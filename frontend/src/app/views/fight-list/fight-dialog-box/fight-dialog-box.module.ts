@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FightDialogBoxComponent} from "./fight-dialog-box.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {TeamCardModule} from "../../../components/team-card/team-card.module";
 import {TeamListModule} from "../../../components/basic/team-list/team-list.module";
 import {MatDialogModule} from "@angular/material/dialog";
@@ -16,7 +16,7 @@ import {MatButtonModule} from "@angular/material/button";
     CommonModule,
     DragDropModule,
     MatSpinnerOverlayModule,
-    TranslateModule,
+    TranslocoModule,
     TeamCardModule,
     TeamListModule,
     MatDialogModule,

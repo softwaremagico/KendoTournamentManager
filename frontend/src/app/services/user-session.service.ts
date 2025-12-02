@@ -1,12 +1,48 @@
 import {Injectable} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
+import {Constants} from "../constants";
+import {AuthenticatedUser} from "../models/authenticated-user";
+import {LoginService} from "./login.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserSessionService {
+  private loggedIn: boolean = false;
+  private user: AuthenticatedUser | undefined;
+  private store: boolean;
+  private readonly context: string = '';
 
-  constructor(private cookies: CookieService) {
+  constructor(private cookies: CookieService, private loginService: LoginService) {
+    const authToken: string | null = this.getAuthToken();
+    const expires: number | null = this.getLocalAuthExpiration();
+
+    const localUserData: string | null = this.getLocalUser();
+    let user: AuthenticatedUser | undefined = localUserData != null ? AuthenticatedUser.clone(
+      JSON.parse(localUserData)) : undefined;
+    if (!user) {
+      const sessionUserData: string | null = this.getSessionUser();
+      user = sessionUserData != null ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
+    }
+    this.user = user;
+    if (!expires || isNaN(expires) || expires < new Date().getTime()) {
+      localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
+      localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+      localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
+    }
+    if (authToken) {
+      sessionStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`, authToken);
+      this.setSessionUser(user);
+      this.store = true;
+      if (expires && !isNaN(expires)) {
+        sessionStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`, expires.toString());
+      }
+      this.loggedIn = true;
+    }
+    if ((authToken && expires)
+      || (sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`) && sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`))) {
+      this.setAutoRenew(authToken, expires);
+    }
   }
 
   setLanguage(language: string | undefined): void {
@@ -91,5 +127,89 @@ export class UserSessionService {
 
   getNightMode(): boolean {
     return Boolean(localStorage.getItem("nightMode"));
+  }
+
+  setAuthToken(authToken: string): void {
+    localStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`, authToken);
+  }
+
+  getAuthToken(): string | null {
+    return localStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
+  }
+
+  getLocalAuthExpiration(): number | null {
+    const data: string | null = localStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+    if (data) {
+      return +data;
+    }
+    return null;
+  }
+
+  getSessionAuthExpiration(): number | null {
+    const data: string | null = sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+    if (data) {
+      return +data;
+    }
+    return null;
+  }
+
+  getLocalUser(): string | null {
+    return localStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
+  }
+
+  setSessionUser(user: AuthenticatedUser | undefined) {
+    sessionStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`, JSON.stringify(user));
+  }
+
+  getSessionUser(): string | null {
+    return sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`)
+  }
+
+  get isLoggedIn(): boolean {
+    return this.loggedIn;
+  }
+
+  isTokenExpired(): boolean {
+    const expired: boolean = !sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`) ||
+      new Date().getTime() > +(this.getLocalAuthExpiration() || 0) || !this.getToken();
+    if (!expired) {
+      this.loggedIn = true;
+    }
+    return expired;
+  }
+
+  getExpirationDate(): Date | null {
+    const sessionExpiration: string | null = sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+    if (!isNaN(+(sessionExpiration || NaN))) {
+      return new Date(+(this.getSessionAuthExpiration() || 0));
+    }
+    return null;
+  }
+
+  getToken(): string | null {
+    return sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
+  }
+
+  private setAutoRenew(token: string | null, expires: number | null): void {
+    if (token && expires) {
+      this.loginService.autoRenewToken(token, expires, (jwt: string, expires: number): void => {
+      });
+    }
+  }
+
+  clearToken(): void {
+    sessionStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
+    sessionStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+    sessionStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
+    this.store = false;
+    localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
+    localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+    localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
+    this.loggedIn = false;
+    this.user = undefined;
+  }
+
+  getUser(): AuthenticatedUser | undefined {
+    return this.user;
   }
 }

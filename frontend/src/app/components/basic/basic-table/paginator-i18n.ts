@@ -1,13 +1,13 @@
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {MatPaginatorIntl} from "@angular/material/paginator";
 import {Injectable} from "@angular/core";
 
 @Injectable()
 export class PaginatorI18n extends MatPaginatorIntl {
-  translate: TranslateService;
+  translate: TranslocoService;
 
   override getRangeLabel = (page: number, pageSize: number, length: number) => {
-    const of = this.translate ? this.translate.instant('paginatorOf') : 'of';
+    const of = this.translate ? this.translate.translate('paginatorOf') : 'of';
     if (length === 0 || pageSize === 0) {
       return '0 ' + of + ' ' + length;
     }
@@ -20,10 +20,10 @@ export class PaginatorI18n extends MatPaginatorIntl {
     return startIndex + 1 + ' - ' + endIndex + ' ' + of + ' ' + length;
   };
 
-  injectTranslateService(translate: TranslateService) {
+  injectTranslateService(translate: TranslocoService) {
     this.translate = translate;
 
-    this.translate.onLangChange.subscribe(() => {
+    this.translate.langChanges$.subscribe(() => {
       this.translateLabels();
     });
 
@@ -31,16 +31,16 @@ export class PaginatorI18n extends MatPaginatorIntl {
   }
 
   translateLabels() {
-    super.itemsPerPageLabel = this.translate.instant('paginatorItemsPerPage') !== 'paginatorItemsPerPage' ?
-      this.translate.instant('paginatorItemsPerPage') : 'Items per page:';
-    super.nextPageLabel = this.translate.instant('paginatorNextPage') !== 'paginatorNextPage' ?
-      this.translate.instant('paginatorNextPage') : 'Next page';
-    super.previousPageLabel = this.translate.instant('paginatorPreviousPage')!== 'paginatorPreviousPage' ?
-      this.translate.instant('paginatorPreviousPage') : 'Previous page';
-    super.firstPageLabel = this.translate.instant('paginatorFirstPage')!== 'paginatorFirstPage' ?
-      this.translate.instant('paginatorFirstPage') : 'First page';
-    super.lastPageLabel = this.translate.instant('paginatorLastPage')!== 'paginatorLastPage' ?
-      this.translate.instant('paginatorLastPage') : 'Last page';
+    super.itemsPerPageLabel = this.translate.translate('paginatorItemsPerPage') !== 'paginatorItemsPerPage' ?
+      this.translate.translate('paginatorItemsPerPage') : 'Items per page:';
+    super.nextPageLabel = this.translate.translate('paginatorNextPage') !== 'paginatorNextPage' ?
+      this.translate.translate('paginatorNextPage') : 'Next page';
+    super.previousPageLabel = this.translate.translate('paginatorPreviousPage') !== 'paginatorPreviousPage' ?
+      this.translate.translate('paginatorPreviousPage') : 'Previous page';
+    super.firstPageLabel = this.translate.translate('paginatorFirstPage') !== 'paginatorFirstPage' ?
+      this.translate.translate('paginatorFirstPage') : 'First page';
+    super.lastPageLabel = this.translate.translate('paginatorLastPage') !== 'paginatorLastPage' ?
+      this.translate.translate('paginatorLastPage') : 'Last page';
     this.changes.next();
   }
 }

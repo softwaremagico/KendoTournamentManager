@@ -31,7 +31,7 @@ import {TournamentType} from "../../../models/tournament-type";
 import {getBalancedMember} from "../../../utils/teams/members";
 import {Action} from "../../../action";
 import {CsvService} from "../../../services/csv-service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -53,7 +53,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
               rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
               private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
-              private filterResetService: FilterResetService, public csvService: CsvService, private translateService: TranslateService,
+              private filterResetService: FilterResetService, public csvService: CsvService, private translateService: TranslocoService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -505,9 +505,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
             this.dialogRef.close({action: Action.Cancel});
           } else {
             const parameters: object = {element: _teams[0].name};
-            this.translateService.get('failedOnCsvField', parameters).subscribe((message: string): void => {
-              this.messageService.errorMessage(message);
-            });
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
           }
         });
       }

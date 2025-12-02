@@ -6,7 +6,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {FightModule} from "../../components/fight/fight.module";
 import {UntieFightModule} from "../../components/untie-fight/untie-fight.module";
 import {FilterModule} from "../../components/basic/filter/filter.module";
@@ -26,7 +26,7 @@ import {DuelModule} from "../../components/fight/duel/duel.module";
     MatSpinnerOverlayModule,
     MatTooltipModule,
     RbacModule,
-    TranslateModule,
+    TranslocoModule,
     FightModule,
     UntieFightModule,
     FilterModule,

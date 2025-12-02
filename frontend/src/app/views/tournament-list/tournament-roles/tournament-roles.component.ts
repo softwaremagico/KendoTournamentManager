@@ -10,7 +10,7 @@ import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
 import {forkJoin} from "rxjs";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
@@ -33,7 +33,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService, public roleService: RoleService,
-              private messageService: MessageService, public translateService: TranslateService,
+              private messageService: MessageService, private translateService: TranslocoService,
               rbacService: RbacService, private filterResetService: FilterResetService,
               private statisticsChangedService: StatisticsChangedService,
               private teamService: TeamService,

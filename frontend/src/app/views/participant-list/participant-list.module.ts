@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {MatIconModule} from "@angular/material/icon";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {BasicTableModule} from "../../components/basic/basic-table/basic-table.module";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
@@ -17,7 +17,7 @@ import {ParticipantRoutingModule} from "./participant-routing.module";
     ParticipantRoutingModule,
     CommonModule,
     MatIconModule,
-    TranslateModule,
+    TranslocoModule,
     BasicTableModule,
     MatTooltipModule,
     MatButtonModule,

@@ -6,20 +6,20 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {GroupContainerComponent} from './group-container/group-container.component';
 import {TeamCardModule} from "../../team-card/team-card.module";
 import {ShiaijoModule} from "./shiaijo/shiaijo.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
   declarations: [TournamentBracketsComponent, GroupContainerComponent],
   exports: [TournamentBracketsComponent],
-    imports: [
-        CommonModule,
-        ArrowModule,
-        DragDropModule,
-        TeamCardModule,
-        ShiaijoModule,
-        TranslateModule
-    ]
+  imports: [
+    CommonModule,
+    ArrowModule,
+    DragDropModule,
+    TeamCardModule,
+    ShiaijoModule,
+    TranslocoModule
+  ]
 })
 export class TournamentBracketsModule {
 }

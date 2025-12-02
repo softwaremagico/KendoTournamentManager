@@ -1,6 +1,6 @@
 <app-filter (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
 <button [matMenuTriggerFor]="mainMenuButton" [matTooltipShowDelay]="500" class="tune-button" mat-button
-        matTooltip="{{'fields' | translate}}">
+        matTooltip="{{'fields' | transloco}}">
   <mat-icon>tune</mat-icon>
 </button>
 <mat-menu #mainMenuButton="matMenu" class="table-settings">
@@ -8,7 +8,7 @@
               *ngFor="let column of basicTableData.columns; let i = index">
           <mat-checkbox (change)="toggleColumnVisibility(column)" [checked]="isColumnVisible(column)"
                         class="menu-setting-option"></mat-checkbox>
-          <span class="menu-setting-option-text">{{basicTableData.columnsTags[i] | translate}}</span>
+          <span class="menu-setting-option-text">{{basicTableData.columnsTags[i] | transloco}}</span>
           <br>
         </span>
 </mat-menu>
@@ -20,7 +20,7 @@
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
         <ng-container [matColumnDef]=column>
           <th *matHeaderCellDef mat-header-cell class="table-header-cell"
-              mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}
+              mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | transloco}}
           </th>
           <td *matCellDef="let data" mat-cell> {{getColumnData(data[column])}}</td>
         </ng-container>

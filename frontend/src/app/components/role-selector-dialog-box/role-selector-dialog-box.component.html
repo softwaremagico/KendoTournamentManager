@@ -3,7 +3,7 @@
     <ul>
      <li *ngFor="let roleType of roleTypes">
       <mat-checkbox (change)="select($event.checked, roleType)">
-      {{roleType.toLowerCase() | translate}}
+      {{roleType.toLowerCase() | transloco}}
       </mat-checkbox>
      </li>
     </ul>
@@ -12,15 +12,15 @@
     <button (click)="setRoles(false)" color="primary" mat-flat-button
             mat-raised-button type="button">
       <mat-icon>done</mat-icon>
-      {{'all' | translate}}
+      {{'all' | transloco}}
     </button>
     <button (click)="setRoles(true)" color="picture" mat-flat-button
             mat-raised-button type="button">
       <mat-icon>done</mat-icon>
-      {{'onlyNews' | translate}}
+      {{'onlyNews' | transloco}}
     </button>
     <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
-            type="button">{{'cancel' | translate}}
+            type="button">{{'cancel' | transloco}}
     </button>
   </div>
 </div>

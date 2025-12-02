@@ -3,7 +3,7 @@ import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../../models/tournament";
 import {RbacService} from "../../../../services/rbac/rbac.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {MessageService} from "../../../../services/message.service";
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../../services/rbac/rbac.activity";
@@ -21,7 +21,7 @@ export class TournamentScoreEditorComponent extends RbacBasedComponent {
   formScore: UntypedFormGroup;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, tournament: Tournament },
-              public dialogRef: MatDialogRef<TournamentScoreEditorComponent>, rbacService: RbacService, public translateService: TranslateService,
+              public dialogRef: MatDialogRef<TournamentScoreEditorComponent>, rbacService: RbacService, public translateService: TranslocoService,
               public messageService: MessageService,) {
     super(rbacService);
     this.tournament = data.tournament;

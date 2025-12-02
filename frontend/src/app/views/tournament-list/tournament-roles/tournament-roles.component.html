@@ -10,7 +10,7 @@
     <div class="roles">
       <div *ngFor="let roleType of roleTypes" class="roles-location">
         <div class="role-header">
-          <h2 class="role-text">{{roleType.toLowerCase() | translate}}</h2>
+          <h2 class="role-text">{{roleType.toLowerCase() | transloco}}</h2>
           <h2 *ngIf="countRole(roleType)" class="role-counter">(x{{countRole(roleType)}})</h2>
         </div>
         <div (cdkDropListDropped)="dropParticipant($event, roleType)"
@@ -30,7 +30,7 @@
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>
-    {{'download' | translate}}
+    {{'download' | transloco}}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | transloco}}</button>
 </div>

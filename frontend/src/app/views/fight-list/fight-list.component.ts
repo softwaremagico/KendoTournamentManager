@@ -30,7 +30,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
@@ -94,7 +94,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              rbacService: RbacService, private translateService: TranslateService,
+              rbacService: RbacService, private translateService: TranslocoService,
               private systemOverloadService: SystemOverloadService,
               private rxStompService: RxStompService, private loginService: LoginService,
               private audioService: AudioService, private projectModeChangedService: ProjectModeChangedService) {
@@ -985,7 +985,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   getShiaijoTag(): string {
     if (this.selectedShiaijo < 0) {
-      return this.translateService.instant('-');
+      return this.translateService.translate('-');
     }
     return Tournament.SHIAIJO_NAMES[this.selectedShiaijo];
   }

@@ -5,7 +5,7 @@ import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Action} from "../../action";
 import {AuthenticatedUser} from "../../models/authenticated-user";
@@ -32,7 +32,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private loginService: LoginService, private userService: UserService, public dialog: MatDialog, private messageService: MessageService,
-              private translateService: TranslateService, rbacService: RbacService) {
+              private translateService: TranslocoService, rbacService: RbacService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'username', 'name', 'lastname', 'roles'];
     this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname', 'roles'];
@@ -54,18 +54,18 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
   addElement(): void {
     const authenticatedUser: AuthenticatedUser = new AuthenticatedUser();
     authenticatedUser.roles[0] = UserRoles.VIEWER;
-    this.openDialog(this.translateService.instant('authenticatedUserAdd'), Action.Add, new AuthenticatedUser());
+    this.openDialog(this.translateService.translate('authenticatedUserAdd'), Action.Add, new AuthenticatedUser());
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('authenticatedUserEdit'), Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('authenticatedUserEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('authenticatedUserDelete'), Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('authenticatedUserDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 
@@ -121,7 +121,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
           this.basicTableData.dataSource._updateChangeSubscription();
         }
         this.basicTableData.selectedElement = _authenticatedUser;
-      this.basicTableData.selectItem(_authenticatedUser);
+        this.basicTableData.selectItem(_authenticatedUser);
       }
     );
   }

@@ -54,7 +54,7 @@
               <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
                 <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
                 <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
-                <mat-icon *ngIf="team.locked" class="locked" color="warn" matTooltip="{{'elementInUse' | translate}}">
+                <mat-icon *ngIf="team.locked" class="locked" color="warn" matTooltip="{{'elementInUse' | transloco}}">
                   block
                 </mat-icon>
               </mat-card-header>
@@ -68,7 +68,7 @@
            [ngStyle]="{'pointer-events': addingTeam ? 'none' : 'auto'}"
            (click)="addTeam()"
            (keydown)="addTeam()">
-        <div class="row">{{'addTeamToTournament' | translate}}</div>
+        <div class="row">{{'addTeamToTournament' | transloco}}</div>
       </div>
     </div>
   </div>
@@ -78,19 +78,19 @@
           mat-flat-button
           mat-raised-button>
     <mat-icon>auto_fix_high</mat-icon>
-    {{'wizard' | translate}}
+    {{'wizard' | transloco}}
   </button>
   <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())"
           mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
-    {{'random' | translate}}
+    {{'random' | transloco}}
   </button>
   <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.getActivities())"
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>
-    {{'download' | translate}}
+    {{'download' | transloco}}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | transloco}}</button>
 </div>

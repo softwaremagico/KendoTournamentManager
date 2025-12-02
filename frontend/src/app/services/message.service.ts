@@ -1,6 +1,5 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {TranslateService} from '@ngx-translate/core';
 import {Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
@@ -8,6 +7,7 @@ import {Message} from "@stomp/stompjs/esm6";
 import {RxStompService} from "../websockets/rx-stomp.service";
 import {EnvironmentService} from "../environment.service";
 import {MessageContent} from "../websockets/message-content.model";
+import {TranslocoService} from "@ngneat/transloco";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class MessageService implements OnDestroy {
 
   private snackBarActive: boolean = false;
 
-  constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
+  constructor(public snackBar: MatSnackBar, private translateService: TranslocoService,
               private loggerService: LoggerService, private rxStompService: RxStompService,
               private environmentService: EnvironmentService) {
     this.registerWebsocketsMessages();
@@ -35,23 +35,22 @@ export class MessageService implements OnDestroy {
     this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/messages').subscribe((message: Message): void => {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
-        this.translateService.get(messageContent.payload, messageContent.parameters).subscribe((res: string): void => {
-          let type: string = messageContent.type.toLowerCase();
-          if (!type) {
-            type = "info";
-          }
-          switch (type) {
-            case "error":
-              this.errorMessage(res);
-              break;
-            case "warning":
-              this.warningMessage(res);
-              break;
-            case "info":
-            default:
-              this.infoMessage(res);
-          }
-        });
+        const res: string = this.translateService.translate(messageContent.payload, messageContent.parameters);
+        let type: string = messageContent.type.toLowerCase();
+        if (!type) {
+          type = "info";
+        }
+        switch (type) {
+          case "error":
+            this.errorMessage(res);
+            break;
+          case "warning":
+            this.warningMessage(res);
+            break;
+          case "info":
+          default:
+            this.infoMessage(res);
+        }
 
       } catch (e) {
         console.log("Invalid message payload", message.body);
@@ -62,7 +61,7 @@ export class MessageService implements OnDestroy {
   private openSnackBar(message: string, cssClass: string, duration: number, action?: string): void {
     if (!this.snackBarActive) {
       this.snackBarActive = true;
-      const snackBarRef = this.snackBar.open(this.translateService.instant(message), action, {
+      const snackBarRef = this.snackBar.open(this.translateService.translate(message), action, {
         duration: duration,
         panelClass: [cssClass, 'message-service'],
         verticalPosition: 'top',

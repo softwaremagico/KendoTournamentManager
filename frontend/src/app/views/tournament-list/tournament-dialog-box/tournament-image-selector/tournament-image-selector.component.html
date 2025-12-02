@@ -28,7 +28,7 @@
               [class.photo-width]="insertedTournamentImageType === photoType"
               [style.margin-top]="(getLinePosition()-10)+'px'"
               class="name">
-          {{'nameExample' | translate}}</span>
+          {{'nameExample' | transloco}}</span>
         <img *ngIf="image" alt="Preview"
              class="image-preview" src="{{ image }}"/>
         <div *ngIf="!image" class="empty-image image-preview">
@@ -77,7 +77,7 @@
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>badge</mat-icon>
-      {{'accreditation' | translate}}
+      {{'accreditation' | transloco}}
     </button>
     <button (click)="selectType(photoType)"
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | rbac : this.rbacService.getActivities())"
@@ -86,7 +86,7 @@
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>face</mat-icon>
-      {{'photo' | translate}}
+      {{'photo' | transloco}}
     </button>
     <button (click)="selectType(diplomaType)"
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | rbac : this.rbacService.getActivities())"
@@ -95,7 +95,7 @@
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
-      {{'diplomas' | translate}}
+      {{'diplomas' | transloco}}
     </button>
     <button (click)="selectType(bannerType)"
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | rbac : this.rbacService.getActivities())"
@@ -104,11 +104,11 @@
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>featured_video</mat-icon>
-      {{'banner' | translate}}
+      {{'banner' | transloco}}
     </button>
     <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button type="button">
       <mat-icon>cancel</mat-icon>
-      {{'close' | translate}}
+      {{'close' | transloco}}
     </button>
   </div>
 </div>

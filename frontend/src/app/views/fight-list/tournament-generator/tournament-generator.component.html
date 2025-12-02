@@ -7,7 +7,7 @@
                 *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" color="secondary"
                 color="primary" mat-button
-                matTooltip="{{'back' | translate}}">
+                matTooltip="{{'back' | transloco}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | rbac : this.rbacService.getActivities())"
@@ -15,7 +15,7 @@
                 [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
-                matTooltip="{{'addFight' | translate}}">
+                matTooltip="{{'addFight' | transloco}}">
           <mat-icon>add</mat-icon>
         </button>
         <button (click)="changeNumberOfWinners(2)"
@@ -23,7 +23,7 @@
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'winnerNumber' | translate}}">
+                matTooltip="{{'winnerNumber' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
         </button>
         <button (click)="changeNumberOfWinners(1)"
@@ -31,14 +31,14 @@
                 [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'winnerNumber' | translate}}">
+                matTooltip="{{'winnerNumber' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
         </button>
         <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.getActivities())"
                 [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | translate}}">
+                matTooltip="{{'delete' | transloco}}">
           <mat-icon>clear</mat-icon>
         </button>
         <button (click)="refreshGroups()" *ngIf="(RbacActivity.REFRESH_GROUPS | rbac : this.rbacService.getActivities())"
@@ -46,7 +46,7 @@
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 class="refresh-group"
-                matTooltip="{{'refreshStructure' | translate}}">
+                matTooltip="{{'refreshStructure' | transloco}}">
           <mat-icon>settings_backup_restore</mat-icon>
         </button>
         <mat-divider [vertical]="true"
@@ -57,7 +57,7 @@
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'wizard' | translate}}">
+                matTooltip="{{'wizard' | transloco}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <mat-divider [vertical]="true"
@@ -69,7 +69,7 @@
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 class="download"
-                matTooltip="{{'download' | translate}}">
+                matTooltip="{{'download' | transloco}}">
           <mat-icon>file_download</mat-icon>
         </button>
       </div>

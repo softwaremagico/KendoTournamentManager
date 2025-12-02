@@ -5,19 +5,19 @@
       <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_CLUB | rbac : this.rbacService.getActivities())"
               [matTooltipShowDelay]="500" color="primary"
               mat-button
-              matTooltip="{{'clubAdd' | translate}}">
+              matTooltip="{{'clubAdd' | transloco}}">
         <mat-icon>add</mat-icon>
       </button>
       <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_CLUB | rbac : this.rbacService.getActivities())"
               [disabled]="!basicTableData.selectedElement"
               [matTooltipShowDelay]="500" mat-button
-              matTooltip="{{'clubEdit' | translate}}">
+              matTooltip="{{'clubEdit' | transloco}}">
         <mat-icon>create</mat-icon>
       </button>
       <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_CLUB | rbac : this.rbacService.getActivities())"
               [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
               color="warn" mat-button
-              matTooltip="{{'clubDelete' | translate}}">
+              matTooltip="{{'clubDelete' | transloco}}">
         <mat-icon>clear</mat-icon>
       </button>
     </div>
@@ -28,7 +28,7 @@
             *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
             [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
             color="primary" mat-button
-            matTooltip="{{'competitorsClubRanking' | translate}}">
+            matTooltip="{{'competitorsClubRanking' | transloco}}">
       <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
     </button>
   </div>

@@ -4,7 +4,7 @@ import {TimerComponent} from "./timer.component";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
@@ -17,7 +17,7 @@ import {TranslateModule} from "@ngx-translate/core";
     RbacModule,
     MatIconModule,
     DragDropModule,
-    TranslateModule
+    TranslocoModule
   ]
 })
 export class TimerModule {

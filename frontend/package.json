@@ -4,9 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run prepare:translations && ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "prepare:translations": "npm run clean:translations && cpx \"./node_modules/@biit-solutions/wizardry-theme/assets/i18n/**/*.json\" \"src/assets/i18n/wizardry-theme/\"",
+    "clean:translations": "del-cli --force src/assets/i18n/wizardry-theme/"
   },
   "private": true,
   "dependencies": {
@@ -20,20 +22,18 @@
     "@angular/platform-browser": "v15-lts",
     "@angular/platform-browser-dynamic": "v15-lts",
     "@angular/router": "v15-lts",
-    "@ngx-translate/core": "^14.0.0",
-    "@ngx-translate/http-loader": "^7.0.0",
+    "@biit-solutions/biit-icons-collection": "latest",
+    "@biit-solutions/wizardry-theme": "latest",
+    "@ngneat/transloco": "^4.3.0",
     "@stomp/rx-stomp": "^2.0.0",
-    "apexcharts": "^3.37.1",
     "dom-to-image": "^2.6.0",
     "jspdf": "^2.5.1",
-    "ng-apexcharts": "^1.8.0",
     "ngx-cookie-service": "^15.0.0",
     "ngx-webcam": "^0.4.1",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
     "uuid": "^9.0.0",
-    "zone.js": "~0.11.4",
-    "@biit-solutions/wizardry-theme": "latest"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "v15-lts",
@@ -42,6 +42,7 @@
     "@types/dom-to-image": "^2.6.4",
     "@types/jasmine": "~4.3.0",
     "@types/uuid": "^9.0.1",
+    "@types/node": "^18.17.17",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
@@ -49,6 +50,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "node-sass": "9.0.0",
-    "typescript": "~4.9.4"
+    "typescript": "~4.9.4",
+    "cpx2": "^6.0.1",
+    "del-cli": "^5.0.0"
   }
 }

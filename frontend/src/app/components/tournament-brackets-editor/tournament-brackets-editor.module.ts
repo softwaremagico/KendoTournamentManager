@@ -8,7 +8,7 @@ import {TeamListModule} from "../basic/team-list/team-list.module";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatTooltipModule} from "@angular/material/tooltip";
 
@@ -29,7 +29,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MatButtonModule,
     MatIconModule,
     RbacModule,
-    TranslateModule,
+    TranslocoModule,
     MatDialogModule,
     MatTooltipModule
   ]

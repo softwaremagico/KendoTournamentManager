@@ -4,7 +4,7 @@ import {RankingService} from "../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
 import {forkJoin, Observable} from "rxjs";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {UndrawTeamsComponent} from "../../views/fight-list/undraw-teams/undraw-teams.component";
 import {Team} from "../../models/team";
 import {RbacBasedComponent} from "../RbacBasedComponent";
@@ -40,7 +40,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
                 tournament: Tournament, group: Group, finished: boolean,
                 showIndex: boolean | undefined,
               },
-              private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
+              private rankingService: RankingService, public translateService: TranslocoService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
               public override rbacService: RbacService, private router: Router,
               private nameUtils: NameUtilsService) {

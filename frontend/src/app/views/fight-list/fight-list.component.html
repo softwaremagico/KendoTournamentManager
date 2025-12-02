@@ -7,7 +7,7 @@
                 *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" color="secondary"
                 mat-button
-                matTooltip="{{'back' | translate}}">
+                matTooltip="{{'back' | transloco}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <button (click)="openConfirmationGenerateElementsDialog()"
@@ -15,7 +15,7 @@
                 [disabled]="(tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'wizard' | translate}}">
+                matTooltip="{{'wizard' | transloco}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <button (click)="addElement()"
@@ -24,7 +24,7 @@
                 [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
-                matTooltip="{{'addFight' | translate}}">
+                matTooltip="{{'addFight' | transloco}}">
           <mat-icon>add</mat-icon>
         </button>
         <button (click)="deleteElement()"
@@ -32,7 +32,7 @@
                 [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | translate}}">
+                matTooltip="{{'delete' | transloco}}">
           <mat-icon>clear</mat-icon>
         </button>
         <button (click)="openBracketsManager()"
@@ -40,7 +40,7 @@
                 [disabled]="(tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'groups' | translate}}">
+                matTooltip="{{'groups' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
         </button>
         <mat-divider [vertical]="true" class="timer-divider"
@@ -50,7 +50,7 @@
                 [disabled]="!selectedDuel || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'finishFight' | translate}}">
+                matTooltip="{{'finishFight' | transloco}}">
           <mat-icon>check_circle</mat-icon>
         </button>
         <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())
@@ -58,7 +58,7 @@
                 [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'reopenFight' | translate}}">
+                matTooltip="{{'reopenFight' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="unfinish"></mat-icon>
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
@@ -68,7 +68,7 @@
                 class="timer-button"
                 color="primary"
                 mat-button
-                matTooltip="{{'chronometerOn' | translate}}">
+                matTooltip="{{'chronometerOn' | transloco}}">
           <mat-icon>timer</mat-icon>
         </button>
         <button (click)="showTimer(false)"
@@ -78,7 +78,7 @@
                 class="timer-button"
                 color="primary"
                 mat-button
-                matTooltip="{{'chronometerOff' | translate}}">
+                matTooltip="{{'chronometerOff' | transloco}}">
           <mat-icon>timer_off</mat-icon>
         </button>
         <button (mousedown)="playWhistle()"
@@ -88,7 +88,7 @@
                 class="whisper-button"
                 color="primary"
                 mat-button
-                matTooltip="{{'playWhistle' | translate}}">
+                matTooltip="{{'playWhistle' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
         </button>
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())
@@ -99,13 +99,13 @@
                 *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" class="exchange-colors"
                 color="primary" mat-button
-                matTooltip="{{'swapColors' | translate}}">
+                matTooltip="{{'swapColors' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
         </button>
         <button (click)="swapTeams()" *ngIf="(RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" class="exchange-teams"
                 color="primary" mat-button
-                matTooltip="{{'swapTeams' | translate}}">
+                matTooltip="{{'swapTeams' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
         </button>
         <button (click)="enableMemberOrder(true)"
@@ -113,7 +113,7 @@
                 [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="member-order"
                 color="primary" mat-button
-                matTooltip="{{'membersOrder' | translate}}">
+                matTooltip="{{'membersOrder' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
         </button>
         <button (click)="enableMemberOrder(false)"
@@ -121,7 +121,7 @@
                 [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="member-order"
                 color="primary" mat-button
-                matTooltip="{{'membersOrder' | translate}}">
+                matTooltip="{{'membersOrder' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
         </button>
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities()) ||
@@ -133,7 +133,7 @@
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" color="primary"
                 mat-button
-                matTooltip="{{'teamsRanking' | translate}}">
+                matTooltip="{{'teamsRanking' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
         </button>
         <button (click)="showCompetitorsClassification()"
@@ -142,7 +142,7 @@
                 [matTooltipShowDelay]="500"
                 class="competitors-classification" color="primary"
                 mat-button
-                matTooltip="{{'competitorsRanking' | translate}}">
+                matTooltip="{{'competitorsRanking' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
         </button>
         <mat-divider [vertical]="true"
@@ -154,7 +154,7 @@
                 [matTooltipShowDelay]="500"
                 class="download-button" color="primary"
                 mat-button
-                matTooltip="{{'fightList' | translate}}">
+                matTooltip="{{'fightList' | transloco}}">
           <mat-icon>file_download</mat-icon>
         </button>
         <mat-divider [vertical]="true"
@@ -166,14 +166,14 @@
                 [matTooltipShowDelay]="500"
                 class="expand-button" color="primary"
                 mat-button
-                matTooltip="{{'projectMode' | translate}}">
+                matTooltip="{{'projectMode' | transloco}}">
           <mat-icon>present_to_all</mat-icon>
         </button>
       </div>
     </div>
     <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1 && !projectMode">
       <div class="shiaijo-label">
-        {{ 'shiaijo'| translate }}
+        {{ 'shiaijo'| transloco }}
       </div>
       <div class="shiaijo-name" (click)="changeShiaijo()" (keydown)="changeShiaijo()">
         {{ getShiaijoTag() }}
@@ -194,10 +194,10 @@
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
-            class="level-name">{{ 'level' | translate }} {{ group.level + 1 }}</h2>
+            class="level-name">{{ 'level' | transloco }} {{ group.level + 1 }}</h2>
         <h3 *ngIf="filteredFights.get(group.id!)?.length! > 0"
             [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
-            class="group-name">{{ 'group' | translate }} {{ group.index + 1 }}</h3>
+            class="group-name">{{ 'group' | transloco }} {{ group.index + 1 }}</h3>
         <div *ngIf="filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0"
              [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
           <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"

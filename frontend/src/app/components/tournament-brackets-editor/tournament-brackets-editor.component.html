@@ -14,7 +14,7 @@
               mat-flat-button
               mat-raised-button>
         <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
-        {{'sorted' | translate}}
+        {{'sorted' | transloco}}
       </button>
       <button (click)="randomGroups()"
               *ngIf="(RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
@@ -22,16 +22,16 @@
               mat-flat-button
               mat-raised-button>
         <mat-icon>casino</mat-icon>
-        {{'random' | translate}}
+        {{'random' | transloco}}
       </button>
       <button (click)="askToRemoveAllTeams()"
               *ngIf="(RbacActivity.CLEAN_UP_GROUPS | rbac : this.rbacService.getActivities())"
               [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
               mat-flat-button
               mat-raised-button
-              matTooltip="{{'removeTeams' | translate}}">
+              matTooltip="{{'removeTeams' | transloco}}">
         <mat-icon>cleaning_services</mat-icon>
-        {{'clean' | translate}}
+        {{'clean' | transloco}}
       </button>
     </div>
   </div>

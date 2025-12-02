@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TeamRankingComponent} from "./team-ranking.component";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
@@ -14,7 +14,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
   declarations: [TeamRankingComponent],
     imports: [
         CommonModule,
-        TranslateModule,
+        TranslocoModule,
         MatSpinnerOverlayModule,
         RbacModule,
         MatIconModule,

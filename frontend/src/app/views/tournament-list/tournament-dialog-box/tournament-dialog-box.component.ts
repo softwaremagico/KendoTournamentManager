@@ -10,7 +10,7 @@ import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {TournamentImageSelectorComponent} from "./tournament-image-selector/tournament-image-selector.component";
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/tournament-extra-properties.component";
 import {InputLimits} from "../../../utils/input-limits";
 
@@ -49,7 +49,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Tournament },
-    public dialog: MatDialog, private translateService: TranslateService) {
+    public dialog: MatDialog, private translateService: TranslocoService) {
     super(rbacService)
     this.tournament = data.entity;
     this.title = data.title;
@@ -151,7 +151,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   openScoreDefinition(): void {
     const dialogRef = this.dialog.open(TournamentScoreEditorComponent, {
       data: {
-        title: this.translateService.instant('scoreRules'), action: Action.Add, tournament: this.tournament
+        title: this.translateService.translate('scoreRules'), action: Action.Add, tournament: this.tournament
       }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -166,7 +166,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   openCustomProperties(): void {
     const dialogRef = this.dialog.open(TournamentExtraPropertiesComponent, {
       data: {
-        title: this.translateService.instant('tournamentProperties'), action: Action.Add, tournament: this.tournament
+        title: this.translateService.translate('tournamentProperties'), action: Action.Add, tournament: this.tournament
       }
     });
   }

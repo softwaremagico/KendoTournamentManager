@@ -1,0 +1,25 @@
+<div id="navbar">
+  <div class="left">
+    <biit-nav-menu [routes]="routes"
+    ></biit-nav-menu>
+  </div>
+  <div class="right" id="kendo-menu">
+    <component-menu/>
+    <biit-nav-user *ngIf="user"
+                   [title]="user.name + ' ' + user.lastname"
+                   [subtitle]="'Kendo Tournament'"
+                   (click)="onContextMenu($event)"
+                   #navUser
+    ></biit-nav-user>
+  </div>
+</div>
+
+<context-menu #contextMenu dir="rtl">
+  <ng-template contextMenuItem
+               *transloco="let t"
+               (execute)="router.navigateByUrl('/login?logout')">
+    <span id="kendo-menu-logout">
+    {{ t('t.logout') }}
+      </span>
+  </ng-template>
+</context-menu>

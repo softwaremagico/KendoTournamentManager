@@ -4,11 +4,11 @@
   </div>
   <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
+    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | transloco}}</a>
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
   <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button
-          type="button">{{'close' | translate}}
+          type="button">{{'close' | transloco}}
   </button>
 </div>

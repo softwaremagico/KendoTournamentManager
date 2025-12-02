@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../../models/tournament";
 import {RbacService} from "../../../../services/rbac/rbac.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {MessageService} from "../../../../services/message.service";
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {TournamentType} from "../../../../models/tournament-type";
@@ -42,7 +42,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   challengeDistance: number;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, tournament: Tournament },
-              public dialogRef: MatDialogRef<TournamentExtraPropertiesComponent>, rbacService: RbacService, public translateService: TranslateService,
+              public dialogRef: MatDialogRef<TournamentExtraPropertiesComponent>, rbacService: RbacService, public translateService: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
               public messageService: MessageService,) {
     super(rbacService);

@@ -5,7 +5,7 @@
        class="users-container">
     <app-user-card *ngFor="let user of members" [user]="user"></app-user-card>
   </div>
-  <h2 class="representative-title">{{'representative' | translate}}</h2>
+  <h2 class="representative-title">{{'representative' | transloco}}</h2>
   <div (cdkDropListDropped)="dropParticipant($event)" [cdkDropListData]="selectedMembers"
        [cdkDropListEnterPredicate]="checkDroppedElement"
        [cdkDropListSortingDisabled]="false" cdkDropList

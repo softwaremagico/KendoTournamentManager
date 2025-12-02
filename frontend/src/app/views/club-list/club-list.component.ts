@@ -10,7 +10,7 @@ import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.componen
 import {MessageService} from "../../services/message.service";
 import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
 import {Action} from "../../action";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
@@ -30,7 +30,7 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
-              private translateService: TranslateService, rbacService: RbacService) {
+              private translateService: TranslocoService, rbacService: RbacService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
       'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
@@ -53,18 +53,18 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
   }
 
   addElement(): void {
-    this.openDialog(this.translateService.instant('clubAdd'), Action.Add, new Club());
+    this.openDialog(this.translateService.translate('clubAdd'), Action.Add, new Club());
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('clubEdit'), Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('clubEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('clubDelete'), Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('clubDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 

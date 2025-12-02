@@ -24,7 +24,7 @@
             mat-flat-button
             mat-raised-button type="button">
       <mat-icon>add_a_photo</mat-icon>
-      {{'photo' | translate}}
+      {{'photo' | transloco}}
     </button>
     <button (click)="switchCamera()"
             *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
@@ -32,26 +32,26 @@
             mat-raised-button
             type="button">
       <mat-icon>switch_camera</mat-icon>
-      {{'switch' | translate}}
+      {{'switch' | transloco}}
     </button>
     <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
             [disabled]="selectedPicture == undefined" color="primary"
             mat-flat-button
             mat-raised-button type="button">
       <mat-icon>photo_album</mat-icon>
-      {{'selectButton' | translate}}
+      {{'selectButton' | transloco}}
     </button>
     <button (click)="fileInput.click()"
             *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.getActivities())"
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>upload_file</mat-icon>
-      {{'upload' | translate}}
+      {{'upload' | transloco}}
       <input #fileInput (change)="handleFileInput($event)" accept=".jpg,.jpeg,.png" style="display:none;" type="file"/>
     </button>
     <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button type="button">
       <mat-icon>cancel</mat-icon>
-      {{'close' | translate}}
+      {{'close' | transloco}}
     </button>
   </div>
 </div>

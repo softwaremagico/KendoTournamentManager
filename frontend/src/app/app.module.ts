@@ -8,8 +8,6 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -22,7 +20,6 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSortModule} from '@angular/material/sort';
 import {MatInputModule} from "@angular/material/input";
-import {LoginComponent} from "./views/login/login.component";
 import {CookieService} from 'ngx-cookie-service';
 import {MatSelectModule} from "@angular/material/select";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
@@ -123,6 +120,10 @@ import {ParticipantFightListModule} from './views/participant-fight-list/partici
 import {
   SenbatsuFightDialogBoxModule
 } from "./views/fight-list/senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.module";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
+import {NavbarModule} from "./components/navigation/navbar/navbar.module";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 registerLocaleData(localeES, "es");
@@ -135,13 +136,13 @@ registerLocaleData(localeNL, "nl");
   declarations: [
     AppComponent,
     ClubListComponent,
-    LoginComponent,
     AuthenticatedUserListComponent,
     PasswordsComponent,
     TournamentStatisticsComponent,
     ParticipantStatisticsComponent
   ],
   imports: [
+    NavbarModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -160,13 +161,6 @@ registerLocaleData(localeNL, "nl");
     MatDialogModule,
     MatSortModule,
     MatInputModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient]
-      }
-    }),
     MatSelectModule,
     MatSnackBarModule,
     MatCardModule,
@@ -235,17 +229,12 @@ registerLocaleData(localeNL, "nl");
     ParticipantQrCodeModule,
     ParticipantFightListModule,
     SenbatsuFightDialogBoxModule,
+    BiitButtonModule,
+    BiitProgressBarModule,
+    BiitSnackbarModule,
+    TranslocoModule,
   ],
   providers: [
-    CookieService, {
-      provide: MatPaginatorIntl,
-      useFactory: (translate: TranslateService) => {
-        const service: PaginatorI18n = new PaginatorI18n();
-        service.injectTranslateService(translate);
-        return service;
-      },
-      deps: [TranslateService]
-    },
     {
       provide: ErrorHandler,
       useClass: LocalErrorHandler
@@ -265,8 +254,4 @@ registerLocaleData(localeNL, "nl");
   bootstrap: [AppComponent]
 })
 export class AppModule {
-}
-
-export function httpTranslateLoader(http: HttpClient): TranslateHttpLoader {
-  return new TranslateHttpLoader(http);
 }

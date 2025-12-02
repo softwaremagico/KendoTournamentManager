@@ -2,7 +2,7 @@
 <div class="table-container">
   <div class="days-selector" *ngIf="!this.club && !this.tournament">
     <input class="day-input" type="number" matInput min="0" max="10000" step="30" [(ngModel)]="numberOfDays"
-           placeholder="{{'daysFrom' | translate}}" [matTooltipShowDelay]="1000" matTooltip="{{'daysFrom' | translate}}"
+           placeholder="{{'daysFrom' | transloco}}" [matTooltipShowDelay]="1000" matTooltip="{{'daysFrom' | transloco}}"
            required (keyup.enter)="daysChanged()">
     <button (click)="daysChanged()" color="secondary" class="day-input"
             mat-button>
@@ -10,15 +10,15 @@
     </button>
   </div>
   <table class="competitor-ranking-table">
-    <caption class="table-caption">{{ 'competitorsRanking' | translate }}</caption>
+    <caption class="table-caption">{{ 'competitorsRanking' | transloco }}</caption>
     <thead>
     <tr>
-      <th class="competitor-ranking-header">{{ 'competitor' | translate }}</th>
-      <th class="competitor-ranking-header">{{ 'duelsWon' | translate }}</th>
-      <th class="competitor-ranking-header">{{ 'duelsDraw' | translate }}</th>
-      <th class="competitor-ranking-header">{{ 'hitsWon' | translate }}</th>
-      <th *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="competitor-ranking-header">{{ 'hitsLost' | translate }}</th>
-      <th class="competitor-ranking-header">{{ 'totalFights' | translate }}</th>
+      <th class="competitor-ranking-header">{{ 'competitor' | transloco }}</th>
+      <th class="competitor-ranking-header">{{ 'duelsWon' | transloco }}</th>
+      <th class="competitor-ranking-header">{{ 'duelsDraw' | transloco }}</th>
+      <th class="competitor-ranking-header">{{ 'hitsWon' | transloco }}</th>
+      <th *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="competitor-ranking-header">{{ 'hitsLost' | transloco }}</th>
+      <th class="competitor-ranking-header">{{ 'totalFights' | transloco }}</th>
     </tr>
     </thead>
     <tr *ngFor="let scoreOfCompetitor of competitorsScore; let i = index">
@@ -51,7 +51,7 @@
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>
-    {{ 'download' | translate }}
+    {{ 'download' | transloco }}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | translate }}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | transloco }}</button>
 </div>

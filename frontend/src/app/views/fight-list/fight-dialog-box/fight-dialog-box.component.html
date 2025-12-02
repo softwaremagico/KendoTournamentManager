@@ -7,11 +7,11 @@
   </div>
   <div class="new-fight-title">
     <h2 [class.red-ribbon]="!swappedColors" [class.white-ribbon]="swappedColors"
-        class="teams-title">{{!swappedColors ? ('redTeam' | translate) : ('whiteTeam' |
-      translate)}}</h2>
+        class="teams-title">{{!swappedColors ? ('redTeam' | transloco) : ('whiteTeam' |
+      transloco)}}</h2>
     <h2 [class.red-ribbon]="swappedColors" [class.white-ribbon]="!swappedColors"
-        class="teams-title">{{swappedColors ? ('redTeam' | translate) : ('whiteTeam' |
-      translate)}}</h2>
+        class="teams-title">{{swappedColors ? ('redTeam' | transloco) : ('whiteTeam' |
+      transloco)}}</h2>
   </div>
   <div class="new-fight">
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam1"
@@ -29,6 +29,6 @@
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="addFights()" color="primary" mat-flat-button mat-raised-button>{{'add' | translate}}</button>
-  <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button>{{'cancel' | translate}}</button>
+  <button (click)="addFights()" color="primary" mat-flat-button mat-raised-button>{{'add' | transloco}}</button>
+  <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button>{{'cancel' | transloco}}</button>
 </div>

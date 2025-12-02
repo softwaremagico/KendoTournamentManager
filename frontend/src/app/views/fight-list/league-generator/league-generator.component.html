@@ -5,7 +5,7 @@
     <team-list [teamListData]="teamListData"></team-list>
   </div>
   <div class="sorted-teams">
-    <h2>{{ 'teamsOrder' | translate }}</h2>
+    <h2>{{ 'teamsOrder' | transloco }}</h2>
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
          cdkDropList class="final-team-list">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
@@ -14,29 +14,29 @@
     <div *ngIf="canMaximizeFights || needsDrawResolution || needsFifoWinner || canAvoidDuplicatedFights"
          class="extra-properties">
       <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
-                        [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
-        {{ 'maximizeFights' | translate }}
+                        [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | transloco}}">
+        {{ 'maximizeFights' | transloco }}
       </mat-slide-toggle>
 
       <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights"
                         (change)="avoidDuplicatesToggle($event)">
-        {{ 'avoidDuplicateFights' | translate }}
+        {{ 'avoidDuplicateFights' | transloco }}
       </mat-slide-toggle>
 
 
       <mat-form-field *ngIf="needsDrawResolution">
-        <mat-label>{{ 'drawResolution' | translate }}</mat-label>
+        <mat-label>{{ 'drawResolution' | transloco }}</mat-label>
         <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
           <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
-                      [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
-            {{ getDrawResolutionTranslationTag(resolution) | translate }}
+                      [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | transloco}}">
+            {{ getDrawResolutionTranslationTag(resolution) | transloco }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
-                        [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
-        {{ 'leagueFifo' | translate }}
+                        [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | transloco}}">
+        {{ 'leagueFifo' | transloco }}
       </mat-slide-toggle>
     </div>
 
@@ -51,39 +51,39 @@
     mat-flat-button
     mat-raised-button>
     <mat-icon>auto_fix_high</mat-icon>
-    {{ 'wizard' | translate }}
+    {{ 'wizard' | transloco }}
   </button>
   <button
     class="reverse-button"
     (click)="reverseTeams()"
     *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-    matTooltip="{{'reverseOrderHint' | translate}}"
+    matTooltip="{{'reverseOrderHint' | transloco}}"
     mat-flat-button
     mat-raised-button>
     <mat-icon>loop</mat-icon>
-    {{ 'reverseOrder' | translate }}
+    {{ 'reverseOrder' | transloco }}
   </button>
   <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="sorted-button" mat-flat-button
           mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
-    {{ 'sorted' | translate }}
+    {{ 'sorted' | transloco }}
   </button>
   <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="random-button" mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
-    {{ 'random' | translate }}
+    {{ 'random' | transloco }}
   </button>
   <button (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           [disabled]="teamsOrder.length===0 || teamListData.teams.length>0" class="fight-button" color="primary"
           mat-flat-button
           mat-raised-button>
     <mat-icon>done</mat-icon>
-    {{ 'accept' | translate }}
+    {{ 'accept' | transloco }}
   </button>
   <button (click)="cancelDialog()" color="accent" mat-flat-button mat-raised-button>
     <mat-icon>cancel</mat-icon>
-    {{ 'cancel' | translate }}
+    {{ 'cancel' | transloco }}
   </button>
 </div>

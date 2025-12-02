@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {PictureDialogBoxComponent} from './picture-dialog-box.component';
 import {MatIconModule} from "@angular/material/icon";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 
@@ -14,7 +14,7 @@ import {MatButtonModule} from "@angular/material/button";
   imports: [
     CommonModule,
     MatIconModule,
-    TranslateModule,
+    TranslocoModule,
     MatDialogModule,
     MatButtonModule
   ]

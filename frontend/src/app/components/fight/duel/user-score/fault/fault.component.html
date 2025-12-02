@@ -2,9 +2,9 @@
 (RbacActivity.ASSIGN_FAULTS | rbac : this.rbacService.getActivities())">
   <mat-menu #menu="matMenu">
     <button [disabled]="duel.finished" (click)="updateFault(true)"
-            mat-menu-item>{{'fault' | translate}}
+            mat-menu-item>{{'fault' | transloco}}
     </button>
-    <button [disabled]="duel.finished" (click)="updateFault(false)" mat-menu-item>{{'clear' | translate}}</button>
+    <button [disabled]="duel.finished" (click)="updateFault(false)" mat-menu-item>{{'clear' | transloco}}</button>
   </mat-menu>
   <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
        this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"

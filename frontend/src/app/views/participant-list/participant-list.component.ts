@@ -12,7 +12,7 @@ import {ParticipantDialogBoxComponent} from "./participant-dialog-box/participan
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
 import {Action} from "../../action";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
@@ -36,7 +36,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   constructor(private router: Router, private userSessionService: UserSessionService,
               private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
-              private clubService: ClubService, private translateService: TranslateService, rbacService: RbacService) {
+              private clubService: ClubService, private translateService: TranslocoService, rbacService: RbacService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'clubName', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'idCard', 'name', 'lastname', 'club', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
@@ -69,18 +69,18 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   addElement(): void {
     const participant: Participant = new Participant();
-    this.openDialog(this.translateService.instant('participantAdd'), Action.Add, participant);
+    this.openDialog(this.translateService.translate('participantAdd'), Action.Add, participant);
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('participantEdit'), Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('participantEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('participantDelete'), Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('participantDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 

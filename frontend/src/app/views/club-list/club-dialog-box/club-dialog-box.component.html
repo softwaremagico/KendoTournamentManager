@@ -14,37 +14,37 @@
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubName" matInput
-             placeholder="{{'clubName' | translate}}"
+             placeholder="{{'clubName' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubCountry" matInput
-             placeholder="{{'clubCountry' | translate}}"
+             placeholder="{{'clubCountry' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubCity" matInput
-             placeholder="{{'clubCity' | translate}}"
+             placeholder="{{'clubCity' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubAddress" matInput
-             placeholder="{{'clubAddress' | translate}}">
+             placeholder="{{'clubAddress' | transloco}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubEmail" matInput
-             placeholder="{{'clubEmail' | translate}}">
+             placeholder="{{'clubEmail' | transloco}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubPhone" matInput
-             placeholder="{{'clubPhone' | translate}}">
+             placeholder="{{'clubPhone' | transloco}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubWeb" matInput
-             placeholder="{{'clubWeb' | translate}}">
+             placeholder="{{'clubWeb' | transloco}}">
     </mat-form-field>
     <ng-template #elseTemplate>
-      <span [innerHTML]="'clubDeleteQuestion' | translate : {name: club.name}"></span>
+      <span [innerHTML]="'clubDeleteQuestion' | transloco : {name: club.name}"></span>
     </ng-template>
     <div class="button-container" mat-dialog-actions>
       <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())" [disabled]="registerForm.invalid"
@@ -52,10 +52,10 @@
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{actionName.toLowerCase() | translate}}
+        {{actionName.toLowerCase() | transloco}}
       </button>
       <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
-              type="button">{{'cancel' | translate}}
+              type="button">{{'cancel' | transloco}}
       </button>
     </div>
   </form>

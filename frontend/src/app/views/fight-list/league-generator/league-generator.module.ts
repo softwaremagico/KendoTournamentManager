@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {LeagueGeneratorComponent} from "./league-generator.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TeamListModule} from "../../../components/basic/team-list/team-list.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {TeamCardModule} from "../../../components/team-card/team-card.module";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
@@ -23,7 +23,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     CommonModule,
     DragDropModule,
     TeamListModule,
-    TranslateModule,
+    TranslocoModule,
     TeamCardModule,
     MatIconModule,
     RbacModule,

@@ -4,7 +4,7 @@ import {ParticipantPictureDialogBoxComponent} from "./participant-picture-dialog
 import {WebcamModule} from "ngx-webcam";
 import {RbacModule} from "../../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 
@@ -19,7 +19,7 @@ import {MatButtonModule} from "@angular/material/button";
     WebcamModule,
     RbacModule,
     MatIconModule,
-    TranslateModule,
+    TranslocoModule,
     MatDialogModule,
     MatButtonModule
   ]

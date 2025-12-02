@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {AuthenticatedUserDialogBoxComponent} from "./authenticated-user-dialog-box.component";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatOptionModule} from "@angular/material/core";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
@@ -19,7 +19,7 @@ import {MatDialogModule} from "@angular/material/dialog";
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    TranslateModule,
+    TranslocoModule,
     MatOptionModule,
     RbacModule,
     MatIconModule,

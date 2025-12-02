@@ -4,7 +4,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort} from "@angular/material/sort";
 import {UserSessionService} from "../../../services/user-session.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {DatePipe} from "@angular/common";
 import {Subscription} from "rxjs";
 import {Message} from "@stomp/stompjs";
@@ -34,7 +34,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
   private topicSubscription: Subscription;
 
-  constructor(public dialog: MatDialog, private translateService: TranslateService,
+  constructor(public dialog: MatDialog, private translateService: TranslocoService,
               private userSessionService: UserSessionService, private environmentService: EnvironmentService,
               private rxStompService: RxStompService) {
     this.setLocale();
@@ -172,20 +172,20 @@ export class BasicTableComponent implements OnInit, OnDestroy {
     if (typeof column === 'number') {
       return column;
     } else if (typeof column === 'boolean') {
-      return column ? this.translateService.instant('yes') : this.translateService.instant('no');
+      return column ? this.translateService.translate('yes') : this.translateService.translate('no');
       //Is it a date?
     } else if (isNaN(column) && !isNaN(Date.parse(column)) && (column instanceof Date)) {
       return this.pipe.transform(column, 'short');
     } else if (column instanceof Object) {
-      return this.translateService.instant(column.toString());
+      return this.translateService.translate(column.toString());
     } else {
       if (column) {
         const text: string = (column as string);
         if (text.toUpperCase() === text) {
           //probably is an enum
-          return this.translateService.instant(this.snakeToCamel(text.toLowerCase()));
+          return this.translateService.translate(this.snakeToCamel(text.toLowerCase()));
         } else {
-          return this.translateService.instant(text);
+          return this.translateService.translate(text);
         }
       } else {
         return "";

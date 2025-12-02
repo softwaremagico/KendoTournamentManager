@@ -1,16 +1,16 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="table-container">
   <table class="team-ranking-table">
-    <caption class="table-caption">{{ 'teamsRanking' | translate }}</caption>
+    <caption class="table-caption">{{ 'teamsRanking' | transloco }}</caption>
     <thead>
     <tr>
-      <th class="team-ranking-header">{{ 'team' | translate }}</th>
-      <th class="team-ranking-header">{{ 'fightsWon' | translate }}</th>
-      <th class="team-ranking-header">{{ 'fightsDraw' | translate }}</th>
-      <th class="team-ranking-header">{{ 'duelsWon' | translate }}</th>
-      <th class="team-ranking-header">{{ 'duelsDraw' | translate }}</th>
-      <th class="team-ranking-header">{{ 'hitsWon' | translate }}</th>
-      <th *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="team-ranking-header">{{ 'hitsLost' | translate }}</th>
+      <th class="team-ranking-header">{{ 'team' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'fightsWon' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'fightsDraw' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'duelsWon' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'duelsDraw' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'hitsWon' | transloco }}</th>
+      <th *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="team-ranking-header">{{ 'hitsLost' | transloco }}</th>
     </tr>
     </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
@@ -39,17 +39,17 @@
   <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
           (click)="downloadPDF()" mat-flat-button mat-raised-button>
     <mat-icon>file_download</mat-icon>
-    {{ 'download' | translate }}
+    {{ 'download' | transloco }}
   </button>
   <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
           (click)="openStatistics()" mat-flat-button mat-raised-button>
     <mat-icon>bar_chart</mat-icon>
-    {{ 'statistics' | translate }}
+    {{ 'statistics' | transloco }}
   </button>
   <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
   (RbacActivity.CREATE_UNDRAW_FIGHTS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
-    {{ 'undraw' | translate }}
+    {{ 'undraw' | transloco }}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | translate }}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | transloco }}</button>
 </div>

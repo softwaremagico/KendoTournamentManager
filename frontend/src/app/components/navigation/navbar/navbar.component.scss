@@ -1,0 +1,20 @@
+#navbar {
+  height: 2.5rem;
+  width: 100%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 0 1.05rem;
+  box-sizing: border-box;
+
+  >.left {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 0.7rem;
+  }
+
+  >.right {
+    display: inline-flex;
+  }
+}

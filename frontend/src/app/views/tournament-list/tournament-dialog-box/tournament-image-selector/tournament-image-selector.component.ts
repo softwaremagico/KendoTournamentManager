@@ -3,7 +3,7 @@ import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {RbacService} from "../../../../services/rbac/rbac.service";
 import {Tournament} from "../../../../models/tournament";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {Action} from "../../../../action";
@@ -32,7 +32,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService,
-              public translateService: TranslateService, private tournamentService: TournamentService,
+              public translateService: TranslocoService, private tournamentService: TournamentService,
               public messageService: MessageService, public fileService: FileService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService) {
     super(rbacService);
@@ -58,9 +58,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
       const file: File | null = fileList.item(0);
       if (!file || file.size < 4096 || file.size > 2097152) {
         const parameters: object = {minSize: '4096', maxSize: '' + (2097152 / (1024 * 1024))};
-        this.translateService.get('invalidFileSize', parameters).subscribe((res: string): void => {
-          this.messageService.errorMessage(res);
-        });
+        this.messageService.errorMessage(this.translateService.translate('invalidFileSize', parameters));
       } else {
         const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file.type);
         if (imageCompression) {
@@ -138,11 +136,12 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   downloadPreview(insertedTournamentImageType: TournamentImageType) {
     if (this.tournament!.id) {
       const participant: Participant = new Participant();
-      this.translateService.get('nameExample').subscribe((res: string) => {
-        const names: string[] = res.split(' ');
-        participant.name = names[0];
-        participant.lastname = names[1];
-      });
+
+      const res: string = this.translateService.translate('nameExample');
+      const names: string[] = res.split(' ');
+      participant.name = names[0];
+      participant.lastname = names[1];
+
       if (insertedTournamentImageType === TournamentImageType.DIPLOMA) {
         this.tournamentService.getParticipantDiploma(this.tournament.id, participant).subscribe((html: Blob) => {
           const blob = new Blob([html], {type: 'application/pdf'});

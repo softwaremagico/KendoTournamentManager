@@ -4,7 +4,7 @@ import {RoleSelectorDialogBoxComponent} from "./role-selector-dialog-box.compone
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSelectModule} from "@angular/material/select";
 import {ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
@@ -20,7 +20,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     MatDialogModule,
     MatSelectModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslocoModule,
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule

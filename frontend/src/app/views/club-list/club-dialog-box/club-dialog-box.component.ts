@@ -9,7 +9,7 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {InputLimits} from "../../../utils/input-limits";
 import {CsvService} from "../../../services/csv-service";
 import {MessageService} from "../../../services/message.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 
 @Component({
   selector: 'app-club-dialog-box',
@@ -42,7 +42,7 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ClubDialogBoxComponent>, rbacService: RbacService, public csvService: CsvService,
-    public messageService: MessageService, private translateService: TranslateService,
+    public messageService: MessageService, private translateService: TranslocoService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Club }) {
     super(rbacService);
@@ -106,15 +106,13 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
       const file: File | null = fileList.item(0);
       if (file) {
         this.csvService.addClubs(file).subscribe(_clubs => {
-          if(_clubs.length==0) {
+          if (_clubs.length == 0) {
             this.messageService.infoMessage('clubStored');
             //We cancel action or will be saved later again.
             this.dialogRef.close({action: Action.Cancel});
-          }else{
+          } else {
             const parameters: object = {element: _clubs[0].name};
-            this.translateService.get('failedOnCsvField', parameters).subscribe((message: string): void => {
-              this.messageService.errorMessage(message);
-            });
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
           }
         });
       }

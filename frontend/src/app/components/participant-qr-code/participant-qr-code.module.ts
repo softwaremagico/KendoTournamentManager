@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ParticipantQrCodeComponent} from './participant-qr-code.component';
 import {MatIconModule} from "@angular/material/icon";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatButtonModule} from "@angular/material/button";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
@@ -17,7 +17,7 @@ import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overla
   imports: [
     CommonModule,
     MatIconModule,
-    TranslateModule,
+    TranslocoModule,
     MatTooltipModule,
     MatButtonModule,
     RbacModule,

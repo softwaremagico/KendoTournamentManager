@@ -3,7 +3,7 @@ import {Tournament} from "../../models/tournament";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {RankingService} from "../../services/ranking.service";
 import {ScoreOfCompetitor} from "../../models/score-of-competitor";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";
@@ -33,7 +33,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
                 competitor: Participant | undefined,
                 showIndex: boolean | undefined,
               },
-              private rankingService: RankingService, public translateService: TranslateService, rbacService: RbacService) {
+              private rankingService: RankingService, public translateService: TranslocoService, rbacService: RbacService) {
     super(rbacService);
     this.tournament = data.tournament;
     this.club = data.club;
@@ -113,5 +113,5 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
     this.getRanking();
   }
 
-    protected readonly ScoreType = ScoreType;
+  protected readonly ScoreType = ScoreType;
 }

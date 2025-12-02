@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {UserNameComponent} from "./user-name.component";
 import {MatIconModule} from "@angular/material/icon";
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
@@ -15,7 +15,7 @@ import {TranslateModule} from "@ngx-translate/core";
     CommonModule,
     MatIconModule,
     DragDropModule,
-    TranslateModule
+    TranslocoModule
   ]
 })
 export class UserNameModule {

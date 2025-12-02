@@ -16,4 +16,22 @@ export class AuthenticatedUser extends DatabaseObject {
     super();
     this.roles = [];
   }
+
+  public static override copy(from: AuthenticatedUser, to: AuthenticatedUser): void {
+    super.copy(from, to);
+    to.username = from.username;
+    to.password = from.password;
+    to.name = from.name;
+    to.lastname = from.lastname;
+    to.jwt = from.jwt;
+    to.expires = from.expires;
+    to.roles = from.roles;
+    to.session = from.session;
+  }
+
+  public static clone(from: AuthenticatedUser): AuthenticatedUser {
+    const to: AuthenticatedUser = new AuthenticatedUser();
+    AuthenticatedUser.copy(from, to);
+    return to;
+  }
 }

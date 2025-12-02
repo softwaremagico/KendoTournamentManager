@@ -3,32 +3,32 @@
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="username" matInput
-             placeholder="{{'username' | translate}}"
+             placeholder="{{'username' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="name" matInput
-             placeholder="{{'name' | translate}}"
+             placeholder="{{'name' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="lastname" matInput
-             placeholder="{{'lastname' | translate}}"
+             placeholder="{{'lastname' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-select [value]="authenticatedUser.roles" formControlName="roles" multiple
-                  placeholder="{{'roles' | translate}}">
+                  placeholder="{{'roles' | transloco}}">
         <mat-option *ngFor="let role of UserRoles.toArray()" [value]="UserRoles[role]">
-          {{role.toLowerCase() | translate}}
+          {{role.toLowerCase() | transloco}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" [type]="hidePassword ? 'password' : 'text'"
-             formControlName="password" matInput placeholder="{{'password' | translate}}"
+             formControlName="password" matInput placeholder="{{'password' | transloco}}"
              required>
-      <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | translate}}</mat-error>
+      <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | transloco}}</mat-error>
       <mat-icon (click)="setHidePassword(!hidePassword)"
                 (keydown)="setHidePassword(!hidePassword)"
                 matSuffix>{{hidePassword ? 'visibility_off' : 'visibility'}}
@@ -38,12 +38,12 @@
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" [type]="'password'"
              formControlName="repeatPassword"
              matInput name="repeatPassword" pattern="{{registerForm.value.password}}"
-             placeholder="{{'repeatPassword' | translate}}"
+             placeholder="{{'repeatPassword' | transloco}}"
              required>
-      <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
+      <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | transloco}}</mat-error>
     </mat-form-field>
     <ng-template #elseTemplate>
-      <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {username: authenticatedUser.username}"></span>
+      <span [innerHTML]="'authenticatedUserDeleteQuestion' | transloco : {username: authenticatedUser.username}"></span>
     </ng-template>
 
     <div class="button-container" mat-dialog-actions>
@@ -52,10 +52,10 @@
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{actionName.toLowerCase() | translate}}
+        {{actionName.toLowerCase() | transloco}}
       </button>
       <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
-              type="button">{{'cancel' | translate}}
+              type="button">{{'cancel' | transloco}}
       </button>
     </div>
   </form>

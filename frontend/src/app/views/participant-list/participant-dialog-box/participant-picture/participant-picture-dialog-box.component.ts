@@ -11,7 +11,7 @@ import {FileService} from "../../../../services/file.service";
 import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
@@ -36,7 +36,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { participant: Participant },
               public dialogRef: MatDialogRef<ParticipantPictureDialogBoxComponent>, rbacService: RbacService,
               private imageService: ImageService, public messageService: MessageService, private fileService: FileService,
-              private translateService: TranslateService, private pictureUpdatedService: PictureUpdatedService) {
+              private translateService: TranslocoService, private pictureUpdatedService: PictureUpdatedService) {
     super(rbacService);
     this.participant = data.participant;
   }
@@ -116,9 +116,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
       const file: File | null = fileList.item(0);
       if (!file || file.size < 4096 || file.size > 2097152) {
         const parameters: object = {minSize: '4096', maxSize: '' + (2097152 / (1024 * 1024))};
-        this.translateService.get('invalidFileSize', parameters).subscribe((res: string): void => {
-          this.messageService.errorMessage(res);
-        });
+          this.messageService.errorMessage(this.translateService.translate('invalidFileSize', parameters));
       } else {
         this.fileService.setParticipantFilePicture(file, this.participant).subscribe((_picture: ParticipantImage): void => {
           this.messageService.infoMessage('infoPictureStored');

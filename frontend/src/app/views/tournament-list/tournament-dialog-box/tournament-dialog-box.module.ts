@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatSelectModule} from "@angular/material/select";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatTooltipModule} from "@angular/material/tooltip";
@@ -23,7 +23,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     imports: [
         CommonModule,
         MatFormFieldModule,
-        TranslateModule,
+        TranslocoModule,
         MatSelectModule,
         FormsModule,
         MatTooltipModule,

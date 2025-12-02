@@ -9,7 +9,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatDividerModule} from "@angular/material/divider";
 
 
@@ -28,7 +28,7 @@ import {MatDividerModule} from "@angular/material/divider";
     MatIconModule,
     MatTooltipModule,
     RbacModule,
-    TranslateModule,
+    TranslocoModule,
     MatDividerModule
   ]
 })

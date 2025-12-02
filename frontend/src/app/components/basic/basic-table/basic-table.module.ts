@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BasicTableComponent} from './basic-table.component';
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatIconModule} from "@angular/material/icon";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatMenuModule} from "@angular/material/menu";
@@ -23,7 +23,7 @@ import {FilterModule} from "../filter/filter.module";
   ],
   imports: [
     CommonModule,
-    TranslateModule,
+    TranslocoModule,
     MatIconModule,
     MatFormFieldModule,
     MatMenuModule,

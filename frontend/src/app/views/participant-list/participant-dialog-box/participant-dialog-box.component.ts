@@ -14,7 +14,7 @@ import {ParticipantImage} from "../../../models/participant-image.model";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {InputLimits} from "../../../utils/input-limits";
 import {CsvService} from "../../../services/csv-service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -47,7 +47,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       action: Action,
       entity: Participant,
       clubs: Club[]
-    }, public dialog: MatDialog, private translateService: TranslateService,
+    }, public dialog: MatDialog, private translateService: TranslocoService,
     private pictureUpdatedService: PictureUpdatedService, private fileService: FileService, private messageService: MessageService) {
     super(rbacService);
     this.participant = data.entity;
@@ -159,9 +159,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
             this.dialogRef.close({action: Action.Cancel});
           } else {
             const parameters: object = {element: _participants[0].name};
-            this.translateService.get('failedOnCsvField', parameters).subscribe((message: string): void => {
-              this.messageService.errorMessage(message);
-            });
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
           }
         });
       }

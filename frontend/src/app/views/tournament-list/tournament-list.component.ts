@@ -16,7 +16,7 @@ import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
 import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {
@@ -41,7 +41,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
+              private rankingService: RankingService, private translateService: TranslocoService, public dialog: MatDialog,
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private achievementsService: AchievementsService) {
     super(rbacService);
@@ -84,18 +84,18 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
     tournament.teamSize = Tournament.DEFAULT_TEAM_SIZE;
-    this.openDialog(this.translateService.instant('competitionAdd'), Action.Add, tournament);
+    this.openDialog(this.translateService.translate('competitionAdd'), Action.Add, tournament);
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('competitionEdit'), Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('competitionEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('competitionDelete'), Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.translate('competitionDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 

@@ -3,11 +3,11 @@
 <div class="form-layout" mat-dialog-content>
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-label>{{ 'tournamentType' | translate }}</mat-label>
+      <mat-label>{{ 'tournamentType' | transloco }}</mat-label>
       <mat-select [(value)]="tournament.type" formControlName="tournamentType">
         <mat-option (click)="select(type)" (keydown)="select(type)" *ngFor="let type of tournamentType" [value]="type"
-                    [matTooltipShowDelay]="500" matTooltip="{{getTournamentTypeHintTag(type) | translate}}">
-          {{ getTournamentTypeTranslationTag(type) | translate }}
+                    [matTooltipShowDelay]="500" matTooltip="{{getTournamentTypeHintTag(type) | transloco}}">
+          {{ getTournamentTypeTranslationTag(type) | transloco }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -16,7 +16,7 @@
         <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)"
                formControlName="tournamentName"
                matInput
-               placeholder="{{'competitionName' | translate}}"
+               placeholder="{{'competitionName' | transloco}}"
                required>
       </mat-form-field>
       <button *ngIf="actionName != 'Delete'" (click)="openCustomProperties()" class="edit-score-button"
@@ -31,24 +31,24 @@
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
           || this.selectedType == typeLeague || this.selectedType == typeKing || this.selectedType == typeSorting"
              formControlName="shiaijos" matInput
-             placeholder="{{'tournamentShiaijos' | translate}}"
+             placeholder="{{'tournamentShiaijos' | transloco}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'  && tournament && tournament.type!== TournamentType.SENBATSU">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="teamSize" matInput
-             placeholder="{{'tournamentTeamSize' | translate}}">
+             placeholder="{{'tournamentTeamSize' | transloco}}">
     </mat-form-field>
     <div class="types">
       <mat-form-field
         *ngIf="actionName != 'Delete' && tournament && tournament.type!== TournamentType.BUBBLE_SORT && tournament.type!== TournamentType.SENBATSU">
-        <mat-label>{{ 'scoreRules' | translate }}</mat-label>
+        <mat-label>{{ 'scoreRules' | transloco }}</mat-label>
         <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                     formControlName="scoreTypes"
-                    matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
+                    matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | transloco}}">
           <mat-option *ngFor="let type of scoreTypes" [matTooltipShowDelay]="1000"
                       (click)="selectScore(type)" (keydown)="selectScore(type)"
-                      [value]="type" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
-            {{ type.toLowerCase() | translate }}
+                      [value]="type" matTooltip="{{type.toLowerCase()+'Hint' | transloco}}">
+            {{ type.toLowerCase() | transloco }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -60,17 +60,17 @@
       </button>
     </div>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-label>{{ 'tournamentDuelsDurations' | translate }}</mat-label>
+      <mat-label>{{ 'tournamentDuelsDurations' | transloco }}</mat-label>
       <mat-select [(value)]="tournament.duelsDuration" formControlName="duelsDuration">
         <mat-option *ngFor="let number of [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600]"
                     [value]="number">
-          {{ number }} {{ 'seconds' | translate }}
-          ({{ getMinutes(number) }} {{ 'minutes' | translate }} {{ getSeconds(number) }} {{ 'seconds' | translate }})
+          {{ number }} {{ 'seconds' | transloco }}
+          ({{ getMinutes(number) }} {{ 'minutes' | transloco }} {{ getSeconds(number) }} {{ 'seconds' | transloco }})
         </mat-option>
       </mat-select>
     </mat-form-field>
     <ng-template #elseTemplate>
-      <span [innerHTML]="'tournamentDeleteQuestion' | translate : {name: tournament.name}"></span>
+      <span [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: tournament.name}"></span>
     </ng-template>
 
     <div class="button-container" mat-dialog-actions>
@@ -81,17 +81,17 @@
               mat-raised-button
               type="button">
         <mat-icon>image</mat-icon>
-        {{ 'images' | translate }}
+        {{ 'images' | transloco }}
       </button>
       <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
               [disabled]="registerForm.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{ actionName.toLowerCase() | translate }}
+        {{ actionName.toLowerCase() | transloco }}
       </button>
       <button (click)="closeDialog(cancel)" color="warn" mat-flat-button mat-raised-button
-              type="button">{{ 'cancel' | translate }}
+              type="button">{{ 'cancel' | transloco }}
       </button>
     </div>
   </form>

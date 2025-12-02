@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {EnvironmentData} from "./environment-data.interface";
 import {Environment} from '../environments/environment';
 
-declare let __config: EnvironmentData;
+declare const __config: EnvironmentData;
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from "@angular/material/dialog";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -13,7 +13,7 @@ export class ConfirmationDialogComponent implements OnInit {
   messageTag: string;
   parameters: object;
 
-  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>, private translateService: TranslateService) {
+  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>, private translateService: TranslocoService) {
 
   }
 
@@ -27,8 +27,6 @@ export class ConfirmationDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.message = "";
-    this.translateService.get(this.messageTag, this.parameters).subscribe((res: string): void => {
-      this.message += res;
-    });
+    this.message += this.translateService.translate(this.messageTag, this.parameters);
   }
 }
