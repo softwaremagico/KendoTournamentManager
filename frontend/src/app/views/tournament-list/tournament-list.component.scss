@@ -33,3 +33,16 @@ $main-black: #262626;
   margin-top: 1rem;
   gap: $space;
 }
+
+.bottom-menu {
+  text-align: right;
+  padding-left: 250px;
+  position: absolute;
+  margin-top: -35px;
+}
+
+@media screen and (max-width: 1700px) {
+  .bottom-menu {
+    display: none;
+  }
+}
