@@ -8,6 +8,7 @@ import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
 import {ContextMenuModule} from "@perfectmemory/ngx-contextmenu";
 import {ComponentMenuModule} from "../component-menu/component-menu.module";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [NavbarComponent],
@@ -21,6 +22,7 @@ import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
     ContextMenuModule,
     ComponentMenuModule,
     HasPermissionPipe,
+    MatIconModule,
   ],
   exports: [NavbarComponent],
 })

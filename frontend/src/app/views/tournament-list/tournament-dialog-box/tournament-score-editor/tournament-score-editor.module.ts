@@ -10,6 +10,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {RbacModule} from "../../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
+import {HasPermissionPipe} from "../../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -17,17 +18,18 @@ import {MatIconModule} from "@angular/material/icon";
   exports: [
     TournamentScoreEditorComponent
   ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatSpinnerOverlayModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    TranslocoModule,
-    MatInputModule,
-    MatButtonModule,
-    RbacModule,
-    MatIconModule
-  ]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatSpinnerOverlayModule,
+        MatFormFieldModule,
+        MatDialogModule,
+        TranslocoModule,
+        MatInputModule,
+        MatButtonModule,
+        RbacModule,
+        MatIconModule,
+        HasPermissionPipe
+    ]
 })
 export class TournamentScoreEditorModule { }

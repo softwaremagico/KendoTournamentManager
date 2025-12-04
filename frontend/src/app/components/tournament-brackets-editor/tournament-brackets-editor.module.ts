@@ -11,6 +11,7 @@ import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -20,18 +21,19 @@ import {MatTooltipModule} from "@angular/material/tooltip";
   exports:[
     TournamentBracketsEditorComponent
   ],
-  imports: [
-    CommonModule,
-    TournamentBracketsModule,
-    DragDropModule,
-    TeamCardModule,
-    TeamListModule,
-    MatButtonModule,
-    MatIconModule,
-    RbacModule,
-    TranslocoModule,
-    MatDialogModule,
-    MatTooltipModule
-  ]
+    imports: [
+        CommonModule,
+        TournamentBracketsModule,
+        DragDropModule,
+        TeamCardModule,
+        TeamListModule,
+        MatButtonModule,
+        MatIconModule,
+        RbacModule,
+        TranslocoModule,
+        MatDialogModule,
+        MatTooltipModule,
+        HasPermissionPipe
+    ]
 })
 export class TournamentBracketsEditorModule { }

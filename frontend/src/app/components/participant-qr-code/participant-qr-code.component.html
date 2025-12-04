@@ -2,7 +2,7 @@
   <div *ngIf="!qrCode" class="qr-container">
     <app-mat-spinner-overlay></app-mat-spinner-overlay>
   </div>
-  <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())" class="qr-container">
+  <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | hasPermission)" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
     <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | transloco}}</a>
   </div>

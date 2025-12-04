@@ -75,7 +75,7 @@
 
     <div class="button-container" mat-dialog-actions>
       <button (click)="addPicture()"
-              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.getActivities())"
+              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | hasPermission)"
               color="picture"
               mat-flat-button
               mat-raised-button
@@ -83,7 +83,7 @@
         <mat-icon>image</mat-icon>
         {{ 'images' | transloco }}
       </button>
-      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
               [disabled]="registerForm.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

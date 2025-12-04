@@ -1,6 +1,6 @@
 <div class="container" cdkDropListGroup>
   <div class="team-panel" *ngIf="!droppingDisabled">
-    <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
+    <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)"
          (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
          cdkDropList cdkDropListSortingDisabled="true"
          class="teams-container">
@@ -9,7 +9,7 @@
     </div>
     <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
       <button (click)="sortedGroups()"
-              *ngIf="(RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
+              *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
               [disabled]="groupsDisabled || (tournament && tournament.locked)"
               mat-flat-button
               mat-raised-button>
@@ -17,7 +17,7 @@
         {{'sorted' | transloco}}
       </button>
       <button (click)="randomGroups()"
-              *ngIf="(RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
+              *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
               [disabled]="groupsDisabled || (tournament && tournament.locked)"
               mat-flat-button
               mat-raised-button>
@@ -25,7 +25,7 @@
         {{'random' | transloco}}
       </button>
       <button (click)="askToRemoveAllTeams()"
-              *ngIf="(RbacActivity.CLEAN_UP_GROUPS | rbac : this.rbacService.getActivities())"
+              *ngIf="(RbacActivity.CLEAN_UP_GROUPS | hasPermission)"
               [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
               mat-flat-button
               mat-raised-button
@@ -36,14 +36,14 @@
     </div>
   </div>
   <button
-    *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+    *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
     (click)="downloadAsPdf()"
           class="floating-button" color="secondary" mat-flat-button mat-mini-fab
           type="button">
     <mat-icon color="primary">download_file</mat-icon>
   </button>
   <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets"
-                           [class.started] = "droppingDisabled || !(RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
+                           [class.started] = "droppingDisabled || !(RbacActivity.EDIT_GROUP | hasPermission)"
                            [tournament]="tournament"
                            [droppingDisabled]="droppingDisabled">
   </app-tournament-brackets>

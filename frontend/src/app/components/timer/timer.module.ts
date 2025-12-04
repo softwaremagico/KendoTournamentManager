@@ -5,6 +5,7 @@ import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TranslocoModule} from "@ngneat/transloco";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -12,13 +13,14 @@ import {TranslocoModule} from "@ngneat/transloco";
   exports: [
     TimerComponent
   ],
-  imports: [
-    CommonModule,
-    RbacModule,
-    MatIconModule,
-    DragDropModule,
-    TranslocoModule
-  ]
+    imports: [
+        CommonModule,
+        RbacModule,
+        MatIconModule,
+        DragDropModule,
+        TranslocoModule,
+        HasPermissionPipe
+    ]
 })
 export class TimerModule {
 }

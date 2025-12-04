@@ -4,13 +4,13 @@
     <div class="upper-menu">
       <div class="cell">
         <button (click)="goBackToFights()"
-                *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
                 [matTooltipShowDelay]="500" color="secondary"
                 color="primary" mat-button
                 matTooltip="{{'back' | transloco}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | rbac : this.rbacService.getActivities())"
+        <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | hasPermission)"
                 [disabled]="!(groupsLevelZero.length < totalTeams / 2) || groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 class="add-button"
@@ -19,7 +19,7 @@
           <mat-icon>add</mat-icon>
         </button>
         <button (click)="changeNumberOfWinners(2)"
-                *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+                *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
@@ -27,21 +27,21 @@
           <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
         </button>
         <button (click)="changeNumberOfWinners(1)"
-                *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+                *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'winnerNumber' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
         </button>
-        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.getActivities())"
+        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
                 matTooltip="{{'delete' | transloco}}">
           <mat-icon>clear</mat-icon>
         </button>
-        <button (click)="refreshGroups()" *ngIf="(RbacActivity.REFRESH_GROUPS | rbac : this.rbacService.getActivities())"
+        <button (click)="refreshGroups()" *ngIf="(RbacActivity.REFRESH_GROUPS | hasPermission)"
                 [disabled]="(tournament && tournament.locked) || updatingGroup || groups.length < 1"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
@@ -50,10 +50,10 @@
           <mat-icon>settings_backup_restore</mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
         ></mat-divider>
         <button (click)="openConfirmationGenerateElementsDialog()"
-                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
@@ -62,10 +62,10 @@
         </button>
         <mat-divider [vertical]="true"
                      class="download-divider"
-                     *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
         ></mat-divider>
         <button (click)="downloadPDF()"
-                *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+                *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 class="download"

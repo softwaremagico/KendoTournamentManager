@@ -26,7 +26,7 @@
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.getActivities())"
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | hasPermission)"
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>

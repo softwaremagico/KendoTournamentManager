@@ -12,6 +12,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {ParticipantPictureModule} from "../../../components/participant-picture/participant-picture.module";
 import {MatSelectModule} from "@angular/material/select";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import {MatSelectModule} from "@angular/material/select";
         MatDialogModule,
         MatButtonModule,
         ParticipantPictureModule,
-        MatSelectModule
+        MatSelectModule,
+        HasPermissionPipe
     ]
 })
 export class ParticipantDialogBoxModule { }

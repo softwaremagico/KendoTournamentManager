@@ -47,7 +47,7 @@
   </table>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>

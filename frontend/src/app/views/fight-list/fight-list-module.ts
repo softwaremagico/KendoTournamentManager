@@ -14,26 +14,28 @@ import {CommonModule} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [FightListComponent],
-  imports: [
-    MatSpinnerOverlayModule,
-    MatIconModule,
-    MatTooltipModule,
-    TranslocoModule,
-    RbacModule,
-    FightModule,
-    UntieFightModule,
-    TimerModule,
-    FilterModule,
-    MatDividerModule,
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
-  ]
+    imports: [
+        MatSpinnerOverlayModule,
+        MatIconModule,
+        MatTooltipModule,
+        TranslocoModule,
+        RbacModule,
+        FightModule,
+        UntieFightModule,
+        TimerModule,
+        FilterModule,
+        MatDividerModule,
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        HasPermissionPipe
+    ]
 })
 export class FightListModule {
 }

@@ -34,7 +34,7 @@
         <div *ngIf="!image" class="empty-image image-preview">
         </div>
         <button (click)="fileInput.click()"
-                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)"
                 [class.upload-accreditation]="insertedTournamentImageType === accreditationType"
                 [class.upload-banner]="insertedTournamentImageType === bannerType"
                 [class.upload-diploma]="insertedTournamentImageType === diplomaType"
@@ -71,7 +71,7 @@
   </div>
   <div mat-dialog-actions>
     <button (click)="selectType(accreditationType)"
-            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.getActivities())"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)"
             [class.selected-button]="insertedTournamentImageType === accreditationType"
             color="picture"
             mat-flat-button mat-raised-button
@@ -80,7 +80,7 @@
       {{'accreditation' | transloco}}
     </button>
     <button (click)="selectType(photoType)"
-            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | rbac : this.rbacService.getActivities())"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | hasPermission)"
             [class.selected-button]="insertedTournamentImageType === photoType"
             color="picture"
             mat-flat-button mat-raised-button
@@ -89,7 +89,7 @@
       {{'photo' | transloco}}
     </button>
     <button (click)="selectType(diplomaType)"
-            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | rbac : this.rbacService.getActivities())"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | hasPermission)"
             [class.selected-button]="insertedTournamentImageType === diplomaType"
             color="picture"
             mat-flat-button mat-raised-button
@@ -98,7 +98,7 @@
       {{'diplomas' | transloco}}
     </button>
     <button (click)="selectType(bannerType)"
-            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | rbac : this.rbacService.getActivities())"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | hasPermission)"
             [class.selected-button]="insertedTournamentImageType ===  bannerType"
             color="picture"
             mat-flat-button mat-raised-button

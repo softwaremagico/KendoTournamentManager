@@ -1,7 +1,7 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div cdkDropListGroup class="teams-container">
   <button (click)="fileInput.click()"
-          *ngIf="(RbacActivity.CREATE_CLUB_CSV | rbac : this.rbacService.getActivities())"
+          *ngIf="(RbacActivity.CREATE_CLUB_CSV | hasPermission)"
           class="floating-button"
           color="secundary"
           mat-flat-button
@@ -27,7 +27,7 @@
               (keydown)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
               class="team-header">{{team.name}}</h2>
           <button (click)="deleteTeam(team)"
-                  *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.getActivities())"
+                  *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | hasPermission)"
                   color="warn"
                   mat-button>
             <mat-icon>clear</mat-icon>
@@ -48,7 +48,7 @@
             <mat-card *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
                       [cdkDragData]="getMember(team, i)"
-                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.getActivities()) || getMember(team, i)!.locked"
+                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | hasPermission) || getMember(team, i)!.locked"
                       cdkDrag
                       class="user-card">
               <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
@@ -64,7 +64,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())" class="new-team"
+      <div *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)" class="new-team"
            [ngStyle]="{'pointer-events': addingTeam ? 'none' : 'auto'}"
            (click)="addTeam()"
            (keydown)="addTeam()">
@@ -74,19 +74,19 @@
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="generateTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())"
+  <button (click)="generateTeams()" *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
           mat-flat-button
           mat-raised-button>
     <mat-icon>auto_fix_high</mat-icon>
     {{'wizard' | transloco}}
   </button>
-  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())"
+  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
           mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
     {{'random' | transloco}}
   </button>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.getActivities())"
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | hasPermission)"
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>

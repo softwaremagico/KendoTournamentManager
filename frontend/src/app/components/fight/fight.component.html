@@ -17,9 +17,9 @@
           (click)="selectDuel(duel)"
           (keydown)="selectDuel(duel)"
           [fight]="fight"
-          [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.getActivities()) && !projectMode,
+          [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | hasPermission) && !projectMode,
             over: isOver(duel)}"
-          [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.getActivities())"
+          [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | hasPermission)"
           [showAvatars]="showAvatars"
           [swapTeams]="swapTeams"
           [locked]="locked"

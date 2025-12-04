@@ -1,5 +1,5 @@
 <div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" class="fault" *ngIf="!locked &&
-(RbacActivity.ASSIGN_FAULTS | rbac : this.rbacService.getActivities())">
+(RbacActivity.ASSIGN_FAULTS | hasPermission)">
   <mat-menu #menu="matMenu">
     <button [disabled]="duel.finished" (click)="updateFault(true)"
             mat-menu-item>{{'fault' | transloco}}
@@ -21,7 +21,7 @@
   </div>
 </div>
 <!-- Fault representation when menu is disabled -->
-<div class="fault" *ngIf="locked || !(RbacActivity.ASSIGN_FAULTS | rbac : this.rbacService.getActivities())">
+<div class="fault" *ngIf="locked || !(RbacActivity.ASSIGN_FAULTS | hasPermission)">
   <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
        this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
        class="fault-content">

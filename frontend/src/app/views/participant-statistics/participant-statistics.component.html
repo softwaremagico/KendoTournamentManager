@@ -4,14 +4,14 @@
     <div class="upper-menu">
       <div class="cell">
         <button (click)="goBackToUsers()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
                 [matTooltipShowDelay]="500" color="secondary"
                 mat-button
                 matTooltip="{{'back' | transloco}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <button (click)="openParticipantFights()"
-                *ngIf="(RbacActivity.VIEW_PARTICIPANT_FIGHTS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.VIEW_PARTICIPANT_FIGHTS | hasPermission)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'titleStatistics' | transloco}}">

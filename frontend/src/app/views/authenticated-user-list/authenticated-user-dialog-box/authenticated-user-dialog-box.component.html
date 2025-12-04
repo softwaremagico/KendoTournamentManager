@@ -47,7 +47,7 @@
     </ng-template>
 
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())"
+      <button *ngIf="(RbacActivity.EDIT_USER | hasPermission)"
               [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

@@ -15,27 +15,29 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [LeagueGeneratorComponent],
-  imports: [
-    CommonModule,
-    DragDropModule,
-    TeamListModule,
-    TranslocoModule,
-    TeamCardModule,
-    MatIconModule,
-    RbacModule,
-    MatSpinnerOverlayModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSlideToggleModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatTooltipModule
-  ]
+    imports: [
+        CommonModule,
+        DragDropModule,
+        TeamListModule,
+        TranslocoModule,
+        TeamCardModule,
+        MatIconModule,
+        RbacModule,
+        MatSpinnerOverlayModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatSlideToggleModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatTooltipModule,
+        HasPermissionPipe
+    ]
 })
 export class LeagueGeneratorModule { }

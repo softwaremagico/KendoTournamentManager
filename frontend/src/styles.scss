@@ -1,5 +1,88 @@
 @import "@biit-solutions/wizardry-theme/styles";
 @import "theme-colors";
+@import '@angular/cdk/overlay-prebuilt';
+
+$background: #EDEDED;
+$space: 0.7rem;
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+  font-size: 16px
+}
+
+body {
+  margin: 0;
+  font-family: Montserrat, "Montserrat", sans-serif;
+  background-color: $background;
+}
+
+app-root > router-outlet + * {
+  display: block;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  overflow-y: auto;
+}
+
+biit-snackbar {
+  z-index: 1000;
+  position: absolute;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+}
+
+.gap {
+  gap: $space;
+}
+
+@media screen and (max-width: 600px) {
+  .horizontal {
+    flex-direction: column;
+  }
+
+  .table-view {
+    padding: unset !important;
+    margin: 2rem 0.5rem !important;
+    box-sizing: unset !important;
+    border: unset !important;
+  }
+
+  .tab-row {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .tab-row-single {
+    width: unset !important;
+  }
+
+  .form-bottom {
+    position: sticky;
+    bottom: 0;
+  }
+}
+
 
 //Icons default color
 svg {

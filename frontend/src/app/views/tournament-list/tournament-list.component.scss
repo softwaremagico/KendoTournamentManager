@@ -1,1 +1,35 @@
+$space: 1em;
+$main-black: #262626;
 
+.table-view {
+  box-sizing: border-box;
+  height: calc(100% - 4rem);
+  overflow-y: hidden;
+  padding: 2rem;
+  margin: 2rem;
+  border: solid 0.2rem $main-black;
+  background: white;
+  overflow-x: hidden;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+}

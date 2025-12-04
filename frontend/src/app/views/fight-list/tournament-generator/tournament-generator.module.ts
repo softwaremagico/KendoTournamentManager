@@ -11,6 +11,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {MatDividerModule} from "@angular/material/divider";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -20,16 +21,17 @@ import {MatDividerModule} from "@angular/material/divider";
   exports:[
     TournamentGeneratorComponent
   ],
-  imports: [
-    CommonModule,
-    TournamentBracketsEditorModule,
-    MatSpinnerOverlayModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    RbacModule,
-    TranslocoModule,
-    MatDividerModule
-  ]
+    imports: [
+        CommonModule,
+        TournamentBracketsEditorModule,
+        MatSpinnerOverlayModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        RbacModule,
+        TranslocoModule,
+        MatDividerModule,
+        HasPermissionPipe
+    ]
 })
 export class TournamentGeneratorModule { }

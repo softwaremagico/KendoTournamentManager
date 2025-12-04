@@ -4,14 +4,14 @@
     <div class="upper-menu" *ngIf="!projectMode">
       <div class="cell">
         <button (click)="goBackToTournament()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
                 [matTooltipShowDelay]="500" color="secondary"
                 mat-button
                 matTooltip="{{'back' | transloco}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <button (click)="openConfirmationGenerateElementsDialog()"
-                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
                 [disabled]="(tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
@@ -19,7 +19,7 @@
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <button (click)="addElement()"
-                *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
+                *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
                 [disabled]="tournament && (tournament.locked || (tournament.type == TournamentType.SENBATSU && this.selectedGroup?.teams?.length == 0))"
                 [matTooltipShowDelay]="500"
                 class="add-button"
@@ -28,7 +28,7 @@
           <mat-icon>add</mat-icon>
         </button>
         <button (click)="deleteElement()"
-                *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
+                *ngIf="(RbacActivity.DELETE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
                 [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
@@ -36,7 +36,7 @@
           <mat-icon>clear</mat-icon>
         </button>
         <button (click)="openBracketsManager()"
-                *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | rbac : this.rbacService.getActivities())"
+                *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | hasPermission)"
                 [disabled]="(tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
@@ -44,8 +44,8 @@
           <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
         </button>
         <mat-divider [vertical]="true" class="timer-divider"
-                     *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"></mat-divider>
-        <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())
+                     *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)"></mat-divider>
+        <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)
                 && (!selectedDuel || selectedDuel?.finished == false)"
                 [disabled]="!selectedDuel || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
@@ -53,16 +53,16 @@
                 matTooltip="{{'finishFight' | transloco}}">
           <mat-icon>check_circle</mat-icon>
         </button>
-        <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())
+        <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)
                 && selectedDuel?.finished == true"
-                [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | rbac : this.rbacService.getActivities())"
+                [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | hasPermission)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'reopenFight' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="unfinish"></mat-icon>
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
-                *ngIf="!timer && (RbacActivity.SHOW_TIMER | rbac : this.rbacService.getActivities())"
+                *ngIf="!timer && (RbacActivity.SHOW_TIMER | hasPermission)"
                 [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [matTooltipShowDelay]="500"
                 class="timer-button"
@@ -72,7 +72,7 @@
           <mat-icon>timer</mat-icon>
         </button>
         <button (click)="showTimer(false)"
-                *ngIf="timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
+                *ngIf="timer && (RbacActivity.EDIT_FIGHT | hasPermission)"
                 [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [matTooltipShowDelay]="500"
                 class="timer-button"
@@ -83,7 +83,7 @@
         </button>
         <button (mousedown)="playWhistle()"
                 (mouseup)="stopWhistle()"
-                *ngIf="(RbacActivity.PLAY_WHISTLE | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.PLAY_WHISTLE | hasPermission)"
                 [matTooltipShowDelay]="500"
                 class="whisper-button"
                 color="primary"
@@ -91,25 +91,25 @@
                 matTooltip="{{'playWhistle' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())
-          || (RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())
-          || (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"
+        <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
+          || (RbacActivity.SWAP_FIGHTS | hasPermission)
+          || (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
                      class="actions-divider"></mat-divider>
         <button (click)="swapColors()"
-                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)"
                 [matTooltipShowDelay]="500" class="exchange-colors"
                 color="primary" mat-button
                 matTooltip="{{'swapColors' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
         </button>
-        <button (click)="swapTeams()" *ngIf="(RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())"
+        <button (click)="swapTeams()" *ngIf="(RbacActivity.SWAP_FIGHTS | hasPermission)"
                 [matTooltipShowDelay]="500" class="exchange-teams"
                 color="primary" mat-button
                 matTooltip="{{'swapTeams' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
         </button>
         <button (click)="enableMemberOrder(true)"
-                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"
+                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
                 [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="member-order"
                 color="primary" mat-button
@@ -117,19 +117,19 @@
           <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
         </button>
         <button (click)="enableMemberOrder(false)"
-                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"
+                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
                 [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="member-order"
                 color="primary" mat-button
                 matTooltip="{{'membersOrder' | transloco}}">
           <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities()) ||
-            (RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
+        <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
+            (RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)"
                      class="order-divider"></mat-divider>
         <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
                 || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU))
-                 && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities())"
+                 && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" color="primary"
                 mat-button
@@ -137,7 +137,7 @@
           <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
         </button>
         <button (click)="showCompetitorsClassification()"
-                *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500"
                 class="competitors-classification" color="primary"
@@ -146,10 +146,10 @@
           <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
                      class="download-divider"></mat-divider>
         <button (click)="downloadPDF()"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500"
                 class="download-button" color="primary"
@@ -158,10 +158,10 @@
           <mat-icon>file_download</mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
                      class="expand-divider"></mat-divider>
         <button (click)="project()"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500"
                 class="expand-button" color="primary"

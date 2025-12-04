@@ -11,23 +11,25 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [TournamentRolesComponent],
-  imports: [
-    CommonModule,
-    DragDropModule,
-    UserListModule,
-    TranslocoModule,
-    UserCardModule,
-    MatIconModule,
-    RbacModule,
-    MatSpinnerOverlayModule,
-    MatDialogModule,
-    MatButtonModule,
-    FightStatisticsPanelModule
-  ]
+    imports: [
+        CommonModule,
+        DragDropModule,
+        UserListModule,
+        TranslocoModule,
+        UserCardModule,
+        MatIconModule,
+        RbacModule,
+        MatSpinnerOverlayModule,
+        MatDialogModule,
+        MatButtonModule,
+        FightStatisticsPanelModule,
+        HasPermissionPipe
+    ]
 })
 export class TournamentRolesModule {
 }

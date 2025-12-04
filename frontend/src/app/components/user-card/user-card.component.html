@@ -1,4 +1,4 @@
-<mat-card [cdkDragData]="user" [cdkDragDisabled]="dragDisabled || !(activity | rbac : this.rbacService.getActivities())"
+<mat-card [cdkDragData]="user" [cdkDragDisabled]="dragDisabled || !(activity | hasPermission)"
           cdkDrag
           class="user-card">
   <mat-card-header class="user-card-header">

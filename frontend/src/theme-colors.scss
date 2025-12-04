@@ -1,6 +1,7 @@
 :root {
   --main-color: #000D5E;
   --main-background: #D9D9D9;
+  --body-background: #EDEDED;
   --floating-background: white;
   --main-font-color: white;
   --disabled-primary-color: #808080;
@@ -18,5 +19,7 @@
   --text-hover-color: #5A6473;
   --selected-color: #AECFFB;
   --popup-background: #FFFFFF;
-  --icon-color: var(--main-color);
+  --icon-color: var(--component-color);
+  --table-header-color: var(--main-color);
+  --scrollbar-color: var(--main-color);
 }

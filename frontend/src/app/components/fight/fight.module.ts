@@ -6,6 +6,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TranslocoModule} from "@ngneat/transloco";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -13,14 +14,15 @@ import {TranslocoModule} from "@ngneat/transloco";
   exports: [
     FightComponent
   ],
-  imports: [
-    CommonModule,
-    DuelModule,
-    MatIconModule,
-    RbacModule,
-    DragDropModule,
-    TranslocoModule
-  ]
+    imports: [
+        CommonModule,
+        DuelModule,
+        MatIconModule,
+        RbacModule,
+        DragDropModule,
+        TranslocoModule,
+        HasPermissionPipe
+    ]
 })
 export class FightModule {
 }

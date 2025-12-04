@@ -1,5 +1,4 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {RbacService} from "../services/rbac/rbac.service";
 import {RbacActivity} from "../services/rbac/rbac.activity";
 import {ActivityService} from "../services/rbac/activity.service";
 
@@ -11,7 +10,7 @@ export class HasPermissionPipe implements PipeTransform {
   constructor(private activityService: ActivityService) {
   }
 
-  transform(value: RbacActivity): unknown {
+  transform(value: RbacActivity): boolean {
     return this.activityService.isAllowed(value);
   }
 

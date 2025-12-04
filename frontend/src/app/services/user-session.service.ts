@@ -21,7 +21,6 @@ export class UserSessionService {
       JSON.parse(localUserData)) : undefined;
     if (!user) {
       const sessionUserData: string | null = this.getSessionUser();
-      console.log('sessionUserData', sessionUserData);
       user = sessionUserData != null || sessionUserData != undefined ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
     }
     this.user = user;

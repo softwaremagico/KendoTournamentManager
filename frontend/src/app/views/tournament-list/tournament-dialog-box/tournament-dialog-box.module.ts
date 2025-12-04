@@ -13,6 +13,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
         MatIconModule,
         ReactiveFormsModule,
         MatSpinnerOverlayModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        HasPermissionPipe
     ]
 })
 export class TournamentDialogBoxModule {

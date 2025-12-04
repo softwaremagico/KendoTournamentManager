@@ -9,21 +9,23 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [ClubDialogBoxComponent],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    TranslocoModule,
-    FormsModule,
-    RbacModule,
-    MatInputModule,
-    MatDialogModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatIconModule
-  ]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        TranslocoModule,
+        FormsModule,
+        RbacModule,
+        MatInputModule,
+        MatDialogModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        HasPermissionPipe
+    ]
 })
 export class ClubDialogBoxModule { }

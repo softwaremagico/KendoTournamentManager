@@ -1,13 +1,8 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
+import {AfterViewInit, Component, OnInit, QueryList, TemplateRef, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTable, MatTableDataSource} from "@angular/material/table";
-import {MatSort} from "@angular/material/sort";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
 import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
 import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
@@ -16,7 +11,7 @@ import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
 import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {
@@ -26,55 +21,101 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {TournamentQrCodeComponent} from "../../components/tournament-qr-code/tournament-qr-code.component";
+import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {combineLatest} from "rxjs";
+import {DatePipe} from "@angular/common";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
+import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
+import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 
 @Component({
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
-  styleUrls: ['./tournament-list.component.scss']
+  styleUrls: ['./tournament-list.component.scss'],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      multi: true,
+      useValue: {scope: '', alias: 't'}
+    }, TableColumnTranslationPipe, CustomDatePipe, DatePipe
+  ]
 })
-export class TournamentListComponent extends RbacBasedComponent implements OnInit {
+export class TournamentListComponent extends RbacBasedComponent implements OnInit, AfterViewInit {
 
-  basicTableData: BasicTableData<Tournament> = new BasicTableData<Tournament>("Tournament");
+  protected columns: DatatableColumn[] = [];
+  protected pageSize: number = 10;
+  protected pageSizes: number[] = [10, 25, 50, 100];
+  protected tournaments: Tournament[];
+  protected target: Tournament | null;
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  protected loading: boolean = false;
+  @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, private translateService: TranslocoService, public dialog: MatDialog,
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private achievementsService: AchievementsService) {
+              private achievementsService: AchievementsService, private transloco: TranslocoService, private customDatePipe: CustomDatePipe, private _datePipe: DatePipe,
+              private biitSnackbarService: BiitSnackbarService, private tableColumnTranslationPipe: TableColumnTranslationPipe) {
     super(rbacService);
-    this.basicTableData.columns = ['id', 'name', 'type', 'tournamentScore', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
-    this.basicTableData.dataSource = new MatTableDataSource<Tournament>();
   }
 
   ngOnInit(): void {
-    this.showAllElements();
   }
 
-  showAllElements(): void {
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    this.tournamentService.getAll().subscribe((_tournaments: Tournament[]): void => {
-      if (_tournaments) {
-        const tournaments: Tournament[] = [];
-        for (let _tournament of _tournaments) {
-          if (_tournament) {
-            tournaments.push(Tournament.clone(_tournament));
-          }
-        }
-        this.basicTableData.dataSource.data = tournaments;
-        //Select session tournament.
-        const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
-          tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
-        const selectedElements: Tournament[] = [];
-        selectedElements.push(selectedTournament);
-        this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
-        this.basicTableData.selectedElement = selectedTournament;
-        this.systemOverloadService.isTransactionalBusy.next(false);
+  datePipe() {
+    return {
+      transform: (value: any) => {
+        !value ? value = 0 : value;
+        return this._datePipe.transform(value, 'dd/MM/yyyy HH:mm:ss');
       }
+    }
+  }
+
+  ngAfterViewInit() {
+    combineLatest(
+      [
+        this.transloco.selectTranslate('id'),
+        this.transloco.selectTranslate('name'),
+        this.transloco.selectTranslate('tournamentType'),
+        this.transloco.selectTranslate('scoreRules'),
+        this.transloco.selectTranslate('locked'),
+        this.transloco.selectTranslate('shiaijos'),
+        this.transloco.selectTranslate('teamSize'),
+        this.transloco.selectTranslate('createdBy'),
+        this.transloco.selectTranslate('createdAt'),
+        this.transloco.selectTranslate('updatedBy'),
+        this.transloco.selectTranslate('updatedAt'),
+      ]
+    ).subscribe(([id, name, type, scoreRules, locked, shiaijos, teamSize, createdBy, createdAt, updatedBy, updatedAt]) => {
+      this.columns = [
+        new DatatableColumn(id, 'id', false, 80),
+        new DatatableColumn(name, 'name'),
+        new DatatableColumn(type, 'type', true, undefined, undefined, this.tableColumnTranslationPipe),
+        new DatatableColumn(scoreRules, 'tournamentScore', false, undefined, undefined, this.tableColumnTranslationPipe),
+        new DatatableColumn(locked, 'locked', false, 200, undefined, undefined, this.booleanCell.first),
+        new DatatableColumn(shiaijos, 'shiaijos', false, 150),
+        new DatatableColumn(teamSize, 'teamSize', true, 150),
+        new DatatableColumn(createdBy, 'createdBy', false),
+        new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
+        new DatatableColumn(updatedBy, 'updatedBy', false),
+        new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+      ];
+      this.loadData();
+    });
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.systemOverloadService.isTransactionalBusy.next(true);
+    this.tournamentService.getAll().subscribe({
+      next: (_tournaments: Tournament[]): void => {
+        this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament));
+      },
+      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+    }).add(() => {
+      this.loading = false;
+      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
@@ -87,15 +128,15 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.openDialog(this.translateService.translate('competitionAdd'), Action.Add, tournament);
   }
 
-  editElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.translate('competitionEdit'), Action.Update, this.basicTableData.selectedElement);
+  editElement(tournament: Tournament): void {
+    if (tournament) {
+      this.openDialog(this.translateService.translate('competitionEdit'), Action.Update, tournament);
     }
   }
 
-  deleteElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.translate('competitionDelete'), Action.Delete, this.basicTableData.selectedElement);
+  deleteElement(tournament: Tournament, confirmed: boolean): void {
+    if (tournament) {
+      this.openDialog(this.translateService.translate('competitionDelete'), Action.Delete, tournament);
     }
   }
 
@@ -124,100 +165,91 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   addRowData(tournament: Tournament): void {
     this.tournamentService.add(tournament).subscribe((_tournament: Tournament): void => {
       //If data is not already added though table webservice.
-      if (this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id) < 0) {
-        this.basicTableData.dataSource.data.push(_tournament);
-        this.basicTableData.dataSource._updateChangeSubscription();
-      }
-      this.basicTableData.selectItem(_tournament);
-      this.basicTableData.selectedElement = _tournament;
+      this.loadData();
+      this.target = null;
       this.messageService.infoMessage('infoTournamentStored');
     });
   }
 
   updateRowData(tournament: Tournament): void {
     this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
+        this.loadData();
+        this.target = null;
         this.messageService.infoMessage('infoTournamentUpdated');
-        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id);
-        if (index >= 0) {
-          this.basicTableData.dataSource.data[index] = _tournament;
-          this.basicTableData.dataSource._updateChangeSubscription();
-        }
-        this.basicTableData.selectedElement = _tournament;
-        this.basicTableData.selectItem(_tournament);
       }
     );
   }
 
   deleteRowData(tournament: Tournament): void {
     this.tournamentService.delete(tournament).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_tournament: Tournament): boolean => _tournament.id !== tournament.id);
         this.messageService.infoMessage('infoTournamentDeleted');
-        this.basicTableData.selectedElement = undefined;
+        this.loadData();
+        this.target = null;
       }
     );
   }
 
-  addRoles(): void {
-    if (this.basicTableData.selectedElement) {
+  addRoles(tournament: Tournament): void {
+    if (tournament) {
       this.dialog.open(TournamentRolesComponent, {
         panelClass: 'pop-up-panel',
         data: {
-          tournament: this.basicTableData.selectedElement
+          tournament: tournament
         }
       });
     }
   }
 
-  addTeams(): void {
-    if (this.basicTableData.selectedElement) {
+  addTeams(tournament: Tournament): void {
+    if (tournament) {
       this.dialog.open(TournamentTeamsComponent, {
         panelClass: 'pop-up-panel',
         data: {
-          tournament: this.basicTableData.selectedElement
+          tournament: tournament
         }
       });
     }
   }
 
-  openFights(): void {
-    if (this.basicTableData.selectedElement) {
-      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
+  openFights(tournament: Tournament): void {
+    if (tournament) {
+      this.userSessionService.setSelectedTournament(tournament.id + "");
+      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: tournament.id}});
     }
   }
 
-  downloadBlogCode(): void {
-    if (this.basicTableData.selectedElement?.id) {
-      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
+  downloadBlogCode(tournament: Tournament): void {
+    if (tournament?.id) {
+      this.rankingService.getTournamentSummaryAsHtml(tournament.id).subscribe((html: Blob): void => {
         const blob: Blob = new Blob([html], {type: 'txt/plain'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
-        anchor.download = "Code - " + this.basicTableData.selectedElement!.name + ".txt";
+        anchor.download = "Code - " + tournament!.name + ".txt";
         anchor.href = downloadURL;
         anchor.click();
       });
     }
   }
 
-  downloadAccreditations(): void {
-    if (this.basicTableData.selectedElement) {
+  downloadAccreditations(tournament: Tournament): void {
+    if (tournament) {
       const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
-          tournament: this.basicTableData.selectedElement
+          tournament: tournament
         }
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement?.id) {
-            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob): void => {
+          if (tournament?.id) {
+            this.tournamentService.getAccreditations(tournament.id, result.newOnes, result.data).subscribe((html: Blob): void => {
               if (html !== null) {
                 const blob: Blob = new Blob([html], {type: 'application/pdf'});
                 const downloadURL: string = window.URL.createObjectURL(blob);
 
                 const anchor: HTMLAnchorElement = document.createElement("a");
-                anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
+                anchor.download = "Accreditations - " + tournament!.name + ".pdf";
                 anchor.href = downloadURL;
                 anchor.click();
               } else {
@@ -230,24 +262,24 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  downloadDiplomas(): void {
-    if (this.basicTableData.selectedElement) {
+  downloadDiplomas(tournament: Tournament): void {
+    if (tournament) {
       const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
-          tournament: this.basicTableData.selectedElement
+          tournament: tournament
         }
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement?.id) {
-            this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
+          if (tournament?.id) {
+            this.tournamentService.getDiplomas(tournament.id, result.newOnes, result.data).subscribe((html: Blob) => {
               if (html !== null) {
                 const blob: Blob = new Blob([html], {type: 'application/pdf'});
                 const downloadURL: string = window.URL.createObjectURL(blob);
 
                 const anchor: HTMLAnchorElement = document.createElement("a");
-                anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
+                anchor.download = "Diplomas - " + tournament!.name + ".pdf";
                 anchor.href = downloadURL;
                 anchor.click();
               } else {
@@ -260,19 +292,19 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  lockElement(locked: boolean): void {
-    if (this.basicTableData.selectedElement) {
-      this.basicTableData.selectedElement.locked = locked;
+  lockElement(tournament: Tournament, locked: boolean): void {
+    if (tournament) {
+      tournament.locked = locked;
       if (locked) {
-        this.achievementsService.regenerateTournamentAchievements(this.basicTableData.selectedElement?.id!).subscribe();
-        if (!this.basicTableData.selectedElement.lockedAt) {
-          this.basicTableData.selectedElement.lockedAt = new Date();
+        this.achievementsService.regenerateTournamentAchievements(tournament?.id!).subscribe();
+        if (!tournament.lockedAt) {
+          tournament.lockedAt = new Date();
         }
-        if (!this.basicTableData.selectedElement.finishedAt) {
-          this.basicTableData.selectedElement.finishedAt = new Date();
+        if (!tournament.finishedAt) {
+          tournament.finishedAt = new Date();
         }
       }
-      this.updateRowData(this.basicTableData.selectedElement);
+      this.updateRowData(tournament);
     }
   }
 
@@ -280,15 +312,15 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     return (argument as Tournament).locked;
   }
 
-  openStatistics(): void {
-    if (this.basicTableData.selectedElement) {
-      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
+  openStatistics(tournament: Tournament): void {
+    if (tournament) {
+      this.userSessionService.setSelectedTournament(tournament.id + "");
+      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: tournament.id}});
     }
   }
 
-  openCloneTournament(): void {
-    if (this.basicTableData.selectedElement) {
+  openCloneTournament(tournament: Tournament): void {
+    if (tournament) {
       let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
         disableClose: false
       });
@@ -296,43 +328,40 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.cloneElement();
+          this.cloneElement(tournament);
         }
       });
     }
   }
 
-  cloneElement(): void {
-    const tournamentId: number = this.basicTableData.selectedElement?.id!;
-    this.basicTableData.selectedElement = undefined;
+  cloneElement(tournament: Tournament): void {
+    const tournamentId: number = tournament?.id!;
     this.tournamentService.clone(tournamentId).subscribe((_tournament: Tournament): void => {
-      this.basicTableData.dataSource.data.push(_tournament);
-      this.basicTableData.selectItem(_tournament);
-      this.basicTableData.dataSource._updateChangeSubscription();
+      this.loadData();
       this.messageService.infoMessage('infoTournamentStored');
     });
   }
 
-  downloadZip(): void {
-    if (this.basicTableData.selectedElement?.id) {
-      this.rankingService.getAllListAsZip(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
+  downloadZip(tournament: Tournament): void {
+    if (tournament?.id) {
+      this.rankingService.getAllListAsZip(tournament.id).subscribe((html: Blob): void => {
         const blob: Blob = new Blob([html], {type: 'application/zip'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
-        anchor.download = this.basicTableData.selectedElement!.name + ".zip";
+        anchor.download = tournament!.name + ".zip";
         anchor.href = downloadURL;
         anchor.click();
       });
     }
   }
 
-  showQrCode(): void {
-    if (this.basicTableData.selectedElement) {
+  showQrCode(tournament: Tournament): void {
+    if (tournament) {
       const dialogRef: MatDialogRef<TournamentQrCodeComponent> = this.dialog.open(TournamentQrCodeComponent, {
         panelClass: 'pop-up-panel',
         data: {
-          tournament: this.basicTableData.selectedElement,
+          tournament: tournament,
           port: window.location.port
         }
       });

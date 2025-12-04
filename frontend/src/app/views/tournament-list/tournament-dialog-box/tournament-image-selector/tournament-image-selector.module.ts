@@ -9,6 +9,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatSpinnerOverlayModule} from "../../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {FormsModule} from "@angular/forms";
 import {MatLegacySliderModule} from "@angular/material/legacy-slider";
+import {HasPermissionPipe} from "../../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -16,17 +17,18 @@ import {MatLegacySliderModule} from "@angular/material/legacy-slider";
   exports: [
     TournamentImageSelectorComponent
   ],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    RbacModule,
-    TranslocoModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatSpinnerOverlayModule,
-    MatLegacySliderModule,
-    FormsModule
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        RbacModule,
+        TranslocoModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatSpinnerOverlayModule,
+        MatLegacySliderModule,
+        FormsModule,
+        HasPermissionPipe
+    ]
 })
 export class TournamentImageSelectorModule {
 }

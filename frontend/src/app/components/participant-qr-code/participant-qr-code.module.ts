@@ -9,22 +9,24 @@ import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [ParticipantQrCodeComponent],
   exports: [ParticipantQrCodeComponent],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    TranslocoModule,
-    MatTooltipModule,
-    MatButtonModule,
-    RbacModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatSpinnerOverlayModule
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        TranslocoModule,
+        MatTooltipModule,
+        MatButtonModule,
+        RbacModule,
+        MatCheckboxModule,
+        MatDialogModule,
+        MatSpinnerOverlayModule,
+        HasPermissionPipe
+    ]
 })
 export class ParticipantQrCodeModule {
 }

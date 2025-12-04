@@ -8,19 +8,21 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [UndrawTeamsComponent],
-  imports: [
-    CommonModule,
-    MatSpinnerOverlayModule,
-    MatTabsModule,
-    MemberSelectorModule,
-    TranslocoModule,
-    RbacModule,
-    MatDialogModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        MatSpinnerOverlayModule,
+        MatTabsModule,
+        MemberSelectorModule,
+        TranslocoModule,
+        RbacModule,
+        MatDialogModule,
+        MatButtonModule,
+        HasPermissionPipe
+    ]
 })
 export class UndrawTeamsModule { }

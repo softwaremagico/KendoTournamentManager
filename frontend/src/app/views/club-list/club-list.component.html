@@ -2,19 +2,19 @@
 <div class="kendo-table">
   <div class="upper-menu">
     <div class="cell">
-      <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_CLUB | rbac : this.rbacService.getActivities())"
+      <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_CLUB | hasPermission)"
               [matTooltipShowDelay]="500" color="primary"
               mat-button
               matTooltip="{{'clubAdd' | transloco}}">
         <mat-icon>add</mat-icon>
       </button>
-      <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_CLUB | rbac : this.rbacService.getActivities())"
+      <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_CLUB | hasPermission)"
               [disabled]="!basicTableData.selectedElement"
               [matTooltipShowDelay]="500" mat-button
               matTooltip="{{'clubEdit' | transloco}}">
         <mat-icon>create</mat-icon>
       </button>
-      <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_CLUB | rbac : this.rbacService.getActivities())"
+      <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_CLUB | hasPermission)"
               [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
               color="warn" mat-button
               matTooltip="{{'clubDelete' | transloco}}">
@@ -25,7 +25,7 @@
   <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
   <div class="bottom-menu">
     <button (click)="showCompetitorsClassification()"
-            *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
+            *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
             [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
             color="primary" mat-button
             matTooltip="{{'competitorsClubRanking' | transloco}}">

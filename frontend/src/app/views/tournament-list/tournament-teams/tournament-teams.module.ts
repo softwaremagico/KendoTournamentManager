@@ -13,25 +13,27 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [TournamentTeamsComponent],
-  imports: [
-    CommonModule,
-    DragDropModule,
-    UserListModule,
-    MatCardModule,
-    TranslocoModule,
-    MatIconModule,
-    FormsModule,
-    RbacModule,
-    MatSpinnerOverlayModule,
-    MatDialogModule,
-    MatButtonModule,
-    FightStatisticsPanelModule,
-    MatTooltipModule,
-  ]
+    imports: [
+        CommonModule,
+        DragDropModule,
+        UserListModule,
+        MatCardModule,
+        TranslocoModule,
+        MatIconModule,
+        FormsModule,
+        RbacModule,
+        MatSpinnerOverlayModule,
+        MatDialogModule,
+        MatButtonModule,
+        FightStatisticsPanelModule,
+        MatTooltipModule,
+        HasPermissionPipe,
+    ]
 })
 export class TournamentTeamsModule {
 }

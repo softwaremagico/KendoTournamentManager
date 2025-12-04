@@ -8,6 +8,7 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ParticipantPictureModule} from "../participant-picture/participant-picture.module";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -17,16 +18,17 @@ import {ParticipantPictureModule} from "../participant-picture/participant-pictu
   exports: [
     UserCardComponent
   ],
-  imports: [
-    CommonModule,
-    MatCardModule,
-    DragDropModule,
-    RbacModule,
-    TranslocoModule,
-    MatIconModule,
-    MatTooltipModule,
-    ParticipantPictureModule,
-  ]
+    imports: [
+        CommonModule,
+        MatCardModule,
+        DragDropModule,
+        RbacModule,
+        TranslocoModule,
+        MatIconModule,
+        MatTooltipModule,
+        ParticipantPictureModule,
+        HasPermissionPipe,
+    ]
 })
 export class UserCardModule {
 }

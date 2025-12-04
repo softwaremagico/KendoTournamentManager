@@ -7,6 +7,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {HasPermissionPipe} from "../../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -14,14 +15,15 @@ import {MatButtonModule} from "@angular/material/button";
   exports: [
     ParticipantPictureDialogBoxComponent
   ],
-  imports: [
-    CommonModule,
-    WebcamModule,
-    RbacModule,
-    MatIconModule,
-    TranslocoModule,
-    MatDialogModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        WebcamModule,
+        RbacModule,
+        MatIconModule,
+        TranslocoModule,
+        MatDialogModule,
+        MatButtonModule,
+        HasPermissionPipe
+    ]
 })
 export class ParticipantPictureDialogModule { }

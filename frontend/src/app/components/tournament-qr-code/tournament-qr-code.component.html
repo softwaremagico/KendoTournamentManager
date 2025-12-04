@@ -6,7 +6,7 @@
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
     <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | transloco}}</a>
     <button (click)="downloadQrAsPdf()"
-            *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
+            *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | hasPermission)"
             class="floating-button"
             color="picture"
             mat-flat-button

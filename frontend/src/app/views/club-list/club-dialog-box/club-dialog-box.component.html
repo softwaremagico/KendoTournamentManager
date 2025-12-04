@@ -1,5 +1,5 @@
 <button (click)="fileInput.click()"
-        *ngIf="(RbacActivity.CREATE_CLUB_CSV | rbac : this.rbacService.getActivities())"
+        *ngIf="(RbacActivity.CREATE_CLUB_CSV | hasPermission)"
         class="floating-button"
         color="secundary"
         mat-flat-button
@@ -47,7 +47,7 @@
       <span [innerHTML]="'clubDeleteQuestion' | transloco : {name: club.name}"></span>
     </ng-template>
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())" [disabled]="registerForm.invalid"
+      <button *ngIf="(RbacActivity.EDIT_USER | hasPermission)" [disabled]="registerForm.invalid"
               color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {TournamentListComponent} from "./tournament-list.component";
-import {CommonModule} from "@angular/common";
+import {CommonModule, DatePipe} from "@angular/common";
 import {TournamentRoutingModule} from "./tournament-routing.module";
 import {MatIconModule} from "@angular/material/icon";
 import {TranslocoModule} from "@ngneat/transloco";
@@ -9,6 +9,9 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatButtonModule} from "@angular/material/button";
+import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 @NgModule({
   declarations: [TournamentListComponent],
@@ -22,7 +25,14 @@ import {MatButtonModule} from "@angular/material/button";
     MatTooltipModule,
     MatButtonModule,
     RbacModule,
-    MatSpinnerOverlayModule
+    MatSpinnerOverlayModule,
+    BiitDatatableModule,
+    HasPermissionPipe,
+    BiitIconButtonModule,
+    BiitButtonModule
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class TournamentListModule {

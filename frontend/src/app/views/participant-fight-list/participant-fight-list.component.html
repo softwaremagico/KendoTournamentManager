@@ -4,7 +4,7 @@
     <div class="upper-menu">
       <div class="cell">
         <button (click)="goBackToStatistics()"
-                *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | rbac : this.rbacService.getActivities())"
+                *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
                 [matTooltipShowDelay]="500"
                 mat-button
                 matTooltip="{{'back' | transloco}}">

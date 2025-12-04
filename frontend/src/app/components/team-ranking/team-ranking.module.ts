@@ -8,6 +8,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
         MatIconModule,
         MatDialogModule,
         MatButtonModule,
-        MatTooltipModule
+        MatTooltipModule,
+        HasPermissionPipe
     ]
 })
 export class TeamRankingModule {

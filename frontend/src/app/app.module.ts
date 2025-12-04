@@ -122,6 +122,7 @@ import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitCookiesConsentModule, BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
 import {NavbarModule} from "./components/navigation/navbar/navbar.module";
 import {TranslocoModule} from "@ngneat/transloco";
+import {HasPermissionPipe} from "./pipes/has-permission.pipe";
 
 
 registerLocaleData(localeES, "es");
@@ -232,6 +233,7 @@ registerLocaleData(localeNL, "nl");
     BiitSnackbarModule,
     TranslocoModule,
     BiitCookiesConsentModule,
+    HasPermissionPipe
   ],
   providers: [
     {

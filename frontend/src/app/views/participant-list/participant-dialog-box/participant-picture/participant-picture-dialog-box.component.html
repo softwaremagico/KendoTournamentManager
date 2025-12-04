@@ -19,7 +19,7 @@
   </div>
 
   <div class="button-container" mat-dialog-actions>
-    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
+    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | hasPermission)"
             color="picture"
             mat-flat-button
             mat-raised-button type="button">
@@ -27,14 +27,14 @@
       {{'photo' | transloco}}
     </button>
     <button (click)="switchCamera()"
-            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
+            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | hasPermission)"
             mat-flat-button
             mat-raised-button
             type="button">
       <mat-icon>switch_camera</mat-icon>
       {{'switch' | transloco}}
     </button>
-    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
+    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | hasPermission)"
             [disabled]="selectedPicture == undefined" color="primary"
             mat-flat-button
             mat-raised-button type="button">
@@ -42,7 +42,7 @@
       {{'selectButton' | transloco}}
     </button>
     <button (click)="fileInput.click()"
-            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.getActivities())"
+            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | hasPermission)"
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>upload_file</mat-icon>

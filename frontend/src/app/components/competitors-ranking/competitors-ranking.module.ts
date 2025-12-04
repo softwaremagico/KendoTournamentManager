@@ -11,24 +11,26 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [CompetitorsRankingComponent],
-  imports: [
-    CommonModule,
-    MatSpinnerOverlayModule,
-    TranslocoModule,
-    MatIconModule,
-    RbacModule,
-    MatDialogModule,
-    MatButtonModule,
-    FormsModule,
-    MatInputModule,
-    MatTooltipModule,
-    ReactiveFormsModule,
-    MatSlideToggleModule
-  ]
+    imports: [
+        CommonModule,
+        MatSpinnerOverlayModule,
+        TranslocoModule,
+        MatIconModule,
+        RbacModule,
+        MatDialogModule,
+        MatButtonModule,
+        FormsModule,
+        MatInputModule,
+        MatTooltipModule,
+        ReactiveFormsModule,
+        MatSlideToggleModule,
+        HasPermissionPipe
+    ]
 })
 export class CompetitorsRankingModule {
 }

@@ -13,7 +13,7 @@
              required>
     </mat-form-field>
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT_SCORE | rbac : this.rbacService.getActivities())"
+      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT_SCORE | hasPermission)"
               [disabled]="formScore.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

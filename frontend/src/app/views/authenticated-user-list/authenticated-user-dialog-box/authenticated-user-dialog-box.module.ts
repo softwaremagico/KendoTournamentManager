@@ -11,22 +11,24 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDialogModule} from "@angular/material/dialog";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
   declarations: [AuthenticatedUserDialogBoxComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    TranslocoModule,
-    MatOptionModule,
-    RbacModule,
-    MatIconModule,
-    MatSelectModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDialogModule
-  ]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        TranslocoModule,
+        MatOptionModule,
+        RbacModule,
+        MatIconModule,
+        MatSelectModule,
+        MatInputModule,
+        MatButtonModule,
+        MatDialogModule,
+        HasPermissionPipe
+    ]
 })
 export class AuthenticatedUserDialogBoxModule { }
