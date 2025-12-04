@@ -7,19 +7,21 @@ import {FormsModule} from "@angular/forms";
 import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
 import {ContextMenuModule} from "@perfectmemory/ngx-contextmenu";
 import {ComponentMenuModule} from "../component-menu/component-menu.module";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 @NgModule({
   declarations: [NavbarComponent],
-    imports: [
-        CommonModule,
-        FormsModule,
-        BiitIconModule,
-        BiitNavMenuModule,
-        BiitNavUserModule,
-        TranslocoRootModule,
-        ContextMenuModule,
-        ComponentMenuModule,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BiitIconModule,
+    BiitNavMenuModule,
+    BiitNavUserModule,
+    TranslocoRootModule,
+    ContextMenuModule,
+    ComponentMenuModule,
+    HasPermissionPipe,
+  ],
   exports: [NavbarComponent],
 })
 export class NavbarModule {

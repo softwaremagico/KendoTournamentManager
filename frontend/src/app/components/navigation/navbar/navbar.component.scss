@@ -1,20 +1,24 @@
 #navbar {
+  display: flex;
+  align-items: center;
   height: 2.5rem;
   width: 100%;
   background: white;
+  padding: 0 1.05rem;
+  box-sizing: border-box;
+}
+
+#navbar > .left {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 0 0 1.05rem;
-  box-sizing: border-box;
+  column-gap: 0.7rem;
+}
 
-  >.left {
-    display: inline-flex;
-    align-items: center;
-    column-gap: 0.7rem;
-  }
-
-  >.right {
-    display: inline-flex;
-  }
+#navbar > .right {
+  flex: 0 0 auto;
+  display: flex;
+  margin-left: auto;
 }

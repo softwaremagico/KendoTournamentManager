@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {Constants} from "../constants";
 import {AuthenticatedUser} from "../models/authenticated-user";
-import {LoginService} from "./login.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +12,7 @@ export class UserSessionService {
   private store: boolean;
   private readonly context: string = '';
 
-  constructor(private cookies: CookieService, private loginService: LoginService) {
+  constructor(private cookies: CookieService) {
     const authToken: string | null = this.getAuthToken();
     const expires: number | null = this.getLocalAuthExpiration();
 
@@ -22,7 +21,8 @@ export class UserSessionService {
       JSON.parse(localUserData)) : undefined;
     if (!user) {
       const sessionUserData: string | null = this.getSessionUser();
-      user = sessionUserData != null ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
+      console.log('sessionUserData', sessionUserData);
+      user = sessionUserData != null || sessionUserData != undefined ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
     }
     this.user = user;
     if (!expires || isNaN(expires) || expires < new Date().getTime()) {
@@ -131,6 +131,7 @@ export class UserSessionService {
 
   setAuthToken(authToken: string): void {
     localStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`, authToken);
+    this.loggedIn = true;
   }
 
   getAuthToken(): string | null {
@@ -170,7 +171,7 @@ export class UserSessionService {
   }
 
   isTokenExpired(): boolean {
-    const expired: boolean = !sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`) ||
+    const expired: boolean = !sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`) ||
       new Date().getTime() > +(this.getLocalAuthExpiration() || 0) || !this.getToken();
     if (!expired) {
       this.loggedIn = true;
@@ -179,11 +180,15 @@ export class UserSessionService {
   }
 
   getExpirationDate(): Date | null {
-    const sessionExpiration: string | null = sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
+    const sessionExpiration: string | null = sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
     if (!isNaN(+(sessionExpiration || NaN))) {
       return new Date(+(this.getSessionAuthExpiration() || 0));
     }
     return null;
+  }
+
+  setExpirationDate(expires: number) {
+    localStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`, expires.toString());
   }
 
   getToken(): string | null {
@@ -192,8 +197,6 @@ export class UserSessionService {
 
   private setAutoRenew(token: string | null, expires: number | null): void {
     if (token && expires) {
-      this.loginService.autoRenewToken(token, expires, (jwt: string, expires: number): void => {
-      });
     }
   }
 
@@ -207,6 +210,19 @@ export class UserSessionService {
     localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
     this.loggedIn = false;
     this.user = undefined;
+  }
+
+  setUser(user: AuthenticatedUser, enableStore: boolean | undefined = undefined): void {
+    sessionStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`, JSON.stringify(user));
+    if (enableStore !== undefined) {
+      if (!enableStore) {
+        localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
+      }
+    }
+    if (this.store) {
+      localStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`, JSON.stringify(user));
+    }
+    this.user = user;
   }
 
   getUser(): AuthenticatedUser | undefined {

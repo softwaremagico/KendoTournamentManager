@@ -113,4 +113,8 @@ export class ActivityService {
     ];
   }
 
+  public clear(): void {
+    this.activities = [];
+  }
+
 }

@@ -119,7 +119,7 @@ import {
   SenbatsuFightDialogBoxModule
 } from "./views/fight-list/senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.module";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
-import {BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
+import {BiitCookiesConsentModule, BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
 import {NavbarModule} from "./components/navigation/navbar/navbar.module";
 import {TranslocoModule} from "@ngneat/transloco";
 
@@ -231,6 +231,7 @@ registerLocaleData(localeNL, "nl");
     BiitProgressBarModule,
     BiitSnackbarModule,
     TranslocoModule,
+    BiitCookiesConsentModule,
   ],
   providers: [
     {

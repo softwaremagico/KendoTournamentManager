@@ -1,7 +1,6 @@
 <div id="navbar">
   <div class="left">
-    <biit-nav-menu [routes]="routes"
-    ></biit-nav-menu>
+    <biit-nav-menu [routes]="routes" style="width: 100%"></biit-nav-menu>
   </div>
   <div class="right" id="kendo-menu">
     <component-menu/>
@@ -14,7 +13,19 @@
   </div>
 </div>
 
-<context-menu #contextMenu dir="rtl">
+<context-menu #contextMenu dir="rtl" *transloco="let t">
+  <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_LANGUAGE | hasPermission"
+               (execute)="router.navigateByUrl(Constants.PATHS.PROFILE.LANGUAGE)">
+        <span id="dashboard-menu-activity">
+    {{ t('t.language') }}
+        </span>
+  </ng-template>
+  <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
+               (execute)="router.navigateByUrl(Constants.PATHS.PROFILE.PASSWORD)">
+        <span id="dashboard-menu-historical">
+    {{ t('t.password') }}
+        </span>
+  </ng-template>
   <ng-template contextMenuItem
                *transloco="let t"
                (execute)="router.navigateByUrl('/login?logout')">

@@ -14,6 +14,8 @@ import {ProjectModeChangedService} from "./services/notifications/project-mode-c
 import {AvailableLangs, TranslocoService} from "@ngneat/transloco";
 import {BiitIconService} from "@biit-solutions/wizardry-theme/icon";
 import {completeIconSet} from "@biit-solutions/biit-icons-collection";
+import {AuthenticatedUser} from "./models/authenticated-user";
+import {ActivityService} from "./services/rbac/activity.service";
 
 @Component({
   selector: 'app-root',
@@ -32,13 +34,15 @@ export class AppComponent extends RbacBasedComponent {
               protected userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
               private overlay: OverlayContainer, private _renderer: Renderer2,
               private messageService: MessageService, rbacService: RbacService, biitIconService: BiitIconService,
-              private darkModeService: DarkModeService, private projectModeChangedService: ProjectModeChangedService) {
+              private darkModeService: DarkModeService, private projectModeChangedService: ProjectModeChangedService,
+              protected sessionService: UserSessionService, private activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
     biitIconService.registerIcons(completeIconSet);
     this.loggedInService.isUserLoggedIn.subscribe((value: boolean) => this.loggedIn = value);
     this.nightModeEnabled = userSessionService.getNightMode();
     this.setDarkModeTheme();
+    this.setPermissions();
     projectModeChangedService.isProjectMode.subscribe((_mode: boolean): void => {
       this.hideMenu = _mode;
     });
@@ -83,6 +87,7 @@ export class AppComponent extends RbacBasedComponent {
       if (result) {
         this.loginService.logout();
         this.rbacService.setRoles([]);
+        this.activityService.setRoles([]);
         this.loggedIn = false;
         this.messageService.infoMessage("userLoggedOutMessage");
         this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
@@ -112,5 +117,13 @@ export class AppComponent extends RbacBasedComponent {
 
   openWiki(): void {
     window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank");
+  }
+
+  private setPermissions(): void {
+    const user: AuthenticatedUser | undefined = this.sessionService.getUser();
+    if (!user) {
+      return;
+    }
+    this.activityService.setRoles(user.roles);
   }
 }
