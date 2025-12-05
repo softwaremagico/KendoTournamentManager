@@ -14,103 +14,89 @@
                 [title]="t('tournamentAdd')"
                 (click)="addElement()"
         ></button>
-        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
-                [title]="t('tournamentEdit')"
-                (click)="editElement(table.selectedRows[0])"
-                [disabled]="!table.selectedRows || !table.selectedRows[0] || table.selectedRows[0].locked"
-        ></button>
-        <button mat-button *ngIf="(RbacActivity.CREATE_ROLE | hasPermission)"
-                [title]="t('roles')"
-                (click)="addRoles(table.selectedRows[0])"
-                [disabled]="!table.selectedRows">
-          <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
-        </button>
-        <button mat-button (click)="addTeams(table.selectedRows[0])" *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
-                [disabled]="!table.selectedRows" [matTooltipShowDelay]="500"
-                color="primary"
-                matTooltip="{{'teams' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
-        </button>
-        <button mat-button (click)="openFights(table.selectedRows[0])"
-                *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
-                [disabled]="!table.selectedRows" [matTooltipShowDelay]="500"
-                color="primary"
-                matTooltip="{{'fights' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
-        </button>
-        <button mat-button (click)="lockElement(table.selectedRows[0],true)"
-                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && (!table.selectedRows || !table.selectedRows[0] || !table.selectedRows[0]!.locked)"
-                [disabled]="!table.selectedRows || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)"
-                [matTooltipShowDelay]="500"
-                color="primary"
-                matTooltip="{{'tournamentLock' | transloco}}">
-          <mat-icon>lock</mat-icon>
-        </button>
-        <button mat-button (click)="lockElement(table.selectedRows[0],false)"
-                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked"
-                [disabled]="!table.selectedRows || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)"
-                [matTooltipShowDelay]="500"
-                color="primary"
-                matTooltip="{{'tournamentUnlock' | transloco}}">
-          <mat-icon>no_encryption</mat-icon>
-        </button>
-        <button mat-button (click)="openCloneTournament(table.selectedRows[0])"
-                *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | hasPermission)"
-                [disabled]="!table.selectedRows"
-                [matTooltipShowDelay]="500"
-                color="primary"
-                matTooltip="{{'tournamentClone' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
-        </button>
         <button id="button-minus" biit-icon icon="minus" *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
                 [title]="t('delete')"
                 (click)="deleteElement(table.selectedRows[0], false)"
                 [disabled]="!table.selectedRows.length"
         ></button>
+        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
+                [title]="t('tournamentEdit')"
+                (click)="editElement(table.selectedRows[0])"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+        ></button>
+        <button mat-button *ngIf="(RbacActivity.CREATE_ROLE | hasPermission)"
+                [title]="t('roles')"
+                (click)="addRoles(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
+                [title]="t('teams')"
+                (click)="addTeams(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
+                [title]="t('fights')"
+                (click)="openFights(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
+        </button>
+        <button biit-icon icon="lock"
+                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && (!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked)"
+                [title]="t('tournamentLock')"
+                (click)="lockElement(table.selectedRows[0],true)"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
+        </button>
+        <button biit-icon icon="unlock"
+                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked"
+                [title]="t('tournamentUnlock')"
+                (click)="lockElement(table.selectedRows[0],false)"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
+        </button>
+        <button mat-button *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | hasPermission)"
+                [title]="t('tournamentClone')"
+                (click)="openCloneTournament(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
+        </button>
       </ng-template>
     </biit-datatable>
     <div class="bottom-menu">
-      <button (click)="openStatistics(table.selectedRows[0])"
-              *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
-              [disabled]="!table.selectedRows" [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'titleStatistics' | transloco}}">
-        <mat-icon>bar_chart</mat-icon>
+      <button mat-button *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
+              [title]="t('titleStatistics')"
+              (click)="openStatistics(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+        <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
       </button>
-      <button (click)="showQrCode(table.selectedRows[0])"
-              *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
-              [disabled]="!table.selectedRows || !table.selectedRows[0] || !table.selectedRows[0]!.locked"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'qrCodeHint' | transloco}}">
-        <mat-icon>qr_code_2</mat-icon>
+      <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
+              [title]="t('qrCodeHint')"
+              (click)="showQrCode(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
+        <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
       </button>
-      <button (click)="downloadZip(table.selectedRows[0])" *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-              [disabled]="!table.selectedRows"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'tournamentListAsZip' | transloco}}">
+      <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
+              [title]="t('tournamentListAsZip')"
+              (click)="downloadZip(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
         <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
       </button>
-      <button (click)="downloadBlogCode(table.selectedRows[0])" *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-              [disabled]="!table.selectedRows" [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'bloggerStatistics' | transloco}}">
+      <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
+              [title]="t('bloggerStatistics')"
+              (click)="downloadBlogCode(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
         <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
       </button>
-      <button (click)="downloadAccreditations(table.selectedRows[0])"
-              *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
-              [disabled]="!table.selectedRows"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'accreditationsHint' | transloco}}">
-        <mat-icon>badge</mat-icon>
+      <button mat-button *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
+              [title]="t('accreditationsHint')"
+              (click)="downloadAccreditations(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+        <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
       </button>
-      <button (click)="downloadDiplomas(table.selectedRows[0])" *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
-              [disabled]="!table.selectedRows"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'diplomasHint' | transloco}}">
+      <button mat-button *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
+              [title]="t('diplomasHint')"
+              (click)="downloadDiplomas(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
         <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
       </button>
     </div>

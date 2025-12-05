@@ -5,10 +5,11 @@
   --floating-background: white;
   --main-font-color: white;
   --disabled-primary-color: #808080;
+  --disabled-menu-color: #D9D9D9;
   --disabled-secondary-color: var(--main-color);
   --border-color: #262626;
   --light-background: #D7D7D7;
-  --error-color: #0917A1;
+  --error-color: #A1093F;
   --warning-color: #0D44F2;
   --secondary-color: #808080;
   --secondary-text-color: #EDEDED;
@@ -20,6 +21,7 @@
   --selected-color: #AECFFB;
   --popup-background: #FFFFFF;
   --icon-color: var(--component-color);
-  --table-header-color: var(--main-color);
+  --table-header-color: var(--component-color);
+  --table-border-color: var(--table-header-color);
   --scrollbar-color: var(--main-color);
 }

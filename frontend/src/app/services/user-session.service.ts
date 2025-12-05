@@ -21,7 +21,11 @@ export class UserSessionService {
       JSON.parse(localUserData)) : undefined;
     if (!user) {
       const sessionUserData: string | null = this.getSessionUser();
-      user = sessionUserData != null || sessionUserData != undefined ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
+      try {
+        user = sessionUserData != null || sessionUserData != undefined ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
+      } catch (e) {
+
+      }
     }
     this.user = user;
     if (!expires || isNaN(expires) || expires < new Date().getTime()) {

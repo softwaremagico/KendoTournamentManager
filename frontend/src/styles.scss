@@ -89,3 +89,13 @@ biit-snackbar {
 svg {
   color: var(--icon-color);
 }
+
+//Size of buttons in table
+button > .mat-icon {
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.mdc-button {
+  min-width: 34px !important;
+}

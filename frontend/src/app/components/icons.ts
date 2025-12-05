@@ -43,7 +43,10 @@ export class IconModule {
       .addSvgIcon("youAreTheWorstNightmareOf", this.setPath(`${this.path}/youAreTheWorstNightmareOf.svg`))
       .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`))
       .addSvgIcon("whistle", this.setPath(`${this.path}/whistle.svg`))
-      .addSvgIcon("csv-file-small", this.setPath(`${this.path}/csv-file-small.svg`));
+      .addSvgIcon("csv-file-small", this.setPath(`${this.path}/csv-file-small.svg`))
+      .addSvgIcon("bar_chart", this.setPath(`${this.path}/bar_chart.svg`))
+      .addSvgIcon("badge", this.setPath(`${this.path}/badge.svg`))
+      .addSvgIcon("qr_code", this.setPath(`${this.path}/qr_code.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

@@ -12,25 +12,27 @@ import {MatButtonModule} from "@angular/material/button";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [TournamentListComponent],
   exports: [TournamentListComponent],
-  imports: [
-    TournamentRoutingModule,
-    CommonModule,
-    MatIconModule,
-    TranslocoModule,
-    BasicTableModule,
-    MatTooltipModule,
-    MatButtonModule,
-    RbacModule,
-    MatSpinnerOverlayModule,
-    BiitDatatableModule,
-    HasPermissionPipe,
-    BiitIconButtonModule,
-    BiitButtonModule
-  ],
+    imports: [
+        TournamentRoutingModule,
+        CommonModule,
+        MatIconModule,
+        TranslocoModule,
+        BasicTableModule,
+        MatTooltipModule,
+        MatButtonModule,
+        RbacModule,
+        MatSpinnerOverlayModule,
+        BiitDatatableModule,
+        HasPermissionPipe,
+        BiitIconButtonModule,
+        BiitButtonModule,
+        MatDividerModule
+    ],
   providers: [
     DatePipe
   ]

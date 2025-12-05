@@ -9,7 +9,7 @@
     <parent>
         <artifactId>kendo-tournament-backend</artifactId>
         <groupId>com.softwaremagico</groupId>
-        <version>2.19.0</version>
+        <version>3.0.0</version>
     </parent>
 
 

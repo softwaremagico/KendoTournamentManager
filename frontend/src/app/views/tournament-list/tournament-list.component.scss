@@ -46,3 +46,11 @@ $main-black: #262626;
     display: none;
   }
 }
+
+button.mdc-button:disabled {
+  opacity: 0.5;
+}
+
+button.mdc-button:disabled mat-icon {
+  fill: grey !important;
+}
