@@ -99,3 +99,9 @@ button > .mat-icon {
 .mdc-button {
   min-width: 34px !important;
 }
+
+.mat-divider{
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  color: var(--component-color);
+}

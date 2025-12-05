@@ -34,15 +34,8 @@ $main-black: #262626;
   gap: $space;
 }
 
-.bottom-menu {
-  text-align: right;
-  padding-left: 250px;
-  position: absolute;
-  margin-top: -35px;
-}
-
-@media screen and (max-width: 1700px) {
-  .bottom-menu {
+@media screen and (max-width: 1000px) {
+  .extra-menu {
     display: none;
   }
 }

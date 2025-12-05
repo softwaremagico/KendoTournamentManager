@@ -24,6 +24,13 @@
                 (click)="editElement(table.selectedRows[0])"
                 [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
         ></button>
+        <button mat-button *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | hasPermission)"
+                [title]="t('tournamentClone')"
+                (click)="openCloneTournament(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
+        </button>
+        <mat-divider [vertical]="true"></mat-divider>
         <button mat-button *ngIf="(RbacActivity.CREATE_ROLE | hasPermission)"
                 [title]="t('roles')"
                 (click)="addRoles(table.selectedRows[0])"
@@ -54,51 +61,46 @@
                 (click)="lockElement(table.selectedRows[0],false)"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
         </button>
-        <button mat-button *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | hasPermission)"
-                [title]="t('tournamentClone')"
-                (click)="openCloneTournament(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
+        <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
+        <span class="extra-menu">
+        <button mat-button *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
+                          [title]="t('titleStatistics')"
+                          (click)="openStatistics(table.selectedRows[0])"
+                          [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
         </button>
+        <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
+                [title]="t('qrCodeHint')"
+                (click)="showQrCode(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
+          <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
+                [title]="t('accreditationsHint')"
+                (click)="downloadAccreditations(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
+                [title]="t('diplomasHint')"
+                (click)="downloadDiplomas(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
+                [title]="t('tournamentListAsZip')"
+                (click)="downloadZip(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
+                [title]="t('bloggerStatistics')"
+                (click)="downloadBlogCode(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
+        </button>
+        </span>
       </ng-template>
     </biit-datatable>
-    <div class="bottom-menu">
-      <button mat-button *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
-              [title]="t('titleStatistics')"
-              (click)="openStatistics(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-        <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
-      </button>
-      <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
-              [title]="t('qrCodeHint')"
-              (click)="showQrCode(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
-        <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
-      </button>
-      <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-              [title]="t('tournamentListAsZip')"
-              (click)="downloadZip(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-        <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
-      </button>
-      <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-              [title]="t('bloggerStatistics')"
-              (click)="downloadBlogCode(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-        <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
-      </button>
-      <button mat-button *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
-              [title]="t('accreditationsHint')"
-              (click)="downloadAccreditations(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-        <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
-      </button>
-      <button mat-button *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
-              [title]="t('diplomasHint')"
-              (click)="downloadDiplomas(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-        <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
-      </button>
-    </div>
   </div>
 </ng-container>
