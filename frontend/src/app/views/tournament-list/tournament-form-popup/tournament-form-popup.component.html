@@ -1,0 +1,13 @@
+<biit-popup id="tournament-popup"
+            [title]="tournament.id ? t('t.tournamentEdit') : t('t.tournamentAdd')"
+            (onClosed)="onClosed.emit()"
+            closable sixty-view
+            *transloco="let t"
+>
+  <tournament-form class="form-container"
+                   [tournament]="tournament"
+                   (onSaved)="onSaved"
+                   [onSaved]="onSaved"
+                   (onError)="onError"
+                   [onError]="onError"></tournament-form>
+</biit-popup>

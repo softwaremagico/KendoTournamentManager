@@ -125,13 +125,11 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
     tournament.teamSize = Tournament.DEFAULT_TEAM_SIZE;
-    this.openDialog(this.translateService.translate('competitionAdd'), Action.Add, tournament);
+    this.target = tournament;
   }
 
   editElement(tournament: Tournament): void {
-    if (tournament) {
-      this.openDialog(this.translateService.translate('competitionEdit'), Action.Update, tournament);
-    }
+    this.target = tournament;
   }
 
   deleteElement(tournament: Tournament, confirmed: boolean): void {
@@ -366,5 +364,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
         }
       });
     }
+  }
+
+  onSaved() {
+    //this.addRowData(result.data);
   }
 }

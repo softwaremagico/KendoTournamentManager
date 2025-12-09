@@ -1,0 +1,6 @@
+{
+  "validationFailed": "Error de validació. Comproveu si algun camp està buit o és invàlid.",
+  "dataIsMandatory": "El camp és obligatori.",
+  "minLengthError": "Les dades introduïdes són massa curtes.",
+  "maxLengthError": "Les dades introduïdes són massa grans."
+}

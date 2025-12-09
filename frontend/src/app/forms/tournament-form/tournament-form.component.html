@@ -1,0 +1,86 @@
+<ng-container id="tournament-form" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div class="row">
+      <biit-dropdown id="tournament-type"
+                     [ngModel]="tournament.type | dropdownInterface: translatedTypes"
+                     (ngModelChange)="tournament.type = $event.value"
+                     [data]="translatedTypes"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('tournamentType')"
+                     [descriptionLabel]="'description'"
+                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-dropdown>
+    </div>
+    <div class="row">
+      <biit-input-text id="tournament-name" [(ngModel)]="tournament.name"
+                       [placeholder]="t('competitionName')"
+                       [required]="true"
+                       error="{{errors | mapGet: TournamentFormValidationFields.NAME_ERRORS}}"
+      ></biit-input-text>
+      <button id="edit-options-button" biit-icon icon="hamburger" *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+              class="edit-score-button"
+              (click)="openCustomProperties()"
+              [disabled]="tournament.id==undefined || tournament.type == typeCustom">
+      </button>
+    </div>
+    <div class="row">
+      <biit-input-text id="tournament-shiaijos" [(ngModel)]="tournament.shiaijos"
+                       [placeholder]="t('tournamentShiaijos')"
+                       [type]="Type.NUMBER"
+                       [min]="TOURNAMENT_MIN_SHIAIJO"
+                       [max]="TOURNAMENT_MAX_SHIAIJO"
+                       error="{{errors | mapGet: TournamentFormValidationFields.SHIAIJO_ERRORS}}"
+                       [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
+          || this.selectedType == typeLeague || this.selectedType == typeKing || this.selectedType == typeSorting"
+                       [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row" *ngIf="tournament && tournament.type!== TournamentType.SENBATSU">
+      <biit-input-text id="tournament-team-size" [(ngModel)]="tournament.teamSize"
+                       [placeholder]="t('tournamentTeamSize')"
+                       [type]="Type.NUMBER"
+                       [min]="TOURNAMENT_MIN_TEAM"
+                       [max]="TOURNAMENT_MAX_TEAM"
+                       error="{{errors | mapGet: TournamentFormValidationFields.TEAM_ERRORS}}"
+                       [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
+          || this.selectedType == typeLeague || this.selectedType == typeKing || this.selectedType == typeSorting"
+                       [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row"
+         *ngIf="tournament && tournament.type!== TournamentType.BUBBLE_SORT && tournament.type!== TournamentType.SENBATSU">
+      <biit-dropdown id="tournament-score-rules"
+                     [ngModel]="tournament.tournamentScore? (tournament.tournamentScore.scoreType | dropdownInterface: translatedScores) : '' "
+                     (ngModelChange)="tournament.tournamentScore.scoreType = $event.value"
+                     [data]="translatedScores"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('scoreRules')"
+                     [descriptionLabel]="'description'"
+                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-dropdown>
+      <button id="edit-score-button" biit-icon icon="hamburger" *ngIf="selectedScore==scoreTypeCustom"
+              class="edit-score-button"
+              [title]="t('teams')"
+              (click)="openCustomProperties()"
+              [disabled]="tournament.id==undefined || tournament.type == typeCustom">
+      </button>
+    </div>
+    <div class="row">
+      <biit-dropdown id="tournament-duration"
+                     [ngModel]="tournament.duelsDuration | numberDropdownInterface : translatedDuration"
+                     (ngModelChange)="tournament.duelsDuration = $event.value"
+                     [data]="translatedDuration"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('tournamentDuelsDurations')"
+                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-dropdown>
+    </div>
+    <button biit-button id="tournament-button-save" (click)="onSave()"
+            [disabled]="saving || !(RbacActivity.EDIT_TOURNAMENT | hasPermission)">
+      {{ t('saveButton') }}
+    </button>
+  </div>
+</ng-container>

@@ -6,33 +6,37 @@ export enum ScoreType {
   CUSTOM = 'CUSTOM',
 }
 
-export namespace Score {
+export namespace ScoreType {
   export function getByKey(key: string) {
-    for (const valueKey in Score) {
-      if ((Score as any)[valueKey] === key) {
+    for (const valueKey in ScoreType) {
+      if ((ScoreType as any)[valueKey] === key) {
         return valueKey;
       }
     }
     return undefined;
   }
-}
 
-export namespace ScoreType {
   export function getKeys(): string[] {
     return Object.keys(ScoreType).filter(enumValue => (typeof (ScoreType[enumValue as ScoreType]) !== 'function'))
   }
-}
 
-export namespace ScoreType {
   export function toArray(): ScoreType[] {
-    return ScoreType.getKeys().map(key => {
+    return getKeys().map(key => {
       return <ScoreType>(<any>ScoreType)[key];
     });
   }
-}
 
-export namespace ScoreType {
-  export function getEnumKeyByEnumValue<T extends { [index: string]: string }>(myEnum: T, enumValue: string): keyof T | null {
+  export function toCamel(scoreType: ScoreType) {
+    return scoreType.toLowerCase()
+      .replace(/_(.)/g, function ($1) {
+        return $1.toUpperCase();
+      })
+      .replace(/_/g, '');
+  }
+
+  export function getEnumKeyByEnumValue<T extends {
+    [index: string]: string
+  }>(myEnum: T, enumValue: string): keyof T | null {
     let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
     return keys.length > 0 ? keys[0] : null;
   }

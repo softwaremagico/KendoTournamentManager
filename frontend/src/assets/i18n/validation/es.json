@@ -1,0 +1,6 @@
+{
+  "validationFailed": "Error de validación. Por favor, compruebe si algún campo está vacío o es inválido.",
+  "dataIsMandatory": "El campo es obligatorio.",
+  "minLengthError": "Los datos introducidos son demasiado cortos.",
+  "maxLengthError": "Los datos introducidos son demasiado grandes."
+}

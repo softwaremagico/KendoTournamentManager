@@ -1,0 +1,6 @@
+{
+  "validationFailed": "Validation failed. Please, check if some fields are empty or invalid.",
+  "dataIsMandatory": "Field is mandatory.",
+  "minLengthError": "Data is too short.",
+  "maxLengthError": "Data is too big."
+}

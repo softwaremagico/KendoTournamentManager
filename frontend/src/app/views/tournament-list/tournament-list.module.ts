@@ -13,6 +13,7 @@ import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {MatDividerModule} from "@angular/material/divider";
+import {TournamentFormPopupModule} from "./tournament-form-popup/tournament-form-popup.module";
 
 @NgModule({
   declarations: [TournamentListComponent],
@@ -31,7 +32,8 @@ import {MatDividerModule} from "@angular/material/divider";
         HasPermissionPipe,
         BiitIconButtonModule,
         BiitButtonModule,
-        MatDividerModule
+        MatDividerModule,
+        TournamentFormPopupModule
     ],
   providers: [
     DatePipe

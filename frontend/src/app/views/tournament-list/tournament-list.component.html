@@ -56,7 +56,7 @@
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
         </button>
         <button biit-icon icon="unlock"
-                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked"
+                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked && table.selectedRows.length == 1"
                 [title]="t('tournamentUnlock')"
                 (click)="lockElement(table.selectedRows[0],false)"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
@@ -64,9 +64,9 @@
         <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
         <span class="extra-menu">
         <button mat-button *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
-                          [title]="t('titleStatistics')"
-                          (click)="openStatistics(table.selectedRows[0])"
-                          [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+                [title]="t('titleStatistics')"
+                (click)="openStatistics(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
         </button>
         <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
@@ -104,3 +104,9 @@
     </biit-datatable>
   </div>
 </ng-container>
+
+<tournament-form-popup *ngIf="target"
+                       [tournament]="target"
+                       (onClosed)="this.target = null"
+                       (onSaved)="onSaved()"
+/>
