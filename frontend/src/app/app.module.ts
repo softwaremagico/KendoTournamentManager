@@ -118,11 +118,17 @@ import {ParticipantFightListModule} from './views/participant-fight-list/partici
 import {
   SenbatsuFightDialogBoxModule
 } from "./views/fight-list/senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.module";
-import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitCookiesConsentModule, BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
 import {NavbarModule} from "./components/navigation/navbar/navbar.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {HasPermissionPipe} from "./pipes/has-permission.pipe";
+import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {TournamentFormPopupModule} from "./views/tournament-list/tournament-form-popup/tournament-form-popup.module";
+import {
+  AuthenticatedUserFormPopupModule
+} from "./views/authenticated-user-list/authenticated-user-form-popup/authenticated-user-form-popup.module";
 
 
 registerLocaleData(localeES, "es");
@@ -233,7 +239,12 @@ registerLocaleData(localeNL, "nl");
     BiitSnackbarModule,
     TranslocoModule,
     BiitCookiesConsentModule,
-    HasPermissionPipe
+    HasPermissionPipe,
+    BiitDatatableModule,
+    BiitIconButtonModule,
+    BiitPopupModule,
+    TournamentFormPopupModule,
+    AuthenticatedUserFormPopupModule
   ],
   providers: [
     {

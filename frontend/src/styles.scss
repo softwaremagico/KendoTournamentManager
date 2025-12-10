@@ -100,8 +100,12 @@ button > .mat-icon {
   min-width: 34px !important;
 }
 
-.mat-divider{
+.mat-divider {
   margin-top: 8px !important;
   margin-bottom: 8px !important;
   color: var(--component-color);
+}
+
+button .warning {
+  color: var(--warning-color);
 }

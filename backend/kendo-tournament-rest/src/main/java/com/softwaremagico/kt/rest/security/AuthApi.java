@@ -304,7 +304,8 @@ public class AuthApi {
     }
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
-    @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Updates a password by an admin user. Does not require to know the old password.",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updateUserPassword(@Parameter(description = "username", required = true)
@@ -313,7 +314,7 @@ public class AuthApi {
             throws InterruptedException {
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
-            authenticatedUserController.updatePassword(username, request.getOldPassword(), request.getNewPassword());
+            authenticatedUserController.updatePassword(username, request.getNewPassword(), request.getNewPassword());
         } catch (Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }

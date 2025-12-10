@@ -725,5 +725,8 @@
   "newVersionAvailable": "Versie '{{newVersion}}' is beschikbaar! Huidige versie is '{{currentVersion}}'.",
   "input_data_is_invalid": "De opgegeven gegevens zijn ongeldig!",
   "refreshStructure": "Verbeter de structuur van groepen waaraan geen gevechtstaken zijn toegewezen.",
-  "failedOnCsvField": "Fout in element {{element}}. Het element is niet correct opgeslagen."
+  "failedOnCsvField": "Fout in element {{element}}. Het element is niet correct opgeslagen.",
+  "youCannotDeleteYourself": "Je kunt je eigen account niet verwijderen.",
+  "account": "Rekening",
+  "generate": "Genereren"
 }

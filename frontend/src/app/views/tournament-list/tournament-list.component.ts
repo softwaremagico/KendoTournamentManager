@@ -3,7 +3,6 @@ import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
 import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
 import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
 
@@ -25,7 +24,7 @@ import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
-import {BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 
@@ -48,6 +47,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   protected pageSizes: number[] = [10, 25, 50, 100];
   protected tournaments: Tournament[];
   protected target: Tournament | null;
+  protected confirm: boolean = false;
 
   protected loading: boolean = false;
   @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
@@ -132,59 +132,20 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.target = tournament;
   }
 
-  deleteElement(tournament: Tournament, confirmed: boolean): void {
-    if (tournament) {
-      this.openDialog(this.translateService.translate('competitionDelete'), Action.Delete, tournament);
+  deleteElement(tournaments: Tournament[], confirmed: boolean): void {
+    if (tournaments) {
+      combineLatest(tournaments.map(tournament => this.tournamentService.delete(tournament))).subscribe({
+        next: (): void => {
+          this.loadData();
+          this.transloco.selectTranslate('infoTournamentDeleted').subscribe(
+            translation => {
+              this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
+            }
+          );
+        },
+        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      });
     }
-  }
-
-  openDialog(title: string, action: Action, tournament: Tournament): void {
-    const dialogRef = this.dialog.open(TournamentDialogBoxComponent, {
-      width: '600px',
-      data: {
-        title: title, action: action, entity: tournament
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result?.action == Action.Add) {
-        this.addRowData(result.data);
-      } else if (result?.action == Action.Update) {
-        this.updateRowData(result.data);
-      } else if (result?.action == Action.Delete) {
-        this.deleteRowData(result.data);
-        this.userSessionService.setSelectedTournament(undefined);
-      }
-    });
-  }
-
-  addRowData(tournament: Tournament): void {
-    this.tournamentService.add(tournament).subscribe((_tournament: Tournament): void => {
-      //If data is not already added though table webservice.
-      this.loadData();
-      this.target = null;
-      this.messageService.infoMessage('infoTournamentStored');
-    });
-  }
-
-  updateRowData(tournament: Tournament): void {
-    this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
-        this.loadData();
-        this.target = null;
-        this.messageService.infoMessage('infoTournamentUpdated');
-      }
-    );
-  }
-
-  deleteRowData(tournament: Tournament): void {
-    this.tournamentService.delete(tournament).subscribe((): void => {
-        this.messageService.infoMessage('infoTournamentDeleted');
-        this.loadData();
-        this.target = null;
-      }
-    );
   }
 
   addRoles(tournament: Tournament): void {
@@ -302,7 +263,12 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
           tournament.finishedAt = new Date();
         }
       }
-      this.updateRowData(tournament);
+      this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
+          this.loadData();
+          this.target = null;
+          this.messageService.infoMessage('infoTournamentUpdated');
+        }
+      );
     }
   }
 
@@ -366,7 +332,17 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  onSaved() {
-    //this.addRowData(result.data);
+  onSaved(tournament: Tournament) {
+    //Saved already on the popup.
+    this.biitSnackbarService.showNotification(this.transloco.translate('infoTournamentStored'), NotificationType.INFO);
+    this.loadData();
+    this.target = null;
+  }
+
+  getTournamentNames(tournaments: Tournament[]): string {
+    if (tournaments) {
+      return tournaments.map(tournament => tournament.name).join(', ');
+    }
+    return "";
   }
 }

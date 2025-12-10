@@ -11,11 +11,9 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./views/login/login.module').then(m => m.LoginModule),
   },
-  {path: 'clubs', component: ClubListComponent, canActivate: [LoggedIn]},
-  {path: 'users', component: AuthenticatedUserListComponent, canActivate: [LoggedIn]},
-  {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedIn]},
+  {path: 'register/clubs', component: ClubListComponent, canActivate: [LoggedIn]},
   {
-    path: 'participants',
+    path: 'register/participants',
     loadChildren: () => import('./views/participant-list/participant-list.module').then(m => m.ParticipantListModule),
     canActivate: [LoggedIn]
   },
@@ -24,6 +22,8 @@ const routes: Routes = [
     loadChildren: () => import('./views/tournament-list/tournament-list.module').then(m => m.TournamentListModule),
     canActivate: [LoggedIn]
   },
+  {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedIn]},
+  {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedIn]},
 ];
 
 @NgModule({

@@ -33,4 +33,9 @@ export class Constants {
       public static readonly LOGOUT: string = 'logout';
     }
   }
+
+  public static readonly PASSWORDS = class {
+    public static readonly MIN_LENGTH = 12
+    public static readonly MAX_LENGTH = 25
+  }
 }

@@ -14,9 +14,10 @@
                 [title]="t('tournamentAdd')"
                 (click)="addElement()"
         ></button>
-        <button id="button-minus" biit-icon icon="minus" *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
+        <button id="button-minus" biit-icon icon="minus" class="warning"
+                *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
                 [title]="t('delete')"
-                (click)="deleteElement(table.selectedRows[0], false)"
+                (click)="confirm=true"
                 [disabled]="!table.selectedRows.length"
         ></button>
         <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
@@ -103,10 +104,24 @@
       </ng-template>
     </biit-datatable>
   </div>
-</ng-container>
 
-<tournament-form-popup *ngIf="target"
-                       [tournament]="target"
-                       (onClosed)="this.target = null"
-                       (onSaved)="onSaved()"
-/>
+  <tournament-form-popup *ngIf="target"
+                         [tournament]="target"
+                         (onClosed)="this.target = null"
+                         (onSaved)="onSaved($event)"
+  />
+
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirm"
+              no-header
+  >
+    <div class="vertical">
+      <div>{{ t('t.tournamentDeleteQuestion') }}</div>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('t.cancel') }}</button>
+        <button id="confirm-delete-button" biit-button primary
+                (click)="deleteElement(table.selectedRows, true)">{{ t('t.delete', {name: getTournamentNames(table.selectedRows)}) }}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+</ng-container>

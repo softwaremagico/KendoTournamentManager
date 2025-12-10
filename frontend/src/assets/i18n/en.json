@@ -742,5 +742,8 @@
   "newVersionAvailable": "Version '{{newVersion}}' is available! Current version is '{{currentVersion}}'",
   "input_data_is_invalid": "Provided data are invalid!",
   "refreshStructure": "Correct the structure of groups that do not have any assigned fight.",
-  "failedOnCsvField": "Error on element {{element}}. Element not saved correctly."
+  "failedOnCsvField": "Error on element {{element}}. Element not saved correctly.",
+  "youCannotDeleteYourself": "You can not delete your own account.",
+  "account": "Account",
+  "generate": "Generate"
 }

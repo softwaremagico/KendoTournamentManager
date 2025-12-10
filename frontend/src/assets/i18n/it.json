@@ -731,5 +731,8 @@
   "newVersionAvailable": "La versione '{{newVersion}}' è disponibile! La versione attuale è '{{currentVersion}}'.",
   "input_data_is_invalid": "I dati forniti non sono validi!",
   "refreshStructure": "Correggere la struttura dei gruppi a cui non è assegnato alcun combattimento.",
-  "failedOnCsvField": "Errore nell'elemento {{element}}. L'elemento non è stato salvato correttamente."
+  "failedOnCsvField": "Errore nell'elemento {{element}}. L'elemento non è stato salvato correttamente.",
+  "youCannotDeleteYourself": "Non puoi eliminare il tuo account.",
+  "account": "Account",
+  "generate": "Genera"
 }

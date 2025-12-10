@@ -10,6 +10,8 @@ import {combineLatest} from "rxjs";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {InputLimits} from "../../utils/input-limits";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
+import {TournamentService} from "../../services/tournament.service";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 
 @Component({
   selector: 'tournament-form',
@@ -56,7 +58,8 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   protected saving: boolean = false;
 
 
-  constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService) {
+  constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
+              private tournamentService: TournamentService,) {
     super(rbacService)
   }
 
@@ -147,6 +150,28 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     if (!this.validate()) {
       this.biitSnackbarService.showNotification(this.transloco.translate('v.validationFailed'), NotificationType.WARNING);
       return;
+    }
+
+    this.saving = true;
+
+    if (this.tournament.id) {
+      this.tournamentService.update(this.tournament).subscribe({
+        next: (tournament: Tournament): void => {
+          this.onSaved.emit(tournament);
+        },
+        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      }).add(() => {
+        this.saving = false;
+      });
+    }else{
+      this.tournamentService.add(this.tournament).subscribe({
+        next: (tournament: Tournament): void => {
+          this.onSaved.emit(tournament);
+        },
+        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      }).add(() => {
+        this.saving = false;
+      });
     }
   }
 

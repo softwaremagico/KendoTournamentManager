@@ -66,6 +66,7 @@ export class ActivityService {
     this.removeActivity(adminActivities, RbacActivity.DELETE_USER);
     this.removeActivity(adminActivities, RbacActivity.EDIT_LOCKED_TOURNAMENT);
     this.removeActivity(adminActivities, RbacActivity.LINK_QR_CODE);
+    this.removeActivity(adminActivities, RbacActivity.UPDATE_OTHERS_PASSWORD);
     return adminActivities;
   }
 

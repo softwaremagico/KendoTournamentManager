@@ -747,5 +747,8 @@
   "newVersionAvailable": "La versió '{{newVersion}}' està disponible! La versió actual és '{{currentVersion}}'.",
   "input_data_is_invalid": "Les dades proporcionades no són vàlides!",
   "refreshStructure": "Corrige la estructura de los grupos que no tienen ningún combate asignado.",
-  "failedOnCsvField": "Error a l'element {{element}}. L'element no s'ha salvat correctament."
+  "failedOnCsvField": "Error a l'element {{element}}. L'element no s'ha salvat correctament.",
+  "youCannotDeleteYourself": "No podeu suprimir el vostre compte.",
+  "account": "Compte",
+  "generate": "Generar"
 }

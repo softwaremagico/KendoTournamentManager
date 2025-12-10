@@ -2,5 +2,7 @@
   "validationFailed": "Errore di convalida. Controlla se qualche campo è vuoto o non valido.",
   "dataIsMandatory": "Questo campo è obbligatorio.",
   "minLengthError": "I dati inseriti sono troppo brevi.",
-  "maxLengthError": "I dati inseriti sono troppo grandi."
+  "maxLengthError": "I dati inseriti sono troppo grandi.",
+  "passwordMismatch": "Le password non corrispondono.",
+  "usernameInvalid": "Il nome de utente non è in un formato valido. Rimuovi eventuali spazi."
 }

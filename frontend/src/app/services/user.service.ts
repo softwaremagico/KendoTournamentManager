@@ -51,7 +51,6 @@ export class UserService {
         tap({
           next: (_authenticatedUser: AuthenticatedUser) => {
             this.loggerService.info(`adding user ${_authenticatedUser}`);
-            this.messageService.infoMessage("infoAuthenticatedUserStored");
           },
           error: (error: { status: any; }): void => {
             this.systemOverloadService.isBusy.next(false);
@@ -101,6 +100,21 @@ export class UserService {
     const url: string = `${this.baseUrl}/password`;
     return this.http.post<void>(url, {
       oldPassword: oldPassword,
+      newPassword: newPassword
+    })
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Updating password!`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Updating password!`))
+      );
+  }
+
+  updateUserPassword(username: string, newPassword: string): Observable<void> {
+    const url: string = `${this.baseUrl}/${username}/password`;
+    return this.http.post<void>(url, {
       newPassword: newPassword
     })
       .pipe(

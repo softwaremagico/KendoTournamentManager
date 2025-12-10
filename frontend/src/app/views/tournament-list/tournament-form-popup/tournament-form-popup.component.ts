@@ -23,11 +23,8 @@ export class TournamentFormPopupComponent implements OnInit {
   @Output() onSaved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Output() onError: EventEmitter<any> = new EventEmitter<any>();
 
-  protected readonly TournamentFormValidationFields = TournamentFormValidationFields;
   protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;
-
-  protected saving: boolean = false;
 
   constructor(protected sessionService: UserSessionService,
               protected transloco: TranslocoService) {
