@@ -297,7 +297,7 @@ public class AuthApi {
             throws InterruptedException {
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
-            authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
+            authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword(), authentication.getName());
         } catch (Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
@@ -314,7 +314,7 @@ public class AuthApi {
             throws InterruptedException {
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
-            authenticatedUserController.updatePassword(username, request.getNewPassword(), request.getNewPassword());
+            authenticatedUserController.updatePassword(authentication.getName(), username, request.getNewPassword(), request.getNewPassword());
         } catch (Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }

@@ -52,17 +52,17 @@ public class PasswordTests extends AbstractTestNGSpringContextTests {
 
     @Test(expectedExceptions = UserNotFoundException.class)
     public void updatePasswordInvalidUser() {
-        authenticatedUserController.updatePassword(USER_NAME + "_error", USER_PASSWORD, USER_NEW_PASSWORD);
+        authenticatedUserController.updatePassword(USER_NAME + "_error", USER_PASSWORD, USER_NEW_PASSWORD, null);
     }
 
     @Test(expectedExceptions = InvalidPasswordException.class)
     public void updatePasswordInvalidOld() {
-        authenticatedUserController.updatePassword(USER_NAME, USER_PASSWORD + "_error", USER_NEW_PASSWORD);
+        authenticatedUserController.updatePassword(USER_NAME, USER_PASSWORD + "_error", USER_NEW_PASSWORD, null);
     }
 
     @Test
     public void updatePasswordCorrectOld() {
-        authenticatedUserController.updatePassword(USER_NAME, USER_PASSWORD, USER_NEW_PASSWORD);
-        authenticatedUserController.updatePassword(USER_NAME, USER_NEW_PASSWORD, USER_PASSWORD);
+        authenticatedUserController.updatePassword(USER_NAME, USER_PASSWORD, USER_NEW_PASSWORD, null);
+        authenticatedUserController.updatePassword(USER_NAME, USER_NEW_PASSWORD, USER_PASSWORD, null);
     }
 }

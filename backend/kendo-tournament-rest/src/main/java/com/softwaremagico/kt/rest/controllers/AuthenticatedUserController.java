@@ -59,7 +59,7 @@ public class AuthenticatedUserController {
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
         try {
             try {
-                return authenticatedUserProvider.save(username, firstName, lastName, password, roles);
+                return authenticatedUserProvider.save(creator, username, firstName, lastName, password, roles);
             } finally {
                 KendoTournamentLogger.info(this.getClass(), "User '{}' created by '{}'.", username, creator);
             }
@@ -76,7 +76,7 @@ public class AuthenticatedUserController {
         return createUser(creator, username, firstName, lastName, password, roleTags);
     }
 
-    public void updatePassword(String username, String oldPassword, String newPassword) {
+    public void updatePassword(String username, String oldPassword, String newPassword, String updater) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
 
@@ -93,6 +93,7 @@ public class AuthenticatedUserController {
 
         //Update the new password.
         authenticatedUser.setPassword(newPassword);
+        authenticatedUser.setUpdatedBy(updater);
         authenticatedUserProvider.save(authenticatedUser);
         KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", user.getUsername());
     }
@@ -105,6 +106,7 @@ public class AuthenticatedUserController {
         if (!Objects.equals(user.getUsername(), updater)) {
             user.setRoles(createUserRequest.getRoles());
         }
+        user.setUpdatedBy(updater);
         KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}' with roles '{}'.", user.getUsername(),
                 updater, user.getRoles());
         try {

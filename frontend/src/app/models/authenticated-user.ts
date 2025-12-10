@@ -1,7 +1,8 @@
 import {UserRoles} from "../services/rbac/user-roles";
 import {DatabaseObject} from "./database-object";
+import {Element} from "./element";
 
-export class AuthenticatedUser extends DatabaseObject {
+export class AuthenticatedUser extends Element {
   public username: string;
   public password: string;
   public name: string;
@@ -18,7 +19,7 @@ export class AuthenticatedUser extends DatabaseObject {
   }
 
   public static override copy(from: AuthenticatedUser, to: AuthenticatedUser): void {
-    super.copy(from, to);
+    Element.copy(from, to);
     to.username = from.username;
     to.password = from.password;
     to.name = from.name;
