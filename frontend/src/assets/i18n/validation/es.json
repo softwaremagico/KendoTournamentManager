@@ -4,5 +4,6 @@
   "minLengthError": "Los datos introducidos son demasiado cortos.",
   "maxLengthError": "Los datos introducidos son demasiado grandes.",
   "passwordMismatch": "Las contraseñas no coinciden.",
-  "usernameInvalid": "El nombre de usuario tiene un formato inválido. Por favor, borra cualquier espacio vacío."
+  "usernameInvalid": "El nombre de usuario tiene un formato inválido. Por favor, borra cualquier espacio vacío.",
+  "formatInvalid": "El formato del campo es inválido."
 }

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
-import {TournamentFormValidationFields} from "../../utils/validations/tournament-form-validation-fields";
+import {TournamentFormValidationFields} from "./tournament-form-validation-fields";
 import {ScoreType} from "../../models/score-type";
 import {TournamentType} from "../../models/tournament-type";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -46,6 +46,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   selectedType: TournamentType | undefined;
 
   protected readonly TournamentType = TournamentType;
+  protected readonly Type = Type;
 
   typeLoop: TournamentType = TournamentType.LOOP;
   typeLeague: TournamentType = TournamentType.LEAGUE;
@@ -118,14 +119,15 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     if (!this.tournament.name || this.tournament.name.length == 0) {
       verdict = false;
       this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    }
-    if (this.tournament.name && this.tournament.name.length < this.TOURNAMENT_NAME_MIN_LENGTH) {
-      verdict = false;
-      this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
-    }
-    if (this.tournament.name && this.tournament.name.length > this.TOURNAMENT_NAME_MAX_LENGTH) {
-      verdict = false;
-      this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
+    }else {
+      if (this.tournament.name && this.tournament.name.length < this.TOURNAMENT_NAME_MIN_LENGTH) {
+        verdict = false;
+        this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
+      }
+      if (this.tournament.name && this.tournament.name.length > this.TOURNAMENT_NAME_MAX_LENGTH) {
+        verdict = false;
+        this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
+      }
     }
     if (this.tournament!.shiaijos! > this.TOURNAMENT_MAX_SHIAIJO) {
       verdict = false;
@@ -163,7 +165,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
       }).add(() => {
         this.saving = false;
       });
-    }else{
+    } else {
       this.tournamentService.add(this.tournament).subscribe({
         next: (tournament: Tournament): void => {
           this.onSaved.emit(tournament);
@@ -175,5 +177,4 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  protected readonly Type = Type;
 }

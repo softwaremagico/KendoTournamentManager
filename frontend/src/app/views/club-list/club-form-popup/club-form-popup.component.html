@@ -1,0 +1,13 @@
+<biit-popup id="club-popup"
+            [title]="club.id ? t('t.clubEdit') : t('t.clubAdd')"
+            (onClosed)="onClosed.emit()"
+            closable sixty-view
+            *transloco="let t"
+>
+  <club-form class="form-container"
+             [club]="club"
+             (onSaved)="onSaved"
+             [onSaved]="onSaved"
+             (onError)="onError"
+             [onError]="onError"></club-form>
+</biit-popup>

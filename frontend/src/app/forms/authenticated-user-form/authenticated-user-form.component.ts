@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../models/authenticated-user";
-import {AuthenticatedUserFormValidationFields} from "../../utils/validations/authenticated-user-form-validation-fields";
+import {AuthenticatedUserFormValidationFields} from "./authenticated-user-form-validation-fields";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";

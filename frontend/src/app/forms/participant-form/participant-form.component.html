@@ -1,0 +1,49 @@
+<ng-container id="participant-form" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div class="row">
+      <biit-input-text id="participant-name" [(ngModel)]="participant.name"
+                       [placeholder]="t('participantName')"
+                       [required]="true"
+                       [minLength]="PARTICIPANT_NAME_MIN_LENGTH"
+                       [maxlength]="PARTICIPANT_NAME_MAX_LENGTH"
+                       error="{{errors | mapGet: ParticipantFormValidationFields.NAME_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="participant-lastname" [(ngModel)]="participant.lastname"
+                       [placeholder]="t('lastname')"
+                       [required]="true"
+                       [minLength]="PARTICIPANT_LASTNAME_MIN_LENGTH"
+                       [maxlength]="PARTICIPANT_LASTNAME_MAX_LENGTH"
+                       error="{{errors | mapGet: ParticipantFormValidationFields.LASTNAME_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="participant-idcard" [(ngModel)]="participant.idCard"
+                       [placeholder]="t('idCard')"
+                       [required]="true"
+                       [maxlength]="PARTICIPANT_ID_MAX_LENGTH"
+                       error="{{errors | mapGet: ParticipantFormValidationFields.ID_CARD_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-dropdown id="participant-club"
+                     [ngModel]="participant.club?.name | dropdownInterface: translatedClubs"
+                     (ngModelChange)="setClub($event.value)"
+                     [data]="translatedClubs"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('club')"
+                     [descriptionLabel]="'description'"
+                     [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-dropdown>
+    </div>
+    <button biit-button id="participant-button-save" (click)="onSave()"
+            [disabled]="saving || !(RbacActivity.EDIT_PARTICIPANT | hasPermission)">
+      {{ t('saveButton') }}
+    </button>
+  </div>
+</ng-container>

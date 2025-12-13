@@ -1,0 +1,13 @@
+<biit-popup id="participant-popup"
+            [title]="participant.id ? t('t.participantEdit') : t('t.participantAdd')"
+            (onClosed)="onClosed.emit()"
+            closable sixty-view
+            *transloco="let t"
+>
+  <participant-form class="form-container"
+                    [participant]="participant"
+                    (onSaved)="onSaved"
+                    [onSaved]="onSaved"
+                    (onError)="onError"
+                    [onError]="onError"></participant-form>
+</biit-popup>

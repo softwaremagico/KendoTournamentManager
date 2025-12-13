@@ -4,5 +4,6 @@
   "minLengthError": "Die eingegebenen Daten sind zu kurz.",
   "maxLengthError": "Die eingegebenen Daten sind zu lang.",
   "passwordMismatch": "Die Passwörter stimmen nicht überein.",
-  "usernameInvalid": "Der Benutzername hat ein ungültiges Format. Bitte entfernen Sie alle Leerzeichen."
+  "usernameInvalid": "Der Benutzername hat ein ungültiges Format. Bitte entfernen Sie alle Leerzeichen.",
+  "formatInvalid": "Das Feldformat ist ungültig."
 }

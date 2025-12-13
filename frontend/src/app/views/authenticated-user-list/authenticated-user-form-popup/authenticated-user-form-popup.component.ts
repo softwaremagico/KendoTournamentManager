@@ -3,7 +3,7 @@ import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {
   AuthenticatedUserFormValidationFields
-} from "../../../utils/validations/authenticated-user-form-validation-fields";
+} from "../../../forms/authenticated-user-form/authenticated-user-form-validation-fields";
 
 @Component({
   selector: 'authenticated-user-form-popup',

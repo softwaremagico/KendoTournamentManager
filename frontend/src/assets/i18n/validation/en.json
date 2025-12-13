@@ -4,5 +4,6 @@
   "minLengthError": "Data is too short.",
   "maxLengthError": "Data is too big.",
   "passwordMismatch": "Passwords do not match.",
-  "usernameInvalid": "The username is in an invalid format. Please remove any spaces."
+  "usernameInvalid": "The username is in an invalid format. Please remove any spaces.",
+  "formatInvalid": "The field format is invalid."
 }
