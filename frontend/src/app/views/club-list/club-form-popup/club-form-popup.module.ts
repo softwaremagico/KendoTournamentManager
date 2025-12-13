@@ -12,6 +12,9 @@ import {ClubFormModule} from "../../../forms/club-form/club-form.module";
   declarations: [
     ClubFormPopupComponent
   ],
+  exports: [
+    ClubFormPopupComponent
+  ],
   imports: [
     CommonModule,
     BiitPopupModule,

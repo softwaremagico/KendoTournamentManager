@@ -119,7 +119,7 @@
       <div class="flex-grow horizontal buttons-row">
         <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('t.cancel') }}</button>
         <button id="confirm-delete-button" biit-button primary
-                (click)="deleteElement(table.selectedRows, true)">{{ t('t.delete', {name: getTournamentNames(table.selectedRows)}) }}
+                (click)="deleteElements(table.selectedRows, true)">{{ t('t.delete', {name: getTournamentNames(table.selectedRows)}) }}
         </button>
       </div>
     </div>

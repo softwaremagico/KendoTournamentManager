@@ -11,9 +11,9 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./views/login/login.module').then(m => m.LoginModule),
   },
-  {path: 'register/clubs', component: ClubListComponent, canActivate: [LoggedIn]},
+  {path: 'registry/clubs', component: ClubListComponent, canActivate: [LoggedIn]},
   {
-    path: 'register/participants',
+    path: 'registry/participants',
     loadChildren: () => import('./views/participant-list/participant-list.module').then(m => m.ParticipantListModule),
     canActivate: [LoggedIn]
   },

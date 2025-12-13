@@ -1,147 +1,154 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
+import {AfterViewInit, Component} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {SelectionModel} from "@angular/cdk/collections";
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
-import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
 import {MessageService} from "../../services/message.service";
-import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
-import {Action} from "../../action";
-import {TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
+import {combineLatest} from "rxjs";
+import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {DatePipe} from "@angular/common";
+import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
+import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 
 
 @Component({
   selector: 'app-club-list',
   templateUrl: './club-list.component.html',
-  styleUrls: ['./club-list.component.scss']
+  styleUrls: ['./club-list.component.scss'],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      multi: true,
+      useValue: {scope: '', alias: 't'}
+    }, TableColumnTranslationPipe, CustomDatePipe, DatePipe
+  ]
 })
-export class ClubListComponent extends RbacBasedComponent implements OnInit {
+export class ClubListComponent extends RbacBasedComponent implements AfterViewInit {
 
-  basicTableData: BasicTableData<Club> = new BasicTableData<Club>("Club");
+  protected columns: DatatableColumn[] = [];
+  protected pageSize: number = 10;
+  protected pageSizes: number[] = [10, 25, 50, 100];
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  protected loading: boolean = false;
+  protected clubs: Club[];
+  protected target: Club | null;
+  protected confirm: boolean = false;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
-              private translateService: TranslocoService, rbacService: RbacService) {
+              private transloco: TranslocoService, rbacService: RbacService, private _datePipe: DatePipe,
+              private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
     super(rbacService);
-    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
-      'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.columnsTags = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
-      'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.visibleColumns = ['name', 'country', 'city'];
-    this.basicTableData.selection = new SelectionModel<Club>(false, []);
-    this.basicTableData.dataSource = new MatTableDataSource<Club>();
   }
 
-  ngOnInit(): void {
-    this.showAllElements();
+  datePipe() {
+    return {
+      transform: (value: any) => {
+        !value ? value = 0 : value;
+        return this._datePipe.transform(value, 'dd/MM/yyyy HH:mm:ss');
+      }
+    }
   }
 
-  showAllElements(): void {
-    this.clubService.getAll().subscribe((clubs: Club[]): void => {
-      clubs.sort((a: Club, b: Club) => a.name.localeCompare(b.name));
-      this.basicTableData.dataSource.data = clubs;
+  ngAfterViewInit() {
+    combineLatest(
+      [
+        this.transloco.selectTranslate('id'),
+        this.transloco.selectTranslate('name'),
+        this.transloco.selectTranslate('country'),
+        this.transloco.selectTranslate('city'),
+        this.transloco.selectTranslate('address'),
+        this.transloco.selectTranslate('email'),
+        this.transloco.selectTranslate('phone'),
+        this.transloco.selectTranslate('web'),
+        this.transloco.selectTranslate('createdBy'),
+        this.transloco.selectTranslate('createdAt'),
+        this.transloco.selectTranslate('updatedBy'),
+        this.transloco.selectTranslate('updatedAt'),
+      ]
+    ).subscribe(([id, name, country, city, address, email, phone, web, createdBy, createdAt, updatedBy, updatedAt]) => {
+      this.columns = [
+        new DatatableColumn(id, 'id', false, 80),
+        new DatatableColumn(name, 'name'),
+        new DatatableColumn(country, 'country'),
+        new DatatableColumn(city, 'city'),
+        new DatatableColumn(address, 'address', false),
+        new DatatableColumn(email, 'email', false),
+        new DatatableColumn(phone, 'phone', false),
+        new DatatableColumn(web, 'web', false),
+        new DatatableColumn(createdBy, 'createdBy', false),
+        new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
+        new DatatableColumn(updatedBy, 'updatedBy', false),
+        new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+      ];
+      this.loadData();
+    });
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.systemOverloadService.isTransactionalBusy.next(true);
+    this.clubService.getAll().subscribe({
+      next: (_clubs: Club[]): void => {
+        this.clubs = _clubs.map(_club => Club.clone(_club));
+      },
+      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+    }).add(() => {
+      this.loading = false;
+      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
   addElement(): void {
-    this.openDialog(this.translateService.translate('clubAdd'), Action.Add, new Club());
+    const club: Club = new Club();
+    this.target = club;
   }
 
-  editElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.translate('clubEdit'), Action.Update, this.basicTableData.selectedElement);
+  editElement(club: Club): void {
+    this.target = club;
+  }
+
+  deleteElements(clubs: Club[]): void {
+    if (clubs) {
+      combineLatest(clubs.map(club => this.clubService.delete(club))).subscribe({
+        next: (): void => {
+          this.loadData();
+          this.transloco.selectTranslate('infoClubDeleted').subscribe(
+            translation => {
+              this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
+            }
+          );
+        },
+        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      });
     }
-  }
-
-  deleteElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.translate('clubDelete'), Action.Delete, this.basicTableData.selectedElement);
-    }
-  }
-
-  setSelectedItem(row: Club): void {
-    if (row === this.basicTableData.selectedElement) {
-      this.basicTableData.selectedElement = undefined;
-    } else {
-      this.basicTableData.selectedElement = row;
-    }
-  }
-
-  openDialog(title: string, action: Action, club: Club): void {
-    const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
-      panelClass: 'pop-up-panel',
-      width: '400px',
-      data: {title: title, action: action, entity: club}
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result?.action == Action.Add) {
-        this.addRowData(result.data);
-      } else if (result?.action == Action.Update) {
-        this.updateRowData(result.data);
-      } else if (result?.action == Action.Delete) {
-        this.deleteRowData(result.data);
-      }
-    });
-  }
-
-  addRowData(club: Club): void {
-    this.clubService.add(club).subscribe((_club: Club): void => {
-      //If data is not already added though table webservice.
-      if (this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _club.id) < 0) {
-        this.basicTableData.dataSource.data.push(_club);
-        this.basicTableData.dataSource._updateChangeSubscription();
-      }
-      this.basicTableData.selectItem(_club);
-      this.basicTableData.selectedElement = _club;
-      this.messageService.infoMessage('infoClubStored');
-    });
-  }
-
-  updateRowData(club: Club): void {
-    this.clubService.update(club).subscribe((_club: Club): void => {
-        this.messageService.infoMessage('infoClubUpdated');
-        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _club.id);
-        if (index >= 0) {
-          this.basicTableData.dataSource.data[index] = _club;
-          this.basicTableData.dataSource._updateChangeSubscription();
-        }
-        this.basicTableData.selectedElement = _club;
-      this.basicTableData.selectItem(_club);
-      }
-    );
-  }
-
-  deleteRowData(club: Club): void {
-    this.clubService.delete(club).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_club: Club): boolean => _club.id !== club.id);
-        this.messageService.infoMessage('infoClubDeleted');
-        this.basicTableData.selectedElement = undefined;
-      }
-    );
-  }
-
-  disableRow(argument: any): boolean {
-    return false;
   }
 
   showCompetitorsClassification(): void {
-    if (this.basicTableData.selectedElement) {
+    if (this.target) {
       this.dialog.open(CompetitorsRankingComponent, {
         width: '85vw',
-        data: {club: this.basicTableData.selectedElement, showIndex: true}
+        data: {club: this.target, showIndex: true}
       });
     }
+  }
+
+  getClubNames(clubs: Club[]): string {
+    if (clubs) {
+      return clubs.map(club => club.name).join(', ');
+    }
+    return "";
+  }
+
+  onSaved(club: Club) {
+    //Saved already on the popup.
+    this.biitSnackbarService.showNotification(this.transloco.translate('infoClubStored'), NotificationType.INFO);
+    this.loadData();
+    this.target = null;
   }
 }

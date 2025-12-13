@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, QueryList, TemplateRef, ViewChildren} from '@angular/core';
+import {AfterViewInit, Component, QueryList, TemplateRef, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -40,7 +40,7 @@ import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
     }, TableColumnTranslationPipe, CustomDatePipe, DatePipe
   ]
 })
-export class TournamentListComponent extends RbacBasedComponent implements OnInit, AfterViewInit {
+export class TournamentListComponent extends RbacBasedComponent implements AfterViewInit {
 
   protected columns: DatatableColumn[] = [];
   protected pageSize: number = 10;
@@ -53,14 +53,11 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService, private translateService: TranslocoService, public dialog: MatDialog,
+              private rankingService: RankingService, public dialog: MatDialog,
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private achievementsService: AchievementsService, private transloco: TranslocoService, private customDatePipe: CustomDatePipe, private _datePipe: DatePipe,
+              private achievementsService: AchievementsService, private transloco: TranslocoService, private _datePipe: DatePipe,
               private biitSnackbarService: BiitSnackbarService, private tableColumnTranslationPipe: TableColumnTranslationPipe) {
     super(rbacService);
-  }
-
-  ngOnInit(): void {
   }
 
   datePipe() {
@@ -132,7 +129,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.target = tournament;
   }
 
-  deleteElement(tournaments: Tournament[], confirmed: boolean): void {
+  deleteElements(tournaments: Tournament[], confirmed: boolean): void {
     if (tournaments) {
       combineLatest(tournaments.map(tournament => this.tournamentService.delete(tournament))).subscribe({
         next: (): void => {
