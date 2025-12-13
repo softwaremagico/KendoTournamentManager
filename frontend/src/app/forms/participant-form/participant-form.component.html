@@ -21,7 +21,7 @@
       ></biit-input-text>
     </div>
     <div class="row">
-      <biit-input-text id="participant-idcard" [(ngModel)]="participant.idCard"
+      <biit-input-text id="participant-id-card" [(ngModel)]="participant.idCard"
                        [placeholder]="t('idCard')"
                        [required]="true"
                        [maxlength]="PARTICIPANT_ID_MAX_LENGTH"
@@ -30,8 +30,8 @@
       ></biit-input-text>
     </div>
     <div class="row">
-      <biit-dropdown id="participant-club"
-                     [ngModel]="participant.club?.name | dropdownInterface: translatedClubs"
+      <biit-dropdown id="participant-club" *ngIf="clubs"
+                     [ngModel]="(participant.club?.id + '') | dropdownInterface: translatedClubs"
                      (ngModelChange)="setClub($event.value)"
                      [data]="translatedClubs"
                      [label]="'label'"

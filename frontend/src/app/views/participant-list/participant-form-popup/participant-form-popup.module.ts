@@ -12,6 +12,9 @@ import {ParticipantFormModule} from "../../../forms/participant-form/participant
   declarations: [
     ParticipantFormPopupComponent
   ],
+  exports: [
+    ParticipantFormPopupComponent
+  ],
   imports: [
     CommonModule,
     BiitPopupModule,

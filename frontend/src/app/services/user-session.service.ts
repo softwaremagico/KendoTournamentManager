@@ -157,6 +157,10 @@ export class UserSessionService {
     return null;
   }
 
+  setLocalUser(user: AuthenticatedUser | undefined) {
+    localStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`, JSON.stringify(user));
+  }
+
   getLocalUser(): string | null {
     return localStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
   }

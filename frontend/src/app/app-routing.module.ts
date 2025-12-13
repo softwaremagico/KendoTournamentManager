@@ -4,6 +4,8 @@ import {ClubListComponent} from "./views/club-list/club-list.component";
 import {LoggedIn} from './interceptors/logged-in.service';
 import {AuthenticatedUserListComponent} from "./views/authenticated-user-list/authenticated-user-list.component";
 import {PasswordsComponent} from "./views/passwords/passwords.component";
+import {ParticipantStatisticsComponent} from "./views/participant-statistics/participant-statistics.component";
+import {TournamentStatisticsComponent} from "./views/tournament-statistics/tournament-statistics.component";
 
 const routes: Routes = [
   {path: '', redirectTo: '/tournaments', pathMatch: 'full'},
@@ -24,6 +26,8 @@ const routes: Routes = [
   },
   {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedIn]},
   {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedIn]},
+  {path: 'tournaments/statistics', component: TournamentStatisticsComponent, canActivate: [LoggedIn]},
+  {path: 'participants/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedIn]},
 ];
 
 @NgModule({

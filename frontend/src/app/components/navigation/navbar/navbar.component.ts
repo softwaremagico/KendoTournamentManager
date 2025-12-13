@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
 import {provideTranslocoScope, TranslocoService} from '@ngneat/transloco';
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
@@ -20,7 +20,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
   providers: [provideTranslocoScope({scope: 'navigation', alias: 't'})]
 })
 
-export class NavbarComponent implements AfterViewInit {
+export class NavbarComponent implements OnInit {
   protected readonly Constants = Constants;
 
   @ViewChild('contextMenu') contextMenu: ContextMenuComponent<void>;
@@ -39,7 +39,7 @@ export class NavbarComponent implements AfterViewInit {
 
   routes: Route[] = [];
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.user = this.sessionService.getUser();
     this.routes = [
       {
@@ -103,7 +103,6 @@ export class NavbarComponent implements AfterViewInit {
         this.translocoService.selectTranslate(child.title as string, {}, {scope: 'navigation'}).subscribe(value => child.title = value);
       })
     });
-
   }
 
   log(event: any) {

@@ -21,6 +21,7 @@ import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {Constants} from "../../constants";
 import {ClubNamePipe} from "../../pipes/visualization/club-name-pipe";
+import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'app-participant-list',
@@ -167,5 +168,18 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
         }
       });
     }
+  }
+
+  onSaved($event: Participant) {
+    this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantStored'), NotificationType.INFO);
+    this.loadData();
+    this.target = null;
+  }
+
+  getParticipantNames(participants: Participant[]): string {
+    if (participants) {
+      return participants.map(participant => (participant.name + " " + participant.lastname)).join(', ');
+    }
+    return "";
   }
 }

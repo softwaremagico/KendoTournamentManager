@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {Participant} from "../../../models/participant";
 import {ParticipantFormValidationFields} from "../../../forms/participant-form/participant-form-validation-fields";
 import {CsvService} from "../../../services/csv-service";
@@ -10,7 +10,14 @@ import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-th
 @Component({
   selector: 'participant-form-popup',
   templateUrl: './participant-form-popup.component.html',
-  styleUrls: ['./participant-form-popup.component.scss']
+  styleUrls: ['./participant-form-popup.component.scss'],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      multi: true,
+      useValue: {scope: '/', alias: 't'}
+    }
+  ]
 })
 export class ParticipantFormPopupComponent implements OnInit {
   @Input() participant: Participant;

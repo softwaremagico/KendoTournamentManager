@@ -37,7 +37,7 @@
                          [minLength]=LASTNAME_MIN_LENGTH
                          [maxLength]=LASTNAME_MAX_LENGTH
                          [required]="true"
-                         (focusout)="user?.lastname?.trim()"
+                         (focusout)="user.lastname.trim()"
                          error="{{errors | mapGet: AuthenticatedUserFormValidationFields.LASTNAME_MANDATORY}}"
         ></biit-input-text>
       </div>

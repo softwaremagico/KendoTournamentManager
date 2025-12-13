@@ -32,7 +32,7 @@
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
         </button>
-        <mat-divider [vertical]="true"></mat-divider>
+        <mat-divider [vertical]="true" class="extra-menu"></mat-divider>
         <span class="extra-menu">
           <button mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
                   [title]="t('competitorsRanking')"
@@ -49,4 +49,25 @@
       </ng-template>
     </biit-datatable>
   </div>
+
+  <participant-form-popup *ngIf="target"
+                          [participant]="target"
+                          (onClosed)="this.target = null"
+                          (onSaved)="onSaved($event)"
+  />
+
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirm"
+              no-header
+  >
+    <div class="vertical">
+      <span
+        [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getParticipantNames(table.selectedRows)}"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}</button>
+        <button id="confirm-delete-button" biit-button primary
+                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
 </ng-container>

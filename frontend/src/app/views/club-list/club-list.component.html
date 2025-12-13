@@ -49,12 +49,12 @@
               no-header
   >
     <div class="vertical">
-      <div>{{ t('t.clubDeleteQuestion') }}</div>
+      <span [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getClubNames(table.selectedRows)}"></span>
       <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('t.cancel') }}
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}
         </button>
         <button id="confirm-delete-button" biit-button primary
-                (click)="deleteElements(table.selectedRows)">{{ t('t.delete', {name: getClubNames(table.selectedRows)}) }}
+                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
         </button>
       </div>
     </div>

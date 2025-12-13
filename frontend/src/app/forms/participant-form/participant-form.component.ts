@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {InputLimits} from "../../utils/input-limits";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Participant} from "../../models/participant";
@@ -16,7 +16,7 @@ import {ClubService} from "../../services/club.service";
   templateUrl: './participant-form.component.html',
   styleUrls: ['./participant-form.component.scss']
 })
-export class ParticipantFormComponent extends RbacBasedComponent implements OnInit {
+export class ParticipantFormComponent extends RbacBasedComponent {
 
   protected PARTICIPANT_NAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
   protected PARTICIPANT_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
@@ -35,27 +35,28 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   protected readonly ParticipantFormValidationFields = ParticipantFormValidationFields;
   protected translatedClubs: { value: string, label: string, description: string }[] = [];
 
-  clubs: Club[];
+  protected clubs: Club[];
   protected saving: boolean = false;
 
   constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
               private participantService: ParticipantService, private clubService: ClubService) {
     super(rbacService);
+    this.loadClubs();
   }
 
-  ngOnInit() {
-    this.translateClubs();
-  }
-
-  private translateClubs() {
+  private loadClubs() {
     this.clubService.getAll().subscribe((_clubs: Club[]) => {
       this.clubs = _clubs;
-      for (let club of _clubs) {
-        this.translatedClubs.push({
-          value: club.id + "", label: club.name, description: club.country + " (" + club.city + ")"
-        });
-      }
+      this.translateClubs(_clubs);
     });
+  }
+
+  private translateClubs(_clubs: Club[]) {
+    for (let club of _clubs) {
+      this.translatedClubs.push({
+        value: club.id + '', label: club.name, description: club.country + " (" + club.city + ")"
+      });
+    }
   }
 
   protected validate(): boolean {

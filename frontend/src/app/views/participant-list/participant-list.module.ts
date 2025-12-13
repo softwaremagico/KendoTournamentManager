@@ -11,8 +11,11 @@ import {ParticipantListComponent} from "./participant-list.component";
 import {ParticipantRoutingModule} from "./participant-routing.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
-import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {MatDividerModule} from "@angular/material/divider";
+import {TournamentFormPopupModule} from "../tournament-list/tournament-form-popup/tournament-form-popup.module";
+import {ParticipantFormPopupModule} from "./participant-form-popup/participant-form-popup.module";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 
 @NgModule({
   declarations: [ParticipantListComponent],
@@ -30,7 +33,11 @@ import {MatDividerModule} from "@angular/material/divider";
     HasPermissionPipe,
     BiitDatatableModule,
     BiitIconButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    TournamentFormPopupModule,
+    ParticipantFormPopupModule,
+    BiitButtonModule,
+    BiitPopupModule
   ]
 })
 export class ParticipantListModule {
