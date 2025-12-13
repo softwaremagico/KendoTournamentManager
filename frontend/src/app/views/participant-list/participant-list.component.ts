@@ -1,51 +1,100 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTable, MatTableDataSource} from "@angular/material/table";
-import {MatSort} from "@angular/material/sort";
+import {AfterViewInit, Component} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {ParticipantService} from "../../services/participant.service";
-import {SelectionModel} from "@angular/cdk/collections";
-import {ParticipantDialogBoxComponent} from "./participant-dialog-box/participant-dialog-box.component";
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
-import {Action} from "../../action";
-import {TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
+import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
+import {DatePipe} from "@angular/common";
+import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {combineLatest} from "rxjs";
+import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {Constants} from "../../constants";
+import {ClubNamePipe} from "../../pipes/visualization/club-name-pipe";
 
 @Component({
   selector: 'app-participant-list',
   templateUrl: './participant-list.component.html',
-  styleUrls: ['./participant-list.component.scss']
+  styleUrls: ['./participant-list.component.scss'],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      multi: true,
+      useValue: {scope: '', alias: 't'}
+    }, CustomDatePipe, DatePipe, ClubNamePipe
+  ]
 })
-export class ParticipantListComponent extends RbacBasedComponent implements OnInit {
+export class ParticipantListComponent extends RbacBasedComponent implements AfterViewInit {
 
-  basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>("Participant");
+  protected columns: DatatableColumn[] = [];
+  protected pageSize: number = 10;
+  protected pageSizes: number[] = [10, 25, 50, 100];
+  protected participants: Participant[];
+  protected target: Participant | null;
+  protected confirm: boolean = false;
   clubs: Club[];
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  protected loading: boolean = false;
 
   constructor(private router: Router, private userSessionService: UserSessionService,
-              private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
-              private clubService: ClubService, private translateService: TranslocoService, rbacService: RbacService) {
+              private participantService: ParticipantService, public dialog: MatDialog,
+              private clubService: ClubService, private transloco: TranslocoService, rbacService: RbacService,
+              private _datePipe: DatePipe, private _clubNamePipe: ClubNamePipe,
+              private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
     super(rbacService);
-    this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'clubName', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.columnsTags = ['id', 'idCard', 'name', 'lastname', 'club', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.visibleColumns = ['name', 'lastname', 'clubName'];
-    this.basicTableData.selection = new SelectionModel<Participant>(false, []);
-    this.basicTableData.dataSource = new MatTableDataSource<Participant>();
   }
 
-  ngOnInit(): void {
+  datePipe() {
+    return {
+      transform: (value: any) => {
+        !value ? value = 0 : value;
+        return this._datePipe.transform(value, Constants.FORMAT.DATE);
+      }
+    }
+  }
+
+  ngAfterViewInit() {
+    combineLatest(
+      [
+        this.transloco.selectTranslate('id'),
+        this.transloco.selectTranslate('idCard'),
+        this.transloco.selectTranslate('name'),
+        this.transloco.selectTranslate('lastname'),
+        this.transloco.selectTranslate('club'),
+        this.transloco.selectTranslate('createdBy'),
+        this.transloco.selectTranslate('createdAt'),
+        this.transloco.selectTranslate('updatedBy'),
+        this.transloco.selectTranslate('updatedAt'),
+      ]
+    ).subscribe(([id, idCard, name, lastname, clubName, createdBy, createdAt, updatedBy, updatedAt]) => {
+      this.columns = [
+        new DatatableColumn(id, 'id', false, 80),
+        new DatatableColumn(idCard, 'idCard', false),
+        new DatatableColumn(name, 'name'),
+        new DatatableColumn(lastname, 'lastname'),
+        new DatatableColumn(clubName, 'club', true, undefined, undefined, this._clubNamePipe),
+        new DatatableColumn(createdBy, 'createdBy', false),
+        new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
+        new DatatableColumn(updatedBy, 'updatedBy', false),
+        new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+      ];
+      this.loadData();
+    });
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.systemOverloadService.isTransactionalBusy.next(true);
     this.clubService.getAll().subscribe((_clubs: Club[]): void => {
       if (_clubs) {
         _clubs.sort(function (a: Club, b: Club) {
@@ -54,128 +103,66 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
         this.clubs = _clubs
       }
     });
-    this.showAllElements();
-  }
-
-  showAllElements(): void {
-    this.participantService.getAll().subscribe((_participants: Participant[]): void => {
-      if (_participants) {
-        this.basicTableData.dataSource.data = _participants.map((participant: Participant) => Participant.clone(participant));
-      } else {
-        this.basicTableData.dataSource.data = [];
-      }
+    this.participantService.getAll().subscribe({
+      next: (_participants: Participant[]): void => {
+        this.participants = _participants.map(_participant => Participant.clone(_participant));
+      },
+      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+    }).add(() => {
+      this.loading = false;
+      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
   addElement(): void {
-    const participant: Participant = new Participant();
-    this.openDialog(this.translateService.translate('participantAdd'), Action.Add, participant);
+    this.target = new Participant();
   }
 
-  editElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.translate('participantEdit'), Action.Update, this.basicTableData.selectedElement);
+  editElement(participant: Participant): void {
+    this.target = participant;
+  }
+
+  deleteElements(participants: Participant[]): void {
+    if (participants) {
+      combineLatest(participants.map(participant => this.participantService.delete(participant))).subscribe({
+        next: (): void => {
+          this.loadData();
+          this.transloco.selectTranslate('infoParticipantDeleted').subscribe(
+            translation => {
+              this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
+            }
+          );
+        },
+        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      });
     }
-  }
-
-  deleteElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.translate('participantDelete'), Action.Delete, this.basicTableData.selectedElement);
-    }
-  }
-
-  setSelectedItem(row: Participant): void {
-    if (row === this.basicTableData.selectedElement) {
-      this.basicTableData.selectedElement = undefined;
-    } else {
-      this.basicTableData.selectedElement = row;
-    }
-  }
-
-  openDialog(title: string, action: Action, participant: Participant): void {
-    const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
-      panelClass: 'pop-up-panel',
-      width: '700px',
-      data: {
-        title: title, action: action, entity: participant,
-        clubs: this.clubs
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result?.action == Action.Add) {
-        this.addRowData(result.data);
-      } else if (result?.action == Action.Update) {
-        this.updateRowData(result.data);
-      } else if (result?.action == Action.Delete) {
-        this.deleteRowData(result.data);
-      }
-    });
-  }
-
-  addRowData(participant: Participant): void {
-    this.participantService.add(participant).subscribe((_participant: Participant): void => {
-      //If data is not already added though table webservice.
-      if (this.basicTableData.dataSource.data.findIndex((obj: Participant): boolean => obj.id === _participant.id) < 0) {
-        this.basicTableData.dataSource.data.push(_participant);
-        this.basicTableData.dataSource._updateChangeSubscription();
-      }
-      this.basicTableData.selectItem(_participant);
-      this.setSelectedItem(_participant);
-      this.messageService.infoMessage('infoParticipantStored');
-    });
-  }
-
-  updateRowData(participant: Participant): void {
-    this.participantService.update(participant).subscribe((_participant: Participant): void => {
-        this.messageService.infoMessage('infoParticipantUpdated');
-        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _participant.id);
-        if (index >= 0) {
-          this.basicTableData.dataSource.data[index] = _participant;
-          this.basicTableData.dataSource._updateChangeSubscription();
-        }
-        this.basicTableData.selectedElement = _participant;
-        this.basicTableData.selectItem(_participant);
-      }
-    );
-  }
-
-  deleteRowData(participant: Participant): void {
-    this.participantService.delete(participant).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_participant: Participant): boolean => _participant.id !== participant.id);
-        this.messageService.infoMessage('infoParticipantDeleted');
-        this.basicTableData.selectedElement = undefined;
-      }
-    );
   }
 
   disableRow(argument: any): boolean {
     return false;
   }
 
-  openStatistics(): void {
-    if (this.basicTableData.selectedElement) {
-      this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/participants/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
+  openStatistics(participant: Participant): void {
+    if (participant) {
+      this.userSessionService.setSelectedParticipant(participant.id + "");
+      this.router.navigate(['/participants/statistics'], {state: {participantId: participant.id}});
     }
   }
 
-  showCompetitorsClassification(): void {
+  showCompetitorsClassification(participant: Participant): void {
     this.dialog.open(CompetitorsRankingComponent, {
       panelClass: 'pop-up-panel',
       width: '85vw',
-      data: {competitor: this.basicTableData.selectedElement, showIndex: true}
+      data: {competitor: participant, showIndex: true}
     });
   }
 
-  showQrCode(): void {
-    if (this.basicTableData.selectedElement) {
+  showQrCode(participant: Participant): void {
+    if (participant) {
       const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
         panelClass: 'pop-up-panel',
         data: {
-          participantId: this.basicTableData.selectedElement?.id,
+          participantId: participant?.id,
           port: window.location.port
         }
       });

@@ -13,8 +13,8 @@ import {DatePipe} from "@angular/common";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
-import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
+import {Constants} from "../../constants";
 
 
 @Component({
@@ -26,7 +26,7 @@ import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
       provide: TRANSLOCO_SCOPE,
       multi: true,
       useValue: {scope: '', alias: 't'}
-    }, TableColumnTranslationPipe, CustomDatePipe, DatePipe
+    }, CustomDatePipe, DatePipe
   ]
 })
 export class ClubListComponent extends RbacBasedComponent implements AfterViewInit {
@@ -50,7 +50,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
     return {
       transform: (value: any) => {
         !value ? value = 0 : value;
-        return this._datePipe.transform(value, 'dd/MM/yyyy HH:mm:ss');
+        return this._datePipe.transform(value, Constants.FORMAT.DATE);
       }
     }
   }

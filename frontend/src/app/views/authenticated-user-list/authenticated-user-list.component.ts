@@ -13,6 +13,7 @@ import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-th
 import {combineLatest} from "rxjs";
 import {UserSessionService} from "../../services/user-session.service";
 import {DatePipe} from "@angular/common";
+import {Constants} from "../../constants";
 
 @Component({
   selector: 'app-authenticated-user-list',
@@ -50,7 +51,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
     return {
       transform: (value: any) => {
         !value ? value = 0 : value;
-        return this._datePipe.transform(value, 'dd/MM/yyyy HH:mm:ss');
+        return this._datePipe.transform(value, Constants.FORMAT.DATE);
       }
     }
   }

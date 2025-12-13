@@ -10,22 +10,28 @@ import {MatButtonModule} from "@angular/material/button";
 import {ParticipantListComponent} from "./participant-list.component";
 import {ParticipantRoutingModule} from "./participant-routing.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
+import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [ParticipantListComponent],
   exports: [ParticipantListComponent],
-    imports: [
-        ParticipantRoutingModule,
-        CommonModule,
-        MatIconModule,
-        TranslocoModule,
-        BasicTableModule,
-        MatTooltipModule,
-        MatButtonModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        HasPermissionPipe
-    ]
+  imports: [
+    ParticipantRoutingModule,
+    CommonModule,
+    MatIconModule,
+    TranslocoModule,
+    BasicTableModule,
+    MatTooltipModule,
+    MatButtonModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    HasPermissionPipe,
+    BiitDatatableModule,
+    BiitIconButtonModule,
+    MatDividerModule
+  ]
 })
 export class ParticipantListModule {
 }

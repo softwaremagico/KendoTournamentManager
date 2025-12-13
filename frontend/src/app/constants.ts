@@ -1,5 +1,8 @@
 export class Constants {
 
+  public static readonly FORMAT = class {
+    public static readonly DATE: string = 'dd/MM/yyyy HH:mm:ss';
+  }
 
   public static readonly SESSION_STORAGE = class {
     public static readonly AUTH_TOKEN: string = 'jwt';

@@ -1,52 +1,52 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="mat-elevation-z8">
-  <div class="kendo-table">
-    <div class="upper-menu">
-      <div class="cell">
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_PARTICIPANT | hasPermission)"
-                [matTooltipShowDelay]="500" color="primary"
-                mat-button
-                matTooltip="{{'participantAdd' | transloco}}">
-          <mat-icon>add</mat-icon>
+<ng-container *transloco="let t">
+  <div class="table-view">
+    <biit-datatable #table id="tournaments-table"
+                    [columns]="columns"
+                    [data]="participants"
+                    [pageSize]="pageSize"
+                    [pageSizeList]="pageSizes"
+                    [loading]="loading"
+                    scrollbarH
+                    selectable
+    >
+      <ng-template #actions>
+        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_TOURNAMENT | hasPermission"
+                [title]="t('tournamentAdd')"
+                (click)="addElement()"
+        ></button>
+        <button id="button-minus" biit-icon icon="minus" class="warning"
+                *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
+                [title]="t('delete')"
+                (click)="confirm=true"
+                [disabled]="!table.selectedRows.length"
+        ></button>
+        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
+                [title]="t('tournamentEdit')"
+                (click)="editElement(table.selectedRows[0])"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+        ></button>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button mat-button *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
+                [title]="t('titleStatistics')"
+                (click)="openStatistics(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
         </button>
-        <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_PARTICIPANT | hasPermission)"
-                [disabled]="!basicTableData.selectedElement"
-                [matTooltipShowDelay]="500" mat-button
-                matTooltip="{{'participantEdit' | transloco}}">
-          <mat-icon>create</mat-icon>
-        </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_PARTICIPANT | hasPermission)"
-                [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-                color="warn" mat-button
-                matTooltip="{{'participantDelete' | transloco}}">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </div>
-    </div>
-    <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
-    <div class="bottom-menu">
-      <button (click)="openStatistics()"
-              *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
-              [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'titleStatistics' | transloco}}">
-        <mat-icon>bar_chart</mat-icon>
-      </button>
-      <button (click)="showCompetitorsClassification()"
-              *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'competitorsRanking' | transloco}}">
-        <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-      </button>
-      <button (click)="showQrCode()"
-              *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
-              [disabled]="!basicTableData.selectedElement"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'qrCodeHint' | transloco}}">
-        <mat-icon>qr_code_2</mat-icon>
-      </button>
-    </div>
+        <mat-divider [vertical]="true"></mat-divider>
+        <span class="extra-menu">
+          <button mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
+                  [title]="t('competitorsRanking')"
+                  (click)="showCompetitorsClassification(table.selectedRows[0])">
+            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+          </button>
+          <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
+                  [title]="t('qrCodeHint')"
+                  (click)="showQrCode(table.selectedRows[0])"
+                  [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+          </button>
+        </span>
+      </ng-template>
+    </biit-datatable>
   </div>
-</div>
+</ng-container>
