@@ -109,3 +109,21 @@ button > .mat-icon {
 button .warning {
   color: var(--warning-color);
 }
+
+//Custom table buttons has a right margin
+.table-view .mat-mdc-button > .mat-icon {
+  margin-right: 0 !important;
+}
+
+//Custom table buttons mimic biit-buttons styles
+.table-view button {
+  &:hover, &:focus-visible, &:has(.checked) {
+    background-color: var(--main-background);
+  }
+
+  &:active {
+    path {
+      fill: var(--main-color) !important;
+    }
+  }
+}
