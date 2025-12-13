@@ -13,6 +13,9 @@ export class DropdownInterfacePipe implements PipeTransform {
         return result;
       }
     }
+    if (data.length > 0) {
+      return data[0];
+    }
     return {value: '', label: ''};
   }
 }
