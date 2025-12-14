@@ -185,12 +185,6 @@ public class QrService {
                                                             @PathVariable("participantId") Integer participantId,
                                                             @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                             HttpServletResponse response, HttpServletRequest request) {
-
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename("Statistics - QR.png").build();
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
         return qrController.generateParticipantQrCodeForStatistics(participantId, null, nightMode.orElse(false));
     }
 
@@ -205,12 +199,6 @@ public class QrService {
                                                                     @PathVariable("port") Integer port,
                                                                     @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                                     HttpServletResponse response, HttpServletRequest request) {
-
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename("Statistics - QR.png").build();
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
         return qrController.generateParticipantQrCodeForStatistics(participantId, port, nightMode.orElse(false));
     }
 

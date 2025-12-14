@@ -110,7 +110,7 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo, boolean circleShaped, Color background) {
         return getQr(content, size, color, color, background, resourceLogo,
-                crateSquareConfig(circleShaped, null, color, color, color, background),
+                crateSquareConfig(circleShaped, null, color, background, color, background),
                 null);
     }
 
