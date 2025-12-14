@@ -5,6 +5,10 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TournamentFormModule} from "../../../forms/tournament-form/tournament-form.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {ClubFormModule} from "../../../forms/club-form/club-form.module";
+import {BiitActionButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 
 
@@ -15,12 +19,17 @@ import {ClubFormModule} from "../../../forms/club-form/club-form.module";
   exports: [
     ClubFormPopupComponent
   ],
-  imports: [
-    CommonModule,
-    BiitPopupModule,
-    TournamentFormModule,
-    TranslocoModule,
-    ClubFormModule
-  ]
+    imports: [
+        CommonModule,
+        BiitPopupModule,
+        TournamentFormModule,
+        TranslocoModule,
+        ClubFormModule,
+        BiitActionButtonModule,
+        BiitIconButtonModule,
+        HasPermissionPipe,
+        MatButtonModule,
+        MatIconModule
+    ]
 })
 export class ClubFormPopupModule { }

@@ -111,12 +111,12 @@ button .warning {
 }
 
 //Custom table buttons has a right margin
-.table-view .mat-mdc-button > .mat-icon {
+.table-view .mat-mdc-button, biit-action-button button > .mat-icon {
   margin-right: 0 !important;
 }
 
 //Custom table buttons mimic biit-buttons styles
-.table-view button {
+.table-view button, biit-action-button button {
   &:hover, &:focus-visible, &:has(.checked) {
     background-color: var(--main-background);
   }

@@ -6,6 +6,7 @@ import {Club} from "../../../models/club";
 import {ClubFormValidationFields} from "../../../forms/club-form/club-form-validation-fields";
 import {CsvService} from "../../../services/csv-service";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'club-form-popup',
@@ -62,4 +63,6 @@ export class ClubFormPopupComponent implements OnInit {
       }
     }
   }
+
+    protected readonly RbacActivity = RbacActivity;
 }

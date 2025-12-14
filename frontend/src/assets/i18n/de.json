@@ -728,5 +728,6 @@
   "failedOnCsvField": "Fehler im Element {{element}}. Das Element wurde nicht korrekt gespeichert.",
   "youCannotDeleteYourself": "Sie können Ihr eigenes Konto nicht löschen.",
   "account": "Konto",
-  "generate": "Generieren"
+  "generate": "Generieren",
+  "uploadCsvFile": "Laden Sie eine CSV-Datei hoch"
 }

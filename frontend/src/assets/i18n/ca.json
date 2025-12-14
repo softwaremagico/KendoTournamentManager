@@ -750,5 +750,6 @@
   "failedOnCsvField": "Error a l'element {{element}}. L'element no s'ha salvat correctament.",
   "youCannotDeleteYourself": "No podeu suprimir el vostre compte.",
   "account": "Compte",
-  "generate": "Generar"
+  "generate": "Generar",
+  "uploadCsvFile": "Pujar un fitxer CSV"
 }

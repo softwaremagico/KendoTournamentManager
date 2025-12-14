@@ -6,6 +6,7 @@ import {Participant} from "../../../models/participant";
 import {ParticipantFormValidationFields} from "../../../forms/participant-form/participant-form-validation-fields";
 import {CsvService} from "../../../services/csv-service";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'participant-form-popup',
@@ -24,6 +25,8 @@ export class ParticipantFormPopupComponent implements OnInit {
   @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
   @Output() onSaved: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+
+  protected readonly RbacActivity = RbacActivity;
 
   protected errors: Map<ParticipantFormValidationFields, string> = new Map<ParticipantFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;

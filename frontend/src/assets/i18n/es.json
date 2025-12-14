@@ -746,5 +746,6 @@
   "failedOnCsvField": "Error en el elemento {{element}}. El elemento no se guardó correctamente.",
   "youCannotDeleteYourself": "No puede eliminar su propia cuenta.",
   "account": "Cuenta",
-  "generate": "Generar"
+  "generate": "Generar",
+  "uploadCsvFile": "Subir un fichero CSV"
 }

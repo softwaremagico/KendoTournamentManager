@@ -728,5 +728,6 @@
   "failedOnCsvField": "Fout in element {{element}}. Het element is niet correct opgeslagen.",
   "youCannotDeleteYourself": "Je kunt je eigen account niet verwijderen.",
   "account": "Rekening",
-  "generate": "Genereren"
+  "generate": "Genereren",
+  "uploadCsvFile": "Upload een CSV-bestand"
 }
