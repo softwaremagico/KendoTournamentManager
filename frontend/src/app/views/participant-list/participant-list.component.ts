@@ -1,7 +1,6 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {MessageService} from "../../services/message.service";
 import {ParticipantService} from "../../services/participant.service";
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
@@ -21,7 +20,6 @@ import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {Constants} from "../../constants";
 import {ClubNamePipe} from "../../pipes/visualization/club-name-pipe";
-import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'app-participant-list',
@@ -46,6 +44,9 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   clubs: Club[];
 
   protected loading: boolean = false;
+  protected showQr: boolean = false;
+
+  protected readonly port: number = +window.location.port;
 
   constructor(private router: Router, private userSessionService: UserSessionService,
               private participantService: ParticipantService, public dialog: MatDialog,

@@ -41,7 +41,7 @@
           </button>
           <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
                   [title]="t('qrCodeHint')"
-                  (click)="showQrCode(table.selectedRows[0])"
+                  (click)="showQr=true"
                   [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
           </button>
@@ -69,5 +69,12 @@
         </button>
       </div>
     </div>
+  </biit-popup>
+
+  <biit-popup id="qr-code" *ngIf="showQr" no-header>
+    <participant-qr-code
+      [participant]="table.selectedRows[0]"
+      [port]="port"
+      (onClosed)="showQr=false"></participant-qr-code>
   </biit-popup>
 </ng-container>

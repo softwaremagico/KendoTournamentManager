@@ -1,45 +1,47 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {QrCode} from "../../models/qr-code.model";
-import {Action} from "../../action";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {QrService} from "../../services/qr.service";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {UserSessionService} from "../../services/user-session.service";
+import {Participant} from "../../models/participant";
 
 @Component({
-  selector: 'app-participant-qr-code',
+  selector: 'participant-qr-code',
   templateUrl: './participant-qr-code.component.html',
   styleUrls: ['./participant-qr-code.component.scss']
 })
 export class ParticipantQrCodeComponent implements OnInit {
 
-  participantId: number;
+  @Input()
+  participant: Participant;
+  @Input()
   port: number;
-  qrCode: string | undefined;
-  link: string | undefined;
+  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(public dialogRef: MatDialogRef<ParticipantQrCodeComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { participantId: number, port: number },
-              private qrService: QrService, private userSessionService: UserSessionService, public rbacService: RbacService) {
-    this.participantId = data.participantId;
-    this.port = data.port;
+  protected qrCode: string | undefined;
+  protected link: string | undefined;
+
+  protected readonly RbacActivity = RbacActivity;
+
+  constructor(private qrService: QrService, private userSessionService: UserSessionService, public rbacService: RbacService) {
+
   }
 
   ngOnInit(): void {
-    this.qrService.getParticipantQr(this.participantId, this.userSessionService.getNightMode(), this.port).subscribe((_qrCode: QrCode): void => {
-      if (_qrCode) {
-        this.qrCode = _qrCode.base64;
-        this.link = _qrCode.link;
-      } else {
-        this.qrCode = undefined;
-      }
-    });
+    if (this.participant) {
+      this.qrService.getParticipantQr(this.participant.id!, this.userSessionService.getNightMode(), this.port).subscribe((_qrCode: QrCode): void => {
+        if (_qrCode) {
+          this.qrCode = _qrCode.base64;
+          this.link = _qrCode.link;
+        } else {
+          this.qrCode = undefined;
+        }
+      });
+    }
   }
 
-  closeDialog(): void {
-    this.dialogRef.close({data: undefined, action: Action.Cancel});
+  close() {
+    this.onClosed.emit();
   }
-
-  protected readonly RbacActivity = RbacActivity;
 }

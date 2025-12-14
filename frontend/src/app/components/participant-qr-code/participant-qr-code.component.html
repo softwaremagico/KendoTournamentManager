@@ -1,14 +1,15 @@
-<div mat-dialog-content class="content">
+<div class="content">
   <div *ngIf="!qrCode" class="qr-container">
     <app-mat-spinner-overlay></app-mat-spinner-overlay>
   </div>
   <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | hasPermission)" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | transloco}}</a>
+    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{ 'orClickHere' | transloco }}</a>
   </div>
 </div>
-<div class="button-container" mat-dialog-actions>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button
-          type="button">{{'close' | transloco}}
+<div class="button-container">
+  <button biit-button id="participant-button-save"
+          (click)="close()">
+    {{ 'close' | transloco }}
   </button>
 </div>
