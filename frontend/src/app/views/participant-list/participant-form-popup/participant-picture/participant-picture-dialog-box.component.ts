@@ -1,11 +1,8 @@
-import {Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
-import {ImageService} from "../../../../services/image.service";
 import {RbacService} from "../../../../services/rbac/rbac.service";
 import {WebcamImage, WebcamInitError} from "ngx-webcam";
 import {Observable, Subject} from 'rxjs';
-import {Action} from "../../../../action";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {Participant} from "../../../../models/participant";
@@ -15,14 +12,16 @@ import {TranslocoService} from "@ngneat/transloco";
 import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
-  selector: 'app-participant-picture',
+  selector: 'participant-picture',
   templateUrl: './participant-picture-dialog-box.component.html',
   styleUrls: ['./participant-picture-dialog-box.component.scss']
 })
 export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent implements OnInit {
   pictures: Array<string> = [];
   selectedPicture: number | undefined = undefined;
+  @Input()
   participant: Participant;
+  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
   imageType: string = "image/png";
   modes: string[] = ["environment", "user"];
   facingMode: number = 0;  //Set back camera
@@ -33,12 +32,9 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   public imageClicked = new EventEmitter<WebcamImage>();
   private pictureGenerated: Subject<void> = new Subject<void>();
 
-  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { participant: Participant },
-              public dialogRef: MatDialogRef<ParticipantPictureDialogBoxComponent>, rbacService: RbacService,
-              private imageService: ImageService, public messageService: MessageService, private fileService: FileService,
+  constructor(rbacService: RbacService, public messageService: MessageService, private fileService: FileService,
               private translateService: TranslocoService, private pictureUpdatedService: PictureUpdatedService) {
     super(rbacService);
-    this.participant = data.participant;
   }
 
   ngOnInit(): void {
@@ -49,7 +45,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   }
 
   closeDialog(): void {
-    this.dialogRef.close({action: Action.Cancel});
+    this.onClosed.emit();
   }
 
   public takePicture(): void {
@@ -116,7 +112,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
       const file: File | null = fileList.item(0);
       if (!file || file.size < 4096 || file.size > 2097152) {
         const parameters: object = {minSize: '4096', maxSize: '' + (2097152 / (1024 * 1024))};
-          this.messageService.errorMessage(this.translateService.translate('invalidFileSize', parameters));
+        this.messageService.errorMessage(this.translateService.translate('invalidFileSize', parameters));
       } else {
         this.fileService.setParticipantFilePicture(file, this.participant).subscribe((_picture: ParticipantImage): void => {
           this.messageService.infoMessage('infoPictureStored');
@@ -125,5 +121,11 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
         });
       }
     }
+  }
+
+  deletePicture() {
+    this.fileService.deleteParticipantPicture(this.participant).subscribe((): void => {
+      this.messageService.infoMessage("pictureDeleted");
+    });
   }
 }

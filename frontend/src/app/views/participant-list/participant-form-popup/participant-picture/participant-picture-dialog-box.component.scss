@@ -17,8 +17,8 @@
 }
 
 .camera-frame {
-  border: 2px solid #012354;
-  padding: 5px;
+  border: 3px solid var(--border-color);
+  padding: 0;
   height: 384px;
   width: 623px;
 }
@@ -26,14 +26,14 @@
 :host ::ng-deep {
   .webcam-container .webcam-wrapper, .webcam-wrapper video {
     width: 100% !important;
-    margin: auto;
-    height: 390px;
+    margin-top: 0px;
+    height: 378px;
   }
 
   .webcam-container .webcam-wrapper, .webcam-wrapper {
     width: 100% !important;
-    margin: auto;
-    height: 390px;
+    margin-top: -1px;
+    height: 378px;
   }
 }
 
@@ -59,7 +59,7 @@ video {
 }
 
 .selected-image {
-  border: 2px solid #ff2a2a;
+  border: 3px solid #ff2a2a;
 }
 
 img {
@@ -68,24 +68,38 @@ img {
 }
 
 .rectangle {
-  border: 2px solid #ff2a2a;
-  height: 384px;
+  border: 3px solid #ff2a2a;
+  height: 382px;
   width: 312px;
   position: absolute;
   margin-left: 156px;
-  margin-top: -392px;
+  margin-top: -382px;
 }
 
 .circle {
-  border: 2px solid #ff2a2a;
+  border: 3px solid #ff2a2a;
   height: 310px;
   width: 310px;
   position: absolute;
   margin-left: 156px;
-  margin-top: -354px;
+  margin-top: -344px;
   border-radius: 50%;
 }
 
 .canvas {
   max-height: 400px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  padding-top: 1em;
+}
+
+.floating-image-delete-button {
+  position: relative;
+  z-index: 999;
+  top: -376px;
+  left: 580px;
 }

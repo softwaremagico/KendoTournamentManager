@@ -18,6 +18,9 @@ import {ParticipantFormPopupModule} from "./participant-form-popup/participant-f
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {ParticipantQrCodeModule} from "../../components/participant-qr-code/participant-qr-code.module";
 import {CompetitorsRankingModule} from "../../components/competitors-ranking/competitors-ranking.module";
+import {
+  ParticipantPictureDialogModule
+} from "./participant-form-popup/participant-picture/participant-picture-dialog-box.module";
 
 @NgModule({
   declarations: [ParticipantListComponent],
@@ -41,7 +44,8 @@ import {CompetitorsRankingModule} from "../../components/competitors-ranking/com
     BiitButtonModule,
     BiitPopupModule,
     ParticipantQrCodeModule,
-    CompetitorsRankingModule
+    CompetitorsRankingModule,
+    ParticipantPictureDialogModule
   ]
 })
 export class ParticipantListModule {

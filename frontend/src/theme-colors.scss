@@ -18,7 +18,14 @@
   --active-color: var(--component-color);
   --hover-color: #EDEDED;
   --hover-primary-color: var(--main-color);
-  --hover-secondary-color: #808080;
+  --secondary-button-color: #808080;
+  --secondary-button-background-color: var(--main-font-color);
+  --secondary-button-hover-background: var(--main-background);
+  --secondary-button-active-background: var(--main-background);
+  --quaternary-button-color: var(--main-font-color);
+  --quaternary-button-background-color: #006911;
+  --quaternary-button-hover-background: #00A618;
+  --quaternary-button-active-background: #00A618;
   --text-hover-color: #5A6473;
   --selected-color: #AECFFB;
   --popup-background: #FFFFFF;

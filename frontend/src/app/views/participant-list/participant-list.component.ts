@@ -45,6 +45,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   protected loading: boolean = false;
   protected showQr: boolean = false;
   protected showRanking: boolean = false;
+  protected addPhoto: boolean = false;
 
   protected readonly port: number = +window.location.port;
 

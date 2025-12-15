@@ -6,7 +6,7 @@ import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
-import {ParticipantPictureDialogBoxComponent} from "./participant-picture/participant-picture-dialog-box.component";
+import {ParticipantPictureDialogBoxComponent} from "../participant-form-popup/participant-picture/participant-picture-dialog-box.component";
 import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
 import {FileService} from "../../../services/file.service";
 import {MessageService} from "../../../services/message.service";

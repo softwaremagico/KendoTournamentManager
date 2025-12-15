@@ -1,6 +1,6 @@
 <ng-container *transloco="let t">
   <div class="table-view">
-    <biit-datatable #table id="tournaments-table"
+    <biit-datatable #table id="participants-table"
                     [columns]="columns"
                     [data]="participants"
                     [pageSize]="pageSize"
@@ -10,19 +10,24 @@
                     selectable
     >
       <ng-template #actions>
-        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_TOURNAMENT | hasPermission"
-                [title]="t('tournamentAdd')"
+        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_PARTICIPANT | hasPermission"
+                [title]="t('participantAdd')"
                 (click)="addElement()"
         ></button>
         <button id="button-minus" biit-icon icon="minus" class="warning"
-                *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
+                *ngIf="RbacActivity.DELETE_PARTICIPANT | hasPermission"
                 [title]="t('delete')"
                 (click)="confirm=true"
                 [disabled]="!table.selectedRows.length"
         ></button>
-        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
-                [title]="t('tournamentEdit')"
+        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_PARTICIPANT | hasPermission"
+                [title]="t('participantEdit')"
                 (click)="editElement(table.selectedRows[0])"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+        ></button>
+        <button id="button-camera" biit-icon icon="camera" *ngIf="RbacActivity.READ_ONE_PARTICIPANT | hasPermission"
+                [title]="t('photo')"
+                (click)="addPhoto=true"
                 [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
         ></button>
         <mat-divider [vertical]="true"></mat-divider>
@@ -84,5 +89,11 @@
       [competitor]="table.selectedRows[0]"
       [showIndex]="true"
       (onClosed)="showRanking=false"></competitors-ranking>
+  </biit-popup>
+
+  <biit-popup id="photo-popup" *ngIf="addPhoto" no-header>
+    <participant-picture
+      [participant]="table.selectedRows[0]"
+      (onClosed)="addPhoto=false"></participant-picture>
   </biit-popup>
 </ng-container>
