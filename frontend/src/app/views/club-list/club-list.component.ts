@@ -39,6 +39,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   protected clubs: Club[];
   protected target: Club | null;
   protected confirm: boolean = false;
+  protected showRanking: boolean = false;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
               private transloco: TranslocoService, rbacService: RbacService, private _datePipe: DatePipe,
@@ -125,15 +126,6 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
           );
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
-      });
-    }
-  }
-
-  showCompetitorsClassification(): void {
-    if (this.target) {
-      this.dialog.open(CompetitorsRankingComponent, {
-        width: '85vw',
-        data: {club: this.target, showIndex: true}
       });
     }
   }

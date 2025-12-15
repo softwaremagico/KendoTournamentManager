@@ -71,7 +71,7 @@
     </div>
   </biit-popup>
 
-  <biit-popup id="qr-code-button" *ngIf="showQr" no-header>
+  <biit-popup id="qr-code-popup" *ngIf="showQr" no-header>
     <participant-qr-code
       [participant]="table.selectedRows[0]"
       [port]="port"
@@ -79,7 +79,7 @@
   </biit-popup>
 
 
-  <biit-popup id="ranking-button" *ngIf="showRanking" no-header>
+  <biit-popup id="ranking-popup" *ngIf="showRanking" no-header>
     <competitors-ranking
       [competitor]="table.selectedRows[0]"
       [showIndex]="true"

@@ -29,7 +29,7 @@
         <span class="extra-menu">
         <button id="club-ranking" mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
                 [title]="t('competitorsClubRanking')"
-                (click)="showCompetitorsClassification()"
+                (click)="showRanking=true"
                 [disabled]="!table.selectedRows || table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
         </button>
@@ -59,4 +59,11 @@
       </div>
     </div>
   </biit-popup>
+
+  <biit-popup id="ranking-popup" *ngIf="showRanking" no-header>
+    <competitors-ranking
+      [club]="table.selectedRows[0]"
+      (onClosed)="showRanking=false"></competitors-ranking>
+  </biit-popup>
+
 </ng-container>
