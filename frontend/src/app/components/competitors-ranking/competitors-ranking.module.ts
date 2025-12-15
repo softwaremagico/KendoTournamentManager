@@ -12,25 +12,35 @@ import {MatInputModule} from "@angular/material/input";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitInputTextModule} from "@biit-solutions/wizardry-theme/inputs";
+import {MapGetPipeModule} from "@biit-solutions/wizardry-theme/utils";
 
 
 @NgModule({
-  declarations: [CompetitorsRankingComponent],
-    imports: [
-        CommonModule,
-        MatSpinnerOverlayModule,
-        TranslocoModule,
-        MatIconModule,
-        RbacModule,
-        MatDialogModule,
-        MatButtonModule,
-        FormsModule,
-        MatInputModule,
-        MatTooltipModule,
-        ReactiveFormsModule,
-        MatSlideToggleModule,
-        HasPermissionPipe
-    ]
+    declarations: [CompetitorsRankingComponent],
+    exports: [
+        CompetitorsRankingComponent
+    ],
+  imports: [
+    CommonModule,
+    MatSpinnerOverlayModule,
+    TranslocoModule,
+    MatIconModule,
+    RbacModule,
+    MatDialogModule,
+    MatButtonModule,
+    FormsModule,
+    MatInputModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    MatSlideToggleModule,
+    HasPermissionPipe,
+    BiitButtonModule,
+    BiitIconButtonModule,
+    BiitInputTextModule,
+    MapGetPipeModule
+  ]
 })
 export class CompetitorsRankingModule {
 }

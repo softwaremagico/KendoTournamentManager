@@ -17,30 +17,32 @@ import {TournamentFormPopupModule} from "../tournament-list/tournament-form-popu
 import {ParticipantFormPopupModule} from "./participant-form-popup/participant-form-popup.module";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {ParticipantQrCodeModule} from "../../components/participant-qr-code/participant-qr-code.module";
+import {CompetitorsRankingModule} from "../../components/competitors-ranking/competitors-ranking.module";
 
 @NgModule({
   declarations: [ParticipantListComponent],
   exports: [ParticipantListComponent],
-    imports: [
-        ParticipantRoutingModule,
-        CommonModule,
-        MatIconModule,
-        TranslocoModule,
-        BasicTableModule,
-        MatTooltipModule,
-        MatButtonModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        HasPermissionPipe,
-        BiitDatatableModule,
-        BiitIconButtonModule,
-        MatDividerModule,
-        TournamentFormPopupModule,
-        ParticipantFormPopupModule,
-        BiitButtonModule,
-        BiitPopupModule,
-        ParticipantQrCodeModule
-    ]
+  imports: [
+    ParticipantRoutingModule,
+    CommonModule,
+    MatIconModule,
+    TranslocoModule,
+    BasicTableModule,
+    MatTooltipModule,
+    MatButtonModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    HasPermissionPipe,
+    BiitDatatableModule,
+    BiitIconButtonModule,
+    MatDividerModule,
+    TournamentFormPopupModule,
+    ParticipantFormPopupModule,
+    BiitButtonModule,
+    BiitPopupModule,
+    ParticipantQrCodeModule,
+    CompetitorsRankingModule
+  ]
 })
 export class ParticipantListModule {
 }

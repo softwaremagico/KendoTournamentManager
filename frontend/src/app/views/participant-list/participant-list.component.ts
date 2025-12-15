@@ -1,6 +1,6 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {Participant} from "../../models/participant";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatDialog} from "@angular/material/dialog";
 import {ParticipantService} from "../../services/participant.service";
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
@@ -10,7 +10,6 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
-import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {DatePipe} from "@angular/common";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
@@ -45,6 +44,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
 
   protected loading: boolean = false;
   protected showQr: boolean = false;
+  protected showRanking: boolean = false;
 
   protected readonly port: number = +window.location.port;
 
@@ -140,10 +140,6 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
     }
   }
 
-  disableRow(argument: any): boolean {
-    return false;
-  }
-
   openStatistics(participant: Participant): void {
     if (participant) {
       this.userSessionService.setSelectedParticipant(participant.id + "");
@@ -157,18 +153,6 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
       width: '85vw',
       data: {competitor: participant, showIndex: true}
     });
-  }
-
-  showQrCode(participant: Participant): void {
-    if (participant) {
-      const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          participantId: participant?.id,
-          port: window.location.port
-        }
-      });
-    }
   }
 
   onSaved($event: Participant) {

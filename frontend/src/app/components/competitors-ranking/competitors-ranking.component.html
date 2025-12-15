@@ -1,12 +1,14 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="table-container">
+<div class="table-container" *transloco="let t">
   <div class="days-selector" *ngIf="!this.club && !this.tournament">
-    <input class="day-input" type="number" matInput min="0" max="10000" step="30" [(ngModel)]="numberOfDays"
-           placeholder="{{'daysFrom' | transloco}}" [matTooltipShowDelay]="1000" matTooltip="{{'daysFrom' | transloco}}"
-           required (keyup.enter)="daysChanged()">
-    <button (click)="daysChanged()" color="secondary" class="day-input"
-            mat-button>
-      <mat-icon>refresh</mat-icon>
+      <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
+                       [placeholder]="t('daysFrom')"
+                       [type]="Type.NUMBER"
+                       [min]="0"
+                       [max]="10000"
+                       (onActionPerformed)="daysChanged()"
+      ></biit-input-text>
+    <button (click)="daysChanged()" class="day-input" biit-icon icon="refresh">
     </button>
   </div>
   <table class="competitor-ranking-table">
@@ -17,7 +19,9 @@
       <th class="competitor-ranking-header">{{ 'duelsWon' | transloco }}</th>
       <th class="competitor-ranking-header">{{ 'duelsDraw' | transloco }}</th>
       <th class="competitor-ranking-header">{{ 'hitsWon' | transloco }}</th>
-      <th *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="competitor-ranking-header">{{ 'hitsLost' | transloco }}</th>
+      <th *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
+          class="competitor-ranking-header">{{ 'hitsLost' | transloco }}
+      </th>
       <th class="competitor-ranking-header">{{ 'totalFights' | transloco }}</th>
     </tr>
     </thead>
@@ -37,7 +41,8 @@
       <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
           class="competitor-ranking-value">{{ scoreOfCompetitor.hits }}{{ (scoreOfCompetitor.untieHits ? "*" : "") }}
       </td>
-      <td *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+      <td *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
+          [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
           class="competitor-ranking-value">{{ scoreOfCompetitor.hitsLost }}
       </td>
       <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
@@ -46,12 +51,10 @@
     </tr>
   </table>
 </div>
-<div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
-          mat-flat-button
-          mat-raised-button>
-    <mat-icon>file_download</mat-icon>
+<div class="button-container">
+  <button biit-button (click)="downloadPDF()" *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
+          secondary>
     {{ 'download' | transloco }}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | transloco }}</button>
+  <button biit-button (click)="closeDialog()">{{ 'close' | transloco }}</button>
 </div>

@@ -36,7 +36,7 @@
         <span class="extra-menu">
           <button mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
                   [title]="t('competitorsRanking')"
-                  (click)="showCompetitorsClassification(table.selectedRows[0])">
+                  (click)="showRanking=true">
             <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
           </button>
           <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
@@ -71,10 +71,18 @@
     </div>
   </biit-popup>
 
-  <biit-popup id="qr-code" *ngIf="showQr" no-header>
+  <biit-popup id="qr-code-button" *ngIf="showQr" no-header>
     <participant-qr-code
       [participant]="table.selectedRows[0]"
       [port]="port"
       (onClosed)="showQr=false"></participant-qr-code>
+  </biit-popup>
+
+
+  <biit-popup id="ranking-button" *ngIf="showRanking" no-header>
+    <competitors-ranking
+      [competitor]="table.selectedRows[0]"
+      [showIndex]="true"
+      (onClosed)="showRanking=false"></competitors-ranking>
   </biit-popup>
 </ng-container>
