@@ -110,8 +110,12 @@ button .warning {
   color: var(--warning-color);
 }
 
+.logo {
+  filter: brightness(0) saturate(100%) invert(12%) sepia(35%) saturate(3300%) hue-rotate(204deg) brightness(88%) contrast(113%);
+}
+
 //Custom table buttons has a right margin
-.table-view .mat-mdc-button, biit-action-button button > .mat-icon {
+.table-view .mat-mdc-button > .mat-icon, biit-action-button button > .mat-icon {
   margin-right: 0 !important;
 }
 
