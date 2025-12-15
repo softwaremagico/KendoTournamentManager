@@ -1,3 +1,10 @@
 .form-container {
   width: 100%;
 }
+
+
+@media screen and (max-width: 800px) {
+  .floating-menu {
+    display: none;
+  }
+}

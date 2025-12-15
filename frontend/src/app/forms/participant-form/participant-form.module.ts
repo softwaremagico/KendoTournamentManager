@@ -8,6 +8,11 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {FormsModule} from "@angular/forms";
 import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
+import {FloatingDeleteButtonModule} from "../../components/floating-delete-button/floating-delete-button.module";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {
+  ParticipantPictureDialogModule
+} from "../../views/participant-list/participant-form-popup/participant-picture/participant-picture-dialog-box.module";
 
 
 
@@ -27,7 +32,10 @@ import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/d
     BiitButtonModule,
     FormsModule,
     BiitDropdownModule,
-    DropdownInterfacePipeModule
+    DropdownInterfacePipeModule,
+    FloatingDeleteButtonModule,
+    BiitPopupModule,
+    ParticipantPictureDialogModule
   ]
 })
 export class ParticipantFormModule { }

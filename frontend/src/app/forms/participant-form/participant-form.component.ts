@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {InputLimits} from "../../utils/input-limits";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Participant} from "../../models/participant";
@@ -10,13 +10,17 @@ import {ParticipantService} from "../../services/participant.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {Club} from "../../models/club";
 import {ClubService} from "../../services/club.service";
+import {ParticipantImage} from "../../models/participant-image.model";
+import {PictureUpdatedService} from "../../services/notifications/picture-updated.service";
+import {FileService} from "../../services/file.service";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'participant-form',
   templateUrl: './participant-form.component.html',
   styleUrls: ['./participant-form.component.scss']
 })
-export class ParticipantFormComponent extends RbacBasedComponent {
+export class ParticipantFormComponent extends RbacBasedComponent implements OnInit {
 
   protected PARTICIPANT_NAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
   protected PARTICIPANT_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
@@ -31,17 +35,38 @@ export class ParticipantFormComponent extends RbacBasedComponent {
   @Input() @Output()
   onError: EventEmitter<any> = new EventEmitter<any>();
 
+  participantPicture: string | undefined = undefined;
+
   protected errors: Map<ParticipantFormValidationFields, string> = new Map<ParticipantFormValidationFields, string>();
   protected readonly ParticipantFormValidationFields = ParticipantFormValidationFields;
   protected translatedClubs: { value: string, label: string, description: string }[] = [];
 
   protected clubs: Club[];
   protected saving: boolean = false;
+  protected addPhoto: boolean = false;
 
   constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private participantService: ParticipantService, private clubService: ClubService) {
+              private participantService: ParticipantService, private clubService: ClubService,
+              private pictureUpdatedService: PictureUpdatedService, private fileService: FileService,
+              public messageService: MessageService) {
     super(rbacService);
     this.loadClubs();
+  }
+
+  ngOnInit(): void {
+    this.participantPicture = undefined;
+    this.pictureUpdatedService.isPictureUpdated.subscribe((_picture: string): void => {
+      this.participantPicture = _picture;
+    });
+    if (this.participant?.id) {
+      this.fileService.getParticipantPicture(this.participant).subscribe((_picture: ParticipantImage): void => {
+        if (_picture) {
+          this.participantPicture = _picture.base64;
+        } else {
+          this.participantPicture = undefined;
+        }
+      });
+    }
   }
 
   private loadClubs() {
@@ -126,5 +151,12 @@ export class ParticipantFormComponent extends RbacBasedComponent {
 
   setClub(clubId: string) {
     this.participant.club = this.clubs.filter(c => c.id + "" == clubId)![0];
+  }
+
+  deletePicture() {
+    this.fileService.deleteParticipantPicture(this.participant).subscribe((): void => {
+      this.messageService.infoMessage("pictureDeleted");
+      this.participantPicture = undefined;
+    });
   }
 }

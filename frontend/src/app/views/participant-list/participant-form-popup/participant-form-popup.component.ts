@@ -7,6 +7,9 @@ import {ParticipantFormValidationFields} from "../../../forms/participant-form/p
 import {CsvService} from "../../../services/csv-service";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
+import {ParticipantImage} from "../../../models/participant-image.model";
+import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
+import {FileService} from "../../../services/file.service";
 
 @Component({
   selector: 'participant-form-popup',

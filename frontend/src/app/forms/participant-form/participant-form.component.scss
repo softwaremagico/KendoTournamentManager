@@ -1,3 +1,5 @@
+$space: 1em;
+
 .canvas {
   width: 100%;
   height: 100%;
@@ -26,4 +28,25 @@
       align-items: center;
     }
   }
+}
+
+.picture-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 30vh !important;
+  height: auto;
+  margin-left: 50px;
+}
+
+.floating-image-delete-button {
+  width: 50px !important;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
 }

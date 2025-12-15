@@ -9,6 +9,7 @@ import {BiitActionButtonModule, BiitIconButtonModule} from "@biit-solutions/wiza
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
+import {FloatingDeleteButtonModule} from "../../../components/floating-delete-button/floating-delete-button.module";
 
 
 
@@ -29,7 +30,8 @@ import {MatIconModule} from "@angular/material/icon";
         HasPermissionPipe,
         BiitActionButtonModule,
         MatButtonModule,
-        MatIconModule
+        MatIconModule,
+        FloatingDeleteButtonModule
     ]
 })
 export class ParticipantFormPopupModule { }

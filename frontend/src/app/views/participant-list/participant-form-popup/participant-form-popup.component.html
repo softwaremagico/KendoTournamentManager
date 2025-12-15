@@ -11,7 +11,7 @@
                     (onError)="onError"
                     [onError]="onError"></participant-form>
 
-  <biit-action-button position="top-right">
+  <biit-action-button class="floating-menu" position="top-right">
     <button biit-icon *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
             [icon]="'upload_general'"
     ></button>
