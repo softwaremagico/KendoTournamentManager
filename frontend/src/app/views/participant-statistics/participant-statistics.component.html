@@ -3,7 +3,7 @@
 <div class="statistics-view" *transloco="let t">
   <div class="statistics-layout">
     <div class="upper-menu">
-      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
+      <button biit-icon *ngIf="(RbacActivity.READ_ALL_PARTICIPANTS | hasPermission)"
               (click)="goBackToUsers()"
               [title]="t('back')">
         <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
@@ -212,18 +212,6 @@
 
           <div class="box-statistics box  scrollable">
             <div class="statistics-table-title">
-              <h3>{{ 'performance' | transloco }}</h3>
-            </div>
-            <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
-                              [ngClass]="'bar-'+i"
-                              [percentage]="value[1]?value[1]:0"
-                              [text]="value[0] | transloco"
-                              [hint]="value[0] + 'Hint' | transloco"
-            ></app-progress-bar>
-          </div>
-
-          <div class="box-statistics box  scrollable">
-            <div class="statistics-table-title">
               <h3>{{ 'yourWorstNightmare' | transloco }}</h3>
             </div>
             <table aria-hidden="true" class="statistics-table">
@@ -251,12 +239,24 @@
             </table>
           </div>
 
-          <div class="box-statistics box ">
+          <div class="box-statistics box  scrollable">
+            <div class="statistics-table-title">
+              <h3>{{ 'performance' | transloco }}</h3>
+            </div>
+            <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
+                              [ngClass]="'bar-'+i"
+                              [percentage]="value[1]?value[1]:0"
+                              [text]="value[0] | transloco"
+                              [hint]="value[0] + 'Hint' | transloco"
+            ></app-progress-bar>
+          </div>
+
+          <div class="box-statistics box chart">
           <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
                          [title]="'participantHitsStatistics' | transloco"
                          [width]="360"></app-pie-chart>
           </div>
-          <div class="box-statistics box ">
+          <div class="box-statistics box chart">
           <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
                          [title]="'participantReceivedHitsStatistics' | transloco"
                          [width]="360"></app-pie-chart>

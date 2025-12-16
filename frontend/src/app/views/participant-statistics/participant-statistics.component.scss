@@ -62,6 +62,10 @@
   border: 1px solid var(--component-color);
 }
 
+.box-statistics.chart {
+  align-content: center;
+}
+
 .statistics-table {
   align-content: center;
   width: 100%;
@@ -99,10 +103,6 @@
 
 .statistics-table .single {
   text-align: center;
-}
-
-.flip {
-  transform: scaleX(-1);
 }
 
 .ranking {
