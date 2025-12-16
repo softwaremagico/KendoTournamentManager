@@ -8,7 +8,7 @@ import {NameUtilsService} from "../../services/name-utils.service";
 import {AchievementsService} from "../../services/achievements.service";
 
 @Component({
-  selector: 'app-achievement-tile',
+  selector: 'achievement-tile',
   templateUrl: './achievement-tile.component.html',
   styleUrls: ['./achievement-tile.component.scss'],
   // tooltip style not applied without this:

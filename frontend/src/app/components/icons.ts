@@ -46,7 +46,9 @@ export class IconModule {
       .addSvgIcon("csv-file-small", this.setPath(`${this.path}/csv-file-small.svg`))
       .addSvgIcon("bar_chart", this.setPath(`${this.path}/bar_chart.svg`))
       .addSvgIcon("badge", this.setPath(`${this.path}/badge.svg`))
-      .addSvgIcon("qr_code", this.setPath(`${this.path}/qr_code.svg`));
+      .addSvgIcon("qr_code", this.setPath(`${this.path}/qr_code.svg`))
+      .addSvgIcon("arrow_back", this.setPath(`${this.path}/arrow_back.svg`))
+      .addSvgIcon("arrow_forward", this.setPath(`${this.path}/arrow_forward.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

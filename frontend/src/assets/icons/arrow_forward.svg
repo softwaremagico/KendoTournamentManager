@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+  width="200"
+  height="200"
+  viewBox="0 0 52.91667 52.916669"
+  version="1.1"
+  id="svg8"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+    id="defs6">
+  </defs>
+  <path
+    id="path5586"
+    style="clip-rule:evenodd;fill-rule:evenodd;stroke-width:0.128926;stroke-linejoin:round;stroke-miterlimit:2"
+    d="M 6.36602 0 L 0 1.5285889 L 0 52.916669 L 6.36602 51.388597 L 6.36602 0 z M 35.936826 9.5570399 L 35.973 18.168918 L 41.317894 23.465752 L 10.724927 23.605796 L 10.7549 29.700514 L 41.184052 29.556854 L 36.047931 34.739483 L 36.093406 43.35963 L 52.916669 26.383921 L 35.936826 9.5570399 z "/>
+  <g
+    transform="matrix(0,0.32204138,0.32204138,0,-1037.1454,-132.41729)"
+    id="g516-3"
+    style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2">
+    <g
+      transform="translate(-1026.61,3231.23)"
+      id="g514-6">
+      <g
+        transform="translate(0,-257.882)"
+        id="g512-7">
+        <g
+          transform="rotate(100.79998,489.64728,1541.3032)"
+          id="g506-5"/>
+        <g
+          transform="translate(873.583,-38.5703)"
+          id="g510-5"/>
+      </g>
+    </g>
+  </g>
+  <g
+    transform="matrix(-0.07586559,-0.07655366,0.07655366,-0.07586559,114.89194,182.44882)"
+    id="g6"
+    style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2">
+    <g
+      transform="translate(-3854.11,-22832)"
+      id="g4">
+
+    </g>
+
+  </g>
+</svg>

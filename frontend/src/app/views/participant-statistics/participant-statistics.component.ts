@@ -23,6 +23,7 @@ import {Participant} from "../../models/participant";
 import {LoginService} from "../../services/login.service";
 import {MatDialog} from "@angular/material/dialog";
 import {EnvironmentService} from "../../environment.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -50,6 +51,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public participant: Participant;
   public yourWorstNightmare: Participant[];
   public youAreTheWorstNightmareOf: Participant[];
+
+  protected loading: boolean = false;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               rbacService: RbacService, private systemOverloadService: SystemOverloadService,
@@ -204,7 +207,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
   goBackToUsers(): void {
-    this.router.navigate(['/participants'], {});
+    this.router.navigate(['/registry/participants'], {});
   }
 
   numberOfPerformedRoles(roleType: RoleType): number {
@@ -227,4 +230,6 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.router.navigate(['/participants/fights'], {state: {participantId: this.participantId}});
     }
   }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

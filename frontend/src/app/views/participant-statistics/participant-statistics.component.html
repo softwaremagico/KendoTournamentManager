@@ -1,279 +1,274 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="statistics-view">
+<biit-progress-bar *ngIf="loading" [type]="BiitProgressBarType.INDETERMINATE" class="loading-bar"></biit-progress-bar>
+
+<div class="statistics-view" *transloco="let t">
   <div class="statistics-layout">
     <div class="upper-menu">
-      <div class="cell">
-        <button (click)="goBackToUsers()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
-                [matTooltipShowDelay]="500" color="secondary"
-                mat-button
-                matTooltip="{{'back' | transloco}}">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <button (click)="openParticipantFights()"
-                *ngIf="(RbacActivity.VIEW_PARTICIPANT_FIGHTS | hasPermission)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'titleStatistics' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
-        </button>
-      </div>
+      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
+              (click)="goBackToUsers()"
+              [title]="t('back')">
+        <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
+      </button>
+      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
+              (click)="openParticipantFights()"
+              [title]="t('titleStatistics')">
+        <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
+      </button>
     </div>
-    <h1 class="name" *ngIf="participant">{{ participant.name }} {{ participant.lastname }}</h1>
-    <div class="statistics-container">
-      <div class="dashboard">
+    <div class="player">
+      <h1 class="name" *ngIf="participant">{{ participant.name }} {{ participant.lastname }}</h1>
+      <div class="statistics-container">
+        <div class="dashboard">
+          <div class="box-statistics box">
+            <div class="statistics-table-title">
+              <h3>{{ 'tournaments' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'tournaments' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.tournaments }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'duels' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.duelsNumber }}</td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'roles' | transloco }}</h3>
+            </div>
+            <!-- aria-hidden="true" to avoid complains from sonarcloud -->
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr *ngFor="let roleType of roleTypes">
+                <td *ngIf="participantStatistics" class="left-column">{{ roleType.toLowerCase() | transloco }}:</td>
+                <td *ngIf="participantStatistics" class="right-column">{{ numberOfPerformedRoles(roleType) }}</td>
+              </tr>
+            </table>
+          </div>
 
-        <div class="box-statistics box ">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
-            <h3>{{ 'roles' | transloco }}</h3>
+          <div class="box-statistics box ">
+            <div class="statistics-table-title">
+              <h3>{{ 'time' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'createdAt' | transloco }}:</td>
+                <td class="right-column">{{ convertDate(participantStatistics.participantCreatedAt) }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'duelsAverage' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.averageTime) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'quickestHit' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.quickestHit) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'quickestReceivedHit' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.quickestReceivedHit) }}
+                </td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'duels' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'duelsWon' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.wonDuels }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'duelsDraw' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.drawDuels }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'duelsLost' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.lostDuels }}</td>
+              </tr>
+            </table>
           </div>
-          <!-- aria-hidden="true" to avoid complains from sonarcloud -->
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr *ngFor="let roleType of roleTypes">
-              <td *ngIf="participantStatistics">{{ roleType.toLowerCase() | transloco }}:</td>
-              <td *ngIf="participantStatistics">{{ numberOfPerformedRoles(roleType) }}</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
-            <h3>{{ 'tournaments' | transloco }}</h3>
-          </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td class="single">{{ 'tournaments' | transloco }}:</td>
-              <td>{{ participantStatistics.tournaments }}</td>
-            </tr>
-            <tr>
-              <td class="single">{{ 'duels' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.duelsNumber }}</td>
-            </tr>
-          </table>
-        </div>
 
-        <div class="box-statistics box ">
-          <div class="statistics-table-title">
-            <mat-icon>timer</mat-icon>
-            <h3>{{ 'time' | transloco }}</h3>
+          <div class="box-statistics box ">
+            <div class="statistics-table-title">
+              <h3>{{ 'hits' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'men' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.menNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'kote' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.koteNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'do' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.doNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'tsuki' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.tsukiNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'hansoku' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.hansokuNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column"> {{ 'ippon' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.ipponNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'fusenGachi' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.fusenGachiNumber }}</td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'faults' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'faults' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.faults }}</td>
+              </tr>
+            </table>
           </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td>{{ 'createdAt' | transloco }}:</td>
-              <td>{{ convertDate(participantStatistics.participantCreatedAt) }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'duelsAverage' | transloco }}:</td>
-              <td>{{ convertSeconds(participantStatistics.participantFightStatistics.averageTime) }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'quickestHit' | transloco }}:</td>
-              <td>{{ convertSeconds(participantStatistics.participantFightStatistics.quickestHit) }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'quickestReceivedHit' | transloco }}:</td>
-              <td>{{ convertSeconds(participantStatistics.participantFightStatistics.quickestReceivedHit) }}</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
-            <h3>{{ 'duels' | transloco }}</h3>
-          </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td class="single">{{ 'duelsWon' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.wonDuels }}</td>
-            </tr>
-            <tr>
-              <td class="single">{{ 'duelsDraw' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.drawDuels }}</td>
-            </tr>
-            <tr>
-              <td class="single">{{ 'duelsLost' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.lostDuels }}</td>
-            </tr>
-          </table>
-        </div>
 
-        <div class="box-statistics box ">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="match"></mat-icon>
-            <h3>{{ 'hits' | transloco }}</h3>
+          <div class="box-statistics box ">
+            <div class="statistics-table-title">
+              <h3>{{ 'receivedHits' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'men' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedMenNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'kote' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedKoteNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'do' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedDoNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'tsuki' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedTsukiNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'hansoku' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedHansokuNumber }}
+                </td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'ippon' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedIpponNumber }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'fusenGachi' | transloco }}:</td>
+                <td
+                  class="right-column">{{ participantStatistics.participantFightStatistics.receivedFusenGachiNumber }}
+                </td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'receivedFaults' | transloco }}</h3>
+            </div>
+            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'faults' | transloco }}:</td>
+                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedFaults }}</td>
+              </tr>
+            </table>
           </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td>{{ 'men' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.menNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'kote' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.koteNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'do' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.doNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'tsuki' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.tsukiNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'hansoku' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.hansokuNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'ippon' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.ipponNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'fusenGachi' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.fusenGachiNumber }}</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon>flag</mat-icon>
-            <h3>{{ 'faults' | transloco }}</h3>
-          </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td class="single">{{ 'faults' | transloco }}
-                : {{ participantStatistics.participantFightStatistics.faults }}
-              </td>
-            </tr>
-          </table>
-        </div>
 
-        <div class="box-statistics box ">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon flip" svgIcon="match"></mat-icon>
-            <h3>{{ 'receivedHits' | transloco }}</h3>
-          </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td>{{ 'men' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedMenNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'kote' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedKoteNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'do' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedDoNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'tsuki' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedTsukiNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'hansoku' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedHansokuNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'ippon' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedIpponNumber }}</td>
-            </tr>
-            <tr>
-              <td>{{ 'fusenGachi' | transloco }}:</td>
-              <td>{{ participantStatistics.participantFightStatistics.receivedFusenGachiNumber }}</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon class="flip">flag</mat-icon>
-            <h3>{{ 'receivedFaults' | transloco }}</h3>
-          </div>
-          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td class="single">{{ 'faults' | transloco }}
-                : {{ participantStatistics.participantFightStatistics.receivedFaults }}
-              </td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="box-statistics box  scrollable">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-            <h3>{{ 'competitorsRanking' | transloco }}</h3>
-          </div>
-          <table *ngIf="competitorRanking" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td [ngClass]="{
+          <div class="box-statistics box  scrollable">
+            <div class="statistics-table-title">
+              <h3>{{ 'competitorsRanking' | transloco }}</h3>
+            </div>
+            <table *ngIf="competitorRanking" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td [ngClass]="{
                     'ranking-very-good': competitorRanking.ranking / competitorRanking.total < 0.1,
                     'ranking-good': competitorRanking.ranking / competitorRanking.total >= 0.1 && competitorRanking.ranking / competitorRanking.total <= 0.3,
                     'ranking-normal': competitorRanking.ranking / competitorRanking.total >= 0.3 && competitorRanking.ranking / competitorRanking.total <= 0.7,
                     'ranking-bad': competitorRanking.ranking / competitorRanking.total >= 0.7 && competitorRanking.ranking / competitorRanking.total <= 0.9,
                     'ranking-very-bad': competitorRanking.ranking / competitorRanking.total > 0.9}
                   "
-                  class="ranking your-ranking">
-                {{ competitorRanking.ranking + 1 }}
-              </td>
-            </tr>
-            <tr>
-              <td class="ranking">of</td>
-            </tr>
-            <tr>
-              <td class="ranking total-ranking">{{ competitorRanking.total }}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="box-statistics box  scrollable">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="gauge"></mat-icon>
-            <h3>{{ 'performance' | transloco }}</h3>
+                    class="ranking your-ranking">
+                  {{ competitorRanking.ranking + 1 }}
+                </td>
+              </tr>
+              <tr>
+                <td class="ranking">of</td>
+              </tr>
+              <tr>
+                <td class="ranking total-ranking">{{ competitorRanking.total }}</td>
+              </tr>
+            </table>
           </div>
-          <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
-                            [ngClass]="'bar-'+i"
-                            [percentage]="value[1]?value[1]:0"
-                            [text]="value[0] | transloco"
-                            [hint]="value[0] + 'Hint' | transloco"
-          ></app-progress-bar>
-        </div>
 
-        <div class="box-statistics box  scrollable">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="yourWorstNightmare"></mat-icon>
-            <h3>{{ 'yourWorstNightmare' | transloco }}</h3>
+          <div class="box-statistics box  scrollable">
+            <div class="statistics-table-title">
+              <h3>{{ 'performance' | transloco }}</h3>
+            </div>
+            <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
+                              [ngClass]="'bar-'+i"
+                              [percentage]="value[1]?value[1]:0"
+                              [text]="value[0] | transloco"
+                              [hint]="value[0] + 'Hint' | transloco"
+            ></app-progress-bar>
           </div>
-          <table aria-hidden="true" class="statistics-table">
-            <tr *ngFor="let nightmare of yourWorstNightmare">
-              <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}</td>
-            </tr>
-          </table>
-          <table *ngIf="!yourWorstNightmare || !yourWorstNightmare.length" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td class="single">--</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="youAreTheWorstNightmareOf"></mat-icon>
-            <h3>{{ 'worstNightmareOf' | transloco }}</h3>
-          </div>
-          <table aria-hidden="true" class="statistics-table">
-            <tr *ngFor="let nightmare of youAreTheWorstNightmareOf">
-              <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}
-              </td>
-            </tr>
-            <tr *ngIf="!youAreTheWorstNightmareOf || !youAreTheWorstNightmareOf.length">
-              <td class="single">--</td>
-            </tr>
-          </table>
-        </div>
 
-        <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
-                       [title]="'participantHitsStatistics' | transloco"
-                       [width]="360"></app-pie-chart>
-        <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
-                       [title]="'participantReceivedHitsStatistics' | transloco"
-                       [width]="360"></app-pie-chart>
-
-        <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
-          <div class="statistics-table-title">
-            <mat-icon>stars</mat-icon>
-            <h3>{{ 'achievements' | transloco }}</h3>
+          <div class="box-statistics box  scrollable">
+            <div class="statistics-table-title">
+              <h3>{{ 'yourWorstNightmare' | transloco }}</h3>
+            </div>
+            <table aria-hidden="true" class="statistics-table">
+              <tr *ngFor="let nightmare of yourWorstNightmare">
+                <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}</td>
+              </tr>
+            </table>
+            <table *ngIf="!yourWorstNightmare || !yourWorstNightmare.length" aria-hidden="true"
+                   class="statistics-table">
+              <tr>
+                <td class="single">--</td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'worstNightmareOf' | transloco }}</h3>
+            </div>
+            <table aria-hidden="true" class="statistics-table">
+              <tr *ngFor="let nightmare of youAreTheWorstNightmareOf">
+                <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}
+                </td>
+              </tr>
+              <tr *ngIf="!youAreTheWorstNightmareOf || !youAreTheWorstNightmareOf.length">
+                <td class="single">--</td>
+              </tr>
+            </table>
           </div>
-          <app-achievement-wall [achievements]="achievements"
-                                [view]="'participant'"></app-achievement-wall>
+
+          <div class="box-statistics box ">
+          <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
+                         [title]="'participantHitsStatistics' | transloco"
+                         [width]="360"></app-pie-chart>
+          </div>
+          <div class="box-statistics box ">
+          <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
+                         [title]="'participantReceivedHitsStatistics' | transloco"
+                         [width]="360"></app-pie-chart>
+          </div>
+
+          <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
+            <div class="statistics-table-title">
+              <h3>{{ 'achievements' | transloco }}</h3>
+            </div>
+            <achievements-wall [achievements]="achievements"
+                                  [view]="'participant'"></achievements-wall>
+          </div>
         </div>
       </div>
     </div>
