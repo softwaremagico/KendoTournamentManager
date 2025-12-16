@@ -52,7 +52,6 @@ import {ConfirmationDialogModule} from "./components/basic/confirmation-dialog/c
 import {
   AuthenticatedUserDialogBoxModule
 } from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
-import {ClubDialogBoxModule} from "./views/club-list/club-dialog-box/club-dialog-box.module";
 import {CompetitorsRankingModule} from "./components/competitors-ranking/competitors-ranking.module";
 import {FightDialogBoxModule} from "./views/fight-list/fight-dialog-box/fight-dialog-box.module";
 import {LeagueGeneratorModule} from "./views/fight-list/league-generator/league-generator.module";
@@ -188,7 +187,6 @@ registerLocaleData(localeNL, "nl");
         TimerModule,
         ConfirmationDialogModule,
         AuthenticatedUserDialogBoxModule,
-        ClubDialogBoxModule,
         CompetitorsRankingModule,
         FightDialogBoxModule,
         LeagueGeneratorModule,
