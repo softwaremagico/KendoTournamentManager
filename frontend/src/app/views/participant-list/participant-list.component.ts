@@ -39,7 +39,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   protected pageSizes: number[] = [10, 25, 50, 100];
   protected participants: Participant[];
   protected target: Participant | null;
-  protected confirm: boolean = false;
+  protected confirmDelete: boolean = false;
   clubs: Club[];
 
   protected loading: boolean = false;
@@ -135,6 +135,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
               this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
             }
           );
+          this.confirmDelete = false;
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       });

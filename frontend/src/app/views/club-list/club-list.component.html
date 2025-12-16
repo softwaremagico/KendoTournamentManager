@@ -17,7 +17,7 @@
         <button id="button-minus" biit-icon icon="minus" class="warning"
                 *ngIf="RbacActivity.DELETE_CLUB | hasPermission"
                 [title]="t('delete')"
-                (click)="confirm=true"
+                (click)="confirmDelete=true"
                 [disabled]="!table.selectedRows.length"
         ></button>
         <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_CLUB | hasPermission"
@@ -45,13 +45,13 @@
   />
 
 
-  <biit-popup id="confirmation-delete-popup" *ngIf="confirm"
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
               no-header
   >
     <div class="vertical">
       <span [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getClubNames(table.selectedRows)}"></span>
       <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
         </button>
         <button id="confirm-delete-button" biit-button primary
                 (click)="deleteElements(table.selectedRows)">{{ t('delete') }}

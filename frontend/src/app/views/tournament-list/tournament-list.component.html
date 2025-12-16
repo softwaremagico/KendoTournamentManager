@@ -17,7 +17,7 @@
         <button id="button-minus" biit-icon icon="minus" class="warning"
                 *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
                 [title]="t('delete')"
-                (click)="confirm=true"
+                (click)="confirmDelete=true"
                 [disabled]="!table.selectedRows.length"
         ></button>
         <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
@@ -27,7 +27,7 @@
         ></button>
         <button mat-button *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | hasPermission)"
                 [title]="t('tournamentClone')"
-                (click)="openCloneTournament(table.selectedRows[0])"
+                (click)="confirmClone=true"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
         </button>
@@ -111,15 +111,29 @@
                          (onSaved)="onSaved($event)"
   />
 
-  <biit-popup id="confirmation-delete-popup" *ngIf="confirm"
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
               no-header
   >
     <div class="vertical">
       <span [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
       <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}</button>
-        <button id="confirm-delete-button" biit-button primary
-                (click)="deleteElements(table.selectedRows, true)">{{ t('delete') }}
+        <button id="delete-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}</button>
+        <button id="delete-confirm-button" biit-button primary
+                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+
+  <biit-popup id="confirmation-clone-popup" *ngIf="confirmClone"
+              no-header
+  >
+    <div class="vertical">
+      <span [innerHTML]="'tournamentCloneWarning' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="clone-cancel-button" biit-button secondary (click)="confirmClone = false">{{ t('cancel') }}</button>
+        <button id="clone-confirm-button" biit-button primary
+                (click)="cloneElement(table.selectedRows[0])">{{ t('accept') }}
         </button>
       </div>
     </div>

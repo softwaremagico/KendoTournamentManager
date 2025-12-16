@@ -18,7 +18,6 @@ import {
 } from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
@@ -47,7 +46,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected pageSizes: number[] = [10, 25, 50, 100];
   protected tournaments: Tournament[];
   protected target: Tournament | null;
-  protected confirm: boolean = false;
+  protected confirmDelete: boolean = false;
+  protected confirmClone: boolean = false;
 
   protected loading: boolean = false;
   protected showQr: boolean = false;
@@ -110,7 +110,9 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.tournamentService.getAll().subscribe({
       next: (_tournaments: Tournament[]): void => {
-        this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament));
+        this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament)).sort((a: Tournament, b: Tournament): number => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
       },
       error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
     }).add(() => {
@@ -132,11 +134,12 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     this.target = tournament;
   }
 
-  deleteElements(tournaments: Tournament[], confirmed: boolean): void {
+  deleteElements(tournaments: Tournament[]): void {
     if (tournaments) {
       combineLatest(tournaments.map(tournament => this.tournamentService.delete(tournament))).subscribe({
         next: (): void => {
           this.loadData();
+          this.confirmDelete = false;
           this.transloco.selectTranslate('infoTournamentDeleted').subscribe(
             translation => {
               this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
@@ -279,27 +282,14 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }
   }
 
-  openCloneTournament(tournament: Tournament): void {
-    if (tournament) {
-      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-        disableClose: false
-      });
-      dialogRef.componentInstance.messageTag = "tournamentCloneWarning"
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.cloneElement(tournament);
-        }
-      });
-    }
-  }
-
   cloneElement(tournament: Tournament): void {
     const tournamentId: number = tournament?.id!;
     this.tournamentService.clone(tournamentId).subscribe((_tournament: Tournament): void => {
       this.loadData();
       this.messageService.infoMessage('infoTournamentStored');
-    });
+    }).add(() => {
+      this.confirmClone = false;
+    })
   }
 
   downloadZip(tournament: Tournament): void {

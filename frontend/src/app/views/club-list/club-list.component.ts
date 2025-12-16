@@ -38,7 +38,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   protected loading: boolean = false;
   protected clubs: Club[];
   protected target: Club | null;
-  protected confirm: boolean = false;
+  protected confirmDelete: boolean = false;
   protected showRanking: boolean = false;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
@@ -124,6 +124,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
               this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
             }
           );
+          this.confirmDelete = false;
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       });
