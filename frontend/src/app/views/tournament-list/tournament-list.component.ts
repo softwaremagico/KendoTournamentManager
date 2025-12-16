@@ -19,7 +19,6 @@ import {
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {TournamentQrCodeComponent} from "../../components/tournament-qr-code/tournament-qr-code.component";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
@@ -51,6 +50,9 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected confirm: boolean = false;
 
   protected loading: boolean = false;
+  protected showQr: boolean = false;
+  protected readonly port: number = +window.location.port;
+
   @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
@@ -270,10 +272,6 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }
   }
 
-  disableRow(argument: any): boolean {
-    return (argument as Tournament).locked;
-  }
-
   openStatistics(tournament: Tournament): void {
     if (tournament) {
       this.userSessionService.setSelectedTournament(tournament.id + "");
@@ -314,18 +312,6 @@ export class TournamentListComponent extends RbacBasedComponent implements After
         anchor.download = tournament!.name + ".zip";
         anchor.href = downloadURL;
         anchor.click();
-      });
-    }
-  }
-
-  showQrCode(tournament: Tournament): void {
-    if (tournament) {
-      const dialogRef: MatDialogRef<TournamentQrCodeComponent> = this.dialog.open(TournamentQrCodeComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          tournament: tournament,
-          port: window.location.port
-        }
       });
     }
   }

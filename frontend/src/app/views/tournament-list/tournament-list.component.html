@@ -72,8 +72,8 @@
         </button>
         <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
                 [title]="t('qrCodeHint')"
-                (click)="showQrCode(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
+                (click)="showQr=true"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
           <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
         </button>
         <button mat-button *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
@@ -124,4 +124,12 @@
       </div>
     </div>
   </biit-popup>
+
+  <biit-popup id="qr-code" *ngIf="showQr" no-header>
+    <tournament-qr-code
+      [tournament]="table.selectedRows[0]"
+      [port]="port"
+      (onClosed)="showQr=false"></tournament-qr-code>
+  </biit-popup>
+
 </ng-container>

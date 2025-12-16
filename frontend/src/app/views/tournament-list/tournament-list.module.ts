@@ -15,6 +15,7 @@ import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-t
 import {MatDividerModule} from "@angular/material/divider";
 import {TournamentFormPopupModule} from "./tournament-form-popup/tournament-form-popup.module";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {TournamentQrCodeModule} from "../../components/tournament-qr-code/tournament-qr-code.module";
 
 @NgModule({
   declarations: [TournamentListComponent],
@@ -35,7 +36,8 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
         BiitButtonModule,
         MatDividerModule,
         TournamentFormPopupModule,
-        BiitPopupModule
+        BiitPopupModule,
+        TournamentQrCodeModule
     ],
   providers: [
     DatePipe

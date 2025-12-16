@@ -4,11 +4,12 @@
   </div>
   <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | hasPermission)" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{ 'orClickHere' | transloco }}</a>
+    <a class="link" target=”_blank” *ngIf="link && (RbacActivity.LINK_QR_CODE | hasPermission)"
+       href="{{link}}">{{ 'orClickHere' | transloco }}</a>
   </div>
 </div>
 <div class="button-container">
-  <button biit-button id="participant-button-save"
+  <button biit-button id="participant-qr-close"
           (click)="close()">
     {{ 'close' | transloco }}
   </button>

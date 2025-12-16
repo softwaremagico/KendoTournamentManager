@@ -10,23 +10,27 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
   declarations: [TournamentQrCodeComponent],
   exports: [TournamentQrCodeComponent],
-    imports: [
-        CommonModule,
-        MatIconModule,
-        TranslocoModule,
-        MatTooltipModule,
-        MatButtonModule,
-        RbacModule,
-        MatCheckboxModule,
-        MatDialogModule,
-        MatSpinnerOverlayModule,
-        HasPermissionPipe
-    ]
+  imports: [
+    CommonModule,
+    MatIconModule,
+    TranslocoModule,
+    MatTooltipModule,
+    MatButtonModule,
+    RbacModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatSpinnerOverlayModule,
+    HasPermissionPipe,
+    BiitButtonModule,
+    BiitActionButtonModule,
+    BiitIconButtonModule
+  ]
 })
 export class TournamentQrCodeModule {
 }

@@ -33,7 +33,7 @@ export class ParticipantQrCodeComponent implements OnInit {
       this.qrService.getParticipantQr(this.participant.id!, this.userSessionService.getNightMode(), this.port).subscribe((_qrCode: QrCode): void => {
         if (_qrCode) {
           this.qrCode = _qrCode.base64;
-          this.link = _qrCode.link;
+          this.link = _qrCode.content;
         } else {
           this.qrCode = undefined;
         }
