@@ -70,9 +70,6 @@ import {
 import {ParticipantPictureModule} from "./components/participant-picture/participant-picture.module";
 import {PictureDialogBoxModule} from "./components/participant-picture/picture-dialog-box/picture-dialog-box.module";
 import {
-  TournamentImageSelectorModule
-} from "./views/tournament-list/tournament-dialog-box/tournament-image-selector/tournament-image-selector.module";
-import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
@@ -202,7 +199,6 @@ registerLocaleData(localeNL, "nl");
         WebcamModule,
         ParticipantPictureModule,
         PictureDialogBoxModule,
-        TournamentImageSelectorModule,
         TournamentScoreEditorModule,
         TournamentExtraPropertiesModule,
         RoleSelectorDialogBoxModule,

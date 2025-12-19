@@ -8,7 +8,6 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
-import {TournamentImageSelectorComponent} from "./tournament-image-selector/tournament-image-selector.component";
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
 import {TranslocoService} from "@ngneat/transloco";
 import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/tournament-extra-properties.component";
@@ -125,13 +124,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   }
 
   addPicture(): void {
-    const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
-      panelClass: 'pop-up-panel',
-      data: {
-        title: "", action: Action.Add, tournament: this.tournament
-      }
-    });
-    dialogRef.afterClosed().subscribe();
+
   }
 
   disableShiaijos(): void {
