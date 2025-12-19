@@ -89,16 +89,16 @@
           <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
         </button>
         <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-                [title]="t('tournamentListAsZip')"
-                (click)="downloadZip(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
                 [title]="t('bloggerStatistics')"
                 (click)="downloadBlogCode(table.selectedRows[0])"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
+        </button>
+        <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
+                [title]="t('tournamentListAsZip')"
+                (click)="downloadZip(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
         </button>
         </span>
       </ng-template>
@@ -115,9 +115,11 @@
               no-header
   >
     <div class="vertical">
-      <span [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
+      <span
+        [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
       <div class="flex-grow horizontal buttons-row">
-        <button id="delete-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}</button>
+        <button id="delete-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
+        </button>
         <button id="delete-confirm-button" biit-button primary
                 (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
         </button>

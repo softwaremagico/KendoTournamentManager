@@ -751,5 +751,7 @@
   "youCannotDeleteYourself": "No podeu suprimir el vostre compte.",
   "account": "Compte",
   "generate": "Generar",
-  "uploadCsvFile": "Pujar un fitxer CSV"
+  "uploadCsvFile": "Pujar un fitxer CSV",
+  "defaultPicture": "Imatge predeterminada",
+  "preview": "Vista preliminar"
 }

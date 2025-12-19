@@ -729,5 +729,7 @@
   "youCannotDeleteYourself": "Je kunt je eigen account niet verwijderen.",
   "account": "Rekening",
   "generate": "Genereren",
-  "uploadCsvFile": "Upload een CSV-bestand"
+  "uploadCsvFile": "Upload een CSV-bestand",
+  "defaultPicture": "Standaard afbeelding",
+  "preview": "Voorbeeld"
 }

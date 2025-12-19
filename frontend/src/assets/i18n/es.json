@@ -412,7 +412,7 @@
   "profile": "Perfil",
   "back": "Volver",
   "chronometerOn": "Mostrar cronómetro",
-  "chronometerOff": "Ocutlar cronómetro",
+  "chronometerOff": "Ocultar cronómetro",
   "playWhistle": "Reproducir el sonido de un silbato.",
   "fields": "Campos",
   "avoidDuplicateFights": "Evita partidos duplicados",
@@ -747,5 +747,7 @@
   "youCannotDeleteYourself": "No puede eliminar su propia cuenta.",
   "account": "Cuenta",
   "generate": "Generar",
-  "uploadCsvFile": "Subir un fichero CSV"
+  "uploadCsvFile": "Subir un fichero CSV",
+  "defaultPicture": "Imagen predeterminada",
+  "preview": "Vista Preliminar"
 }

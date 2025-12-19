@@ -14,6 +14,13 @@ import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-t
 import {
   NumberDropdownInterfacePipeModule
 } from "../../pipes/number-dropdown-interface-pipe/number-dropdown-interface-pipe.module";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {
+    ParticipantPictureDialogModule
+} from "../../views/participant-list/participant-form-popup/participant-picture/participant-picture-dialog-box.module";
+import {
+  TournamentImagesModule
+} from "../../views/tournament-list/tournament-form-popup/tournament-images/tournament-images.module";
 
 
 
@@ -39,7 +46,10 @@ import {
     MatFormFieldModule,
     BiitIconButtonModule,
     NumberDropdownInterfacePipeModule,
-    BiitButtonModule
+    BiitButtonModule,
+    BiitPopupModule,
+    ParticipantPictureDialogModule,
+    TournamentImagesModule
   ]
 })
 export class TournamentFormModule { }

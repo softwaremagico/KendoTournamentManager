@@ -54,6 +54,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
     } else {
       this.waiting = false;
+      this.userSessionService.clearToken();
     }
   }
 

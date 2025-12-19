@@ -1,3 +1,5 @@
+$space: 1em;
+
 .canvas {
   width: 100%;
   height: 100%;
@@ -26,4 +28,12 @@
       align-items: center;
     }
   }
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
 }

@@ -35,6 +35,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   onSaved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Input() @Output()
   onError: EventEmitter<any> = new EventEmitter<any>();
+  protected addPhoto: boolean = false;
 
   protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
   protected readonly TournamentFormValidationFields = TournamentFormValidationFields;
@@ -119,7 +120,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     if (!this.tournament.name || this.tournament.name.length == 0) {
       verdict = false;
       this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    }else {
+    } else {
       if (this.tournament.name && this.tournament.name.length < this.TOURNAMENT_NAME_MIN_LENGTH) {
         verdict = false;
         this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));

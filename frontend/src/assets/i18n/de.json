@@ -729,5 +729,7 @@
   "youCannotDeleteYourself": "Sie können Ihr eigenes Konto nicht löschen.",
   "account": "Konto",
   "generate": "Generieren",
-  "uploadCsvFile": "Laden Sie eine CSV-Datei hoch"
+  "uploadCsvFile": "Laden Sie eine CSV-Datei hoch",
+  "defaultPicture": "Standardbild",
+  "preview": "Vorschau"
 }

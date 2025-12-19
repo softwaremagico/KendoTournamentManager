@@ -735,5 +735,7 @@
   "youCannotDeleteYourself": "Non puoi eliminare il tuo account.",
   "account": "Account",
   "generate": "Genera",
-  "uploadCsvFile": "Carica un file CSV"
+  "uploadCsvFile": "Carica un file CSV",
+  "defaultPicture": "Immagine predefinita",
+  "preview": "Anteprima"
 }

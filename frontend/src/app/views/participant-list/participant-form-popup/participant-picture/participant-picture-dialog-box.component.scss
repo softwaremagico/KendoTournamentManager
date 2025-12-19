@@ -100,6 +100,10 @@ img {
 .floating-image-delete-button {
   position: relative;
   z-index: 999;
-  top: -376px;
-  left: 580px;
+  top: -600px;
+  left: 300px;
+}
+
+.floating-button {
+  border: 3px solid var(--component-color);
 }
