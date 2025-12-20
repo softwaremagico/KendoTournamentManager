@@ -58,6 +58,8 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   selectedScore: ScoreType;
 
   protected saving: boolean = false;
+  protected openCustomProperties: boolean = false;
+  protected openScoreRules: boolean = false;
 
 
   constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
@@ -108,10 +110,6 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
 
   getSeconds(time: number): number {
     return time % 60;
-  }
-
-  openCustomProperties() {
-
   }
 
   protected validate(): boolean {

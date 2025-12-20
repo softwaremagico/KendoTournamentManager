@@ -37,3 +37,8 @@ $space: 1em;
   margin-top: 1rem;
   gap: $space;
 }
+
+.canvas .row.row-with-button{
+  display: grid;
+  grid-template-columns: 80% 15%;
+}
