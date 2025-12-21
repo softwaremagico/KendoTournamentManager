@@ -4,6 +4,8 @@ import {TournamentFormPopupComponent} from './tournament-form-popup.component';
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TournamentFormModule} from "../../../forms/tournament-form/tournament-form.module";
 import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 
 
 @NgModule({
@@ -13,12 +15,14 @@ import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
   exports: [
     TournamentFormPopupComponent
   ],
-  imports: [
-    CommonModule,
-    BiitPopupModule,
-    TournamentFormModule,
-    TranslocoRootModule
-  ]
+    imports: [
+        CommonModule,
+        BiitPopupModule,
+        TournamentFormModule,
+        TranslocoRootModule,
+        BiitButtonModule,
+        HasPermissionPipe
+    ]
 })
 export class TournamentFormPopupModule {
 }

@@ -4,6 +4,7 @@ import {Tournament} from "../../../models/tournament";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";
 import {TournamentFormValidationFields} from "../../../forms/tournament-form/tournament-form-validation-fields";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'tournament-form-popup',
@@ -33,4 +34,6 @@ export class TournamentFormPopupComponent implements OnInit {
   ngOnInit(): void {
     this.loggedUser = this.sessionService.getUser();
   }
+
+  protected readonly RbacActivity = RbacActivity;
 }

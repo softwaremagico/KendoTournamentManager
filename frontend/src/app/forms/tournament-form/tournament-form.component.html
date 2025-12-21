@@ -18,7 +18,8 @@
                        [required]="true"
                        error="{{errors | mapGet: TournamentFormValidationFields.NAME_ERRORS}}"
       ></biit-input-text>
-      <button id="edit-options-button" biit-icon icon="hamburger" *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      <button id="edit-options-button" biit-icon icon="column_selection"
+              *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
               class="edit-score-button"
               (click)="openCustomProperties=true"
               [disabled]="tournament.id==undefined || tournament.type == typeCustom">
@@ -49,6 +50,7 @@
       ></biit-input-text>
     </div>
     <div class="row"
+         [class.row-with-button]="tournament.tournamentScore.scoreType == scoreTypeCustom"
          *ngIf="tournament && tournament.type!== TournamentType.BUBBLE_SORT && tournament.type!== TournamentType.SENBATSU">
       <biit-dropdown id="tournament-score-rules"
                      [ngModel]="tournament.tournamentScore? (tournament.tournamentScore.scoreType | dropdownInterface: translatedScores) : '' "
@@ -60,7 +62,8 @@
                      [descriptionLabel]="'description'"
                      [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
       ></biit-dropdown>
-      <button id="edit-score-button" biit-icon icon="hamburger" *ngIf="selectedScore==scoreTypeCustom"
+      <button id="edit-score-button" biit-icon icon="column_selection"
+              *ngIf="tournament.tournamentScore.scoreType == scoreTypeCustom"
               class="edit-score-button"
               [title]="t('teams')"
               (click)="openScoreRules=true"
@@ -97,11 +100,17 @@
       (onClosed)="addPhoto=false"></tournament-images>
   </biit-popup>
 
-  <biit-popup id="custom-properties-popup" *ngIf="openCustomProperties" no-header>
-
+  <biit-popup id="custom-properties-popup" *ngIf="openCustomProperties"
+              [title]="t('t.tournamentProperties')"
+  >
+    <tournament-extra-settings-form
+      [tournament]="tournament"
+      (onClosed)="openCustomProperties=false">
+    </tournament-extra-settings-form>
   </biit-popup>
 
-  <biit-popup id="score-rules-popup" *ngIf="openScoreRules" no-header>
+  <biit-popup id="score-rules-popup" *ngIf="openScoreRules"
+              (onClosed)="openScoreRules=false">
     <!--              TODO(softwaremagico): score rules popup is missing -->
   </biit-popup>
 </ng-container>
