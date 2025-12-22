@@ -20,7 +20,8 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
 })
 export class TournamentFormPopupComponent implements OnInit {
   @Input() tournament: Tournament;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  originalTournament: Tournament;
+  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Output() onSaved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Output() onError: EventEmitter<any> = new EventEmitter<any>();
 
@@ -33,6 +34,7 @@ export class TournamentFormPopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.loggedUser = this.sessionService.getUser();
+    this.originalTournament = Tournament.clone(this.tournament);
   }
 
   protected readonly RbacActivity = RbacActivity;

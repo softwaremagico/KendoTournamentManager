@@ -1,0 +1,35 @@
+$space: 1em;
+
+.canvas {
+  width: 100%;
+  min-width: 40vw;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4.5rem;
+  padding: 4.5rem 2.5rem 3rem;
+  background: var(--body-background);
+
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 52.5rem;
+
+    * {
+      flex-grow: 1;
+      width: inherit;
+    }
+  }
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+}

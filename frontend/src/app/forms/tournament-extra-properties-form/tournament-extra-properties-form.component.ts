@@ -48,9 +48,9 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
 
   protected readonly TournamentExtraPropertyKey = TournamentExtraPropertyKey;
 
-  constructor(rbacService: RbacService, public translateService: TranslocoService,
+  constructor(rbacService: RbacService, public transloco: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
-              public messageService: MessageService, private transloco: TranslocoService,) {
+              public messageService: MessageService) {
     super(rbacService);
 
     this.drawResolution = DrawResolution.toArray();

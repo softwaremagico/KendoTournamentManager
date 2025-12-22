@@ -8,7 +8,6 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
-import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
 import {TranslocoService} from "@ngneat/transloco";
 import {InputLimits} from "../../../utils/input-limits";
 
@@ -141,14 +140,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   }
 
   openScoreDefinition(): void {
-    const dialogRef = this.dialog.open(TournamentScoreEditorComponent, {
-      data: {
-        title: this.translateService.translate('scoreRules'), action: Action.Add, tournament: this.tournament
-      }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.tournament = result.data;
-    });
+
   }
 
   selectScore(score: ScoreType): void {

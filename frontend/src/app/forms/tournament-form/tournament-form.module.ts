@@ -24,6 +24,7 @@ import {
 import {
     TournamentExtraPropertiesFormModule
 } from "../tournament-extra-properties-form/tournament-extra-properties-form.module";
+import {TournamentCustomScoresFormModule} from "../tournament-custom-scores-form/tournament-custom-scores-form.module";
 
 
 
@@ -34,26 +35,27 @@ import {
   exports: [
     TournamentFormComponent
   ],
-    imports: [
-        CommonModule,
-        TranslocoRootModule,
-        BiitInputTextModule,
-        FormsModule,
-        MapGetPipeModule,
-        BiitMultiselectModule,
-        BiitDropdownModule,
-        DropdownInterfacePipeModule,
-        HasPermissionPipe,
-        MatButtonModule,
-        MatIconModule,
-        MatFormFieldModule,
-        BiitIconButtonModule,
-        NumberDropdownInterfacePipeModule,
-        BiitButtonModule,
-        BiitPopupModule,
-        ParticipantPictureDialogModule,
-        TournamentImagesModule,
-        TournamentExtraPropertiesFormModule
-    ]
+  imports: [
+    CommonModule,
+    TranslocoRootModule,
+    BiitInputTextModule,
+    FormsModule,
+    MapGetPipeModule,
+    BiitMultiselectModule,
+    BiitDropdownModule,
+    DropdownInterfacePipeModule,
+    HasPermissionPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    BiitIconButtonModule,
+    NumberDropdownInterfacePipeModule,
+    BiitButtonModule,
+    BiitPopupModule,
+    ParticipantPictureDialogModule,
+    TournamentImagesModule,
+    TournamentExtraPropertiesFormModule,
+    TournamentCustomScoresFormModule
+  ]
 })
 export class TournamentFormModule { }

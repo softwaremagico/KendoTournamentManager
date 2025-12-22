@@ -1,6 +1,6 @@
 <biit-popup id="tournament-popup"
             [title]="tournament.id ? t('t.tournamentEdit') : t('t.tournamentAdd')"
-            (onClosed)="onClosed.emit()"
+            (onClosed)="onClosed.emit(this.originalTournament)"
             closable sixty-view
             *transloco="let t"
 >

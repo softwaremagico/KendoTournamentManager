@@ -55,7 +55,6 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   typeCustom: TournamentType = TournamentType.CUSTOMIZED;
   typeSorting: TournamentType = TournamentType.BUBBLE_SORT;
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
-  selectedScore: ScoreType;
 
   protected saving: boolean = false;
   protected openCustomProperties: boolean = false;

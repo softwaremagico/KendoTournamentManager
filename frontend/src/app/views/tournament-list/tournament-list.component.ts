@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, QueryList, TemplateRef, ViewChildren} from '@angular/core';
+import {AfterViewInit, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -18,7 +18,7 @@ import {
 } from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {BiitTableComponent, DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
@@ -54,6 +54,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected readonly port: number = +window.location.port;
 
   @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
+  @ViewChild('table')
+  table!: BiitTableComponent;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, public dialog: MatDialog,

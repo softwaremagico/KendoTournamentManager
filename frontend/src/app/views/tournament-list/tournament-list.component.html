@@ -107,7 +107,7 @@
 
   <tournament-form-popup *ngIf="target"
                          [tournament]="target"
-                         (onClosed)="this.target = null"
+                         (onClosed)="this.target = null; loadData();"
                          (onSaved)="onSaved($event)"
   />
 

@@ -1,17 +1,5 @@
 <ng-container id="tournament-form" *transloco="let t">
   <div class="canvas" slot="{{'empty' | transloco}}">
-    <div class="row">
-      <biit-dropdown id="tournament-type"
-                     [ngModel]="tournament.type | dropdownInterface: translatedTypes"
-                     (ngModelChange)="tournament.type = $event.value"
-                     [data]="translatedTypes"
-                     [label]="'label'"
-                     [value]="'value'"
-                     [title]="t('tournamentType')"
-                     [descriptionLabel]="'description'"
-                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
-      ></biit-dropdown>
-    </div>
     <div class="row row-with-button">
       <biit-input-text id="tournament-name" class="tournament-name" [(ngModel)]="tournament.name"
                        [placeholder]="t('competitionName')"
@@ -24,6 +12,18 @@
               (click)="openCustomProperties=true"
               [disabled]="tournament.id==undefined || tournament.type == typeCustom">
       </button>
+    </div>
+    <div class="row">
+      <biit-dropdown id="tournament-type"
+                     [ngModel]="tournament.type | dropdownInterface: translatedTypes"
+                     (ngModelChange)="tournament.type = $event.value"
+                     [data]="translatedTypes"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('tournamentType')"
+                     [descriptionLabel]="'description'"
+                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-dropdown>
     </div>
     <div class="row">
       <biit-input-text id="tournament-shiaijos" [(ngModel)]="tournament.shiaijos"
@@ -110,7 +110,10 @@
   </biit-popup>
 
   <biit-popup id="score-rules-popup" *ngIf="openScoreRules"
-              (onClosed)="openScoreRules=false">
-    <!--              TODO(softwaremagico): score rules popup is missing -->
+              [title]="t('t.scoreRules')">
+    <tournament-custom-scores-form
+      [tournament]="tournament"
+      (onClosed)="openScoreRules=false">
+    </tournament-custom-scores-form>
   </biit-popup>
 </ng-container>
