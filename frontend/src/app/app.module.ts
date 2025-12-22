@@ -100,9 +100,6 @@ import {
   TournamentBracketsEditorModule
 } from "./components/tournament-brackets-editor/tournament-brackets-editor.module";
 import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator/tournament-generator.module";
-import {
-  TournamentExtraPropertiesModule
-} from "./views/tournament-list/tournament-dialog-box/tournament-extra-properties/tournament-extra-properties.module";
 import {RxStompService} from "./websockets/rx-stomp.service";
 import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
 import {TournamentQrCodeModule} from './components/tournament-qr-code/tournament-qr-code.module';
@@ -200,7 +197,6 @@ registerLocaleData(localeNL, "nl");
         ParticipantPictureModule,
         PictureDialogBoxModule,
         TournamentScoreEditorModule,
-        TournamentExtraPropertiesModule,
         RoleSelectorDialogBoxModule,
         AchievementTileModule,
         AchievementWallModule,

@@ -10,13 +10,14 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {LeagueFightsOrder} from "../../models/league-fights-order";
 import {Tournament} from "../../models/tournament";
 import {TournamentType} from "../../models/tournament-type";
+import {combineLatest} from "rxjs";
 
 @Component({
   selector: 'tournament-extra-settings-form',
-  templateUrl: './tournament-extra-settings-form.component.html',
-  styleUrls: ['./tournament-extra-settings-form.component.scss']
+  templateUrl: './tournament-extra-properties-form.component.html',
+  styleUrls: ['./tournament-extra-properties-form.component.scss']
 })
-export class TournamentExtraSettingsFormComponent extends RbacBasedComponent implements OnInit {
+export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   tournament: Tournament;
@@ -37,17 +38,25 @@ export class TournamentExtraSettingsFormComponent extends RbacBasedComponent imp
   areFightsMaximized: boolean;
   firstInFirstOut: boolean;
   selectedDrawResolution: DrawResolution;
+  protected drawResolutions = DrawResolution.toArray();
+  protected drawResolutionValues: { value: string, label: string, description: string }[] = [];
   avoidDuplicatedFights: boolean;
   resolveOddFightsAsap: boolean;
   challengeDistance: number;
+  protected senbatsuChallengeDistance: { value: string, label: string }[] = [];
+  protected SENBATSU_ALLOWED_DISTANCE: number[] = [2, 3, 4, 5];
+
+  protected readonly TournamentExtraPropertyKey = TournamentExtraPropertyKey;
 
   constructor(rbacService: RbacService, public translateService: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
-              public messageService: MessageService,) {
+              public messageService: MessageService, private transloco: TranslocoService,) {
     super(rbacService);
 
     this.drawResolution = DrawResolution.toArray();
     this.defaultPropertiesValue();
+    this.translateSenbatsuChallengeDistance();
+    this.translateDrawResolution();
   }
 
   ngOnInit(): void {
@@ -91,5 +100,37 @@ export class TournamentExtraSettingsFormComponent extends RbacBasedComponent imp
     this.avoidDuplicatedFights = TournamentExtraPropertyKey.avoidDuplicateFightsGeneration();
     this.resolveOddFightsAsap = TournamentExtraPropertyKey.oddFightsResolvedAsap();
     this.challengeDistance = TournamentExtraPropertyKey.senbatsuChallengeDistance();
+  }
+
+  private translateDrawResolution() {
+    const scoresTranslations = this.drawResolutions.map(drawValue => this.transloco.selectTranslate(`${DrawResolution.toCamel(drawValue)}`));
+    combineLatest(scoresTranslations).subscribe((translations) => {
+      translations.forEach((label, index) => this.drawResolutionValues.push({
+        value: this.drawResolutions[index],
+        label: label,
+        description: this.transloco.translate(DrawResolution.toCamel(this.drawResolutions[index]) + "Hint")
+      }));
+    });
+  }
+
+  private translateSenbatsuChallengeDistance(): void {
+    for (let number of this.SENBATSU_ALLOWED_DISTANCE) {
+      this.senbatsuChallengeDistance.push({
+        value: number + "", label: number + ""
+      });
+    }
+  }
+
+  onSave(tournamentExtraProperty: TournamentExtraPropertyKey, propertyValue: string) {
+    if (tournamentExtraProperty === TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
+      if (propertyValue == "true") {
+        propertyValue = LeagueFightsOrder.FIFO;
+      } else {
+        propertyValue = LeagueFightsOrder.LIFO;
+      }
+    }
+    this.tournamentExtendedPropertiesService.update(
+      new TournamentExtendedProperty(this.tournament, tournamentExtraProperty, propertyValue)
+    ).subscribe().add();
   }
 }

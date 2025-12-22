@@ -10,7 +10,6 @@ import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
 import {TranslocoService} from "@ngneat/transloco";
-import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/tournament-extra-properties.component";
 import {InputLimits} from "../../../utils/input-limits";
 
 @Component({
@@ -157,11 +156,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   }
 
   openCustomProperties(): void {
-    const dialogRef = this.dialog.open(TournamentExtraPropertiesComponent, {
-      data: {
-        title: this.translateService.translate('tournamentProperties'), action: Action.Add, tournament: this.tournament
-      }
-    });
+
   }
 
   getMinutes(time: number): number {

@@ -22,8 +22,8 @@ import {
   TournamentImagesModule
 } from "../../views/tournament-list/tournament-form-popup/tournament-images/tournament-images.module";
 import {
-    TournamentExtraSetttingsFormModule
-} from "../tournament-extra-setttings-form/tournament-extra-setttings-form.module";
+    TournamentExtraPropertiesFormModule
+} from "../tournament-extra-properties-form/tournament-extra-properties-form.module";
 
 
 
@@ -53,7 +53,7 @@ import {
         BiitPopupModule,
         ParticipantPictureDialogModule,
         TournamentImagesModule,
-        TournamentExtraSetttingsFormModule
+        TournamentExtraPropertiesFormModule
     ]
 })
 export class TournamentFormModule { }

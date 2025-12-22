@@ -67,7 +67,7 @@
               class="edit-score-button"
               [title]="t('teams')"
               (click)="openScoreRules=true"
-              [disabled]="tournament.id==undefined || tournament.type == typeCustom">
+              [disabled]="tournament.id==undefined">
       </button>
     </div>
     <div class="row">
@@ -82,7 +82,7 @@
       ></biit-dropdown>
     </div>
     <div class="buttons-row">
-      <button biit-button secondary id="participant-photo" *ngIf="tournament.id" (click)="addPhoto=true"
+      <button biit-button secondary id="tournament-images" *ngIf="tournament.id" (click)="addPhoto=true"
               [disabled]="saving || !(RbacActivity.TAKE_PICTURE | hasPermission)">
         {{ t('images') }}
       </button>
