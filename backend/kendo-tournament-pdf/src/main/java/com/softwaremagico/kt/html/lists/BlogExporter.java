@@ -21,6 +21,7 @@ package com.softwaremagico.kt.html.lists;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
@@ -149,28 +150,28 @@ public class BlogExporter {
                 final List<List<String>> rows = new ArrayList<>();
                 if (groups.get(i).getFights().contains(fight)) {
                     if (tournament.getTeamSize() > 1) {
-                        stringBuilder.append(NEW_LINE + "<h5>").append(fight.getTeam1().getName()).append(" - ")
+                        stringBuilder.append(NEW_LINE).append("<h5>").append(fight.getTeam1().getName()).append(" - ")
                                 .append(fight.getTeam2().getName()).append("</h5>\n");
                     }
                     // Create for each competitor
 
-                    for (int teamMember = 0; teamMember < tournament.getTeamSize(); teamMember++) {
+                    for (DuelDTO duelDTO : fight.getDuels()) {
                         final List<String> columns = new ArrayList<>();
                         // Team 1
-                        ParticipantDTO competitor = fight.getTeam1().getMembers().get(teamMember);
+                        ParticipantDTO competitor = duelDTO.getCompetitor1();
                         String name;
                         name = NameUtils.getLastnameName(competitor);
                         columns.add(name);
-                        columns.add(getFaultsDiv(fight, teamMember, true));
-                        columns.add(getScoreDiv(fight, teamMember, 1, true));
-                        columns.add(getScoreDiv(fight, teamMember, 0, true));
-                        columns.add(getDrawFight(fight, teamMember));
-                        columns.add(getScoreDiv(fight, teamMember, 0, false));
-                        columns.add(getScoreDiv(fight, teamMember, 1, false));
-                        columns.add(getFaultsDiv(fight, teamMember, false));
+                        columns.add(getFaultsDiv(duelDTO, true));
+                        columns.add(getScoreDiv(duelDTO, 1, true));
+                        columns.add(getScoreDiv(duelDTO, 0, true));
+                        columns.add(getDrawFight(duelDTO));
+                        columns.add(getScoreDiv(duelDTO, 0, false));
+                        columns.add(getScoreDiv(duelDTO, 1, false));
+                        columns.add(getFaultsDiv(duelDTO, false));
 
                         // Team 2
-                        competitor = fight.getTeam2().getMembers().get(teamMember);
+                        competitor = duelDTO.getCompetitor2();
                         if (competitor != null) {
                             name = NameUtils.getLastnameName(competitor);
                         } else {
@@ -253,9 +254,9 @@ public class BlogExporter {
         stringBuilder.append("</table>\n");
     }
 
-    private String getDrawFight(FightDTO fightDTO, int duel) {
+    private String getDrawFight(DuelDTO duelDTO) {
         // Draw Fights
-        if (fightDTO.getDuels().get(duel).getWinner() == 0 && fightDTO.isOver()) {
+        if (duelDTO.getWinner() == 0 && duelDTO.isOver()) {
             return "<div style=\"text-align: center;\">"
                     + Score.DRAW.getPdfAbbreviation()
                     + "</div>";
@@ -264,8 +265,8 @@ public class BlogExporter {
         }
     }
 
-    private String getFaultsDiv(FightDTO fightDTO, int duel, boolean leftTeam) {
-        final boolean fault = getFaults(fightDTO, duel, leftTeam);
+    private String getFaultsDiv(DuelDTO duelDTO, boolean leftTeam) {
+        final boolean fault = getFaults(duelDTO, leftTeam);
         if (!fault) {
             return "";
         }
@@ -273,33 +274,33 @@ public class BlogExporter {
                 + "</div>";
     }
 
-    private boolean getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
+    private boolean getFaults(DuelDTO duelDTO, boolean leftTeam) {
         if (leftTeam) {
-            return fightDTO.getDuels().get(duel).getCompetitor1Fault();
+            return duelDTO.getCompetitor1Fault();
         } else {
-            return fightDTO.getDuels().get(duel).getCompetitor2Fault();
+            return duelDTO.getCompetitor2Fault();
         }
     }
 
-    private String getScoreDiv(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
-        final Score scoreText = getScore(fightDTO, duel, score, leftTeam);
+    private String getScoreDiv(DuelDTO duelDTO, int score, boolean leftTeam) {
+        final Score scoreText = getScore(duelDTO, score, leftTeam);
         if (scoreText == null || scoreText == Score.EMPTY) {
             return "";
         }
-        final int scoreTime = getScoreTime(fightDTO, duel, score, leftTeam);
+        final int scoreTime = getScoreTime(duelDTO, score, leftTeam);
         return "<div style=\"border-radius: 50%;border: 1px solid black; text-align: center;height=100%\""
                 + (scoreTime > 0 ? "  title=\"" + scoreTime + "&quot;\">" : ">")
                 + String.valueOf(scoreText.getPdfAbbreviation()).replace(" ", "&nbsp;")
                 + "</div>";
     }
 
-    private int getScoreTime(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
+    private int getScoreTime(DuelDTO duelDTO, int score, boolean leftTeam) {
         final int time;
         try {
             if (leftTeam) {
-                time = fightDTO.getDuels().get(duel).getCompetitor1ScoreTime().get(score);
+                time = duelDTO.getCompetitor1ScoreTime().get(score);
             } else {
-                time = fightDTO.getDuels().get(duel).getCompetitor2ScoreTime().get(score);
+                time = duelDTO.getCompetitor2ScoreTime().get(score);
             }
             return time;
         } catch (Exception ignored) {
@@ -308,12 +309,12 @@ public class BlogExporter {
         return -1;
     }
 
-    private Score getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
+    private Score getScore(DuelDTO duelDTO, int score, boolean leftTeam) {
         try {
             if (leftTeam) {
-                return fightDTO.getDuels().get(duel).getCompetitor1Score().get(score);
+                return duelDTO.getCompetitor1Score().get(score);
             } else {
-                return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score);
+                return duelDTO.getCompetitor2Score().get(score);
             }
         } catch (IndexOutOfBoundsException | NullPointerException e) {
             return null;
