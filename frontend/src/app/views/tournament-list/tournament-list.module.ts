@@ -18,31 +18,33 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TournamentQrCodeModule} from "../../components/tournament-qr-code/tournament-qr-code.module";
 import {TournamentRolesModule} from "./tournament-roles/tournament-roles.module";
 import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
+import {TournamentTeamsModule} from "./tournament-teams/tournament-teams.module";
 
 @NgModule({
   declarations: [TournamentListComponent],
   exports: [TournamentListComponent],
-  imports: [
-    TournamentRoutingModule,
-    CommonModule,
-    MatIconModule,
-    TranslocoModule,
-    BasicTableModule,
-    MatTooltipModule,
-    MatButtonModule,
-    RbacModule,
-    MatSpinnerOverlayModule,
-    BiitDatatableModule,
-    HasPermissionPipe,
-    BiitIconButtonModule,
-    BiitButtonModule,
-    MatDividerModule,
-    TournamentFormPopupModule,
-    BiitPopupModule,
-    TournamentQrCodeModule,
-    TournamentRolesModule,
-    BiitProgressBarModule
-  ],
+    imports: [
+        TournamentRoutingModule,
+        CommonModule,
+        MatIconModule,
+        TranslocoModule,
+        BasicTableModule,
+        MatTooltipModule,
+        MatButtonModule,
+        RbacModule,
+        MatSpinnerOverlayModule,
+        BiitDatatableModule,
+        HasPermissionPipe,
+        BiitIconButtonModule,
+        BiitButtonModule,
+        MatDividerModule,
+        TournamentFormPopupModule,
+        BiitPopupModule,
+        TournamentQrCodeModule,
+        TournamentRolesModule,
+        BiitProgressBarModule,
+        TournamentTeamsModule
+    ],
   providers: [
     DatePipe
   ]

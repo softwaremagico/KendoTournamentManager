@@ -15,7 +15,8 @@
     <button biit-icon *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
             [icon]="'upload_general'"
     ></button>
-    <button mat-button *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
+    <button mat-button class="csv-button"
+            *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
             (click)="fileInput.click()"
             [title]="t('uploadCsvFile')">
       <mat-icon class="kendo-icon" svgIcon="csv-file-small"></mat-icon>

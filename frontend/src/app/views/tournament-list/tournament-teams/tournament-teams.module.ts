@@ -14,26 +14,35 @@ import {MatButtonModule} from "@angular/material/button";
 import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
+import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
   declarations: [TournamentTeamsComponent],
-    imports: [
-        CommonModule,
-        DragDropModule,
-        UserListModule,
-        MatCardModule,
-        TranslocoModule,
-        MatIconModule,
-        FormsModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        MatDialogModule,
-        MatButtonModule,
-        FightStatisticsPanelModule,
-        MatTooltipModule,
-        HasPermissionPipe,
-    ]
+  exports: [
+    TournamentTeamsComponent
+  ],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    UserListModule,
+    MatCardModule,
+    TranslocoModule,
+    MatIconModule,
+    FormsModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    MatDialogModule,
+    MatButtonModule,
+    FightStatisticsPanelModule,
+    MatTooltipModule,
+    HasPermissionPipe,
+    BiitProgressBarModule,
+    BiitButtonModule,
+    BiitIconButtonModule,
+    BiitActionButtonModule,
+  ]
 })
 export class TournamentTeamsModule {
 }

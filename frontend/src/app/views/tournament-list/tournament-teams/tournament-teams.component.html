@@ -1,96 +1,101 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div cdkDropListGroup class="teams-container">
-  <button (click)="fileInput.click()"
-          *ngIf="(RbacActivity.CREATE_CLUB_CSV | hasPermission)"
-          class="floating-button"
-          color="secundary"
-          mat-flat-button
-          mat-mini-fab
-          type="button">
-    <mat-icon class="kendo-icon" svgIcon="csv-file-small"></mat-icon>
-    <input #fileInput (change)="handleFileInput($event)" accept="text/csv" style="display:none;"
-           type="file"/>
-  </button>
-  <div (cdkDropListDropped)="removeFromTeam($event)" [attr.data-tournament-size]="tournament.teamSize"
-       [cdkDropListData]="userListData.filteredParticipants"
-       cdkDropList
-       class="users-container">
-    <user-list [userListData]="userListData"></user-list>
-  </div>
-  <div class="right-panel">
-    <app-fight-statistics-panel [teams]="true" [tournament]="tournament"></app-fight-statistics-panel>
-    <div class="teams">
-      <div *ngFor="let team of teams" class="teams-location">
-        <div>
-          <h2 *ngIf="!team.editing"
-              (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
-              (keydown)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
-              class="team-header">{{team.name}}</h2>
-          <button (click)="deleteTeam(team)"
-                  *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | hasPermission)"
-                  color="warn"
-                  mat-button>
-            <mat-icon>clear</mat-icon>
-          </button>
-        </div>
-        <input (keyup.enter)="setEditable(team, false); updateTeamName(team)" *ngIf="team.editing"
-               [(ngModel)]="team.name"
-               class="team-title-editable" type="text"/>
-        <div *ngIf="team.editing" class="input-padding"></div>
-        <div [attr.data-team]="team" [attr.data-tournament-size]="tournament.teamSize"
-             [class.small]="this.tournament.teamSize===1" class="team">
-          <div (cdkDropListDropped)="dropMember($event, team, i)" *ngFor="let i of teamSize"
-               [cdkDropListData]="getMembersContainer(team)"
-               [cdkDropListDisabled]="isTeamLocked(team)"
-               [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)"
-               cdkDropList
-               class="team-member-room">
-            <mat-card *ngIf="members!==undefined && members.get(team)!==undefined
+<ng-container id="tournament-roles" *transloco="let t">
+  <biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+  <biit-action-button class="action-button" position="custom">
+    <button biit-icon *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
+            [icon]="'upload_general'"
+    ></button>
+    <button mat-button class="csv-button"
+            *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
+            (click)="fileInput.click()"
+            [title]="t('uploadCsvFile')">
+      <mat-icon class="kendo-icon" svgIcon="csv-file-small"></mat-icon>
+      <input #fileInput (change)="handleFileInput($event)" accept="text/csv" style="display:none;"
+             type="file"/>
+    </button>
+  </biit-action-button>
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div cdkDropListGroup class="teams-container">
+      <div (cdkDropListDropped)="removeFromTeam($event)" [attr.data-tournament-size]="tournament.teamSize"
+           [cdkDropListData]="userListData.filteredParticipants"
+           cdkDropList
+           class="users-container">
+        <user-list [userListData]="userListData"></user-list>
+      </div>
+      <div class="right-panel">
+        <app-fight-statistics-panel [teams]="true" [tournament]="tournament"></app-fight-statistics-panel>
+        <div class="teams">
+          <div *ngFor="let team of teams" class="teams-location">
+            <div class="team-title">
+              <h2 *ngIf="!team.editing"
+                  (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
+                  (keydown)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
+                  class="team-header">{{ team.name }}</h2>
+              <button id="delete-team-button" class="delete-button" (click)="deleteTeam(team)" icon="cross"
+                      biit-icon></button>
+            </div>
+            <input (keyup.enter)="setEditable(team, false); updateTeamName(team)" *ngIf="team.editing"
+                   [(ngModel)]="team.name"
+                   class="team-title-editable" type="text"/>
+            <div *ngIf="team.editing" class="input-padding"></div>
+            <div [attr.data-team]="team" [attr.data-tournament-size]="tournament.teamSize"
+                 [class.small]="this.tournament.teamSize===1" class="team">
+              <div (cdkDropListDropped)="dropMember($event, team, i)" *ngFor="let i of teamSize"
+                   [cdkDropListData]="getMembersContainer(team)"
+                   [cdkDropListDisabled]="isTeamLocked(team)"
+                   [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)"
+                   cdkDropList
+                   class="team-member-room">
+                <mat-card *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
-                      [cdkDragData]="getMember(team, i)"
-                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | hasPermission) || getMember(team, i)!.locked"
-                      cdkDrag
-                      class="user-card">
-              <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
-                <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
-                <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
-                <mat-icon *ngIf="team.locked" class="locked" color="warn" matTooltip="{{'elementInUse' | transloco}}">
-                  block
-                </mat-icon>
-              </mat-card-header>
-              <mat-card-content>
-              </mat-card-content>
-            </mat-card>
+                          [cdkDragData]="getMember(team, i)"
+                          [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | hasPermission) || getMember(team, i)!.locked"
+                          cdkDrag
+                          class="user-card">
+                  <mat-card-header class="team-card" [attr.data-tournament-size]="tournament.teamSize">
+                    <mat-card-title class="team-card-title">{{ getCardTitle(team, i) }}</mat-card-title>
+                    <mat-card-subtitle>{{ getCardSubTitle(team, i) }}</mat-card-subtitle>
+                    <mat-icon *ngIf="team.locked" class="locked" color="warn"
+                              matTooltip="{{'elementInUse' | transloco}}">
+                      block
+                    </mat-icon>
+                  </mat-card-header>
+                  <mat-card-content>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </div>
+          <div class="buttons-row">
+            <button biit-button primary id="tournament-team-add" class="tournament-team-add"
+                    *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
+                    [ngStyle]="{'pointer-events': addingTeam ? 'none' : 'auto'}"
+                    (click)="addTeam()">
+              {{ t('addTeamsText') }}
+            </button>
           </div>
         </div>
       </div>
-      <div *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)" class="new-team"
-           [ngStyle]="{'pointer-events': addingTeam ? 'none' : 'auto'}"
-           (click)="addTeam()"
-           (keydown)="addTeam()">
-        <div class="row">{{'addTeamToTournament' | transloco}}</div>
-      </div>
+    </div>
+    <div class="buttons-row">
+      <button biit-button secondary
+              *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
+              (click)="generateTeams()">
+        {{ t('auto') }}
+      </button>
+      <button biit-button secondary
+              *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
+              (click)="randomTeams()">
+        {{ t('random') }}
+      </button>
+      <button biit-button secondary
+              *ngIf="(RbacActivity.READ_ALL_ROLES | hasPermission)"
+              (click)="downloadPDF()">
+        {{ t('download') }}
+      </button>
+      <button biit-button id="tournament-button-close"
+              (click)="onClosed.emit()" primary>
+        {{ t('close') }}
+      </button>
     </div>
   </div>
-</div>
-<div class="button-container" mat-dialog-actions>
-  <button (click)="generateTeams()" *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
-          mat-flat-button
-          mat-raised-button>
-    <mat-icon>auto_fix_high</mat-icon>
-    {{'wizard' | transloco}}
-  </button>
-  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
-          mat-flat-button
-          mat-raised-button>
-    <mat-icon>casino</mat-icon>
-    {{'random' | transloco}}
-  </button>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | hasPermission)"
-          mat-flat-button
-          mat-raised-button>
-    <mat-icon>file_download</mat-icon>
-    {{'download' | transloco}}
-  </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | transloco}}</button>
-</div>
+</ng-container>

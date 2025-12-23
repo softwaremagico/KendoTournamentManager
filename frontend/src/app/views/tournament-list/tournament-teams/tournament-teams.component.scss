@@ -1,22 +1,30 @@
+$space: 1em;
+
 .teams-container {
   width: 800px;
   display: flex;
-  height: 80vh;
+  max-height: 60vh;
+}
+
+@media screen and (max-width: 950px) {
+  .teams-container {
+    width: 700px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .teams-container {
+    width: 600px;
+  }
 }
 
 .teams-container div {
   flex: 1
 }
 
-.teams-location.ng-star-inserted {
-  padding-bottom: 30px;
-  padding-right: 20px;
-  overflow: auto;
-}
-
 .team {
   min-height: 200px;
-  border: 1px solid #c3d1e1;
+  border: 3px solid var(--component-color);
   overflow: auto;
 }
 
@@ -46,62 +54,18 @@
   height: 5px;
 }
 
-//Padding between roles
-.ng-star-inserted {
-  padding-bottom: 10px;
-}
-
 .users-container {
   overflow: auto;
-}
-
-.user-list {
-  border-color: #c3d1e1;
-  border-radius: 15px;
-  border-style: dotted;
-  padding-right: 10px;
-}
-
-.mat-dialog-actions {
-  display: flex;
-  justify-content: center;
 }
 
 h2 {
   display: inline-block;
 }
 
-.new-team {
-  height: 60px;
-  background-color: var(--contrast-color);
-  color: white;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  margin-right: 20px;
-}
-
-.new-team:hover {
-  background-color: #8097b3;
-  color: black;
-  cursor: pointer;
-}
-
-.new-team .row {
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.mat-raised-button {
-  width: 150px;
-  padding-bottom: 0px;
-}
-
 .team-member-room {
   min-height: 60px;
-  border: 1px solid #c3d1e1;
+  margin: 5px;
+  background-color: var(--main-background);
 }
 
 .team-title-edition {
@@ -113,14 +77,69 @@ h2 {
   padding-bottom: 5px;
 }
 
-.locked {
-  position: absolute;
-  right: 16px;
-  top: 16px;
+.team-title {
+  display: flex;
+  flex-direction: row;
 }
 
-.user-card {
-  margin: 5px;
-  box-shadow: 0px 2px 1px -1px var(--card-shadow1), 0px 1px 1px 0px var(--card-shadow2), 0px 1px 3px 0px var(--card-shadow3) !important;
+.canvas {
+  width: 100%;
+  min-width: 40vw;
+  overflow-y: auto;
+
+  align-items: center;
+  gap: 4.5rem;
+  padding: 2.5rem 2.5rem 1.5rem;
+  background: var(--body-background);
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+  padding-bottom: 30px;
+  padding-top: 20px;
+}
+
+.delete-button {
+  margin-top: 1.1em;
+}
+
+.tournament-team-add {
+  margin: auto;
+}
+
+.action-button {
+  position: absolute;
+  top: 2em !important;
+  right: 5em !important;
+}
+
+.csv-button {
+  padding: 0 0 0 8px;
+
+  &:hover {
+    background-color: var(--main-background);
+  }
+}
+
+.team-card {
+  background-color: var(--floating-background);
+  border: 3px solid var(--component-color);
+  min-height: 60px;
+}
+
+.team-card-title {
+  font-weight: bold;
+}
+
+.mat-mdc-card-content:last-child {
+  padding-bottom: 0;
+}
+
+.teams-location {
+  padding-right: 20px;
 }
 

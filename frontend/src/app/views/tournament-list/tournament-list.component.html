@@ -41,7 +41,7 @@
         </button>
         <button mat-button *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
                 [title]="t('teams')"
-                (click)="addTeams(table.selectedRows[0])"
+                (click)="showTournamentTeams=true"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
         </button>
@@ -155,6 +155,14 @@
     <tournament-roles
       [tournament]="table.selectedRows[0]"
       (onClosed)="showTournamentRoles=false"></tournament-roles>
+  </biit-popup>
+
+  <biit-popup id="tournament-teams" *ngIf="showTournamentTeams"
+              (onClosed)="showTournamentTeams=false"
+              [title]="t('addTeamToTournament')">
+    <tournament-teams
+      [tournament]="table.selectedRows[0]"
+      (onClosed)="showTournamentTeams=false"></tournament-teams>
   </biit-popup>
 
 </ng-container>

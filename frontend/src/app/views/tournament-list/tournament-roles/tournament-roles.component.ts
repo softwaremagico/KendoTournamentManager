@@ -28,6 +28,8 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
   userListData: UserListData = new UserListData();
   roleTypes: RoleType[] = RoleType.toArray();
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
@@ -188,6 +190,5 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     return this.participants.get(roleType)!.length;
   }
 
-  protected readonly BiitProgressBarType = BiitProgressBarType;
 }
 

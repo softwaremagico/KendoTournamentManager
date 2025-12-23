@@ -100,7 +100,7 @@ export class LoginComponent implements OnInit {
         } else {
           this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
         }
-        this.messageService.infoMessage("userloggedInMessage");
+        this.messageService.infoMessage("userLoggedInMessage");
         this.userSessionService.setUser(AuthenticatedUser.clone(authenticatedUser))
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
       },

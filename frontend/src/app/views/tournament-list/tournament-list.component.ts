@@ -49,6 +49,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected confirmDelete: boolean = false;
   protected confirmClone: boolean = false;
   protected showTournamentRoles: boolean = false;
+  protected showTournamentTeams: boolean = false;
 
   protected loading: boolean = false;
   protected loadingGlobal: boolean = false;
@@ -152,17 +153,6 @@ export class TournamentListComponent extends RbacBasedComponent implements After
           );
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
-      });
-    }
-  }
-
-  addTeams(tournament: Tournament): void {
-    if (tournament) {
-      this.dialog.open(TournamentTeamsComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          tournament: tournament
-        }
       });
     }
   }
