@@ -9,6 +9,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ParticipantPictureModule} from "../participant-picture/participant-picture.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
 
 @NgModule({
@@ -18,17 +19,18 @@ import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
   exports: [
     UserCardComponent
   ],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        DragDropModule,
-        RbacModule,
-        TranslocoModule,
-        MatIconModule,
-        MatTooltipModule,
-        ParticipantPictureModule,
-        HasPermissionPipe,
-    ]
+  imports: [
+    CommonModule,
+    MatCardModule,
+    DragDropModule,
+    RbacModule,
+    TranslocoModule,
+    MatIconModule,
+    MatTooltipModule,
+    ParticipantPictureModule,
+    HasPermissionPipe,
+    BiitIconModule,
+  ]
 })
 export class UserCardModule {
 }

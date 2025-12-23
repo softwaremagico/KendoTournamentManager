@@ -1,5 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
@@ -10,13 +9,13 @@ import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
 import {forkJoin} from "rxjs";
-import {TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 import {TeamService} from "../../../services/team.service";
 import {Team} from "../../../models/team";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
   selector: 'tournament-roles',
@@ -33,6 +32,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   roleTypes: RoleType[] = RoleType.toArray();
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
+  loadingGlobal: boolean = false;
 
   constructor(public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService,
@@ -60,6 +60,10 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         this.participants.set(roleType, rolesFromType.map(role => role.participant).sort(function (a: Participant, b: Participant) {
           return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
         }));
+        //Update participant's club from roles. Needed if dropping back the card from role to user list.
+        this.participants.get(roleType)!.forEach((participant: Participant) => {
+          participant.club = participants.filter(p => p.id === participant.id)[0]?.club;
+        })
         //Get participants and subtract the ones already with roles.
         const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
         participants = participants.filter((participantWithoutRole: Participant) => !participantsIds
@@ -162,6 +166,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
 
   downloadPDF(): void {
     if (this.tournament?.id) {
+      this.loadingGlobal = true;
       this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -170,6 +175,8 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         anchor.download = "Role List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
+      }).add(() => {
+        this.loadingGlobal = false;
       });
     }
   }
@@ -180,5 +187,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     }
     return this.participants.get(roleType)!.length;
   }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }
 

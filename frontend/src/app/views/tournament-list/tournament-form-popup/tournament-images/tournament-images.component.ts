@@ -150,7 +150,6 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
     if (this.nameLine > 100) {
       this.nameLine = 100;
     }
-    console.log(this.nameLine);
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = (this.nameLine / 100).toString();

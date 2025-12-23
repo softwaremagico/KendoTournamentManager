@@ -1,4 +1,5 @@
 <ng-container id="tournament-roles" *transloco="let t">
+  <biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
   <div class="canvas" slot="{{'empty' | transloco}}">
     <div cdkDropListGroup class="roles-container">
       <div (cdkDropListDropped)="removeRole($event)" [cdkDropListData]="userListData.filteredParticipants"
@@ -18,9 +19,10 @@
                  [cdkDropListData]="getParticipantsContainer(roleType)"
                  cdkDropList
                  class="role">
-              <app-user-card *ngFor="let user of participants.get(roleType)" [activity]="RbacActivity.EDIT_ROLE"
-                             [dragDisabled]="user.locked"
-                             [showAvatar]="showAvatars" [user]="user"></app-user-card>
+              <user-card *ngFor="let user of participants.get(roleType)" [activity]="RbacActivity.EDIT_ROLE"
+                         [dragDisabled]="user.locked"
+                         [showClub]="false"
+                         [showAvatar]="showAvatars" [user]="user"></user-card>
             </div>
           </div>
         </div>

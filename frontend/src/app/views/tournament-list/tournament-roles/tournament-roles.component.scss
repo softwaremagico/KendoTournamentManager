@@ -6,6 +6,18 @@ $space: 1em;
   max-height: 60vh;
 }
 
+@media screen and (max-width: 950px) {
+  .roles-container {
+    width: 700px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .roles-container {
+    width: 600px;
+  }
+}
+
 .roles-container div {
   flex: 1
 }
@@ -21,9 +33,8 @@ $space: 1em;
 
 .role {
   min-height: 200px;
-  border-color: #c3d1e1;
-  border-radius: 15px;
-  border-style: dotted;
+  border: 3px solid var(--component-color);
+  background-color: var(--popup-background);
   overflow: auto;
 }
 
@@ -31,16 +42,9 @@ $space: 1em;
   overflow: auto;
 }
 
-.right-panel{
+.right-panel {
   padding-left: 10px;
-  display:grid
-}
-
-.user-list {
-  border-color: #c3d1e1;
-  border-radius: 15px;
-  border-style: dotted;
-  padding-right: 10px;
+  display: grid
 }
 
 .role-header {
@@ -56,7 +60,6 @@ $space: 1em;
 .role-counter {
   padding-right: 5vh;
   float: right;
-  color: var(--secondary-text-color);
   margin-bottom: -20px;
 }
 
@@ -68,7 +71,7 @@ $space: 1em;
 
   align-items: center;
   gap: 4.5rem;
-  padding: 4.5rem 2.5rem 3rem;
+  padding: 2.5rem 2.5rem 1.5rem;
   background: var(--body-background);
 }
 

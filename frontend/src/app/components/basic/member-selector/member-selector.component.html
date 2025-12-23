@@ -3,13 +3,13 @@
   <div (cdkDropListDropped)="dropParticipant($event)" [cdkDropListData]="members" [cdkDropListSortingDisabled]="false"
        cdkDropList
        class="users-container">
-    <app-user-card *ngFor="let user of members" [user]="user"></app-user-card>
+    <user-card *ngFor="let user of members" [user]="user"></user-card>
   </div>
   <h2 class="representative-title">{{'representative' | transloco}}</h2>
   <div (cdkDropListDropped)="dropParticipant($event)" [cdkDropListData]="selectedMembers"
        [cdkDropListEnterPredicate]="checkDroppedElement"
        [cdkDropListSortingDisabled]="false" cdkDropList
        class="representative-user">
-    <app-user-card *ngFor="let user of selectedMembers" [user]="user"></app-user-card>
+    <user-card *ngFor="let user of selectedMembers" [user]="user"></user-card>
   </div>
 </div>

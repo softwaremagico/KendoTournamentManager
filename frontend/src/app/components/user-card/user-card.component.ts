@@ -5,7 +5,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 
 @Component({
-  selector: 'app-user-card',
+  selector: 'user-card',
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.scss']
 })
@@ -22,6 +22,9 @@ export class UserCardComponent extends RbacBasedComponent {
 
   @Input()
   showAvatar: boolean = false;
+
+  @Input()
+  showClub: boolean = true;
 
   constructor(rbacService: RbacService) {
     super(rbacService);

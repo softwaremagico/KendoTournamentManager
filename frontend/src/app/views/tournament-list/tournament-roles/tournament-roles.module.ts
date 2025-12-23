@@ -13,6 +13,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
     MatButtonModule,
     FightStatisticsPanelModule,
     HasPermissionPipe,
-    BiitButtonModule
+    BiitButtonModule,
+    BiitProgressBarModule
   ]
 })
 export class TournamentRolesModule {
