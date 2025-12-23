@@ -405,6 +405,7 @@
   "playWhistle": "Riprodurre il suono di un fischio.",
   "fields": "Campi",
   "avoidDuplicateFights": "Evita combatti duplicati",
+  "avoidDuplicateFightsHint": "Due squadre si affronteranno solo una volta.",
   "maximizeFights": "Saotori Shiai.",
   "maximizeFightsHint": "Tutte le squadre giocheranno contro tutte le altre squadre se questa opzione è selezionata. Se non viene selezionato, verranno disputate solo due partite per squadra.",
   "estimatedFights": "Numero stimato di incontri",

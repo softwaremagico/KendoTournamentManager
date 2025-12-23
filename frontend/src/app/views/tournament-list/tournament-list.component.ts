@@ -18,7 +18,7 @@ import {
 } from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {BiitTableComponent, DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
@@ -26,6 +26,7 @@ import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-th
 import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {Constants} from "../../constants";
+import {BiitDatatableComponent} from "@biit-solutions/wizardry-theme/table/biit-datatable/biit-datatable.component";
 
 @Component({
   selector: 'app-tournament-list',
@@ -55,7 +56,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
   @ViewChild('table')
-  table!: BiitTableComponent;
+  table: BiitDatatableComponent<Tournament>;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, public dialog: MatDialog,
@@ -107,7 +108,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     });
   }
 
-  loadData(): void {
+  loadData(tournament?: Tournament): void {
     this.loading = true;
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.tournamentService.getAll().subscribe({
@@ -120,6 +121,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }).add(() => {
       this.loading = false;
       this.systemOverloadService.isTransactionalBusy.next(false);
+      this.selectItem(tournament);
     });
   }
 
@@ -311,8 +313,17 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   onSaved(tournament: Tournament) {
     //Saved already on the popup.
     this.biitSnackbarService.showNotification(this.transloco.translate('infoTournamentStored'), NotificationType.INFO);
-    this.loadData();
+    this.loadData(tournament);
     this.target = null;
+  }
+
+  selectItem(tournament?: Tournament) {
+    if (tournament) {
+      const selectedItems: Tournament[] = [];
+      selectedItems.push(tournament);
+      this.table.selectedRows = selectedItems;
+      console.log(this.table.selectedRows)
+    }
   }
 
   getTournamentNames(tournaments: Tournament[]): string {

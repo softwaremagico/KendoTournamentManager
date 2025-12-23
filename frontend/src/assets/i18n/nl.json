@@ -399,6 +399,7 @@
   "playWhistle": "Het geluid van een fluitje reproduceren.",
   "fields": "Veld",
   "avoidDuplicateFights": "Vermijd dubbele overeenkomsten",
+  "avoidDuplicateFightsHint": "Twee teams zullen elkaar slechts één keer treffen.",
   "maximizeFights": "Saotori Shiai.",
   "maximizeFightsHint": "Als deze optie is geselecteerd, spelen alle teams tegen alle andere teams. Indien niet geselecteerd, worden er slechts twee wedstrijden per team gespeeld.",
   "estimatedFights": "Geschat aantal wedstrijden",

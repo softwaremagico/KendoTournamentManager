@@ -1,19 +1,13 @@
 <ng-container id="tournament-form" *transloco="let t">
   <div class="canvas" slot="{{'empty' | transloco}}">
-    <div class="row row-with-button">
+    <div class="row">
       <biit-input-text id="tournament-name" class="tournament-name" [(ngModel)]="tournament.name"
                        [placeholder]="t('competitionName')"
                        [required]="true"
                        error="{{errors | mapGet: TournamentFormValidationFields.NAME_ERRORS}}"
       ></biit-input-text>
-      <button id="edit-options-button" biit-icon icon="column_selection"
-              *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
-              class="edit-score-button"
-              (click)="openCustomProperties=true"
-              [disabled]="tournament.id==undefined || tournament.type == typeCustom">
-      </button>
     </div>
-    <div class="row">
+    <div class="row row-with-button">
       <biit-dropdown id="tournament-type"
                      [ngModel]="tournament.type | dropdownInterface: translatedTypes"
                      (ngModelChange)="tournament.type = $event.value"
@@ -24,6 +18,12 @@
                      [descriptionLabel]="'description'"
                      [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
       ></biit-dropdown>
+      <button id="edit-options-button" biit-icon icon="column_selection"
+              *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+              class="edit-score-button"
+              (click)="openCustomProperties=true"
+              [disabled]="tournament.id==undefined || tournament.type == typeCustom">
+      </button>
     </div>
     <div class="row">
       <biit-input-text id="tournament-shiaijos" [(ngModel)]="tournament.shiaijos"

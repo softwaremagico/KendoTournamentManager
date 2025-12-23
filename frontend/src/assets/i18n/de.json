@@ -399,6 +399,7 @@
   "playWhistle": "Reproduzieren Sie den Klang einer Pfeife.",
   "fields": "Feld",
   "avoidDuplicateFights": "Vermeiden sie doppelte übereinstimmungen",
+  "avoidDuplicateFightsHint": "Die beiden Teams werden nur einmal gegeneinander antreten.",
   "maximizeFights": "Saotori Shiai.",
   "maximizeFightsHint": "Wenn diese Option ausgewählt ist, spielen alle Teams gegen alle anderen Teams. Wenn nicht ausgewählt, werden nur zwei Spiele pro Team gespielt.",
   "estimatedFights": "Geschätzte Anzahl der Übereinstimmungen",

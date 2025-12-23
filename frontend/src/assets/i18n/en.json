@@ -420,6 +420,7 @@
   "redTeam": "Red Team",
   "whiteTeam": "White Team",
   "avoidDuplicateFights": "Avoid duplicated matches",
+  "avoidDuplicateFightsHint": "Two teams will face each other only once.\n\n",
   "maximizeFights": "Saotori Shiai.",
   "maximizeFightsHint": "All teams will fight against all other teams if this option is selected. If it is not selected, only two matches will be performed by team.",
   "estimatedFights": "Estimated number of matches",

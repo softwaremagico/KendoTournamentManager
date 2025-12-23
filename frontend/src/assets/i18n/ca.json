@@ -411,6 +411,7 @@
   "playWhistle": "Reprodueix el so d'un xiulet.",
   "fields": "Camps",
   "avoidDuplicateFights": "Evitar partits duplicats",
+  "avoidDuplicateFightsHint": "Dos equips s'enfrontaran entre ells una sola vegada.",
   "maximizeFights": "Saotori Shiai.",
   "maximizeFightsHint": "Tots els equips s'enfrontaran contra tots els altres equips si aquesta opció és seleccionada. En cas que no sigui seleccionat, només es disputaran dos partits per equip.",
   "estimatedFights": "Nombre estimat de partits",
