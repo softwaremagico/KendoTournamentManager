@@ -3,7 +3,6 @@ import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
 import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
 
 import {Router} from '@angular/router';
@@ -22,7 +21,7 @@ import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
-import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {Constants} from "../../constants";
@@ -49,8 +48,10 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected target: Tournament | null;
   protected confirmDelete: boolean = false;
   protected confirmClone: boolean = false;
+  protected showTournamentRoles: boolean = false;
 
   protected loading: boolean = false;
+  protected loadingGlobal: boolean = false;
   protected showQr: boolean = false;
   protected readonly port: number = +window.location.port;
 
@@ -155,17 +156,6 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }
   }
 
-  addRoles(tournament: Tournament): void {
-    if (tournament) {
-      this.dialog.open(TournamentRolesComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          tournament: tournament
-        }
-      });
-    }
-  }
-
   addTeams(tournament: Tournament): void {
     if (tournament) {
       this.dialog.open(TournamentTeamsComponent, {
@@ -186,6 +176,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   downloadBlogCode(tournament: Tournament): void {
     if (tournament?.id) {
+      this.loadingGlobal = true;
       this.rankingService.getTournamentSummaryAsHtml(tournament.id).subscribe((html: Blob): void => {
         const blob: Blob = new Blob([html], {type: 'txt/plain'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -194,6 +185,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
         anchor.download = "Code - " + tournament!.name + ".txt";
         anchor.href = downloadURL;
         anchor.click();
+      }).add(() => {
+        this.loadingGlobal = false;
       });
     }
   }
@@ -239,6 +232,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
           if (tournament?.id) {
+            this.loadingGlobal = true;
             this.tournamentService.getDiplomas(tournament.id, result.newOnes, result.data).subscribe((html: Blob) => {
               if (html !== null) {
                 const blob: Blob = new Blob([html], {type: 'application/pdf'});
@@ -251,6 +245,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
               } else {
                 this.messageService.warningMessage('noResults');
               }
+            }).add(() => {
+              this.loadingGlobal = false;
             });
           }
         }
@@ -298,6 +294,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   downloadZip(tournament: Tournament): void {
     if (tournament?.id) {
+      this.loadingGlobal = true;
       this.rankingService.getAllListAsZip(tournament.id).subscribe((html: Blob): void => {
         const blob: Blob = new Blob([html], {type: 'application/zip'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -306,6 +303,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
         anchor.download = tournament!.name + ".zip";
         anchor.href = downloadURL;
         anchor.click();
+      }).add(() => {
+        this.loadingGlobal = false
       });
     }
   }
@@ -332,4 +331,6 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }
     return "";
   }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

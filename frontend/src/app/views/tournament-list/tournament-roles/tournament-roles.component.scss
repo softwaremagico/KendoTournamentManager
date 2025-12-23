@@ -1,7 +1,9 @@
+$space: 1em;
+
 .roles-container {
   width: 800px;
   display: flex;
-  height: 80vh;
+  max-height: 60vh;
 }
 
 .roles-container div {
@@ -34,26 +36,11 @@
   display:grid
 }
 
-//Padding between roles
-.ng-star-inserted {
-  padding-bottom: 20px;
-}
-
 .user-list {
   border-color: #c3d1e1;
   border-radius: 15px;
   border-style: dotted;
   padding-right: 10px;
-}
-
-.mat-dialog-actions {
-  display: flex;
-  justify-content: center;
-}
-
-.mat-raised-button {
-  width: 150px;
-  padding-bottom: 0px;
 }
 
 .role-header {
@@ -73,4 +60,23 @@
   margin-bottom: -20px;
 }
 
+.canvas {
+  width: 100%;
+  min-width: 40vw;
+  height: 100%;
+  overflow-y: auto;
+
+  align-items: center;
+  gap: 4.5rem;
+  padding: 4.5rem 2.5rem 3rem;
+  background: var(--body-background);
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+}
 

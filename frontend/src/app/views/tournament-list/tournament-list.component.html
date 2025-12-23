@@ -1,3 +1,4 @@
+<biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
 <ng-container *transloco="let t">
   <div class="table-view">
     <biit-datatable #table id="tournaments-table"
@@ -34,7 +35,7 @@
         <mat-divider [vertical]="true"></mat-divider>
         <button mat-button *ngIf="(RbacActivity.CREATE_ROLE | hasPermission)"
                 [title]="t('roles')"
-                (click)="addRoles(table.selectedRows[0])"
+                (click)="showTournamentRoles=true"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
         </button>
@@ -146,6 +147,14 @@
       [tournament]="table.selectedRows[0]"
       [port]="port"
       (onClosed)="showQr=false"></tournament-qr-code>
+  </biit-popup>
+
+  <biit-popup id="tournament-roles" *ngIf="showTournamentRoles"
+              (onClosed)="showTournamentRoles=false"
+              [title]="t('addRoleToTournament')">
+    <tournament-roles
+      [tournament]="table.selectedRows[0]"
+      (onClosed)="showTournamentRoles=false"></tournament-roles>
   </biit-popup>
 
 </ng-container>

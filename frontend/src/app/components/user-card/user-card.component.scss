@@ -1,7 +1,10 @@
 .user-card {
   margin: 10px;
-  width: 300px;
-  box-shadow: 0 2px 1px -1px var(--card-shadow1), 0px 1px 1px 0px var(--card-shadow2), 0px 1px 3px 0px var(--card-shadow3) !important;
+  min-width: 300px;
+  width: 95%;
+  background-color: var(--floating-background);
+  border: 3px solid var(--component-color);
+  //box-shadow: 0 2px 1px -1px var(--card-shadow1), 0px 1px 1px 0px var(--card-shadow2), 0px 1px 3px 0px var(--card-shadow3) !important;
 }
 
 .locked {

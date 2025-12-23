@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
@@ -19,27 +19,27 @@ import {TeamService} from "../../../services/team.service";
 import {Team} from "../../../models/team";
 
 @Component({
-  selector: 'app-tournament-roles',
+  selector: 'tournament-roles',
   templateUrl: './tournament-roles.component.html',
   styleUrls: ['./tournament-roles.component.scss']
 })
 export class TournamentRolesComponent extends RbacBasedComponent implements OnInit {
 
-  userListData: UserListData = new UserListData();
+  @Input()
   tournament: Tournament;
+  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+
+  userListData: UserListData = new UserListData();
   roleTypes: RoleType[] = RoleType.toArray();
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
-              public participantService: ParticipantService, public roleService: RoleService,
-              private messageService: MessageService, private translateService: TranslocoService,
+  constructor(public participantService: ParticipantService, public roleService: RoleService,
+              private messageService: MessageService,
               rbacService: RbacService, private filterResetService: FilterResetService,
               private statisticsChangedService: StatisticsChangedService,
-              private teamService: TeamService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+              private teamService: TeamService) {
     super(rbacService);
-    this.tournament = data.tournament;
   }
 
   getParticipantsContainer(role: RoleType): Participant[] {
@@ -94,10 +94,6 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         }
       });
     });
-  }
-
-  closeDialog(): void {
-    this.dialogRef.close();
   }
 
   transferCard(event: CdkDragDrop<Participant[], any>): Participant | undefined {

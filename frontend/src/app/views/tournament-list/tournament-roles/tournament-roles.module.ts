@@ -12,24 +12,29 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
-  declarations: [TournamentRolesComponent],
-    imports: [
-        CommonModule,
-        DragDropModule,
-        UserListModule,
-        TranslocoModule,
-        UserCardModule,
-        MatIconModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        MatDialogModule,
-        MatButtonModule,
-        FightStatisticsPanelModule,
-        HasPermissionPipe
-    ]
+    declarations: [TournamentRolesComponent],
+    exports: [
+        TournamentRolesComponent
+    ],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    UserListModule,
+    TranslocoModule,
+    UserCardModule,
+    MatIconModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    MatDialogModule,
+    MatButtonModule,
+    FightStatisticsPanelModule,
+    HasPermissionPipe,
+    BiitButtonModule
+  ]
 })
 export class TournamentRolesModule {
 }

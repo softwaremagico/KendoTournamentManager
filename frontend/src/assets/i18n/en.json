@@ -411,6 +411,7 @@
   "viewer": "Viewer",
   "guest": "Guest",
   "roles": "Role",
+  "addRoleToTournament": "Define the roles of the championship",
   "profile": "Profile",
   "back": "Going back",
   "chronometerOn": "Show Chronometer",
