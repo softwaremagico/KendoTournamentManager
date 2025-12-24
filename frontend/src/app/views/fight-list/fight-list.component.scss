@@ -1,9 +1,11 @@
 .fight-container {
-  height: 80vh;
-  max-height: 80vh;
+  height: 88vh;
+  max-height: 88vh;
   min-height: 50vh;
   overflow-y: auto;
   padding-left: 20px;
+  margin-top: -25px;
+  margin-right: 15px;
 }
 
 .fight-container.project-mode {
@@ -14,6 +16,21 @@
 
 .upper-menu {
   padding-left: 30px;
+  margin: 10px;
+  display: flex;
+  gap: 1em;
+}
+
+.upper-menu button:disabled {
+  opacity: 50%;
+}
+
+.upper-menu button:disabled .mat-icon.kendo-icon.mat-icon-no-color{
+  fill: var(--disabled-primary-color);
+}
+
+::ng-deep .upper-menu button .icon-button-svg {
+  margin-left: -20px;
 }
 
 .statistics {
@@ -28,8 +45,10 @@
   width: 100%;
 }
 
-.fights-table {
+.fights-layout {
   min-width: 600px;
+  display: grid;
+  gap: 2em;
 }
 
 .fights-of-group {
@@ -51,7 +70,17 @@
 }
 
 .filter-shiaijo {
-  display: inline-block;
+  position: absolute;
+  top: 50px;
+  right: 350px;
+  font-size: 18px;
+  color: var(--primay-color);
+}
+
+.filter-fights {
+  position: absolute;
+  top: 50px;
+  right: 20px;
   font-size: 18px;
   color: var(--primay-color);
 }

@@ -11,7 +11,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {FilterFocusService} from "../../services/notifications/filter-focus.service";
 
 @Component({
-  selector: 'app-timer',
+  selector: 'popup-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss']
 })

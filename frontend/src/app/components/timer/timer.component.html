@@ -1,4 +1,4 @@
-<div (cdkDragEnded)="dragEnd($event)" [cdkDragFreeDragPosition]="timerPosition" cdkDrag class="app-timer">
+<div (cdkDragEnded)="dragEnd($event)" [cdkDragFreeDragPosition]="timerPosition" cdkDrag class="popup-timer">
   <div class="container">
     <mat-icon cdkDragHandle class="drag-icon">drag_handle</mat-icon>
     <div [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished(), 'paused': isPaused()}"

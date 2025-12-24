@@ -15,6 +15,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
-        HasPermissionPipe
+        HasPermissionPipe,
+        BiitIconButtonModule
     ]
 })
 export class FightListModule {

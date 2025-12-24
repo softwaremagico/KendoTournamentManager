@@ -1,177 +1,144 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="fight-view">
-  <div class="fights-table">
-    <div class="upper-menu" *ngIf="!projectMode">
-      <div class="cell">
-        <button (click)="goBackToTournament()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
-                [matTooltipShowDelay]="500" color="secondary"
-                mat-button
-                matTooltip="{{'back' | transloco}}">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <button (click)="openConfirmationGenerateElementsDialog()"
-                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
-                [disabled]="(tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'wizard' | transloco}}">
-          <mat-icon>auto_fix_high</mat-icon>
-        </button>
-        <button (click)="addElement()"
-                *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
-                [disabled]="tournament && (tournament.locked || (tournament.type == TournamentType.SENBATSU && this.selectedGroup?.teams?.length == 0))"
-                [matTooltipShowDelay]="500"
-                class="add-button"
-                color="primary" mat-button
-                matTooltip="{{'addFight' | transloco}}">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button (click)="deleteElement()"
-                *ngIf="(RbacActivity.DELETE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
-                [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | transloco}}">
-          <mat-icon>clear</mat-icon>
-        </button>
-        <button (click)="openBracketsManager()"
-                *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | hasPermission)"
-                [disabled]="(tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'groups' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
-        </button>
-        <mat-divider [vertical]="true" class="timer-divider"
-                     *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)"></mat-divider>
-        <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)
-                && (!selectedDuel || selectedDuel?.finished == false)"
-                [disabled]="!selectedDuel || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'finishFight' | transloco}}">
-          <mat-icon>check_circle</mat-icon>
-        </button>
-        <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)
-                && selectedDuel?.finished == true"
-                [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | hasPermission)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'reopenFight' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="unfinish"></mat-icon>
-        </button>
-        <button (click)="showTimer(canStartFight(selectedDuel))"
-                *ngIf="!timer && (RbacActivity.SHOW_TIMER | hasPermission)"
-                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
-                [matTooltipShowDelay]="500"
-                class="timer-button"
-                color="primary"
-                mat-button
-                matTooltip="{{'chronometerOn' | transloco}}">
-          <mat-icon>timer</mat-icon>
-        </button>
-        <button (click)="showTimer(false)"
-                *ngIf="timer && (RbacActivity.EDIT_FIGHT | hasPermission)"
-                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
-                [matTooltipShowDelay]="500"
-                class="timer-button"
-                color="primary"
-                mat-button
-                matTooltip="{{'chronometerOff' | transloco}}">
-          <mat-icon>timer_off</mat-icon>
-        </button>
-        <button (mousedown)="playWhistle()"
-                (mouseup)="stopWhistle()"
-                *ngIf="(RbacActivity.PLAY_WHISTLE | hasPermission)"
-                [matTooltipShowDelay]="500"
-                class="whisper-button"
-                color="primary"
-                mat-button
-                matTooltip="{{'playWhistle' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
-        </button>
-        <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
+<div class="fight-view" *transloco="let t">
+  <div class="fights-layout">
+    <div class="upper-menu" *ngIf="!projectorMode">
+      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
+              (click)="goBackToTournament()"
+              [title]="t('back')">
+        <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
+      </button>
+      <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
+              (click)="openConfirmationGenerateElementsDialog()"
+              [title]="t('wizard')">
+        <mat-icon class="kendo-icon" svgIcon="wand"></mat-icon>
+      </button>
+      <button id="button-plus" biit-icon class="add-button"
+              *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
+              (click)="addElement()"
+              [disabled]="tournament && (tournament.locked || (tournament.type == TournamentType.SENBATSU && this.selectedGroup?.teams?.length == 0))"
+              [title]="t('addFight')"
+              icon="plus">
+      </button>
+      <button id="button-minus" biit-icon class="warning"
+              *ngIf="(RbacActivity.DELETE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
+              (click)="deleteElement()"
+              [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
+              [title]="t('delete')"
+              icon="minus">
+      </button>
+      <button biit-icon *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | hasPermission)"
+              (click)="openBracketsManager()"
+              [disabled]="(tournament && tournament.locked)"
+              [title]="t('groups')">
+        <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
+      </button>
+      <mat-divider [vertical]="true" class="timer-divider"
+                   *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)"></mat-divider>
+      <button biit-icon
+              *ngIf="(RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel?.finished == false)"
+              (click)="finishDuel()"
+              [disabled]="!selectedDuel || (tournament && tournament.locked)"
+              [title]="t('finishFight')">
+        <mat-icon class="kendo-icon" svgIcon="check"></mat-icon>
+      </button>
+      <button biit-icon
+              *ngIf="(RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished == true"
+              (click)="unfinishDuel()"
+              [disabled]="!selectedDuel || (tournament && tournament.locked)"
+              [title]="t('reopenFight')">
+        <mat-icon class="kendo-icon" svgIcon="uncheck"></mat-icon>
+      </button>
+      <button biit-icon class="timer-button"
+              *ngIf="!timer && (RbacActivity.SHOW_TIMER | hasPermission)"
+              (click)="showTimer(canStartFight(selectedDuel))"
+              [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+              [title]="t('chronometerOn')">
+        <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
+      </button>
+      <button biit-icon class="timer-button"
+              *ngIf="timer && (RbacActivity.EDIT_FIGHT | hasPermission)"
+              (click)="showTimer(false)"
+              [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+              [title]="t('chronometerOff')">
+        <mat-icon class="kendo-icon" svgIcon="timer_off"></mat-icon>
+      </button>
+      <button biit-icon class="whisper-button"
+              *ngIf="(RbacActivity.PLAY_WHISTLE | hasPermission)"
+              (mousedown)="playWhistle()"
+              (mouseup)="stopWhistle()"
+              [title]="t('playWhistle')">
+        <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
+      </button>
+      <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
           || (RbacActivity.SWAP_FIGHTS | hasPermission)
           || (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
-                     class="actions-divider"></mat-divider>
-        <button (click)="swapColors()"
-                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)"
-                [matTooltipShowDelay]="500" class="exchange-colors"
-                color="primary" mat-button
-                matTooltip="{{'swapColors' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
-        </button>
-        <button (click)="swapTeams()" *ngIf="(RbacActivity.SWAP_FIGHTS | hasPermission)"
-                [matTooltipShowDelay]="500" class="exchange-teams"
-                color="primary" mat-button
-                matTooltip="{{'swapTeams' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
-        </button>
-        <button (click)="enableMemberOrder(true)"
-                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
-                [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
-                class="member-order"
-                color="primary" mat-button
-                matTooltip="{{'membersOrder' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
-        </button>
-        <button (click)="enableMemberOrder(false)"
-                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
-                [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
-                class="member-order"
-                color="primary" mat-button
-                matTooltip="{{'membersOrder' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
-        </button>
-        <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
+                   class="actions-divider"></mat-divider>
+      <button biit-icon class="exchange-colors"
+              *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)"
+              (click)="swapColors()"
+              [title]="t('swapColors')">
+        <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
+      </button>
+      <button biit-icon class="exchange-teams"
+              *ngIf="(RbacActivity.SWAP_FIGHTS | hasPermission)"
+              (click)="swapTeams()"
+              [title]="t('swapTeams')">
+        <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
+      </button>
+      <button biit-icon class="member-order"
+              *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
+              [disabled]="(tournament && tournament.locked)"
+              (click)="enableMemberOrder(true)"
+              [title]="t('membersOrder')">
+        <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
+      </button>
+      <button biit-icon class="member-order"
+              *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
+              [disabled]="(tournament && tournament.locked)"
+              (click)="enableMemberOrder(false)"
+              [title]="t('membersOrder')">
+        <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
+      </button>
+      <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
             (RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)"
-                     class="order-divider"></mat-divider>
-        <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
-                || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU))
-                 && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)"
-                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
-                [matTooltipShowDelay]="500" color="primary"
-                mat-button
-                matTooltip="{{'teamsRanking' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
-        </button>
-        <button (click)="showCompetitorsClassification()"
-                *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)"
-                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
-                [matTooltipShowDelay]="500"
-                class="competitors-classification" color="primary"
-                mat-button
-                matTooltip="{{'competitorsRanking' | transloco}}">
-          <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-        </button>
-        <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
-                     class="download-divider"></mat-divider>
-        <button (click)="downloadPDF()"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
-                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
-                [matTooltipShowDelay]="500"
-                class="download-button" color="primary"
-                mat-button
-                matTooltip="{{'fightList' | transloco}}">
-          <mat-icon>file_download</mat-icon>
-        </button>
-        <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
-                     class="expand-divider"></mat-divider>
-        <button (click)="project()"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
-                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
-                [matTooltipShowDelay]="500"
-                class="expand-button" color="primary"
-                mat-button
-                matTooltip="{{'projectMode' | transloco}}">
-          <mat-icon>present_to_all</mat-icon>
-        </button>
-      </div>
+                   class="order-divider"></mat-divider>
+      <button biit-icon
+              *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
+                  || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              (click)="showTeamsClassification(areAllDuelsOver())"
+              [title]="t('teamsRanking')">
+        <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
+      </button>
+      <button biit-icon class="competitors-classification"
+              *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              (click)="showCompetitorsClassification()"
+              [title]="t('competitorsRanking')">
+        <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+      </button>
+      <mat-divider [vertical]="true"
+                   *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+                   class="download-divider"></mat-divider>
+      <button biit-icon class="download-button"
+              *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              (click)="downloadPDF()"
+              [title]="t('fightList')">
+        <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
+      </button>
+      <mat-divider [vertical]="true"
+                   *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+                   class="expand-divider"></mat-divider>
+      <button biit-icon class="expand-button"
+              *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              (click)="projector()"
+              [title]="t('projectMode')">
+        <mat-icon class="kendo-icon" svgIcon="projector"></mat-icon>
+      </button>
     </div>
-    <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1 && !projectMode">
+    <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1 && !projectorMode">
       <div class="shiaijo-label">
         {{ 'shiaijo'| transloco }}
       </div>
@@ -179,9 +146,9 @@
         {{ getShiaijoTag() }}
       </div>
     </div>
-    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"
-                *ngIf="!projectMode"></app-filter>
-    <app-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
+    <app-filter class="filter-fights " (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"
+                *ngIf="!projectorMode"></app-filter>
+    <popup-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
                (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
                (timeDurationChanged)="updateDuelDuration($event[0])"
                (timerClosed)="showTimer(false)"
@@ -189,8 +156,8 @@
                [resetTimerPosition]="resetTimerPosition"
                [startingMinutes]="getDuelDefaultMinutesDuration()"
                [shown]="timer"
-               [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
-    <div class="fight-container" [ngClass]="{'project-mode': projectMode}">
+               [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
+    <div class="fight-container" [ngClass]="{'project-mode': projectorMode}">
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
@@ -202,9 +169,9 @@
              [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
           <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
-                 [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectMode"
+                 [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectorMode"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
-                 [projectMode]="projectMode"
+                 [projectMode]="projectorMode"
                  [swapTeams]="swappedTeams"></fight>
 
           <div class="unties-list">
@@ -213,7 +180,7 @@
                          (keydown)="selectDuel(duel)"
                          [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
                          [selected]="duel === selectedDuel" [swapColors]="swappedColors"
-                         [projectMode]="projectMode"
+                         [projectMode]="projectorMode"
                          [swapTeams]="swappedTeams"></untie-fight>
           </div>
         </div>

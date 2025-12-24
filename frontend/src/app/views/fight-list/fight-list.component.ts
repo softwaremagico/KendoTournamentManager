@@ -80,7 +80,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectedShiaijo: number = -1;
 
-  projectMode: boolean = false;
+  projectorMode: boolean = false;
   hideFinishedFights: boolean = false;
 
   private topicSubscription: Subscription;
@@ -196,7 +196,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const fight: Fight = JSON.parse(messageContent.payload);
         if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
           this.replaceFight(fight);
-          if (this.projectMode) {
+          if (this.projectorMode) {
             //Remove any finished fight.
             this.resetFilter();
           }
@@ -1009,12 +1009,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.audioService.stopWhistle();
   }
 
-  project() {
-    this.changeProjectMode(!this.projectMode);
+  projector() {
+    this.changeProjectMode(!this.projectorMode);
   }
 
   changeProjectMode(mode: boolean) {
-    this.projectMode = mode;
+    this.projectorMode = mode;
     this.hideFinishedFights = mode;
     this.resetFilter();
     this.projectModeChangedService.isProjectMode.next(mode);
