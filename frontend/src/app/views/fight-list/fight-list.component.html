@@ -146,17 +146,18 @@
         {{ getShiaijoTag() }}
       </div>
     </div>
-    <app-filter class="filter-fights " (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"
+    <app-filter class="filter-fights " (filterChanged)="filter($event)" (reset)="filter('')"
+                [resetValue]="resetFilterValue"
                 *ngIf="!projectorMode"></app-filter>
     <popup-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
-               (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
-               (timeDurationChanged)="updateDuelDuration($event[0])"
-               (timerClosed)="showTimer(false)"
-               [editable]="tournament && !tournament.locked" [hidden]="!timer"
-               [resetTimerPosition]="resetTimerPosition"
-               [startingMinutes]="getDuelDefaultMinutesDuration()"
-               [shown]="timer"
-               [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
+                 (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
+                 (timeDurationChanged)="updateDuelDuration($event[0])"
+                 (timerClosed)="showTimer(false)"
+                 [editable]="tournament && !tournament.locked" [hidden]="!timer"
+                 [resetTimerPosition]="resetTimerPosition"
+                 [startingMinutes]="getDuelDefaultMinutesDuration()"
+                 [shown]="timer"
+                 [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
     <div class="fight-container" [ngClass]="{'project-mode': projectorMode}">
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
@@ -188,3 +189,19 @@
     </div>
   </div>
 </div>
+
+<biit-popup id="competitors-ranking-popup" *ngIf="showCompetitorsRanking" no-header>
+  <competitors-ranking
+    [tournament]="tournament"
+    [showIndex]="true"
+    (onClosed)="showCompetitorsRanking=false"></competitors-ranking>
+</biit-popup>
+
+<biit-popup id="teams-ranking-popup" *ngIf="showTeamsRanking" no-header>
+  <team-ranking
+    [tournament]="tournament"
+    [showIndex]="true"
+    [fightsFinished]="areAllDuelsOver()"
+    [group]="selectedGroup"
+    (onClosed)="showTeamsRanking=false"></team-ranking>
+</biit-popup>

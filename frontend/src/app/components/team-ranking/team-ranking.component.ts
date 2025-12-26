@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatDialog} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
 import {forkJoin, Observable} from "rxjs";
 import {TranslocoService} from "@ngneat/transloco";
@@ -11,7 +11,6 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Group} from "../../models/group";
 import {TournamentType} from "../../models/tournament-type";
-import {Action} from "../../action";
 import {TournamentExtendedPropertiesService} from "../../services/tournament-extended-properties.service";
 import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
@@ -21,33 +20,31 @@ import {NameUtilsService} from "../../services/name-utils.service";
 import {ScoreType} from "../../models/score-type";
 
 @Component({
-  selector: 'app-team-ranking',
+  selector: 'team-ranking',
   templateUrl: './team-ranking.component.html',
   styleUrls: ['./team-ranking.component.scss']
 })
 export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
   teamScores: ScoreOfTeam[];
+  @Input()
   tournament: Tournament;
+  @Input()
   fightsFinished: boolean;
-  group: Group;
+  @Input()
+  group: Group | undefined | null;
+  @Input()
   showIndex: boolean | undefined;
+  @Output()
+  onClosed: EventEmitter<void> = new EventEmitter<void>();
   existsDraws: boolean = false;
   numberOfWinners: number;
 
-  constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-                tournament: Tournament, group: Group, finished: boolean,
-                showIndex: boolean | undefined,
-              },
-              private rankingService: RankingService, public translateService: TranslocoService, public dialog: MatDialog,
+  constructor(private rankingService: RankingService, public translateService: TranslocoService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
               public override rbacService: RbacService, private router: Router,
               private nameUtils: NameUtilsService) {
     super(rbacService);
-    this.tournament = data.tournament;
-    this.group = data.group;
-    this.fightsFinished = data.finished;
   }
 
   ngOnInit(): void {
@@ -102,7 +99,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.dialogRef.close({action: Action.Cancel, draws: this.existsDraws});
+    this.onClosed.emit();
   }
 
   downloadPDF(): void {
@@ -112,7 +109,11 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
           const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
           const downloadURL: string = window.URL.createObjectURL(blob);
           const anchor: HTMLAnchorElement = document.createElement("a");
-          anchor.download = `Team Ranking - ${this.tournament.name} (group ${this.group.index + 1}).pdf`;
+          if (this.group) {
+            anchor.download = `Team Ranking - ${this.tournament.name} (group ${this.group.index + 1}).pdf`;
+          } else {
+            anchor.download = `Team Ranking - ${this.tournament.name}.pdf`;
+          }
           anchor.href = downloadURL;
           anchor.click();
         });
@@ -144,13 +145,14 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     this.dialog.open(UndrawTeamsComponent, {
       panelClass: 'pop-up-panel',
       disableClose: false,
-      data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
+      data: {tournament: this.tournament, groupId: this.group?.id, teams: teams}
     });
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (result?.action === Action.Update) {
-        this.dialogRef.close({action: Action.Update, draws: result.draws});
-      }
-    });
+    // TODO(softwaremagico): fix undraw window. 
+    // this.dialogRef.afterClosed().subscribe(result => {
+    //   if (result?.action === Action.Update) {
+    //     this.dialogRef.close({action: Action.Update, draws: result.draws});
+    //   }
+    // });
   }
 
   openStatistics(): void {

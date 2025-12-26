@@ -21,16 +21,20 @@
   gap: 1em;
 }
 
+.upper-menu button {
+  width: 60px;
+}
+
 .upper-menu button:disabled {
   opacity: 50%;
 }
 
-.upper-menu button:disabled .mat-icon.kendo-icon.mat-icon-no-color{
+.upper-menu button:disabled .mat-icon.kendo-icon.mat-icon-no-color {
   fill: var(--disabled-primary-color);
 }
 
-::ng-deep .upper-menu button .icon-button-svg {
-  margin-left: -20px;
+::ng-deep .upper-menu button .mat-icon.kendo-icon.mat-icon-no-color {
+  margin-left: -17px;
 }
 
 .statistics {
@@ -71,8 +75,8 @@
 
 .filter-shiaijo {
   position: absolute;
-  top: 50px;
-  right: 350px;
+  top: 60px;
+  right: 360px;
   font-size: 18px;
   color: var(--primay-color);
 }

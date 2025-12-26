@@ -9,21 +9,26 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
   declarations: [TeamRankingComponent],
-    imports: [
-        CommonModule,
-        TranslocoModule,
-        MatSpinnerOverlayModule,
-        RbacModule,
-        MatIconModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatTooltipModule,
-        HasPermissionPipe
-    ]
+  exports: [
+    TeamRankingComponent
+  ],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    MatSpinnerOverlayModule,
+    RbacModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatTooltipModule,
+    HasPermissionPipe,
+    BiitButtonModule
+  ]
 })
 export class TeamRankingModule {
 }

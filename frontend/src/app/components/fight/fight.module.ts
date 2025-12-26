@@ -7,6 +7,7 @@ import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TranslocoModule} from "@ngneat/transloco";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
         RbacModule,
         DragDropModule,
         TranslocoModule,
-        HasPermissionPipe
+        HasPermissionPipe,
+        BiitIconModule
     ]
 })
 export class FightModule {

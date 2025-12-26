@@ -6,7 +6,6 @@ import {MessageService} from "../../services/message.service";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 import {combineLatest} from "rxjs";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {DatePipe} from "@angular/common";

@@ -13,8 +13,6 @@ import {LeagueGeneratorComponent} from "./league-generator/league-generator.comp
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {TeamRankingComponent} from "../../components/team-ranking/team-ranking.component";
-import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
@@ -83,6 +81,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   projectorMode: boolean = false;
   hideFinishedFights: boolean = false;
 
+  protected showCompetitorsRanking: boolean = false;
+  protected showTeamsRanking: boolean = false;
+
+
   private topicSubscription: Subscription;
 
 
@@ -116,7 +118,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.tournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
       if (!this.tournamentId) {
         this.tournamentId = Number(localStorage.getItem('tournamentId'));
-        debugger
       }
       if (!this.tournamentId || isNaN(this.tournamentId)) {
         this.goBackToTournament();
@@ -637,25 +638,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showTeamsClassification(fightsFinished: boolean): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
-      const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
-        panelClass: 'pop-up-panel',
-        width: '85vw',
-        restoreFocus: false,
-        data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result?.action === Action.Cancel) {
-        }
-      });
+      this.showTeamsRanking = true;
     }
   }
 
   showCompetitorsClassification(): void {
-    this.dialog.open(CompetitorsRankingComponent, {
-      panelClass: 'pop-up-panel',
-      width: '85vw',
-      data: {tournament: this.tournament}
-    });
+    this.showCompetitorsRanking = true;
   }
 
   downloadPDF(): void {

@@ -1,7 +1,5 @@
 .fight {
-  border-width: 2px 0 2px 0;
-  border-color: var(--fight-border-color);
-  border-style: solid;
+  border: 3px solid var(--score-color);
   padding: 5px;
   width: 100%;
   display: table;
@@ -19,10 +17,25 @@
   text-align: center;
   padding: 20px;
   border-style: solid;
-  //background-color: var(--ribbon-background);
+  background-color: var(--ribbon-background);
   text-transform: uppercase;
   border-width: 2px 2px 2px 0;
-  border-color: var(--fight-border-color);
+  border-color: var(--component-color);
+  line-height: 25px;
+  max-width: 56px;
+  overflow: clip;
+}
+
+.right-team {
+  writing-mode: vertical-rl;
+  text-align: center;
+  padding: 20px;
+  border-style: solid;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: var(--ribbon-background);
+  text-transform: uppercase;
+  border-width: 2px 2px 2px 0;
+  border-color: var(--component-color);
   line-height: 25px;
   max-width: 56px;
   overflow: clip;
@@ -45,21 +58,6 @@
 .ribbon-icon {
   transform: rotate(0deg);
   border-width: 2px 0 2px 2px;
-}
-
-.right-team {
-  writing-mode: vertical-rl;
-  text-align: center;
-  padding: 20px;
-  border-style: solid;
-  //text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  //background-color: var(--ribbon-background);
-  text-transform: uppercase;
-  border-width: 2px 2px 2px 0;
-  border-color: var(--fight-border-color);
-  line-height: 25px;
-  max-width: 56px;
-  overflow: clip;
 }
 
 .fight-container {

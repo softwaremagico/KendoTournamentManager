@@ -4,16 +4,20 @@
     <caption class="table-caption">{{ 'teamsRanking' | transloco }}</caption>
     <thead>
     <tr>
+      <th *ngIf="showIndex" class="competitor-ranking-header">#</th>
       <th class="team-ranking-header">{{ 'team' | transloco }}</th>
       <th class="team-ranking-header">{{ 'fightsWon' | transloco }}</th>
       <th class="team-ranking-header">{{ 'fightsDraw' | transloco }}</th>
       <th class="team-ranking-header">{{ 'duelsWon' | transloco }}</th>
       <th class="team-ranking-header">{{ 'duelsDraw' | transloco }}</th>
       <th class="team-ranking-header">{{ 'hitsWon' | transloco }}</th>
-      <th *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="team-ranking-header">{{ 'hitsLost' | transloco }}</th>
+      <th *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
+          class="team-ranking-header">{{ 'hitsLost' | transloco }}
+      </th>
     </tr>
     </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
+      <td *ngIf="showIndex" class="team-ranking-value">{{ i + 1 }}</td>
       <td [ngClass]="{'finished': fightsFinished,
           'winner': teamScore.sortingIndex===0 && fightsFinished,
           'finalist': teamScore.sortingIndex===1 && fightsFinished,
@@ -24,32 +28,31 @@
           [matTooltipShowDelay]="500"
           matTooltip="{{getTeamMembers(teamScore.team)}}"
           matTooltipClass="tooltip-with-lines"
-         class="team-ranking-value team-name">{{ showIndex ? i + 1 + ". " : "" }}{{ teamScore.team.name }}
+          class="team-ranking-value team-name">{{ teamScore.team.name }}
       </td>
       <td class="team-ranking-value">{{ teamScore.wonFights }}</td>
       <td class="team-ranking-value">{{ teamScore.drawFights }}</td>
       <td class="team-ranking-value">{{ teamScore.wonDuels }}</td>
       <td class="team-ranking-value">{{ teamScore.drawDuels }}</td>
       <td class="team-ranking-value">{{ teamScore.hits }}{{ (teamScore.untieDuels ? "*" : "") }}</td>
-      <td *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="team-ranking-value">{{ teamScore.hitsLost }}</td>
+      <td *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
+          class="team-ranking-value">{{ teamScore.hitsLost }}
+      </td>
     </tr>
   </table>
 </div>
-<div class="button-container" mat-dialog-actions>
-  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
-          (click)="downloadPDF()" mat-flat-button mat-raised-button>
-    <mat-icon>file_download</mat-icon>
+<div class="button-container">
+  <button biit-button *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
+          (click)="downloadPDF()" secondary>
     {{ 'download' | transloco }}
   </button>
-  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
-          (click)="openStatistics()" mat-flat-button mat-raised-button>
-    <mat-icon>bar_chart</mat-icon>
+  <button biit-button *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
+          (click)="openStatistics()" secondary>
     {{ 'statistics' | transloco }}
   </button>
-  <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
-  (RbacActivity.CREATE_UNDRAW_FIGHTS | hasPermission)" mat-flat-button mat-raised-button>
-    <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
+  <button biit-button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
+  (RbacActivity.CREATE_UNDRAW_FIGHTS | hasPermission)" secondary>
     {{ 'undraw' | transloco }}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | transloco }}</button>
+  <button biit-button (click)="closeDialog()" color="primary" primary>{{ 'close' | transloco }}</button>
 </div>

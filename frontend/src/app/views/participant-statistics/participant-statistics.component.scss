@@ -17,8 +17,12 @@
   gap: 1em;
 }
 
-::ng-deep .upper-menu button .icon-button-svg {
-  margin-left: -20px;
+.upper-menu button {
+  width: 60px;
+}
+
+::ng-deep .upper-menu button .mat-icon.kendo-icon.mat-icon-no-color {
+  margin-left: -17px;
 }
 
 .player {

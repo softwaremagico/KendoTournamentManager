@@ -1,13 +1,13 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="table-container" *transloco="let t">
   <div class="days-selector" *ngIf="!this.club && !this.tournament">
-      <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
-                       [placeholder]="t('daysFrom')"
-                       [type]="Type.NUMBER"
-                       [min]="0"
-                       [max]="10000"
-                       (onActionPerformed)="daysChanged()"
-      ></biit-input-text>
+    <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
+                     [placeholder]="t('daysFrom')"
+                     [type]="Type.NUMBER"
+                     [min]="0"
+                     [max]="10000"
+                     (onActionPerformed)="daysChanged()"
+    ></biit-input-text>
     <button (click)="daysChanged()" class="day-input" biit-icon icon="refresh">
     </button>
   </div>
@@ -15,6 +15,7 @@
     <caption class="table-caption">{{ 'competitorsRanking' | transloco }}</caption>
     <thead>
     <tr>
+      <th *ngIf="showIndex" class="competitor-ranking-header">#</th>
       <th class="competitor-ranking-header">{{ 'competitor' | transloco }}</th>
       <th class="competitor-ranking-header">{{ 'duelsWon' | transloco }}</th>
       <th class="competitor-ranking-header">{{ 'duelsDraw' | transloco }}</th>
@@ -26,10 +27,15 @@
     </tr>
     </thead>
     <tr *ngFor="let scoreOfCompetitor of competitorsScore; let i = index">
+      <td *ngIf="showIndex" [ngClass]="{
+          'selected': competitor?.id === scoreOfCompetitor.competitor.id
+        }"
+          class="competitor-ranking-value">{{ i + 1 }}
+      </td>
       <td [id]="scoreOfCompetitor.competitor.id" [ngClass]="{
           'selected': competitor?.id === scoreOfCompetitor.competitor.id
         }"
-          class="competitor-ranking-value competitor-name">{{ showIndex ? i + 1 + ". " : "" }}{{ scoreOfCompetitor.competitor.lastname }}
+          class="competitor-ranking-value competitor-name">{{ scoreOfCompetitor.competitor.lastname }}
         , {{ scoreOfCompetitor.competitor.name }}
       </td>
       <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"

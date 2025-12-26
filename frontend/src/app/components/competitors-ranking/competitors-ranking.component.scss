@@ -3,12 +3,14 @@
   overflow: auto;
   max-height: 70vh;
   min-height: 30vh;
+  padding: 1em;
 }
 
 .table-caption {
   font-size: 150%;
-  padding-bottom: 30px;
-  color: white;
+  font-weight: bold;
+  margin-bottom: 1.5em;
+  color: var(--component-color);
 }
 
 .competitor-ranking-table {
@@ -17,6 +19,7 @@
 
 .competitor-ranking-table thead th {
   position: sticky;
+  top: -1em;
   z-index: 1;
   background: var(--table-header-color);
   color: var(--table-header-text);

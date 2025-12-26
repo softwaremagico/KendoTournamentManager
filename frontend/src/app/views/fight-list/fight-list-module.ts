@@ -16,28 +16,34 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {CompetitorsRankingModule} from "../../components/competitors-ranking/competitors-ranking.module";
+import {TeamRankingModule} from "../../components/team-ranking/team-ranking.module";
 
 
 @NgModule({
   declarations: [FightListComponent],
-    imports: [
-        MatSpinnerOverlayModule,
-        MatIconModule,
-        MatTooltipModule,
-        TranslocoModule,
-        RbacModule,
-        FightModule,
-        UntieFightModule,
-        TimerModule,
-        FilterModule,
-        MatDividerModule,
-        CommonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        HasPermissionPipe,
-        BiitIconButtonModule
-    ]
+  imports: [
+    MatSpinnerOverlayModule,
+    MatIconModule,
+    MatTooltipModule,
+    TranslocoModule,
+    RbacModule,
+    FightModule,
+    UntieFightModule,
+    TimerModule,
+    FilterModule,
+    MatDividerModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    HasPermissionPipe,
+    BiitIconButtonModule,
+    BiitPopupModule,
+    CompetitorsRankingModule,
+    TeamRankingModule
+  ]
 })
 export class FightListModule {
 }
