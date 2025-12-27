@@ -234,7 +234,7 @@ export class ScoreComponent implements OnInit, OnChanges {
       return "";
     }
     return '<span class="tooltip-score"><b>' + this.getScore() + '</b></span><br>' +
-      '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip-text">' + this.timeRepresentation + '</span></div>';
+      '<div class="time-tooltip-container"><img src="assets/icons/timer.svg" alt="My Icon" width="16px" height="16px">\n<span class="time-tooltip-text">' + this.timeRepresentation + '</span></div>';
   }
 
   updateCoordinates($event: MouseEvent): void {
