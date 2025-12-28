@@ -22,7 +22,7 @@
         <user-list [userListData]="userListData"></user-list>
       </div>
       <div class="right-panel">
-        <app-fight-statistics-panel [teams]="true" [tournament]="tournament"></app-fight-statistics-panel>
+        <fight-statistics-panel [teams]="true" [tournament]="tournament"></fight-statistics-panel>
         <div class="teams">
           <div *ngFor="let team of teams" class="teams-location">
             <div class="team-title">

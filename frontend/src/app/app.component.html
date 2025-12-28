@@ -1,4 +1,4 @@
-<navbar *ngIf="sessionService.isLoggedIn"></navbar>
+<navbar *ngIf="sessionService.isLoggedIn && !hideMenu"></navbar>
 <biit-snackbar></biit-snackbar>
 <biit-cookies-consent></biit-cookies-consent>
 <router-outlet id="router-outlet"></router-outlet>

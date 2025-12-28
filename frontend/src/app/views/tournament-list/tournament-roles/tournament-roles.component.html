@@ -8,7 +8,7 @@
         <user-list [showAvatars]="showAvatars" [userListData]="userListData"></user-list>
       </div>
       <div class="right-panel">
-        <app-fight-statistics-panel [teams]="false" [tournament]="tournament"></app-fight-statistics-panel>
+        <fight-statistics-panel [teams]="false" [tournament]="tournament"></fight-statistics-panel>
         <div class="roles">
           <div *ngFor="let roleType of roleTypes" class="roles-location">
             <div class="role-header">

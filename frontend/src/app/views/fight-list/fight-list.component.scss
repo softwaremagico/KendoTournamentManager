@@ -1,4 +1,4 @@
-.fight-container {
+.fights-container {
   height: 88vh;
   max-height: 88vh;
   min-height: 50vh;
@@ -8,8 +8,8 @@
   margin-right: 15px;
 }
 
-.fight-container.project-mode {
-  height: 100%;
+.fights-container.project-mode {
+  height: 100vh;
   max-height: 100%;
   overflow: scroll;
 }
@@ -59,6 +59,7 @@
   border: #001239 3px solid;
   padding: 5px;
   margin: 5px 5px 20px;
+  background-color: var(--popup-background);
 }
 
 .group-name {
@@ -190,7 +191,7 @@ h2.level-name {
 }
 
 @media screen and (max-height: 850px) {
-  .fight-container {
+  .fights-container {
     height: 75vh;
   }
 }

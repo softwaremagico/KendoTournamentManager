@@ -38,7 +38,7 @@ public abstract class PdfTheme {
     public static final int FOOTER_FONT_SIZE = 8;
 
     public static final int FONT_SIZE = 12;
-    public static final int SCORE_FONT_SIZE = 8;
+    public static final int SCORE_FONT_SIZE = 12;
     public static final int SCORE_LIST_SIZE = 9;
 
     public static final int HEADER_FONT_SIZE = FONT_SIZE + 15;

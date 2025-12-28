@@ -17,9 +17,8 @@
   text-align: center;
   padding: 20px;
   border-style: solid;
-  background-color: var(--ribbon-background);
   text-transform: uppercase;
-  border-width: 2px 2px 2px 0;
+  border-width: 2px;
   border-color: var(--component-color);
   line-height: 25px;
   max-width: 56px;
@@ -32,7 +31,6 @@
   padding: 20px;
   border-style: solid;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  background-color: var(--ribbon-background);
   text-transform: uppercase;
   border-width: 2px 2px 2px 0;
   border-color: var(--component-color);
@@ -42,44 +40,70 @@
 }
 
 .red-ribbon {
-  color: var(--ribbon-background);
+  color: var(--red-team-color);
   //To be below the timer
-  z-index: -1;
-  background-color: var(--red-team-color);
+  //z-index: -1;
+
+  ::ng-deep svg {
+    color: var(--red-team-color) !important;
+  }
 }
 
 .white-ribbon {
-  color: var(--ribbon-background);
+  color: var(--white-team-color);
   //To be below the timer
-  z-index: -1;
-  background-color: var(--white-team-color);
+  //z-index: -1;
+
+  ::ng-deep svg {
+    color: var(--white-team-color) !important;
+  }
 }
 
 .ribbon-icon {
+  background: var(--component-color);
   transform: rotate(0deg);
-  border-width: 2px 0 2px 2px;
+  padding-right: 0;
+  padding-left: 0;
+
+  .mat-icon {
+    margin-left: -10px;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 .fight-container {
   display: flex;
-  padding-bottom: 2vh
+  padding-bottom: 1vh;
+  padding-top: 1vh;
 }
 
-.over {
-  background: var(--disabled);
+.fight-container.ribbon:has(.duel.over) {
+  opacity: 40%;
+}
+
+.fight:has(.duel.duelSelected) {
+  background: var(--floating-background);
+  opacity: 100%;
+}
+
+.duel {
+  background: var(--fight-color);
 }
 
 .duel.over {
-  background: var(--disabled);
-  color: var(--text-disabled);
+  opacity: 40%;
+}
+
+.duel.teamDuel{
+  opacity: 100%;
+}
+
+.duel.duelSelected.over {
+  opacity: 60%;
 }
 
 .duel.duelSelected {
-  border-width: 1px;
-  border-color: #777;
-  border-style: solid;
-  box-shadow: 0 5px 10px 0 var(--shadow);
-  transition: transform .2s; /* Animation */
-  //Transform causes problem with the timer component z-index.
-  //transform: scale(1.03);
+  background: var(--active-fight-color);
+  opacity: 100%;
 }

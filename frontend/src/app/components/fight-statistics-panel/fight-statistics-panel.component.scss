@@ -6,9 +6,13 @@
   padding-bottom: 20px;
 }
 
+.text {
+  color: var(--component-color);
+}
+
 .viewer {
   display: table-cell;
-  width: 33%;
+  width: 20%;
   font-size: 0.8vw;
   color: var(--secondary-text-color);
 }

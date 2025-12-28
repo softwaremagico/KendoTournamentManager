@@ -973,7 +973,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   getShiaijoTag(): string {
     if (this.selectedShiaijo < 0) {
-      return this.translateService.translate('-');
+      return '-';
     }
     return Tournament.SHIAIJO_NAMES[this.selectedShiaijo];
   }

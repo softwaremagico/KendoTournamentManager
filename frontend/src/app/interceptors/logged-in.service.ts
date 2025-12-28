@@ -37,7 +37,7 @@ export class LoggedInService {
 
   userLoginPageDependingOnRoles(context: string, params: string): boolean {
     if (this.loginService.getJwtValue()) {
-      //Participant users must redirect to their statistcs.
+      //Participant users must redirect to their statistics.
       if (localStorage.getItem('account') == 'participant'
         && (!context.startsWith('/participants/statistics') && !context.startsWith('/participants/fights'))) {
         this.router.navigate(['/participants/statistics']);

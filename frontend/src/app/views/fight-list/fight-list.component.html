@@ -158,7 +158,7 @@
                  [startingMinutes]="getDuelDefaultMinutesDuration()"
                  [shown]="timer"
                  [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
-    <div class="fight-container" [ngClass]="{'project-mode': projectorMode}">
+    <div class="fights-container" [ngClass]="{'project-mode': projectorMode}">
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"

@@ -126,6 +126,8 @@ export class LoginService {
 
   logout(): void {
     this.userSessionService.clearToken();
+    localStorage.removeItem('account');
+    localStorage.removeItem('tournamentId');
   }
 
   private setJwtValue(token: string, expires: number): void {

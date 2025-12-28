@@ -1,4 +1,4 @@
-<div class="fight-container">
+<div class="fight-container" [class.ribbon]="this.fight.tournament.teamSize==1" >
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true" [class.red-ribbon]="!swapColors"
        [class.white-ribbon]="swapColors" [ngStyle]="{'max-height': this.fight.tournament.teamSize*50+'px' }"
        class="left-team">
@@ -18,7 +18,7 @@
           (keydown)="selectDuel(duel)"
           [fight]="fight"
           [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | hasPermission) && !projectMode,
-            over: isOver(duel)}"
+            over: isOver(duel), teamDuel: this.fight.tournament.teamSize==1}"
           [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | hasPermission)"
           [showAvatars]="showAvatars"
           [swapTeams]="swapTeams"
