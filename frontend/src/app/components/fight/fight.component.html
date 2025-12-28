@@ -1,7 +1,7 @@
 <div class="fight-container" [class.ribbon]="this.fight.tournament.teamSize==1" >
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true" [class.red-ribbon]="!swapColors"
-       [class.white-ribbon]="swapColors" [ngStyle]="{'max-height': this.fight.tournament.teamSize*50+'px' }"
-       class="left-team">
+       [class.white-ribbon]="swapColors" [ngStyle]="{'height': this.fight.tournament.teamSize*60+'px' }"
+       class="left-team team-name">
     {{ !swapTeams ? fight.team1.name : fight.team2.name }}
   </div>
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false"
@@ -28,8 +28,8 @@
           class="duel"></duel>
   </div>
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true" [class.red-ribbon]="swapColors"
-       [class.white-ribbon]="!swapColors" [ngStyle]="{'max-height': this.fight.tournament.teamSize*50+'px' }"
-       class="right-team">
+       [class.white-ribbon]="!swapColors" [ngStyle]="{'height': this.fight.tournament.teamSize*60+'px' }"
+       class="right-team team-name">
     {{ !swapTeams ? fight.team2.name : fight.team1.name }}
   </div>
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false"
