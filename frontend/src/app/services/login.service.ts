@@ -12,6 +12,7 @@ import {AuthGuestRequest} from "./models/auth-guest-request";
 import {TemporalToken} from "./models/temporal-token";
 import {UserRoles} from "./rbac/user-roles";
 import {UserSessionService} from "./user-session.service";
+import {RbacService} from "./rbac/rbac.service";
 
 @Injectable({
   providedIn: 'root'
@@ -126,6 +127,7 @@ export class LoginService {
 
   logout(): void {
     this.userSessionService.clearToken();
+    this.activityService.setRoles([]);
     localStorage.removeItem('account');
     localStorage.removeItem('tournamentId');
   }

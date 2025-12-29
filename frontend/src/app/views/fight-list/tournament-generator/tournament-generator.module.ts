@@ -12,6 +12,8 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {MatDividerModule} from "@angular/material/divider";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 
 
 @NgModule({
@@ -31,7 +33,9 @@ import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
         RbacModule,
         TranslocoModule,
         MatDividerModule,
-        HasPermissionPipe
+        HasPermissionPipe,
+        BiitButtonModule,
+        BiitPopupModule
     ]
 })
 export class TournamentGeneratorModule { }

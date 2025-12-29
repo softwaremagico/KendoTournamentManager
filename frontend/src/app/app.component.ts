@@ -2,7 +2,6 @@ import {Component, HostBinding, Renderer2} from '@angular/core';
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./interceptors/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
-import {ConfirmationDialogComponent} from "./components/basic/confirmation-dialog/confirmation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {Router} from "@angular/router";
 import {MessageService} from "./services/message.service";
@@ -75,24 +74,6 @@ export class AppComponent extends RbacBasedComponent {
     this.translocoService.setActiveLang(lang);
     this.selectedLanguage = lang;
     this.userSessionService.setLanguage(lang);
-  }
-
-  logout() {
-    let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "logoutWarning"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loginService.logout();
-        this.rbacService.setRoles([]);
-        this.activityService.setRoles([]);
-        this.loggedIn = false;
-        this.messageService.infoMessage("userLoggedOutMessage");
-        this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
-      }
-    });
   }
 
   switchDarkMode(): void {

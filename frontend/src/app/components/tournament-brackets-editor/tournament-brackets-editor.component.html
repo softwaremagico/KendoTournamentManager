@@ -1,50 +1,69 @@
-<div class="container" cdkDropListGroup>
-  <div class="team-panel" *ngIf="!droppingDisabled">
-    <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)"
-         (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
-         cdkDropList cdkDropListSortingDisabled="true"
-         class="teams-container">
-      <team-list
-        [teamListData]="teamListData" [minify]="true"></team-list>
+<ng-container *transloco="let t">
+  <div class="container" cdkDropListGroup>
+    <div class="team-panel" *ngIf="!droppingDisabled">
+      <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)"
+           (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+           cdkDropList cdkDropListSortingDisabled="true"
+           class="teams-container">
+        <team-list
+          [teamListData]="teamListData" [minify]="true"></team-list>
+      </div>
+      <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
+        <button (click)="sortedGroups()"
+                *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                mat-flat-button
+                mat-raised-button>
+          <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
+          {{ 'sorted' | transloco }}
+        </button>
+        <button (click)="randomGroups()"
+                *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                mat-flat-button
+                mat-raised-button>
+          <mat-icon>casino</mat-icon>
+          {{ 'random' | transloco }}
+        </button>
+        <button (click)="removeAllTeamsConfirmation=true"
+                *ngIf="(RbacActivity.CLEAN_UP_GROUPS | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
+                mat-flat-button
+                mat-raised-button
+                matTooltip="{{'removeTeams' | transloco}}">
+          <mat-icon>cleaning_services</mat-icon>
+          {{ 'clean' | transloco }}
+        </button>
+      </div>
     </div>
-    <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
-      <button (click)="sortedGroups()"
-              *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
-              [disabled]="groupsDisabled || (tournament && tournament.locked)"
-              mat-flat-button
-              mat-raised-button>
-        <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
-        {{'sorted' | transloco}}
+    <button
+      *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
+      (click)="downloadAsPdf()"
+      class="floating-button" color="secondary" mat-flat-button mat-mini-fab
+      type="button">
+      <mat-icon color="primary">download_file</mat-icon>
+    </button>
+    <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets"
+                             [class.started]="droppingDisabled || !(RbacActivity.EDIT_GROUP | hasPermission)"
+                             [tournament]="tournament"
+                             [droppingDisabled]="droppingDisabled">
+    </app-tournament-brackets>
+  </div>
+
+  <biit-popup id="confirmation-delete-teams" *ngIf="removeAllTeamsConfirmation"
+              no-header
+  >
+    <div class="vertical">
+    <span [innerHTML]="'questionDeleteTeams' | transloco"></span>
+    <div class="flex-grow horizontal buttons-row">
+      <button id="confirm-delete-cancel-button" biit-button secondary
+              (click)="removeAllTeamsConfirmation = false">{{ t('cancel') }}
       </button>
-      <button (click)="randomGroups()"
-              *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
-              [disabled]="groupsDisabled || (tournament && tournament.locked)"
-              mat-flat-button
-              mat-raised-button>
-        <mat-icon>casino</mat-icon>
-        {{'random' | transloco}}
-      </button>
-      <button (click)="askToRemoveAllTeams()"
-              *ngIf="(RbacActivity.CLEAN_UP_GROUPS | hasPermission)"
-              [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
-              mat-flat-button
-              mat-raised-button
-              matTooltip="{{'removeTeams' | transloco}}">
-        <mat-icon>cleaning_services</mat-icon>
-        {{'clean' | transloco}}
+      <button id="confirm-delete-accept-button" biit-button primary
+              (click)="removeAllTeams(); removeAllTeamsConfirmation = false">
+        {{ t('accept') }}
       </button>
     </div>
   </div>
-  <button
-    *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
-    (click)="downloadAsPdf()"
-          class="floating-button" color="secondary" mat-flat-button mat-mini-fab
-          type="button">
-    <mat-icon color="primary">download_file</mat-icon>
-  </button>
-  <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets"
-                           [class.started] = "droppingDisabled || !(RbacActivity.EDIT_GROUP | hasPermission)"
-                           [tournament]="tournament"
-                           [droppingDisabled]="droppingDisabled">
-  </app-tournament-brackets>
-</div>
+  </biit-popup>
+</ng-container>

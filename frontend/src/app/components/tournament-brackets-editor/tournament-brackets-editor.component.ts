@@ -18,8 +18,7 @@ import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 import {random} from "../../utils/random/random";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
 import {Message} from "@stomp/stompjs/esm6";
 import {MessageContent} from "../../websockets/message-content.model";
@@ -57,23 +56,19 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   @Output()
   onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
-
   @ViewChild('tournamentBracketsComponent', {read: ElementRef})
   public tournamentBracketsComponent: ElementRef;
 
-
   groups: Group[];
-
   selectedGroup: Group;
 
   //Level -> Src Group -> Dst Group
   relations: Map<number, { src: number, dest: number }[]>;
-
   teamListData: TeamListData = new TeamListData();
-
   totalTeams: number;
-
   numberOfWinnersFirstLevel: number;
+
+  removeAllTeamsConfirmation: boolean = false;
 
   private topicSubscription: Subscription;
 
@@ -309,19 +304,6 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   getRandomTeam(teams: Team[]): Team {
     return teams[Math.floor(random() * teams.length)];
-  }
-
-  askToRemoveAllTeams(): void {
-    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "questionDeleteTeams"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.removeAllTeams();
-      }
-    });
   }
 
   removeAllTeams(): void {

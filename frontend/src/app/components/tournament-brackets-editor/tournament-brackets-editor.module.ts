@@ -12,6 +12,8 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 
 
 @NgModule({
@@ -21,19 +23,21 @@ import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
   exports:[
     TournamentBracketsEditorComponent
   ],
-    imports: [
-        CommonModule,
-        TournamentBracketsModule,
-        DragDropModule,
-        TeamCardModule,
-        TeamListModule,
-        MatButtonModule,
-        MatIconModule,
-        RbacModule,
-        TranslocoModule,
-        MatDialogModule,
-        MatTooltipModule,
-        HasPermissionPipe
-    ]
+  imports: [
+    CommonModule,
+    TournamentBracketsModule,
+    DragDropModule,
+    TeamCardModule,
+    TeamListModule,
+    MatButtonModule,
+    MatIconModule,
+    RbacModule,
+    TranslocoModule,
+    MatDialogModule,
+    MatTooltipModule,
+    HasPermissionPipe,
+    BiitButtonModule,
+    BiitPopupModule
+  ]
 })
 export class TournamentBracketsEditorModule { }

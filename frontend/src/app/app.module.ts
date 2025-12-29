@@ -48,7 +48,6 @@ import {MatSpinnerOverlayModule} from "./components/mat-spinner-overlay/mat-spin
 import {FightModule} from "./components/fight/fight.module";
 import {UntieFightModule} from "./components/untie-fight/untie-fight.module";
 import {TimerModule} from "./components/timer/timer.module";
-import {ConfirmationDialogModule} from "./components/basic/confirmation-dialog/confirmation-dialog.module";
 import {
   AuthenticatedUserDialogBoxModule
 } from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
@@ -176,7 +175,6 @@ registerLocaleData(localeNL, "nl");
         FightModule,
         UntieFightModule,
         TimerModule,
-        ConfirmationDialogModule,
         AuthenticatedUserDialogBoxModule,
         CompetitorsRankingModule,
         FightDialogBoxModule,

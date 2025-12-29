@@ -28,6 +28,7 @@ export class NavbarComponent implements OnInit {
   user: AuthenticatedUser | undefined;
 
   protected readonly RbacActivity = RbacActivity;
+  protected logoutConfirmation: boolean = false;
 
   constructor(protected router: Router,
               private contextMenuService: ContextMenuService<void>,

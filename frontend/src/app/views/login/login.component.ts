@@ -39,7 +39,6 @@ export class LoginComponent implements OnInit {
               private infoService: InfoService, private translateService: TranslocoService, private environmentService: EnvironmentService,
               private userSessionService: UserSessionService, private activityService: ActivityService, private translocoService: TranslocoService) {
     this.appVersion = appVersion;
-    console.log(appVersion)
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
       password: ['', Validators.required]

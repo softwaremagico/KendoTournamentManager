@@ -7,8 +7,7 @@ import {TournamentService} from "../../../services/tournament.service";
 import {
   TournamentBracketsEditorComponent
 } from "../../../components/tournament-brackets-editor/tournament-brackets-editor.component";
-import {ConfirmationDialogComponent} from "../../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatDialog} from "@angular/material/dialog";
 import {Fight} from "../../../models/fight";
 import {FightService} from "../../../services/fight.service";
 import {MessageService} from "../../../services/message.service";
@@ -44,6 +43,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
 
   numberOfWinners: number = 1;
   protected updatingGroup: boolean = false;
+  protected generateGroupConfirmation: boolean = false;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
               private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
@@ -88,19 +88,6 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
       this.updatingGroup = true;
       this.tournamentBracketsEditorComponent.deleteLast();
     }
-  }
-
-  openConfirmationGenerateElementsDialog(): void {
-    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "deleteFightsWarning"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.generateElements();
-      }
-    });
   }
 
   generateElements(): void {
