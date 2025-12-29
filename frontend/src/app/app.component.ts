@@ -2,9 +2,6 @@ import {Component, HostBinding, Renderer2} from '@angular/core';
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./interceptors/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
-import {MatDialog} from "@angular/material/dialog";
-import {Router} from "@angular/router";
-import {MessageService} from "./services/message.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
 import {OverlayContainer} from "@angular/cdk/overlay";
@@ -30,10 +27,9 @@ export class AppComponent extends RbacBasedComponent {
   hideMenu = false;
 
   constructor(public translocoService: TranslocoService, public loginService: LoginService, public loggedInService: LoggedInService,
-              protected userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
-              private overlay: OverlayContainer, private _renderer: Renderer2,
-              private messageService: MessageService, rbacService: RbacService, biitIconService: BiitIconService,
-              private darkModeService: DarkModeService, private projectModeChangedService: ProjectModeChangedService,
+              protected userSessionService: UserSessionService, private overlay: OverlayContainer, private _renderer: Renderer2,
+              rbacService: RbacService, biitIconService: BiitIconService,
+              private darkModeService: DarkModeService, projectModeChangedService: ProjectModeChangedService,
               protected sessionService: UserSessionService, private activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
@@ -70,12 +66,6 @@ export class AppComponent extends RbacBasedComponent {
     }
   }
 
-  switchLanguage(lang: string): void {
-    this.translocoService.setActiveLang(lang);
-    this.selectedLanguage = lang;
-    this.userSessionService.setLanguage(lang);
-  }
-
   switchDarkMode(): void {
     this.nightModeEnabled = !this.nightModeEnabled;
     this.userSessionService.setNightMode(this.nightModeEnabled);
@@ -94,10 +84,6 @@ export class AppComponent extends RbacBasedComponent {
       //For drag and drop preview.
       this._renderer.removeClass(document.body, 'dark-mode');
     }
-  }
-
-  openWiki(): void {
-    window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank");
   }
 
   private setPermissions(): void {

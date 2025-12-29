@@ -17,22 +17,31 @@
 
   <context-menu #contextMenu dir="rtl" *transloco="let t">
     <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_LANGUAGE | hasPermission"
-                 (execute)="router.navigateByUrl(Constants.PATHS.PROFILE.LANGUAGE)">
-        <span id="dashboard-menu-activity">
-    {{ t('t.language') }}
+                 (execute)="languagePopup=true">
+        <span id="language-option">
+          {{ t('t.language') }}
         </span>
     </ng-template>
     <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
                  (execute)="router.navigateByUrl(Constants.PATHS.PROFILE.PASSWORD)">
-        <span id="dashboard-menu-historical">
-    {{ t('t.password') }}
+        <span id="password-option">
+          {{ t('t.password') }}
+        </span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="openWiki()">
+        <span id="help-option">
+          {{ t('titleHelp') }}
+        </span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="openAbout()">
+        <span id="about-option">
+          {{ t('titleAboutBox') }}
         </span>
     </ng-template>
     <ng-template contextMenuItem
-                 *transloco="let t"
                  (execute)="logoutConfirmation=true">
-    <span id="kendo-menu-logout">
-    {{ t('t.logout') }}
+        <span id="kendo-menu-logout">
+          {{ t('t.logout') }}
       </span>
     </ng-template>
   </context-menu>
@@ -52,5 +61,10 @@
         </button>
       </div>
     </div>
+  </biit-popup>
+
+  <biit-popup id="language-selector-popup" *ngIf="languagePopup"
+              [title]="t('selectLanguage')">
+    <language-selector (onClosed)="languagePopup=false" style="width:100%"></language-selector>
   </biit-popup>
 </ng-container>

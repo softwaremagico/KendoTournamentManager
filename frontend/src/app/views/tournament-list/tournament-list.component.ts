@@ -308,9 +308,9 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   selectItem(tournament?: Tournament) {
     if (tournament) {
-      const selectedItems: Tournament[] = [];
-      selectedItems.push(tournament);
-      this.table.selectedRows = selectedItems;
+      // const selectedItems: Tournament[] = [];
+      // selectedItems.push(tournament);
+      // this.table.selectedRows = selectedItems;
     }
   }
 

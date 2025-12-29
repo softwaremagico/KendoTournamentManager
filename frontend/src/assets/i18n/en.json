@@ -47,6 +47,7 @@
   "participants": "Participants",
   "accreditation": "Accreditation",
   "language": "Language",
+  "selectLanguage": "Select your preferred language",
   "statistics": "Statistics",
   "fightList": "List of matches",
   "projectMode": "Projector Mode",
@@ -751,5 +752,13 @@
   "generate": "Generate",
   "uploadCsvFile": "Upload a CSV file",
   "defaultPicture": "Default Picture",
-  "preview": "Preview"
+  "preview": "Preview",
+  "languageKey":{
+    "en": "English",
+    "es": "Español",
+    "ca": "Català",
+    "it": "Italiano",
+    "nl": "Nederlandse" ,
+    "de":"Deutsche"
+  }
 }

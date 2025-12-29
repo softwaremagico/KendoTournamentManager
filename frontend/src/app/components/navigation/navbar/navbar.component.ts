@@ -29,6 +29,7 @@ export class NavbarComponent implements OnInit {
 
   protected readonly RbacActivity = RbacActivity;
   protected logoutConfirmation: boolean = false;
+  protected languagePopup: boolean = false;
 
   constructor(protected router: Router,
               private contextMenuService: ContextMenuService<void>,
@@ -120,6 +121,14 @@ export class NavbarComponent implements OnInit {
     );
     $event.preventDefault();
     $event.stopPropagation();
+  }
+
+  openWiki(): void {
+    window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank");
+  }
+
+  openAbout(): void {
+    window.open("https://github.com/softwaremagico/KendoTournamentManager", "_blank");
   }
 }
 

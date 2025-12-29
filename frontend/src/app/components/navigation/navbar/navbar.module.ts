@@ -11,23 +11,27 @@ import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 import {MatIconModule} from "@angular/material/icon";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {TeamRankingModule} from "../../team-ranking/team-ranking.module";
+import {LanguageSelectorModule} from "../../language-selector/language-selector.module";
 
 @NgModule({
   declarations: [NavbarComponent],
-    imports: [
-        CommonModule,
-        FormsModule,
-        BiitIconModule,
-        BiitNavMenuModule,
-        BiitNavUserModule,
-        TranslocoRootModule,
-        ContextMenuModule,
-        ComponentMenuModule,
-        HasPermissionPipe,
-        MatIconModule,
-        BiitButtonModule,
-        BiitPopupModule,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BiitIconModule,
+    BiitNavMenuModule,
+    BiitNavUserModule,
+    TranslocoRootModule,
+    ContextMenuModule,
+    ComponentMenuModule,
+    HasPermissionPipe,
+    MatIconModule,
+    BiitButtonModule,
+    BiitPopupModule,
+    TeamRankingModule,
+    LanguageSelectorModule,
+  ],
   exports: [NavbarComponent],
 })
 export class NavbarModule {

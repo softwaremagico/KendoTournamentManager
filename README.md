@@ -1,4 +1,4 @@
-<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2" align="middle"> 
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle"> 
 
 ---
 
@@ -9,7 +9,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-780.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-782h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -23,7 +23,7 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
-The Kendo Tournament Manager v2 is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
+The Kendo Tournament Manager NG is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
 designed to efficiently manage all your kendo tournament data in one convenient location.
 It caters to tournaments of varying sizes, offering versatility to accommodate any type of event for your kendo club.
 Drawing on 15 years of experience with different fighting structures, this tool aims to provide flexibility that serves
@@ -187,7 +187,7 @@ password to log in, and the system will immediately create an administrator acco
 This feature is only available if there are no users in the system, so it will be disabled as soon as you create the
 first administrator. Please make a note of the generated username and password and store it in a safe place.
 
-# Contributing to Kendo Tournament Manager v2
+# Contributing to Kendo Tournament Manager NG
 
 There are various ways to contribute to this project:
 
@@ -196,7 +196,7 @@ There are various ways to contribute to this project:
 - Translating the application into different languages is also appreciated.
 - Any suggestions for improving the design are welcome.
 
-To contribute code to Kendo Tournament Manager v2, please follow these steps:
+To contribute code to Kendo Tournament Manager NG, please follow these steps:
 
     Fork this repository.
     Create a branch: git checkout -b <branch_name>.
