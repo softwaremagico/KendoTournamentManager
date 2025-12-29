@@ -1,5 +1,5 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
@@ -12,7 +12,6 @@ import {TournamentType} from "../../models/tournament-type";
 import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
-import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
@@ -83,6 +82,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   protected showCompetitorsRanking: boolean = false;
   protected showTeamsRanking: boolean = false;
+  protected confirmResetFights: boolean = false;
+  protected confirmDeleteFights: boolean = false;
 
 
   private topicSubscription: Subscription;
@@ -387,24 +388,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.showLevelTags = showedLevel.length > 1;
   }
 
-  openConfirmationGenerateElementsDialog(): void {
-    if (this.getFights().length > 0) {
-      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-        disableClose: false,
-        restoreFocus: false,
-      });
-      dialogRef.componentInstance.messageTag = "deleteFightsWarning"
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.generateElements();
-        }
-      });
-    } else {
-      this.generateElements();
-    }
-  }
-
   openBracketsManager(): void {
     if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
       this.router.navigate(['tournaments/fights/championship'], {
@@ -476,44 +459,44 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  deleteElement(): void {
+  openDeleteElement(): void {
     if (this.selectedFight || this.selectedDuel) {
-      let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        disableClose: false
-      });
-      dialogRef.componentInstance.messageTag = "deleteFightWarning"
-      if (this.selectedFight) {
-        dialogRef.componentInstance.parameters = {
-          team1: !this.swappedTeams ? (this.selectedFight?.team1.name) : (this.selectedFight?.team2.name),
-          team2: !this.swappedTeams ? (this.selectedFight?.team2.name) : (this.selectedFight?.team1.name),
-        }
-      } else if (this.selectedDuel) {
-        dialogRef.componentInstance.parameters = {
-          team1: !this.swappedTeams ? (this.selectedDuel?.competitor1?.lastname) : (this.selectedDuel?.competitor2?.lastname),
-          team2: !this.swappedTeams ? (this.selectedDuel?.competitor2?.lastname) : (this.selectedDuel?.competitor1?.lastname)
-        }
-      }
+      this.confirmDeleteFights = true;
+    }
+  }
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          //Delete undraw.
-          if (this.selectedDuel && this.selectedGroup && this.selectedDuel.type === DuelType.UNDRAW) {
-            this.selectedGroup.unties.splice(this.selectedGroup.unties.indexOf(this.selectedDuel), 1);
-            //Delete the fight.
-          } else {
-            if (this.selectedFight && this.selectedGroup) {
-              this.selectedGroup.fights.splice(this.selectedGroup.fights.indexOf(this.selectedFight), 1);
-            }
-          }
-          if (this.selectedGroup) {
-            this.selectedFight = undefined;
-            this.groupService.update(this.selectedGroup).subscribe((): void => {
-              this.messageService.infoMessage("fightDeleted");
-              this.refreshFights();
-              this.selectFirstUnfinishedDuel();
-            });
-          }
-        }
+  getDeleteTeamParams(): { team1: string | undefined, team2: string | undefined } {
+    if (this.selectedFight) {
+      return {
+        team1: !this.swappedTeams ? (this.selectedFight?.team1.name) : (this.selectedFight?.team2.name),
+        team2: !this.swappedTeams ? (this.selectedFight?.team2.name) : (this.selectedFight?.team1.name),
+      }
+    } else if (this.selectedDuel) {
+      return {
+        team1: !this.swappedTeams ? (this.selectedDuel?.competitor1?.lastname) : (this.selectedDuel?.competitor2?.lastname),
+        team2: !this.swappedTeams ? (this.selectedDuel?.competitor2?.lastname) : (this.selectedDuel?.competitor1?.lastname)
+      }
+    } else {
+      return {team1: "", team2: ""};
+    }
+  }
+
+  deleteElement(): void {
+    //Delete undraw.
+    if (this.selectedDuel && this.selectedGroup && this.selectedDuel.type === DuelType.UNDRAW) {
+      this.selectedGroup.unties.splice(this.selectedGroup.unties.indexOf(this.selectedDuel), 1);
+      //Delete the fight.
+    } else {
+      if (this.selectedFight && this.selectedGroup) {
+        this.selectedGroup.fights.splice(this.selectedGroup.fights.indexOf(this.selectedFight), 1);
+      }
+    }
+    if (this.selectedGroup) {
+      this.selectedFight = undefined;
+      this.groupService.update(this.selectedGroup).subscribe((): void => {
+        this.messageService.infoMessage("fightDeleted");
+        this.refreshFights();
+        this.selectFirstUnfinishedDuel();
       });
     }
   }

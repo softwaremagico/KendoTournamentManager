@@ -12,7 +12,7 @@
                  class="timer-edition timer-edition-minutes"
                  max="20" min="0" oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
                  placeholder='00'
-                 type=number/>
+                 type="number">
           <span>:</span>
           <span (dblclick)="setSecondsEditable(true)" *ngIf="!secondsEditable">{{ toDoubleDigit(seconds) }}</span>
           <input (keyup)="validateInputSeconds($event)" (keyup.enter)="setSecondsEditable(false)"
@@ -21,7 +21,7 @@
                  class="timer-edition timer-edition-seconds"
                  max="59" min="0" oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
                  placeholder='00'
-                 type=number/>
+                 type="number"/>
         </div>
       </div>
       <div [class.non-editable]="!editable" class="timer-buttons">
