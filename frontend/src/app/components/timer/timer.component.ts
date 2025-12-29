@@ -107,7 +107,6 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   onWindowResize(): void {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
-    this.correctTimerPosition();
   }
 
 
@@ -340,21 +339,5 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   dragEnd($event: CdkDragEnd): void {
     this.timerPosition = $event.source.getFreeDragPosition();
-    this.correctTimerPosition();
-  }
-
-  correctTimerPosition(): void {
-    if (this.timerPosition.x < -this.screenWidth / 2) {
-      this.timerPosition.x = -this.screenWidth / 2;
-    }
-    if (this.timerPosition.x > 100) {
-      this.timerPosition.x = 100;
-    }
-    if (this.timerPosition.y < -130) {
-      this.timerPosition.y = -130;
-    }
-    if (this.timerPosition.y > -130 + this.screenHeight - this.TIMER_HEIGHT) {
-      this.timerPosition.y = -130 + this.screenHeight - this.TIMER_HEIGHT;
-    }
   }
 }

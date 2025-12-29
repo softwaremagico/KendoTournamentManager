@@ -1,11 +1,13 @@
 .popup-timer {
   // To avoid a jump when dragging
   transform: translate3d(0px, 0px, 0px);
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .container {
   border: 1px solid #333;
-  border-radius: 10px;
   width: 390px;
   margin: 20px auto;
   padding: 5px 20px 5px 20px;
@@ -22,13 +24,13 @@
   font-size: 50px;
   margin: auto;
   border: 8px solid #8097b3;
-  border-radius: 5%;
   width: 350px;
   height: 70px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 5px;
 }
 
 .timer.warning {
@@ -55,16 +57,15 @@
 .time {
   z-index: 1;
   position: relative;
-  font-family: "Square Sans Serif 7", sans-serif;
+  font-family: sans-serif;
 }
 
 .timer-buttons button {
   background: #222222;
   border: none;
   padding: 5px;
-  width: 50px;
+  width: 45px;
   height: 50px;
-  align-items: center;
   vertical-align: top;
   font-size: large;
   font-weight: bold;
@@ -74,36 +75,33 @@
   color: gray;
 }
 
-.play {
-  color: #8097b3;
-  margin-right: 5px;
+
+::ng-deep .drag-icon svg {
+  color: #8097b3 !important;
 }
 
-.pause {
+::ng-deep .play svg {
   color: #8097b3;
-  margin-right: 5px;
 }
 
-.stop {
+::ng-deep .pause svg {
+  color: #8097b3;
+}
+
+::ng-deep .stop svg {
   color: #ff0000;
-  margin-right: 10px;
-  margin-left: 5px;
 }
 
 .rewind {
   color: #ff0000;
 }
 
-.restore {
+::ng-deep .restore svg {
   color: #FF9800;
 }
 
 .forward {
   color: #00ff00;
-}
-
-.drag-icon {
-  color: #8097b3;
 }
 
 .separator {
@@ -119,9 +117,14 @@
   height: 30px;
   font-size: 35pt;
   font-weight: bold;
-  font-family: "Square Sans Serif 7", sans-serif;
+  font-family: sans-serif;
   background: #222222;
   color: #8097b3;
   border: 1px solid #8097b3;
   border-radius: 4px;
+}
+
+button > .mat-icon {
+  height: 18px !important;
+  width: 18px !important;
 }

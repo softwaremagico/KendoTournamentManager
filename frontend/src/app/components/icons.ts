@@ -54,6 +54,10 @@ export class IconModule {
       .addSvgIcon("timer_off", this.setPath(`${this.path}/timer_off.svg`))
       .addSvgIcon("download", this.setPath(`${this.path}/download.svg`))
       .addSvgIcon("projector", this.setPath(`${this.path}/projector.svg`))
+      .addSvgIcon("menu-drag", this.setPath(`${this.path}/menu-drag.svg`))
+      .addSvgIcon("play", this.setPath(`${this.path}/play.svg`))
+      .addSvgIcon("pause", this.setPath(`${this.path}/pause.svg`))
+      .addSvgIcon("rewind", this.setPath(`${this.path}/rewind.svg`))
       .addSvgIcon("arrow_forward", this.setPath(`${this.path}/arrow_forward.svg`));
   }
 

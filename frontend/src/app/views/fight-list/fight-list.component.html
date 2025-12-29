@@ -149,15 +149,6 @@
     <app-filter class="filter-fights " (filterChanged)="filter($event)" (reset)="filter('')"
                 [resetValue]="resetFilterValue"
                 *ngIf="!projectorMode"></app-filter>
-    <popup-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
-                 (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
-                 (timeDurationChanged)="updateDuelDuration($event[0])"
-                 (timerClosed)="showTimer(false)"
-                 [editable]="tournament && !tournament.locked" [hidden]="!timer"
-                 [resetTimerPosition]="resetTimerPosition"
-                 [startingMinutes]="getDuelDefaultMinutesDuration()"
-                 [shown]="timer"
-                 [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
     <div class="fights-container" [ngClass]="{'project-mode': projectorMode}">
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
@@ -189,6 +180,16 @@
     </div>
   </div>
 </div>
+
+<popup-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
+             (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
+             (timeDurationChanged)="updateDuelDuration($event[0])"
+             (timerClosed)="showTimer(false)"
+             [editable]="tournament && !tournament.locked" [hidden]="!timer"
+             [resetTimerPosition]="resetTimerPosition"
+             [startingMinutes]="getDuelDefaultMinutesDuration()"
+             [shown]="timer"
+             [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
 
 <biit-popup id="competitors-ranking-popup" *ngIf="showCompetitorsRanking" no-header>
   <competitors-ranking
