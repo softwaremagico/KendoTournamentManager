@@ -58,6 +58,7 @@ export class IconModule {
       .addSvgIcon("play", this.setPath(`${this.path}/play.svg`))
       .addSvgIcon("pause", this.setPath(`${this.path}/pause.svg`))
       .addSvgIcon("rewind", this.setPath(`${this.path}/rewind.svg`))
+      .addSvgIcon("swap_vertical", this.setPath(`${this.path}/swap_vertical.svg`))
       .addSvgIcon("arrow_forward", this.setPath(`${this.path}/arrow_forward.svg`));
   }
 
