@@ -3,7 +3,6 @@ import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
 import {Subject, takeUntil} from "rxjs";
 import {MatDialog} from "@angular/material/dialog";
-import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CdkDragEnd, Point} from "@angular/cdk/drag-drop";
@@ -16,8 +15,6 @@ import {FilterFocusService} from "../../services/notifications/filter-focus.serv
   styleUrls: ['./timer.component.scss']
 })
 export class TimerComponent extends RbacBasedComponent implements OnInit {
-
-  private TIMER_HEIGHT: number = 320;
 
   @Input()
   set startingMinutes(value: number) {
@@ -60,8 +57,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   private clickedElement: HTMLElement;
 
   timerPosition: Point = {x: 0, y: 0};
-  private screenWidth: number;
-  private screenHeight: number;
+
+  protected confirmReset: boolean = false;
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
@@ -71,8 +68,6 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
 
     //Enable/Disable key controls if the filter is in use.
     this.filterFocusService.isFilterActive.subscribe((_value: boolean): void => {
@@ -101,12 +96,6 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
       clearInterval(this.clockHandler);
       this.clockHandler = null;
     }
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(): void {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
   }
 
 
@@ -178,22 +167,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   };
 
   restoreTimer(): void {
-    if (this.elapsedSeconds === 0) {
-      return;
-    }
-    let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "timerResetWarning"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.elapsedSeconds = 0;
-        this.onTimerChanged.emit([this.elapsedSeconds]);
-        this.resetVariablesAsSeconds(this.totalTime + this.increasedTime, false);
-        this.alarmRinging = false;
-      }
-    });
+    this.elapsedSeconds = 0;
+    this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.resetVariablesAsSeconds(this.totalTime + this.increasedTime, false);
+    this.alarmRinging = false;
   }
 
   timerComplete(): void {
