@@ -23,7 +23,7 @@
         </span>
     </ng-template>
     <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
-                 (execute)="router.navigateByUrl(Constants.PATHS.PROFILE.PASSWORD)">
+                 (execute)="passwordPopup=true">
         <span id="password-option">
           {{ t('t.password') }}
         </span>
@@ -63,8 +63,14 @@
     </div>
   </biit-popup>
 
-  <biit-popup id="language-selector-popup" *ngIf="languagePopup"
+  <biit-popup id="language-selector-popup" *ngIf="languagePopup" closable
               [title]="t('selectLanguage')">
     <language-selector (onClosed)="languagePopup=false" style="width:100%"></language-selector>
+  </biit-popup>
+
+  <biit-popup id="password-change-popup" *ngIf="passwordPopup && this.user" closable
+              [title]="t('passwordChange')" (onClosed)="passwordPopup=false">
+    <reset-password (onClosed)="passwordPopup=false" style="width:100%"
+                    [user]="this.user"></reset-password>
   </biit-popup>
 </ng-container>

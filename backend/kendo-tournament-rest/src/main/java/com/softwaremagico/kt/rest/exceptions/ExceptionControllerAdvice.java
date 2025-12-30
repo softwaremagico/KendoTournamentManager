@@ -202,6 +202,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Object> invalidPasswordException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_password", ex), HttpStatus.BAD_REQUEST);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(

@@ -296,11 +296,7 @@ public class AuthApi {
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-        try {
-            authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword(), authentication.getName());
-        } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass(), e);
-        }
+        authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword(), authentication.getName());
     }
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")

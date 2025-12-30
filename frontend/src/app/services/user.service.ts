@@ -108,7 +108,7 @@ export class UserService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<void>(`Updating password!`))
+        //catchError(this.messageService.handleError<void>(`Updating password!`))
       );
   }
 

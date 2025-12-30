@@ -30,6 +30,7 @@ export class NavbarComponent implements OnInit {
   protected readonly RbacActivity = RbacActivity;
   protected logoutConfirmation: boolean = false;
   protected languagePopup: boolean = false;
+  protected passwordPopup: boolean = false;
 
   constructor(protected router: Router,
               private contextMenuService: ContextMenuService<void>,
