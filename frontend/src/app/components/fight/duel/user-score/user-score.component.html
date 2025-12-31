@@ -1,4 +1,6 @@
-<div [class.left]="left" [class.right]="!left" class="user-score">
+<div [class.left]="left" [class.right]="!left" class="user-score"
+     [class.highlightParticipant]="highlightedParticipantId!=undefined"
+     [class.fightSelected]="fightSelected">
   <score *ngIf="!left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
          [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
   <score *ngIf="!left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"

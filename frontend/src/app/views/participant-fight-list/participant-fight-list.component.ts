@@ -82,7 +82,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
         this.tournaments = [...this.competitorFights.keys()];
 
         this.tournaments.sort((a: Tournament, b: Tournament): number =>
-          a.createdAt && b.createdAt ? (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) : 0);
+          a.createdAt && b.createdAt ? (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) : 0);
 
         //Undraw fights.
         this.competitorUndraws = new Map<Tournament, Duel[]>();

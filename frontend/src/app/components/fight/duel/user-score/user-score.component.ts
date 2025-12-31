@@ -26,6 +26,9 @@ export class UserScoreComponent {
   showAvatar: boolean = false;
 
   @Input()
+  fightSelected: boolean;
+
+  @Input()
   locked: boolean = false;
 
   @Input()

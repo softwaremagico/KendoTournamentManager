@@ -100,7 +100,7 @@
 }
 
 .duel.over {
-  opacity: 40%;
+  opacity: 30%;
 }
 
 .duel.teamDuel {
@@ -108,10 +108,25 @@
 }
 
 .duel.duelSelected.over {
-  opacity: 60%;
+  opacity: 30% !important;
 }
 
 .duel.duelSelected {
+  background: var(--active-fight-color-selected) !important;
+  opacity: 100% !important;
+}
+
+.duel:has(user-score .fightSelected) {
+  background-color: var(--active-fight-color);
+}
+
+//For participant fights.
+.duel:has(user-name .highlighted) {
+  background: var(--floating-background) !important;
+  opacity: 100% !important;
+}
+
+.duel:has(user-score .highlightParticipant) {
   background: var(--active-fight-color);
-  opacity: 100%;
+  opacity: 30%;
 }

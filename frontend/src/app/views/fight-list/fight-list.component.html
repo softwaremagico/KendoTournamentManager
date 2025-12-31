@@ -147,7 +147,7 @@
           {{ getShiaijoTag() }}
         </div>
       </div>
-      <app-filter class="filter-fights " (filterChanged)="filter($event)" (reset)="filter('')"
+      <app-filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
                   [resetValue]="resetFilterValue"
                   *ngIf="!projectorMode"></app-filter>
       <div class="fights-container" [ngClass]="{'project-mode': projectorMode}">

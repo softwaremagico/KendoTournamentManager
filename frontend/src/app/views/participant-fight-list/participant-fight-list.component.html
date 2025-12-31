@@ -1,19 +1,18 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<ng-container *transloco="let t">
 <div class="fight-view">
-  <div class="fights-table">
+  <div class="fights-layout">
     <div class="upper-menu">
-      <div class="cell">
-        <button (click)="goBackToStatistics()"
-                *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
-                [matTooltipShowDelay]="500"
-                mat-button
-                matTooltip="{{'back' | transloco}}">
-          <mat-icon>arrow_back</mat-icon>
+        <button biit-icon *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
+                (click)="goBackToStatistics()"
+                [title]="t('back')">
+          <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
         </button>
       </div>
     </div>
-    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
-    <div class="fight-container">
+    <app-filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
+                [resetValue]="resetFilterValue"></app-filter>
+    <div class="fights-container">
       <div *ngIf="tournaments" class="fight-container">
         <div *ngFor="let tournament of tournaments" class="fight-list">
           <h2 *ngIf="filteredFights.get(tournament)?.length! > 0"
@@ -35,5 +34,5 @@
         </div>
       </div>
     </div>
-  </div>
 </div>
+</ng-container>

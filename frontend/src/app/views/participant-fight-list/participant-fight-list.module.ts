@@ -13,6 +13,7 @@ import {FilterModule} from "../../components/basic/filter/filter.module";
 import {UserScoreModule} from "../../components/fight/duel/user-score/user-score.module";
 import {DuelModule} from "../../components/fight/duel/duel.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
@@ -20,21 +21,22 @@ import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
     ParticipantFightListComponent
   ],
   exports: [ParticipantFightListComponent],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSpinnerOverlayModule,
-        MatTooltipModule,
-        RbacModule,
-        TranslocoModule,
-        FightModule,
-        UntieFightModule,
-        FilterModule,
-        UserScoreModule,
-        DuelModule,
-        HasPermissionPipe
-    ]
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSpinnerOverlayModule,
+    MatTooltipModule,
+    RbacModule,
+    TranslocoModule,
+    FightModule,
+    UntieFightModule,
+    FilterModule,
+    UserScoreModule,
+    DuelModule,
+    HasPermissionPipe,
+    BiitIconButtonModule
+  ]
 })
 export class ParticipantFightListModule {
 }
