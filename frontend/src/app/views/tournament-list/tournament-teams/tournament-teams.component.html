@@ -18,7 +18,7 @@
       <div (cdkDropListDropped)="removeFromTeam($event)" [attr.data-tournament-size]="tournament.teamSize"
            [cdkDropListData]="userListData.filteredParticipants"
            cdkDropList
-           class="users-container">
+           class="teams-list">
         <user-list [userListData]="userListData"></user-list>
       </div>
       <div class="right-panel">

@@ -22,6 +22,7 @@ export class RoleSelectorDialogBoxComponent {
   constructor(public dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
+    //TODO(): updtate this component.
   }
 
   setRoles(newOnes: boolean): void {

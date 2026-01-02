@@ -1,15 +1,10 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {FightDialogBoxComponent} from "../fight-dialog-box/fight-dialog-box.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Component, OnInit} from '@angular/core';
+import {FightCreator} from "../../../components/fight-creator/fight-creator.component";
 import {TeamService} from "../../../services/team.service";
 import {FightService} from "../../../services/fight.service";
 import {GroupService} from "../../../services/group.service";
 import {MessageService} from "../../../services/message.service";
 import {GroupUpdatedService} from "../../../services/notifications/group-updated.service";
-import {Action} from "../../../action";
-import {Fight} from "../../../models/fight";
-import {Group} from "../../../models/group";
-import {Tournament} from "../../../models/tournament";
 import {Team} from "../../../models/team";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {forkJoin, Observable} from "rxjs";
@@ -18,36 +13,24 @@ import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-prope
 import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
 
 @Component({
-  selector: 'app-senbatsu-fight-dialog-box',
+  selector: 'app-senbatsu-fight-creator',
   templateUrl: './senbatsu-fight-dialog-box.component.html',
   styleUrls: ['./senbatsu-fight-dialog-box.component.scss']
 })
-export class SenbatsuFightDialogBoxComponent extends FightDialogBoxComponent implements OnInit {
+export class SenbatsuFightDialogBoxComponent extends FightCreator implements OnInit {
 
   private originalTeams: Team[];
   public teamDragDisabled: Team[];
 
   constructor(
-    public override dialogRef: MatDialogRef<FightDialogBoxComponent>,
     protected override teamService: TeamService,
     protected override fightService: FightService,
     protected override groupServices: GroupService,
     protected override messageService: MessageService,
     protected override groupUpdatedService: GroupUpdatedService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public override data: {
-      action: Action,
-      entity: Fight,
-      group: Group,
-      previousFight: Fight | undefined,
-      tournament: Tournament,
-      swappedColors: boolean,
-      swappedTeams: boolean,
-      horizontalTeams: boolean,
-      grid: boolean,
-    },
     private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService
   ) {
-    super(dialogRef, teamService, fightService, groupServices, messageService, groupUpdatedService, data);
+    super(teamService, fightService, groupServices, messageService, groupUpdatedService);
   }
 
 

@@ -19,13 +19,13 @@
   </div>
   <div class="new-fight">
     <div class="team-selected">
-      <app-team-card [disableDrag]="true" *ngFor="let team of selectedTeam1" [team]="team"></app-team-card>
+      <team-card [disableDrag]="true" *ngFor="let team of selectedTeam1" [team]="team"></team-card>
     </div>
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam2"
          [cdkDropListEnterPredicate]="checkDroppedElement"
          [cdkDropListSortingDisabled]="false" cdkDropList
          class="team-selected">
-      <app-team-card *ngFor="let team of selectedTeam2" [team]="team"></app-team-card>
+      <team-card *ngFor="let team of selectedTeam2" [team]="team"></team-card>
     </div>
   </div>
 </div>

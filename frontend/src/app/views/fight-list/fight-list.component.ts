@@ -7,7 +7,7 @@ import {Tournament} from "../../models/tournament";
 import {ActivatedRoute, Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
-import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.component";
+import {FightCreator} from "../../components/fight-creator/fight-creator.component";
 import {TournamentType} from "../../models/tournament-type";
 import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
 import {GroupService} from "../../services/group.service";
@@ -87,6 +87,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
 
   private topicSubscription: Subscription;
+  protected openNewFightPopup: boolean = false;
+  protected openSenbatsuFightPopup: boolean = false
+  protected newFight: Fight;
 
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
@@ -448,15 +451,31 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.selectedGroup = this.groups[0];
     }
     if (this.selectedGroup) {
-      const fight: Fight = new Fight();
-      fight.tournament = this.tournament;
-      fight.shiaijo = this.selectedGroup.shiaijo;
-      fight.level = this.selectedGroup.level;
-      fight.duels = [];
-      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight);
+      this.newFight = new Fight();
+      this.newFight.tournament = this.tournament;
+      this.newFight.shiaijo = this.selectedGroup.shiaijo;
+      this.newFight.level = this.selectedGroup.level;
+      this.newFight.duels = [];
+      if (this.tournament.type !== TournamentType.SENBATSU) {
+        this.openNewFightPopup = true;
+      } else {
+        this.openSenbatsuFightPopup = true;
+      }
     } else {
       this.messageService.warningMessage('errorFightNotSelected');
     }
+  }
+
+  onFightCreated(result:Fight):void{
+    // if (result == undefined) {
+    //   //Do nothing
+    // } else if (result?.action === Action.Add) {
+    //   this.selectFirstUnfinishedDuel();
+    // } else if (result?.action === Action.Update) {
+    //   this.updateRowData(result.data);
+    // } else if (result?.action === Action.Delete) {
+    //   this.deleteRowData(result.data);
+    // }
   }
 
   openDeleteElement(): void {
@@ -499,63 +518,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         this.selectFirstUnfinishedDuel();
       });
     }
-  }
-
-  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined): void {
-    const horizontalTeams: boolean = this.tournament.type === TournamentType.SENBATSU;
-    const grid: boolean = this.tournament.type !== TournamentType.SENBATSU;
-    const height: string = horizontalTeams ? '550px' : '95vh';
-    let dialogRef;
-    if (this.tournament.type == TournamentType.SENBATSU) {
-      dialogRef = this.dialog.open(SenbatsuFightDialogBoxComponent, {
-        panelClass: 'pop-up-panel',
-        width: '90vw',
-        height: height,
-        maxWidth: '1000px',
-        restoreFocus: false,
-        data: {
-          action: Action.Add,
-          entity: fight,
-          group: group,
-          previousFight: afterFight,
-          tournament: this.tournament,
-          swappedColors: this.swappedColors,
-          swappedTeams: this.swappedTeams,
-          horizontalTeams: horizontalTeams,
-          grid: grid,
-        }
-      });
-    } else {
-      dialogRef = this.dialog.open(FightDialogBoxComponent, {
-        panelClass: 'pop-up-panel',
-        width: '90vw',
-        height: height,
-        maxWidth: '1000px',
-        restoreFocus: false,
-        data: {
-          action: Action.Add,
-          entity: fight,
-          group: group,
-          previousFight: afterFight,
-          tournament: this.tournament,
-          swappedColors: this.swappedColors,
-          swappedTeams: this.swappedTeams,
-          horizontalTeams: horizontalTeams,
-          grid: grid,
-        }
-      });
-    }
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result?.action === Action.Add) {
-        this.selectFirstUnfinishedDuel();
-      } else if (result?.action === Action.Update) {
-        this.updateRowData(result.data);
-      } else if (result?.action === Action.Delete) {
-        this.deleteRowData(result.data);
-      }
-    });
   }
 
   createGroupFight(teams: Team[]): void {

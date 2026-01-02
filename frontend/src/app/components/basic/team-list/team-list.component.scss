@@ -1,14 +1,9 @@
-team-card {
-  margin: 20px;
-  border-radius: 10px;
-  height: 40px;
-}
-
 .team-list {
   display: block;
   height: 60vh;
   overflow: auto;
   min-height: 460px;
+  margin-top: 1em;
 }
 
 .team-list.horizontal {
@@ -37,10 +32,20 @@ team-card {
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: auto auto;
+  overflow: auto;
+  max-height: 30vh;
 }
 
 @media screen and (max-height: 800px) {
   .filter {
     display: none !important;
+  }
+}
+
+
+@media screen and (max-width: 600px) {
+  .team-grid.grid {
+    grid-template-columns: 100%;
+    grid-template-rows: auto;
   }
 }

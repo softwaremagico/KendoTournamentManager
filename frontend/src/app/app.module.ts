@@ -51,13 +51,12 @@ import {
   AuthenticatedUserDialogBoxModule
 } from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
 import {CompetitorsRankingModule} from "./components/competitors-ranking/competitors-ranking.module";
-import {FightDialogBoxModule} from "./views/fight-list/fight-dialog-box/fight-dialog-box.module";
+import {FightCreatorModule} from "./components/fight-creator/fight-creator.module";
 import {LeagueGeneratorModule} from "./views/fight-list/league-generator/league-generator.module";
 import {TeamRankingModule} from "./components/team-ranking/team-ranking.module";
 import {UndrawTeamsModule} from "./views/fight-list/undraw-teams/undraw-teams.module";
 import {TournamentTeamsModule} from "./views/tournament-list/tournament-teams/tournament-teams.module";
 import {TournamentRolesModule} from "./views/tournament-list/tournament-roles/tournament-roles.module";
-import {TournamentDialogBoxModule} from "./views/tournament-list/tournament-dialog-box/tournament-dialog-box.module";
 import {FightListModule} from "./views/fight-list/fight-list-module";
 import {FightStatisticsPanelModule} from "./components/fight-statistics-panel/fight-statistics-panel.module";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
@@ -176,13 +175,12 @@ registerLocaleData(localeNL, "nl");
     TimerModule,
     AuthenticatedUserDialogBoxModule,
     CompetitorsRankingModule,
-    FightDialogBoxModule,
+    FightCreatorModule,
     LeagueGeneratorModule,
     TeamRankingModule,
     ParticipantPictureDialogModule,
     TournamentTeamsModule,
     TournamentRolesModule,
-    TournamentDialogBoxModule,
     UndrawTeamsModule,
     FightListModule,
     FightStatisticsPanelModule,

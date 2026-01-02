@@ -1,0 +1,42 @@
+<ng-container id="tournament-roles" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div cdkDropListGroup class="fights-creator" [ngClass]="{'horizontal' : horizontalTeams }">
+      <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+           cdkDropList
+           class="teams-container" [ngClass]="{'horizontal' : horizontalTeams }">
+        <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [grid]="grid"
+                   [ngClass]="{'horizontal' : horizontalTeams }"></team-list>
+      </div>
+      <div class="new-fight-title">
+        <h2 [class.red-ribbon]="!swappedColors" [class.white-ribbon]="swappedColors"
+            class="teams-title">{{
+            !swappedColors ? ('redTeam' | transloco) : ('whiteTeam' |
+              transloco)
+          }}</h2>
+        <h2 [class.red-ribbon]="swappedColors" [class.white-ribbon]="!swappedColors"
+            class="teams-title">{{
+            swappedColors ? ('redTeam' | transloco) : ('whiteTeam' |
+              transloco)
+          }}</h2>
+      </div>
+      <div class="new-fight">
+        <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam1"
+             [cdkDropListEnterPredicate]="checkDroppedElement"
+             [cdkDropListSortingDisabled]="false" cdkDropList
+             class="team-selected">
+          <team-card *ngFor="let team of selectedTeam1" [team]="team"></team-card>
+        </div>
+        <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam2"
+             [cdkDropListEnterPredicate]="checkDroppedElement"
+             [cdkDropListSortingDisabled]="false" cdkDropList
+             class="team-selected">
+          <team-card *ngFor="let team of selectedTeam2" [team]="team"></team-card>
+        </div>
+      </div>
+    </div>
+    <div class="buttons-row">
+      <button biit-button (click)="closeDialog()" secondary>{{ 'cancel' | transloco }}</button>
+      <button biit-button (click)="addFights()" primary>{{ 'add' | transloco }}</button>
+    </div>
+  </div>
+</ng-container>

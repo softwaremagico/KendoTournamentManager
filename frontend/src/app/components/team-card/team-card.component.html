@@ -8,9 +8,7 @@
   <mat-card-content class="team-card-content" *ngIf="!minify">
     <ul class="team-card-content-list">
       <li *ngFor="let user of team.members" class="team-member">
-        {{user && user.lastname ? user?.lastname : ""}}
-        {{user && user.name && user.lastname ? ", " : ""}}
-        {{user && user.name ? user?.name : ""}}
+        {{user | participantNamePipe}}
       </li>
     </ul>
   </mat-card-content>

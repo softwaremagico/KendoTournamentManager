@@ -19,6 +19,7 @@ import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-t
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {CompetitorsRankingModule} from "../../components/competitors-ranking/competitors-ranking.module";
 import {TeamRankingModule} from "../../components/team-ranking/team-ranking.module";
+import {FightCreatorModule} from "../../components/fight-creator/fight-creator.module";
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import {TeamRankingModule} from "../../components/team-ranking/team-ranking.modu
         BiitPopupModule,
         CompetitorsRankingModule,
         TeamRankingModule,
-        BiitButtonModule
+        BiitButtonModule,
+        FightCreatorModule
     ]
 })
 export class FightListModule {

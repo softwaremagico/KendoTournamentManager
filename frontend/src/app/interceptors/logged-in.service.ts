@@ -3,7 +3,6 @@ import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from
 import {LoginService} from "../services/login.service";
 import {BehaviorSubject} from "rxjs";
 import {TournamentService} from "../services/tournament.service";
-import {Tournament} from "../models/tournament";
 
 @Injectable({
   providedIn: 'root'

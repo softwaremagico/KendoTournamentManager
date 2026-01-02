@@ -8,7 +8,7 @@
     <h2>{{ 'teamsOrder' | transloco }}</h2>
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
          cdkDropList class="final-team-list">
-      <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
+      <team-card *ngFor="let team of teamsOrder" [team]="team"></team-card>
     </div>
 
     <div *ngIf="canMaximizeFights || needsDrawResolution || needsFifoWinner || canAvoidDuplicatedFights"

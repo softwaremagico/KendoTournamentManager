@@ -1,71 +1,50 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {Fight} from "../../../models/fight";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Action} from "../../../action";
-import {TeamListData} from "../../../components/basic/team-list/team-list-data";
-import {TeamService} from "../../../services/team.service";
-import {Tournament} from "../../../models/tournament";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Fight} from "../../models/fight";
+import {TeamListData} from "../basic/team-list/team-list-data";
+import {TeamService} from "../../services/team.service";
+import {Tournament} from "../../models/tournament";
 import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
-import {Team} from "../../../models/team";
-import {GroupService} from "../../../services/group.service";
-import {Group} from "../../../models/group";
-import {MessageService} from "../../../services/message.service";
-import {FightService} from "../../../services/fight.service";
-import {GroupUpdatedService} from "../../../services/notifications/group-updated.service";
+import {Team} from "../../models/team";
+import {GroupService} from "../../services/group.service";
+import {Group} from "../../models/group";
+import {MessageService} from "../../services/message.service";
+import {FightService} from "../../services/fight.service";
+import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 
 @Component({
-  selector: 'app-fight-dialog-box',
-  templateUrl: './fight-dialog-box.component.html',
-  styleUrls: ['./fight-dialog-box.component.scss']
+  selector: 'fight-creator',
+  templateUrl: './fight-creator.component.html',
+  styleUrls: ['./fight-creator.component.scss']
 })
-export class FightDialogBoxComponent implements OnInit {
+export class FightCreator implements OnInit {
+
+  @Input()
+  tournament: Tournament;
+  @Input()
+  previousFight: Fight | undefined;
+  @Input()
+  fight: Fight;
+  @Input()
+  group: Group;
+  @Input()
+  swappedColors: boolean = false;
+  @Input()
+  swappedTeams: boolean = false;
+  @Input()
+  horizontalTeams: boolean = false;
+  @Input()
+  grid: boolean = false;
+  @Output()
+  onClosed: EventEmitter<void> = new EventEmitter<void>();
 
   teamListData: TeamListData = new TeamListData();
-  tournament: Tournament;
-  previousFight: Fight | undefined;
-  fight: Fight;
-  group: Group;
-  title: string;
-  action: Action;
-  actionName: string;
-
-  swappedColors: boolean = false;
-  swappedTeams: boolean = false;
-  horizontalTeams: boolean = false;
-  grid: boolean = false;
 
   selectedTeam1: Team[] = [];
   selectedTeam2: Team[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<FightDialogBoxComponent>,
-    protected teamService: TeamService,
-    protected fightService: FightService,
-    protected groupServices: GroupService,
-    protected messageService: MessageService,
-    protected groupUpdatedService: GroupUpdatedService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-      action: Action,
-      entity: Fight,
-      group: Group,
-      previousFight: Fight | undefined,
-      tournament: Tournament,
-      swappedColors: boolean,
-      swappedTeams: boolean,
-      horizontalTeams: boolean,
-      grid: boolean,
-    }
-  ) {
-    this.group = data.group;
-    this.previousFight = data.previousFight;
-    this.fight = data.entity;
-    this.action = data.action;
-    this.actionName = Action[data.action];
-    this.tournament = data.tournament;
-    this.swappedColors = data.swappedColors;
-    this.swappedTeams = data.swappedTeams;
-    this.horizontalTeams = data.horizontalTeams;
-    this.grid = data.grid;
+    protected teamService: TeamService, protected fightService: FightService, protected groupServices: GroupService,
+    protected messageService: MessageService, protected groupUpdatedService: GroupUpdatedService) {
   }
 
   ngOnInit(): void {
@@ -83,7 +62,7 @@ export class FightDialogBoxComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.dialogRef.close({action: Action.Cancel, data: this.data});
+    this.onClosed.emit();
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): Team {
@@ -119,7 +98,7 @@ export class FightDialogBoxComponent implements OnInit {
       this.groupServices.update(this.group).subscribe((_group: Group): void => {
         this.messageService.infoMessage("addFightMessage");
         this.groupUpdatedService.isGroupUpdated.next(_group);
-        this.dialogRef.close({action: this.action, data: this.data});
+        this.closeDialog();
       });
     });
 

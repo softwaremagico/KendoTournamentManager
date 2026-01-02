@@ -215,7 +215,8 @@
     <div class="vertical">
       <span [innerHTML]="'deleteFightsWarning' | transloco"></span>
       <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-recreate-cancel-button" biit-button secondary (click)="confirmResetFights = false">{{ t('cancel') }}
+        <button id="confirm-recreate-cancel-button" biit-button secondary
+                (click)="confirmResetFights = false">{{ t('cancel') }}
         </button>
         <button id="confirm-recreate-accept-button" biit-button primary
                 (click)="generateElements(); confirmResetFights = false">
@@ -231,7 +232,8 @@
     <div class="vertical">
       <span [innerHTML]="'deleteFightWarningDeleteFightWarning' | transloco: getDeleteTeamParams()"></span>
       <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-delete-cancel-button" biit-button secondary (click)="confirmDeleteFights = false">{{ t('cancel') }}
+        <button id="confirm-delete-cancel-button" biit-button secondary
+                (click)="confirmDeleteFights = false">{{ t('cancel') }}
         </button>
         <button id="confirm-delete-accept-button" biit-button primary
                 (click)="deleteElement(); confirmDeleteFights = false">
@@ -239,5 +241,20 @@
         </button>
       </div>
     </div>
+  </biit-popup>
+
+  <biit-popup id="fight-creator" *ngIf="openNewFightPopup" closable
+              [title]="t('addFight')"
+              (onClosed)="openNewFightPopup=false">
+    <fight-creator
+      [tournament]="tournament"
+      [previousFight]="this.selectedFight"
+      [fight]="newFight"
+      [group]="this.selectedGroup!"
+      [swappedColors]="this.swappedColors"
+      [swappedTeams]="this.swappedTeams"
+      [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
+      [grid]="this.tournament.type !== TournamentType.SENBATSU"
+      (onClosed)="openNewFightPopup=false"></fight-creator>
   </biit-popup>
 </ng-container>
