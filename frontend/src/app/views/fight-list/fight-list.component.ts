@@ -38,7 +38,7 @@ import {AudioService} from "../../services/audio.service";
 import {ProjectModeChangedService} from "../../services/notifications/project-mode-changed.service";
 
 @Component({
-  selector: 'app-fight-list',
+  selector: 'fight-list',
   templateUrl: './fight-list.component.html',
   styleUrls: ['./fight-list.component.scss']
 })

@@ -6,6 +6,7 @@ ul {
   margin: 10px;
   background-color: var(--floating-background);
   border: 3px solid var(--component-color);
+  min-width: 300px;
 }
 
 .team-card-title {
@@ -16,4 +17,8 @@ ul {
   margin: 0;
   border-radius: 0;
   border: 2px #1f1836;
+}
+
+.team-card.locked {
+  background-color: var(--disabled-floating-color);
 }

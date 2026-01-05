@@ -257,4 +257,19 @@
       [grid]="this.tournament.type !== TournamentType.SENBATSU"
       (onClosed)="openNewFightPopup=false"></fight-creator>
   </biit-popup>
+
+  <biit-popup id="senbatsu-fight-creator" *ngIf="openSenbatsuFightPopup" closable
+              [title]="t('addFight')"
+              (onClosed)="openSenbatsuFightPopup=false">
+    <senbatsu-fight-creator
+      [tournament]="tournament"
+      [previousFight]="this.selectedFight"
+      [fight]="newFight"
+      [group]="this.selectedGroup!"
+      [swappedColors]="this.swappedColors"
+      [swappedTeams]="this.swappedTeams"
+      [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
+      [grid]="this.tournament.type !== TournamentType.SENBATSU"
+      (onClosed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
+  </biit-popup>
 </ng-container>

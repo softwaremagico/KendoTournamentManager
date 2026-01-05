@@ -6,13 +6,13 @@
   margin-top: 1em;
 }
 
-.team-list.horizontal {
+.team-list.list-horizontal {
+  max-width: 55vw;
   min-height: 80px;
-  height: 100px;
-  padding: 20px;
+  height: 130px;
 }
 
-.team-list .horizontal {
+.team-list .list-horizontal {
   width: 100%;
   display: flex;
   flex-direction: row;

@@ -1,11 +1,11 @@
 <ng-container id="tournament-teams" *transloco="let t">
   <div class="canvas" slot="{{'empty' | transloco}}">
-    <div cdkDropListGroup class="fights-creator" [ngClass]="{'horizontal' : horizontalTeams }">
+    <div cdkDropListGroup class="fights-creator" [ngClass]="{'list-horizontal' : horizontalTeams }">
       <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
            cdkDropList
            class="teams-container" [ngClass]="{'horizontal' : horizontalTeams }">
         <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [grid]="grid"
-                   [ngClass]="{'horizontal' : horizontalTeams }"></team-list>
+                   [ngClass]="{'list-horizontal' : horizontalTeams }" [teamsDragDisabled]="teamDragDisabled"></team-list>
       </div>
       <div class="new-fight-title">
         <h2 [class.red-ribbon]="!swappedColors" [class.white-ribbon]="swappedColors"

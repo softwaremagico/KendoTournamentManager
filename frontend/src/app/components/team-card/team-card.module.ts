@@ -7,6 +7,7 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ParticipantNamePipe} from "../../pipes/visualization/participant-name-pipe";
+import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import {ParticipantNamePipe} from "../../pipes/visualization/participant-name-pi
         MatIconModule,
         MatTooltipModule,
         TranslocoModule,
-        ParticipantNamePipe
+        ParticipantNamePipe,
+        BiitIconModule
     ]
 })
 export class TeamCardModule { }
