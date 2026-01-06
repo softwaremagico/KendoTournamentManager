@@ -28,3 +28,9 @@
   padding-left: 5px;
   fill: var(--main-color);
 }
+
+@media screen and (max-width: 1000px) {
+  .logo {
+    display: none !important;
+  }
+}

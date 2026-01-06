@@ -5,7 +5,6 @@
       <biit-nav-menu [routes]="routes" style="width: 100%"></biit-nav-menu>
     </div>
     <div class="right" id="kendo-menu">
-      <component-menu/>
       <biit-nav-user *ngIf="user"
                      [title]="user.name + ' ' + user.lastname"
                      [subtitle]="'Kendo Tournament'"
@@ -27,22 +26,6 @@
         <span id="password-option">
           {{ t('t.password') }}
         </span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)="openWiki()">
-        <span id="help-option">
-          {{ t('titleHelp') }}
-        </span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)="openAbout()">
-        <span id="about-option">
-          {{ t('titleAboutBox') }}
-        </span>
-    </ng-template>
-    <ng-template contextMenuItem
-                 (execute)="logoutConfirmation=true">
-        <span id="kendo-menu-logout">
-          {{ t('t.logout') }}
-      </span>
     </ng-template>
   </context-menu>
 
