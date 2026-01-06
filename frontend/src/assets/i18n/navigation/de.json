@@ -7,5 +7,9 @@
   "users": "Gebruikers",
   "logout": "Uitloggen",
   "language": "Taal",
-  "password": "Passwort"
+  "password": "Passwort",
+  "help": "Helfen",
+  "wiki": "Wiki",
+  "licenses": "Lizenzen",
+  "about": "Über"
 }

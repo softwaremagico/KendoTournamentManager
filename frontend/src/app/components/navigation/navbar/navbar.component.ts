@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
 import {provideTranslocoScope, TranslocoService} from '@ngneat/transloco';
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
@@ -96,6 +96,23 @@ export class NavbarComponent implements OnInit {
             data: {
               hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
             }
+          }]
+      },
+      {
+        path: Constants.PATHS.HELP.ROOT,
+        title: 'help',
+        children: [
+          {
+            path: Constants.PATHS.HELP.WIKI,
+            title: 'wiki',
+          },
+          {
+            path: Constants.PATHS.HELP.LICENSE,
+            title: 'licenses',
+          },
+          {
+            path: Constants.PATHS.HELP.ABOUT,
+            title: 'about',
           }]
       },
     ]

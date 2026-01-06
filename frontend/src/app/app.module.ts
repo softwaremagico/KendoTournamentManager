@@ -114,6 +114,7 @@ import {
   AuthenticatedUserFormPopupModule
 } from "./views/authenticated-user-list/authenticated-user-form-popup/authenticated-user-form-popup.module";
 import {ClubFormPopupModule} from "./views/club-list/club-form-popup/club-form-popup.module";
+import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
 
 
 registerLocaleData(localeES, "es");
@@ -253,7 +254,8 @@ registerLocaleData(localeNL, "nl");
         reRenderOnLangChange: true,
         prodMode: !isDevMode()
       })
-    }],
+    },
+    RedirectGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {

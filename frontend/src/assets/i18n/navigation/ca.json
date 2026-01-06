@@ -7,5 +7,9 @@
   "users": "Usuaris",
   "logout": "Tancar sessió",
   "language": "Idioma",
-  "password": "Contrasenya"
+  "password": "Contrasenya",
+  "help": "Ajuda",
+  "wiki": "Wiki",
+  "licenses": "Llicències",
+  "about": "Quan a"
 }

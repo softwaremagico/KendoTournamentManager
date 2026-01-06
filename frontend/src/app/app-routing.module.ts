@@ -7,6 +7,7 @@ import {PasswordsComponent} from "./views/passwords/passwords.component";
 import {ParticipantStatisticsComponent} from "./views/participant-statistics/participant-statistics.component";
 import {TournamentStatisticsComponent} from "./views/tournament-statistics/tournament-statistics.component";
 import {ParticipantFightListComponent} from "./views/participant-fight-list/participant-fight-list.component";
+import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
 
 const routes: Routes = [
   {path: '', redirectTo: '/tournaments', pathMatch: 'full'},
@@ -30,6 +31,30 @@ const routes: Routes = [
   {path: 'tournaments/statistics', component: TournamentStatisticsComponent, canActivate: [LoggedIn]},
   {path: 'participants/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedIn]},
   {path: 'participants/fights', component: ParticipantFightListComponent, canActivate: [LoggedIn]},
+  {
+    path: 'help/wiki',
+    canActivate: [RedirectGuard],
+    component: RedirectGuard,
+    data: {
+      externalUrl: "https://github.com/softwaremagico/KendoTournamentManager/wiki"
+    }
+  },
+  {
+    path: 'help/about',
+    canActivate: [RedirectGuard],
+    component: RedirectGuard,
+    data: {
+      externalUrl: "https://github.com/softwaremagico/KendoTournamentManager"
+    }
+  },
+  {
+    path: 'help/license',
+    canActivate: [RedirectGuard],
+    component: RedirectGuard,
+    data: {
+      externalUrl: "https://github.com/softwaremagico/KendoTournamentManager/wiki/Third-Party-Tools"
+    }
+  },
 ];
 
 @NgModule({

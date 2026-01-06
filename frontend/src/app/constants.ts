@@ -26,8 +26,8 @@ export class Constants {
     public static readonly HELP = class {
       public static readonly ROOT: string = 'help';
       public static readonly WIKI: string = 'wiki';
-      public static readonly ABOUT: string = 'users';
-      public static readonly LICENSE: string = 'users';
+      public static readonly ABOUT: string = 'about';
+      public static readonly LICENSE: string = 'license';
     }
     public static readonly PROFILE = class {
       public static readonly ROOT: string = 'profile';

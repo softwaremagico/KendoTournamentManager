@@ -7,5 +7,9 @@
   "users": "Users",
   "logout": "Logout",
   "language": "Language",
-  "password": "Password"
+  "password": "Password",
+  "help": "Help",
+  "wiki": "Wiki",
+  "licenses": "Licenses",
+  "about": "About"
 }
