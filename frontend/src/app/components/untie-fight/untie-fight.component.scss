@@ -1,11 +1,11 @@
 
 .untie-container {
   display: flex;
-  padding-bottom: 2vh
+  padding-bottom: 10px;
 }
 
 .untie {
-  border-width: 2px 0 2px 0;
+  border-width: 2px;
   border-color: #011d4a;
   border-style: solid;
   padding: 5px;
@@ -20,37 +20,27 @@
   transform: rotate(180deg);
   text-align: center;
   padding: 20px;
+  border-width: 2px;
+  border-color: white;
   border-style: solid;
-  //background-color: var(--ribbon-background);
-  text-transform: uppercase;
-  border-width: 2px 2px 2px 0;
-  border-color: var(--fight-border-color);
-  line-height: 25px;
-  max-width: 56px;
-  overflow: clip;
+  color: red;
+  background-color: #011d4a;
 }
 
 .right-team {
   writing-mode: vertical-rl;
   text-align: center;
   padding: 20px;
+  border-width: 2px;
+  border-color: white;
   border-style: solid;
-  //text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  //background-color: var(--ribbon-background);
-  text-transform: uppercase;
-  border-width: 2px 2px 2px 0;
-  border-color: var(--fight-border-color);
-  line-height: 25px;
-  max-width: 56px;
-  overflow: clip;
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: #011d4a;
 }
 
 .red-ribbon {
-  color: var(--ribbon-background);
-  //To be below the timer
-  z-index: -1;
-  background-color: var(--red-team-color);
-  border-width: 2px 0 2px 2px;
+  color: red;
 }
 
 .ribbon-icon {
@@ -58,11 +48,7 @@
 }
 
 .white-ribbon {
-  color: var(--ribbon-background);
-  //To be below the timer
-  z-index: -1;
-  background-color: var(--white-team-color);
-  border-width: 2px 2px 2px 0;
+  color: white;
 }
 
 .duel {
@@ -87,8 +73,7 @@
   border-width: 1px;
   border-color: #777;
   border-style: solid;
-  box-shadow: 0 5px 10px 0 var(--shadow);
+  box-shadow: 0 5px 10px 0 rgba(0, 18, 57, 0.5);
   transition: transform .2s; /* Animation */
-  //Transform causes problem with the timer component z-index.
-  //transform: scale(1.03);
+  background: white;
 }
