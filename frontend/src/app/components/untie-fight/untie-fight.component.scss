@@ -6,7 +6,7 @@
 
 .untie {
   border-style: solid;
-  padding: 5px;
+  padding: 9px;
   width: 100%;
   display: table;
   min-width: 600px;
@@ -105,6 +105,6 @@
 }
 
 .duel.duelSelected {
-  background: var(--active-fight-color-selected) !important;
+  background: var(--duel-selected-color) !important;
   opacity: 100% !important;
 }
