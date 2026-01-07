@@ -47,14 +47,11 @@ import {MatSpinnerOverlayModule} from "./components/mat-spinner-overlay/mat-spin
 import {FightModule} from "./components/fight/fight.module";
 import {UntieFightModule} from "./components/untie-fight/untie-fight.module";
 import {TimerModule} from "./components/timer/timer.module";
-import {
-  AuthenticatedUserDialogBoxModule
-} from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
 import {CompetitorsRankingModule} from "./components/competitors-ranking/competitors-ranking.module";
 import {FightCreatorModule} from "./components/fight-creator/fight-creator.module";
 import {LeagueGeneratorModule} from "./views/fight-list/league-generator/league-generator.module";
 import {TeamRankingModule} from "./components/team-ranking/team-ranking.module";
-import {UndrawTeamsModule} from "./views/fight-list/undraw-teams/undraw-teams.module";
+import {UndrawTeamsModule} from "./components/undraw-teams/undraw-teams.module";
 import {TournamentTeamsModule} from "./views/tournament-list/tournament-teams/tournament-teams.module";
 import {TournamentRolesModule} from "./views/tournament-list/tournament-roles/tournament-roles.module";
 import {FightListModule} from "./views/fight-list/fight-list-module";
@@ -99,9 +96,6 @@ import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
 import {TournamentQrCodeModule} from './components/tournament-qr-code/tournament-qr-code.module';
 import {ParticipantQrCodeModule} from './components/participant-qr-code/participant-qr-code.module';
 import {ParticipantFightListModule} from './views/participant-fight-list/participant-fight-list.module';
-import {
-  SenbatsuFightDialogBoxModule
-} from "./views/fight-list/senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.module";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitCookiesConsentModule, BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
 import {NavbarModule} from "./components/navigation/navbar/navbar.module";
@@ -174,7 +168,6 @@ registerLocaleData(localeNL, "nl");
     FightModule,
     UntieFightModule,
     TimerModule,
-    AuthenticatedUserDialogBoxModule,
     CompetitorsRankingModule,
     FightCreatorModule,
     LeagueGeneratorModule,
@@ -212,7 +205,6 @@ registerLocaleData(localeNL, "nl");
     TournamentQrCodeModule,
     ParticipantQrCodeModule,
     ParticipantFightListModule,
-    SenbatsuFightDialogBoxModule,
     BiitButtonModule,
     BiitProgressBarModule,
     BiitSnackbarModule,

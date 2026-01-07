@@ -7,7 +7,6 @@ import {Tournament} from "../../models/tournament";
 import {ActivatedRoute, Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
-import {FightCreator} from "../../components/fight-creator/fight-creator.component";
 import {TournamentType} from "../../models/tournament-type";
 import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
 import {GroupService} from "../../services/group.service";
@@ -33,7 +32,6 @@ import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
 import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
-import {SenbatsuFightDialogBoxComponent} from "./senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.component";
 import {AudioService} from "../../services/audio.service";
 import {ProjectModeChangedService} from "../../services/notifications/project-mode-changed.service";
 
@@ -466,7 +464,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  onFightCreated(result:Fight):void{
+  onFightCreated(result: Fight): void {
     // if (result == undefined) {
     //   //Do nothing
     // } else if (result?.action === Action.Add) {

@@ -16,6 +16,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
         MatFormFieldModule,
         MatSelectModule,
         MatTooltipModule,
-        HasPermissionPipe
+        HasPermissionPipe,
+        BiitButtonModule
     ]
 })
 export class LeagueGeneratorModule { }

@@ -8,6 +8,7 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     TranslocoModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    BiitButtonModule
   ]
 })
 export class RoleSelectorDialogBoxModule {

@@ -116,6 +116,7 @@
   opacity: 100% !important;
 }
 
+//Selected fight always shows all duels with an highlighted background.
 .duel:has(user-score .fightSelected) {
   background-color: var(--active-fight-color);
 }

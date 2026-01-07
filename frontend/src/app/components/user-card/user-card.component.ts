@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
@@ -25,6 +25,9 @@ export class UserCardComponent extends RbacBasedComponent {
 
   @Input()
   showClub: boolean = true;
+
+  @Output()
+  onClick: EventEmitter<Participant> = new EventEmitter();
 
   constructor(rbacService: RbacService) {
     super(rbacService);

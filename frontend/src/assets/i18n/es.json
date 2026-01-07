@@ -67,6 +67,7 @@
   "idCard": "DNI/Pasaporte",
   "id": "Id",
   "representative": "Representante",
+  "selectRepresentative": "Selecciona el representante de cada equipo",
   "phone": "Teléfono",
   "mail": "E-Mail",
   "club": "Club",

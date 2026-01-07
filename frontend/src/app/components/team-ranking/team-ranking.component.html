@@ -1,4 +1,4 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<ng-container *transloco="let t">
 <div class="table-container">
   <table class="team-ranking-table">
     <caption class="table-caption">{{ 'teamsRanking' | transloco }}</caption>
@@ -50,9 +50,18 @@
           (click)="openStatistics()" secondary>
     {{ 'statistics' | transloco }}
   </button>
-  <button biit-button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
+  <button biit-button (click)="untieAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
   (RbacActivity.CREATE_UNDRAW_FIGHTS | hasPermission)" secondary>
     {{ 'undraw' | transloco }}
   </button>
-  <button biit-button (click)="closeDialog()" color="primary" primary>{{ 'close' | transloco }}</button>
+  <button biit-button (click)="closeDialog()" primary>{{ 'close' | transloco }}</button>
 </div>
+
+<biit-popup id="untie-teams-popup" *ngIf="untieTeamsPopup" [title]="t('selectRepresentative')" >
+  <untie-teams
+    [tournament]="tournament"
+    [teams]="drawTeams"
+    [groupId]="group?.id"
+    (onClosed)="untieFights($event)"></untie-teams>
+</biit-popup>
+</ng-container>

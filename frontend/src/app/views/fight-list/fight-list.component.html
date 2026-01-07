@@ -168,7 +168,8 @@
                    [swapTeams]="swappedTeams"></fight>
 
             <div class="unties-list">
-              <untie-fight *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+              <untie-fight *ngFor="let duel of filteredUnties.get(group.id!)"
+                           [duel]="duel"
                            (click)="selectDuel(duel)"
                            (keydown)="selectDuel(duel)"
                            [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"

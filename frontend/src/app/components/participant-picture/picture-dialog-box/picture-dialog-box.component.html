@@ -2,9 +2,8 @@
   <div class="picture-container">
     <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
   </div>
-  <div class="button-container" mat-dialog-actions>
-    <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button type="button">
-      <mat-icon>cancel</mat-icon>
+  <div class="button-container">
+    <button biit-button (click)="closeDialog()" primary>
       {{'close' | transloco}}
     </button>
   </div>

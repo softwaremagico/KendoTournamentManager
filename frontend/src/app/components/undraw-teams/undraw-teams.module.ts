@@ -1,38 +1,36 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {TeamRankingComponent} from "./team-ranking.component";
-import {TranslocoModule} from "@ngneat/transloco";
+import {UntieTeamsComponent} from "./untie-teams.component";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
+import {MatTabsModule} from "@angular/material/tabs";
+import {MemberSelectorModule} from "../basic/member-selector/member-selector.module";
+import {TranslocoModule} from "@ngneat/transloco";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {MatIconModule} from "@angular/material/icon";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
-import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
-import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
-import {UndrawTeamsModule} from "../undraw-teams/undraw-teams.module";
+import {BiitTabGroupModule} from "@biit-solutions/wizardry-theme/navigation";
 
 
 @NgModule({
-  declarations: [TeamRankingComponent],
+  declarations: [UntieTeamsComponent],
   exports: [
-    TeamRankingComponent
+    UntieTeamsComponent
   ],
   imports: [
     CommonModule,
-    TranslocoModule,
     MatSpinnerOverlayModule,
+    MatTabsModule,
+    MemberSelectorModule,
+    TranslocoModule,
     RbacModule,
-    MatIconModule,
     MatDialogModule,
     MatButtonModule,
-    MatTooltipModule,
     HasPermissionPipe,
     BiitButtonModule,
-    BiitPopupModule,
-    UndrawTeamsModule
+    BiitTabGroupModule
   ]
 })
-export class TeamRankingModule {
+export class UndrawTeamsModule {
 }

@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {Team} from "../../../models/team";
-import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 
 @Component({
-  selector: 'app-member-selector',
+  selector: 'member-selector',
   templateUrl: './member-selector.component.html',
   styleUrls: ['./member-selector.component.scss']
 })
@@ -13,25 +13,19 @@ export class MemberSelectorComponent implements OnChanges {
   @Input()
   team: Team;
 
+  @Input()
+  selections: number = 1;
+
+  @Output() onSelectedMember: EventEmitter<Participant[]> = new EventEmitter<Participant[]>();
+
   members: Participant[];
   selectedMembers: Participant[] = [];
-
-  @Output() selectedMember: EventEmitter<Participant> = new EventEmitter<Participant>();
 
   ngOnChanges(): void {
     //Refresh automatically the team.
     const teamMembers: (Participant | undefined)[] = this.team.members;
     //Removing undefined members.
     this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
-  }
-
-  checkDroppedElement(item: CdkDrag<Participant>, drop: CdkDropList): boolean {
-    return drop.data.length === 0;
-  }
-
-  dropParticipant(event: CdkDragDrop<Participant[], any>): void {
-    this.transferCard(event);
-    this.selectedMember.emit(this.selectedMembers[0]);
   }
 
   transferCard(event: CdkDragDrop<Participant[], any>): Participant {
@@ -47,4 +41,17 @@ export class MemberSelectorComponent implements OnChanges {
     return event.container.data[event.currentIndex];
   }
 
+  selectUser(participant: Participant) {
+    if (this.selections > 1) {
+      if (this.selectedMembers.indexOf(participant) > -1) {
+        this.selectedMembers.splice(this.selectedMembers.indexOf(participant), 1);
+      } else {
+        this.selectedMembers.push(participant);
+      }
+    } else {
+      this.selectedMembers = [];
+      this.selectedMembers.push(participant);
+    }
+    this.onSelectedMember.emit(this.selectedMembers);
+  }
 }

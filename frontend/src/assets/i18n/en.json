@@ -243,6 +243,7 @@
   "idCard": "Id. Number",
   "id": "Id",
   "representative": "Representative",
+  "selectRepresentative": "Select the representative for each team",
   "phone": "Phone",
   "mail": "E-Mail",
   "web": "Web",

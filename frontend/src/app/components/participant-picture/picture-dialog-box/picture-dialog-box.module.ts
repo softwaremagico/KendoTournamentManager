@@ -5,18 +5,20 @@ import {MatIconModule} from "@angular/material/icon";
 import {TranslocoModule} from "@ngneat/transloco";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 
 
 @NgModule({
   declarations: [
     PictureDialogBoxComponent
   ],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    TranslocoModule,
-    MatDialogModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        TranslocoModule,
+        MatDialogModule,
+        MatButtonModule,
+        BiitButtonModule
+    ]
 })
 export class PictureDialogBoxModule { }

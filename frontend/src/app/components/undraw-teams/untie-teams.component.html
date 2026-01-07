@@ -1,0 +1,32 @@
+<div class="container">
+  <biit-tab-group class="teams-tabs" id="teams-tabs" *ngIf="totalDuels >= 2">
+    <biit-tab *ngFor="let team of teams; let i = index"
+              [name]="teams[(i%(teams.length))].name + ' - ' +teams[((i+1)%(teams.length))].name">
+      <div class="untie-generator">
+        <member-selector (onSelectedMember)="setCompetitor1(i, $event)"
+                         [team]="teams[(i%(teams.length))]" [selections]="1"></member-selector>
+        <member-selector (onSelectedMember)="setCompetitor2(i, $event)"
+                         [team]="teams[((i+1)%(teams.length))]" [selections]="1"></member-selector>
+      </div>
+    </biit-tab>
+  </biit-tab-group>
+  <div *ngIf="totalDuels == 1">
+    <div class="untie-generator">
+      <member-selector (onSelectedMember)="setCompetitor1(0, $event)" [team]="teams[0]" [selections]="1">
+      </member-selector>
+      <member-selector (onSelectedMember)="setCompetitor2(0, $event)" [team]="teams[1]" [selections]="1">
+      </member-selector>
+    </div>
+  </div>
+  <div class="button-container">
+    <button biit-button secondary
+            (click)="closeDialog()" color="secondary">
+      {{ 'cancel' | transloco }}
+    </button>
+    <button biit-button primary
+            (click)="createFights()" *ngIf="(RbacActivity.CREATE_DUEL | hasPermission)"
+            [disabled]="!duelsCompleted()">
+      {{ 'accept' | transloco }}
+    </button>
+  </div>
+</div>

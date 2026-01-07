@@ -5,7 +5,6 @@ import {MatDialog} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
 import {forkJoin, Observable} from "rxjs";
 import {TranslocoService} from "@ngneat/transloco";
-import {UndrawTeamsComponent} from "../../views/fight-list/undraw-teams/undraw-teams.component";
 import {Team} from "../../models/team";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -18,6 +17,7 @@ import {MessageService} from "../../services/message.service";
 import {Router} from "@angular/router";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {ScoreType} from "../../models/score-type";
+import {Duel} from "../../models/duel";
 
 @Component({
   selector: 'team-ranking',
@@ -36,9 +36,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   @Input()
   showIndex: boolean | undefined;
   @Output()
-  onClosed: EventEmitter<void> = new EventEmitter<void>();
+  onClosed: EventEmitter<Duel[]> = new EventEmitter<Duel[]>();
   existsDraws: boolean = false;
   numberOfWinners: number;
+  protected untieTeamsPopup: boolean = false;
+  protected drawTeams: Team[] = [];
+  protected readonly ScoreType = ScoreType;
 
   constructor(private rankingService: RankingService, public translateService: TranslocoService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
@@ -132,27 +135,24 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
-  undrawAllTeams(): void {
+  untieAllTeams(): void {
     for (let i = 0; i < this.numberOfWinners; i++) {
       if (this.isDrawWinner(i)) {
-        this.undrawTeams(i);
+        this.untieTeams(i);
       }
     }
   }
 
-  undrawTeams(index: number): void {
-    const teams: Team[] = this.getDrawWinners(index);
-    this.dialog.open(UndrawTeamsComponent, {
-      panelClass: 'pop-up-panel',
-      disableClose: false,
-      data: {tournament: this.tournament, groupId: this.group?.id, teams: teams}
-    });
-    // TODO(softwaremagico): fix undraw window. 
-    // this.dialogRef.afterClosed().subscribe(result => {
-    //   if (result?.action === Action.Update) {
-    //     this.dialogRef.close({action: Action.Update, draws: result.draws});
-    //   }
-    // });
+  untieTeams(index: number): void {
+    this.drawTeams = this.getDrawWinners(index);
+    this.untieTeamsPopup = true;
+  }
+
+  untieFights(duels: Duel[]) {
+    this.untieTeamsPopup = false;
+    if (duels && duels.length > 0) {
+      this.onClosed.emit(duels);
+    }
   }
 
   openStatistics(): void {
@@ -170,5 +170,4 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     return teamMembers;
   }
 
-  protected readonly ScoreType = ScoreType;
 }

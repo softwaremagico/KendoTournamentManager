@@ -1,6 +1,6 @@
 <mat-card [cdkDragData]="user" [cdkDragDisabled]="dragDisabled || !(activity | hasPermission)"
           cdkDrag
-          class="user-card">
+          class="user-card" (click)="onClick.emit(user)">
   <mat-card-header class="user-card-header">
     <app-participant-picture *ngIf="showAvatar" [participant]="user" mat-card-avatar></app-participant-picture>
     <mat-card-title class="user-card-title">{{ user.lastname }}, {{ user.name }}</mat-card-title>

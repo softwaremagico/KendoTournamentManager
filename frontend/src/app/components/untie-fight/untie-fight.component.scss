@@ -5,29 +5,42 @@
 }
 
 .untie {
-  border-width: 2px 0 2px 0;
-  border-color: #011d4a;
   border-style: solid;
   padding: 5px;
   width: 100%;
   display: table;
   min-width: 600px;
-  background: white;
+  background: var(--fight-color);
+}
+
+.untie:has(.duel.duelSelected) {
+  background: var(--fight-color);
+  opacity: 100%;
+}
+
+.untie:has(.duel.over) {
+  background: var(--body-background);
+  opacity: 100%;
+}
+
+.untie:has(.duel.duelSelected.over) {
+  background: var(--fight-color);
+  opacity: 100%;
 }
 
 .left-team {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: center;
-  padding: 20px;
   border-style: solid;
-  //background-color: var(--ribbon-background);
   text-transform: uppercase;
-  border-width: 2px 2px 2px 0;
+  border-width: 2px;
   border-color: var(--component-color);
   line-height: 25px;
   max-width: 56px;
   overflow: clip;
+  background: var(--component-color);
+  min-height: 76px;
 }
 
 .right-team {
@@ -35,34 +48,47 @@
   text-align: center;
   padding: 20px;
   border-style: solid;
-  //text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  //background-color: var(--ribbon-background);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   text-transform: uppercase;
   border-width: 2px 2px 2px 0;
   border-color: var(--component-color);
   line-height: 25px;
   max-width: 56px;
   overflow: clip;
+  background: var(--component-color);
 }
 
 .red-ribbon {
-  color: var(--ribbon-background);
+  color: var(--red-team-color);
   //To be below the timer
-  z-index: -1;
-  background-color: var(--red-team-color);
-  border-width: 2px 0 2px 2px;
-}
+  //z-index: -1;
 
-.ribbon-icon {
-  transform: rotate(0deg);
+  ::ng-deep svg {
+    color: var(--red-team-color) !important;
+  }
 }
 
 .white-ribbon {
-  color: var(--ribbon-background);
+  color: var(--white-team-color);
   //To be below the timer
-  z-index: -1;
-  background-color: var(--white-team-color);
-  border-width: 2px 2px 2px 0;
+  //z-index: -1;
+
+  ::ng-deep svg {
+    color: var(--white-team-color) !important;
+  }
+}
+
+.ribbon-icon {
+  background: var(--component-color);
+  transform: rotate(0deg);
+  padding-right: 0;
+  padding-left: 0;
+
+  .mat-icon {
+    margin-left: -10px;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 .duel {
@@ -70,25 +96,15 @@
   vertical-align: middle;
 }
 
-.selected {
-  background: white;
-}
-
-.over {
-  background: var(--disabled);
-}
-
 .duel.over {
-  background: var(--disabled);
-  color: var(--text-disabled);
+  opacity: 30%;
+}
+
+.duel.duelSelected.over {
+  opacity: 30% !important;
 }
 
 .duel.duelSelected {
-  border-width: 1px;
-  border-color: #777;
-  border-style: solid;
-  box-shadow: 0 5px 10px 0 var(--shadow);
-  transition: transform .2s; /* Animation */
-  //Transform causes problem with the timer component z-index.
-  //transform: scale(1.03);
+  background: var(--active-fight-color-selected) !important;
+  opacity: 100% !important;
 }

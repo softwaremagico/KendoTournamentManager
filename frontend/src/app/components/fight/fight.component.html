@@ -6,7 +6,7 @@
   </div>
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false"
        [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors"
-       class="left-team ribbon-icon">
+       class="left-team ribbon-icon" [ngStyle]="{'height': this.fight.tournament.teamSize*60+'px' }">
     <mat-icon *ngIf="this.fight?.tournament?.type!==TournamentType.KING_OF_THE_MOUNTAIN || swapColors"
               class="kendo-icon" svgIcon="ribbon"></mat-icon>
     <mat-icon *ngIf="this.fight?.tournament?.type===TournamentType.KING_OF_THE_MOUNTAIN && !swapColors"
@@ -35,7 +35,7 @@
   </div>
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false"
        [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors"
-       class="right-team ribbon-icon">
+       class="right-team ribbon-icon" [ngStyle]="{'height': this.fight.tournament.teamSize*60+'px' }">
     <mat-icon *ngIf="this.fight?.tournament?.type!==TournamentType.KING_OF_THE_MOUNTAIN || !swapColors"
               class="kendo-icon" svgIcon="ribbon"></mat-icon>
     <mat-icon *ngIf="this.fight?.tournament?.type===TournamentType.KING_OF_THE_MOUNTAIN && swapColors"

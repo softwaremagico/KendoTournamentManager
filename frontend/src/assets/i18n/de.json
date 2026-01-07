@@ -71,6 +71,7 @@
   "idCard": "ID/Passnummer",
   "id": "ID/Passnummer",
   "representative": "Ansprechpartner",
+  "selectRepresentative": "Wählen Sie für jedes Team einen Vertreter aus.",
   "phone": "Telefon",
   "mail": "E-Mail",
   "club": "Klub",

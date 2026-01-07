@@ -3,6 +3,7 @@ import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/notifications/duel-changed.service";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
+import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'untie-fight',
