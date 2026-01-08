@@ -63,7 +63,7 @@ import {
 } from "./views/participant-list/participant-form-popup/participant-picture/participant-picture-dialog-box.module";
 import {ParticipantPictureModule} from "./components/participant-picture/participant-picture.module";
 import {PictureDialogBoxModule} from "./components/participant-picture/picture-dialog-box/picture-dialog-box.module";
-import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
+import {RoleSelectorModule} from "./components/role-selector/role-selector.module";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
@@ -182,7 +182,7 @@ registerLocaleData(localeNL, "nl");
     WebcamModule,
     ParticipantPictureModule,
     PictureDialogBoxModule,
-    RoleSelectorDialogBoxModule,
+    RoleSelectorModule,
     AchievementTileModule,
     AchievementWallModule,
     BarChartModule,

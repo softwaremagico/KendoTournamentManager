@@ -739,5 +739,6 @@
   "generate": "Genereren",
   "uploadCsvFile": "Upload een CSV-bestand",
   "defaultPicture": "Standaard afbeelding",
-  "preview": "Voorbeeld"
+  "preview": "Voorbeeld",
+  "selectDiplomaRoles": "Selecteer de functies waarvoor een diploma vereist is."
 }

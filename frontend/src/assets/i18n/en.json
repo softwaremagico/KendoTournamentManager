@@ -762,5 +762,6 @@
     "it": "Italiano",
     "nl": "Nederlandse" ,
     "de":"Deutsche"
-  }
+  },
+  "selectDiplomaRoles": "Select the roles with diploma"
 }

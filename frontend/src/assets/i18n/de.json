@@ -739,5 +739,6 @@
   "generate": "Generieren",
   "uploadCsvFile": "Laden Sie eine CSV-Datei hoch",
   "defaultPicture": "Standardbild",
-  "preview": "Vorschau"
+  "preview": "Vorschau",
+  "selectDiplomaRoles": "Wählen Sie die Rollen mit einem Diplom aus."
 }

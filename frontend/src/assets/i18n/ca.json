@@ -759,5 +759,6 @@
   "generate": "Generar",
   "uploadCsvFile": "Pujar un fitxer CSV",
   "defaultPicture": "Imatge predeterminada",
-  "preview": "Vista preliminar"
+  "preview": "Vista preliminar",
+  "selectDiplomaRoles": "Selecciona els rols amb diploma"
 }

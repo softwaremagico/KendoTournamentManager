@@ -1,20 +1,15 @@
 import {AfterViewInit, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
 
 import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
-import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
-import {
-  RoleSelectorDialogBoxComponent
-} from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
@@ -26,6 +21,7 @@ import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {Constants} from "../../constants";
 import {BiitDatatableComponent} from "@biit-solutions/wizardry-theme/table/biit-datatable/biit-datatable.component";
+import {RoleType} from "../../models/role-type";
 
 @Component({
   selector: 'app-tournament-list',
@@ -50,6 +46,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected confirmClone: boolean = false;
   protected showTournamentRoles: boolean = false;
   protected showTournamentTeams: boolean = false;
+  protected showDiplomasRoles: boolean = false;
+  protected showAccreditationRoles: boolean = false;
 
   protected loading: boolean = false;
   protected loadingGlobal: boolean = false;
@@ -181,66 +179,48 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }
   }
 
-  downloadAccreditations(tournament: Tournament): void {
-    if (tournament) {
-      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
-        data: {
-          tournament: tournament
+  downloadAccreditations(data: { tournament: Tournament, roles: RoleType[], newOnes: boolean }): void {
+    if (data && data.tournament?.id) {
+      this.tournamentService.getAccreditations(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob): void => {
+        if (html !== null) {
+          const blob: Blob = new Blob([html], {type: 'application/pdf'});
+          const downloadURL: string = window.URL.createObjectURL(blob);
+
+          const anchor: HTMLAnchorElement = document.createElement("a");
+          anchor.download = "Accreditations - " + data.tournament!.name + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+          this.showAccreditationRoles = false;
+        } else {
+          this.messageService.warningMessage('noResults');
         }
       });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.action !== Action.Cancel) {
-          if (tournament?.id) {
-            this.tournamentService.getAccreditations(tournament.id, result.newOnes, result.data).subscribe((html: Blob): void => {
-              if (html !== null) {
-                const blob: Blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL: string = window.URL.createObjectURL(blob);
-
-                const anchor: HTMLAnchorElement = document.createElement("a");
-                anchor.download = "Accreditations - " + tournament!.name + ".pdf";
-                anchor.href = downloadURL;
-                anchor.click();
-              } else {
-                this.messageService.warningMessage('noResults');
-              }
-            });
-          }
-        }
-      });
+    } else {
+      this.showAccreditationRoles = false;
     }
   }
 
-  downloadDiplomas(tournament: Tournament): void {
-    if (tournament) {
-      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
-        data: {
-          tournament: tournament
-        }
-      });
+  downloadDiplomas(data: { tournament: Tournament, roles: RoleType[], newOnes: boolean }): void {
+    if (data && data.tournament.id) {
+      this.loadingGlobal = true;
+      this.tournamentService.getDiplomas(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob) => {
+        if (html !== null) {
+          const blob: Blob = new Blob([html], {type: 'application/pdf'});
+          const downloadURL: string = window.URL.createObjectURL(blob);
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.action !== Action.Cancel) {
-          if (tournament?.id) {
-            this.loadingGlobal = true;
-            this.tournamentService.getDiplomas(tournament.id, result.newOnes, result.data).subscribe((html: Blob) => {
-              if (html !== null) {
-                const blob: Blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL: string = window.URL.createObjectURL(blob);
-
-                const anchor: HTMLAnchorElement = document.createElement("a");
-                anchor.download = "Diplomas - " + tournament!.name + ".pdf";
-                anchor.href = downloadURL;
-                anchor.click();
-              } else {
-                this.messageService.warningMessage('noResults');
-              }
-            }).add(() => {
-              this.loadingGlobal = false;
-            });
-          }
+          const anchor: HTMLAnchorElement = document.createElement("a");
+          anchor.download = "Diplomas - " + data.tournament!.name + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+          this.showDiplomasRoles = false;
+        } else {
+          this.messageService.warningMessage('noResults');
         }
+      }).add(() => {
+        this.loadingGlobal = false;
       });
+    } else {
+      this.showDiplomasRoles = false;
     }
   }
 

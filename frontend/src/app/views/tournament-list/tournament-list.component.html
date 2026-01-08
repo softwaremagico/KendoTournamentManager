@@ -79,13 +79,13 @@
         </button>
         <button mat-button *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
                 [title]="t('accreditationsHint')"
-                (click)="downloadAccreditations(table.selectedRows[0])"
+                (click)="showAccreditationRoles=true"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
         </button>
         <button mat-button *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
                 [title]="t('diplomasHint')"
-                (click)="downloadDiplomas(table.selectedRows[0])"
+                (click)="showDiplomasRoles=true"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
         </button>
@@ -142,14 +142,15 @@
     </div>
   </biit-popup>
 
-  <biit-popup id="qr-code" *ngIf="showQr" no-header>
+  <biit-popup id="qr-code" *ngIf="showQr" no-header closable
+              (onClosed)="showQr=false">
     <tournament-qr-code
       [tournament]="table.selectedRows[0]"
       [port]="port"
       (onClosed)="showQr=false"></tournament-qr-code>
   </biit-popup>
 
-  <biit-popup id="tournament-roles" *ngIf="showTournamentRoles"
+  <biit-popup id="tournament-roles" *ngIf="showTournamentRoles" closable
               (onClosed)="showTournamentRoles=false"
               [title]="t('addRoleToTournament')">
     <tournament-roles
@@ -163,6 +164,20 @@
     <tournament-teams
       [tournament]="table.selectedRows[0]"
       (onClosed)="showTournamentTeams=false"></tournament-teams>
+  </biit-popup>
+
+  <biit-popup id="accreditations-role-selector" *ngIf="showAccreditationRoles" closable
+              [title]="t('selectDiplomaRoles')" (onClosed)="showAccreditationRoles=false">
+    <role-selector
+      [tournament]="table.selectedRows[0]"
+      (onClosed)="downloadAccreditations($event)"></role-selector>
+  </biit-popup>
+
+  <biit-popup id="diplomas-role-selector" *ngIf="showDiplomasRoles" closable
+              [title]="t('selectDiplomaRoles')" (onClosed)="showDiplomasRoles=false">
+    <role-selector
+      [tournament]="table.selectedRows[0]"
+      (onClosed)="downloadDiplomas($event)"></role-selector>
   </biit-popup>
 
 </ng-container>

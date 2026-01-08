@@ -744,5 +744,6 @@
   "generate": "Genera",
   "uploadCsvFile": "Carica un file CSV",
   "defaultPicture": "Immagine predefinita",
-  "preview": "Anteprima"
+  "preview": "Anteprima",
+  "selectDiplomaRoles": "Seleziona i ruoli con diploma"
 }

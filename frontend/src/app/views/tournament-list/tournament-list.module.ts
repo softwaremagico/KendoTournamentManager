@@ -19,32 +19,36 @@ import {TournamentQrCodeModule} from "../../components/tournament-qr-code/tourna
 import {TournamentRolesModule} from "./tournament-roles/tournament-roles.module";
 import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 import {TournamentTeamsModule} from "./tournament-teams/tournament-teams.module";
+import {LeagueGeneratorModule} from "../fight-list/league-generator/league-generator.module";
+import {RoleSelectorModule} from "../../components/role-selector/role-selector.module";
 
 @NgModule({
   declarations: [TournamentListComponent],
   exports: [TournamentListComponent],
-    imports: [
-        TournamentRoutingModule,
-        CommonModule,
-        MatIconModule,
-        TranslocoModule,
-        BasicTableModule,
-        MatTooltipModule,
-        MatButtonModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        BiitDatatableModule,
-        HasPermissionPipe,
-        BiitIconButtonModule,
-        BiitButtonModule,
-        MatDividerModule,
-        TournamentFormPopupModule,
-        BiitPopupModule,
-        TournamentQrCodeModule,
-        TournamentRolesModule,
-        BiitProgressBarModule,
-        TournamentTeamsModule
-    ],
+  imports: [
+    TournamentRoutingModule,
+    CommonModule,
+    MatIconModule,
+    TranslocoModule,
+    BasicTableModule,
+    MatTooltipModule,
+    MatButtonModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    BiitDatatableModule,
+    HasPermissionPipe,
+    BiitIconButtonModule,
+    BiitButtonModule,
+    MatDividerModule,
+    TournamentFormPopupModule,
+    BiitPopupModule,
+    TournamentQrCodeModule,
+    TournamentRolesModule,
+    BiitProgressBarModule,
+    TournamentTeamsModule,
+    LeagueGeneratorModule,
+    RoleSelectorModule
+  ],
   providers: [
     DatePipe
   ]

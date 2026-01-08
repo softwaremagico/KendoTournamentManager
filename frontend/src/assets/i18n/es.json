@@ -755,5 +755,6 @@
   "generate": "Generar",
   "uploadCsvFile": "Subir un fichero CSV",
   "defaultPicture": "Imagen predeterminada",
-  "preview": "Vista Preliminar"
+  "preview": "Vista Preliminar",
+  "selectDiplomaRoles": "Selecciona los roles con diploma"
 }

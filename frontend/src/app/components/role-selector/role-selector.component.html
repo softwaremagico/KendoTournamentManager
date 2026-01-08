@@ -1,12 +1,8 @@
-<div class="form-layout" mat-dialog-content>
+<div class="canvas" slot="{{'empty' | transloco}}">
   <span class="example-list-section">
-    <ul>
-     <li *ngFor="let roleType of roleTypes">
-      <mat-checkbox (change)="select($event.checked, roleType)">
+      <biit-checkbox *ngFor="let roleType of roleTypes" (onValueChange)="select($event, roleType)">
       {{ roleType.toLowerCase() | transloco }}
-      </mat-checkbox>
-     </li>
-    </ul>
+      </biit-checkbox>
   </span>
   <div class="button-container">
     <button biit-button (click)="setRoles(false)" primary>

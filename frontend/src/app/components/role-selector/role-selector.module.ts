@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {RoleSelectorDialogBoxComponent} from "./role-selector-dialog-box.component";
+import {RoleSelectorComponent} from "./role-selector.component";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSelectModule} from "@angular/material/select";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -9,12 +9,13 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitCheckboxModule} from "@biit-solutions/wizardry-theme/inputs";
 
 
 @NgModule({
-  declarations: [RoleSelectorDialogBoxComponent],
+  declarations: [RoleSelectorComponent],
   exports: [
-    RoleSelectorDialogBoxComponent
+    RoleSelectorComponent
   ],
   imports: [
     CommonModule,
@@ -25,8 +26,9 @@ import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
-    BiitButtonModule
+    BiitButtonModule,
+    BiitCheckboxModule
   ]
 })
-export class RoleSelectorDialogBoxModule {
+export class RoleSelectorModule {
 }
