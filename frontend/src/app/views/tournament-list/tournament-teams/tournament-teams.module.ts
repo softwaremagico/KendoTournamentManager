@@ -16,6 +16,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@b
     BiitButtonModule,
     BiitIconButtonModule,
     BiitActionButtonModule,
+    BiitIconModule,
   ]
 })
 export class TournamentTeamsModule {

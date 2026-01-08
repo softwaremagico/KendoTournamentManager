@@ -15,16 +15,17 @@ import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
   exports: [
     TeamCardComponent
   ],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        DragDropModule,
-        TranslocoModule,
-        MatIconModule,
-        MatTooltipModule,
-        TranslocoModule,
-        ParticipantNamePipe,
-        BiitIconModule
-    ]
+  imports: [
+    CommonModule,
+    MatCardModule,
+    DragDropModule,
+    TranslocoModule,
+    MatIconModule,
+    MatTooltipModule,
+    TranslocoModule,
+    ParticipantNamePipe,
+    BiitIconModule
+  ]
 })
-export class TeamCardModule { }
+export class TeamCardModule {
+}

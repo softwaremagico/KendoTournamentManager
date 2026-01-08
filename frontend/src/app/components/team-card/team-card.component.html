@@ -1,8 +1,10 @@
-<mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify" [ngClass]="{'locked': team.locked || disableDrag}">
+<mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify"
+          [ngClass]="{'locked': team.locked || disableDrag}"
+          (click)="onClick.emit(team)">
   <mat-card-header class="team-card-header">
     <mat-card-title class="team-card-title">{{ team.name }}</mat-card-title>
     <mat-card-subtitle class="team-card-subtitle"></mat-card-subtitle>
-    <biit-icon *ngIf="team.locked || disableDrag" class="locked" [name]="'exclamation'"
+    <biit-icon *ngIf="team.locked || disableDrag" [name]="'exclamation'"
                [svgStyle]="{backgroundColor: 'transparent'}"
                [pathStyle]="{fill: '#001fff'}"
                style="width: 24px; height: 24px; position: absolute; right: 16px; top: 16px;"></biit-icon>

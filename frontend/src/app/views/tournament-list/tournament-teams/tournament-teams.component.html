@@ -54,10 +54,10 @@
                   <mat-card-header class="team-card" [attr.data-tournament-size]="tournament.teamSize">
                     <mat-card-title class="team-card-title">{{ getCardTitle(team, i) }}</mat-card-title>
                     <mat-card-subtitle>{{ getCardSubTitle(team, i) }}</mat-card-subtitle>
-                    <mat-icon *ngIf="team.locked" class="locked" color="warn"
-                              matTooltip="{{'elementInUse' | transloco}}">
-                      block
-                    </mat-icon>
+                    <biit-icon *ngIf="team.locked" [name]="'exclamation'"
+                               [svgStyle]="{backgroundColor: 'transparent'}"
+                               [pathStyle]="{fill: '#001fff'}"
+                               style="width: 24px; height: 24px; position: absolute; right: 16px; top: 16px;"></biit-icon>
                   </mat-card-header>
                   <mat-card-content>
                   </mat-card-content>

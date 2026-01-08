@@ -27,7 +27,7 @@ export class UserCardComponent extends RbacBasedComponent {
   showClub: boolean = true;
 
   @Output()
-  onClick: EventEmitter<Participant> = new EventEmitter();
+  onClick: EventEmitter<Participant> = new EventEmitter<Participant>();
 
   constructor(rbacService: RbacService) {
     super(rbacService);
