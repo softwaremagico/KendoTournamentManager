@@ -35,7 +35,6 @@
 .right-team {
   writing-mode: vertical-rl;
   text-align: center;
-  padding: 20px;
   border-style: solid;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   text-transform: uppercase;
@@ -114,6 +113,7 @@
 .duel.duelSelected {
   background: var(--duel-selected-color) !important;
   opacity: 100% !important;
+  font-weight: bold;
 }
 
 //Selected fight always shows all duels with an highlighted background.

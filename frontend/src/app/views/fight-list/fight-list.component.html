@@ -277,6 +277,6 @@
   <biit-popup id="league-generator-popup" *ngIf="openLeagueGeneratorPopup" no-header closable>
     <league-generator
       [tournament]="tournament"
-      (onClosed)="elementsGenerated(); openLeagueGeneratorPopup=false"></league-generator>
+      (onClosed)="createGroupFight($event); openLeagueGeneratorPopup=false"></league-generator>
   </biit-popup>
 </ng-container>
