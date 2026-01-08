@@ -13,7 +13,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {combineLatest} from "rxjs";
 
 @Component({
-  selector: 'tournament-extra-settings-form',
+  selector: 'tournament-extra-properties-form',
   templateUrl: './tournament-extra-properties-form.component.html',
   styleUrls: ['./tournament-extra-properties-form.component.scss']
 })

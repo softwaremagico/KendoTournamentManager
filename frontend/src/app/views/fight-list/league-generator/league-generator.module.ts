@@ -16,30 +16,42 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
-import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {
+  TournamentExtraPropertiesFormModule
+} from "../../../forms/tournament-extra-properties-form/tournament-extra-properties-form.module";
 
 
 @NgModule({
   declarations: [LeagueGeneratorComponent],
-    imports: [
-        CommonModule,
-        DragDropModule,
-        TeamListModule,
-        TranslocoModule,
-        TeamCardModule,
-        MatIconModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatSlideToggleModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatTooltipModule,
-        HasPermissionPipe,
-        BiitButtonModule
-    ]
+  exports: [
+    LeagueGeneratorComponent
+  ],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    TeamListModule,
+    TranslocoModule,
+    TeamCardModule,
+    MatIconModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSlideToggleModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    HasPermissionPipe,
+    BiitButtonModule,
+    BiitProgressBarModule,
+    BiitPopupModule,
+    TournamentExtraPropertiesFormModule,
+    BiitIconButtonModule
+  ]
 })
 export class LeagueGeneratorModule { }

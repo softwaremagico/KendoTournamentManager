@@ -21,7 +21,7 @@
       <button id="edit-options-button" biit-icon icon="column_selection"
               *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
               class="edit-score-button"
-              (click)="openCustomProperties=true"
+              (click)="openExtraProperties=true"
               [disabled]="tournament.id==undefined || tournament.type == typeCustom">
       </button>
     </div>
@@ -100,13 +100,13 @@
       (onClosed)="addPhoto=false"></tournament-images>
   </biit-popup>
 
-  <biit-popup id="custom-properties-popup" *ngIf="openCustomProperties"
+  <biit-popup id="custom-properties-popup" *ngIf="openExtraProperties"
               [title]="t('t.tournamentProperties')"
   >
-    <tournament-extra-settings-form
+    <tournament-extra-properties-form
       [tournament]="tournament"
-      (onClosed)="openCustomProperties=false">
-    </tournament-extra-settings-form>
+      (onClosed)="openExtraProperties=false">
+    </tournament-extra-properties-form>
   </biit-popup>
 
   <biit-popup id="score-rules-popup" *ngIf="openScoreRules"

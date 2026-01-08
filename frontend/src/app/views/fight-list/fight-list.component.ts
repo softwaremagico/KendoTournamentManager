@@ -8,7 +8,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
 import {TournamentType} from "../../models/tournament-type";
-import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
 import {Duel} from "../../models/duel";
@@ -83,10 +82,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   protected confirmResetFights: boolean = false;
   protected confirmDeleteFights: boolean = false;
 
-
   private topicSubscription: Subscription;
   protected openNewFightPopup: boolean = false;
   protected openSenbatsuFightPopup: boolean = false
+  protected openLeagueGeneratorPopup: boolean = false;
   protected newFight: Fight;
 
 
@@ -401,32 +400,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   generateElements(): void {
-    let dialogRef;
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
       this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.BUBBLE_SORT
       || this.tournament.type === TournamentType.SENBATSU) {
-      dialogRef = this.dialog.open(LeagueGeneratorComponent, {
-        width: '85vw',
-        panelClass: 'pop-up-panel',
-        data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
-      });
+      this.openLeagueGeneratorPopup = true;
     } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
       this.openBracketsManager();
     }
+  }
 
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe(result => {
-        if (result == undefined) {
-          //Do nothing
-        } else if (result?.action === Action.Add) {
-          this.createGroupFight(result.data);
-        } else if (result?.action === Action.Update) {
-          this.updateRowData(result.data);
-        } else if (result?.action === Action.Delete) {
-          this.deleteRowData(result.data);
-        }
-      });
-    }
+  protected elementsGenerated(): void {
+    this.refreshFights();
+    this.selectFirstUnfinishedDuel();
   }
 
   getDuelDefaultSecondsDuration(): number {

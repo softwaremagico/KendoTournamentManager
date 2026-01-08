@@ -1,4 +1,4 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<spinner-overlay [overlay]="true"></spinner-overlay>
 <ng-container *transloco="let t">
   <div class="fight-view" *transloco="let t">
     <div class="fights-layout">
@@ -210,23 +210,6 @@
   </biit-popup>
 
 
-  <biit-popup id="confirmation-recreate-fights" *ngIf="confirmResetFights"
-              no-header
-  >
-    <div class="vertical">
-      <span [innerHTML]="'deleteFightsWarning' | transloco"></span>
-      <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-recreate-cancel-button" biit-button secondary
-                (click)="confirmResetFights = false">{{ t('cancel') }}
-        </button>
-        <button id="confirm-recreate-accept-button" biit-button primary
-                (click)="generateElements(); confirmResetFights = false">
-          {{ t('accept') }}
-        </button>
-      </div>
-    </div>
-  </biit-popup>
-
   <biit-popup id="confirmation-delete-fights" *ngIf="confirmDeleteFights"
               no-header
   >
@@ -272,5 +255,28 @@
       [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
       [grid]="this.tournament.type !== TournamentType.SENBATSU"
       (onClosed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
+  </biit-popup>
+
+  <biit-popup id="confirmation-recreate-fights" *ngIf="confirmResetFights"
+              no-header
+  >
+    <div class="vertical">
+      <span [innerHTML]="'deleteFightsWarning' | transloco"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-recreate-cancel-button" biit-button secondary
+                (click)="confirmResetFights = false">{{ t('cancel') }}
+        </button>
+        <button id="confirm-recreate-accept-button" biit-button primary
+                (click)="generateElements(); confirmResetFights = false">
+          {{ t('accept') }}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+
+  <biit-popup id="league-generator-popup" *ngIf="openLeagueGeneratorPopup" no-header closable>
+    <league-generator
+      [tournament]="tournament"
+      (onClosed)="elementsGenerated(); openLeagueGeneratorPopup=false"></league-generator>
   </biit-popup>
 </ng-container>

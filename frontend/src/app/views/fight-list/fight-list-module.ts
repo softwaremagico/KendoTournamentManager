@@ -21,6 +21,7 @@ import {CompetitorsRankingModule} from "../../components/competitors-ranking/com
 import {TeamRankingModule} from "../../components/team-ranking/team-ranking.module";
 import {FightCreatorModule} from "../../components/fight-creator/fight-creator.module";
 import {SenbatsuFightCreatorModule} from "../../components/senbatsu-fight-creator/senbatsu-fight-creator.module";
+import {LeagueGeneratorModule} from "./league-generator/league-generator.module";
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import {SenbatsuFightCreatorModule} from "../../components/senbatsu-fight-creato
         TeamRankingModule,
         BiitButtonModule,
         FightCreatorModule,
-        SenbatsuFightCreatorModule
+        SenbatsuFightCreatorModule,
+        LeagueGeneratorModule
     ]
 })
 export class FightListModule {

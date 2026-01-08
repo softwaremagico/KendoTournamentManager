@@ -57,7 +57,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
 
   protected saving: boolean = false;
-  protected openCustomProperties: boolean = false;
+  protected openExtraProperties: boolean = false;
   protected openScoreRules: boolean = false;
 
 

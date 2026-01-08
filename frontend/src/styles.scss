@@ -53,6 +53,11 @@ biit-snackbar {
   gap: $space;
 }
 
+//Toggle component descriptions overflow on popups.
+.toggle-description {
+  width: 65vh;
+}
+
 .gap {
   gap: $space;
 }
