@@ -59,7 +59,9 @@ export class IconModule {
       .addSvgIcon("pause", this.setPath(`${this.path}/pause.svg`))
       .addSvgIcon("rewind", this.setPath(`${this.path}/rewind.svg`))
       .addSvgIcon("swap_vertical", this.setPath(`${this.path}/swap_vertical.svg`))
-      .addSvgIcon("arrow_forward", this.setPath(`${this.path}/arrow_forward.svg`));
+      .addSvgIcon("arrow_forward", this.setPath(`${this.path}/arrow_forward.svg`))
+      .addSvgIcon("clean", this.setPath(`${this.path}/clean.svg`))
+      .addSvgIcon("restore", this.setPath(`${this.path}/restore.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

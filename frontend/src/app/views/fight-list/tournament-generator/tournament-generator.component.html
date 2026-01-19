@@ -3,87 +3,70 @@
   <div class="championship-view">
     <div class="page-container">
       <div class="upper-menu">
-        <div class="cell">
-          <button (click)="goBackToFights()"
-                  *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
-                  [matTooltipShowDelay]="500" color="secondary"
-                  color="primary" mat-button
-                  matTooltip="{{'back' | transloco}}">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-          <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | hasPermission)"
-                  [disabled]="!(groupsLevelZero.length < totalTeams / 2) || groupsDisabled || (tournament && tournament.locked)"
-                  [matTooltipShowDelay]="500"
-                  class="add-button"
-                  color="primary" mat-button
-                  matTooltip="{{'addFight' | transloco}}">
-            <mat-icon>add</mat-icon>
-          </button>
-          <button (click)="changeNumberOfWinners(2)"
-                  *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
-                  [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                  [matTooltipShowDelay]="500"
-                  color="primary" mat-button
-                  matTooltip="{{'winnerNumber' | transloco}}">
-            <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
-          </button>
-          <button (click)="changeNumberOfWinners(1)"
-                  *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
-                  [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
-                  [matTooltipShowDelay]="500"
-                  color="primary" mat-button
-                  matTooltip="{{'winnerNumber' | transloco}}">
-            <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
-          </button>
-          <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | hasPermission)"
-                  [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
-                  [matTooltipShowDelay]="500"
-                  class="delete-button" color="warn" mat-button
-                  matTooltip="{{'delete' | transloco}}">
-            <mat-icon>clear</mat-icon>
-          </button>
-          <button (click)="refreshGroups()" *ngIf="(RbacActivity.REFRESH_GROUPS | hasPermission)"
-                  [disabled]="(tournament && tournament.locked) || updatingGroup || groups.length < 1"
-                  [matTooltipShowDelay]="500"
-                  color="primary" mat-button
-                  class="refresh-group"
-                  matTooltip="{{'refreshStructure' | transloco}}">
-            <mat-icon>settings_backup_restore</mat-icon>
-          </button>
-          <mat-divider [vertical]="true"
-                       *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
-          ></mat-divider>
-          <button (click)="generateGroupConfirmation=true"
-                  *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
-                  [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                  [matTooltipShowDelay]="500"
-                  color="primary" mat-button
-                  matTooltip="{{'wizard' | transloco}}">
-            <mat-icon>wand</mat-icon>
-          </button>
-          <mat-divider [vertical]="true"
-                       class="download-divider"
-                       *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
-          ></mat-divider>
-          <button (click)="downloadPDF()"
-                  *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
-                  [matTooltipShowDelay]="500"
-                  color="primary" mat-button
-                  class="download"
-                  matTooltip="{{'download' | transloco}}">
-            <mat-icon>file_download</mat-icon>
-          </button>
-        </div>
+        <button biit-icon *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
+                (click)="goBackToFights()"
+                [title]="t('back')">
+          <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
+        </button>
+        <button biit-icon *ngIf="(RbacActivity.CREATE_GROUP | hasPermission)"
+                [disabled]="!(groupsLevelZero.length < totalTeams / 2) || groupsDisabled || (tournament && tournament.locked)"
+                (click)="addGroup()"
+                [title]="t('addFight')"
+                icon="plus">
+        </button>
+        <button biit-icon *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                (click)="changeNumberOfWinners(2)"
+                [title]="t('winnerNumber')">
+          <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
+        </button>
+        <button biit-icon *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
+                (click)="changeNumberOfWinners(1)"
+                [title]="t('winnerNumber')">
+          <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
+        </button>
+        <button biit-icon *ngIf="(RbacActivity.DELETE_GROUP | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
+                (click)="deleteGroup()"
+                [title]="t('delete')">
+          <mat-icon class="kendo-icon" svgIcon="clean"></mat-icon>
+        </button>
+        <button biit-icon *ngIf="(RbacActivity.REFRESH_GROUPS | hasPermission)"
+                [disabled]="(tournament && tournament.locked) || updatingGroup || groups.length < 1"
+                (click)="refreshGroups()"
+                [title]="t('refreshStructure')">
+          <mat-icon class="kendo-icon" svgIcon="restore"></mat-icon>
+        </button>
+        <mat-divider [vertical]="true"
+                     *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
+        ></mat-divider>
+        <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                (click)="generateGroupConfirmation=true"
+                [title]="t('wizard')">
+          <mat-icon class="kendo-icon" svgIcon="wand"></mat-icon>
+        </button>
+        <mat-divider [vertical]="true"
+                     class="download-divider"
+                     *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
+        ></mat-divider>
+        <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                (click)="downloadPDF()"
+                [title]="t('download')">
+          <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
+        </button>
       </div>
-      <div class="page-content">
-        <app-tournament-brackets-editor [tournament]="tournament"
-                                        [droppingDisabled]="groupsDisabled"
-                                        [groupsDisabled]="groupsDisabled"
-                                        (onGroupsUpdated)="groupsUpdated($event)"
-                                        (onGroupsDisabled)="groupsActionsDisabled($event)"
-                                        (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
-        </app-tournament-brackets-editor>
-      </div>
+    </div>
+    <div class="page-content">
+      <app-tournament-brackets-editor [tournament]="tournament"
+                                      [droppingDisabled]="groupsDisabled"
+                                      [groupsDisabled]="groupsDisabled"
+                                      (onGroupsUpdated)="groupsUpdated($event)"
+                                      (onGroupsDisabled)="groupsActionsDisabled($event)"
+                                      (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
+      </app-tournament-brackets-editor>
     </div>
   </div>
 
