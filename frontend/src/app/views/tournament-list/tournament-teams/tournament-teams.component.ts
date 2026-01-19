@@ -387,6 +387,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
 
+    this.loadingGlobal = true;
     this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
       const sortedParticipants: Participant[] = _scoreRanking.map((scoreOfCompetitor: ScoreOfCompetitor) => scoreOfCompetitor.competitor);
       for (let team of this.teams) {
@@ -405,7 +406,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
             this.loggerService.info("Team '" + newTeam.name + "' updated.");
           }),
           catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
-        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
+        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true))
+          .add(() => this.loadingGlobal = false);
       }
       //Remaining one on left column.
       this.userListData.participants = sortedParticipants;
@@ -456,6 +458,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     this.teams = [];
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    this.loadingGlobal = true;
     this.members = new Map<Team, Participant[]>();
     for (const member of participants) {
       const team: Team = new Team();
@@ -475,7 +478,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
       this.systemOverloadService.isBusy.next(false);
       this.statisticsChangedService.areStatisticsChanged.next(true);
-    });
+    }).add(() => this.loadingGlobal = false);
   }
 
   downloadPDF(): void {
