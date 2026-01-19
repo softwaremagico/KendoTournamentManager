@@ -1,69 +1,60 @@
 <ng-container *transloco="let t">
-  <div class="container" cdkDropListGroup>
-    <div class="team-panel" *ngIf="!droppingDisabled">
-      <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)"
-           (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
-           cdkDropList cdkDropListSortingDisabled="true"
-           class="teams-container">
-        <team-list
-          [teamListData]="teamListData" [minify]="true"></team-list>
-      </div>
-      <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
-        <button (click)="sortedGroups()"
-                *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                mat-flat-button
-                mat-raised-button>
-          <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
-          {{ 'sorted' | transloco }}
+    <div class="container" cdkDropListGroup>
+        <div class="team-panel" *ngIf="!droppingDisabled">
+            <biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+            <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)"
+                 (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+                 cdkDropList cdkDropListSortingDisabled="true"
+                 class="teams-container">
+                <team-list
+                        [teamListData]="teamListData" [minify]="true"></team-list>
+            </div>
+            <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
+                <button biit-button secondary (click)="sortedGroups()"
+                        *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
+                        [disabled]="groupsDisabled || (tournament && tournament.locked)">
+                    {{ 'sorted' | transloco }}
+                </button>
+                <button biit-button secondary (click)="randomGroups()"
+                        *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
+                        [disabled]="groupsDisabled || (tournament && tournament.locked)">
+                    {{ 'random' | transloco }}
+                </button>
+                <button biit-button secondary (click)="removeAllTeamsConfirmation=true"
+                        *ngIf="(RbacActivity.CLEAN_UP_GROUPS | hasPermission)"
+                        [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
+                        matTooltip="{{'removeTeams' | transloco}}">
+                    {{ 'clean' | transloco }}
+                </button>
+            </div>
+        </div>
+        <button class="floating-button"
+                *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
+                (click)="downloadAsPdf()">
+            <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
         </button>
-        <button (click)="randomGroups()"
-                *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                mat-flat-button
-                mat-raised-button>
-          <mat-icon>casino</mat-icon>
-          {{ 'random' | transloco }}
-        </button>
-        <button (click)="removeAllTeamsConfirmation=true"
-                *ngIf="(RbacActivity.CLEAN_UP_GROUPS | hasPermission)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
-                mat-flat-button
-                mat-raised-button
-                matTooltip="{{'removeTeams' | transloco}}">
-          <mat-icon>cleaning_services</mat-icon>
-          {{ 'clean' | transloco }}
-        </button>
-      </div>
-    </div>
-    <button
-      *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
-      (click)="downloadAsPdf()"
-      class="floating-button" color="secondary" mat-flat-button mat-mini-fab
-      type="button">
-      <mat-icon color="primary">download_file</mat-icon>
-    </button>
-    <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets"
+        <tournament-brackets #tournamentBracketsComponent class="tournament-brackets"
                              [class.started]="droppingDisabled || !(RbacActivity.EDIT_GROUP | hasPermission)"
-                             [tournament]="tournament"
-                             [droppingDisabled]="droppingDisabled">
-    </app-tournament-brackets>
-  </div>
-
-  <biit-popup id="confirmation-delete-teams" *ngIf="removeAllTeamsConfirmation"
-              no-header
-  >
-    <div class="vertical">
-    <span [innerHTML]="'questionDeleteTeams' | transloco"></span>
-    <div class="flex-grow horizontal buttons-row">
-      <button id="confirm-delete-cancel-button" biit-button secondary
-              (click)="removeAllTeamsConfirmation = false">{{ t('cancel') }}
-      </button>
-      <button id="confirm-delete-accept-button" biit-button primary
-              (click)="removeAllTeams(); removeAllTeamsConfirmation = false">
-        {{ t('accept') }}
-      </button>
+                             [tournament]="tournament" [selectedGroup]="selectedGroup"
+                             [droppingDisabled]="droppingDisabled"
+                             (elementClicked)="selectGroup($event)">
+        </tournament-brackets>
     </div>
-  </div>
-  </biit-popup>
+
+    <biit-popup id="confirmation-delete-teams" *ngIf="removeAllTeamsConfirmation"
+                no-header
+    >
+        <div class="vertical">
+            <span [innerHTML]="'questionDeleteTeams' | transloco"></span>
+            <div class="flex-grow horizontal buttons-row">
+                <button id="confirm-delete-cancel-button" biit-button secondary
+                        (click)="removeAllTeamsConfirmation = false">{{ t('cancel') }}
+                </button>
+                <button id="confirm-delete-accept-button" biit-button primary
+                        (click)="removeAllTeams(); removeAllTeamsConfirmation = false">
+                    {{ t('accept') }}
+                </button>
+            </div>
+        </div>
+    </biit-popup>
 </ng-container>

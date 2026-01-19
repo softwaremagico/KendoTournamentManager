@@ -4,7 +4,7 @@ import {Group} from "../../../../models/group";
 import {BracketsMeasures} from "../brackets-measures";
 
 @Component({
-  selector: 'app-arrow',
+  selector: 'arrow',
   templateUrl: './arrow.component.html',
   styleUrls: ['./arrow.component.scss']
 })

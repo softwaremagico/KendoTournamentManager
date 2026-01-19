@@ -6,7 +6,6 @@ import {Fight} from "../../models/fight";
 import {Tournament} from "../../models/tournament";
 import {ActivatedRoute, Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
-import {Action} from "../../action";
 import {TournamentType} from "../../models/tournament-type";
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
@@ -504,7 +503,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   createGroupFight(teams: Team[]): void {
-    if (this.tournamentId) {
+    if (this.tournamentId && teams && teams.length > 0) {
       this.groupService.setTeams(teams).subscribe((_group: Group): void => {
         this.selectedGroup = _group;
         if (this.tournamentId) {

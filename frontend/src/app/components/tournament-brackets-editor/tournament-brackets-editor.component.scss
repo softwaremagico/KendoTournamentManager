@@ -1,41 +1,68 @@
 .container {
   display: flex;
   width: 100%;
-  margin-top: 50px;
 }
 
 .team-panel {
   position: fixed;
+  top: 110px;
+  left: 1rem;
+  height: 86%;
+  background-color: var( --main-background);
+  border: 3px solid var(--component-color);
+  z-index: 12;
+}
+
+::ng-deep .team-list {
+  width: 35vh;
 }
 
 .teams-container {
-  height: 70vh;
-  width: 420px;
-  border: 1px solid #1f1836;
+  width: 470px;
   min-height: 550px;
+  height: 90%;
   display: flex;
   justify-content: center;
+  overflow: clip;
+  padding-top: 1rem;
 }
 
 .tournament-brackets {
-  margin-left: 470px;
+  margin-left: 550px;
   flex: 3;
+  position: relative;
 }
 
-.tournament-brackets.started{
+.tournament-brackets.started {
   margin-left: 20px;
 }
 
 .floating-button {
-  z-index: 100;
+  z-index: 999;
   right: 100px;
   position: fixed;
+  border: 3px solid var(--component-color);
+  background-color: var(--floating-background);
+  justify-content: center;
+  gap: 1em;
+
+  &:hover {
+    background-color: var(--main-background);
+  }
+}
+
+button > .mat-icon {
+  height: 24px !important;
+  width: 24px !important;
 }
 
 .button-container {
   text-align: center;
   width: 100%;
-  padding: 10px;
+  padding-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  margin: 1rem;
 }
 
 .mat-raised-button {

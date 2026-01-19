@@ -25,9 +25,10 @@ import {MessageContent} from "../../websockets/message-content.model";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
 import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
-  selector: 'app-tournament-brackets-editor',
+  selector: 'tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
@@ -71,6 +72,8 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   removeAllTeamsConfirmation: boolean = false;
 
   private topicSubscription: Subscription;
+
+  loadingGlobal: boolean = false;
 
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
               public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
@@ -134,7 +137,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
         this.relations = this.convert(_groupRelations);
         this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
-      });
+      }).add(() => this.loadingGlobal = false);
     }
   }
 
@@ -271,6 +274,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   randomGroups(): void {
     let groups: Group[] = this.groups;
     //Select group from level 0.
+    this.loadingGlobal = true;
     groups = groups.filter((group: Group): boolean => group.level == 0);
     while (this.teamListData.teams.length > 0) {
       const team: Team = this.getRandomTeam(this.teamListData.teams);
@@ -313,4 +317,5 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   }
 
   protected readonly RbacActivity = RbacActivity;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

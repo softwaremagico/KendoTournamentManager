@@ -15,6 +15,7 @@
   gap: 1em;
   height: 50px;
   background-color: var(--body-background);
+  z-index: 15;
 }
 
 .upper-menu button {
@@ -35,6 +36,7 @@
 
 .championship-view {
   min-width: 600px;
+  overflow: auto;
 }
 
 @media screen and (max-height: 750px) {

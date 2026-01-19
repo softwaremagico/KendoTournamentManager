@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Team} from "../../models/team";
-import {Participant} from "../../models/participant";
 
 @Component({
   selector: 'team-card',

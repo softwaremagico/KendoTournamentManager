@@ -11,15 +11,17 @@
 </div>
 <div class="level" [class]="'level-' + level" *ngFor="let level of groupsByLevel.keys()">
   <div class="arrow-container" *ngFor="let g of relations.get(level)">
-    <app-arrow [color]="g.winner==0 ? '#001239' : '#4d6d95'"
-               [getGroupTopSeparation]="getGroupTopSeparation"
-               [getGroupHigh]="getGroupHigh" [groupsByLevel]="groupsByLevel"
-               [level]="level" [groupSource]="g.src" [groupDestination]="g.dest"
-               [winner]="g.winner" [numberOfWinnersFirstLevel]="numberOfWinnersFirstLevel" ></app-arrow>
+    <arrow [color]="g.winner==0 ? '#001239' : '#4d6d95'"
+           [getGroupTopSeparation]="getGroupTopSeparation"
+           [getGroupHigh]="getGroupHigh" [groupsByLevel]="groupsByLevel"
+           [level]="level" [groupSource]="g.src" [groupDestination]="g.dest"
+           [winner]="g.winner" [numberOfWinnersFirstLevel]="numberOfWinnersFirstLevel"></arrow>
   </div>
-  <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
-                       [groupsByLevel]="groupsByLevel" [tournament]="tournament" [droppingDisabled]="droppingDisabled"
-                       [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation"
-                       [getGroupHigh]="getGroupHigh">
-  </app-group-container>
+  <group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
+                   [group]="group" [groupsByLevel]="groupsByLevel" [tournament]="tournament"
+                   [droppingDisabled]="droppingDisabled" [getGroupLeftSeparation]="getGroupLeftSeparation"
+                   [getGroupTopSeparation]="getGroupTopSeparation" [getGroupHigh]="getGroupHigh"
+                   [selected]="selectedGroup && (group.id==selectedGroup.id)"
+                   (elementClicked)="isSelected(group)">
+  </group-container>
 </div>

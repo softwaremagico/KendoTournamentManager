@@ -14,6 +14,12 @@
                 [title]="t('addFight')"
                 icon="plus">
         </button>
+        <button biit-icon *ngIf="(RbacActivity.DELETE_GROUP | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || (groups && groups.length < 1)"
+                (click)="deleteGroup()"
+                [title]="t('delete')"
+                icon="minus">
+        </button>
         <button biit-icon *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 (click)="changeNumberOfWinners(2)"
@@ -26,14 +32,8 @@
                 [title]="t('winnerNumber')">
           <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
         </button>
-        <button biit-icon *ngIf="(RbacActivity.DELETE_GROUP | hasPermission)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
-                (click)="deleteGroup()"
-                [title]="t('delete')">
-          <mat-icon class="kendo-icon" svgIcon="clean"></mat-icon>
-        </button>
         <button biit-icon *ngIf="(RbacActivity.REFRESH_GROUPS | hasPermission)"
-                [disabled]="(tournament && tournament.locked) || updatingGroup || groups.length < 1"
+                [disabled]="(tournament && tournament.locked) || updatingGroup || (groups && groups.length < 1)"
                 (click)="refreshGroups()"
                 [title]="t('refreshStructure')">
           <mat-icon class="kendo-icon" svgIcon="restore"></mat-icon>
@@ -60,13 +60,13 @@
       </div>
     </div>
     <div class="page-content">
-      <app-tournament-brackets-editor [tournament]="tournament"
+      <tournament-brackets-editor [tournament]="tournament"
                                       [droppingDisabled]="groupsDisabled"
                                       [groupsDisabled]="groupsDisabled"
                                       (onGroupsUpdated)="groupsUpdated($event)"
                                       (onGroupsDisabled)="groupsActionsDisabled($event)"
                                       (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
-      </app-tournament-brackets-editor>
+      </tournament-brackets-editor>
     </div>
   </div>
 

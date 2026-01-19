@@ -3,10 +3,9 @@ ul {
 }
 
 .team-card {
-  margin: 10px;
   background-color: var(--floating-background);
   border: 3px solid var(--component-color);
-  min-width: 300px;
+  min-width: 200px;
 }
 
 .team-card-title {
@@ -14,9 +13,16 @@ ul {
 }
 
 .team-card.minify {
-  margin: 0;
-  border-radius: 0;
-  border: 2px #1f1836;
+  padding: 1rem;
+  margin: 1rem 0 0;
+}
+
+.team-card.minify mat-card-header {
+  padding: 0;
+}
+
+.group .team-card.minify {
+  border: none;
 }
 
 .team-card.locked {

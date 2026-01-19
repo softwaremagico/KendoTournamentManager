@@ -1,11 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Group} from "../../../models/group";
 import {GroupsUpdatedService} from "./groups-updated.service";
 import {Tournament} from "../../../models/tournament";
 import {BracketsMeasures} from "./brackets-measures";
 
 @Component({
-  selector: 'app-tournament-brackets',
+  selector: 'tournament-brackets',
   templateUrl: './tournament-brackets.component.html',
   styleUrls: ['./tournament-brackets.component.scss']
 })
@@ -16,6 +16,12 @@ export class TournamentBracketsComponent implements OnInit {
 
   @Input()
   droppingDisabled: boolean;
+
+  @Input()
+  selectedGroup: Group;
+
+  @Output()
+  elementClicked: EventEmitter<Group> = new EventEmitter<Group>();
 
   numberOfWinnersFirstLevel: number;
 
@@ -85,9 +91,9 @@ export class TournamentBracketsComponent implements OnInit {
       }
 
       if (level == 0 && Math.max(estimatedTeams, teams) > 1) {
-        return Math.max(estimatedTeams, teams) * 60;
+        return Math.max(estimatedTeams, teams) * BracketsMeasures.TEAM_GROUP_HIGH;
       } else if (teams && teams > 1) {
-        return teams * 60;
+        return teams * BracketsMeasures.TEAM_GROUP_HIGH;
       }
     }
     return BracketsMeasures.GROUP_HIGH;
@@ -158,5 +164,9 @@ export class TournamentBracketsComponent implements OnInit {
       return this.groupsByLevel.get(level)!.filter((_group: Group): boolean => _group.shiaijo == shiaijo);
     }
     return [];
+  }
+
+  isSelected(group: Group) {
+    this.elementClicked.emit(group);
   }
 }

@@ -6,13 +6,16 @@
           'height': groupHigh + 'px'
         }"
      class="group"
-     [ngClass]="['group-' + index ,'group-' + level + '-' + index]">
+     [ngClass]="['group-' + index ,'group-' + level + '-' + index]"
+     (click)="isClicked()">
   <div class="group-title">{{ 'group'| transloco }} {{ index + 1 }}</div>
   <div class="group-content" [class]="'group-content-' + level + '-' + index" (cdkDropListDropped)="dropTeam($event)"
+       [class.selected]="selected && level==0"
+       [class.disabled]="droppingDisabled && level === 0 && this.groupsByLevel.get(this.level)![this.index].teams.length < estimatedTeams"
        [cdkDropListData]="this.groupsByLevel.get(this.level)![this.index].teams" cdkDropList
        [cdkDropListSortingDisabled]="false"
        [cdkDropListEnterPredicate]="checkDroppedElement(level, estimatedTeams, this.groupsByLevel.get(this.level)![this.index].teams, droppingDisabled)">
     <team-card class="group-team-card" *ngFor="let team of this.groupsByLevel.get(this.level)![this.index].teams"
-                   [team]="team" [minify]="true" [disableDrag]="droppingDisabled"></team-card>
+               [team]="team" [minify]="true" [disableDrag]="droppingDisabled"></team-card>
   </div>
 </div>
