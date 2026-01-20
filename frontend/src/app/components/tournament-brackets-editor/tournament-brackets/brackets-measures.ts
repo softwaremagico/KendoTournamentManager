@@ -6,7 +6,7 @@ export abstract class BracketsMeasures {
   private static readonly LEVEL_SEPARATION_EXTRA: number = 75;
   static readonly SHIAIJO_PADDING: number = 15;
   static readonly TEAM_GROUP_HIGH: number = 80;
-  static readonly WINNER_ARROWS_SEPARATION: number = 10;
+  static readonly WINNER_ARROWS_SEPARATION: number = 20;
 
   static levelSeparation(groupsAtLevelZero: number | undefined): number {
     if (groupsAtLevelZero) {

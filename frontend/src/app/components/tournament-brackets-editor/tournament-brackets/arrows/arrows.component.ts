@@ -102,9 +102,9 @@ export class ArrowsComponent implements OnInit {
       for (let r of this.relations) {
         this.coordinates.push({
           x1: this.getArrowX1Coordinate(this.level, r.src),
-          y1: this.getArrowY1Coordinate(this.level, r.src, r.winner),
+          y1: this.getArrowY1Coordinate(this.level, r.src, r.dest, r.winner),
           x2: this.getArrowX2Coordinate(this.level + 1, r.dest),
-          y2: this.getArrowY2Coordinate(this.level + 1, r.dest, r.winner),
+          y2: this.getArrowY2Coordinate(this.level + 1, r.src, r.dest, r.winner),
           winner: r.winner,
           color: r.winner == 0 ? 'var(--component-color)' : 'var(--secondary-team-arrow)'
         });
@@ -129,18 +129,56 @@ export class ArrowsComponent implements OnInit {
     return y;
   }
 
-  getArrowY1Coordinate(level: number, group: number, winner: number): number {
-    return this.getGroupYCoordinate(level, group) + this.getGroupHigh(level, group) / 2
-      + (winner == 0 ? -BracketsMeasures.WINNER_ARROWS_SEPARATION : BracketsMeasures.WINNER_ARROWS_SEPARATION);
+  getArrowY1Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
+    return this.getGroupYCoordinate(level, sourceGroupIndex) + this.getGroupHigh(level, sourceGroupIndex) / 2
+      + this.getOutboundWinnerPixedDifference(destinationGroupIndex, this.getOutboundArrowsDest(sourceGroupIndex));
   }
 
   getArrowX2Coordinate(column: number, group: number): number {
     return BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
   }
 
-  getArrowY2Coordinate(level: number, destinationGroupIndex: number, winner: number): number {
+  getArrowY2Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
     return this.getGroupYCoordinate(level, destinationGroupIndex) + this.getGroupHigh(level, destinationGroupIndex) / 2
-      + (winner == 0 ? -BracketsMeasures.WINNER_ARROWS_SEPARATION : BracketsMeasures.WINNER_ARROWS_SEPARATION);
+      + this.getInboundWinnerPixedDifference(sourceGroupIndex, this.getInboundArrowsSrc(destinationGroupIndex));
+  }
+
+  getInboundArrowsSrc(group: number): number[] {
+    const arrows: number[] = [];
+    if (this.relations) {
+      for (let rel of this.relations) {
+        if (rel.dest == group) {
+          arrows.push(rel.src);
+        }
+      }
+    }
+    return arrows;
+  }
+
+  getOutboundArrowsDest(group: number): number[] {
+    const arrows: number[] = [];
+    if (this.relations) {
+      for (let rel of this.relations) {
+        if (rel.src == group) {
+          arrows.push(rel.dest);
+        }
+      }
+    }
+    return arrows;
+  }
+
+  getOutboundWinnerPixedDifference(source: number, arrows: number[]): number {
+    if (source == Math.max(...arrows)) {
+      return BracketsMeasures.WINNER_ARROWS_SEPARATION;
+    }
+    return -BracketsMeasures.WINNER_ARROWS_SEPARATION;
+  }
+
+  getInboundWinnerPixedDifference(destination: number, arrows: number[]): number {
+    if (destination == Math.max(...arrows)) {
+      return BracketsMeasures.WINNER_ARROWS_SEPARATION;
+    }
+    return -BracketsMeasures.WINNER_ARROWS_SEPARATION;
   }
 
 }
