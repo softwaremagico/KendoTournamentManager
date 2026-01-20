@@ -21,12 +21,12 @@
                        (elementClicked)="isSelected(group)">
       </group-container>
     </div>
-    <div class="arrow-container"
-         [ngStyle]="{'width': this.levelSeparation+'px' }">
+    <div class="arrow-container">
       <arrows class="arrow-element"
-             [relations]="relations.get(level)"
-             [getGroupHigh]="getGroupHigh" [groupsByLevel]="groupsByLevel"
-             [level]="level" [numberOfWinnersFirstLevel]="numberOfWinnersFirstLevel"></arrows>
+              [relations]="relations.get(level)"
+              [getGroupHigh]="getGroupHigh" [groupsByLevel]="groupsByLevel"
+              [getGroupTopSeparation]="getGroupTopSeparation"
+              [level]="level" [numberOfWinnersFirstLevel]="numberOfWinnersFirstLevel"></arrows>
     </div>
   </div>
 </div>

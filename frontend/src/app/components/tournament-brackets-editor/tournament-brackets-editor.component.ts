@@ -221,7 +221,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
     const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
     //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
+    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(groupsByLevel.get(0)?.length) + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
     const widthMM: number = this.getMM(width);

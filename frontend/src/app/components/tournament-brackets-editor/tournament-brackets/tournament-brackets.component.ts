@@ -33,7 +33,7 @@ export class TournamentBracketsComponent implements OnInit {
 
   groupsByLevel: Map<number, Group[]> = new Map();
 
-  readonly levelSeparation: number = BracketsMeasures.LEVEL_SEPARATION;
+  readonly levelSeparation: number = BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
 
 
   constructor(private groupsUpdatedService: GroupsUpdatedService) {
@@ -132,7 +132,6 @@ export class TournamentBracketsComponent implements OnInit {
           return portion;
         }
       }
-
     }
     return 0;
   }
@@ -140,6 +139,10 @@ export class TournamentBracketsComponent implements OnInit {
   getGroupLeftSeparation(level: number, group: number): number {
     //included on arrow div.
     return 0;
+  }
+
+  getLevelSeparation(): number {
+    return BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
   }
 
   getShiaijos(): Map<number, number[]> {

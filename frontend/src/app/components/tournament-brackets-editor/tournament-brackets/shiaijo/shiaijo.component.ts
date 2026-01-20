@@ -65,9 +65,11 @@ export class ShiaijoComponent {
   generateCoordinates(): void {
     const lastGroupIndex: number = this.getLastGroupIndex(this.shiaijo);
 
-    this.x1 = this.level * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION) + BracketsMeasures.SHIAIJO_PADDING;
+    this.x1 = this.level * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length))
+      + BracketsMeasures.SHIAIJO_PADDING;
     this.y1 = this.getYCoordinate(lastGroupIndex);
-    this.x2 = this.level * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION) + BracketsMeasures.GROUP_WIDTH - BracketsMeasures.SHIAIJO_PADDING;
+    this.x2 = this.level * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length))
+      + BracketsMeasures.GROUP_WIDTH - BracketsMeasures.SHIAIJO_PADDING;
     this.y2 = this.getYCoordinate(lastGroupIndex);
     this.height = Math.max(this.y2, this.y1);
     this.width = Math.max(this.x2, this.x1);

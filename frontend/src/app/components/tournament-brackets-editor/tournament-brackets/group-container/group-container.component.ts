@@ -85,7 +85,6 @@ export class GroupContainerComponent implements OnInit {
 
   checkDroppedElement(level: number, teamsByGroup: number, teams: Team[], droppingDisabled: boolean): (drag: CdkDrag, drop: CdkDropList) => boolean {
     return function (drag: CdkDrag, drop: CdkDropList): boolean {
-      console.log(!droppingDisabled, level === 0 , teams.length < teamsByGroup)
       return !droppingDisabled && level === 0 && teams.length < teamsByGroup;
     };
   }
