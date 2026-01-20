@@ -7,7 +7,6 @@ import {TournamentService} from "../../../services/tournament.service";
 import {
   TournamentBracketsEditorComponent
 } from "../../../components/tournament-brackets-editor/tournament-brackets-editor.component";
-import {MatDialog} from "@angular/material/dialog";
 import {Fight} from "../../../models/fight";
 import {FightService} from "../../../services/fight.service";
 import {MessageService} from "../../../services/message.service";
@@ -21,6 +20,7 @@ import {NumberOfWinnersUpdatedService} from "../../../services/notifications/num
 import {
   TournamentChangedService
 } from "../../../components/tournament-brackets-editor/tournament-brackets/tournament-changed.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -44,6 +44,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   numberOfWinners: number = 1;
   protected updatingGroup: boolean = false;
   protected generateGroupConfirmation: boolean = false;
+  loadingGlobal: boolean = false;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
               private fightService: FightService, private messageService: MessageService,
@@ -91,10 +92,11 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   generateElements(): void {
+    this.loadingGlobal = true;
     this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
       this.messageService.infoMessage("infoFightCreated");
       this.goBackToFights();
-    });
+    }).add(() => this.loadingGlobal = false);
   }
 
   groupsUpdated(groups: Group[]): void {
@@ -157,8 +159,11 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   refreshGroups() {
+    this.loadingGlobal = true;
     this.groupService.refreshNonStartedGroups(this.tournamentId, 1).subscribe((): void => {
       this.tournamentBracketsEditorComponent.updateData(true, true);
-    });
+    }).add(() => this.loadingGlobal = false);
   }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

@@ -125,10 +125,6 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  log(event: any) {
-    console.log("DEVELOPMENT LOG: ", event);
-  }
-
   protected onContextMenu($event: Event): void {
     this.contextMenuService.show(
       this.contextMenu,

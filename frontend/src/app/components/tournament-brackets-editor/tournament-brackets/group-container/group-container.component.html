@@ -11,7 +11,7 @@
   <div class="group-title">{{ 'group'| transloco }} {{ index + 1 }}</div>
   <div class="group-content" [class]="'group-content-' + level + '-' + index" (cdkDropListDropped)="dropTeam($event)"
        [class.selected]="selected && level==0"
-       [class.disabled]="droppingDisabled && level === 0 && this.groupsByLevel.get(this.level)![this.index].teams.length < estimatedTeams"
+       [class.disabled]="droppingDisabled && level === 0"
        [cdkDropListData]="this.groupsByLevel.get(this.level)![this.index].teams" cdkDropList
        [cdkDropListSortingDisabled]="false"
        [cdkDropListEnterPredicate]="checkDroppedElement(level, estimatedTeams, this.groupsByLevel.get(this.level)![this.index].teams, droppingDisabled)">

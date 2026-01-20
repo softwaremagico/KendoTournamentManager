@@ -14,6 +14,7 @@ import {MatDividerModule} from "@angular/material/divider";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 
 
 @NgModule({
@@ -23,20 +24,21 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
   exports:[
     TournamentGeneratorComponent
   ],
-  imports: [
-    CommonModule,
-    TournamentBracketsEditorModule,
-    MatSpinnerOverlayModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    RbacModule,
-    TranslocoModule,
-    MatDividerModule,
-    HasPermissionPipe,
-    BiitButtonModule,
-    BiitPopupModule,
-    BiitIconButtonModule
-  ]
+    imports: [
+        CommonModule,
+        TournamentBracketsEditorModule,
+        MatSpinnerOverlayModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        RbacModule,
+        TranslocoModule,
+        MatDividerModule,
+        HasPermissionPipe,
+        BiitButtonModule,
+        BiitPopupModule,
+        BiitIconButtonModule,
+        BiitProgressBarModule
+    ]
 })
 export class TournamentGeneratorModule { }
