@@ -1,14 +1,19 @@
-.level {
-  border: 0;
-  padding: 0;
+.tree {
+  display: flex;
+  flex-direction: row;
 }
 
-.arrow-container {
-  position: absolute;
-  z-index: 9;
+.level {
+  display: flex;
+  flex-direction: row;
 }
 
 .shiaijo-separator {
   position: absolute;
   z-index: 9;
+}
+
+.arrow-element {
+  position: relative;
+  top: 0;
 }

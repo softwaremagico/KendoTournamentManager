@@ -1,6 +1,6 @@
 .page-content {
-  min-height: 100vh;
-  overflow-y: auto;
+  min-height: 100%;
+  overflow: scroll;
   width: 100%;
   padding-left: 20px;
   padding-right: 20px;
@@ -37,6 +37,7 @@
 .championship-view {
   min-width: 600px;
   overflow: auto;
+  width: 100%;
 }
 
 @media screen and (max-height: 750px) {

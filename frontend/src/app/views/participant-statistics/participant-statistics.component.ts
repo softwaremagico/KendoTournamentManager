@@ -21,7 +21,6 @@ import {Achievement} from "../../models/achievement.model";
 import {ParticipantService} from "../../services/participant.service";
 import {Participant} from "../../models/participant";
 import {LoginService} from "../../services/login.service";
-import {MatDialog} from "@angular/material/dialog";
 import {EnvironmentService} from "../../environment.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
@@ -59,7 +58,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
               private translateService: TranslocoService, private rankingService: RankingService,
               private achievementService: AchievementsService, private participantService: ParticipantService,
-              private loginService: LoginService, public dialog: MatDialog, private environmentService: EnvironmentService) {
+              private loginService: LoginService, private environmentService: EnvironmentService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {

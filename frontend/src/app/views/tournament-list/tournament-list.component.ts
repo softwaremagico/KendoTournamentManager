@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
-import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 
 import {Router} from '@angular/router';
@@ -59,7 +58,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   table: BiitDatatableComponent<Tournament>;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService, public dialog: MatDialog,
+              private rankingService: RankingService,
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private achievementsService: AchievementsService, private transloco: TranslocoService, private _datePipe: DatePipe,
               private biitSnackbarService: BiitSnackbarService, private tableColumnTranslationPipe: TableColumnTranslationPipe) {

@@ -2,7 +2,6 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@ang
 import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
 import {Subject, takeUntil} from "rxjs";
-import {MatDialog} from "@angular/material/dialog";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CdkDragEnd, Point} from "@angular/cdk/drag-drop";
@@ -61,7 +60,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   protected confirmReset: boolean = false;
 
 
-  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
+  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService,
               rbacService: RbacService, private filterFocusService: FilterFocusService) {
     super(rbacService);
     this.started = false;

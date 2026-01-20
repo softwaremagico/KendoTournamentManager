@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
-import {MatDialog} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
 import {forkJoin, Observable} from "rxjs";
 import {TranslocoService} from "@ngneat/transloco";
@@ -43,7 +42,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   protected drawTeams: Team[] = [];
   protected readonly ScoreType = ScoreType;
 
-  constructor(private rankingService: RankingService, public translateService: TranslocoService, public dialog: MatDialog,
+  constructor(private rankingService: RankingService, public translateService: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
               public override rbacService: RbacService, private router: Router,
               private nameUtils: NameUtilsService) {

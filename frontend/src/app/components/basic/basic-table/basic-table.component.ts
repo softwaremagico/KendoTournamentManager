@@ -1,6 +1,5 @@
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BasicTableData} from "./basic-table-data";
-import {MatDialog} from "@angular/material/dialog";
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort} from "@angular/material/sort";
 import {UserSessionService} from "../../../services/user-session.service";
@@ -34,7 +33,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
   private topicSubscription: Subscription;
 
-  constructor(public dialog: MatDialog, private translateService: TranslocoService,
+  constructor(private translateService: TranslocoService,
               private userSessionService: UserSessionService, private environmentService: EnvironmentService,
               private rxStompService: RxStompService) {
     this.setLocale();

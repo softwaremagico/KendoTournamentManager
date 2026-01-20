@@ -1,9 +1,12 @@
 .team-list {
-  display: block;
-  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  height: auto;
   overflow: auto;
   min-height: 460px;
   margin-top: 1em;
+  width: auto;
+  padding: 1rem;
 }
 
 .team-list.list-horizontal {

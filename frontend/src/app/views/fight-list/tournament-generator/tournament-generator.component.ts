@@ -46,7 +46,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   protected generateGroupConfirmation: boolean = false;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
-              private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
+              private fightService: FightService, private messageService: MessageService,
               private groupService: GroupService, private tournamentChangedService: TournamentChangedService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
               private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {

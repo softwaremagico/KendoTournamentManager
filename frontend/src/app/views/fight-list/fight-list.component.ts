@@ -1,5 +1,4 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
@@ -94,7 +93,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
-              private dialog: MatDialog, private userSessionService: UserSessionService,
+              private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslocoService,
               private systemOverloadService: SystemOverloadService,

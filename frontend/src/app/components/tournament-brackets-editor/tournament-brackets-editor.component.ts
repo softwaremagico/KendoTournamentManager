@@ -75,6 +75,9 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   loadingGlobal: boolean = false;
 
+  protected readonly RbacActivity = RbacActivity;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
               public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
@@ -315,7 +318,4 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
   }
-
-  protected readonly RbacActivity = RbacActivity;
-  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

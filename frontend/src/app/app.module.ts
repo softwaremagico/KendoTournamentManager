@@ -84,7 +84,6 @@ import {ParticipantListModule} from "./views/participant-list/participant-list.m
 import {
   TournamentBracketsModule
 } from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
-import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
 import {ShiaijoModule} from "./components/tournament-brackets-editor/tournament-brackets/shiaijo/shiaijo.module";
 import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
 import {
@@ -109,6 +108,7 @@ import {
 } from "./views/authenticated-user-list/authenticated-user-form-popup/authenticated-user-form-popup.module";
 import {ClubFormPopupModule} from "./views/club-list/club-form-popup/club-form-popup.module";
 import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
+import {KeyReversePipe} from "./pipes/keyReverse.pipe";
 
 
 registerLocaleData(localeES, "es");
@@ -198,7 +198,6 @@ registerLocaleData(localeNL, "nl");
     ParticipantListModule,
     ProgressBarModule,
     TournamentBracketsModule,
-    ArrowModule,
     ShiaijoModule,
     TournamentBracketsEditorModule,
     TournamentGeneratorModule,
@@ -211,6 +210,7 @@ registerLocaleData(localeNL, "nl");
     TranslocoModule,
     BiitCookiesConsentModule,
     HasPermissionPipe,
+    KeyReversePipe,
     BiitDatatableModule,
     BiitIconButtonModule,
     BiitPopupModule,
