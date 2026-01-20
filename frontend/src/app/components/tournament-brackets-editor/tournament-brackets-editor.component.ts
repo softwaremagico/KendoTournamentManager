@@ -219,11 +219,12 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   public downloadAsPdf(): void {
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
-    const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
-    //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(groupsByLevel.get(0)?.length) + 100);
+    const height: number = groupsByLevel.get(0)?.length! * (BracketsMeasures.GROUP_SEPARATION
+      + BracketsMeasures.GROUP_HIGH + 100) + (this.totalTeams * (BracketsMeasures.TEAM_GROUP_HIGH + 70));
+    const width: number = (groupsByLevel.size) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(groupsByLevel.get(0)?.length) + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
+    const pageFormat: string = groupsByLevel.get(0)?.length! > 8 ? "a3" : "a4";
     const widthMM: number = this.getMM(width);
     const heightMM: number = this.getMM(height);
     const ratio: number = this.getRatio(widthMM, heightMM);
@@ -234,7 +235,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       const jsPdfOptions = {
         orientation: orientation,
         unit: imageUnit,
-        format: "a4",
+        format: pageFormat,
       };
       const pdf: jsPDF = new jsPDF(jsPdfOptions);
       pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);

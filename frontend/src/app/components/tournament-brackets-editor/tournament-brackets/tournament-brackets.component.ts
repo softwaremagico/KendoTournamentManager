@@ -109,7 +109,8 @@ export class TournamentBracketsComponent implements OnInit {
     let levelWithMaxGroups: number = 0;
     //Now group 0 maybe is the one with the highest number of groups. Search for which level is.
     if (groupsByLevel) {
-      for (let key of groupsByLevel.keys()) {
+      const keys: number[] = [...groupsByLevel.keys()];
+      for (let key of keys.sort()) {
         if (groupsByLevel.get(key)!.length > maxGroupsByLevel) {
           maxGroupsByLevel = groupsByLevel.get(key)!.length;
           levelWithMaxGroups = key;
@@ -118,9 +119,10 @@ export class TournamentBracketsComponent implements OnInit {
       if (level == levelWithMaxGroups || groupsByLevel.get(levelWithMaxGroups)?.length == groupsByLevel?.get(level)?.length) {
         if (group == 0) {
           //First group no margin. Only difference on size of groups
-          return (this.getGroupHigh(levelWithMaxGroups, group) - this.getGroupHigh(level, group)) / 2;
+          return (level != 0 && (groupsByLevel.get(level)!.length > groupsByLevel.get(0)!.length) ?
+            BracketsMeasures.GROUP_SEPARATION : 0) + (this.getGroupHigh(levelWithMaxGroups, group) - this.getGroupHigh(level, group)) / 2;
         } else {
-          return BracketsMeasures.GROUP_SEPARATION + (this.getGroupHigh(levelWithMaxGroups, group) - this.getGroupHigh(level, group));
+          return BracketsMeasures.GROUP_SEPARATION + (this.getGroupHigh(levelWithMaxGroups, group));
         }
       } else {
         //Level is smaller than the max one.
@@ -137,6 +139,19 @@ export class TournamentBracketsComponent implements OnInit {
       }
     }
     return 0;
+  }
+
+  getGroupYCoordinate(level: number, group: number): number {
+    let y: number = 0;
+    for (let i = 0; i <= group; i++) {
+      if (i > 0) {
+        //Add previous group high
+        y += this.getGroupHigh(level, i - 1);
+      }
+      //Add separation between groups.
+      y += this.getGroupTopSeparation(level, i, this.groupsByLevel);
+    }
+    return y;
   }
 
   getGroupLeftSeparation(level: number, group: number): number {

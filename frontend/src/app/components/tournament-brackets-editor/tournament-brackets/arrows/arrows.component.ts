@@ -24,6 +24,9 @@ export class ArrowsComponent implements OnInit {
   getGroupHigh: (level: number, group: number) => number;
 
   @Input()
+  getGroupYCoordinate: (level: number, group: number)=> number;
+
+  @Input()
   groupsByLevel: Map<number, Group[]>;
 
   @Input()
@@ -84,7 +87,7 @@ export class ArrowsComponent implements OnInit {
         levelWithMaxGroups = key;
       }
     }
-    return maxGroupsByLevel * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(0, 0));
+    return Math.max(this.getGroupYCoordinate(levelWithMaxGroups, maxGroupsByLevel - 1), this.getGroupYCoordinate(0, this.groupsByLevel.get(0)!.length)) + this.getGroupHigh(0, 0);
   }
 
   getTotalWidth(): number {
@@ -119,19 +122,6 @@ export class ArrowsComponent implements OnInit {
 
   getArrowX1Coordinate(level: number, group: number): number {
     return 0;
-  }
-
-  getGroupYCoordinate(level: number, group: number): number {
-    let y: number = 0;
-    for (let i = 0; i <= group; i++) {
-      if (i > 0) {
-        //Add previous group high
-        y += this.getGroupHigh(level, i - 1);
-      }
-      //Add separation between groups.
-      y += this.getGroupTopSeparation(level, i, this.groupsByLevel);
-    }
-    return y;
   }
 
   getArrowY1Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
