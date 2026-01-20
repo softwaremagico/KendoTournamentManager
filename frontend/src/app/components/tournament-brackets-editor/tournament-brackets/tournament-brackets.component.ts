@@ -58,6 +58,9 @@ export class TournamentBracketsComponent implements OnInit {
         });
       });
     });
+    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
+      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
+    })
   }
 
   private updateShiaijos(): void {

@@ -52,6 +52,7 @@ export class ArrowsComponent implements OnInit {
   ngOnInit(): void {
     this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
       this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
+      this.updateSize();
     })
     this.groupsUpdatedService.areTotalTeamsNumberUpdated.subscribe((_totalTeams: number): void => {
       if (_totalTeams != this.totalTeams) {
@@ -66,6 +67,10 @@ export class ArrowsComponent implements OnInit {
       this.relations = _relations.get(this.level);
       this.generateCoordinates();
     })
+    this.updateSize();
+  }
+
+  updateSize() {
     this.height = this.getTotalHigh();
     this.width = this.getTotalWidth();
   }
@@ -79,7 +84,7 @@ export class ArrowsComponent implements OnInit {
         levelWithMaxGroups = key;
       }
     }
-    return maxGroupsByLevel * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(levelWithMaxGroups, 0));
+    return maxGroupsByLevel * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(0, 0));
   }
 
   getTotalWidth(): number {
@@ -131,7 +136,7 @@ export class ArrowsComponent implements OnInit {
 
   getArrowY1Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
     return this.getGroupYCoordinate(level, sourceGroupIndex) + this.getGroupHigh(level, sourceGroupIndex) / 2
-      + this.getOutboundWinnerPixedDifference(destinationGroupIndex, this.getOutboundArrowsDest(sourceGroupIndex));
+      + this.getOutboundWinnerPixedDifference(destinationGroupIndex, this.getOutboundArrowsDest(sourceGroupIndex), winner);
   }
 
   getArrowX2Coordinate(column: number, group: number): number {
@@ -140,7 +145,7 @@ export class ArrowsComponent implements OnInit {
 
   getArrowY2Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
     return this.getGroupYCoordinate(level, destinationGroupIndex) + this.getGroupHigh(level, destinationGroupIndex) / 2
-      + this.getInboundWinnerPixedDifference(sourceGroupIndex, this.getInboundArrowsSrc(destinationGroupIndex));
+      + this.getInboundWinnerPixedDifference(sourceGroupIndex, this.getInboundArrowsSrc(destinationGroupIndex), winner);
   }
 
   getInboundArrowsSrc(group: number): number[] {
@@ -167,14 +172,29 @@ export class ArrowsComponent implements OnInit {
     return arrows;
   }
 
-  getOutboundWinnerPixedDifference(source: number, arrows: number[]): number {
+  getOutboundWinnerPixedDifference(source: number, arrows: number[], winner: number): number {
+    if (arrows[0] == arrows[1]) {
+      if (winner == 0) {
+        return -BracketsMeasures.WINNER_ARROWS_SEPARATION;
+      } else {
+        return BracketsMeasures.WINNER_ARROWS_SEPARATION;
+      }
+    }
     if (source == Math.max(...arrows)) {
       return BracketsMeasures.WINNER_ARROWS_SEPARATION;
     }
     return -BracketsMeasures.WINNER_ARROWS_SEPARATION;
   }
 
-  getInboundWinnerPixedDifference(destination: number, arrows: number[]): number {
+  getInboundWinnerPixedDifference(destination: number, arrows: number[], winner: number): number {
+    //From same group
+    if (arrows[0] == arrows[1]) {
+      if (winner == 0) {
+        return -BracketsMeasures.WINNER_ARROWS_SEPARATION;
+      } else {
+        return BracketsMeasures.WINNER_ARROWS_SEPARATION;
+      }
+    }
     if (destination == Math.max(...arrows)) {
       return BracketsMeasures.WINNER_ARROWS_SEPARATION;
     }
