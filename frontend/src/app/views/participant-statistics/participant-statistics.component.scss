@@ -156,3 +156,7 @@ achievements-wall {
 .name {
   text-align: center;
 }
+
+::ng-deep .apexcharts-canvas {
+  display: inline-block;
+}

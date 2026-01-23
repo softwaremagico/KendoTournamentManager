@@ -28,7 +28,7 @@
 }
 
 .statistics-container {
-  height: 100%;
+  height: 78vh;
   overflow-y: auto;
   margin-top: 1em;
 }
@@ -113,4 +113,6 @@ achievements-wall {
   text-align: center;
 }
 
-
+::ng-deep .apexcharts-canvas {
+  display: inline-block;
+}
