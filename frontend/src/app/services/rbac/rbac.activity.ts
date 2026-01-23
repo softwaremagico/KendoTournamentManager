@@ -109,6 +109,8 @@ export enum RbacActivity {
   DOWNLOAD_QR_CODE = 'DOWNLOAD_QR_CODE',
   DOWNLOAD_PDF = 'DOWNLOAD_PDF',
 
+  WIKI_ACCESS = 'WIKI_ACCESS',
+
 }
 
 export namespace RbacActivity {

@@ -51,7 +51,7 @@ export class MessageService implements OnDestroy {
         }
 
       } catch (e) {
-        console.log("Invalid message payload", message.body);
+        console.error("Invalid message payload", message.body);
       }
     });
   }

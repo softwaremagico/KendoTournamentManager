@@ -27,7 +27,7 @@
           {{ t('t.password') }}
         </span>
     </ng-template>
-    <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
+    <ng-template contextMenuItem *ngIf="RbacActivity.CAN_LOGOUT | hasPermission"
                  (execute)="logoutConfirmation=true">
         <span id="logout-option">
           {{ t('t.logout') }}

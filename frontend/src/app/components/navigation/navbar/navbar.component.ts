@@ -105,6 +105,9 @@ export class NavbarComponent implements OnInit {
           {
             path: Constants.PATHS.HELP.WIKI,
             title: 'wiki',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.WIKI_ACCESS)
+            }
           },
           {
             path: Constants.PATHS.HELP.LICENSE,

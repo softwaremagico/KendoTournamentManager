@@ -94,6 +94,7 @@ export class ActivityService {
       RbacActivity.SHOW_TIMER,
       RbacActivity.PLAY_WHISTLE,
       RbacActivity.EDIT_FIGHT_TIME,
+      RbacActivity.WIKI_ACCESS,
     ];
   }
 

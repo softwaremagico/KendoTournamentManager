@@ -4,7 +4,7 @@
   <div class="statistics-layout">
     <div class="upper-menu">
       <button biit-icon *ngIf="(RbacActivity.READ_ALL_PARTICIPANTS | hasPermission)"
-              (click)="goBackToUsers()"
+              (click)="goBack()"
               [title]="t('back')">
         <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
       </button>

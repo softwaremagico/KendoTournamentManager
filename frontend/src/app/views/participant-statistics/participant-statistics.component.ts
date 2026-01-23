@@ -52,6 +52,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public youAreTheWorstNightmareOf: Participant[];
 
   protected loading: boolean = false;
+  backUrl: string | null = null;
+  srcTournamentId: number | null = null;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               rbacService: RbacService, private systemOverloadService: SystemOverloadService,
@@ -65,7 +67,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       if (state['participantId'] && !isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);
       } else {
-        this.goBackToUsers();
+        this.goBack();
       }
     } else {
       //Gets participant from URL parameter (from QR codes).
@@ -75,7 +77,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
         this.loginService.logout()
       }
       if (!this.participantId || isNaN(this.participantId)) {
-        this.goBackToUsers();
+        this.goBack();
       }
     }
     this.setLocale();
@@ -106,9 +108,11 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
           this.router.navigate([]);
         });
       } else {
-        this.goBackToUsers();
+        this.goBack();
       }
     }
+    this.backUrl = this.activatedRoute.snapshot.queryParamMap.get('redirectUrl');
+    this.srcTournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
   }
 
   initializeData(): void {
@@ -127,7 +131,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
         },
         error: (): void => {
           console.error("User logged in is not a participant");
-          this.goBackToUsers()
+          this.goBack()
         }
       });
     }
@@ -205,8 +209,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     return scores;
   }
 
-  goBackToUsers(): void {
-    this.router.navigate(['/registry/participants'], {});
+  goBack(): void {
+    if (this.backUrl) {
+      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.srcTournamentId}});
+    } else {
+      this.router.navigate(['/registry/participants'], {});
+    }
   }
 
   numberOfPerformedRoles(roleType: RoleType): number {
