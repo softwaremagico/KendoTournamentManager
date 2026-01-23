@@ -49,6 +49,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
   selectedGroup: Group | undefined | null;
+  finishedGroup: Group | undefined | null;
 
   tournament: Tournament;
   timer: boolean = false;
@@ -449,18 +450,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  onFightCreated(result: Fight): void {
-    // if (result == undefined) {
-    //   //Do nothing
-    // } else if (result?.action === Action.Add) {
-    //   this.selectFirstUnfinishedDuel();
-    // } else if (result?.action === Action.Update) {
-    //   this.updateRowData(result.data);
-    // } else if (result?.action === Action.Delete) {
-    //   this.deleteRowData(result.data);
-    // }
-  }
-
   openDeleteElement(): void {
     if (this.selectedFight || this.selectedDuel) {
       this.confirmDeleteFights = true;
@@ -626,6 +615,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   finishDuel(): void {
+    this.finishedGroup = null;
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
       this.selectedDuel.finished = true;
@@ -635,6 +625,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.duelService.update(this.selectedDuel).subscribe((): void => {
         this.messageService.infoMessage("infoDuelFinished");
         this.selectedGroup = this.getGroup(this.selectedDuel);
+        this.finishedGroup = this.selectedGroup;
         let showClassification: boolean = true;
         if (this.selectedGroup != null) {
           // Senbatsu, has a limited number of fights
@@ -659,6 +650,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       });
     }
+  }
+
+  groupRankingToShow(): Group | undefined | null {
+    if (this.finishedGroup) {
+      return this.finishedGroup;
+    }
+    return this.selectedGroup;
   }
 
   unfinishDuel(): void {
