@@ -147,9 +147,11 @@
           {{ getShiaijoTag() }}
         </div>
       </div>
-      <app-filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
-                  [resetValue]="resetFilterValue"
-                  *ngIf="!projectorMode"></app-filter>
+      <filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
+              [resetValue]="resetFilterValue"
+              (focusout)="filterInUse=false"
+              (focusin)="filterInUse=true"
+              *ngIf="!projectorMode"></filter>
       <div class="fights-container" [ngClass]="{'project-mode': projectorMode}">
         <div *ngFor="let group of groups" class="fight-list">
           <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"

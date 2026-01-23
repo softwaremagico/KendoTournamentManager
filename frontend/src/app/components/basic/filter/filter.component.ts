@@ -5,7 +5,7 @@ import {FilterFocusService} from "../../../services/notifications/filter-focus.s
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
-  selector: 'app-filter',
+  selector: 'filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.scss']
 })

@@ -86,6 +86,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   protected openLeagueGeneratorPopup: boolean = false;
   protected newFight: Fight;
 
+  filterInUse: boolean = false;
+
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               private tournamentService: TournamentService, private fightService: FightService,
@@ -238,7 +240,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
-    if (event.key === 't') {
+    if (event.key === 't' && !this.filterInUse) {
       this.showTimer(!this.timer);
     }
     if (event.key === 'Escape') {

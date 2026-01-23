@@ -1,4 +1,4 @@
-<app-filter class="team-filter" (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
+<filter class="team-filter" (filterChanged)="filter($event)" (reset)="filter('')"></filter>
 <div *ngIf="teamListData.filteredTeams" class="team-list" [ngClass]="{'list-horizontal' : horizontal, 'grid' : grid  }">
   <div class="team-grid" [ngClass]="{'list-horizontal' : horizontal, 'grid' : grid  }">
     <team-card *ngFor="let team of teamListData.filteredTeams" [team]="team" [minify]="minify"

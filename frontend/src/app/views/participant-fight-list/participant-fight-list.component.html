@@ -10,8 +10,8 @@
         </button>
       </div>
     </div>
-    <app-filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
-                [resetValue]="resetFilterValue"></app-filter>
+    <filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
+                [resetValue]="resetFilterValue"></filter>
     <div class="fights-container">
       <div *ngIf="tournaments" class="fight-container">
         <div *ngFor="let tournament of tournaments" class="fight-list">

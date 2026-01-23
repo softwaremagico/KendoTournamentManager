@@ -1,4 +1,4 @@
-<app-filter (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
+<filter (filterChanged)="filter($event)" (reset)="filter('')"></filter>
 <div *ngIf="userListData.filteredParticipants" class="user-list">
   <user-card *ngFor="let user of userListData.filteredParticipants" [dragDisabled]="user.locked"
                  [showAvatar]="showAvatars"
