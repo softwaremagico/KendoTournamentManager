@@ -8,9 +8,9 @@
               [title]="t('back')">
         <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
       </button>
-      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
+      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission) && !this.srcTournamentId"
               (click)="openParticipantFights()"
-              [title]="t('titleStatistics')">
+              [title]="t('fights')">
         <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
       </button>
     </div>
@@ -252,14 +252,14 @@
           </div>
 
           <div class="box-statistics box chart">
-          <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
-                         [title]="'participantHitsStatistics' | transloco"
-                         [width]="360"></app-pie-chart>
+            <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
+                           [title]="'participantHitsStatistics' | transloco"
+                           [width]="360"></app-pie-chart>
           </div>
           <div class="box-statistics box chart">
-          <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
-                         [title]="'participantReceivedHitsStatistics' | transloco"
-                         [width]="360"></app-pie-chart>
+            <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
+                           [title]="'participantReceivedHitsStatistics' | transloco"
+                           [width]="360"></app-pie-chart>
           </div>
 
           <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
@@ -267,7 +267,7 @@
               <h3>{{ 'achievements' | transloco }}</h3>
             </div>
             <achievements-wall [achievements]="achievements"
-                                  [view]="'participant'"></achievements-wall>
+                               [view]="'participant'"></achievements-wall>
           </div>
         </div>
       </div>
