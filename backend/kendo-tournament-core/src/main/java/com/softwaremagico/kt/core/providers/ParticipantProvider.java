@@ -212,7 +212,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             }
         }
 
-        selected.sort(Comparator.comparing(Participant::getLastname).thenComparing(Participant::getName));
-        return selected;
+        return selected.stream().filter(Objects::nonNull).sorted(Comparator.comparing(Participant::getLastname, Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(Participant::getName, Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 }
