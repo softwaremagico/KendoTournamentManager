@@ -15,6 +15,8 @@ import {TournamentType} from "../../models/tournament-type";
 })
 export class FightComponent extends RbacBasedComponent implements OnInit {
 
+  readonly ROW_HIGH: number = 70;
+
   @Input()
   fight: Fight;
 
