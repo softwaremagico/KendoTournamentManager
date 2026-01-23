@@ -18,6 +18,7 @@ export class Constants {
     }
     public static readonly TOURNAMENTS = class {
       public static readonly ROOT: string = 'tournaments';
+      public static readonly LIST: string = 'list';
     }
     public static readonly ADMINISTRATION = class {
       public static readonly ROOT: string = 'administration';

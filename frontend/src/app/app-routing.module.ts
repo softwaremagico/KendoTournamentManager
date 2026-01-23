@@ -28,7 +28,6 @@ const routes: Routes = [
   },
   {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedIn]},
   {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedIn]},
-  {path: 'tournaments/statistics', component: TournamentStatisticsComponent, canActivate: [LoggedIn]},
   {path: 'participants/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedIn]},
   {path: 'participants/fights', component: ParticipantFightListComponent, canActivate: [LoggedIn]},
   {

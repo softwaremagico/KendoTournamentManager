@@ -12,6 +12,7 @@ import {ClubListComponent} from "../../../views/club-list/club-list.component";
 import {ParticipantListComponent} from "../../../views/participant-list/participant-list.component";
 import {UserListComponent} from "../../basic/user-list/user-list.component";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {TournamentListComponent} from "../../../views/tournament-list/tournament-list.component";
 
 @Component({
   selector: 'navbar',
@@ -78,7 +79,17 @@ export class NavbarComponent implements OnInit {
         title: 'competitions',
         data: {
           hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_TOURNAMENTS)
-        }
+        },
+        children: [
+          {
+            path: Constants.PATHS.TOURNAMENTS.LIST,
+            component: TournamentListComponent,
+            canActivate: [AuthGuard],
+            title: 'list',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_TOURNAMENTS)
+            }
+          }]
       },
       {
         path: Constants.PATHS.ADMINISTRATION.ROOT,
