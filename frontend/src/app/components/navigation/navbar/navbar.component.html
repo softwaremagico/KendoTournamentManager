@@ -27,6 +27,12 @@
           {{ t('t.password') }}
         </span>
     </ng-template>
+    <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
+                 (execute)="logoutConfirmation=true">
+        <span id="logout-option">
+          {{ t('t.logout') }}
+        </span>
+    </ng-template>
   </context-menu>
 
   <biit-popup id="confirmation-delete-teams" *ngIf="logoutConfirmation"
@@ -56,4 +62,5 @@
     <reset-password (onClosed)="passwordPopup=false" style="width:100%"
                     [user]="this.user"></reset-password>
   </biit-popup>
+
 </ng-container>
