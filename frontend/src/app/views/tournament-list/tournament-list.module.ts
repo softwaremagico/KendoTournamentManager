@@ -4,7 +4,6 @@ import {CommonModule, DatePipe} from "@angular/common";
 import {TournamentRoutingModule} from "./tournament-routing.module";
 import {MatIconModule} from "@angular/material/icon";
 import {TranslocoModule} from "@ngneat/transloco";
-import {BasicTableModule} from "../../components/basic/basic-table/basic-table.module";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
@@ -29,7 +28,6 @@ import {MatButtonModule} from "@angular/material/button";
     CommonModule,
     MatIconModule,
     TranslocoModule,
-    BasicTableModule,
     MatButtonModule,
     RbacModule,
     MatSpinnerOverlayModule,

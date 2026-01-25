@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {MatIconModule} from "@angular/material/icon";
 import {TranslocoModule} from "@ngneat/transloco";
-import {BasicTableModule} from "../../components/basic/basic-table/basic-table.module";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {ParticipantListComponent} from "./participant-list.component";
@@ -29,7 +28,6 @@ import {MatButtonModule} from "@angular/material/button";
     CommonModule,
     MatIconModule,
     TranslocoModule,
-    BasicTableModule,
     MatButtonModule,
     RbacModule,
     MatSpinnerOverlayModule,

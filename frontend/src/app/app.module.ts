@@ -24,7 +24,6 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import {BasicTableModule} from "./components/basic/basic-table/basic-table.module";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {IconModule} from "./components/icons";
@@ -153,7 +152,6 @@ registerLocaleData(localeNL, "nl");
     ReactiveFormsModule,
     MatExpansionModule,
     MatCheckboxModule,
-    BasicTableModule,
     MatAutocompleteModule,
     DragDropModule,
     IconModule,
