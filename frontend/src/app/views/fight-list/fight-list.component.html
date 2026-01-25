@@ -88,7 +88,7 @@
         </button>
         <button biit-icon class="member-order"
                 *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
-                [disabled]="this.tournament.teamSize > 1 && (tournament && tournament.locked)"
+                [disabled]="this.tournament && this.tournament.teamSize > 1 && (tournament && tournament.locked)"
                 (click)="enableMemberOrder(true)"
                 [title]="t('membersOrder')">
           <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>

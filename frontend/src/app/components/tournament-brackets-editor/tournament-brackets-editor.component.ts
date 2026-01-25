@@ -18,7 +18,6 @@ import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 import {random} from "../../utils/random/random";
-import {MatDialog} from "@angular/material/dialog";
 import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
 import {Message} from "@stomp/stompjs/esm6";
 import {MessageContent} from "../../websockets/message-content.model";
@@ -79,7 +78,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
+              public rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
               private rxStompService: RxStompService, private environmentService: EnvironmentService,
               private tournamentChangedService: TournamentChangedService) {

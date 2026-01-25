@@ -1,10 +1,8 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ParticipantFightListComponent} from './participant-fight-list.component';
-import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {FightModule} from "../../components/fight/fight.module";
@@ -14,6 +12,7 @@ import {UserScoreModule} from "../../components/fight/duel/user-score/user-score
 import {DuelModule} from "../../components/fight/duel/duel.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -26,7 +25,6 @@ import {BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
     MatButtonModule,
     MatIconModule,
     MatSpinnerOverlayModule,
-    MatTooltipModule,
     RbacModule,
     TranslocoModule,
     FightModule,

@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
 import {Team} from "../../models/team";
 import {Participant} from "../../models/participant";
@@ -31,7 +30,7 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
   totalDuels: number;
 
   constructor(private untieAddedService: UntieAddedService,
-              private groupServices: GroupService, private messageService: MessageService, public dialog: MatDialog,
+              private groupServices: GroupService, private messageService: MessageService,
               rbacService: RbacService) {
     super(rbacService);
     this.totalDuels = this.getTotalDuels();

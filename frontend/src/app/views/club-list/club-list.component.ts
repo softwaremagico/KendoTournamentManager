@@ -1,8 +1,6 @@
 import {AfterViewInit, Component} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
-import {MessageService} from "../../services/message.service";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -40,7 +38,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   protected confirmDelete: boolean = false;
   protected showRanking: boolean = false;
 
-  constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
+  constructor(private clubService: ClubService,
               private transloco: TranslocoService, rbacService: RbacService, private _datePipe: DatePipe,
               private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
     super(rbacService);

@@ -37,6 +37,8 @@ export class UserScoreComponent {
   @Input()
   highlightedParticipantId: number | undefined;
 
+  participantWindowOpened: boolean = false;
+
   isUntie(): boolean {
     return this.duel.type === DuelType.UNDRAW;
   }
@@ -57,4 +59,7 @@ export class UserScoreComponent {
     }
   }
 
+  isParticipantPhotoWindowVisible($event: boolean) {
+    this.participantWindowOpened = $event;
+  }
 }

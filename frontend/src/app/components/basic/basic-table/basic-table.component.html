@@ -1,6 +1,5 @@
 <filter (filterChanged)="filter($event)" (reset)="filter('')"></filter>
-<button [matMenuTriggerFor]="mainMenuButton" [matTooltipShowDelay]="500" class="tune-button" mat-button
-        matTooltip="{{'fields' | transloco}}">
+<button [matMenuTriggerFor]="mainMenuButton" class="tune-button" mat-button>
   <mat-icon>tune</mat-icon>
 </button>
 <mat-menu #mainMenuButton="matMenu" class="table-settings">

@@ -101,11 +101,11 @@
 }
 
 .duel.duelSelected.over {
-  opacity: 30% !important;
+  opacity: 30%
 }
 
 .duel.duelSelected {
   background: var(--duel-selected-color) !important;
-  opacity: 100% !important;
+  opacity: 100%;
   font-weight: bold;
 }

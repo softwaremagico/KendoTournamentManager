@@ -1,5 +1,4 @@
 import {AfterViewInit, Component} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {UserService} from "../../services/user.service";
@@ -40,10 +39,9 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
 
   protected loading: boolean = false;
 
-  constructor(private userService: UserService, public dialog: MatDialog,
-              rbacService: RbacService, private systemOverloadService: SystemOverloadService, private userSessionService: UserSessionService,
-              private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private _datePipe: DatePipe) {
+  constructor(private userService: UserService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private userSessionService: UserSessionService, private transloco: TranslocoService,
+              private biitSnackbarService: BiitSnackbarService, private _datePipe: DatePipe) {
     super(rbacService);
   }
 

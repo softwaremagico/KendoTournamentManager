@@ -6,11 +6,10 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MemberSelectorModule} from "../basic/member-selector/member-selector.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {MatDialogModule} from "@angular/material/dialog";
-import {MatButtonModule} from "@angular/material/button";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitTabGroupModule} from "@biit-solutions/wizardry-theme/navigation";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -25,7 +24,6 @@ import {BiitTabGroupModule} from "@biit-solutions/wizardry-theme/navigation";
     MemberSelectorModule,
     TranslocoModule,
     RbacModule,
-    MatDialogModule,
     MatButtonModule,
     HasPermissionPipe,
     BiitButtonModule,

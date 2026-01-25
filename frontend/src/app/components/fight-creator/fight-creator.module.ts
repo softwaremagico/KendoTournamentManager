@@ -6,9 +6,8 @@ import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overla
 import {TranslocoModule} from "@ngneat/transloco";
 import {TeamCardModule} from "../team-card/team-card.module";
 import {TeamListModule} from "../basic/team-list/team-list.module";
-import {MatDialogModule} from "@angular/material/dialog";
-import {MatButtonModule} from "@angular/material/button";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -23,7 +22,6 @@ import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
     TranslocoModule,
     TeamCardModule,
     TeamListModule,
-    MatDialogModule,
     MatButtonModule,
     BiitButtonModule
   ]

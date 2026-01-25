@@ -1,6 +1,5 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {Participant} from "../../models/participant";
-import {MatDialog} from "@angular/material/dialog";
 import {ParticipantService} from "../../services/participant.service";
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
@@ -9,7 +8,6 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
-import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {DatePipe} from "@angular/common";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
@@ -50,7 +48,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   protected readonly port: number = +window.location.port;
 
   constructor(private router: Router, private userSessionService: UserSessionService,
-              private participantService: ParticipantService, public dialog: MatDialog,
+              private participantService: ParticipantService,
               private clubService: ClubService, private transloco: TranslocoService, rbacService: RbacService,
               private _datePipe: DatePipe, private _clubNamePipe: ClubNamePipe,
               private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
@@ -147,14 +145,6 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
       this.userSessionService.setSelectedParticipant(participant.id + "");
       this.router.navigate(['/participants/statistics'], {state: {participantId: participant.id}});
     }
-  }
-
-  showCompetitorsClassification(participant: Participant): void {
-    this.dialog.open(CompetitorsRankingComponent, {
-      panelClass: 'pop-up-panel',
-      width: '85vw',
-      data: {competitor: participant, showIndex: true}
-    });
   }
 
   onSaved($event: Participant) {

@@ -5,7 +5,6 @@ import {MatCardModule} from "@angular/material/card";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TranslocoModule} from "@ngneat/transloco";
 import {MatIconModule} from "@angular/material/icon";
-import {MatTooltipModule} from "@angular/material/tooltip";
 import {ParticipantNamePipe} from "../../pipes/visualization/participant-name-pipe";
 import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
@@ -21,7 +20,6 @@ import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
     DragDropModule,
     TranslocoModule,
     MatIconModule,
-    MatTooltipModule,
     TranslocoModule,
     ParticipantNamePipe,
     BiitIconModule

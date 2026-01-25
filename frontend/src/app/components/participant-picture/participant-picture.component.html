@@ -1,8 +1,17 @@
 <div class="participant-picture">
-  <div (dblclick)="openImage()" *ngIf="participantPicture" class="container">
-    <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
+  <div *ngIf="participantPicture" (dblclick)="openImage(true)" class="container">
+    <img alt="{{participantInitials}}" class="picture" src="{{ participantPicture }}"/>
   </div>
   <div *ngIf="!participantPicture" [style]="circleStyle" class="container">
-    <span class="initials">{{this.participantInitials}}</span>
+    <span class="initials">{{ this.participantInitials }}</span>
   </div>
 </div>
+
+<biit-popup id="participant-photo" *ngIf="participantWindowOpened && this.participantPicture"
+            (onClosed)="openImage(false)" no-header
+>
+  <picture-dialog-box
+    [participantPicture]="this.participantPicture"
+    (onClosed)="openImage(false)">
+  </picture-dialog-box>
+</biit-popup>

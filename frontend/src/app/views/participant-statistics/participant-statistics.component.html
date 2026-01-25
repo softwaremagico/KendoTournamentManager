@@ -243,12 +243,12 @@
             <div class="statistics-table-title">
               <h3>{{ 'performance' | transloco }}</h3>
             </div>
-            <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
+            <progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
                               [ngClass]="'bar-'+i"
                               [percentage]="value[1]?value[1]:0"
                               [text]="value[0] | transloco"
                               [hint]="value[0] + 'Hint' | transloco"
-            ></app-progress-bar>
+            ></progress-bar>
           </div>
 
           <div class="box-statistics box chart">

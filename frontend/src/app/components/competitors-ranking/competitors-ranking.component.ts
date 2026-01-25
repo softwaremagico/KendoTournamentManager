@@ -1,16 +1,13 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {RankingService} from "../../services/ranking.service";
 import {ScoreOfCompetitor} from "../../models/score-of-competitor";
 import {TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";
-import {DOCUMENT} from "@angular/common";
 import {Club} from "../../models/club";
 import {ScoreType} from "../../models/score-type";
-import {ParticipantFormValidationFields} from "../../forms/participant-form/participant-form-validation-fields";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({

@@ -107,12 +107,12 @@
 }
 
 .duel.duelSelected.over {
-  opacity: 30% !important;
+  opacity: 30%;
 }
 
 .duel.duelSelected {
   background: var(--duel-selected-color) !important;
-  opacity: 100% !important;
+  opacity: 100%;
   font-weight: bold;
 }
 
@@ -124,10 +124,14 @@
 //For participant fights.
 .duel:has(user-name .highlighted) {
   background: var(--floating-background) !important;
-  opacity: 100% !important;
+  opacity: 100%;
 }
 
 .duel:has(user-score .highlightParticipant) {
   background: var(--active-fight-color);
   opacity: 30%;
+}
+
+.duel:has(user-score .showAvatar) {
+  opacity: 100%;
 }

@@ -5,10 +5,8 @@ import {TournamentRoutingModule} from "./tournament-routing.module";
 import {MatIconModule} from "@angular/material/icon";
 import {TranslocoModule} from "@ngneat/transloco";
 import {BasicTableModule} from "../../components/basic/basic-table/basic-table.module";
-import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {MatButtonModule} from "@angular/material/button";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
@@ -21,6 +19,7 @@ import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 import {TournamentTeamsModule} from "./tournament-teams/tournament-teams.module";
 import {LeagueGeneratorModule} from "../fight-list/league-generator/league-generator.module";
 import {RoleSelectorModule} from "../../components/role-selector/role-selector.module";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [TournamentListComponent],
@@ -31,7 +30,6 @@ import {RoleSelectorModule} from "../../components/role-selector/role-selector.m
     MatIconModule,
     TranslocoModule,
     BasicTableModule,
-    MatTooltipModule,
     MatButtonModule,
     RbacModule,
     MatSpinnerOverlayModule,
