@@ -135,6 +135,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   editElement(tournament: Tournament): void {
     this.target = tournament;
+    this.userSessionService.setSelectedTournament(tournament.id + "");
   }
 
   deleteElements(tournaments: Tournament[]): void {
@@ -301,4 +302,12 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   }
 
   protected readonly BiitProgressBarType = BiitProgressBarType;
+
+  selectTournaments(tournaments: Tournament[]) {
+    if (tournaments && tournaments.length == 1) {
+      this.userSessionService.setSelectedTournament(tournaments[0].id + "");
+    } else {
+      this.userSessionService.setSelectedTournament(undefined);
+    }
+  }
 }

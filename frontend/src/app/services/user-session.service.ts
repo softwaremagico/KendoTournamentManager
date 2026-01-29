@@ -63,13 +63,11 @@ export class UserSessionService {
   setSelectedTournament(tournamentId: string | undefined): void {
     if (tournamentId) {
       sessionStorage.setItem("lastSelectedTournament", tournamentId);
+      localStorage.setItem('tournamentId', tournamentId + "");
     } else {
       sessionStorage.removeItem("lastSelectedTournament");
+      localStorage.removeItem('tournamentId');
     }
-  }
-
-  getSelectedTournament() {
-    return sessionStorage.getItem("lastSelectedTournament");
   }
 
   setSelectedParticipant(participantId: string | undefined): void {

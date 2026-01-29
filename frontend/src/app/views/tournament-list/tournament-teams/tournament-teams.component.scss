@@ -4,6 +4,7 @@ $space: 1em;
   width: 800px;
   display: flex;
   max-height: 60vh;
+  min-height: 40vh;
 }
 
 @media screen and (max-width: 950px) {
