@@ -31,7 +31,7 @@
       {{ 'photo' | transloco }}
       <!--      <mat-icon>add_a_photo</mat-icon>-->
     </button>
-    <button biit-button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | hasPermission)" secondary>
+    <button biit-button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | hasPermission)" primary>
       {{ 'selectButton' | transloco }}
       <!--      <mat-icon>photo_album</mat-icon>-->
     </button>
@@ -40,6 +40,6 @@
       <!--      <mat-icon>upload_file</mat-icon>-->
       <input #fileInput (change)="handleFileInput($event)" accept=".jpg,.jpeg,.png" style="display:none;" type="file"/>
     </button>
-    <button biit-button (click)="closeDialog()">{{ 'close' | transloco }}</button>
+    <button biit-button (click)="closeDialog()" secondary>{{ 'close' | transloco }}</button>
   </div>
 </div>

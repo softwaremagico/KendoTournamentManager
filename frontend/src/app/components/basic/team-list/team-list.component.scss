@@ -32,6 +32,12 @@
   font-size: 12px;
 }
 
+.team-grid {
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
 .team-grid.grid {
   display: grid;
   grid-template-columns: 50% 50%;
