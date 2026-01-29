@@ -356,7 +356,7 @@
   "clubEmail": "Correo Electrónico",
   "clubPhone": "Teléfono",
   "clubWeb": "Web",
-  "clubDeleteQuestion": "¿Estás seguro de eliminar <strong>{{name}}</strong>?",
+  "clubDeleteQuestion": "¿Estás seguro de eliminar <strong>{{name}}</strong>? Esta acción también eliminará cualquier participante asociado a estos clubs.",
   "clubAdd": "Añadir un nuevo club",
   "clubEdit": "Editar club",
   "clubDelete": "Eliminar club",

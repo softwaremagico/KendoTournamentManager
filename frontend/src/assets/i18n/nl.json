@@ -332,7 +332,7 @@
   "clubEmail": "E-mail",
   "clubPhone": "Telefoon",
   "clubWeb": "Web",
-  "clubDeleteQuestion": "Weet je zeker dat je <strong>{{name}} wilt verwijderen?",
+  "clubDeleteQuestion": "Weet je zeker dat je <strong>{{name}} wilt verwijderen? Deze actie zal ook alle deelnemers verwijderen die aan deze clubs zijn verbonden.",
   "clubAdd": "Een Nieuwe Club Toevoegen",
   "clubEdit": "Club Bewerken",
   "clubDelete": "Club Verwijderen",

@@ -351,7 +351,7 @@
   "clubEmail": "Correu Electrònic",
   "clubPhone": "Telèfon",
   "clubWeb": "Web",
-  "clubDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?",
+  "clubDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>? Aquesta acció també eliminarà qualsevol participant associat a aquests clubs.",
   "clubAdd": "Afegeix un club nou",
   "clubEdit": "Edita el club",
   "clubDelete": "Suprimeix el club",

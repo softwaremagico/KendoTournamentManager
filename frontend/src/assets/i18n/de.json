@@ -332,7 +332,7 @@
   "clubEmail": "Email",
   "clubPhone": "Telefon",
   "clubWeb": "Web",
-  "clubDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?",
+  "clubDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen? Diese Maßnahme führt auch zum Ausschluss aller Teilnehmer, die mit diesen Clubs in Verbindung stehen.",
   "clubAdd": "Verein Hinzufügen",
   "clubEdit": "Verein Bearbeiten",
   "clubDelete": "Verein Löschen",

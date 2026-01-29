@@ -342,7 +342,7 @@
   "clubEmail": "E-mail",
   "clubPhone": "Telefono",
   "clubWeb": "Web",
-  "clubDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?",
+  "clubDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>? Questa azione rimuoverà anche tutti i partecipanti associati a questi club.",
   "clubAdd": "Aggiungi un Nuovo Club",
   "clubEdit": "Modifica Club",
   "clubDelete": "Elimina il Club",

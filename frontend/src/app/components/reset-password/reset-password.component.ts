@@ -78,21 +78,6 @@ export class ResetPasswordComponent implements OnInit {
     }
   }
 
-  // changePassword(): void {
-  //   if (this.validate()) {
-  //     this.loadingGlobal = true;
-  //     this.userService.updatePassword(this.oldPassword, this.newPassword).subscribe({
-  //       next: (): void => {
-  //         this.messageService.infoMessage('infoAuthenticatedUserUpdated');
-  //         this.close();
-  //       },
-  //       error: error => {
-  //         ErrorHandler.notify(error, this.transloco, this.biitSnackbarService);
-  //       }
-  //     }).add(() => this.loadingGlobal = false);
-  //   }
-  // }
-
   protected validate(): boolean {
     let verdict: boolean = true;
     if (!this.oldPassword) {
