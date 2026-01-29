@@ -55,7 +55,7 @@ export class ParticipantFormPopupComponent implements OnInit {
                 this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
               }
             );
-            this.onClosed.emit();
+            this.onSaved.emit();
           } else {
             const parameters: object = {element: _participants[0].name};
             this.transloco.selectTranslate('failedOnCsvField', parameters).subscribe(
