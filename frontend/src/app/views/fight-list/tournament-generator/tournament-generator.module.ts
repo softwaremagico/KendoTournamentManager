@@ -5,19 +5,22 @@ import {
   TournamentBracketsEditorModule
 } from "../../../components/tournament-brackets-editor/tournament-brackets-editor.module";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
-import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatDividerModule} from "@angular/material/divider";
+import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
   declarations: [
     TournamentGeneratorComponent
   ],
-  exports:[
+  exports: [
     TournamentGeneratorComponent
   ],
   imports: [
@@ -26,10 +29,15 @@ import {MatDividerModule} from "@angular/material/divider";
     MatSpinnerOverlayModule,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule,
     RbacModule,
-    TranslateModule,
-    MatDividerModule
+    TranslocoModule,
+    MatDividerModule,
+    HasPermissionPipe,
+    BiitButtonModule,
+    BiitPopupModule,
+    BiitIconButtonModule,
+    BiitProgressBarModule
   ]
 })
-export class TournamentGeneratorModule { }
+export class TournamentGeneratorModule {
+}

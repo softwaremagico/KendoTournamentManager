@@ -1,8 +1,8 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Team} from "../../models/team";
 
 @Component({
-  selector: 'app-team-card',
+  selector: 'team-card',
   templateUrl: './team-card.component.html',
   styleUrls: ['./team-card.component.scss']
 })
@@ -16,5 +16,8 @@ export class TeamCardComponent {
 
   @Input()
   disableDrag: boolean = false;
+
+  @Output()
+  onClick: EventEmitter<Team> = new EventEmitter<Team>();
 
 }

@@ -98,4 +98,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     Optional<Participant> findByToken(String token);
 
     Optional<Participant> findByIdCard(String idCard);
+
+    int deleteByClubIn(Collection<Club> clubs);
 }

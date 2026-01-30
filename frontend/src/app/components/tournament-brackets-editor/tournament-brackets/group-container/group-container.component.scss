@@ -1,31 +1,45 @@
 .group {
-  position: absolute;
+  position: relative;
   width: 300px;
-  border: 2px solid #001239;
-  border-radius: 4px;
+  border: 3px solid var(--component-color);
   overflow: hidden;
   display: flex;
-  z-index: 15;
 }
 
 .group-title {
-  font-size: 16px;
-  text-transform: uppercase;
-  background: #001239;
-  color: #fff;
-  padding: 0 10px;
-  line-height: 24px;
-  /* Rotate from top left corner (not default) */
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: center;
-  height: 100%;
+  border-style: solid;
+  text-transform: uppercase;
+  border-width: 2px;
+  border-color: var(--component-color);
+  line-height: 25px;
+  max-width: 56px;
+  overflow: clip;
+  background: var(--component-color);
+  color: var(--body-background);
+  font-weight: bold;
 }
 
 .group-content {
-  background: #4d6d95;
-  width: 100%;
+  background: white;
+  width: 90%;
+  overflow: auto;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
 }
+
+.group-content.selected {
+  background: var(--selected-color);
+}
+
+.group-content.disabled {
+  background: var(--disabled-floating-color) !important;
+}
+
 
 .mat-card.mat-focus-indicator.cdk-drag.team-card.minify {
   margin: 0;

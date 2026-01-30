@@ -1,6 +1,5 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Action} from "../../../action";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
 import {TeamListData} from "../../../components/basic/team-list/team-list-data";
 import {TeamService} from "../../../services/team.service";
@@ -9,7 +8,6 @@ import {Team} from "../../../models/team";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentType} from "../../../models/tournament-type";
-import {TournamentService} from "../../../services/tournament.service";
 import {UntypedFormControl} from "@angular/forms";
 import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
 import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
@@ -21,21 +19,25 @@ import {LeagueFightsOrder} from "../../../models/league-fights-order";
 import {Participant} from "../../../models/participant";
 import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {RankingService} from "../../../services/ranking.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
-  selector: 'app-league-generator',
+  selector: 'league-generator',
   templateUrl: './league-generator.component.html',
   styleUrls: ['./league-generator.component.scss']
 })
 export class LeagueGeneratorComponent extends RbacBasedComponent implements OnInit {
 
+  @Input()
+  tournament: Tournament;
+  @Output()
+  onClosed: EventEmitter<Team[]> = new EventEmitter<Team[]>();
+
   teamListData: TeamListData = new TeamListData();
   teams: Team[];
   title: string;
   action: Action;
-  actionName: string;
   teamsOrder: Team[] = [];
-  tournament: Tournament;
   drawResolution: DrawResolution[];
   avoidDuplicates = new UntypedFormControl('', []);
 
@@ -50,21 +52,18 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   firstInFirstOut: boolean;
   selectedDrawResolution: DrawResolution;
   avoidDuplicatedFights: boolean;
+  loadingGlobal: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
-              private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
+  protected openExtraProperties: boolean = false;
+
+  constructor(private teamService: TeamService, rbacService: RbacService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
-              private messageService: MessageService, private rankingService: RankingService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-                title: string,
-                action: Action,
-                tournament: Tournament
-              }) {
+              private messageService: MessageService, private rankingService: RankingService) {
     super(rbacService);
-    this.title = data.title;
-    this.action = data.action;
-    this.actionName = Action[data.action];
-    this.tournament = data.tournament;
+    this.defaultPropertiesValue();
+  }
+
+  private initTournament(): void {
     if (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
       this.drawResolution = DrawResolution.toArray();
     } else if (TournamentType.BUBBLE_SORT) {
@@ -77,11 +76,10 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
     this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
     this.canAvoidDuplicatedFights = TournamentType.avoidsDuplicatedFights(this.tournament.type);
-
-    this.defaultPropertiesValue();
   }
 
   ngOnInit(): void {
+    this.initTournament();
     if (this.canMaximizeFights || this.needsDrawResolution || this.needsFifoWinner) {
       this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
         if (_tournamentSelection) {
@@ -129,11 +127,11 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   }
 
   acceptAction() {
-    this.dialogRef.close({data: this.teamsOrder, action: this.action});
+    this.onClosed.emit(this.teamsOrder);
   }
 
   cancelDialog() {
-    this.dialogRef.close({action: Action.Cancel});
+    this.onClosed.emit([]);
   }
 
   private transferCard(event: CdkDragDrop<Team[], any>): Team {
@@ -288,4 +286,5 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   }
 
   protected readonly TournamentType = TournamentType;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

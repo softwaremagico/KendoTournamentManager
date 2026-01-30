@@ -1,0 +1,13 @@
+<svg [attr.height]="height" [attr.width]="width">
+  <defs>
+    <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6"
+            orient="auto">
+      <path d="M2,2 L2,11 L10,6 L2,2"/>
+    </marker>
+  </defs>
+
+  <line *ngFor="let coordinate of this.coordinates"
+        [attr.x1]="coordinate.x1" [attr.y1]="coordinate.y1" [attr.x2]="coordinate.x2-(this.arrow_size/2)"
+        [attr.y2]="coordinate.y2" class="arrow" [style.stroke]="coordinate.color"
+        [style.stroke-dasharray]="(coordinate.winner==0) ? '1 0' : '10 5'"/>
+</svg>

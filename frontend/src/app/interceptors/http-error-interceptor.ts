@@ -6,12 +6,17 @@ import {catchError} from "rxjs/operators";
 import {LoginService} from "../services/login.service";
 import {MessageService} from "../services/message.service";
 import {EnvironmentService} from "../environment.service";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {TranslocoService} from "@ngneat/transloco";
+import {BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
   constructor(public router: Router, private loginService: LoginService,
-              private messageService: MessageService, private environmentService: EnvironmentService) {
+              private messageService: MessageService, private environmentService: EnvironmentService,
+              protected transloco: TranslocoService,
+              private biitSnackbarService: BiitSnackbarService,) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -22,9 +27,11 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           console.error('An error occurred:', error.error.message);
         } else {
           // Log error.
-          if (error.error) {
-            this.messageService.backendErrorMessage(error.status, error.error.code);
+          if (error.error && !error.ok) {
+            ErrorHandler.notify(error, this.transloco, this.biitSnackbarService);
             console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
+            //Set to 'ok' so it is not handled again by local error handler.
+            error.ok = true;
           }
         }
         if (error.status === 409 || error.status === 401 || error.status === 423) {

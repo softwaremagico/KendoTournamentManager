@@ -3,7 +3,7 @@ import {AchievementType} from "../../models/achievement-type.model";
 import {Achievement} from "../../models/achievement.model";
 
 @Component({
-  selector: 'app-achievement-wall',
+  selector: 'achievements-wall',
   templateUrl: './achievement-wall.component.html',
   styleUrls: ['./achievement-wall.component.scss']
 })

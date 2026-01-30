@@ -1,182 +1,138 @@
+@import "@biit-solutions/wizardry-theme/styles";
+@import "theme-colors";
+@import '@angular/cdk/overlay-prebuilt';
+
+$background: #EDEDED;
+$space: 0.7rem;
 /* You can add global styles to this file, and also import other style files */
-@import "basic-colors";
 
-.cdk-overlay-pane {
-  &.mat-tooltip-panel {
-    .mat-tooltip {
-      background: var(--tooltip-background);
-      font-size: 15px;
-      padding: 10px;
-    }
-  }
-}
-
-
-//Messages
-.mat-snack-bar-container.info-snackbar.message-service {
-  background: #3700B3;
-  color: aliceblue;
-  width: 80%;
-}
-
-.mat-snack-bar-container.warning-snackbar.message-service {
-  background: #FF9800;
-  color: aliceblue;
-}
-
-.mat-snack-bar-container.error-snackbar.message-service {
-  background: var(--alert);
-  color: var(--warning);
-}
-
-// Table
-.kendo-table {
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
-  min-width: 600px;
-}
-
-.page-container {
-  width: 100%;
+html, body {
   height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.upper-menu {
-  display: inline-flex;
-  flex-flow: row wrap;
-  text-align: left;
-  float: left;
-  flex-shrink: 0;
-  flex-grow: 0;
-  padding: 10px;
-}
-
-.page-content {
-  flex-shrink: 1;
-  flex-grow: 1;
-  position: relative;
-  overflow-y: auto;
+  font-size: 16px;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  height: 100%;
-  overflow: hidden
+  font-family: Montserrat, "Montserrat", sans-serif;
+  background-color: $background;
 }
 
-.upper-menu .mat-button {
-  width: 80px;
+app-root > router-outlet + * {
+  display: block;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  //overflow-y: auto;
 }
 
-.upper-menu .cell {
-  display: flex;
-}
-
-.upper-menu .filter {
-  text-align: right;
-  flex: 1 1 100px;
-  padding-right: 50px;
-  margin-bottom: 0px;
-}
-
-.bottom-menu {
-  text-align: right;
-  padding-left: 20px;
+biit-snackbar {
+  z-index: 1000;
   position: absolute;
-  margin-top: -50px;
 }
 
-.mat-cell {
-  text-align: left;
-  padding: 3px 20px 3px 20px !important;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
+.horizontal {
+  display: flex;
+  flex-direction: row;
 }
 
-.mat-row.hovered {
-  background: var(--hover-color);
+.vertical {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.dark-mode .mat-row.hovered {
-  background: #b0a3d5;
+.flex-grow {
+  flex-grow: 1;
 }
 
-.mat-row.highlighted {
-  background: var(--hightligh-color);
-  color: var(--text-color);
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
 }
 
-.dark-mode .mat-row.highlighted {
-  background: #5f4ca1;
-  color: white;
+//Toggle component descriptions overflow on popups.
+.toggle-description {
+  width: 65vh;
 }
 
-.highlighted .mat-cell {
-  color: var(--selected-color);
-  font-weight: bold;
+.gap {
+  gap: $space;
 }
 
-.mat-form-field-wrapper {
-  font-size: 12px;
+@media screen and (max-width: 600px) {
+  .horizontal {
+    flex-direction: column;
+  }
+
+  .table-view {
+    padding: unset !important;
+    margin: 2rem 0.5rem !important;
+    box-sizing: unset !important;
+    border: unset !important;
+  }
+
+  .tab-row {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .tab-row-single {
+    width: unset !important;
+  }
+
+  .form-bottom {
+    position: sticky;
+    bottom: 0;
+  }
 }
 
-.mat-paginator-container {
-  color: var(--footer);
+
+//Icons default color
+svg {
+  color: var(--icon-color);
 }
 
-.table-settings {
-  padding: 15px;
+//Size of buttons in table
+button > .mat-icon {
+  height: 16px !important;
+  width: 16px !important;
 }
 
-@font-face {
-  font-family: "Square Sans Serif 7";
-  src: local("Square Sans Serif 7"), url(./assets/fonts/square_sans_serif_7.ttf) format("truetype");
+.mdc-button {
+  min-width: 34px !important;
 }
 
-
-a:link {
-  color: var(--link);
+.mat-divider {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  color: var(--component-color);
 }
 
-/* visited link */
-a:visited {
-  color: var(--link-visited);
+button .warning {
+  color: var(--warning-color);
 }
 
-/* mouse over link */
-a:hover {
-  color: var(--link-hover);
+.logo {
+  filter: brightness(0) saturate(100%) invert(12%) sepia(35%) saturate(3300%) hue-rotate(204deg) brightness(88%) contrast(113%);
 }
 
-/* selected link */
-a:active {
-  color: var(--link-active);
+//Custom table buttons has a right margin
+.table-view .mat-mdc-button > .mat-icon, biit-action-button button, .upper-menu button > .mat-icon {
+  margin-right: 0 !important;
 }
 
-.mat-toolbar a:link {
-  color: var(--title-color);
-}
+//Custom table buttons mimic biit-buttons styles
+.table-view button, biit-action-button button {
+  &:hover, &:focus-visible, &:has(.checked) {
+    background-color: var(--main-background);
+  }
 
-/* visited link */
-.mat-toolbar a:visited {
-  color: var(--title-color);
-}
-
-/* mouse over link */
-.mat-toolbar a:hover {
-  color: var(--title-color);
-}
-
-/* selected link */
-.mat-toolbar a:active {
-  color: var(--title-color);
-}
-
-/* Allow new lines on tooltips with this class */
-.tooltip-with-lines {
-  white-space: pre-line;
+  &:active {
+    path {
+      fill: var(--main-color) !important;
+    }
+  }
 }

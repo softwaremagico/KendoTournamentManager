@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  <div class="content">
+    <div *ngFor="let language of languages, let i = index">
+      <div style="display: flex; margin-bottom: 0.5rem">
+        <biit-radio-button [(ngModel)]="selectedLanguage"
+                           (ngModelChange)="switchLanguage()"
+                           [id]="i+''"
+                           [name]="language"
+                           [value]="language"
+                           [required]="false"
+                           [description]="language"
+                           [showAlwaysDescription]="true"
+                           [disabled]="false">
+          {{ 'languageKey.' + language | transloco }}
+        </biit-radio-button>
+      </div>
+    </div>
+    <div class="button-container">
+      <button biit-button id="language-accept" primary
+              (click)="close()">
+        {{ 'close' | transloco }}
+      </button>
+    </div>
+  </div>
+</ng-container>

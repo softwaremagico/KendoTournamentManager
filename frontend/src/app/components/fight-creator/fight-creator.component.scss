@@ -1,0 +1,120 @@
+.fights-creator {
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+}
+
+.fights-creator.horizontal {
+  height: 90%;
+}
+
+.teams-container {
+  overflow: hidden;
+  margin-left: 30px;
+  margin-right: 30px;
+  height: 75%;
+  max-height: 60vh;
+  min-height: 40vh;
+}
+
+@media screen and (max-width: 950px) {
+  .teams-container {
+    width: 700px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .teams-container {
+    width: 600px;
+  }
+}
+
+.teams-container div {
+  flex: 1
+}
+
+.teams-container.horizontal {
+  max-height: 220px;
+  overflow: unset;
+}
+
+.team {
+  min-height: 200px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+  overflow: auto;
+}
+
+.teams {
+  overflow: auto;
+  padding-left: 10px;
+}
+
+.team-list {
+  padding-right: 10px;
+  min-height: 20vh;
+  max-height: 400px;
+  gap: 1rem;
+}
+
+.new-fight-title {
+  display: flex;
+  width: 100%;
+}
+
+.teams-title {
+  width: 100%;
+  text-align: center;
+  margin-left: 30px;
+  margin-right: 30px;
+  background-color: var(--component-color);
+  height: 40px;
+  align-content: center;
+}
+
+.red-ribbon {
+  color: red;
+}
+
+.white-ribbon {
+  color: white;
+}
+
+.new-fight {
+  display: flex;
+  height: 140px;
+}
+
+.team-selected {
+  border: 3px solid var(--component-color);
+  min-height: 140px;
+  height: 140px;
+  width: 100%;
+  margin-left: 30px;
+  margin-right: 30px;
+  overflow: auto;
+  margin-top: -20px;
+  padding: 1rem;
+}
+
+.canvas {
+  width: 100%;
+  min-width: 40vw;
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.5rem 0 1.5rem;
+  background: var(--body-background);
+}
+
+
+@media screen and (max-width: 800px) {
+  .canvas {
+    min-width: 0;
+  }
+}
+
+
+
+
+

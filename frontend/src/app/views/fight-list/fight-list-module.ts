@@ -2,8 +2,7 @@ import {NgModule} from '@angular/core';
 import {FightListComponent} from "./fight-list.component";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatIconModule} from "@angular/material/icon";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {FightModule} from "../../components/fight/fight.module";
 import {UntieFightModule} from "../../components/untie-fight/untie-fight.module";
@@ -12,28 +11,42 @@ import {FilterModule} from "../../components/basic/filter/filter.module";
 import {MatDividerModule} from "@angular/material/divider";
 import {CommonModule} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
+import {CompetitorsRankingModule} from "../../components/competitors-ranking/competitors-ranking.module";
+import {TeamRankingModule} from "../../components/team-ranking/team-ranking.module";
+import {FightCreatorModule} from "../../components/fight-creator/fight-creator.module";
+import {SenbatsuFightCreatorModule} from "../../components/senbatsu-fight-creator/senbatsu-fight-creator.module";
+import {LeagueGeneratorModule} from "./league-generator/league-generator.module";
 import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
   declarations: [FightListComponent],
-  imports: [
-    MatSpinnerOverlayModule,
-    MatIconModule,
-    MatTooltipModule,
-    TranslateModule,
-    RbacModule,
-    FightModule,
-    UntieFightModule,
-    TimerModule,
-    FilterModule,
-    MatDividerModule,
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
-  ]
+    imports: [
+        MatSpinnerOverlayModule,
+        MatIconModule,
+        TranslocoModule,
+        RbacModule,
+        FightModule,
+        UntieFightModule,
+        TimerModule,
+        FilterModule,
+        MatDividerModule,
+        CommonModule,
+        MatInputModule,
+        MatButtonModule,
+        HasPermissionPipe,
+        BiitIconButtonModule,
+        BiitPopupModule,
+        CompetitorsRankingModule,
+        TeamRankingModule,
+        BiitButtonModule,
+        FightCreatorModule,
+        SenbatsuFightCreatorModule,
+        LeagueGeneratorModule
+    ]
 })
 export class FightListModule {
 }

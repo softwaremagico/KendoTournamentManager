@@ -4,24 +4,45 @@
 
 .statistics-layout {
   display: grid;
+  gap: 2em;
 }
 
 .statistics-layout .upper-menu {
   padding-left: 30px;
+  margin: 10px;
+  display: flex;
+}
+
+.upper-menu {
+  gap: 1em;
+}
+
+.upper-menu button {
+  width: 60px;
+}
+
+::ng-deep .upper-menu button .mat-icon.kendo-icon.mat-icon-no-color {
+  margin-left: -17px;
+}
+
+.player {
+  background-color: var(--floating-background);
+  border: 3px solid var(--component-color);
+  margin: 0 2em 0 2em;
 }
 
 .statistics-container {
-  height: 83vh;
-  max-height: 83vh;
-  min-height: 50vh;
+  height: 78vh;
   overflow-y: auto;
-  margin-top: 20px;
+  margin-top: 1em;
 }
 
 .dashboard {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 }
+
 
 .frame {
   padding: 15px;
@@ -37,29 +58,40 @@
 
 .box-statistics {
   text-align: center;
-  margin: 15px;
-  min-width: 160px;
+  margin: 1em;
+  min-height: 500px;
   padding: 15px 15px 50px;
+  border: 1px solid var(--component-color);
+}
+
+.box-statistics.chart {
+  align-content: center;
 }
 
 .statistics-table {
-  font-size: 12px;
   align-content: center;
-  text-align: right;
   width: 100%;
   padding: 15px;
 }
 
 .statistics-table-title {
-  align-content: center;
-  display: flex;
-  justify-content: center;
+  font-size: 1.5em;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding-left: .75em;
+  padding-right: .75em;
   width: 100%;
   margin-bottom: -20px;
 }
 
-.statistics-table-title > h3 {
-  padding-left: 15px;
+.statistics-table .left-column {
+  text-align: right;
+  width: 55%;
+}
+
+.statistics-table .right-column {
+  text-align: left;
+  width: 45%;
 }
 
 .scrollable {
@@ -75,13 +107,8 @@
   text-align: center;
 }
 
-.flip {
-  transform: scaleX(-1);
-}
-
 .ranking {
   text-align: center;
-  padding: 15px;
 }
 
 .ranking-very-good {
@@ -121,12 +148,15 @@
   min-width: 290px;
 }
 
-app-achievement-wall {
+achievements-wall {
   margin-top: 10px;
-  width: 275px;
-  height: 245px;
+  height: 350px;
 }
 
 .name {
   text-align: center;
+}
+
+::ng-deep .apexcharts-canvas {
+  display: inline-block;
 }

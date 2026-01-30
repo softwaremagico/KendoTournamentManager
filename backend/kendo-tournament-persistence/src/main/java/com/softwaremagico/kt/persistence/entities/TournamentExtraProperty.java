@@ -38,6 +38,8 @@ import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
+
 
 @Entity
 @Cacheable
@@ -47,6 +49,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
                 @Index(name = "ind_tournament", columnList = "tournament"),
         })
 public class TournamentExtraProperty extends Element {
+
+    @Serial
+    private static final long serialVersionUID = -7263989925801297370L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament", nullable = false)

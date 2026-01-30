@@ -2,9 +2,10 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {FilterFocusService} from "../../../services/notifications/filter-focus.service";
+import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
-  selector: 'app-filter',
+  selector: 'filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.scss']
 })
@@ -31,8 +32,12 @@ export class FilterComponent implements OnInit {
   }
 
   filter(event: Event): void {
-    const filter: string = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filterChanged.emit(filter);
+    const filter: string = (event.target as HTMLInputElement).value;
+    this.filterValue(filter);
+  }
+
+  filterValue(filter: string): void {
+    this.filterChanged.emit(filter.toLowerCase());
   }
 
   reset(): void {
@@ -47,4 +52,6 @@ export class FilterComponent implements OnInit {
   focusout(): void {
     this.filterFocusService.isFilterActive.next(false);
   }
+
+  protected readonly Type = Type;
 }

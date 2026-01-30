@@ -1,0 +1,68 @@
+<ng-container id="participant-form" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div class="row">
+      <biit-input-text id="participant-name" [(ngModel)]="participant.name"
+                       [placeholder]="t('participantName')"
+                       [required]="true"
+                       [minLength]="PARTICIPANT_NAME_MIN_LENGTH"
+                       [maxlength]="PARTICIPANT_NAME_MAX_LENGTH"
+                       error="{{errors | mapGet: ParticipantFormValidationFields.NAME_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="participant-lastname" [(ngModel)]="participant.lastname"
+                       [placeholder]="t('lastname')"
+                       [required]="true"
+                       [minLength]="PARTICIPANT_LASTNAME_MIN_LENGTH"
+                       [maxlength]="PARTICIPANT_LASTNAME_MAX_LENGTH"
+                       error="{{errors | mapGet: ParticipantFormValidationFields.LASTNAME_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="participant-id-card" [(ngModel)]="participant.idCard"
+                       [placeholder]="t('idCard')"
+                       [required]="true"
+                       [maxlength]="PARTICIPANT_ID_MAX_LENGTH"
+                       error="{{errors | mapGet: ParticipantFormValidationFields.ID_CARD_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-dropdown id="participant-club" *ngIf="clubs"
+                     [ngModel]="(participant.club?.id + '') | dropdownInterface: translatedClubs"
+                     (ngModelChange)="setClub($event.value)"
+                     [data]="translatedClubs"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('club')"
+                     [descriptionLabel]="'description'"
+                     [disabled]="!(RbacActivity.EDIT_PARTICIPANT | hasPermission)"
+      ></biit-dropdown>
+    </div>
+    <div class="row picture-container" *ngIf="participantPicture">
+      <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
+      <floating-delete-button icon="cross" class="floating-image-delete-button"
+                              (click)="deletePicture()">
+      </floating-delete-button>
+    </div>
+    <div class="buttons-row">
+      <button biit-button secondary id="participant-photo" *ngIf="participant.id" (click)="addPhoto=true"
+              [disabled]="saving || !(RbacActivity.TAKE_PICTURE | hasPermission)">
+        {{ t('photo') }}
+      </button>
+      <button biit-button id="participant-button-save" (click)="onSave()"
+              [disabled]="saving || !(RbacActivity.EDIT_PARTICIPANT | hasPermission)">
+        {{ t('saveButton') }}
+      </button>
+    </div>
+  </div>
+
+
+  <biit-popup id="photo-popup" *ngIf="addPhoto" no-header>
+    <participant-picture
+      [participant]="participant"
+      (onClosed)="addPhoto=false"></participant-picture>
+  </biit-popup>
+</ng-container>

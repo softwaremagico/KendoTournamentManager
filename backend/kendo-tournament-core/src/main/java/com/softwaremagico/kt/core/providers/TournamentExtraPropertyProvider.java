@@ -82,7 +82,7 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
 
 
     @Override
-    public TournamentExtraProperty save(TournamentExtraProperty entity) {
+    public synchronized TournamentExtraProperty save(TournamentExtraProperty entity) {
         if (!entity.getPropertyKey().getAllowedTournaments().contains(entity.getTournament().getType())) {
             throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
                     + "' cannot have property '" + entity.getPropertyKey() + "'");

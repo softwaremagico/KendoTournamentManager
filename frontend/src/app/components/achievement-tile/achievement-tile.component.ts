@@ -1,14 +1,14 @@
 import {Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {formatDate} from "@angular/common";
 import {AchievementType} from "../../models/achievement-type.model";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {AchievementsService} from "../../services/achievements.service";
 
 @Component({
-  selector: 'app-achievement-tile',
+  selector: 'achievement-tile',
   templateUrl: './achievement-tile.component.html',
   styleUrls: ['./achievement-tile.component.scss'],
   // tooltip style not applied without this:
@@ -39,7 +39,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   tooltipHtml: string;
   totalHtml: string;
 
-  constructor(private translateService: TranslateService, private nameUtils: NameUtilsService,
+  constructor(private translateService: TranslocoService, private nameUtils: NameUtilsService,
               private achievementsService: AchievementsService) {
 
   }
@@ -135,11 +135,11 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     if (total) {
       if (this.view === 'tournament') {
         return '<div class="achieved-by-total"><br>'
-          + this.translateService.instant('achievementToolTipTotal', {totalParticipants: total})
+          + this.translateService.translate('achievementToolTipTotal', {totalParticipants: total})
           + '</div>';
       } else {
         return '<div class="achieved-by-total"><br>'
-          + this.translateService.instant('achievementToolTipOthersTotal', {totalParticipants: total - 1})
+          + this.translateService.translate('achievementToolTipOthersTotal', {totalParticipants: total - 1})
           + '</div>';
       }
     }
@@ -152,7 +152,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     }
     let tooltipText: string = this.getAchievementDescription();
     if (this.achievements) {
-      tooltipText += '<br>' + this.translateService.instant('achievementToolTipObtainedAt') + ':<br>';
+      tooltipText += '<br>' + this.translateService.translate('achievementToolTipObtainedAt') + ':<br>';
       tooltipText += '<div class="tournament-list">';
       for (const achievement of this.achievements) {
         if (achievement.tournament) {
@@ -190,7 +190,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     }
     let tooltipText: string = this.getAchievementDescription();
     if (this.achievements) {
-      tooltipText += '<br>' + this.translateService.instant('achievementToolTipObtainedBy') + ':<br>';
+      tooltipText += '<br>' + this.translateService.translate('achievementToolTipObtainedBy') + ':<br>';
       tooltipText += '<div class="tournament-list">';
       for (const achievement of this.achievements) {
         if (achievement.tournament) {
@@ -225,21 +225,21 @@ export class AchievementTileComponent implements OnInit, OnChanges {
       return "";
     }
     const achievementTag: string = AchievementType.toCamel(this.achievements[0].achievementType);
-    let tooltipText: string = '<b>' + this.translateService.instant(
+    let tooltipText: string = '<b>' + this.translateService.translate(
         'achievement.' + achievementTag + '.title') + '</b><br>' +
       '<div class="achivement-content">' +
-      this.translateService.instant('achievement.' + achievementTag + '.description') + '<br>';
+      this.translateService.translate('achievement.' + achievementTag + '.description') + '<br>';
     if (this.achievements.some(a => a.achievementGrade === AchievementGrade.NORMAL)) {
-      tooltipText += '<br><span class="achievement-grade text-normal">' + this.translateService.instant('achievement.normal') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.normal') + '<br>';
+      tooltipText += '<br><span class="achievement-grade text-normal">' + this.translateService.translate('achievement.normal') + "</span>" + this.translateService.translate('achievement.' + achievementTag + '.normal') + '<br>';
     }
     if (this.achievements.some(a => a.achievementGrade === AchievementGrade.BRONZE)) {
-      tooltipText += '<br><span class="achievement-grade text-bronze">' + this.translateService.instant('achievement.bronze') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.bronze') + '<br>';
+      tooltipText += '<br><span class="achievement-grade text-bronze">' + this.translateService.translate('achievement.bronze') + "</span>" + this.translateService.translate('achievement.' + achievementTag + '.bronze') + '<br>';
     }
     if (this.achievements.some(a => a.achievementGrade === AchievementGrade.SILVER)) {
-      tooltipText += '<br><span class="achievement-grade text-silver">' + this.translateService.instant('achievement.silver') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.silver') + '<br>';
+      tooltipText += '<br><span class="achievement-grade text-silver">' + this.translateService.translate('achievement.silver') + "</span>" + this.translateService.translate('achievement.' + achievementTag + '.silver') + '<br>';
     }
     if (this.achievements.some(a => a.achievementGrade === AchievementGrade.GOLD)) {
-      tooltipText += '<br><span class="achievement-grade text-gold">' + this.translateService.instant('achievement.gold') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.gold') + '<br>';
+      tooltipText += '<br><span class="achievement-grade text-gold">' + this.translateService.translate('achievement.gold') + "</span>" + this.translateService.translate('achievement.' + achievementTag + '.gold') + '<br>';
     }
     tooltipText += '</div>';
     return tooltipText;

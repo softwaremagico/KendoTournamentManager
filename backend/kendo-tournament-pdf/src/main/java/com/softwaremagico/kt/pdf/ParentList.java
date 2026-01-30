@@ -38,6 +38,7 @@ public abstract class ParentList extends PdfDocument {
     protected static final int FOOTER_BORDER = 0;
     protected static final int HEADER_BORDER = 0;
     protected static final int CELL_BORDER = 0;
+    protected static final int CELL_PADDING = 5;
 
     protected static final int BORDER_WIDTH = 0;
 
@@ -159,6 +160,7 @@ public abstract class ParentList extends PdfDocument {
         cell.setBorderWidth(border);
         cell.setBorderColor(getCellBorderColor());
         cell.setHorizontalAlignment(align);
+        cell.setPadding(CELL_PADDING);
         if (color != null) {
             cell.setBackgroundColor(color);
         }

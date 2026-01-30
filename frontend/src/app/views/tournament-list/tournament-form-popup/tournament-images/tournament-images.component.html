@@ -1,0 +1,158 @@
+<biit-progress-bar *ngIf="loading" [type]="BiitProgressBarType.INDETERMINATE"
+                   class="loading-bar"></biit-progress-bar>
+
+<div class="canvas" *transloco="let t">
+  <biit-tab-group class="images-tabs" id="images-tabs">
+    <biit-tab id="banner-tab" [name]="t('t.banner')">
+      <div class="tab-row">
+        <div class="image-editor">
+          <img *ngIf="bannerImage" alt="Preview"
+               class="image-preview" src="{{ bannerImage }}"/>
+          <div *ngIf="!bannerImage" class="empty-image image-preview">
+          </div>
+        </div>
+      </div>
+      <div class="floating-menu">
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | hasPermission)"
+                (click)="fileInputBanner.click()"
+                [title]="t('upload')"
+                [icon]="'upload_general'">
+        </button>
+        <input #fileInputBanner (change)="handleFileInput($event, TournamentImageType.BANNER)"
+               accept=".jpg,.jpeg,.png" style="display:none;"
+               type="file"/>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | hasPermission)"
+                (click)="downloadPreview(TournamentImageType.BANNER)"
+                [title]="t('preview')"
+                [icon]="'show'">
+        </button>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | hasPermission)"
+                (click)="deletePicture(TournamentImageType.BANNER, this.bannerImage)"
+                [title]="t('defaultPicture')"
+                [icon]="'cross_wide'">
+        </button>
+      </div>
+    </biit-tab>
+    <biit-tab id="diplomas-tab" [name]="t('t.diplomas')">
+      <div class="tab-row">
+        <div class="controls">
+          <button biit-icon icon="up_double_arrow" class="up-double-arrow arrow" (click)="moveLineUpFast()">
+          </button>
+          <button biit-icon icon="up_arrow" class="up-arrow arrow" (click)="moveLineUp()">
+          </button>
+          <button biit-icon icon="down_arrow" class="down-arrow  arrow" (click)="moveLineDown()">
+          </button>
+          <button biit-icon icon="down_double_arrow" class="down-double-arrow  arrow" (click)="moveLineDownFast()">
+          </button>
+        </div>
+        <div [style.margin-top]="getLinePosition()+'px'"
+             class="name-line"></div>
+        <div class="image-editor">
+          <img *ngIf="diplomaImage" alt="Preview"
+               class="image-preview" src="{{ diplomaImage }}"/>
+          <div *ngIf="!diplomaImage" class="empty-image image-preview">
+          </div>
+        </div>
+        <span class="name" [style.margin-top]="-componentHeight + (getLinePosition()-10)+'px'">
+          {{ 'nameExample' | transloco }}</span>
+      </div>
+      <div class="floating-menu">
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | hasPermission)"
+                (click)="fileInputDiploma.click()"
+                [title]="t('upload')"
+                [icon]="'upload_general'">
+        </button>
+        <input #fileInputDiploma (change)="handleFileInput($event, TournamentImageType.DIPLOMA)"
+               accept=".jpg,.jpeg,.png" style="display:none;"
+               type="file"/>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | hasPermission)"
+                (click)="downloadPreview(TournamentImageType.DIPLOMA)"
+                [title]="t('preview')"
+                [icon]="'show'">
+        </button>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | hasPermission)"
+                (click)="deletePicture(TournamentImageType.DIPLOMA, this.diplomaImage)"
+                [title]="t('defaultPicture')"
+                [icon]="'cross_wide'">
+        </button>
+      </div>
+    </biit-tab>
+    <biit-tab id="accreditation-tab" [name]="t('t.accreditation')">
+      <div class="tab-row">
+        <div class="image-editor">
+          <img *ngIf="accreditationImage" alt="Preview"
+               class="image-preview" src="{{ accreditationImage }}"/>
+          <div *ngIf="!accreditationImage" class="empty-image image-preview">
+          </div>
+        </div>
+      </div>
+      <div class="floating-menu">
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)"
+                (click)="fileInputAccreditation.click()"
+                [title]="t('upload')"
+                [icon]="'upload_general'">
+        </button>
+        <input #fileInputAccreditation (change)="handleFileInput($event, TournamentImageType.ACCREDITATION)"
+               accept=".jpg,.jpeg,.png" style="display:none;"
+               type="file"/>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)"
+                (click)="downloadPreview(TournamentImageType.ACCREDITATION)"
+                [title]="t('preview')"
+                [icon]="'show'">
+        </button>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)"
+                (click)="deletePicture(TournamentImageType.ACCREDITATION, this.accreditationImage)"
+                [title]="t('defaultPicture')"
+                [icon]="'cross_wide'">
+        </button>
+      </div>
+    </biit-tab>
+    <biit-tab id="default-photo-tab" [name]="t('t.defaultPicture')">
+      <div class="tab-row">
+        <div class="image-editor">
+          <img *ngIf="defaultPhotoImage" alt="Preview"
+               class="image-preview" src="{{ defaultPhotoImage }}"/>
+          <div *ngIf="!defaultPhotoImage" class="empty-image image-preview">
+          </div>
+        </div>
+      </div>
+      <div class="floating-menu">
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | hasPermission)"
+                (click)="fileInputPhoto.click()"
+                [title]="t('upload')"
+                [icon]="'upload_general'">
+        </button>
+        <input #fileInputPhoto (change)="handleFileInput($event, TournamentImageType.PHOTO)"
+               accept=".jpg,.jpeg,.png" style="display:none;"
+               type="file"/>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | hasPermission)"
+                (click)="downloadPreview(TournamentImageType.PHOTO)"
+                [title]="t('preview')"
+                [icon]="'show'">
+        </button>
+        <button biit-icon class="floating-button"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | hasPermission)"
+                (click)="deletePicture(TournamentImageType.PHOTO, this.defaultPhotoImage)"
+                [title]="t('defaultPicture')"
+                [icon]="'cross_wide'">
+        </button>
+      </div>
+    </biit-tab>
+  </biit-tab-group>
+  <div class="buttons-row">
+    <button biit-button id="tournament-button-save" primary (click)="onClosed.emit()">
+      {{ t('close') }}
+    </button>
+  </div>
+</div>

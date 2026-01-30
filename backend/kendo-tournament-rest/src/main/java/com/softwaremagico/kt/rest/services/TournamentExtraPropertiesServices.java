@@ -91,7 +91,6 @@ public class TournamentExtraPropertiesServices {
     public TournamentExtraPropertyDTO update(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
                                              @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                              Authentication authentication, HttpServletRequest request) {
-        tournamentExtraPropertyDTO.setCreatedBy(authentication.getName());
         return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName(), session);
     }
 

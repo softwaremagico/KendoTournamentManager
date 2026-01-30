@@ -1,89 +1,69 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div cdkDropListGroup class="league-creator">
-  <div (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
-       cdkDropList class="teams-container">
-    <team-list [teamListData]="teamListData"></team-list>
-  </div>
-  <div class="sorted-teams">
-    <h2>{{ 'teamsOrder' | translate }}</h2>
-    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
-         cdkDropList class="final-team-list">
-      <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
+<ng-container id="tournament-roles" *transloco="let t">
+  <biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div cdkDropListGroup class="league-creator">
+      <div (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+           cdkDropList class="teams-container">
+        <team-list [teamListData]="teamListData"></team-list>
+      </div>
+      <div class="sorted-teams">
+        <h2>{{ 'teamsOrder' | transloco }}</h2>
+        <button id="edit-options-button" biit-icon icon="column_selection"
+                *ngIf="(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+                class="settings-button"
+                (click)="openExtraProperties=true">
+        </button>
+        <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
+             cdkDropList class="final-team-list">
+          <team-card *ngFor="let team of teamsOrder" [team]="team"></team-card>
+        </div>
+
+      </div>
     </div>
-
-    <div *ngIf="canMaximizeFights || needsDrawResolution || needsFifoWinner || canAvoidDuplicatedFights"
-         class="extra-properties">
-      <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
-                        [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
-        {{ 'maximizeFights' | translate }}
-      </mat-slide-toggle>
-
-      <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights"
-                        (change)="avoidDuplicatesToggle($event)">
-        {{ 'avoidDuplicateFights' | translate }}
-      </mat-slide-toggle>
-
-
-      <mat-form-field *ngIf="needsDrawResolution">
-        <mat-label>{{ 'drawResolution' | translate }}</mat-label>
-        <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
-          <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
-                      [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
-            {{ getDrawResolutionTranslationTag(resolution) | translate }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
-                        [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
-        {{ 'leagueFifo' | translate }}
-      </mat-slide-toggle>
-    </div>
-
-  </div>
-</div>
-<div class="button-container" mat-dialog-actions>
-  <button
-    (click)="balancedTeams()"
-    *ngIf="(tournament.type == TournamentType.KING_OF_THE_MOUNTAIN || tournament.type == TournamentType.LOOP || tournament.type == TournamentType.BUBBLE_SORT
+    <div class="button-container">
+      <button biit-button secondary
+              (click)="balancedTeams()"
+              *ngIf="(tournament.type == TournamentType.KING_OF_THE_MOUNTAIN || tournament.type == TournamentType.LOOP || tournament.type == TournamentType.BUBBLE_SORT
     || tournament.type == TournamentType.SENBATSU)
-          && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-    mat-flat-button
-    mat-raised-button>
-    <mat-icon>auto_fix_high</mat-icon>
-    {{ 'wizard' | translate }}
-  </button>
-  <button
-    class="reverse-button"
-    (click)="reverseTeams()"
-    *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-    matTooltip="{{'reverseOrderHint' | translate}}"
-    mat-flat-button
-    mat-raised-button>
-    <mat-icon>loop</mat-icon>
-    {{ 'reverseOrder' | translate }}
-  </button>
-  <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-          class="sorted-button" mat-flat-button
-          mat-raised-button>
-    <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
-    {{ 'sorted' | translate }}
-  </button>
-  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-          class="random-button" mat-flat-button
-          mat-raised-button>
-    <mat-icon>casino</mat-icon>
-    {{ 'random' | translate }}
-  </button>
-  <button (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-          [disabled]="teamsOrder.length===0 || teamListData.teams.length>0" class="fight-button" color="primary"
-          mat-flat-button
-          mat-raised-button>
-    <mat-icon>done</mat-icon>
-    {{ 'accept' | translate }}
-  </button>
-  <button (click)="cancelDialog()" color="accent" mat-flat-button mat-raised-button>
-    <mat-icon>cancel</mat-icon>
-    {{ 'cancel' | translate }}
-  </button>
-</div>
+          && (RbacActivity.CREATE_FIGHT | hasPermission)">
+        {{ 'wizard' | transloco }}
+      </button>
+      <button biit-button secondary
+              class="reverse-button"
+              (click)="reverseTeams()"
+              *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
+              matTooltip="{{'reverseOrderHint' | transloco}}">
+        {{ 'reverseOrder' | transloco }}
+      </button>
+      <button biit-button secondary
+              (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
+              class="sorted-button">
+        {{ 'sorted' | transloco }}
+      </button>
+      <button biit-button secondary
+              (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
+              class="random-button">
+        {{ 'random' | transloco }}
+      </button>
+      <button biit-button secondary
+              (click)="cancelDialog()">
+        {{ 'cancel' | transloco }}
+      </button>
+      <button biit-button primary
+              (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
+              [disabled]="teamsOrder.length===0 || teamListData.teams.length>0" class="fight-button">
+        {{ 'accept' | transloco }}
+      </button>
+    </div>
+  </div>
+
+
+  <biit-popup id="custom-properties-popup" *ngIf="openExtraProperties"
+              [title]="t('tournamentProperties')"
+  >
+    <tournament-extra-properties-form
+      [tournament]="tournament"
+      (onClosed)="openExtraProperties=false">
+    </tournament-extra-properties-form>
+  </biit-popup>
+</ng-container>
