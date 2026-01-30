@@ -58,6 +58,7 @@ public abstract class PdfTheme {
     private static BaseFont titleFont;
     private static BaseFont tableSubtitleFont;
     private static BaseFont handwrittenFont;
+    private static BaseFont scoreFont;
 
     private static BaseFont basicFont;
 
@@ -126,6 +127,15 @@ public abstract class PdfTheme {
             handwrittenFont = font.getBaseFont();
         }
         return handwrittenFont;
+    }
+
+    public static BaseFont getScoreFont() {
+        if (scoreFont == null) {
+            final Font font = FontFactory.getFont("/" + FILLED_TEXT_FONT_NAME, BaseFont.IDENTITY_H, BaseFont.EMBEDDED,
+                    0.8f, Font.BOLD, BaseColor.BLACK);
+            scoreFont = font.getBaseFont();
+        }
+        return scoreFont;
     }
 
     public static BaseFont getBasicFont() {

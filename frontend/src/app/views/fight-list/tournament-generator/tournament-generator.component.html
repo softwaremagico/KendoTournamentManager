@@ -52,7 +52,6 @@
                      *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
         ></mat-divider>
         <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 (click)="downloadPDF()"
                 [title]="t('download')">
           <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>

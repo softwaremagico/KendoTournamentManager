@@ -59,7 +59,7 @@ import java.util.Objects;
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
  */
 public class FightSummary extends ParentList {
-    private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.02f, 0.08f, 0.08f, 0.03f, 0.29f};
+    private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.03f, 0.08f, 0.08f, 0.03f, 0.29f};
     private static final int DEFAULT_CELL_HEIGHT = 50;
     private static final int FIGHT_BORDER = 1;
     private final MessageSource messageSource;
@@ -156,7 +156,8 @@ public class FightSummary extends ParentList {
             if (competitor != null) {
                 name = NameUtils.getLastnameNameIni(competitor);
             }
-            final PdfPCell team2NameCell = getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT);
+            final PdfPCell team2NameCell = getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(),
+                    PdfTheme.SCORE_LIST_SIZE, Color.WHITE, 1, Element.ALIGN_LEFT);
             team2NameCell.setBorder(Rectangle.BOTTOM);
             table.addCell(team2NameCell);
         }
@@ -176,7 +177,7 @@ public class FightSummary extends ParentList {
     private PdfPCell getScoreCell(FightDTO fightDTO, int index, int scoreIndex, boolean leftCompetitor) {
         final Score score = getScore(fightDTO, index, scoreIndex, leftCompetitor);
         final PdfPCell pdfPCell = getCell(score != null ? String.valueOf(score.getPdfAbbreviation()) : "", FIGHT_BORDER,
-                PdfTheme.getHandwrittenFont(), PdfTheme.SCORE_FONT_SIZE, null, 1, Element.ALIGN_CENTER);
+                PdfTheme.getScoreFont(), PdfTheme.SCORE_FONT_SIZE, null, 1, Element.ALIGN_CENTER);
         if (score != null) {
             pdfPCell.setCellEvent(new ScoreCircleCellEvent());
         }
