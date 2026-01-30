@@ -98,6 +98,10 @@
   background: var(--fight-color);
 }
 
+.duel.onlyShow {
+  opacity: 100% !important;
+}
+
 .duel.over {
   opacity: 30%;
 }

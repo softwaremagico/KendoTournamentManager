@@ -12,7 +12,7 @@ import {Participant} from "../../models/participant";
 import {DuelService} from "../../services/duel.service";
 
 @Component({
-  selector: 'app-participant-fight-list',
+  selector: 'participant-fight-list',
   templateUrl: './participant-fight-list.component.html',
   styleUrls: ['./participant-fight-list.component.scss']
 })

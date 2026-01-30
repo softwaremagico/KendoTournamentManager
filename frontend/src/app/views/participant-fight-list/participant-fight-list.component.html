@@ -1,8 +1,8 @@
 <spinner-overlay [overlay]="true"></spinner-overlay>
 <ng-container *transloco="let t">
-<div class="fight-view">
-  <div class="fights-layout">
-    <div class="upper-menu">
+  <div class="fight-view">
+    <div class="fights-layout">
+      <div class="upper-menu">
         <button biit-icon *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
                 (click)="goBackToStatistics()"
                 [title]="t('back')">
@@ -11,7 +11,7 @@
       </div>
     </div>
     <filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
-                [resetValue]="resetFilterValue"></filter>
+            [resetValue]="resetFilterValue"></filter>
     <div class="fights-container">
       <div *ngIf="tournaments" class="fight-container">
         <div *ngFor="let tournament of tournaments" class="fight-list">
@@ -23,6 +23,7 @@
                    [showAvatars]="false" [swapColors]="false"
                    [swapTeams]="false"
                    [highlightedParticipantId]="participantId"
+                   [onlyShow]="true"
                    [locked]="true"></fight>
 
             <div class="unties-list">
@@ -34,5 +35,5 @@
         </div>
       </div>
     </div>
-</div>
+  </div>
 </ng-container>
