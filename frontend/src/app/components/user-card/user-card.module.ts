@@ -4,10 +4,11 @@ import {UserCardComponent} from "./user-card.component";
 import {MatCardModule} from "@angular/material/card";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatIconModule} from "@angular/material/icon";
-import {MatTooltipModule} from "@angular/material/tooltip";
 import {ParticipantPictureModule} from "../participant-picture/participant-picture.module";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
 
 @NgModule({
@@ -22,10 +23,11 @@ import {ParticipantPictureModule} from "../participant-picture/participant-pictu
     MatCardModule,
     DragDropModule,
     RbacModule,
-    TranslateModule,
+    TranslocoModule,
     MatIconModule,
-    MatTooltipModule,
     ParticipantPictureModule,
+    HasPermissionPipe,
+    BiitIconModule,
   ]
 })
 export class UserCardModule {

@@ -99,7 +99,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserProvider.save(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+        AuthenticatedUser authenticatedUser = authenticatedUserProvider.save(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());

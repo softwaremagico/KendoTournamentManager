@@ -34,7 +34,8 @@ export class IconModule {
       .addSvgIcon("willpower", this.setPath(`${this.path}/willpower.svg`))
       .addSvgIcon("match", this.setPath(`${this.path}/match.svg`))
       .addSvgIcon("brackets", this.setPath(`${this.path}/brackets.svg`))
-      .addSvgIcon("unfinish", this.setPath(`${this.path}/unfinish.svg`))
+      .addSvgIcon("check", this.setPath(`${this.path}/check.svg`))
+      .addSvgIcon("uncheck", this.setPath(`${this.path}/uncheck.svg`))
       .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`))
       .addSvgIcon("one-winner", this.setPath(`${this.path}/one-winner.svg`))
       .addSvgIcon("two-winners", this.setPath(`${this.path}/two-winners.svg`))
@@ -43,7 +44,24 @@ export class IconModule {
       .addSvgIcon("youAreTheWorstNightmareOf", this.setPath(`${this.path}/youAreTheWorstNightmareOf.svg`))
       .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`))
       .addSvgIcon("whistle", this.setPath(`${this.path}/whistle.svg`))
-      .addSvgIcon("csv-file-small", this.setPath(`${this.path}/csv-file-small.svg`));
+      .addSvgIcon("csv-file-small", this.setPath(`${this.path}/csv-file-small.svg`))
+      .addSvgIcon("bar_chart", this.setPath(`${this.path}/bar_chart.svg`))
+      .addSvgIcon("badge", this.setPath(`${this.path}/badge.svg`))
+      .addSvgIcon("qr_code", this.setPath(`${this.path}/qr_code.svg`))
+      .addSvgIcon("arrow_back", this.setPath(`${this.path}/arrow_back.svg`))
+      .addSvgIcon("wand", this.setPath(`${this.path}/wand.svg`))
+      .addSvgIcon("timer", this.setPath(`${this.path}/timer.svg`))
+      .addSvgIcon("timer_off", this.setPath(`${this.path}/timer_off.svg`))
+      .addSvgIcon("download", this.setPath(`${this.path}/download.svg`))
+      .addSvgIcon("projector", this.setPath(`${this.path}/projector.svg`))
+      .addSvgIcon("menu-drag", this.setPath(`${this.path}/menu-drag.svg`))
+      .addSvgIcon("play", this.setPath(`${this.path}/play.svg`))
+      .addSvgIcon("pause", this.setPath(`${this.path}/pause.svg`))
+      .addSvgIcon("rewind", this.setPath(`${this.path}/rewind.svg`))
+      .addSvgIcon("swap_vertical", this.setPath(`${this.path}/swap_vertical.svg`))
+      .addSvgIcon("arrow_forward", this.setPath(`${this.path}/arrow_forward.svg`))
+      .addSvgIcon("clean", this.setPath(`${this.path}/clean.svg`))
+      .addSvgIcon("restore", this.setPath(`${this.path}/restore.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

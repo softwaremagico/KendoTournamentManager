@@ -11,7 +11,8 @@ import {ActivityService} from "./rbac/activity.service";
 import {AuthGuestRequest} from "./models/auth-guest-request";
 import {TemporalToken} from "./models/temporal-token";
 import {UserRoles} from "./rbac/user-roles";
-import {TokenService} from "./token-service";
+import {UserSessionService} from "./user-session.service";
+import {RbacService} from "./rbac/rbac.service";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class LoginService {
   private interval: NodeJS.Timeout | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private activityService: ActivityService, private router: Router) {
+              private activityService: ActivityService, private router: Router, private userSessionService: UserSessionService) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
       this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
         (jwt: string, expires: number): void => {
@@ -84,7 +85,6 @@ export class LoginService {
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.setAuthenticatedUser(authenticatedUser, callback);
         localStorage.setItem('account', 'guest');
-        debugger
         localStorage.setItem('tournamentId', tournamentId + "");
       },
       error: (): void => {
@@ -111,6 +111,7 @@ export class LoginService {
       (): void => {
       });
     this.activityService.setRoles(authenticatedUser.roles);
+    this.userSessionService.setLocalUser(authenticatedUser);
     localStorage.setItem('username', authenticatedUser.username);
     localStorage.setItem('session', authenticatedUser.session);
     callback(authenticatedUser.jwt, authenticatedUser.expires);
@@ -125,21 +126,23 @@ export class LoginService {
   }
 
   logout(): void {
-    sessionStorage.clear();
-    localStorage.clear();
+    this.userSessionService.clearToken();
+    this.activityService.setRoles([]);
+    localStorage.removeItem('account');
+    localStorage.removeItem('tournamentId');
   }
 
-  public setJwtValue(token: string, expires: number): void {
-    localStorage.setItem("jwt", token);
-    localStorage.setItem("jwt_expires", expires.toString());
+  private setJwtValue(token: string, expires: number): void {
+    this.userSessionService.setAuthToken(token);
+    this.userSessionService.setExpirationDate(expires)
   }
 
   public getJwtValue(): string | null {
-    return localStorage.getItem("jwt");
+    return this.userSessionService.getAuthToken();
   }
 
-  getJwtExpirationValue(): number {
-    return Number(localStorage.getItem("jwt_expires"));
+  public getJwtExpirationValue(): number {
+    return Number(this.userSessionService.getExpirationDate());
   }
 
   public autoRenewToken(jwt: string | null, expiration: number, callback: (token: string, expiration: number) => void): void {

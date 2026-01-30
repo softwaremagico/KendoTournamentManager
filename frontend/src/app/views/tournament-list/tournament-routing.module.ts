@@ -8,6 +8,7 @@ import {TournamentGeneratorComponent} from "../fight-list/tournament-generator/t
 
 const routes: Routes = [
   {path: '', component: TournamentListComponent, canActivate: [LoggedInService]},
+  {path: 'list', component: TournamentListComponent, canActivate: [LoggedInService]},
   {path: 'fights', component: FightListComponent},
   {path: 'statistics', component: TournamentStatisticsComponent, canActivate: [LoggedInService]},
   {path: 'fights/championship', component: TournamentGeneratorComponent},

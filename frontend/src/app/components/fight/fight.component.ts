@@ -15,6 +15,8 @@ import {TournamentType} from "../../models/tournament-type";
 })
 export class FightComponent extends RbacBasedComponent implements OnInit {
 
+  readonly ROW_HIGH: number = 70;
+
   @Input()
   fight: Fight;
 
@@ -46,6 +48,9 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   showAvatars: boolean = false;
+
+  @Input()
+  onlyShow: boolean = false;
 
   constructor(private duelChangedService: DuelChangedService, rbacService: RbacService) {
     super(rbacService);

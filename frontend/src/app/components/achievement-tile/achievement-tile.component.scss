@@ -37,34 +37,18 @@
 
 .achievement-border.normal {
   border-color: black;
-  animation-name: animate-normal;
-  animation-duration: 0.6s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
 }
 
 .achievement-border.bronze {
   border: 4px hsl(28, 31%, 52%);
-  animation-name: animate-bronze;
-  animation-duration: 0.6s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
 }
 
 .achievement-border.silver {
   border: 4px hsl(210, 3%, 61%);
-  animation-name: animate-silver;
-  animation-duration: 0.6s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
 }
 
 .achievement-border.gold {
   border: 4px hsl(45, 100%, 47%);
-  animation-name: animate-gold;
-  animation-duration: 0.6s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
 }
 
 .achivement-content {
@@ -97,47 +81,6 @@
   color: hsl(45, 100%, 47%);
   font-style: oblique;
   text-transform: uppercase;
-}
-
-@keyframes animate-normal {
-  0% {
-    box-shadow: 0 0 1px black;
-  }
-
-  100% {
-    box-shadow: 0 0 4px black;
-  }
-}
-
-@keyframes animate-bronze {
-  0% {
-    box-shadow: 0 0 1px hsl(28, 31%, 52%);
-  }
-
-  100% {
-    box-shadow: 0 0 4px hsl(28, 31%, 52%);
-  }
-}
-
-@keyframes animate-silver {
-  0% {
-    box-shadow: 0 0 1px hsl(210, 3%, 61%);
-  }
-
-  100% {
-    box-shadow: 0 0 4px hsl(210, 3%, 61%);
-  }
-}
-
-
-@keyframes animate-gold {
-  0% {
-    box-shadow: 0px 0px 1px hsl(45, 100%, 47%);
-  }
-
-  100% {
-    box-shadow: 0px 0px 4px hsl(45, 100%, 47%);
-  }
 }
 
 .achievement-info {

@@ -1,16 +1,18 @@
-<mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify">
+<mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify"
+          [ngClass]="{'locked': team.locked || disableDrag}"
+          (click)="onClick.emit(team)">
   <mat-card-header class="team-card-header">
-    <mat-card-title class="team-card-title">{{team.name}}</mat-card-title>
+    <mat-card-title class="team-card-title">{{ team.name }}</mat-card-title>
     <mat-card-subtitle class="team-card-subtitle"></mat-card-subtitle>
-    <mat-icon *ngIf="team.locked || disableDrag" class="locked" color="warn" matTooltip="{{'elementInUse' | translate}}">block
-    </mat-icon>
+    <biit-icon *ngIf="team.locked || disableDrag" [name]="'exclamation'"
+               [svgStyle]="{backgroundColor: 'transparent'}"
+               [pathStyle]="{fill: '#001fff'}"
+               style="width: 24px; height: 24px; position: absolute; right: 16px; top: 16px;"></biit-icon>
   </mat-card-header>
   <mat-card-content class="team-card-content" *ngIf="!minify">
     <ul class="team-card-content-list">
       <li *ngFor="let user of team.members" class="team-member">
-        {{user && user.lastname ? user?.lastname : ""}}
-        {{user && user.name && user.lastname ? ", " : ""}}
-        {{user && user.name ? user?.name : ""}}
+        {{ user | participantNamePipe }}
       </li>
     </ul>
   </mat-card-content>

@@ -1,8 +1,8 @@
 <div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" class="score-area" *ngIf="!locked &&
-(RbacActivity.EDIT_DUEL | rbac : this.rbacService.getActivities())">
+(RbacActivity.EDIT_DUEL | hasPermission)">
   <mat-menu #menu="matMenu">
     <button [disabled]="duel.finished" (click)="updateScore(score)" *ngFor="let score of possibleScores()"
-            mat-menu-item>{{ Score.toCamel(score) | translate }}
+            mat-menu-item>{{ Score.toCamel(score) | transloco }}
     </button>
   </mat-menu>
   <div (mouseout)="clearCoordinates()" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
@@ -17,12 +17,12 @@
           'right-border': onRightBorder
         }"
          class="tooltip-time-popup">
-      <mat-icon>timer</mat-icon>
+      <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
     </div>
   </div>
 </div>
 <!-- Score representation when menu is disabled -->
-<div class="score-area" *ngIf="locked || !(RbacActivity.EDIT_DUEL | rbac : this.rbacService.getActivities())">
+<div class="score-area" *ngIf="locked || !(RbacActivity.EDIT_DUEL | hasPermission)">
   <div class="point" *ngIf="scoreRepresentation!==''">
     {{ scoreRepresentation }}
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
@@ -32,7 +32,7 @@
           'right-border': onRightBorder
         }"
          class="tooltip-time-popup">
-      <mat-icon>timer</mat-icon>
+      <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
     </div>
   </div>
 </div>

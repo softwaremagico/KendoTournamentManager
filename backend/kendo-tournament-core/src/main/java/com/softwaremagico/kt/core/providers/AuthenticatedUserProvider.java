@@ -99,7 +99,7 @@ public class AuthenticatedUserProvider {
         return findByUsername(uniqueId);
     }
 
-    public AuthenticatedUser save(String username, String firstName, String lastName, String password, String... roles) {
+    public AuthenticatedUser save(String creator, String username, String firstName, String lastName, String password, String... roles) {
         if (findByUsername(username).isPresent()) {
             throw new DuplicatedUserException(this.getClass(), "Username exists!");
         }
@@ -109,6 +109,7 @@ public class AuthenticatedUserProvider {
         authenticatedUser.setName(firstName);
         authenticatedUser.setLastname(lastName);
         authenticatedUser.setPassword(password);
+        authenticatedUser.setCreatedBy(creator);
         if (roles != null) {
             authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
         }

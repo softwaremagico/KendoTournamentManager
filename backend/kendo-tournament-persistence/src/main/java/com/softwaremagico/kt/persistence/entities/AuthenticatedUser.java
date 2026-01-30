@@ -35,9 +35,6 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -53,11 +50,7 @@ import java.util.Set;
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
-public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class AuthenticatedUser extends Element implements UserDetails, IAuthenticatedUser {
 
     @Column(name = "password")
     @Convert(converter = BCryptPasswordConverter.class)
@@ -96,10 +89,6 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
 
     @JsonIgnore
     private transient Set<SimpleGrantedAuthority> authorities;
-
-    public Integer getId() {
-        return id;
-    }
 
     @JsonIgnore
     @Override

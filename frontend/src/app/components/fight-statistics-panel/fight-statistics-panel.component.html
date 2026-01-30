@@ -1,19 +1,19 @@
 <div *ngIf="fightStatistics!==undefined && fightStatistics!==null && fightStatistics.fightsNumber" class="panel">
   <div class="viewer fights">
-    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedFights' | translate}}"
+    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedFights' | transloco}}"
               svgIcon="match"></mat-icon>
-    <span class="text" matTooltip="{{'estimatedFights' | translate}}">{{fightStatistics.fightsNumber}}</span>
+    <span class="text" matTooltip="{{'estimatedFights' | transloco}}">{{fightStatistics.fightsNumber}}</span>
   </div>
   <div class="viewer duels">
-    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedDuels' | translate}}"
+    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedDuels' | transloco}}"
               svgIcon="fight"></mat-icon>
     <span class="text"
-          matTooltip="{{'estimatedDuels' | translate}}">{{fightStatistics.duelsNumber ? fightStatistics.duelsNumber : "0"}}</span>
+          matTooltip="{{'estimatedDuels' | transloco}}">{{fightStatistics.duelsNumber ? fightStatistics.duelsNumber : "0"}}</span>
   </div>
   <div class="viewer time">
-    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedTime' | translate}}">timer</mat-icon>
+    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedTime' | transloco}}">timer</mat-icon>
     <span [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}"
           class="text"
-          matTooltip="{{'estimatedTime' | translate}}">{{getTime()}}</span>
+          matTooltip="{{'estimatedTime' | transloco}}">{{getTime()}}</span>
   </div>
 </div>

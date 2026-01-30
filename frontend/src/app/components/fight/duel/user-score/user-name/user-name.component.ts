@@ -5,6 +5,7 @@ import {NameUtilsService} from "../../../../../services/name-utils.service";
 import {MembersOrderChangedService} from "../../../../../services/notifications/members-order-changed.service";
 import {KendoComponent} from "../../../../kendo-component";
 import {Duel} from "../../../../../models/duel";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'user-name',
@@ -37,7 +38,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   public displayName: string = '';
 
-  constructor(private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
+  constructor(protected router: Router, private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
     super();
   }
 
@@ -76,7 +77,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   }
 
   openStatistics(): void {
-    window.open("/#/participants/statistics?participantId=" + this.participant?.id, "_blank");
+    this.router.navigateByUrl("/participants/statistics?participantId=" + this.participant?.id + "&tournamentId=" + this.duel.tournament.id + "&redirectUrl=/tournaments/fights");
   }
 
 }

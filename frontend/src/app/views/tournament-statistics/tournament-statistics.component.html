@@ -1,143 +1,153 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="statistics-view">
+<spinner-overlay [overlay]="true"></spinner-overlay>
+<div class="statistics-view" *transloco="let t">
   <div class="statistics-layout">
     <div class="upper-menu">
-      <div class="cell">
-        <button (click)="goBackToTournament()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
-                [matTooltipShowDelay]="500" color="secondary"
-                mat-button
-                matTooltip="{{'back' | translate}}">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-      </div>
+      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission)"
+              (click)="goBackToTournament()"
+              [title]="t('back')">
+        <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
+      </button>
     </div>
-    <h1 class="name" *ngIf="tournament">{{tournament.name}}</h1>
-    <div class="statistics-container">
-      <div class="dashboard">
+    <div class="tournament">
+      <h1 class="name" *ngIf="tournament">{{ tournament.name }}</h1>
+      <div class="statistics-container">
+        <div class="dashboard">
 
-        <div class="box-statistics box">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
-            <h3>{{'participants' | translate}}</h3>
-          </div>
-          <!-- aria-hidden="true" to avoid complains from sonarcloud -->
-          <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
-            <tr *ngFor="let roleType of roleTypes">
-              <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>
-              <td *ngIf="tournamentStatistics">{{numberOfParticipantsByRole(roleType)}}</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
-            <h3>{{'teams' | translate}}</h3>
-          </div>
-          <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td>{{'teams' | translate}}:</td>
-              <td>{{tournamentStatistics.numberOfTeams}}</td>
-            </tr>
-            <tr>
-              <td>{{'tournamentTeamSize' | translate}}:</td>
-              <td>{{tournamentStatistics.teamSize}}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="box-statistics box">
-          <div class="statistics-table-title">
-            <mat-icon>timer</mat-icon>
-            <h3>{{'time' | translate}}</h3>
-          </div>
-          <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td>{{'createdAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics.tournamentCreatedAt)}}</td>
-            </tr>
-            <tr>
-              <td>{{'lockedAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics.tournamentLockedAt)}}</td>
-            </tr>
-            <tr>
-              <td>{{'fightsStartedAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics.tournamentFightStatistics.fightsStartedAt)}}</td>
-            </tr>
-            <tr>
-              <td>{{'fightsFinishedAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics.tournamentFightStatistics.fightsFinishedAt)}}</td>
-            </tr>
-            <tr>
-              <td>{{'fightsDuration' | translate}}:</td>
-              <td>{{convertSeconds(tournamentStatistics.tournamentFightStatistics.duelsDuration())}}</td>
-            </tr>
-            <tr>
-              <td>{{'fightsAverage' | translate}}:</td>
-              <td>{{convertSeconds(tournamentStatistics.tournamentFightStatistics.averageTime)}}</td>
-            </tr>
-          </table>
-          <div class="statistics-table-title">
-            <mat-icon>flag</mat-icon>
-            <h3>{{'faults' | translate}}</h3>
-          </div>
-          <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
-            <tr>
-              <td class="single">{{'faults' | translate}}
-                : {{tournamentStatistics.tournamentFightStatistics.faults}}
-              </td>
-            </tr>
-          </table>
-        </div>
-
-        <div *ngIf="tournamentStatistics && tournamentStatistics.teamSize>1"
-             class="box-statistics box scrollable">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
-            <h3>{{'teamsRanking' | translate}}</h3>
-          </div>
-          <table *ngIf="teamScores" aria-hidden="true" class="statistics-table">
-            <tr *ngFor="let scoreOfTeam of teamScores">
-              <td class="ranking">{{getTeamsRanking(scoreOfTeam)}}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="box-statistics box">
-          <div class="statistics-table-title">
-            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-            <h3>{{'competitorsRanking' | translate}}</h3>
-          </div>
-          <div class="scrollable">
-            <table *ngIf="competitorsScore" aria-hidden="true" class="statistics-table">
-              <tr *ngFor="let scoreOfCompetitor of competitorsScore">
-                <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
+          <div class="box-statistics box">
+            <div class="statistics-table-title">
+              <h3>{{ 'participants' | transloco }}</h3>
+            </div>
+            <!-- aria-hidden="true" to avoid complains from sonarcloud -->
+            <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
+              <tr *ngFor="let roleType of roleTypes">
+                <td *ngIf="tournamentStatistics" class="left-column">{{ roleType.toLowerCase() | transloco }}:</td>
+                <td *ngIf="tournamentStatistics" class="right-column">{{ numberOfParticipantsByRole(roleType) }}</td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'teams' | transloco }}</h3>
+            </div>
+            <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'teams' | transloco }}:</td>
+                <td class="right-column">{{ tournamentStatistics.numberOfTeams }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'tournamentTeamSize' | transloco }}:</td>
+                <td class="right-column">{{ tournamentStatistics.teamSize }}</td>
               </tr>
             </table>
           </div>
-        </div>
 
-        <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [height]="260"
-                         [title]="'progress' | translate" [width]="600"></app-gauge-chart>
-        <app-pie-chart *ngIf="!!scoreTypeChartData" [data]="scoreTypeChartData"
-                       [title]="'tournamentHitsStatistics' | translate"
-                       [width]="360"></app-pie-chart>
-        <app-stacked-bars-chart #participantsByTournamentChart [data]="hitsByTournament"
-                                [enableTotals]="false"
-                                [stackType]="'normal'" [title]="'participantsByTournament' | translate"
-                                [width]="400"></app-stacked-bars-chart>
-        <app-line-chart #timeSizeByTournamentChart [data]="teamSizeByTournament" [title]="'teams' | translate"
-                        [width]="400"></app-line-chart>
-        <app-stacked-bars-chart #hitsByTournamentChart [data]="hitsByTournament"
-                                [stackType]="'normal'"
-                                [title]="('hitsByTournament' | translate)" [width]="400"></app-stacked-bars-chart>
-        <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | translate"
-                        [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
-        <div *ngIf="achievementsEnabled" class="box-statistics box achievements-box">
-          <div class="statistics-table-title">
-            <mat-icon>stars</mat-icon>
-            <h3>{{'achievements' | translate}}</h3>
+          <div class="box-statistics box">
+            <div class="statistics-table-title">
+              <h3>{{ 'time' | transloco }}</h3>
+            </div>
+            <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'createdAt' | transloco }}:</td>
+                <td class="right-column">{{ convertDate(tournamentStatistics.tournamentCreatedAt) }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'lockedAt' | transloco }}:</td>
+                <td class="right-column">{{ convertDate(tournamentStatistics.tournamentLockedAt) }}</td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'fightsStartedAt' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertDate(tournamentStatistics.tournamentFightStatistics.fightsStartedAt) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'fightsFinishedAt' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertDate(tournamentStatistics.tournamentFightStatistics.fightsFinishedAt) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'fightsDuration' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertSeconds(tournamentStatistics.tournamentFightStatistics.duelsDuration()) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="left-column">{{ 'fightsAverage' | transloco }}:</td>
+                <td
+                  class="right-column">{{ convertSeconds(tournamentStatistics.tournamentFightStatistics.averageTime) }}
+                </td>
+              </tr>
+            </table>
+            <div class="statistics-table-title">
+              <h3>{{ 'faults' | transloco }}</h3>
+            </div>
+            <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
+              <tr>
+                <td class="left-column">{{ 'faults' | transloco }}:</td>
+                <td class="right-column">{{ tournamentStatistics.tournamentFightStatistics.faults }}</td>
+              </tr>
+            </table>
           </div>
-          <app-achievement-wall [achievements]="achievements"
-                                [view]="'tournament'"></app-achievement-wall>
+
+          <div *ngIf="tournamentStatistics && tournamentStatistics.teamSize>1"
+               class="box-statistics box scrollable">
+            <div class="statistics-table-title">
+              <h3>{{ 'teamsRanking' | transloco }}</h3>
+            </div>
+            <table *ngIf="teamScores" aria-hidden="true" class="statistics-table">
+              <tr *ngFor="let scoreOfTeam of teamScores">
+                <td class="ranking">{{ getTeamsRanking(scoreOfTeam) }}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="box-statistics box">
+            <div class="statistics-table-title">
+              <h3>{{ 'competitorsRanking' | transloco }}</h3>
+            </div>
+            <div class="scrollable">
+              <table *ngIf="competitorsScore" aria-hidden="true" class="statistics-table">
+                <tr *ngFor="let scoreOfCompetitor of competitorsScore">
+                  <td class="ranking">{{ getCompetitorRanking(scoreOfCompetitor) }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="box-statistics box chart">
+          <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [height]="500"
+                           [title]="'progress' | transloco" [width]="500"></app-gauge-chart>
+          </div>
+          <div class="box-statistics box chart">
+          <app-pie-chart *ngIf="!!scoreTypeChartData" [data]="scoreTypeChartData"
+                         [title]="'tournamentHitsStatistics' | transloco"
+                         [width]="360"></app-pie-chart>
+          </div>
+          <div class="box-statistics box chart">
+          <app-stacked-bars-chart #participantsByTournamentChart [data]="hitsByTournament"
+                                  [enableTotals]="false"
+                                  [stackType]="'normal'" [title]="'participantsByTournament' | transloco"
+                                  [width]="400"></app-stacked-bars-chart>
+          </div>
+          <div class="box-statistics box chart">
+          <app-line-chart #timeSizeByTournamentChart [data]="teamSizeByTournament" [title]="'teams' | transloco"
+                          [width]="400"></app-line-chart>
+          </div>
+          <div class="box-statistics box chart">
+          <app-stacked-bars-chart #hitsByTournamentChart [data]="hitsByTournament"
+                                  [stackType]="'normal'"
+                                  [title]="('hitsByTournament' | transloco)" [width]="400"></app-stacked-bars-chart>
+          </div>
+          <div class="box-statistics box chart">
+          <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | transloco"
+                          [width]="400" [yAxisTitle]="'minutes' | transloco"></app-line-chart>
+          </div>
+          <div *ngIf="achievementsEnabled" class="box-statistics box achievements-box">
+            <div class="statistics-table-title">
+              <h3>{{ 'achievements' | transloco }}</h3>
+            </div>
+            <achievements-wall [achievements]="achievements"
+                               [view]="'tournament'"></achievements-wall>
+          </div>
         </div>
       </div>
     </div>

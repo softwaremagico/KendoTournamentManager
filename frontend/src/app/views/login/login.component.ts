@@ -5,12 +5,16 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
-import {RbacService} from "../../services/rbac/rbac.service";
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {HttpHeaders} from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {EnvironmentService} from "../../environment.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
+import {BiitLogin} from "@biit-solutions/wizardry-theme/models";
+import {UserSessionService} from "../../services/user-session.service";
+import {Constants} from "../../constants";
+import {ActivityService} from "../../services/rbac/activity.service";
 
 const {version: appVersion} = require('../../../../package.json')
 
@@ -24,13 +28,16 @@ export class LoginComponent implements OnInit {
   password: string;
   loginForm: UntypedFormGroup;
   appVersion: string;
+  protected waiting: boolean = true;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 
-  protected checkForNewVersion: boolean =  this.environmentService.isCheckForNewVersion();
+  protected checkForNewVersion: boolean = this.environmentService.isCheckForNewVersion();
 
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService,
               private formBuilder: UntypedFormBuilder, private messageService: MessageService, private loggerService: LoggerService,
-              private infoService: InfoService, private translateService: TranslateService, private environmentService: EnvironmentService) {
+              private infoService: InfoService, private translateService: TranslocoService, private environmentService: EnvironmentService,
+              private userSessionService: UserSessionService, private activityService: ActivityService, private translocoService: TranslocoService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
@@ -41,6 +48,13 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLastVersion();
+    this.managePathQueries();
+    if (!this.userSessionService.isTokenExpired()) {
+      this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+    } else {
+      this.waiting = false;
+      this.userSessionService.clearToken();
+    }
   }
 
   isLastVersion(): void {
@@ -50,23 +64,43 @@ export class LoginComponent implements OnInit {
       this.infoService.getLatestVersion().subscribe((_version: string): void => {
         if (_version && this.appVersion != _version) {
           const parameters: object = {currentVersion: this.appVersion, newVersion: _version};
-          this.translateService.get('newVersionAvailable', parameters).subscribe((message: string): void => {
-            this.messageService.warningMessage(message);
-          });
+          this.messageService.warningMessage(this.translateService.translate('newVersionAvailable', parameters));
         }
       })
     }
   }
 
-  login(): void {
-    this.loginService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value).subscribe({
+  private managePathQueries(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      const queryParams: { [key: string]: string | null } = {};
+      if (params[Constants.PATHS.QUERY.LOGOUT] !== undefined) {
+        this.loginService.logout();
+        this.activityService.clear()
+        this.translocoService.selectTranslate(Constants.PATHS.QUERY.LOGOUT, {}, {scope: 'wizardry-theme/utils'}).subscribe(msg => {
+          this.messageService.infoMessage(msg);
+        });
+        queryParams[Constants.PATHS.QUERY.LOGOUT] = null;
+      }
+      this.router.navigate([], {queryParams: queryParams, queryParamsHandling: 'merge'});
+    });
+  }
+
+  login(login: BiitLogin): void {
+    this.waiting = true;
+    this.loginService.login(login.username, login.password).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.loginService.setAuthenticatedUser(authenticatedUser, (jwt: string, expires: number): void => {
         });
 
+        this.activityService.setRoles(authenticatedUser.roles);
         const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
-        this.router.navigate([returnUrl]);
-        this.messageService.infoMessage("userloggedInMessage");
+        if (returnUrl) {
+          this.router.navigate([returnUrl]);
+        } else {
+          this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+        }
+        this.messageService.infoMessage("userLoggedInMessage");
+        this.userSessionService.setUser(AuthenticatedUser.clone(authenticatedUser))
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
       },
       error: (error): void => {
@@ -83,6 +117,14 @@ export class LoginComponent implements OnInit {
           this.messageService.errorMessage("backendError");
         }
       }
-    });
+    }).add(() => this.waiting = false);
+  }
+
+  onResetPassword(email: string) {
+
+  }
+
+  login2() {
+
   }
 }

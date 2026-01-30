@@ -3,12 +3,12 @@ import {ImageModel} from "./image.model";
 
 export class QrCode extends ImageModel {
 
-  link: string;
+  content: string;
 
   public static override copy(source: QrCode, target: QrCode): void {
     Element.copy(source, target);
     target.data = source.data;
-    target.link = source.link;
+    target.content = source.content;
     target.imageFormat = source.imageFormat;
   }
 

@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {DrawComponent} from "./draw.component";
 import {DrawPipeModule} from "../../../../pipes/draw-pipe/draw-pipe.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
@@ -13,7 +13,7 @@ import {TranslateModule} from "@ngx-translate/core";
   imports: [
     CommonModule,
     DrawPipeModule,
-    TranslateModule
+    TranslocoModule
   ]
 })
 export class DrawModule {

@@ -4,7 +4,7 @@ import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
@@ -50,7 +50,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   protected readonly Score = Score;
 
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
-              private translateService: TranslateService, public rbacService: RbacService) {
+              private translateService: TranslocoService, public rbacService: RbacService) {
   }
 
   ngOnInit(): void {
@@ -218,10 +218,10 @@ export class ScoreComponent implements OnInit, OnChanges {
       seconds = seconds % 60;
       let text: string = "";
       if (minutes) {
-        text += minutes + " " + this.translateService.instant('minutesAbbreviation') + " ";
+        text += minutes + " " + this.translateService.translate('minutesAbbreviation') + " ";
       }
       if (seconds) {
-        text += seconds + " " + this.translateService.instant('secondsAbbreviation') + " ";
+        text += seconds + " " + this.translateService.translate('secondsAbbreviation') + " ";
       }
       this.timeRepresentation = text;
     } else {
@@ -234,7 +234,7 @@ export class ScoreComponent implements OnInit, OnChanges {
       return "";
     }
     return '<span class="tooltip-score"><b>' + this.getScore() + '</b></span><br>' +
-      '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip-text">' + this.timeRepresentation + '</span></div>';
+      '<div class="time-tooltip-container"><img src="assets/icons/timer.svg" alt="My Icon" width="16px" height="16px">\n<span class="time-tooltip-text">' + this.timeRepresentation + '</span></div>';
   }
 
   updateCoordinates($event: MouseEvent): void {

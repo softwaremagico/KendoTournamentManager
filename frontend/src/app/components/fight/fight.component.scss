@@ -1,7 +1,5 @@
 .fight {
-  border-width: 2px;
-  border-color: var(--fight-border-color);
-  border-style: solid;
+  border: 3px solid var(--component-color);
   padding: 5px;
   width: 100%;
   display: table;
@@ -13,64 +11,131 @@
   vertical-align: middle;
 }
 
+.team-name {
+  font-weight: bold;
+  font-size: 130%;
+  width: 100px;
+  align-content: center;
+}
+
 .left-team {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: center;
-  padding: 20px;
-  border-width: 2px;
-  border-color: var(--ribbon-border);
   border-style: solid;
-  background-color: var(--ribbon-background);
-}
-
-.red-ribbon {
-  color: red;
-  //To be below the timer
-  z-index: -1;
-}
-
-.ribbon-icon {
-  transform: rotate(0deg);
+  text-transform: uppercase;
+  border-width: 2px;
+  border-color: var(--component-color);
+  line-height: 25px;
+  max-width: 56px;
+  overflow: clip;
+  background: var(--component-color);
 }
 
 .right-team {
   writing-mode: vertical-rl;
   text-align: center;
-  padding: 20px;
-  border-width: 2px;
-  border-color: var(--ribbon-border);
   border-style: solid;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  background-color: var(--ribbon-background);
+  text-transform: uppercase;
+  border-width: 2px 2px 2px 0;
+  border-color: var(--component-color);
+  line-height: 25px;
+  max-width: 56px;
+  overflow: clip;
+  background: var(--component-color);
+}
+
+.red-ribbon {
+  color: var(--red-team-color);
+  //To be below the timer
+  //z-index: -1;
+
+  ::ng-deep svg {
+    color: var(--red-team-color) !important;
+  }
 }
 
 .white-ribbon {
-  color: white;
+  color: var(--white-team-color);
   //To be below the timer
-  z-index: -1;
+  //z-index: -1;
+
+  ::ng-deep svg {
+    color: var(--white-team-color) !important;
+  }
+}
+
+.ribbon-icon {
+  background: var(--component-color);
+  transform: rotate(0deg);
+  padding-right: 0;
+  padding-left: 0;
+
+  .mat-icon {
+    margin-left: -10px;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 .fight-container {
   display: flex;
-  padding-bottom: 2vh
+  padding-bottom: 1vh;
+  padding-top: 1vh;
 }
 
-.over {
-  background: var(--disabled);
+.fight-container.ribbon:has(.duel.over) {
+  opacity: 40%;
+}
+
+.fight:has(.duel.duelSelected) {
+  background: var(--floating-background);
+  opacity: 100%;
+}
+
+.duel {
+  background: var(--fight-color);
+}
+
+.duel.onlyShow {
+  opacity: 100% !important;
 }
 
 .duel.over {
-  background: var(--disabled);
-  color: var(--text-disabled);
+  opacity: 30%;
+}
+
+.duel.teamDuel {
+  opacity: 100%;
+}
+
+.duel.duelSelected.over {
+  opacity: 30%;
 }
 
 .duel.duelSelected {
-  border-width: 1px;
-  border-color: #777;
-  border-style: solid;
-  box-shadow: 0 5px 10px 0 var(--shadow);
-  transition: transform .2s; /* Animation */
-  //Transform causes problem with the timer component z-index.
-  //transform: scale(1.03);
+  background: var(--duel-selected-color) !important;
+  opacity: 100%;
+  font-weight: bold;
+}
+
+//Selected fight always shows all duels with an highlighted background.
+.duel:has(user-score .fightSelected) {
+  background-color: var(--active-fight-color);
+}
+
+//For participant fights.
+.duel:has(user-name .highlighted) {
+  background: var(--floating-background) !important;
+  opacity: 100%;
+}
+
+.duel:has(user-score .highlightParticipant) {
+  background: var(--active-fight-color);
+  opacity: 30%;
+}
+
+.duel:has(user-score .showAvatar) {
+  opacity: 100%;
 }

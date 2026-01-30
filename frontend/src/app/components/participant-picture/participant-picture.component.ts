@@ -1,13 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {FileService} from "../../services/file.service";
 import {NameUtilsService} from "../../services/name-utils.service";
-import {PictureDialogBoxComponent} from "./picture-dialog-box/picture-dialog-box.component";
-import {MatDialog} from "@angular/material/dialog";
 import {ParticipantImage} from "../../models/participant-image.model";
 
 @Component({
-  selector: 'app-participant-picture',
+  selector: 'participant-picture',
   templateUrl: './participant-picture.component.html',
   styleUrls: ['./participant-picture.component.scss']
 })
@@ -16,10 +14,16 @@ export class ParticipantPictureComponent implements OnInit {
   @Input()
   participant: Participant | undefined;
 
+  @Output()
+  onWindowOpened: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   participantPicture: string | undefined;
   participantInitials: string;
 
-  constructor(private fileService: FileService, private nameUtils: NameUtilsService, public dialog: MatDialog) {
+  participantWindowOpened: boolean = false;
+
+
+  constructor(private fileService: FileService, private nameUtils: NameUtilsService) {
   }
 
   ngOnInit(): void {
@@ -82,18 +86,8 @@ export class ParticipantPictureComponent implements OnInit {
     return color;
   }
 
-  openImage() {
-    if (this.participantPicture) {
-      this.openDialog("", this.participantPicture);
-    }
-  }
-
-  openDialog(title: string, image: string) {
-    this.dialog.open(PictureDialogBoxComponent, {
-      width: '435px',
-      data: {
-        image: image
-      }
-    });
+  openImage(opened: boolean) {
+    this.participantWindowOpened = opened;
+    this.onWindowOpened.emit(opened);
   }
 }

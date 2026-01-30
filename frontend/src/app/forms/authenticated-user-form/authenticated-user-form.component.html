@@ -1,0 +1,109 @@
+<div class="canvas" *transloco="let t">
+  <biit-tab-group class="user-tabs" id="user-tabs">
+    <biit-tab id="account-tab" [name]="t('t.account')"
+              [error]="!!(errors | mapGet: [AuthenticatedUserFormValidationFields.USERNAME_MANDATORY,
+                                              AuthenticatedUserFormValidationFields.USERNAME_INVALID,
+                                              AuthenticatedUserFormValidationFields.USERNAME_EXISTS,
+                                              AuthenticatedUserFormValidationFields.NAME_MANDATORY,
+                                              AuthenticatedUserFormValidationFields.PASSWORD_MANDATORY,
+                                              AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH,
+                                              AuthenticatedUserFormValidationFields.LASTNAME_MANDATORY])"
+    >
+      <div class="row">
+        <biit-input-text id="username"
+                         [placeholder]="t('t.username')"
+                         [(ngModel)]="user.username"
+                         [minLength]=USERNAME_MIN_LENGTH
+                         [maxLength]=USERNAME_MAX_LENGTH
+                         [disabled]="!!user.id"
+                         [required]="true"
+                         (focusout)="user.username = user.username.trim()"
+                         error="{{errors | mapGet: [AuthenticatedUserFormValidationFields.USERNAME_MANDATORY, AuthenticatedUserFormValidationFields.USERNAME_INVALID, AuthenticatedUserFormValidationFields.USERNAME_EXISTS]}}"
+        ></biit-input-text>
+      </div>
+      <div class="row">
+        <biit-input-text id="name"
+                         [placeholder]="t('t.name')"
+                         [(ngModel)]="user.name"
+                         [minLength]=NAME_MIN_LENGTH
+                         [maxLength]=NAME_MAX_LENGTH
+                         [required]="true"
+                         (focusout)="user.name = user.name.trim()"
+                         error="{{errors | mapGet: AuthenticatedUserFormValidationFields.NAME_MANDATORY}}"
+        ></biit-input-text>
+        <biit-input-text id="lastname"
+                         [placeholder]="t('t.lastname')"
+                         [(ngModel)]="user.lastname"
+                         [minLength]=LASTNAME_MIN_LENGTH
+                         [maxLength]=LASTNAME_MAX_LENGTH
+                         [required]="true"
+                         (focusout)="user.lastname.trim()"
+                         error="{{errors | mapGet: AuthenticatedUserFormValidationFields.LASTNAME_MANDATORY}}"
+        ></biit-input-text>
+      </div>
+      <div class="row" *ngIf="!user.id">
+        <biit-input-text id="password"
+                         [placeholder]="t('t.password')"
+                         [type]="Type.PASSWORD"
+                         [(ngModel)]="user.password"
+                         [maxLength]=PASSWORD_MAX_LENGTH
+                         [required]="true"
+                         error="{{errors | mapGet: AuthenticatedUserFormValidationFields.PASSWORD_MANDATORY}}"
+        ></biit-input-text>
+        <biit-input-text id="repeat-password"
+                         [placeholder]="t('t.repeatPassword')"
+                         [type]="Type.PASSWORD"
+                         [(ngModel)]="pwdVerification"
+                         [maxLength]=PASSWORD_MAX_LENGTH
+                         [required]="true"
+                         error="{{errors | mapGet: AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH}}"
+        ></biit-input-text>
+      </div>
+      <div class="row-single" *ngIf="!user.id">
+        <button biit-button secondary style="display: block" (click)="generatePassword()">
+          {{ t('t.generate') }}
+        </button>
+      </div>
+    </biit-tab>
+    <biit-tab [name]="t('password')" *ngIf="user.id"
+              [error]="!!(errors | mapGet: [AuthenticatedUserFormValidationFields.PASSWORD_MANDATORY,
+                                              AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH])?.length"
+    >
+      <div class="row-single" *ngIf="!(RbacActivity.UPDATE_OTHERS_PASSWORD | hasPermission)">
+        <biit-input-text id="old-password"
+                         [placeholder]="t('t.oldPassword')"
+                         [type]="Type.PASSWORD"
+                         [(ngModel)]="oldPassword"
+                         [maxLength]=PASSWORD_MAX_LENGTH
+        ></biit-input-text>
+      </div>
+      <div class="row">
+        <biit-input-text id="new-password"
+                         [placeholder]="t('t.newPassword')"
+                         [type]="Type.PASSWORD"
+                         [(ngModel)]="user.password"
+                         error="{{errors | mapGet: AuthenticatedUserFormValidationFields.PASSWORD_MANDATORY}}"
+                         [maxLength]=PASSWORD_MAX_LENGTH
+        ></biit-input-text>
+        <biit-input-text id="new-repeat-password"
+                         [placeholder]="t('t.repeatPassword')"
+                         [type]="Type.PASSWORD"
+                         [(ngModel)]="pwdVerification"
+                         [maxLength]=PASSWORD_MAX_LENGTH
+                         error="{{errors | mapGet: AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH}}"
+        ></biit-input-text>
+      </div>
+      <div class="row-single">
+        <button biit-button secondary style="display: block" (click)="generatePassword()">
+          {{ t('t.generate') }}
+        </button>
+      </div>
+    </biit-tab>
+  </biit-tab-group>
+  <div class="form-bottom">
+    <button id="user-button-save" biit-button primary style="display: block" (click)="onSave()"
+            [disabled]="saving || !(RbacActivity.EDIT_USER | hasPermission)">
+      {{ t('saveButton') }}
+    </button>
+  </div>
+</div>

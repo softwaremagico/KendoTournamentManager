@@ -6,7 +6,7 @@ import {takeUntil} from "rxjs";
 import {ThemePalette} from "@angular/material/core";
 
 @Component({
-  selector: 'app-mat-spinner-overlay',
+  selector: 'spinner-overlay',
   templateUrl: './mat-spinner-overlay.component.html',
   styleUrls: ['./mat-spinner-overlay.component.scss']
 })

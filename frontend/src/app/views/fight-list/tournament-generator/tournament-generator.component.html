@@ -1,87 +1,88 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="championship-view">
-  <div class="page-container">
-    <div class="upper-menu">
-      <div class="cell">
-        <button (click)="goBackToFights()"
-                *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
-                [matTooltipShowDelay]="500" color="secondary"
-                color="primary" mat-button
-                matTooltip="{{'back' | translate}}">
-          <mat-icon>arrow_back</mat-icon>
+<ng-container *transloco="let t">
+  <biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+  <div class="championship-view">
+    <div class="page-container">
+      <div class="upper-menu">
+        <button biit-icon *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
+                (click)="goBackToFights()"
+                [title]="t('back')">
+          <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
         </button>
-        <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | rbac : this.rbacService.getActivities())"
+        <button biit-icon *ngIf="(RbacActivity.CREATE_GROUP | hasPermission)"
                 [disabled]="!(groupsLevelZero.length < totalTeams / 2) || groupsDisabled || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                class="add-button"
-                color="primary" mat-button
-                matTooltip="{{'addFight' | translate}}">
-          <mat-icon>add</mat-icon>
+                (click)="addGroup()"
+                [title]="t('addFight')"
+                icon="plus">
         </button>
-        <button (click)="changeNumberOfWinners(2)"
-                *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+        <button biit-icon *ngIf="(RbacActivity.DELETE_GROUP | hasPermission)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || (groups && groups.length < 1)"
+                (click)="deleteGroup()"
+                [title]="t('delete')"
+                icon="minus">
+        </button>
+        <button biit-icon *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'winnerNumber' | translate}}">
+                (click)="changeNumberOfWinners(2)"
+                [title]="t('winnerNumber')">
           <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
         </button>
-        <button (click)="changeNumberOfWinners(1)"
-                *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+        <button biit-icon *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'winnerNumber' | translate}}">
+                (click)="changeNumberOfWinners(1)"
+                [title]="t('winnerNumber')">
           <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
         </button>
-        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.getActivities())"
-                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
-                [matTooltipShowDelay]="500"
-                class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | translate}}">
-          <mat-icon>clear</mat-icon>
-        </button>
-        <button (click)="refreshGroups()" *ngIf="(RbacActivity.REFRESH_GROUPS | rbac : this.rbacService.getActivities())"
-                [disabled]="(tournament && tournament.locked) || updatingGroup || groups.length < 1"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                class="refresh-group"
-                matTooltip="{{'refreshStructure' | translate}}">
-          <mat-icon>settings_backup_restore</mat-icon>
+        <button biit-icon *ngIf="(RbacActivity.REFRESH_GROUPS | hasPermission)"
+                [disabled]="(tournament && tournament.locked) || updatingGroup || (groups && groups.length < 1)"
+                (click)="refreshGroups()"
+                [title]="t('refreshStructure')">
+          <mat-icon class="kendo-icon" svgIcon="restore"></mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission)"
         ></mat-divider>
-        <button (click)="openConfirmationGenerateElementsDialog()"
-                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+        <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'wizard' | translate}}">
-          <mat-icon>auto_fix_high</mat-icon>
+                (click)="generateGroupConfirmation=true"
+                [title]="t('wizard')">
+          <mat-icon class="kendo-icon" svgIcon="wand"></mat-icon>
         </button>
         <mat-divider [vertical]="true"
                      class="download-divider"
-                     *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
         ></mat-divider>
-        <button (click)="downloadPDF()"
-                *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                class="download"
-                matTooltip="{{'download' | translate}}">
-          <mat-icon>file_download</mat-icon>
+        <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
+                (click)="downloadPDF()"
+                [title]="t('download')">
+          <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
         </button>
       </div>
     </div>
     <div class="page-content">
-      <app-tournament-brackets-editor [tournament]="tournament"
+      <tournament-brackets-editor [tournament]="tournament"
                                       [droppingDisabled]="groupsDisabled"
                                       [groupsDisabled]="groupsDisabled"
                                       (onGroupsUpdated)="groupsUpdated($event)"
                                       (onGroupsDisabled)="groupsActionsDisabled($event)"
                                       (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
-      </app-tournament-brackets-editor>
+      </tournament-brackets-editor>
     </div>
   </div>
-</div>
+
+  <biit-popup id="confirmation-delete-teams" *ngIf="generateGroupConfirmation"
+              no-header
+  >
+    <div class="vertical">
+      <span [innerHTML]="'deleteFightsWarning' | transloco"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-delete-cancel-button" biit-button secondary
+                (click)="generateGroupConfirmation = false">{{ t('cancel') }}
+        </button>
+        <button id="confirm-delete-accept-button" biit-button primary
+                (click)="generateElements(); generateGroupConfirmation = false">
+          {{ t('accept') }}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+</ng-container>

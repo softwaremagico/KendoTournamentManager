@@ -101,6 +101,7 @@ export abstract class CustomChartComponent implements OnInit {
 
   protected getChart(type: ChartType, width: number, height: number | undefined, shadow: boolean, showToolbar: boolean): ApexChart {
     return {
+      fontFamily: 'Montserrat',
       width: width,
       height: height ? height : width,
       type: type,
@@ -112,12 +113,12 @@ export abstract class CustomChartComponent implements OnInit {
 
   protected getTitle(title: string | undefined, titleAlignment: "left" | "center" | "right" = "center"): ApexTitleSubtitle {
     return {
-      text: title,
+      text: title?.toUpperCase(),
       align: titleAlignment,
       style: {
-        fontSize: '14px',
+        fontSize: '20px',
         fontWeight: 'bold',
-        fontFamily: 'Roboto',
+        fontFamily: 'Montserrat',
         color: this.titleTextColor
       },
     }
@@ -252,4 +253,17 @@ export abstract class CustomChartComponent implements OnInit {
   }
 
   protected abstract getPlotOptions(): ApexPlotOptions | undefined;
+
+  convertToMultiline(text: string, lineLength: number): string[] {
+    const symbolWidth: number = 10;
+    const chartWidth: number = 300;
+    const rows = Math.ceil(lineLength / (text.length * symbolWidth));
+    const newText: string[] = [];
+    const symbolQuantity = Math.floor(chartWidth / symbolWidth);
+
+    for (let i = 0; i < rows; i++) {
+      newText.push(text.substr(symbolQuantity * i, symbolQuantity));
+    }
+    return newText;
+  }
 }

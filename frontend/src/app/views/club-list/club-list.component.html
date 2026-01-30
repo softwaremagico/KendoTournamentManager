@@ -1,35 +1,70 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="kendo-table">
-  <div class="upper-menu">
-    <div class="cell">
-      <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_CLUB | rbac : this.rbacService.getActivities())"
-              [matTooltipShowDelay]="500" color="primary"
-              mat-button
-              matTooltip="{{'clubAdd' | translate}}">
-        <mat-icon>add</mat-icon>
-      </button>
-      <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_CLUB | rbac : this.rbacService.getActivities())"
-              [disabled]="!basicTableData.selectedElement"
-              [matTooltipShowDelay]="500" mat-button
-              matTooltip="{{'clubEdit' | translate}}">
-        <mat-icon>create</mat-icon>
-      </button>
-      <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_CLUB | rbac : this.rbacService.getActivities())"
-              [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-              color="warn" mat-button
-              matTooltip="{{'clubDelete' | translate}}">
-        <mat-icon>clear</mat-icon>
-      </button>
+<ng-container *transloco="let t">
+  <div class="table-view">
+    <biit-datatable #table id="clubs-table"
+                    [columns]="columns"
+                    [data]="clubs"
+                    [pageSize]="pageSize"
+                    [pageSizeList]="pageSizes"
+                    [loading]="loading"
+                    scrollbarH
+                    selectable
+    >
+      <ng-template #actions>
+        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_CLUB | hasPermission"
+                [title]="t('clubAdd')"
+                (click)="addElement()"
+        ></button>
+        <button id="button-minus" biit-icon icon="minus" class="warning"
+                *ngIf="RbacActivity.DELETE_CLUB | hasPermission"
+                [title]="t('delete')"
+                (click)="confirmDelete=true"
+                [disabled]="!table.selectedRows.length"
+        ></button>
+        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_CLUB | hasPermission"
+                [title]="t('clubEdit')"
+                (click)="editElement(table.selectedRows[0])"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1"
+        ></button>
+        <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
+        <span class="extra-menu">
+        <button id="club-ranking" mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
+                [title]="t('competitorsClubRanking')"
+                (click)="showRanking=true"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+        </button>
+        </span>
+      </ng-template>
+    </biit-datatable>
+  </div>
+
+  <club-form-popup *ngIf="target"
+                   [club]="target"
+                   (onClosed)="this.target = null"
+                   (onSaved)="onSaved($event)"
+  />
+
+
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
+              no-header
+  >
+    <div class="vertical">
+      <span [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getClubNames(table.selectedRows)}"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
+        </button>
+        <button id="confirm-delete-button" biit-button primary
+                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
+        </button>
+      </div>
     </div>
-  </div>
-  <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
-  <div class="bottom-menu">
-    <button (click)="showCompetitorsClassification()"
-            *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
-            [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-            color="primary" mat-button
-            matTooltip="{{'competitorsClubRanking' | translate}}">
-      <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-    </button>
-  </div>
-</div>
+  </biit-popup>
+
+  <biit-popup id="ranking-popup" *ngIf="showRanking" [title]="t('competitorsRanking')">
+    <competitors-ranking
+      [club]="table.selectedRows[0]"
+      [showIndex]="true"
+      (onClosed)="showRanking=false"></competitors-ranking>
+  </biit-popup>
+
+</ng-container>

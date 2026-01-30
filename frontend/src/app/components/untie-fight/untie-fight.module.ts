@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {UntieFightComponent} from "./untie-fight.component";
 import {MatIconModule} from "@angular/material/icon";
 import {DuelModule} from "../fight/duel/duel.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
@@ -15,7 +15,8 @@ import {TranslateModule} from "@ngx-translate/core";
     CommonModule,
     MatIconModule,
     DuelModule,
-    TranslateModule
+    TranslocoModule
   ]
 })
-export class UntieFightModule { }
+export class UntieFightModule {
+}

@@ -1,0 +1,30 @@
+.untie-generator {
+  display: flex;
+  max-height: 600px;
+  justify-content: center;
+}
+
+.teams-tabs {
+  display: block;
+  width: 100%;
+  height: calc(100% - 3rem);
+}
+
+.container {
+  width: 100%;
+  min-width: 40vw;
+  padding: 2.5rem 2.5rem 1.5rem;
+  background: var(--body-background);
+}
+
+::ng-deep .content {
+  overflow: hidden !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  padding-top: 1em;
+  margin-top: 1rem;
+}

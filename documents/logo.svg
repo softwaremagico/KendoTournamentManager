@@ -2,15 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        width="672"
-        height="135"
-        viewBox="0 0 177.80001 35.718752"
-        version="1.1"
-        id="svg8"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        xmlns:cc="http://creativecommons.org/ns#"
-        xmlns:dc="http://purl.org/dc/elements/1.1/">
+   width="672"
+   height="135"
+   viewBox="0 0 177.80001 35.718752"
+   version="1.1"
+   id="svg8"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
     <clipPath
@@ -63,7 +64,7 @@
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#012e67;fill-opacity:1;stroke-width:0.264583"
          x="17.762199"
          y="-12.458448"
-         id="tspan13000">Manager v2</tspan></text>
+         id="tspan13000">Manager NG</tspan></text>
   </g>
   <g
      id="layer2"
