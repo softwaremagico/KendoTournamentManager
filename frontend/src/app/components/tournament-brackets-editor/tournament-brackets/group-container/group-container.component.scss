@@ -24,10 +24,12 @@
 
 .group-content {
   background: white;
-  padding-right: 1rem;
-  padding-left: 1rem;
   width: 90%;
   overflow: auto;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
 }
 
 .group-content.selected {

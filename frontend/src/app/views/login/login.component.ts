@@ -117,7 +117,7 @@ export class LoginComponent implements OnInit {
           this.messageService.errorMessage("backendError");
         }
       }
-    });
+    }).add(() => this.waiting = false);
   }
 
   onResetPassword(email: string) {

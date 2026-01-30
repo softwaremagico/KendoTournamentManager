@@ -3,6 +3,7 @@ import {GroupsUpdatedService} from "../groups-updated.service";
 import {Group} from "../../../../models/group";
 import {BracketsMeasures} from "../brackets-measures";
 import {TournamentBracketsComponent} from "../tournament-brackets.component";
+import {ShiaijoComponent} from "../shiaijo/shiaijo.component";
 
 @Component({
   selector: 'arrows',
@@ -24,7 +25,7 @@ export class ArrowsComponent implements OnInit {
   getGroupHigh: (level: number, group: number) => number;
 
   @Input()
-  getGroupYCoordinate: (level: number, group: number)=> number;
+  getGroupYCoordinate: (level: number, group: number) => number;
 
   @Input()
   groupsByLevel: Map<number, Group[]>;
@@ -126,7 +127,8 @@ export class ArrowsComponent implements OnInit {
 
   getArrowY1Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
     return this.getGroupYCoordinate(level, sourceGroupIndex) + this.getGroupHigh(level, sourceGroupIndex) / 2
-      + this.getOutboundWinnerPixedDifference(destinationGroupIndex, this.getOutboundArrowsDest(sourceGroupIndex), winner);
+      + this.getOutboundWinnerPixedDifference(destinationGroupIndex, this.getOutboundArrowsDest(sourceGroupIndex), winner)
+      + (this.getNumberOfShiaijosCrossed(level, sourceGroupIndex) * this.getShiaijoLabelHeight());
   }
 
   getArrowX2Coordinate(column: number, group: number): number {
@@ -135,7 +137,8 @@ export class ArrowsComponent implements OnInit {
 
   getArrowY2Coordinate(level: number, sourceGroupIndex: number, destinationGroupIndex: number, winner: number): number {
     return this.getGroupYCoordinate(level, destinationGroupIndex) + this.getGroupHigh(level, destinationGroupIndex) / 2
-      + this.getInboundWinnerPixedDifference(sourceGroupIndex, this.getInboundArrowsSrc(destinationGroupIndex), winner);
+      + this.getInboundWinnerPixedDifference(sourceGroupIndex, this.getInboundArrowsSrc(destinationGroupIndex), winner)
+      + (this.getNumberOfShiaijosCrossed(level, destinationGroupIndex) * this.getShiaijoLabelHeight());
   }
 
   getInboundArrowsSrc(group: number): number[] {
@@ -189,6 +192,24 @@ export class ArrowsComponent implements OnInit {
       return BracketsMeasures.WINNER_ARROWS_SEPARATION;
     }
     return -BracketsMeasures.WINNER_ARROWS_SEPARATION;
+  }
+
+  getShiaijoLabelHeight(): number {
+    return ShiaijoComponent.SHIAIJO_HEIGHT + 5;
+  }
+
+
+  getNumberOfShiaijosCrossed(level: number, group: number): number {
+    let shiaijos: number = 0;
+    if (this.groupsByLevel) {
+      for (let g = 0; g < Math.min(this.groupsByLevel.get(level)!.length, group); g++) {
+        if (g < this.groupsByLevel.get(level)!.length - 1
+          && this.groupsByLevel.get(level)![g].shiaijo != this.groupsByLevel.get(level)![g + 1].shiaijo) {
+          shiaijos++;
+        }
+      }
+    }
+    return shiaijos;
   }
 
 }
