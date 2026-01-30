@@ -87,13 +87,13 @@
         <button mat-button *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
                 [title]="t('diplomasHint')"
                 (click)="showDiplomasRoles=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
           <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
         </button>
         <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
                 [title]="t('bloggerStatistics')"
                 (click)="downloadBlogCode(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
           <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
         </button>
         <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
