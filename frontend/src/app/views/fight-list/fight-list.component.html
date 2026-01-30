@@ -195,7 +195,8 @@
                [shown]="timer"
                [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
 
-  <biit-popup id="competitors-ranking-popup" *ngIf="showCompetitorsRanking" no-header>
+  <biit-popup id="competitors-ranking-popup" *ngIf="showCompetitorsRanking"
+              [title]="t('competitorsRanking')">
     <competitors-ranking
       [tournament]="tournament"
       [showIndex]="true"

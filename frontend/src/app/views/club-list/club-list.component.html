@@ -60,7 +60,7 @@
     </div>
   </biit-popup>
 
-  <biit-popup id="ranking-popup" *ngIf="showRanking" no-header>
+  <biit-popup id="ranking-popup" *ngIf="showRanking" [title]="t('competitorsRanking')">
     <competitors-ranking
       [club]="table.selectedRows[0]"
       [showIndex]="true"

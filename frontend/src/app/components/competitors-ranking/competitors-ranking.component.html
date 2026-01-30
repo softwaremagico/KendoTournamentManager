@@ -1,18 +1,18 @@
 <spinner-overlay [overlay]="true"></spinner-overlay>
-<div class="table-container" *transloco="let t">
-  <div class="days-selector" *ngIf="!this.club && !this.tournament">
-    <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
-                     [placeholder]="t('daysFrom')"
-                     [type]="Type.NUMBER"
-                     [min]="0"
-                     [max]="10000"
-                     (onActionPerformed)="daysChanged()"
-    ></biit-input-text>
-    <button (click)="daysChanged()" class="day-input" biit-icon icon="refresh">
-    </button>
-  </div>
+<ng-container *transloco="let t">
+<div class="days-selector" *ngIf="!this.club && !this.tournament" >
+  <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
+                   [placeholder]="t('daysFrom')"
+                   [type]="Type.NUMBER"
+                   [min]="0"
+                   [max]="10000"
+                   (onActionPerformed)="daysChanged()"
+  ></biit-input-text>
+  <button (click)="daysChanged()" class="day-input" biit-icon icon="refresh">
+  </button>
+</div>
+<div class="table-container">
   <table class="competitor-ranking-table">
-    <caption class="table-caption">{{ 'competitorsRanking' | transloco }}</caption>
     <thead>
     <tr>
       <th *ngIf="showIndex" class="competitor-ranking-header">#</th>
@@ -64,3 +64,4 @@
   </button>
   <button biit-button (click)="closeDialog()">{{ 'close' | transloco }}</button>
 </div>
+</ng-container>

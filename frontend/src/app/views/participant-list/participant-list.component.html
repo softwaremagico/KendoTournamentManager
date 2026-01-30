@@ -85,7 +85,8 @@
   </biit-popup>
 
 
-  <biit-popup id="ranking-popup" *ngIf="showRanking" no-header>
+  <biit-popup id="ranking-popup" *ngIf="showRanking"
+              [title]="t('competitorsRanking')">
     <competitors-ranking
       [competitor]="table.selectedRows[0]"
       [showIndex]="true"
