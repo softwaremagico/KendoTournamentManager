@@ -9,7 +9,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-815.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-816h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -76,6 +76,21 @@ the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
 For detailed guidance on the installation process, please refer to
 the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation).
 But for your convenience, here is an overview:
+
+### Using Docker
+
+Deploying the application as a [docker](https://www.docker.com/) container is the best option.
+If you prefer deploying it as a Docker container, refer to the guidelines provided in this
+project's [documentation](./docker/README.md).
+Using Docker is recommended for deployment due to its ease of use once you are familiar with it.
+Remember that you can also use the official images from docker hub:
+
+- [Backend](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-backend/general)
+- [Frontend](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-frontend)
+- [Proxy](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-rproxy)
+
+Please, check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation-using-docker-hub) for further information about how
+to customize the configuration.
 
 ### From a release version
 
@@ -151,13 +166,6 @@ Make sure to carefully review the documentation as there are default keys that s
 The backend requires a database for data persistence.
 You have flexibility in choosing your preferred database provider.
 Refer to [the documentation](./backend/README.md) for guidance on configuring your chosen database engine.
-
-### Using Docker
-
-Furthermore, deploying the application as a [docker](https://www.docker.com/) container is an option.
-If you prefer deploying it as a Docker container, refer to the guidelines provided in this
-project's [documentation](./docker/README.md).
-Using Docker is recommended for deployment due to its ease of use once you are familiar with it.
 
 ## Hardware Requirements
 
