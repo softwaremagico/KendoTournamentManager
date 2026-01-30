@@ -132,7 +132,7 @@
                      *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
                      class="expand-divider"></mat-divider>
         <button biit-icon class="expand-button"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && !this.tournament.locked"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 (click)="projector()"
                 [title]="t('projectMode')">
