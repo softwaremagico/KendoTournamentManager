@@ -46,7 +46,7 @@
                        error="{{errors | mapGet: TournamentFormValidationFields.TEAM_ERRORS}}"
                        [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
           || this.selectedType == typeLeague || this.selectedType == typeKing || this.selectedType == typeSorting"
-                       [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+                       [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission) || this.tournamentWithTeams"
       ></biit-input-text>
     </div>
     <div class="row"

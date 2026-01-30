@@ -12,6 +12,8 @@ import {InputLimits} from "../../utils/input-limits";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 import {TournamentService} from "../../services/tournament.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {FightService} from "../../services/fight.service";
+import {Fight} from "../../models/fight";
 
 @Component({
   selector: 'tournament-form',
@@ -60,9 +62,11 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   protected openExtraProperties: boolean = false;
   protected openScoreRules: boolean = false;
 
+  tournamentWithTeams: boolean = false;
+
 
   constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private tournamentService: TournamentService,) {
+              private tournamentService: TournamentService, private fightService: FightService) {
     super(rbacService)
   }
 
@@ -70,6 +74,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     this.translateTypes();
     this.translateScores();
     this.translateDuration();
+    this.isTournamentStarted();
   }
 
   private translateTypes() {
@@ -100,6 +105,16 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
         value: number, label: this.getMinutes(number) + " " + this.transloco.translate('minutes') + " "
           + this.getSeconds(number) + " " + this.transloco.translate('seconds')
       });
+    }
+  }
+
+  private isTournamentStarted(): void {
+    if (this.tournament.id) {
+      this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
+        this.tournamentWithTeams = _fights.length > 0;
+      });
+    } else {
+      this.tournamentWithTeams = false;
     }
   }
 
