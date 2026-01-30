@@ -11,9 +11,11 @@
 }
 
 .team-list.list-horizontal {
+  display: flex;
+  flex-direction: row;
   max-width: 55vw;
   min-height: 80px;
-  height: 130px;
+  height: 150px;
 }
 
 .team-list .list-horizontal {
