@@ -30,7 +30,7 @@ Drawing on 15 years of experience with different fighting structures, this tool 
 your club's needs effectively.
 
 <p align="center">
-    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
+    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="800" alt="Scores example">
 </p>
 
 A significant upgrade from the previous Kendo Tournament
