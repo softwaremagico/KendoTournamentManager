@@ -157,10 +157,9 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe();
   }
 
-  deletePicture(imageType: TournamentImageType, image: string | null) {
+  deletePicture(imageType: TournamentImageType) {
     this.fileService.deleteTournamentPicture(this.tournament, imageType).subscribe(_picture => {
       this.messageService.infoMessage('pictureDeleted');
-      image = null;
       this.refreshImages();
     });
   }

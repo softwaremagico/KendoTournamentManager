@@ -107,7 +107,7 @@ export class ArrowsComponent implements OnInit {
 
   generateCoordinates(): void {
     this.coordinates = [];
-    if (this.relations && this.relations) {
+    if (this.relations) {
       for (let r of this.relations) {
         this.coordinates.push({
           x1: this.getArrowX1Coordinate(this.level, r.src),

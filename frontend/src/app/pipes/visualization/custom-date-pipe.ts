@@ -13,7 +13,9 @@ export class CustomDatePipe implements PipeTransform {
 
 
   transform(value: any): any {
-    value ? value = 0 : value;
+    if (!value) {
+      value = 0;
+    }
     this._datePipe.transform(value, 'dd/MM/yyyy');
   }
 }

@@ -9,6 +9,7 @@
                      [title]="user.name + ' ' + user.lastname"
                      [subtitle]="'Kendo Tournament'"
                      (click)="onContextMenu($event)"
+                     (keydown)="onContextMenu($event)"
                      #navUser
       ></biit-nav-user>
     </div>

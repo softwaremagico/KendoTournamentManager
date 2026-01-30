@@ -47,7 +47,9 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   datePipe() {
     return {
       transform: (value: any) => {
-        !value ? value = 0 : value;
+        if (!value) {
+          value = 0;
+        }
         return this._datePipe.transform(value, Constants.FORMAT.DATE);
       }
     }

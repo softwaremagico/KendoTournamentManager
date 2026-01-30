@@ -30,7 +30,7 @@
         </button>
         <button biit-icon class="floating-button"
                 *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | hasPermission)"
-                (click)="deletePicture(TournamentImageType.BANNER, this.bannerImage)"
+                (click)="deletePicture(TournamentImageType.BANNER)"
                 [title]="t('defaultPicture')"
                 [icon]="'cross_wide'">
         </button>
@@ -77,7 +77,7 @@
         </button>
         <button biit-icon class="floating-button"
                 *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | hasPermission)"
-                (click)="deletePicture(TournamentImageType.DIPLOMA, this.diplomaImage)"
+                (click)="deletePicture(TournamentImageType.DIPLOMA)"
                 [title]="t('defaultPicture')"
                 [icon]="'cross_wide'">
         </button>
@@ -110,7 +110,7 @@
         </button>
         <button biit-icon class="floating-button"
                 *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)"
-                (click)="deletePicture(TournamentImageType.ACCREDITATION, this.accreditationImage)"
+                (click)="deletePicture(TournamentImageType.ACCREDITATION)"
                 [title]="t('defaultPicture')"
                 [icon]="'cross_wide'">
         </button>
@@ -143,7 +143,7 @@
         </button>
         <button biit-icon class="floating-button"
                 *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | hasPermission)"
-                (click)="deletePicture(TournamentImageType.PHOTO, this.defaultPhotoImage)"
+                (click)="deletePicture(TournamentImageType.PHOTO)"
                 [title]="t('defaultPicture')"
                 [icon]="'cross_wide'">
         </button>

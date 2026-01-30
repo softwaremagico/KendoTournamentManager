@@ -5,6 +5,7 @@
         *ngIf="canMaximizeFights"
         [(ngModel)]="areFightsMaximized"
         (click)="onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, !areFightsMaximized+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, !areFightsMaximized+'')"
         [description]="t('maximizeFightsHint')">
         {{ t('maximizeFights') }}
       </biit-toggle>
@@ -14,6 +15,7 @@
         *ngIf="canAvoidDuplicatedFights"
         [(ngModel)]="avoidDuplicatedFights"
         (click)="onSave(TournamentExtraPropertyKey.AVOID_DUPLICATES, !avoidDuplicatedFights+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.AVOID_DUPLICATES, !avoidDuplicatedFights+'')"
         [description]="t('avoidDuplicateFightsHint')">
         {{ t('avoidDuplicateFights') }}
       </biit-toggle>
@@ -23,6 +25,7 @@
         *ngIf="needsFifoWinner"
         [(ngModel)]="firstInFirstOut"
         (click)="onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, !firstInFirstOut+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, !firstInFirstOut+'')"
         [description]="t('leagueFifoHint')">
         {{ t('leagueFifo') }}
       </biit-toggle>
@@ -32,6 +35,7 @@
         *ngIf="canResolveOddFightsAsap"
         [(ngModel)]="resolveOddFightsAsap"
         (click)="onSave(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, !resolveOddFightsAsap+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, !resolveOddFightsAsap+'')"
         [description]="t('oddFightsResolvedAsapHint')">
         {{ t('oddFightsResolvedAsap') }}
       </biit-toggle>

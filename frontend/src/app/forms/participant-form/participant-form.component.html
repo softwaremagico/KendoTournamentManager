@@ -44,7 +44,8 @@
     <div class="row picture-container" *ngIf="participantPicture">
       <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
       <floating-delete-button icon="cross" class="floating-image-delete-button"
-                              (click)="deletePicture()">
+                              (click)="deletePicture()"
+                              (keydown)="deletePicture()">
       </floating-delete-button>
     </div>
     <div class="buttons-row">

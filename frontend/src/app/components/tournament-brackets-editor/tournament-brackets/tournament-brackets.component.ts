@@ -110,7 +110,7 @@ export class TournamentBracketsComponent implements OnInit {
     //Now group 0 maybe is the one with the highest number of groups. Search for which level is.
     if (groupsByLevel) {
       const keys: number[] = [...groupsByLevel.keys()];
-      for (let key of keys.sort()) {
+      for (let key of keys.sort((a, b) => a - b)) {
         if (groupsByLevel.get(key)!.length > maxGroupsByLevel) {
           maxGroupsByLevel = groupsByLevel.get(key)!.length;
           levelWithMaxGroups = key;

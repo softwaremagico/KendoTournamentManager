@@ -9,7 +9,7 @@
       <div class="rectangle"></div>
       <div class="circle"></div>
       <floating-delete-button icon="cross" class="floating-image-delete-button"
-                              (click)="deletePicture()">
+                              (click)="deletePicture()" (keydown)="deletePicture()">
       </floating-delete-button>
       <button biit-icon class="floating-swap-button" *ngIf="availableCameras>1 && (RbacActivity.TAKE_PICTURE | hasPermission)"
               (click)="switchCamera()"
