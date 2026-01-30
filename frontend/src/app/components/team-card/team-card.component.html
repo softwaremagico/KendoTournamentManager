@@ -1,6 +1,6 @@
 <mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify"
           [ngClass]="{'locked': team.locked || disableDrag}"
-          (click)="onClick.emit(team)">
+          (click)="onClick.emit(team)" (keydown)="onClick.emit(team)">
   <mat-card-header class="team-card-header">
     <mat-card-title class="team-card-title">{{ team.name }}</mat-card-title>
     <mat-card-subtitle class="team-card-subtitle"></mat-card-subtitle>

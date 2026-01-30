@@ -7,7 +7,7 @@
         }"
      class="group"
      [ngClass]="['group-' + index ,'group-' + level + '-' + index]"
-     (click)="isClicked()">
+     (click)="isClicked()" (keydown)="isClicked()">
   <div class="group-title">{{ 'group'| transloco }} {{ index + 1 }}</div>
   <div class="group-content" [class]="'group-content-' + level + '-' + index" (cdkDropListDropped)="dropTeam($event)"
        [class.selected]="selected && level==0"

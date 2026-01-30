@@ -5,7 +5,6 @@ import {LoggedIn} from './interceptors/logged-in.service';
 import {AuthenticatedUserListComponent} from "./views/authenticated-user-list/authenticated-user-list.component";
 import {PasswordsComponent} from "./views/passwords/passwords.component";
 import {ParticipantStatisticsComponent} from "./views/participant-statistics/participant-statistics.component";
-import {TournamentStatisticsComponent} from "./views/tournament-statistics/tournament-statistics.component";
 import {ParticipantFightListComponent} from "./views/participant-fight-list/participant-fight-list.component";
 import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
 
