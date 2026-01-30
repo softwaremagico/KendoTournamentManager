@@ -31,6 +31,7 @@
                   (keydown)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
                   class="team-header">{{ team.name }}</h2>
               <button id="delete-team-button" class="delete-button" (click)="deleteTeam(team)" icon="cross"
+                      *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.getActivities())"
                       biit-icon></button>
             </div>
             <input (keyup.enter)="setEditable(team, false); updateTeamName(team)" *ngIf="team.editing"
