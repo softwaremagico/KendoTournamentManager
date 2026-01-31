@@ -2,6 +2,10 @@
   height: 99%;
 }
 
+::ng-deep #biit-popup .content {
+  overflow-y: clip;
+}
+
 .image-editor {
   width: 800px;
   height: 600px;
@@ -38,7 +42,6 @@
   justify-content: center;
 }
 
-
 .arrow {
   padding: 0 0 0 0;
   min-width: 0;
@@ -65,13 +68,13 @@
 .name-line {
   position: absolute;
   height: 3px;
-  background: var(--disabled-primary-color);
+  background: var(--warning-color);
   width: 87.5%;
 }
 
 .name {
   position: absolute;
-  width: 100%;
+  width: 800px;
   font-size: 48px;
   text-align: center;
 }
