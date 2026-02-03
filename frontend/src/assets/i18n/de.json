@@ -396,9 +396,13 @@
   "wizard": "Wizard",
   "auto": "Auto",
   "admin": "Administrator",
+  "adminHint": "Sie können jede beliebige Aktion ausführen.",
   "editor": "Editor",
+  "editorHint": "Sie können Informationen zu Turnieren bearbeiten.",
   "viewer": "Zuschauer",
+  "viewerHint": "Temporäres Konto mit stark eingeschränktem Zugriff.",
   "guest": "Gast",
+  "guestHint": "",
   "profile": "Profil",
   "back": "Terugkomen",
   "chronometerOn": "Stoppuhr zeigen",
@@ -740,5 +744,6 @@
   "uploadCsvFile": "Laden Sie eine CSV-Datei hoch",
   "defaultPicture": "Standardbild",
   "preview": "Vorschau",
-  "selectDiplomaRoles": "Wählen Sie die Rollen mit einem Diplom aus."
+  "selectDiplomaRoles": "Wählen Sie die Rollen mit einem Diplom aus.",
+  "userRoleTitle":"Definieren Sie die Kontorolle"
 }

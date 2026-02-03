@@ -396,9 +396,13 @@
   "wizard": "Wizard",
   "auto": "Auto",
   "admin": "Beheerder",
+  "adminHint": "Je kunt elke actie uitvoeren.",
   "editor": "Editor",
+  "editorHint": "Je kunt informatie met betrekking tot toernooien bewerken.",
   "viewer": "Kijker",
+  "viewerHint": "Tijdelijk account met zeer beperkte toegang.",
   "guest": "Gast",
+  "guestHint": "",
   "profile": "Profiel",
   "back": "Terugkomen",
   "chronometerOn": "Stopwatch tonen",
@@ -740,5 +744,6 @@
   "uploadCsvFile": "Upload een CSV-bestand",
   "defaultPicture": "Standaard afbeelding",
   "preview": "Voorbeeld",
-  "selectDiplomaRoles": "Selecteer de functies waarvoor een diploma vereist is."
+  "selectDiplomaRoles": "Selecteer de functies waarvoor een diploma vereist is.",
+  "userRoleTitle":"Definieer de accountrol"
 }
