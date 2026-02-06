@@ -232,7 +232,7 @@
   "refereeListBad": "Si è verificato un problema mentre si stava creando il file con la lista degli arbitri. Esiste qualche altro programmo che sta accedendo al file?",
   "diplomaOK": "I diploma sono stati creati in un file PDF.",
   "diplomaBad": "Si è verificato un problema mentre si stavano generando i diploma. Esiste qualche altro programmo che sta accedendo al file?",
-  "roleChanged": "Il ruolo del partecipante è stato cambiato",
+  "roleChanged": "Il ruolo è stato cambiato",
   "roleDeleteQuestion": "Questa azione cancellerà il ruolo del partecipante. Si è sicuri di voler procedere?",
   "roleDeleted": "Il ruolo è stato cancellato",
   "noAccessParticipant": "L'utente selezionato non ha permesso per accedere al database della macchina indicata.",
@@ -401,9 +401,13 @@
   "wizard": "Assistente",
   "auto": "Auto",
   "admin": "Amministratore",
+  "adminHint": "Puoi eseguire qualsiasi azione",
   "editor": "Editore",
+  "editorHint": "Puoi modificare le informazioni relative ai tornei",
   "viewer": "Spettatore",
+  "viewerHint": "È possibile leggere le informazioni ma non modificarle.",
   "guest": "Ospite",
+  "guestHint": "Account temporaneo con accesso molto limitato.",
   "profile": "Profilo",
   "back": "Tornare",
   "chronometerOn": "Mostra il cronometro",
@@ -745,5 +749,6 @@
   "uploadCsvFile": "Carica un file CSV",
   "defaultPicture": "Immagine predefinita",
   "preview": "Anteprima",
-  "selectDiplomaRoles": "Seleziona i ruoli con diploma"
+  "selectDiplomaRoles": "Seleziona i ruoli con diploma",
+  "userRoleTitle":"Definire il ruolo dell'account"
 }

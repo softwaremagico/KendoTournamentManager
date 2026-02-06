@@ -152,7 +152,7 @@
               (focusout)="filterInUse=false"
               (focusin)="filterInUse=true"
               *ngIf="!projectorMode"></filter>
-      <div class="fights-container" [ngClass]="{'project-mode': projectorMode}">
+      <div class="fights-container" [ngClass]="{'project-mode': projectorMode, 'with-banner':bannerImage}">
         <div *ngFor="let group of groups" class="fight-list">
           <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
               [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
@@ -181,6 +181,9 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="banner" *ngIf="bannerImage && projectorMode">
+        <img alt="Banner" class="banner-image" src="{{ bannerImage }}"/>
       </div>
     </div>
   </div>

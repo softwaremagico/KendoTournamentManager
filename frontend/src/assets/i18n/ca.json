@@ -234,7 +234,7 @@
   "refereeListBad": "Ha ocorregut un problema quan s'intentava generar l'arxiu amb la llista d'àrbitres. Existeix algun altre programa intentant accedir a l'arxiu?.",
   "diplomaOK": "Els diplomes han sigut creats en un arxiu PDF.",
   "diplomaBad": "Ha ocorregut un problema quan s'intentaven generar els diplomes. Existeix algun altre programa intentant accedir a l'arxiu?.",
-  "roleChanged": "S'ha canviat el rol dels participants.",
+  "roleChanged": "S'ha canviat el rol.",
   "roleDeleteQuestion": "Va a eliminar-se el rol del participant seleccionat. Desitja continuar?",
   "roleDeleted": "S'ha eliminat el rol",
   "noAccessParticipant": "L'usuari seleccionat no té permès per accedir a la base de dades de la màquina indicada.",
@@ -406,9 +406,13 @@
   "logoutWarning": "Esteu segur de voler tancar sessió?",
   "logout": "Tancar sessió",
   "admin": "Administrador",
+  "adminHint": "Pot realitzar qualsevol acció",
   "editor": "Editor",
+  "editorHint": "Podeu editar informació relativa als tornejos",
   "viewer": "Espectador",
+  "viewerHint": "Podeu llegir informació però no modificar-la",
   "guest": "Convidat",
+  "guestHint": "Compte temporal amb accés molt limitat.",
   "profile": "Perfil",
   "back": "Tornar",
   "chronometerOn": "Mostra cronòmetre",
@@ -760,5 +764,6 @@
   "uploadCsvFile": "Pujar un fitxer CSV",
   "defaultPicture": "Imatge predeterminada",
   "preview": "Vista preliminar",
-  "selectDiplomaRoles": "Selecciona els rols amb diploma"
+  "selectDiplomaRoles": "Selecciona els rols amb diploma",
+  "userRoleTitle":"Definir el rol del compte"
 }

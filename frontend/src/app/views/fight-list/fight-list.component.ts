@@ -23,7 +23,6 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
-import {TranslocoService} from "@ngneat/transloco";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
@@ -31,6 +30,8 @@ import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
 import {AudioService} from "../../services/audio.service";
 import {ProjectModeChangedService} from "../../services/notifications/project-mode-changed.service";
+import {TournamentImageType} from "../../models/tournament-image-type";
+import {FileService} from "../../services/file.service";
 
 @Component({
   selector: 'fight-list',
@@ -88,7 +89,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   protected newFight: Fight;
 
   filterInUse: boolean = false;
-
+  protected bannerImage: string | null;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               private tournamentService: TournamentService, private fightService: FightService,
@@ -98,7 +99,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              rbacService: RbacService, private translateService: TranslocoService,
+              rbacService: RbacService, private fileService: FileService,
               private systemOverloadService: SystemOverloadService,
               private rxStompService: RxStompService, private loginService: LoginService,
               private audioService: AudioService, private projectModeChangedService: ProjectModeChangedService) {
@@ -159,6 +160,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         } else {
           this.refreshFights();
         }
+        this.loadTournamentBanner();
       });
     }
     this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
@@ -932,6 +934,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.hideFinishedFights = mode;
     this.resetFilter();
     this.projectModeChangedService.isProjectMode.next(mode);
+  }
+
+  loadTournamentBanner() {
+    if (this.tournament) {
+      this.fileService.getTournamentPicture(this.tournament, TournamentImageType.BANNER).subscribe(_picture => {
+        if (_picture && !_picture.defaultImage) {
+          this.bannerImage = _picture.base64;
+        } else {
+          this.bannerImage = null;
+        }
+      });
+    }
   }
 
 
