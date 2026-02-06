@@ -27,6 +27,8 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   protected TOURNAMENT_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
   protected TOURNAMENT_MIN_SHIAIJO: number = 1;
   protected TOURNAMENT_MAX_SHIAIJO: number = 10;
+  protected TOURNAMENT_MIN_FIGHT: number = 1;
+  protected TOURNAMENT_MAX_FIGHT: number = 10;
   protected TOURNAMENT_MIN_TEAM: number = 1;
   protected TOURNAMENT_MAX_TEAM: number = 10;
   protected TOURNAMENT_ALLOWED_DURATION: number[] = [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600];
@@ -157,6 +159,11 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     if (this.tournament!.teamSize! < this.TOURNAMENT_MIN_TEAM) {
       verdict = false;
       this.errors.set(TournamentFormValidationFields.TEAM_ERRORS, this.transloco.translate(`v.minLengthError`));
+    }
+    if (this.tournament!.teamSize! < this.tournament!.fightSize!) {
+      verdict = false;
+      this.errors.set(TournamentFormValidationFields.TEAM_ERRORS, this.transloco.translate(`teamsSmallerThanFights`));
+      this.errors.set(TournamentFormValidationFields.FIGHT_ERRORS, this.transloco.translate(`teamsSmallerThanFights`));
     }
     return verdict;
   }

@@ -11,6 +11,17 @@
   vertical-align: middle;
 }
 
+.duel.reserve {
+  display: none;
+  background-color: var(--duel-reserve-color) !important;
+  opacity: 100%;
+}
+
+.duel.reserve.reordering {
+  display: flex;
+}
+
+
 .team-name {
   font-weight: bold;
   font-size: 130%;
@@ -106,6 +117,10 @@
   opacity: 30%;
 }
 
+.duel.over.reserve {
+  opacity: 100%;
+}
+
 .duel.teamDuel {
   opacity: 100%;
 }
@@ -116,6 +131,12 @@
 
 .duel.duelSelected {
   background: var(--duel-selected-color) !important;
+  opacity: 100%;
+  font-weight: bold;
+}
+
+.duel.duelSelected.reserve {
+  background: var(--duel-reserve-color) !important;
   opacity: 100%;
   font-weight: bold;
 }

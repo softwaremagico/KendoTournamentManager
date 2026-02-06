@@ -38,28 +38,28 @@
         <button biit-icon
                 *ngIf="(RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel?.finished == false)"
                 (click)="finishDuel()"
-                [disabled]="!selectedDuel || (tournament && tournament.locked)"
+                [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.reserve"
                 [title]="t('finishFight')">
           <mat-icon class="kendo-icon" svgIcon="check"></mat-icon>
         </button>
         <button biit-icon
                 *ngIf="(RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished == true"
                 (click)="unfinishDuel()"
-                [disabled]="!selectedDuel || (tournament && tournament.locked)"
+                [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.reserve"
                 [title]="t('reopenFight')">
           <mat-icon class="kendo-icon" svgIcon="uncheck"></mat-icon>
         </button>
         <button biit-icon class="timer-button"
                 *ngIf="!timer && (RbacActivity.SHOW_TIMER | hasPermission)"
                 (click)="showTimer(canStartFight(selectedDuel))"
-                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+                [disabled]="selectedDuel===undefined || selectedDuel.reserve || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [title]="t('chronometerOn')">
           <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
         </button>
         <button biit-icon class="timer-button"
                 *ngIf="timer && (RbacActivity.EDIT_FIGHT | hasPermission)"
                 (click)="showTimer(false)"
-                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+                [disabled]="selectedDuel===undefined || selectedDuel.reserve || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [title]="t('chronometerOff')">
           <mat-icon class="kendo-icon" svgIcon="timer_off"></mat-icon>
         </button>
@@ -132,7 +132,7 @@
                      *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
                      class="expand-divider"></mat-divider>
         <button biit-icon class="expand-button"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && !this.tournament.locked"
+                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && (!tournament || tournament.locked)"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 (click)="projector()"
                 [title]="t('projectMode')">
@@ -165,9 +165,10 @@
             <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                    *ngFor="let fight of filteredFights.get(group.id!)"
                    [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectorMode"
-                   [showAvatars]="showAvatars" [swapColors]="swappedColors"
-                   [projectMode]="projectorMode"
-                   [swapTeams]="swappedTeams"></fight>
+                   [showAvatars]="showAvatars"
+                   [swapColors]="swappedColors"
+                   [swapTeams]="swappedTeams"
+                   [projectMode]="projectorMode"></fight>
 
             <div class="unties-list">
               <untie-fight *ngFor="let duel of filteredUnties.get(group.id!)"

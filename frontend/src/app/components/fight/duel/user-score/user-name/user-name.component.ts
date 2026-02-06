@@ -6,6 +6,7 @@ import {MembersOrderChangedService} from "../../../../../services/notifications/
 import {KendoComponent} from "../../../../kendo-component";
 import {Duel} from "../../../../../models/duel";
 import {Router} from "@angular/router";
+import {Fight} from "../../../../../models/fight";
 
 @Component({
   selector: 'user-name',
@@ -16,6 +17,9 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   @Input()
   participant: Participant | undefined;
+
+  @Input()
+  fight: Fight;
 
   @Input()
   duel: Duel;
@@ -43,7 +47,8 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   }
 
   ngOnInit(): void {
-    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
+    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled =>
+      this.reorderAllowed = enabled && !this.duel.finished && !this.isOver(this.fight));
     this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(100))
       .subscribe(() => {
         this.displayName = this.getDisplayName(window.innerWidth);
@@ -78,6 +83,15 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   openStatistics(): void {
     this.router.navigateByUrl("/participants/statistics?participantId=" + this.participant?.id + "&tournamentId=" + this.duel.tournament.id + "&redirectUrl=/tournaments/fights");
+  }
+
+  isOver(fight: Fight): boolean {
+    for (let duel of fight.duels) {
+      if (!duel.finished && !duel.reserve) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }
