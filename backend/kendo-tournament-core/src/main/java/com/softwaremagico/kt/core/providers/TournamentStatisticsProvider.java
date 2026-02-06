@@ -55,6 +55,7 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
         tournamentStatistics.setTournamentLockedAt(tournament.getLockedAt());
         tournamentStatistics.setTournamentFinishedAt(tournament.getFinishedAt());
         tournamentStatistics.setTeamSize(tournament.getTeamSize());
+        tournamentStatistics.setFightSize(tournament.getFightSize());
         for (final RoleType roleType : RoleType.values()) {
             tournamentStatistics.addNumberOfParticipants(roleType, roleProvider.count(tournament, roleType));
         }

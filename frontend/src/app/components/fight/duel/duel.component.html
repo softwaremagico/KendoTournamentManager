@@ -1,16 +1,24 @@
 <user-score (cdkDropListDropped)="drop($event, true)" [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, true)"
-            [duelIndex]="duelIndex" [duel]="duel" [left]="true"
+            [duelIndex]="duelIndex"
+            [fight]="fight"
+            [duel]="duel"
+            [left]="true"
             [showAvatar]="showAvatars"
             [locked]="locked"
             [highlightedParticipantId]="highlightedParticipantId"
             [fightSelected]="fightSelected"
             [swapTeams]="swapTeams"
             [projectMode]="projectMode"
+            [reserve]="reserve"
             cdkDropList
             class="user-score"></user-score>
-<draw [duel]="duel" class="draw-score"></draw>
+<draw *ngIf="!duel.reserve" [duel]="duel" class="draw-score"></draw>
+<div *ngIf="duel.reserve" class="reserve-separation"></div>
 <user-score (cdkDropListDropped)="drop($event, false)"
-            [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)" [duelIndex]="duelIndex" [duel]="duel"
+            [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)"
+            [duelIndex]="duelIndex"
+            [fight]="fight"
+            [duel]="duel"
             [left]="false"
             [showAvatar]="showAvatars"
             [locked]="locked"
@@ -18,6 +26,7 @@
             [fightSelected]="fightSelected"
             [swapTeams]="swapTeams"
             [projectMode]="projectMode"
+            [reserve]="reserve"
             cdkDropList
             class="user-score"></user-score>
 

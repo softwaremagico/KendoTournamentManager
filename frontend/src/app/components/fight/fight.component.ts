@@ -7,6 +7,7 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {TournamentType} from "../../models/tournament-type";
+import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
 
 @Component({
   selector: 'fight',
@@ -16,6 +17,8 @@ import {TournamentType} from "../../models/tournament-type";
 export class FightComponent extends RbacBasedComponent implements OnInit {
 
   readonly ROW_HIGH: number = 70;
+
+  protected readonly TournamentType = TournamentType;
 
   @Input()
   fight: Fight;
@@ -52,8 +55,11 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   onlyShow: boolean = false;
 
-  constructor(private duelChangedService: DuelChangedService, rbacService: RbacService) {
+  reorderAllowed: boolean = true;
+
+  constructor(private duelChangedService: DuelChangedService, rbacService: RbacService, private membersOrderChangedService: MembersOrderChangedService) {
     super(rbacService);
+    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
   }
 
   ngOnInit(): void {
@@ -79,15 +85,13 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   }
 
   selectDuel(duel: Duel): void {
-    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL)) {
+    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL) && !duel.reserve) {
       this.selectedDuel = duel;
       this.onSelectedDuel.emit(duel);
     }
   }
 
   isOver(duel: Duel): boolean {
-    return duel.finished && !this.locked;
+    return duel.reserve || (duel.finished && !this.locked);
   }
-
-  protected readonly TournamentType = TournamentType;
 }

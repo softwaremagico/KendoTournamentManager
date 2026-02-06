@@ -17,8 +17,9 @@
           (click)="selectDuel(duel)"
           (keydown)="selectDuel(duel)"
           [fight]="fight"
+          [reserve]="duel.reserve"
           [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | hasPermission) && !projectMode,
-            over: isOver(duel), teamDuel: this.fight.tournament.teamSize==1, onlyShow:onlyShow}"
+            over: isOver(duel), teamDuel: this.fight.tournament.teamSize==1, onlyShow:onlyShow, reserve: duel.reserve, reordering: reorderAllowed}"
           [fightSelected]="selectedDuel!=undefined"
           [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | hasPermission)"
           [showAvatars]="showAvatars"

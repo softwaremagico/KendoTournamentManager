@@ -3,4 +3,5 @@ export enum TournamentFormValidationFields {
   TYPE_ERRORS = 'TYPE_ERRORS',
   SHIAIJO_ERRORS = 'SHIAIJO_ERRORS',
   TEAM_ERRORS = 'TEAM_ERRORS',
+  FIGHT_ERRORS = 'FIGHT_ERRORS',
 }

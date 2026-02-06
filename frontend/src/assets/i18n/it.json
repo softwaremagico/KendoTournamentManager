@@ -303,6 +303,7 @@
   "passwordChange": "Cambia la tua password",
   "name": "Nome",
   "teamSize": "Dimensione della squadra",
+  "tournamentFightSize": "Dimensione della partita",
   "tournamentType": "Tipo",
   "competitor": "Competitore",
   "referee": "Arbitro",
@@ -750,5 +751,6 @@
   "defaultPicture": "Immagine predefinita",
   "preview": "Anteprima",
   "selectDiplomaRoles": "Seleziona i ruoli con diploma",
-  "userRoleTitle":"Definire il ruolo dell'account"
+  "userRoleTitle":"Definire il ruolo dell'account",
+  "teamsSmallerThanFights": "La dimensione delle squadre deve essere uguale o superiore alla dimensione delle partite.\n\n"
 }

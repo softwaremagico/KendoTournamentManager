@@ -315,6 +315,7 @@
   "tournamentName": "Turniername",
   "tournamentShiaijos": "Anzahl der Shiaijos",
   "tournamentTeamSize": "Teamgröße",
+  "tournamentFightSize": "Passende Größe",
   "tournamentDuelsDurations": "Duell-Dauer",
   "tournamentAdd": "Turnier Hinzufügen",
   "tournamentEdit": "Turnier Bearbeiten",
@@ -745,5 +746,6 @@
   "defaultPicture": "Standardbild",
   "preview": "Vorschau",
   "selectDiplomaRoles": "Wählen Sie die Rollen mit einem Diplom aus.",
-  "userRoleTitle":"Definieren Sie die Kontorolle"
+  "userRoleTitle":"Definieren Sie die Kontorolle",
+  "teamsSmallerThanFights": "Die Größe der Mannschaften muss mindestens der Größe der Spiele entsprechen."
 }
