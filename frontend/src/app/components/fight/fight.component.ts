@@ -85,13 +85,13 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   }
 
   selectDuel(duel: Duel): void {
-    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL) && !duel.reserve) {
+    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL) && !duel.substitute) {
       this.selectedDuel = duel;
       this.onSelectedDuel.emit(duel);
     }
   }
 
   isOver(duel: Duel): boolean {
-    return duel.reserve || (duel.finished && !this.locked);
+    return duel.substitute || (duel.finished && !this.locked);
   }
 }

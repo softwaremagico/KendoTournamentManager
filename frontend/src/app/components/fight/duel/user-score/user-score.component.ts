@@ -42,7 +42,7 @@ export class UserScoreComponent {
     highlightedParticipantId: number | undefined;
 
     @Input()
-    reserve: boolean = false;
+    substitute: boolean = false;
 
     participantWindowOpened: boolean = false;
 

@@ -9,11 +9,11 @@
             [fightSelected]="fightSelected"
             [swapTeams]="swapTeams"
             [projectMode]="projectMode"
-            [reserve]="reserve"
+            [substitute]="substitute"
             cdkDropList
             class="user-score"></user-score>
-<draw *ngIf="!duel.reserve" [duel]="duel" class="draw-score"></draw>
-<div *ngIf="duel.reserve" class="reserve-separation"></div>
+<draw *ngIf="!duel.substitute" [duel]="duel" class="draw-score"></draw>
+<div *ngIf="duel.substitute" class="substitute-separation"></div>
 <user-score (cdkDropListDropped)="drop($event, false)"
             [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)"
             [duelIndex]="duelIndex"
@@ -26,7 +26,7 @@
             [fightSelected]="fightSelected"
             [swapTeams]="swapTeams"
             [projectMode]="projectMode"
-            [reserve]="reserve"
+            [substitute]="substitute"
             cdkDropList
             class="user-score"></user-score>
 

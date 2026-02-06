@@ -202,8 +202,8 @@ public class Fight extends Element {
                 final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
                         i < team2.getMembers().size() ? team2.getMembers().get(i) : null, tournament, createdBy);
                 duel.setTotalDuration(tournament.getDuelsDuration());
-                //Reserve fights are marked as over.
-                duel.setReserve(i >= tournament.getFightSize());
+                //Substitute fights are marked as over.
+                duel.setSubstitute(i >= tournament.getFightSize());
                 duels.add(duel);
             }
         }

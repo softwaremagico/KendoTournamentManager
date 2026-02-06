@@ -737,8 +737,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   selectDuel(duel: Duel): void {
-    //Reserve are not selectable.
-    if(!duel.reserve) {
+    //substitute are not selectable.
+    if(!duel.substitute) {
       this.selectedDuel = duel;
       this.duelChangedService.isDuelUpdated.next(duel);
       if (duel) {
@@ -789,14 +789,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (fights) {
       for (const fight of fights) {
         for (const duel of unties) {
-          if (!duel.finished && !duel.reserve) {
+          if (!duel.finished && !duel.substitute) {
             this.selectedFight = undefined;
             this.selectDuel(duel);
             return true;
           }
         }
         for (const duel of fight.duels) {
-          if (!duel.finished && !duel.reserve) {
+          if (!duel.finished && !duel.substitute) {
             this.selectFight(fight);
             this.selectDuel(duel);
             return true;

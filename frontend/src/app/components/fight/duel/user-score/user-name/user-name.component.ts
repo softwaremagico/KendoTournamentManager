@@ -87,7 +87,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   isOver(fight: Fight): boolean {
     for (let duel of fight.duels) {
-      if (!duel.finished && !duel.reserve) {
+      if (!duel.finished && !duel.substitute) {
         return false;
       }
     }
