@@ -46,7 +46,7 @@ export class DuelComponent extends KendoComponent implements OnInit {
   projectMode: boolean;
 
   @Input()
-  reserve: boolean;
+  substitute: boolean;
 
   constructor(private duelChangedService: DuelChangedService, private membersOrderChangedService: MembersOrderChangedService) {
     super();

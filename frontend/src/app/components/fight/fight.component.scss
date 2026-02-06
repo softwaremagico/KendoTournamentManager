@@ -11,13 +11,13 @@
   vertical-align: middle;
 }
 
-.duel.reserve {
+.duel.substitute {
   display: none;
-  background-color: var(--duel-reserve-color) !important;
+  background-color: var(--duel-substitute-color) !important;
   opacity: 100%;
 }
 
-.duel.reserve.reordering {
+.duel.substitute.reordering {
   display: flex;
 }
 
@@ -117,7 +117,7 @@
   opacity: 30%;
 }
 
-.duel.over.reserve {
+.duel.over.substitute {
   opacity: 100%;
 }
 
@@ -135,8 +135,8 @@
   font-weight: bold;
 }
 
-.duel.duelSelected.reserve {
-  background: var(--duel-reserve-color) !important;
+.duel.duelSelected.substitute {
+  background: var(--duel-substitute-color) !important;
   opacity: 100%;
   font-weight: bold;
 }

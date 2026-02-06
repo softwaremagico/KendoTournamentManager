@@ -22,7 +22,7 @@ export class Duel extends Element {
   public startedAt: Date | undefined;
   public finishedAt: Date | undefined;
   public tournament: Tournament;
-  public reserve: boolean = false;
+  public substitute: boolean = false;
 
   public static override copy(source: Duel, target: Duel): void {
     Element.copy(source, target);
@@ -56,7 +56,7 @@ export class Duel extends Element {
     if (source.tournament) {
       target.tournament = Tournament.clone(source.tournament);
     }
-    target.reserve = source.reserve;
+    target.substitute = source.substitute;
   }
 
   public static clone(data: Duel): Duel {

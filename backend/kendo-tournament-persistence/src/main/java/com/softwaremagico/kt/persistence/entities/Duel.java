@@ -132,8 +132,8 @@ public class Duel extends Element {
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
-    @Column(name = "reserve")
-    private Boolean reserve = false;
+    @Column(name = "substitute")
+    private Boolean substitute = false;
 
     public Duel() {
         super();
@@ -228,7 +228,7 @@ public class Duel extends Element {
      * @return true if the round is over.
      */
     public boolean isOver() {
-        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || finished || getReserve();
+        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || finished || getSubstitute();
     }
 
     /**
@@ -354,11 +354,11 @@ public class Duel extends Element {
         this.finishedAt = finishedAt;
     }
 
-    public Boolean getReserve() {
-        return reserve;
+    public Boolean getSubstitute() {
+        return substitute;
     }
 
-    public void setReserve(Boolean reserve) {
-        this.reserve = reserve;
+    public void setSubstitute(Boolean substitute) {
+        this.substitute = substitute;
     }
 }
