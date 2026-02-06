@@ -28,6 +28,9 @@ export class DuelComponent extends KendoComponent implements OnInit {
   duelIndex: number;
 
   @Input()
+  fightSelected: boolean;
+
+  @Input()
   selected: boolean;
 
   @Input()
@@ -38,6 +41,9 @@ export class DuelComponent extends KendoComponent implements OnInit {
 
   @Input()
   highlightedParticipantId: number | undefined;
+
+  @Input()
+  projectMode: boolean;
 
   constructor(private duelChangedService: DuelChangedService, private membersOrderChangedService: MembersOrderChangedService) {
     super();

@@ -7,7 +7,7 @@ import {
   ApexNonAxisChartSeries,
   ApexResponsive,
   ApexTitleSubtitle,
-  ApexTooltip, ApexYAxis,
+  ApexTooltip,
   ChartComponent
 } from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";
@@ -96,8 +96,8 @@ export class PieChartComponent extends CustomChartComponent {
   protected override getTooltip(): ApexTooltip {
     return {
       theme: 'dark',
-        //fillSeriesColor: true,
-        style: {
+      //fillSeriesColor: true,
+      style: {
         fontFamily: 'Roboto',
       }
     }

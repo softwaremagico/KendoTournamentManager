@@ -36,6 +36,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,6 +55,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -130,8 +132,10 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
-                       Authentication authentication, HttpServletRequest request) {
-        getController().deleteById(id, authentication.getName());
+                       Authentication authentication,
+                       @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                       HttpServletRequest request) {
+        getController().deleteById(id, authentication.getName(), session);
     }
 
 
@@ -147,11 +151,13 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generate duels on a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/duels", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO generateDuels(@RequestBody FightDTO fightDto, Authentication authentication, HttpServletRequest request) {
+    public FightDTO generateDuels(@RequestBody FightDTO fightDto, Authentication authentication,
+                                  @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                                  HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        fightDto = getController().update(fightDto, authentication.getName());
+        fightDto = getController().update(fightDto, authentication.getName(), session);
         if (!fightDto.getDuels().isEmpty()) {
             return fightDto;
         }
@@ -164,8 +170,10 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
-                                 Authentication authentication, HttpServletRequest request) {
-        return getController().createFights(tournamentId, TeamsOrder.NONE, levelId, authentication.getName());
+                                 Authentication authentication,
+                                 @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                                 HttpServletRequest request) {
+        return getController().createFights(tournamentId, TeamsOrder.NONE, levelId, authentication.getName(), session);
     }
 
 
@@ -175,8 +183,10 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     @PutMapping(value = "/create/tournaments/{tournamentId}/next", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> createNext(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
                                      Integer tournamentId,
-                                     Authentication authentication, HttpServletRequest request) {
-        return getController().createNextFights(tournamentId, authentication.getName());
+                                     Authentication authentication,
+                                     @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                                     HttpServletRequest request) {
+        return getController().createNextFights(tournamentId, authentication.getName(), session);
     }
 
 
@@ -191,5 +201,16 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         return getController().getBy(competitorId);
     }
 
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.participantPrivilege)")
+    @Operation(summary = "Checks if the scores are added from the competitor's name, to the center of the sheet.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/scores-from-name-to-center/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean scoresGoesFromCompetitorsNameToCenter(@Parameter(description = "Id of an existing tournament", required = true)
+                                                         @PathVariable("tournamentId") Integer tournamentId,
+                                                         HttpServletRequest request) {
+        return getController().scoresGoesFromCompetitorsNameToCenter(tournamentId);
+    }
 
 }

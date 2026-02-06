@@ -9,7 +9,7 @@
     <parent>
         <artifactId>kendo-tournament-backend</artifactId>
         <groupId>com.softwaremagico</groupId>
-        <version>2.17.6</version>
+        <version>3.1.1</version>
     </parent>
 
 
@@ -23,7 +23,6 @@
             <artifactId>kendo-tournament-pdf</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -57,6 +56,10 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>${jjwt.version}</version>
@@ -77,7 +80,7 @@
             <version>${springdoc.version}</version>
         </dependency>
 
-        <!***REMOVED***Caching dependencies -->
+        <!-- Caching dependencies -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -99,7 +102,7 @@
             <version>${javassist.version}</version>
         </dependency>
 
-        <!***REMOVED***Testing -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
@@ -163,7 +166,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!***REMOVED***Do not deploy this module in artifact -->
+            <!-- Do not deploy this module in artifact -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -171,7 +174,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <!***REMOVED***Skip any testing sql script from release jar -->
+            <!-- Skip any testing sql script from release jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

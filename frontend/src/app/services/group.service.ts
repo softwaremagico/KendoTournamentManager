@@ -206,4 +206,17 @@ export class GroupService {
     });
   }
 
+  refreshNonStartedGroups(tournamentId: number, level:number): Observable<void> {
+    const url: string = `${this.baseUrl}/refresh/tournaments/${tournamentId}/levels/${level}`;
+    return this.http.patch<void>(url, null)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Refreshing groups from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Refreshing groups from tournament ${tournamentId}`))
+      );
+  }
+
 }

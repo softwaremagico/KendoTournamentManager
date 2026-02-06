@@ -1,29 +1,64 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="mat-elevation-z8">
-  <div class="kendo-table">
-    <div class="upper-menu">
-      <div class="cell">
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_USER | rbac : this.rbacService.getActivities())"
-                [matTooltipShowDelay]="500" color="primary"
-                mat-button
-                matTooltip="{{'authenticatedUserAdd' | translate}}">
-          <mat-icon>add</mat-icon>
+<ng-container *transloco="let t">
+  <div class="table-view">
+    <biit-datatable #table id="users-table"
+                    [columns]="columns"
+                    [data]="users"
+                    [pageSize]="pageSize"
+                    [pageSizeList]="pageSizes"
+                    [loading]="loading"
+                    scrollbarH
+                    selectable
+    >
+      <ng-template #actions>
+        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_USER | hasPermission"
+                [title]="t('authenticatedUserAdd')"
+                (click)="addElement()"
+        ></button>
+        <button id="button-minus" biit-icon icon="minus" class="warning"
+                *ngIf="RbacActivity.DELETE_USER | hasPermission"
+                [title]="t('authenticatedUserDelete')"
+                (click)="confirm=true"
+                [disabled]="!table.selectedRows.length"
+        ></button>
+        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_USER | hasPermission"
+                [title]="t('authenticatedUserEdit')"
+                (click)="editElement(table.selectedRows[0])"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1"
+        ></button>
+        <button id="button-role" biit-icon icon="badge" *ngIf="RbacActivity.READ_ONE_USER | hasPermission"
+                [title]="t('roles')"
+                (click)="roleSelector=true"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1">
         </button>
-        <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_USER | rbac : this.rbacService.getActivities())"
-                [disabled]="!basicTableData.selectedElement"
-                [matTooltipShowDelay]="500"
-                mat-button
-                matTooltip="{{'authenticatedUserEdit' | translate}}">
-          <mat-icon>create</mat-icon>
-        </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_USER | rbac : this.rbacService.getActivities())"
-                [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-                color="warn" mat-button
-                matTooltip="{{'authenticatedUserDelete' | translate}}">
-          <mat-icon>clear</mat-icon>
+      </ng-template>
+    </biit-datatable>
+  </div>
+
+  <authenticated-user-form-popup *ngIf="target"
+                                 [user]="target"
+                                 (onClosed)="this.target = null"
+                                 (onSaved)="onSaved($event)"
+  />
+
+  <authenticated-user-role-popup *ngIf="roleSelector"
+                                 [user]="table.selectedRows[0]"
+                                 (onClosed)="this.roleSelector = false"
+                                 (onSaved)="this.loadData();this.roleSelector = false"
+  />
+
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirm"
+              no-header
+  >
+    <div class="vertical">
+      <span
+        [innerHTML]="'authenticatedUserDeleteQuestion' | transloco : {username: getUserNames(table.selectedRows)}"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}</button>
+        <button id="confirm-delete-button" biit-button primary
+                (click)="deleteElement(table.selectedRows, true)">
+          {{ t('delete') }}
         </button>
       </div>
     </div>
-    <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
-  </div>
-</div>
+  </biit-popup>
+</ng-container>

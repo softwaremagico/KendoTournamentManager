@@ -1,5 +1,4 @@
-import {Component, HostListener, Inject, OnInit, Optional,} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Component, EventEmitter, HostListener, Input, OnInit, Output,} from '@angular/core';
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
@@ -29,30 +28,39 @@ import {Role} from "../../../models/role";
 import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {TournamentType} from "../../../models/tournament-type";
 import {getBalancedMember} from "../../../utils/teams/members";
+import {CsvService} from "../../../services/csv-service";
+import {TranslocoService} from "@ngneat/transloco";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
-  selector: 'app-tournament-teams',
+  selector: 'tournament-teams',
   templateUrl: './tournament-teams.component.html',
   styleUrls: ['./tournament-teams.component.scss']
 })
 export class TournamentTeamsComponent extends RbacBasedComponent implements OnInit {
 
-  userListData: UserListData = new UserListData();
+  @Input()
   tournament: Tournament;
+  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
+  userListData: UserListData = new UserListData();
   teams: Team[];
   members: Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
   teamSize: number[];
+  protected addingTeam: boolean = false;
+  loadingGlobal: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
+  constructor(private messageService: MessageService,
               private loggerService: LoggerService, private teamService: TeamService, private roleService: RoleService,
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
               rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
               private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
-              private filterResetService: FilterResetService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+              private filterResetService: FilterResetService, public csvService: CsvService,
+              private translateService: TranslocoService) {
     super(rbacService);
-    this.tournament = data.tournament;
   }
 
   getMembersContainer(team: Team): (Participant | undefined)[] {
@@ -152,10 +160,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
     }
     return "";
-  }
-
-  closeDialog(): void {
-    this.dialogRef.close();
   }
 
   private transferCard(event: CdkDragDrop<(Participant | undefined)[], any>, memberIndex: number): Participant | undefined {
@@ -319,6 +323,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     const team: Team = new Team();
     team.tournament = this.tournament;
 
+    this.addingTeam = true;
     this.teamService.add(team).pipe(
       tap((): void => {
         this.loggerService.info("Adding new team.");
@@ -339,7 +344,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       this.teams.push(_team);
       this.members.set(_team, []);
       this.statisticsChangedService.areStatisticsChanged.next(true);
-    });
+    }).add(() => this.addingTeam = false);
   }
 
   deleteTeam(team: Team): void {
@@ -382,6 +387,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
 
+    this.loadingGlobal = true;
     this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
       const sortedParticipants: Participant[] = _scoreRanking.map((scoreOfCompetitor: ScoreOfCompetitor) => scoreOfCompetitor.competitor);
       for (let team of this.teams) {
@@ -400,7 +406,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
             this.loggerService.info("Team '" + newTeam.name + "' updated.");
           }),
           catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
-        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
+        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true))
+          .add(() => this.loadingGlobal = false);
       }
       //Remaining one on left column.
       this.userListData.participants = sortedParticipants;
@@ -451,6 +458,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     this.teams = [];
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    this.loadingGlobal = true;
     this.members = new Map<Team, Participant[]>();
     for (const member of participants) {
       const team: Team = new Team();
@@ -470,11 +478,12 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
       this.systemOverloadService.isBusy.next(false);
       this.statisticsChangedService.areStatisticsChanged.next(true);
-    });
+    }).add(() => this.loadingGlobal = false);
   }
 
   downloadPDF(): void {
     if (this.tournament?.id) {
+      this.loadingGlobal = true;
       this.teamService.getTeamsByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -483,7 +492,29 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         anchor.download = "Team List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
+      }).add(() => {
+        this.loadingGlobal = false;
       });
+    }
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addTeams(file).subscribe(_teams => {
+          if (_teams.length == 0) {
+            this.messageService.infoMessage('teamStored');
+            //We cancel action or will be saved later again.
+            this.onClosed.emit();
+          } else {
+            const parameters: object = {element: _teams[0].name};
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
+          }
+        });
+      }
     }
   }
 }

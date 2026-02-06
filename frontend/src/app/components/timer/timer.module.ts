@@ -4,7 +4,10 @@ import {TimerComponent} from "./timer.component";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
+import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
+import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 
 
 @NgModule({
@@ -17,7 +20,10 @@ import {TranslateModule} from "@ngx-translate/core";
     RbacModule,
     MatIconModule,
     DragDropModule,
-    TranslateModule
+    TranslocoModule,
+    HasPermissionPipe,
+    BiitButtonModule,
+    BiitPopupModule
   ]
 })
 export class TimerModule {

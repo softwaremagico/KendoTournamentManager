@@ -1,43 +1,40 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {RankingService} from "../../services/ranking.service";
 import {ScoreOfCompetitor} from "../../models/score-of-competitor";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";
-import {DOCUMENT} from "@angular/common";
 import {Club} from "../../models/club";
+import {ScoreType} from "../../models/score-type";
+import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
-  selector: 'app-competitors-ranking',
+  selector: 'competitors-ranking',
   templateUrl: './competitors-ranking.component.html',
   styleUrls: ['./competitors-ranking.component.scss']
 })
 export class CompetitorsRankingComponent extends RbacBasedComponent implements OnInit {
 
   competitorsScore: ScoreOfCompetitor[];
+  @Input()
   tournament: Tournament | undefined;
+  @Input()
   club: Club | undefined;
+  @Input()
   competitor: Participant | undefined;
+  @Input()
   showIndex: boolean | undefined;
+  @Output()
+  onClosed: EventEmitter<void> = new EventEmitter<void>();
   numberOfDays: number | undefined;
 
-  constructor(public dialogRef: MatDialogRef<CompetitorsRankingComponent>,
-              @Inject(DOCUMENT) document: Document,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-                club: Club | undefined,
-                tournament: Tournament | undefined,
-                competitor: Participant | undefined,
-                showIndex: boolean | undefined,
-              },
-              private rankingService: RankingService, public translateService: TranslateService, rbacService: RbacService) {
+  protected readonly ScoreType = ScoreType;
+  protected readonly Type = Type;
+
+  constructor(private rankingService: RankingService, public translateService: TranslocoService, rbacService: RbacService) {
     super(rbacService);
-    this.tournament = data.tournament;
-    this.club = data.club;
-    this.competitor = data.competitor;
-    this.showIndex = data.showIndex;
   }
 
   ngOnInit(): void {
@@ -65,7 +62,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.onClosed.emit();
   }
 
   downloadPDF(): void {
@@ -111,4 +108,5 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   daysChanged(): void {
     this.getRanking();
   }
+
 }

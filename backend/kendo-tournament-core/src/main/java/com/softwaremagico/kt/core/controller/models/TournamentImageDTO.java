@@ -24,17 +24,33 @@ package com.softwaremagico.kt.core.controller.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
+import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.Base64;
 
 public class TournamentImageDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 1880511590408058653L;
+
     private static final String IMAGE_PNG_BASE_64 = "data:image/png;base64,";
     private static final String IMAGE_JPG_BASE_64 = "data:image/jpeg;base64,";
 
+
+    @NotNull
     private TournamentDTO tournament;
+
+    @NotNull
     private byte[] data;
+
+    @NotNull
     private TournamentImageType imageType;
+
+    @NotNull
     private ImageCompression imageCompression;
+
+    private boolean defaultImage = false;
 
     public TournamentDTO getTournament() {
         return tournament;
@@ -66,6 +82,14 @@ public class TournamentImageDTO extends ElementDTO {
 
     public void setImageCompression(ImageCompression imageCompression) {
         this.imageCompression = imageCompression;
+    }
+
+    public boolean isDefaultImage() {
+        return defaultImage;
+    }
+
+    public void setDefaultImage(boolean defaultImage) {
+        this.defaultImage = defaultImage;
     }
 
     @JsonGetter

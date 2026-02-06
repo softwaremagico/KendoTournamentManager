@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {TeamListComponent} from "./team-list.component";
 import {FilterModule} from "../filter/filter.module";
 import {TeamCardModule} from "../../team-card/team-card.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
@@ -15,7 +15,7 @@ import {TranslateModule} from "@ngx-translate/core";
     CommonModule,
     FilterModule,
     TeamCardModule,
-    TranslateModule
+    TranslocoModule
   ]
 })
 export class TeamListModule { }

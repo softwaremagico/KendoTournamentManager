@@ -21,18 +21,29 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class FightDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 1275809681534444389L;
+
+    @NotNull
     private TeamDTO team1;
+    @NotNull
     private TeamDTO team2;
+    @NotNull
     private TournamentDTO tournament;
     private Integer shiaijo;
     private List<DuelDTO> duels = new ArrayList<>();
     private LocalDateTime finishedAt;
+    @NotNull
     private Integer level;
 
     public FightDTO() {
@@ -172,9 +183,9 @@ public class FightDTO extends ElementDTO {
     public Integer getScore(ParticipantDTO competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(DuelDTO::getCompetitor1ScoreValue).sum();
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(DuelDTO::getCompetitor2ScoreValue).sum();
         return score;
     }
 
@@ -189,11 +200,11 @@ public class FightDTO extends ElementDTO {
     }
 
     public Integer getScoreTeam1() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        return getDuels().stream().mapToInt(DuelDTO::getCompetitor1ScoreValue).sum();
     }
 
     public Integer getScoreTeam2() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return getDuels().stream().mapToInt(DuelDTO::getCompetitor2ScoreValue).sum();
     }
 
     public Integer getDuelsWon(ParticipantDTO competitor) {

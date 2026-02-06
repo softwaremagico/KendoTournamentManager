@@ -1,6 +1,6 @@
 .page-content {
-  min-height: 100vh;
-  overflow-y: auto;
+  min-height: 100%;
+  overflow: scroll;
   width: 100%;
   padding-left: 20px;
   padding-right: 20px;
@@ -10,14 +10,57 @@
 
 .upper-menu {
   padding-left: 30px;
+  margin: 10px;
+  display: flex;
+  gap: 1em;
+  height: 50px;
+  background-color: var(--body-background);
+  z-index: 15;
+}
+
+.upper-menu button {
+  width: 60px;
+}
+
+.upper-menu button:disabled {
+  opacity: 50%;
+}
+
+.upper-menu button:disabled .mat-icon.kendo-icon.mat-icon-no-color {
+  fill: var(--disabled-primary-color);
+}
+
+::ng-deep .upper-menu button .mat-icon.kendo-icon.mat-icon-no-color {
+  margin-left: -17px;
 }
 
 .championship-view {
   min-width: 600px;
+  overflow: auto;
+  width: 100%;
 }
 
 @media screen and (max-height: 750px) {
   .championship-container {
     height: 75vh;
   }
+}
+
+@media screen and (max-width: 800px) {
+  .refresh-group {
+    display: none !important;
+  }
+
+  .download-divider {
+    display: none !important;
+  }
+
+  .download {
+    display: none !important;
+  }
+
+  .upper-menu {
+    gap: 0;
+  }
+
 }

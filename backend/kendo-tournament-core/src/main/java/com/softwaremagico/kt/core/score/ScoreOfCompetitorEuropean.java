@@ -43,12 +43,17 @@ public class ScoreOfCompetitorEuropean implements Comparator<ScoreOfCompetitor> 
             return scoreOfCompetitor2.getHits().compareTo(scoreOfCompetitor1.getHits());
         }
 
+        // Fewer hits lost
+        if (!Objects.equals(scoreOfCompetitor1.getHitsLost(), scoreOfCompetitor2.getHitsLost())) {
+            return scoreOfCompetitor1.getDuelsDone().compareTo(scoreOfCompetitor2.getDuelsDone());
+        }
+
         // More duels done with same score is negative.
         if (!Objects.equals(scoreOfCompetitor1.getDuelsDone(), scoreOfCompetitor2.getDuelsDone())) {
             return scoreOfCompetitor1.getDuelsDone().compareTo(scoreOfCompetitor2.getDuelsDone());
         }
 
-        // Same obtained score, order by name;
+        // Same obtained score, order by name
         return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
     }
 

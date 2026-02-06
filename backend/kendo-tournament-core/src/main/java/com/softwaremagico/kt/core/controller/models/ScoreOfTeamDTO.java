@@ -23,12 +23,18 @@ package com.softwaremagico.kt.core.controller.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 
 public class ScoreOfTeamDTO extends ElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = -1616744182219037268L;
+
+    @NotNull
     private TeamDTO team;
     @JsonIgnore
     private List<FightDTO> fights;
@@ -41,6 +47,7 @@ public class ScoreOfTeamDTO extends ElementDTO {
     private Integer drawDuels = null;
     private Integer untieDuels = null;
     private Integer hits = null;
+    private Integer hitsLost = null;
     private Integer level = null;
     private Integer sortingIndex = null;
 
@@ -205,6 +212,14 @@ public class ScoreOfTeamDTO extends ElementDTO {
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getHitsLost() {
+        return hitsLost;
+    }
+
+    public void setHitsLost(Integer hitsLost) {
+        this.hitsLost = hitsLost;
     }
 
     public Integer getLevel() {

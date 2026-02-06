@@ -21,6 +21,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public interface IAuthenticatedUser {
@@ -34,4 +35,12 @@ public interface IAuthenticatedUser {
     String getLastname();
 
     Set<String> getRoles();
+
+    String getCreatedBy();
+
+    LocalDateTime getCreatedAt();
+
+    String getUpdatedBy();
+
+    LocalDateTime getUpdatedAt();
 }

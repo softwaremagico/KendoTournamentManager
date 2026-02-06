@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -144,6 +145,19 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return Optional.empty();
     }
 
+    public Optional<Participant> findByIdCard(String idCard) {
+        if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
+            final List<Participant> participants = getRepository().findAll();
+            for (Participant participant : participants) {
+                if (participant.getIdCard() != null && participant.getIdCard().equalsIgnoreCase(idCard)) {
+                    return Optional.of(participant);
+                }
+            }
+            return Optional.empty();
+        }
+        return getRepository().findByIdCard(idCard);
+    }
+
     public List<Participant> getYourWorstNightmare(Participant sourceParticipant) {
         if (sourceParticipant == null) {
             return new ArrayList<>();
@@ -198,7 +212,8 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             }
         }
 
-        selected.sort(Comparator.comparing(Participant::getLastname).thenComparing(Participant::getName));
-        return selected;
+        return selected.stream().filter(Objects::nonNull).sorted(Comparator.comparing(Participant::getLastname,
+                        Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(Participant::getName, Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 }

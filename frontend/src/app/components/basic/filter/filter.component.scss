@@ -1,12 +1,15 @@
+$space: 1em;
+
 .filter {
-  text-align: right;
-  padding-bottom: 10px;
-  display: inline-block;
-  padding-left: 5vh;
-  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .reset {
   padding-left: 0;
-  margin-top: -10px;
+}
+
+.reset-button {
+  padding: 0 10px 0 8px;
 }

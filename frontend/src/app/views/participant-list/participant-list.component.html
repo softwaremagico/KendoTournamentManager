@@ -1,52 +1,101 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="mat-elevation-z8">
-  <div class="kendo-table">
-    <div class="upper-menu">
-      <div class="cell">
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_PARTICIPANT | rbac : this.rbacService.getActivities())"
-                [matTooltipShowDelay]="500" color="primary"
-                mat-button
-                matTooltip="{{'participantAdd' | translate}}">
-          <mat-icon>add</mat-icon>
+<ng-container *transloco="let t">
+  <div class="table-view">
+    <biit-datatable #table id="participants-table"
+                    [columns]="columns"
+                    [data]="participants"
+                    [pageSize]="pageSize"
+                    [pageSizeList]="pageSizes"
+                    [loading]="loading"
+                    scrollbarH
+                    selectable
+    >
+      <ng-template #actions>
+        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_PARTICIPANT | hasPermission"
+                [title]="t('participantAdd')"
+                (click)="addElement()"
+        ></button>
+        <button id="button-minus" biit-icon icon="minus" class="warning"
+                *ngIf="RbacActivity.DELETE_PARTICIPANT | hasPermission"
+                [title]="t('delete')"
+                (click)="confirmDelete=true"
+                [disabled]="!table.selectedRows.length"
+        ></button>
+        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_PARTICIPANT | hasPermission"
+                [title]="t('participantEdit')"
+                (click)="editElement(table.selectedRows[0])"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+        ></button>
+        <button id="button-camera" biit-icon icon="camera" *ngIf="RbacActivity.READ_ONE_PARTICIPANT | hasPermission"
+                [title]="t('photo')"
+                (click)="addPhoto=true"
+                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+        ></button>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button mat-button *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
+                [title]="t('titleStatistics')"
+                (click)="openStatistics(table.selectedRows[0])"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
         </button>
-        <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_PARTICIPANT | rbac : this.rbacService.getActivities())"
-                [disabled]="!basicTableData.selectedElement"
-                [matTooltipShowDelay]="500" mat-button
-                matTooltip="{{'participantEdit' | translate}}">
-          <mat-icon>create</mat-icon>
+        <mat-divider [vertical]="true" class="extra-menu"></mat-divider>
+        <span class="extra-menu">
+          <button mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
+                  [title]="t('competitorsRanking')"
+                  (click)="showRanking=true">
+            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+          </button>
+          <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
+                  [title]="t('qrCodeHint')"
+                  (click)="showQr=true"
+                  [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+          <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+          </button>
+        </span>
+      </ng-template>
+    </biit-datatable>
+  </div>
+
+  <participant-form-popup *ngIf="target"
+                          [participant]="target"
+                          (onClosed)="this.target = null"
+                          (onSaved)="onSaved($event)"
+  />
+
+  <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
+              no-header
+  >
+    <div class="vertical">
+      <span
+        [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getParticipantNames(table.selectedRows)}"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
         </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_PARTICIPANT | rbac : this.rbacService.getActivities())"
-                [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-                color="warn" mat-button
-                matTooltip="{{'participantDelete' | translate}}">
-          <mat-icon>clear</mat-icon>
+        <button id="confirm-delete-button" biit-button primary
+                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
         </button>
       </div>
     </div>
-    <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
-    <div class="bottom-menu">
-      <button (click)="openStatistics()"
-              *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | rbac : this.rbacService.getActivities())"
-              [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'titleStatistics' | translate}}">
-        <mat-icon>bar_chart</mat-icon>
-      </button>
-      <button (click)="showCompetitorsClassification()"
-              *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'competitorsRanking' | translate}}">
-        <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-      </button>
-      <button (click)="showQrCode()"
-              *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
-              [disabled]="!basicTableData.selectedElement"
-              [matTooltipShowDelay]="500"
-              color="primary" mat-button
-              matTooltip="{{'qrCodeHint' | translate}}">
-        <mat-icon>qr_code_2</mat-icon>
-      </button>
-    </div>
-  </div>
-</div>
+  </biit-popup>
+
+  <biit-popup id="qr-code-popup" *ngIf="showQr" no-header>
+    <participant-qr-code
+      [participant]="table.selectedRows[0]"
+      [port]="port"
+      (onClosed)="showQr=false"></participant-qr-code>
+  </biit-popup>
+
+
+  <biit-popup id="ranking-popup" *ngIf="showRanking"
+              [title]="t('competitorsRanking')">
+    <competitors-ranking
+      [competitor]="table.selectedRows[0]"
+      [showIndex]="true"
+      (onClosed)="showRanking=false"></competitors-ranking>
+  </biit-popup>
+
+  <biit-popup id="photo-popup" *ngIf="addPhoto" no-header>
+    <participant-picture
+      [participant]="table.selectedRows[0]"
+      (onClosed)="addPhoto=false"></participant-picture>
+  </biit-popup>
+</ng-container>

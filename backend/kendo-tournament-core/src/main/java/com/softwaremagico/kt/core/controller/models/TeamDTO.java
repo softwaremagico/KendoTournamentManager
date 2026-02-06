@@ -22,15 +22,21 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.utils.IName;
+import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class TeamDTO extends ElementDTO implements IName {
 
+    @Serial
+    private static final long serialVersionUID = 5937160785074835788L;
+
     private String name;
 
+    @NotNull
     private TournamentDTO tournament;
 
     private List<ParticipantDTO> members;

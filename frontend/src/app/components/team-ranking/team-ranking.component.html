@@ -1,18 +1,23 @@
-<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<ng-container *transloco="let t">
 <div class="table-container">
   <table class="team-ranking-table">
-    <caption class="table-caption">{{'teamsRanking' | translate}}</caption>
+    <caption class="table-caption">{{ 'teamsRanking' | transloco }}</caption>
     <thead>
     <tr>
-      <th class="team-ranking-header">{{'team' | translate}}</th>
-      <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
-      <th class="team-ranking-header">{{'fightsDraw' | translate}}</th>
-      <th class="team-ranking-header">{{'duelsWon' | translate}}</th>
-      <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
-      <th class="team-ranking-header">{{'histsWon' | translate}}</th>
+      <th *ngIf="showIndex" class="competitor-ranking-header">#</th>
+      <th class="team-ranking-header">{{ 'team' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'fightsWon' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'fightsDraw' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'duelsWon' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'duelsDraw' | transloco }}</th>
+      <th class="team-ranking-header">{{ 'hitsWon' | transloco }}</th>
+      <th *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
+          class="team-ranking-header">{{ 'hitsLost' | transloco }}
+      </th>
     </tr>
     </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
+      <td *ngIf="showIndex" class="team-ranking-value">{{ i + 1 }}</td>
       <td [ngClass]="{'finished': fightsFinished,
           'winner': teamScore.sortingIndex===0 && fightsFinished,
           'finalist': teamScore.sortingIndex===1 && fightsFinished,
@@ -20,31 +25,43 @@
           'draw': (teamScore.sortingIndex===0 && isDrawWinner(0)) ||
           (teamScore.sortingIndex===1 && isDrawWinner(1)) ||
           (teamScore.sortingIndex===2 && isDrawWinner(2))}"
-          class="team-ranking-value team-name">{{showIndex ? i + 1 + ". " : ""}}{{teamScore.team.name}}
+          [matTooltipShowDelay]="500"
+          matTooltip="{{getTeamMembers(teamScore.team)}}"
+          matTooltipClass="tooltip-with-lines"
+          class="team-ranking-value team-name">{{ teamScore.team.name }}
       </td>
-      <td class="team-ranking-value">{{teamScore.wonFights}}</td>
-      <td class="team-ranking-value">{{teamScore.drawFights}}</td>
-      <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
-      <td class="team-ranking-value">{{teamScore.drawDuels}}</td>
-      <td class="team-ranking-value">{{teamScore.hits}}{{(teamScore.untieDuels ? "*" : "")}}</td>
+      <td class="team-ranking-value">{{ teamScore.wonFights }}</td>
+      <td class="team-ranking-value">{{ teamScore.drawFights }}</td>
+      <td class="team-ranking-value">{{ teamScore.wonDuels }}</td>
+      <td class="team-ranking-value">{{ teamScore.drawDuels }}</td>
+      <td class="team-ranking-value">{{ teamScore.hits }}{{ (teamScore.untieDuels ? "*" : "") }}</td>
+      <td *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
+          class="team-ranking-value">{{ teamScore.hitsLost }}
+      </td>
     </tr>
   </table>
 </div>
-<div class="button-container" mat-dialog-actions>
-  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
-          (click)="downloadPDF()" mat-flat-button mat-raised-button>
-    <mat-icon>file_download</mat-icon>
-    {{'download' | translate}}
+<div class="button-container">
+  <button biit-button *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
+          (click)="downloadPDF()" secondary>
+    {{ 'download' | transloco }}
   </button>
-  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
-          (click)="openStatistics()" mat-flat-button mat-raised-button>
-    <mat-icon>bar_chart</mat-icon>
-    {{'statistics' | translate}}
+  <button biit-button *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
+          (click)="openStatistics()" secondary>
+    {{ 'statistics' | transloco }}
   </button>
-  <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
-  (RbacActivity.CREATE_UNDRAW_FIGHTS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
-    <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
-    {{'undraw' | translate}}
+  <button biit-button (click)="untieAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
+  (RbacActivity.CREATE_UNDRAW_FIGHTS | hasPermission)" secondary>
+    {{ 'undraw' | transloco }}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
+  <button biit-button (click)="closeDialog()" primary>{{ 'close' | transloco }}</button>
 </div>
+
+<biit-popup id="untie-teams-popup" *ngIf="untieTeamsPopup" [title]="t('selectRepresentative')" >
+  <untie-teams
+    [tournament]="tournament"
+    [teams]="drawTeams"
+    [groupId]="group?.id"
+    (onClosed)="untieFights($event)"></untie-teams>
+</biit-popup>
+</ng-container>

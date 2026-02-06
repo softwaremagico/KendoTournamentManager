@@ -43,29 +43,29 @@
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
-    <!***REMOVED***Excludes all 'module-info.java' files              -->
-    <!***REMOVED***See https://checkstyle.org/config_filefilters.html -->
+    <!-- Excludes all 'module-info.java' files              -->
+    <!-- See https://checkstyle.org/config_filefilters.html -->
     <module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern" value="module\-info\.java$"/>
     </module>
 
-    <!***REMOVED***https://checkstyle.org/config_filters.html#SuppressionFilter -->
+    <!-- https://checkstyle.org/config_filters.html#SuppressionFilter -->
     <module name="SuppressionFilter">
         <property name="file" value="${org.checkstyle.sun.suppressionfilter.config}"
                   default="checkstyle-suppressions.xml"/>
         <property name="optional" value="true"/>
     </module>
 
-    <!***REMOVED***Checks whether files end with a new line.                        -->
-    <!***REMOVED***See https://checkstyle.org/config_misc.html#NewlineAtEndOfFile -->
+    <!-- Checks whether files end with a new line.                        -->
+    <!-- See https://checkstyle.org/config_misc.html#NewlineAtEndOfFile -->
     <module name="NewlineAtEndOfFile"/>
 
-    <!***REMOVED***Checks that property files contain the same keys.         -->
-    <!***REMOVED***See https://checkstyle.org/config_misc.html#Translation -->
+    <!-- Checks that property files contain the same keys.         -->
+    <!-- See https://checkstyle.org/config_misc.html#Translation -->
     <module name="Translation"/>
 
-    <!***REMOVED***Checks for Size Violations.                    -->
-    <!***REMOVED***See https://checkstyle.org/config_sizes.html -->
+    <!-- Checks for Size Violations.                    -->
+    <!-- See https://checkstyle.org/config_sizes.html -->
     <module name="FileLength">
         <property name="id" value="checkstyle:filelength"/>
         <property name="max" value="2500"/>
@@ -75,12 +75,12 @@
         <property name="max" value="160"/>
     </module>
 
-    <!***REMOVED***Checks for whitespace                               -->
-    <!***REMOVED***See https://checkstyle.org/config_whitespace.html -->
+    <!-- Checks for whitespace                               -->
+    <!-- See https://checkstyle.org/config_whitespace.html -->
     <module name="FileTabCharacter"/>
 
-    <!***REMOVED***Miscellaneous other checks.                   -->
-    <!***REMOVED***See https://checkstyle.org/config_misc.html -->
+    <!-- Miscellaneous other checks.                   -->
+    <!-- See https://checkstyle.org/config_misc.html -->
     <module name="RegexpSingleline">
         <property name="format" value="\s+$"/>
         <property name="minimum" value="0"/>
@@ -88,17 +88,13 @@
         <property name="message" value="Line has trailing spaces."/>
     </module>
 
-    <!***REMOVED***Checks for Headers                                -->
-    <!***REMOVED***See https://checkstyle.org/config_header.html   -->
-    <!***REMOVED***<module name="Header"> -->
-    <!***REMOVED***  <property name="headerFile" value="${checkstyle.header.file}"/> -->
-    <!***REMOVED***  <property name="fileExtensions" value="java"/> -->
-    <!***REMOVED***</module> -->
+    <!-- Checks for Headers                                -->
+    <!-- See https://checkstyle.org/config_header.html   -->
 
     <module name="TreeWalker">
 
-        <!***REMOVED***Checks for Naming Conventions.                  -->
-        <!***REMOVED***See https://checkstyle.org/config_naming.html -->
+        <!-- Checks for Naming Conventions.                  -->
+        <!-- See https://checkstyle.org/config_naming.html -->
         <module name="ConstantName"/>
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
@@ -109,24 +105,24 @@
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
 
-        <!***REMOVED***Checks for imports                              -->
-        <!***REMOVED***See https://checkstyle.org/config_imports.html -->
+        <!-- Checks for imports                              -->
+        <!-- See https://checkstyle.org/config_imports.html -->
         <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/> <!***REMOVED***defaults to sun.* packages -->
+        <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
         <module name="UnusedImports">
             <property name="processJavadoc" value="false"/>
         </module>
 
-        <!***REMOVED***Checks for Size Violations.                    -->
-        <!***REMOVED***See https://checkstyle.org/config_sizes.html -->
+        <!-- Checks for Size Violations.                    -->
+        <!-- See https://checkstyle.org/config_sizes.html -->
         <module name="MethodLength"/>
         <module name="ParameterNumber">
             <property name="max" value="50"/>
         </module>
 
-        <!***REMOVED***Checks for whitespace                               -->
-        <!***REMOVED***See https://checkstyle.org/config_whitespace.html -->
+        <!-- Checks for whitespace                               -->
+        <!-- See https://checkstyle.org/config_whitespace.html -->
         <module name="EmptyForIteratorPad"/>
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
@@ -138,24 +134,23 @@
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
 
-        <!***REMOVED***Modifier Checks                                    -->
-        <!***REMOVED***See https://checkstyle.org/config_modifier.html -->
+        <!-- Modifier Checks                                    -->
+        <!-- See https://checkstyle.org/config_modifier.html -->
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
 
-        <!***REMOVED***Checks for blocks. You know, those {}'s         -->
-        <!***REMOVED***See https://checkstyle.org/config_blocks.html -->
+        <!-- Checks for blocks. You know, those {}'s         -->
+        <!-- See https://checkstyle.org/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
 
-        <!***REMOVED***Checks for common coding problems               -->
-        <!***REMOVED***See https://checkstyle.org/config_coding.html -->
+        <!-- Checks for common coding problems               -->
+        <!-- See https://checkstyle.org/config_coding.html -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <!--<module name="HiddenField"/>-->
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>
@@ -164,27 +159,19 @@
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
-        <!***REMOVED***Checks for class design                         -->
-        <!***REMOVED***See https://checkstyle.org/config_design.html -->
-        <!--<module name="DesignForExtension"/>-->
+        <!-- Checks for class design                         -->
+        <!-- See https://checkstyle.org/config_design.html -->
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
 
-        <!***REMOVED***Miscellaneous other checks.                   -->
-        <!***REMOVED***See https://checkstyle.org/config_misc.html -->
+        <!-- Miscellaneous other checks.                   -->
+        <!-- See https://checkstyle.org/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-        <!***REMOVED***       <module name="FinalParameters"/>-->
         <module name="FinalLocalVariable"/>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
-
-        <!***REMOVED***       &lt;!&ndash; https://checkstyle.org/config_filters.html#SuppressionXpathFilter &ndash;&gt;-->
-        <!***REMOVED***       <module name="SuppressionXpathFilter">-->
-        <!***REMOVED***           <property name="file" value="${main.basedir}/checkstyle-suppressions.xml"/>-->
-        <!***REMOVED***           <property name="optional" value="false"/>-->
-        <!***REMOVED***       </module>-->
 
     </module>
 </module>

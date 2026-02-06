@@ -1,0 +1,109 @@
+.mat-dialog-content {
+  overflow: initial;
+}
+
+.mat-picture {
+  background-color: green;
+  color: #fff;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
+
+.camera-frame {
+  border: 3px solid var(--border-color);
+  padding: 0;
+  height: 384px;
+  width: 623px;
+}
+
+:host ::ng-deep {
+  .webcam-container .webcam-wrapper, .webcam-wrapper video {
+    width: 100% !important;
+    margin-top: 0px;
+    height: 378px;
+  }
+
+  .webcam-container .webcam-wrapper, .webcam-wrapper {
+    width: 100% !important;
+    margin-top: -1px;
+    height: 378px;
+  }
+}
+
+video {
+  width: 100%;
+  height: 390px;
+}
+
+.picture-engine {
+  overflow: hidden;
+  max-height: 60vh;
+  padding-right: 15px;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-container {
+  height: 110px;
+  padding: 5px;
+}
+
+.selected-image {
+  border: 3px solid #ff2a2a;
+}
+
+img {
+  border-radius: 8px;
+  height: 100px;
+}
+
+.rectangle {
+  border: 3px solid #ff2a2a;
+  height: 382px;
+  width: 312px;
+  position: absolute;
+  margin-left: 156px;
+  margin-top: -382px;
+}
+
+.circle {
+  border: 3px solid #ff2a2a;
+  height: 310px;
+  width: 310px;
+  position: absolute;
+  margin-left: 156px;
+  margin-top: -344px;
+  border-radius: 50%;
+}
+
+.canvas {
+  max-height: 400px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  padding-top: 1em;
+}
+
+.floating-image-delete-button {
+  position: relative;
+  z-index: 999;
+  top: -600px;
+  left: 300px;
+}
+
+.floating-button {
+  border: 3px solid var(--component-color);
+}

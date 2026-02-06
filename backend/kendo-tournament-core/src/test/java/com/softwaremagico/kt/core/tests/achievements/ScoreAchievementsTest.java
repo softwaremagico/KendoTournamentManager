@@ -111,7 +111,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //Woodcutter
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
@@ -119,7 +119,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         woodCutter = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
 
         //No Woodcutter
@@ -127,7 +127,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(1).addCompetitor2Score(Score.DO);
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(1).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         noWoodCutter1 = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
         noWoodCutter2 = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
 
@@ -135,40 +135,40 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.HANSOKU);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.HANSOKU);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         boneBreaker = fightDTOs.get(0).getDuels().get(2).getCompetitor2();
 
         //BillyTheKid
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(4);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
         billyTheKid = fightDTOs.get(1).getDuels().get(0).getCompetitor1();
 
         //Woodcutter
         fightDTOs.get(3).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(3).getDuels().get(0).addCompetitor1ScoreTime(11);
         fightDTOs.get(3).getDuels().get(0).setFinished(true);
-        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
 
         //No Woodcutter has a 'Men' here!
         fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.DO);
         fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(3).getDuels().get(1).setFinished(true);
-        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
 
 
         //Woodcutter
         fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(4).getDuels().get(0).setFinished(true);
-        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
 
         //No Woodcutter and now Terminator!
         fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.DO);
         fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.DO);
         fightDTOs.get(4).getDuels().get(1).setFinished(true);
-        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
         terminator = fightDTOs.get(4).getDuels().get(1).getCompetitor1();
 
         achievementController.generateAchievements(tournament1DTO);
@@ -178,14 +178,14 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //Juggernaut
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1ScoreTime(11);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         juggernaut = fightDTOs.get(0).getDuels().get(2).getCompetitor1();
 
 
@@ -194,14 +194,14 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(3).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(3).getDuels().get(2).addCompetitor1ScoreTime(11);
         fightDTOs.get(3).getDuels().get(2).setFinished(true);
-        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
 
 
         //Juggernaut
         fightDTOs.get(4).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(4).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(4).getDuels().get(2).setFinished(true);
-        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
 
         achievementController.generateAchievements(tournament2DTO);
     }
@@ -210,7 +210,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament3() {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //The Castle
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
@@ -226,7 +226,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1ScoreTime(35);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(0).addCompetitor2Score(Score.MEN);
@@ -243,14 +243,14 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).addCompetitor1ScoreTime(35);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //I only want one entrenched.
         fightDTOs.get(5).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(5).getDuels().get(1).addCompetitor2Score(Score.MEN);
         fightDTOs.get(5).getDuels().get(1).addCompetitor1ScoreTime(35);
         fightDTOs.get(5).getDuels().get(1).setFinished(true);
-        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null));
+        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null, null));
 
         achievementController.generateAchievements(tournament3DTO);
     }
@@ -259,7 +259,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament4() {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //Team1 and Team2 no scores. Team1 has no scores neither against itself.
 
@@ -267,7 +267,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
         fightDTOs.get(0).getDuels().get(1).setFinished(true);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //Team3 vs Team2
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
@@ -275,7 +275,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //Team3 vs Team4
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.DO);
@@ -285,22 +285,22 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).addCompetitor2ScoreTime(68);
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         fightDTOs.get(3).getDuels().get(0).setFinished(true);
         fightDTOs.get(3).getDuels().get(1).setFinished(true);
         fightDTOs.get(3).getDuels().get(2).setFinished(true);
-        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
 
         fightDTOs.get(4).getDuels().get(0).setFinished(true);
         fightDTOs.get(4).getDuels().get(1).setFinished(true);
         fightDTOs.get(4).getDuels().get(2).setFinished(true);
-        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
 
         fightDTOs.get(5).getDuels().get(0).setFinished(true);
         fightDTOs.get(5).getDuels().get(1).setFinished(true);
         fightDTOs.get(5).getDuels().get(2).setFinished(true);
-        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null));
+        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null, null));
 
         achievementController.generateAchievements(tournament4DTO);
     }

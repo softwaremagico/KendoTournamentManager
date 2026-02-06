@@ -108,7 +108,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT1_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -122,7 +122,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -133,7 +133,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -144,13 +144,13 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT1_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -161,7 +161,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT2_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -175,7 +175,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -186,7 +186,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -197,12 +197,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT2_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -213,7 +213,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament3() {
         //Create Tournament
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT3_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -227,7 +227,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -238,7 +238,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -249,12 +249,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT3_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -265,8 +265,8 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament4() {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT4_DELAY);
         //Create Tournament
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null));
-        //P1 vs P4 Win P4  <***REMOVED***
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null, null));
+        //P1 vs P4 Win P4  <---
         //P2 vs P5 Win P2
         //P3 vs P6 Win P3
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.TSUKI);
@@ -278,7 +278,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -289,7 +289,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -300,12 +300,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT4_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
         achievementController.generateAchievements(tournament4DTO);
@@ -315,7 +315,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament5() {
         //Create Tournament
         tournament5DTO = addTournament(TOURNAMENT5_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT5_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament5DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament5DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -329,7 +329,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -340,7 +340,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -351,12 +351,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT5_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -367,9 +367,9 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament6() {
         tournament6DTO = addTournament(TOURNAMENT6_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT6_DELAY);
         //Create Tournament
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament6DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament6DTO.getId(), TeamsOrder.SORTED, 0, null, null));
         //P1 vs P4 Win P1
-        //P2 vs P5 Win P5 <***REMOVED***
+        //P2 vs P5 Win P5 <---
         //P3 vs P6 Win P6
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
@@ -380,7 +380,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -391,7 +391,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -402,12 +402,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT6_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
         achievementController.generateAchievements(tournament6DTO);
@@ -417,7 +417,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament7() {
         //Create Tournament
         tournament7DTO = addTournament(TOURNAMENT7_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT7_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament7DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament7DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -431,7 +431,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -442,7 +442,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -453,12 +453,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT7_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -469,7 +469,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament8() {
         tournament8DTO = addTournament(TOURNAMENT8_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT8_DELAY);
         //Create Tournament
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament8DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament8DTO.getId(), TeamsOrder.SORTED, 0, null, null));
         //P1 vs P4 Win P4
         //P2 vs P5 Win P2
         //P3 vs P6 Win P6 <--
@@ -482,7 +482,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor2Score(Score.TSUKI);
         fightDTOs.get(0).getDuels().get(2).addCompetitor2Score(Score.TSUKI);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -493,7 +493,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -504,12 +504,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT8_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
         achievementController.generateAchievements(tournament8DTO);
@@ -519,7 +519,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament9() {
         //Create Tournament
         tournament9DTO = addTournament(TOURNAMENT9_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT9_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament9DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament9DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -533,7 +533,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -544,7 +544,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -555,12 +555,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT9_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -571,7 +571,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament10() {
         //Create Tournament
         tournament10DTO = addTournament(TOURNAMENT10_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT10_DELAY);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament10DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament10DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //P1 vs P4 Win P1
         //P2 vs P5 Win P2
@@ -585,7 +585,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P4
         //P8 vs P5 Win P5
@@ -596,7 +596,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -607,12 +607,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT10_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
 
@@ -623,8 +623,8 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
     public void prepareTournament11() {
         tournament11DTO = addTournament(TOURNAMENT11_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TOURNAMENT11_DELAY);
         //Create Tournament
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament11DTO.getId(), TeamsOrder.SORTED, 0, null));
-        //P1 vs P4 Win P4 <***REMOVED***(Again!)
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament11DTO.getId(), TeamsOrder.SORTED, 0, null, null));
+        //P1 vs P4 Win P4 <-- (Again!)
         //P2 vs P5 Win P5
         //P3 vs P6 Win P6
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.TSUKI);
@@ -636,7 +636,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4 Win P7 <--
         //P8 vs P5 Win P5
@@ -647,7 +647,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P1 Win P1
         //P8 vs P2 Win P2
@@ -658,12 +658,12 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
         fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //Set Time
         fightDTOs.forEach(fightDTO -> {
             fightDTO.getDuels().forEach(duelDTO -> duelDTO.setCreatedAt(LocalDateTime.now().minusMinutes(TOURNAMENT11_DELAY)));
-            duelController.updateAll(fightDTO.getDuels(), null);
+            duelController.updateAll(fightDTO.getDuels(), null, null);
         });
 
         achievementController.generateAchievements(tournament11DTO);

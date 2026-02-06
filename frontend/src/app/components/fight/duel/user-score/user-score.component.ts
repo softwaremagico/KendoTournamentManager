@@ -26,10 +26,18 @@ export class UserScoreComponent {
   showAvatar: boolean = false;
 
   @Input()
+  fightSelected: boolean;
+
+  @Input()
   locked: boolean = false;
 
   @Input()
+  projectMode: boolean;
+
+  @Input()
   highlightedParticipantId: number | undefined;
+
+  participantWindowOpened: boolean = false;
 
   isUntie(): boolean {
     return this.duel.type === DuelType.UNDRAW;
@@ -51,4 +59,7 @@ export class UserScoreComponent {
     }
   }
 
+  isParticipantPhotoWindowVisible($event: boolean) {
+    this.participantWindowOpened = $event;
+  }
 }

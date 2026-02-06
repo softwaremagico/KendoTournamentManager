@@ -1,0 +1,67 @@
+<ng-container *transloco="let t">
+  <div id="navbar">
+    <div class="left">
+      <img alt="kote" class="logo" src="assets/img/kote.svg">
+      <biit-nav-menu [routes]="routes" style="width: 100%"></biit-nav-menu>
+    </div>
+    <div class="right" id="kendo-menu">
+      <biit-nav-user *ngIf="user"
+                     [title]="user.name + ' ' + user.lastname"
+                     [subtitle]="'Kendo Tournament'"
+                     (click)="onContextMenu($event)"
+                     (keydown)="onContextMenu($event)"
+                     #navUser
+      ></biit-nav-user>
+    </div>
+  </div>
+
+  <context-menu #contextMenu dir="rtl" *transloco="let t">
+    <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_LANGUAGE | hasPermission"
+                 (execute)="languagePopup=true">
+        <span id="language-option">
+          {{ t('t.language') }}
+        </span>
+    </ng-template>
+    <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
+                 (execute)="passwordPopup=true">
+        <span id="password-option">
+          {{ t('t.password') }}
+        </span>
+    </ng-template>
+    <ng-template contextMenuItem *ngIf="RbacActivity.CAN_LOGOUT | hasPermission"
+                 (execute)="logoutConfirmation=true">
+        <span id="logout-option">
+          {{ t('t.logout') }}
+        </span>
+    </ng-template>
+  </context-menu>
+
+  <biit-popup id="confirmation-delete-teams" *ngIf="logoutConfirmation"
+              no-header
+  >
+    <div class="vertical">
+      <span [innerHTML]="'logoutWarning' | transloco"></span>
+      <div class="flex-grow horizontal buttons-row">
+        <button id="confirm-delete-cancel-button" biit-button secondary
+                (click)="logoutConfirmation = false">{{ t('cancel') }}
+        </button>
+        <button id="confirm-delete-accept-button" biit-button primary
+                (click)="router.navigateByUrl('/login?logout'); logoutConfirmation = false">
+          {{ t('accept') }}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+
+  <biit-popup id="language-selector-popup" *ngIf="languagePopup" closable
+              [title]="t('selectLanguage')">
+    <language-selector (onClosed)="languagePopup=false" style="width:100%"></language-selector>
+  </biit-popup>
+
+  <biit-popup id="password-change-popup" *ngIf="passwordPopup && this.user" closable
+              [title]="t('passwordChange')" (onClosed)="passwordPopup=false">
+    <reset-password (onClosed)="passwordPopup=false" style="width:100%"
+                    [user]="this.user"></reset-password>
+  </biit-popup>
+
+</ng-container>

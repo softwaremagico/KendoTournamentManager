@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <!***REMOVED***Stop output INFO at start -->
+    <!-- Stop output INFO at start -->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <!***REMOVED***Custom ones -->
+    <!-- Custom ones -->
     <logger name="com.softwaremagico.kt.logger.EncryptorLogger" additivity="false" level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </logger>
@@ -27,7 +27,7 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!***REMOVED***Default ones -->
+    <!-- Default ones -->
     <logger name="org.springframework" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
@@ -61,7 +61,7 @@
     <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" additivity="false" level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <!***REMOVED***For showing hibernate statistics -->
+    <!-- For showing hibernate statistics -->
     <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false"
             level="ERROR">
         <appender-ref ref="CONSOLE"/>

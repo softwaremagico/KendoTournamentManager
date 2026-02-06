@@ -30,7 +30,6 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
@@ -68,13 +67,18 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     private final Set<ShiaijoFinishedListener> shiaijoFinishedListeners = new HashSet<>();
     private final Set<FightUpdatedListener> fightsUpdatedListeners = new HashSet<>();
+    private final Set<UntieUpdatedListener> untiesUpdatedListeners = new HashSet<>();
 
     public interface ShiaijoFinishedListener {
         void finished(TournamentDTO tournament, Integer shiaijo);
     }
 
     public interface FightUpdatedListener {
-        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel, String actor);
+        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel, String actor, String session);
+    }
+
+    public interface UntieUpdatedListener {
+        void finished(TournamentDTO tournament, DuelDTO duel, String actor, String session);
     }
 
     @Autowired
@@ -100,6 +104,10 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         fightsUpdatedListeners.add(listener);
     }
 
+    public void addUntieUpdatedListener(UntieUpdatedListener listener) {
+        untiesUpdatedListeners.add(listener);
+    }
+
     @Override
     protected DuelConverterRequest createConverterRequest(Duel entity) {
         return new DuelConverterRequest(entity);
@@ -121,32 +129,40 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     @Override
     @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
-    public DuelDTO update(DuelDTO duel, String username) {
+    public DuelDTO update(DuelDTO duel, String username, String session) {
         try {
-            return super.update(duel, username);
+            return super.update(duel, username, session);
         } finally {
             new Thread(() -> {
                 //If a shiaijo has finished, send a message to all computers.
-                final Fight fight = fightProvider.findByDuels(reverse(duel)).orElseThrow(() ->
-                        new FightNotFoundException(this.getClass(), "No fight found for duel '" + duel + "'"));
+                final Fight fight = fightProvider.findByDuels(reverse(duel)).orElse(null);
 
-                final FightDTO fightDTO = fightConverter.convert(new FightConverterRequest(fight));
 
-                final Tournament tournament = tournamentProvider.get(fight.getTournament().getId()).orElseThrow(()
+                final Tournament tournament = tournamentProvider.get(duel.getTournament().getId()).orElseThrow(()
                         -> new TournamentNotFoundException(this.getClass(), "No tournament found for duel '" + duel + "'."));
 
                 final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
 
-                //Fight is updated, refresh screens.
-                fightsUpdatedListeners.forEach(fightUpdatedListener -> fightUpdatedListener.finished(tournamentDTO, fightDTO, duel, username));
+                //Standard fight.
+                if (fight != null) {
+                    final FightDTO fightDTO = fightConverter.convert(new FightConverterRequest(fight));
 
-                if (tournament.getShiaijos() > 1) {
-                    final List<Fight> fightsOfShiaijo = fightProvider.findByTournamentAndShiaijo(tournament, fight.getShiaijo());
-                    final long fightsNotOver = fightsOfShiaijo.stream().filter(fightOfShiaijo -> !fightOfShiaijo.isOver()).count();
-                    if (fightsNotOver == 0) {
-                        shiaijoFinishedListeners.forEach(shiaijoFinishedListener
-                                -> shiaijoFinishedListener.finished(tournamentDTO, fight.getShiaijo()));
+                    //Fight is updated, refresh screens.
+                    fightsUpdatedListeners.forEach(fightUpdatedListener ->
+                            fightUpdatedListener.finished(tournamentDTO, fightDTO, duel, username, session));
+
+                    if (tournament.getShiaijos() > 1) {
+                        final List<Fight> fightsOfShiaijo = fightProvider.findByTournamentAndShiaijo(tournament, fight.getShiaijo());
+                        final long fightsNotOver = fightsOfShiaijo.stream().filter(fightOfShiaijo -> !fightOfShiaijo.isOver()).count();
+                        if (fightsNotOver == 0) {
+                            shiaijoFinishedListeners.forEach(shiaijoFinishedListener
+                                    -> shiaijoFinishedListener.finished(tournamentDTO, fight.getShiaijo()));
+                        }
                     }
+                } else {
+                    //It is an untie duel!
+                    untiesUpdatedListeners.forEach(untieUpdatedListener ->
+                            untieUpdatedListener.finished(tournamentDTO, duel, username, session));
                 }
             }).start();
         }

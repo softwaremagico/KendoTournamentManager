@@ -37,6 +37,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,6 +55,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -101,8 +103,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     public GroupDTO updateTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                                @RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
+                               @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                HttpServletRequest request) {
-        return getController().setTeams(groupId, teamsDto, authentication.getName());
+        return getController().setTeams(groupId, teamsDto, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -111,8 +114,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     public GroupDTO addTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                             @RequestBody List<TeamDTO> teamsDto,
                             Authentication authentication,
+                            @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                             HttpServletRequest request) {
-        return getController().addTeams(groupId, teamsDto, authentication.getName());
+        return getController().addTeams(groupId, teamsDto, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -121,8 +125,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     public GroupDTO deleteTeamFromGroup(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                                         @RequestBody List<TeamDTO> teamsDto,
                                         Authentication authentication,
+                                        @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                         HttpServletRequest request) {
-        return getController().deleteTeams(groupId, teamsDto, authentication.getName());
+        return getController().deleteTeams(groupId, teamsDto, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -132,8 +137,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
                                      @PathVariable("tournamentId") Integer tournamentId,
                                      @RequestBody List<TeamDTO> teamsDto,
                                      Authentication authentication,
+                                     @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                      HttpServletRequest request) {
-        return getController().deleteTeamsFromTournament(tournamentId, teamsDto, authentication.getName());
+        return getController().deleteTeamsFromTournament(tournamentId, teamsDto, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -142,8 +148,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     public List<GroupDTO> deleteAllTeam(@Parameter(description = "Id of an existing tournament", required = true)
                                         @PathVariable("tournamentId") Integer tournamentId,
                                         Authentication authentication,
+                                        @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                         HttpServletRequest request) {
-        return getController().deleteTeamsFromTournament(tournamentId, authentication.getName());
+        return getController().deleteTeamsFromTournament(tournamentId, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -151,8 +158,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PutMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
+                               @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                HttpServletRequest request) {
-        return getController().setTeams(teamsDto, authentication.getName());
+        return getController().setTeams(teamsDto, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -160,9 +168,10 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addUnties(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                               @RequestBody List<DuelDTO> duelDTOs,
+                              @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                               Authentication authentication,
                               HttpServletRequest request) {
-        return getController().addUnties(groupId, duelDTOs, authentication.getName());
+        return getController().addUnties(groupId, duelDTOs, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -182,5 +191,17 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Recalculate teams and fights from a group that has not started.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/refresh/tournaments/{tournamentId}/levels/{level}", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public void refreshNonStartedGroups(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                        Integer tournamentId,
+                                        @Parameter(description = "Group level to starting the checks.", required = false) @PathVariable("level")
+                                        Integer level,
+                                        HttpServletResponse response, HttpServletRequest request) {
+        getController().refreshGroupContent(tournamentId, level == null ? 0 : level);
     }
 }

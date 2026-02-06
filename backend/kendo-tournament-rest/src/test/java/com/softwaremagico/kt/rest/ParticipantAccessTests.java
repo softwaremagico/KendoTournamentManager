@@ -213,7 +213,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOthersStatistics() throws Exception {
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(get("/statistics/participants/" + 25)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -221,7 +221,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
     }
 
     @Test(dependsOnMethods = "generateToken")
@@ -237,7 +237,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOtherServices() throws Exception {
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(get("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +245,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @AfterClass(alwaysRun = true)

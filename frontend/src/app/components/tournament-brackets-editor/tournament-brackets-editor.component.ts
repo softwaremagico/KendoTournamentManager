@@ -18,17 +18,16 @@ import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 import {random} from "../../utils/random/random";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
 import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
 import {Message} from "@stomp/stompjs/esm6";
 import {MessageContent} from "../../websockets/message-content.model";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
 import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
-  selector: 'app-tournament-brackets-editor',
+  selector: 'tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
@@ -52,30 +51,34 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
 
   @Output()
-  onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
+  onGroupsDisabled: EventEmitter<boolean> = new EventEmitter();
 
+  @Output()
+  onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
   @ViewChild('tournamentBracketsComponent', {read: ElementRef})
   public tournamentBracketsComponent: ElementRef;
 
-
   groups: Group[];
-
   selectedGroup: Group;
 
   //Level -> Src Group -> Dst Group
   relations: Map<number, { src: number, dest: number }[]>;
-
   teamListData: TeamListData = new TeamListData();
-
   totalTeams: number;
-
   numberOfWinnersFirstLevel: number;
+
+  removeAllTeamsConfirmation: boolean = false;
 
   private topicSubscription: Subscription;
 
+  loadingGlobal: boolean = false;
+
+  protected readonly RbacActivity = RbacActivity;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
+              public rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
               private rxStompService: RxStompService, private environmentService: EnvironmentService,
               private tournamentChangedService: TournamentChangedService) {
@@ -83,22 +86,22 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
-      this.updateData(true);
+      this.updateData(true, false);
     });
     this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
       this.numberOfWinnersFirstLevel = numberOfWinners;
-      this.updateData(true);
+      this.updateData(true, false);
     });
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.topic == "Group") {
-        this.updateData(false);
+      if (messageContent.topic == "Group" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
+        this.updateData(false, messageContent.actor == localStorage.getItem('username'));
       }
     });
     this.tournamentChangedService.isTournamentChanged.subscribe((_tournament: Tournament): void => {
       this.tournament = _tournament;
       if (_tournament) {
-        this.updateData(true);
+        this.updateData(true, false);
       }
     })
   }
@@ -107,7 +110,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     this.topicSubscription?.unsubscribe();
   }
 
-  updateData(showBusy: boolean): void {
+  updateData(showBusy: boolean, ownAction: boolean): void {
     this.systemOverloadService.isBusy.next(showBusy);
     if (this.tournament?.id) {
       const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
@@ -123,6 +126,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
         this.groups = _groups;
         this.onGroupsUpdated.emit(_groups);
+        this.onGroupsDisabled.emit(ownAction);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
         const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
         this.onTeamsLengthUpdated.next(_teams.length);
@@ -135,7 +139,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
         this.relations = this.convert(_groupRelations);
         this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
-      });
+      }).add(() => this.loadingGlobal = false);
     }
   }
 
@@ -187,16 +191,17 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     }).length;
     this.groupService.addGroup(group).subscribe((_group: Group): void => {
       //Refresh all groups, also other levels that can change.
-      this.updateData(true);
+      this.updateData(true, false);
     });
   }
 
   deleteLast(): void {
     if (this.groups.length > 0) {
-      const lastGroup: Group = this.groups.filter((g: Group): boolean => {
+      const level0Groups: Group[] = this.groups.filter((g: Group): boolean => {
         return g.level === 0;
-      }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-        prev : current, this.groups[this.groups.length - 1]);
+      })
+      const lastGroup: Group = level0Groups.reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+        prev : current, level0Groups[level0Groups.length - 1]);
       this.deleteGroup(lastGroup);
     }
   }
@@ -206,18 +211,19 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       this.systemOverloadService.isBusy.next(true);
       this.groupService.deleteGroup(group).subscribe((): void => {
         //Refresh all groups, also other levels that can change.
-        this.updateData(true);
+        this.updateData(true, false);
       });
     }
   }
 
   public downloadAsPdf(): void {
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
-    const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
-    //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
+    const height: number = groupsByLevel.get(0)?.length! * (BracketsMeasures.GROUP_SEPARATION
+      + BracketsMeasures.GROUP_HIGH + 100) + (this.totalTeams * (BracketsMeasures.TEAM_GROUP_HIGH + 70));
+    const width: number = (groupsByLevel.size) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(groupsByLevel.get(0)?.length) + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
+    const pageFormat: string = groupsByLevel.get(0)?.length! > 8 ? "a3" : "a4";
     const widthMM: number = this.getMM(width);
     const heightMM: number = this.getMM(height);
     const ratio: number = this.getRatio(widthMM, heightMM);
@@ -228,7 +234,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       const jsPdfOptions = {
         orientation: orientation,
         unit: imageUnit,
-        format: "a4",
+        format: pageFormat,
       };
       const pdf: jsPDF = new jsPDF(jsPdfOptions);
       pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);
@@ -271,6 +277,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   randomGroups(): void {
     let groups: Group[] = this.groups;
     //Select group from level 0.
+    this.loadingGlobal = true;
     groups = groups.filter((group: Group): boolean => group.level == 0);
     while (this.teamListData.teams.length > 0) {
       const team: Team = this.getRandomTeam(this.teamListData.teams);
@@ -298,7 +305,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     //Ensure all groups are updated.
     forkJoin(observables)
       .subscribe((): void => {
-        this.updateData(true);
+        this.updateData(true, false);
       });
   }
 
@@ -306,24 +313,9 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     return teams[Math.floor(random() * teams.length)];
   }
 
-  askToRemoveAllTeams(): void {
-    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "questionDeleteTeams"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.removeAllTeams();
-      }
-    });
-  }
-
   removeAllTeams(): void {
     this.groupService.deleteAllTeamsFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
   }
-
-  protected readonly RbacActivity = RbacActivity;
 }

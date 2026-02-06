@@ -1,4 +1,4 @@
-FROM eclipse-temurin:22-jdk-alpine
+FROM eclipse-temurin:25-jdk-alpine
 
 ARG release
 ARG machine_domain
@@ -66,7 +66,7 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     zip /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/classes/application.properties && \
     cd /opt/libraries && \
     zip -0 /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/* && \
-    zip -d /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/mysql-connector* && \
+    #zip -d /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/mysql-connector* && \
     apk del openssl zip unzip
 
 #Copy configuration files.

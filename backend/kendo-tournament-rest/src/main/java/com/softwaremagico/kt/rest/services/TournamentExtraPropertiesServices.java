@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,17 +79,19 @@ public class TournamentExtraPropertiesServices {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO add(TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
-                                          Authentication authentication, HttpServletRequest request) {
-        return tournamentExtraPropertyController.create(tournamentExtraPropertyDTO, authentication.getName());
+                                          Authentication authentication,
+                                          @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                                          HttpServletRequest request) {
+        return tournamentExtraPropertyController.create(tournamentExtraPropertyDTO, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a tournament property.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO update(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
+                                             @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                              Authentication authentication, HttpServletRequest request) {
-        tournamentExtraPropertyDTO.setCreatedBy(authentication.getName());
-        return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName());
+        return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")

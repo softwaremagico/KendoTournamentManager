@@ -2,11 +2,15 @@
   position: relative;
   overflow: auto;
   max-height: 70vh;
+  min-height: 30vh;
+  padding: 1em;
 }
 
 .table-caption {
-  font-size: 200%;
-  padding-bottom: 30px;
+  font-size: 150%;
+  font-weight: bold;
+  margin-bottom: 1.5em;
+  color: var(--component-color);
 }
 
 .competitor-ranking-table {
@@ -15,24 +19,21 @@
 
 .competitor-ranking-table thead th {
   position: sticky;
-  top: 0;
+  top: -1em;
   z-index: 1;
   background: var(--table-header-color);
   color: var(--table-header-text);
-  padding-top: 10px;
-  height: 30px;
+  min-height: 30px;
   vertical-align: middle;
   text-align: center;
 }
 
 .competitor-ranking-header {
   max-width: 20vw;
-  min-width: 100px;
-  width: 20vw;
+  padding: 10px;
   text-align: center;
-  font-size: 130%;
-  padding-bottom: 10px;
-  color: var(--secondary-text-color);
+  text-transform: uppercase;
+  color: var(--component-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -41,7 +42,7 @@
 .competitor-ranking-value {
   text-align: center;
   padding: 10px;
-  color: var(--secondary-text-color);
+  color: var(--component-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -56,8 +57,11 @@
   color: var(--focus-element)
 }
 
-.mat-raised-button {
-  width: 150px;
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  padding-top: 1em;
 }
 
 .mat-dialog-actions {
@@ -66,14 +70,33 @@
 }
 
 .days-selector {
-  position: absolute;
-  top: 0;
-  right: 16px;
-  width: 200px;
   display: flex;
+  position: absolute;
+  top: 33px;
+  right: 16px;
 }
 
 .day-input {
   padding: 0 10px 0 0;
   min-width: 0;
+}
+
+::ng-deep .days-selector .biit-input {
+  min-width: 18em !important;
+}
+
+
+@media screen and (max-width: 600px) {
+  .table-container {
+    max-width: 100vh;
+  }
+
+  .competitor-ranking {
+    min-width: 200px;
+  }
+
+  .competitor-ranking-table {
+    margin-left: 100px;
+    margin-right: 100px;
+  }
 }

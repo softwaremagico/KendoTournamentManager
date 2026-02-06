@@ -1,0 +1,66 @@
+name: Publish to Docker Hub
+
+# Only trigger, when the build workflow succeeded
+on:
+  workflow_run:
+    workflows: [ "Create Release" ]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  docker:
+    name: Creating Docker Images
+    runs-on: ubuntu-22.04
+    # I need "packages: write" to access GHCR.
+    # More about permissions here: https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+    permissions: write-all
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+
+      - uses: actions/checkout@v5
+
+#      - name: Build docker-compose
+#        run: docker buildx bake --file docker-compose.yml
+#        with:
+#          projectBaseDir: docker
+
+#      - name: Publish backend docker image
+#        uses: docker/bake-action@v6
+#        with:
+#          source: "{{defaultContext}}:docker"
+#          workdir: "docker"
+#          push: true
+#          set: |
+#            *.tags=softwaremagico/kendo-tournament-manager-backend:latest
+
+      - name: Creating backend docker images
+        run: |
+          cd docker
+          VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
+          docker build -t softwaremagico/kendo-tournament-manager-backend:latest -t softwaremagico/kendo-tournament-manager-backend:${VERSION} --build-arg release=${VERSION} backend/
+          docker push softwaremagico/kendo-tournament-manager-backend:latest
+          docker push softwaremagico/kendo-tournament-manager-backend:${VERSION}
+
+      - name: Creating frontend docker images
+        run: |
+          cd docker
+          VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
+          docker build -t softwaremagico/kendo-tournament-manager-frontend:latest -t softwaremagico/kendo-tournament-manager-frontend:${VERSION} --build-arg release=${VERSION} --build-arg achievements_enabled=true --build-arg check_new_version_enabled=true --build-arg protocol=http --build-arg websocket_protocol=http --build-arg machine_domain=localhost frontend/
+          docker push softwaremagico/kendo-tournament-manager-frontend:latest
+          docker push softwaremagico/kendo-tournament-manager-frontend:${VERSION}
+
+      - name: Creating rproxy docker images
+        run: |
+          cd docker
+          VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
+          docker build -t softwaremagico/kendo-tournament-manager-rproxy:latest -t softwaremagico/kendo-tournament-manager-rproxy:${VERSION} --build-arg release=${VERSION} traefik/
+          docker push softwaremagico/kendo-tournament-manager-rproxy:latest
+          docker push softwaremagico/kendo-tournament-manager-rproxy:${VERSION}

@@ -1,0 +1,73 @@
+<ng-container id="tournament-options" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div class="row" *ngIf="canMaximizeFights">
+      <biit-toggle
+        *ngIf="canMaximizeFights"
+        [(ngModel)]="areFightsMaximized"
+        (click)="onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, !areFightsMaximized+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, !areFightsMaximized+'')"
+        [description]="t('maximizeFightsHint')">
+        {{ t('maximizeFights') }}
+      </biit-toggle>
+    </div>
+    <div class="row" *ngIf="canAvoidDuplicatedFights">
+      <biit-toggle
+        *ngIf="canAvoidDuplicatedFights"
+        [(ngModel)]="avoidDuplicatedFights"
+        (click)="onSave(TournamentExtraPropertyKey.AVOID_DUPLICATES, !avoidDuplicatedFights+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.AVOID_DUPLICATES, !avoidDuplicatedFights+'')"
+        [description]="t('avoidDuplicateFightsHint')">
+        {{ t('avoidDuplicateFights') }}
+      </biit-toggle>
+    </div>
+    <div class="row" *ngIf="needsFifoWinner">
+      <biit-toggle
+        *ngIf="needsFifoWinner"
+        [(ngModel)]="firstInFirstOut"
+        (click)="onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, !firstInFirstOut+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, !firstInFirstOut+'')"
+        [description]="t('leagueFifoHint')">
+        {{ t('leagueFifo') }}
+      </biit-toggle>
+    </div>
+    <div class="row" *ngIf="canResolveOddFightsAsap">
+      <biit-toggle
+        *ngIf="canResolveOddFightsAsap"
+        [(ngModel)]="resolveOddFightsAsap"
+        (click)="onSave(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, !resolveOddFightsAsap+'')"
+        (keydown)="onSave(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, !resolveOddFightsAsap+'')"
+        [description]="t('oddFightsResolvedAsapHint')">
+        {{ t('oddFightsResolvedAsap') }}
+      </biit-toggle>
+    </div>
+    <div class="row" *ngIf="needsDrawResolution">
+      <biit-dropdown id="tournament-draw-resolutions"
+                     [ngModel]="(selectedDrawResolution+'') | dropdownInterface: drawResolutionValues"
+                     (ngModelChange)="onSave(TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, $event.value)"
+                     [data]="drawResolutionValues"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [descriptionLabel]="'description'"
+                     [title]="t('drawResolution')"
+                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-dropdown>
+    </div>
+    <div class="row" *ngIf="canSelectChallengeDistance">
+      <biit-dropdown id="tournament-rung"
+                     [ngModel]="(challengeDistance+'') | dropdownInterface: senbatsuChallengeDistance"
+                     (ngModelChange)="onSave(TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE, $event.value)"
+                     [data]="senbatsuChallengeDistance"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('senbatsuRungLength')"
+                     [descriptionLabel]="'description'"
+                     [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+      ></biit-dropdown>
+    </div>
+    <div class="buttons-row">
+      <button biit-button id="tournament-button-close" (click)="onClosed.emit()" primary>
+        {{ t('close') }}
+      </button>
+    </div>
+  </div>
+</ng-container>

@@ -28,16 +28,20 @@ import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -58,7 +62,19 @@ public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, C
     public ClubDTO add(@Parameter(description = "Name of the new club", required = true) @RequestParam(name = "name") String name,
                        @Parameter(description = "Country where the club is located", required = true) @RequestParam(name = "country") String country,
                        @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
-                       Authentication authentication, HttpServletRequest request) {
-        return getController().create(name, country, city, authentication.getName());
+                       Authentication authentication,
+                       @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                       HttpServletRequest request) {
+        return getController().create(name, country, city, authentication.getName(), session);
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Creates an entity.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/new-club", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ClubDTO addNew(@Valid @RequestBody ClubDTO dto, Authentication authentication,
+                          @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                          HttpServletRequest request) {
+        return getController().create(dto, authentication.getName(), session);
     }
 }

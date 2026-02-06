@@ -3,7 +3,7 @@ import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslocoService} from "@ngneat/transloco";
 import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
@@ -28,6 +28,9 @@ export class FaultComponent implements OnInit, OnChanges {
   @Input()
   locked: boolean = true;
 
+  @Input()
+  projectMode: boolean;
+
   timeRepresentation: string | undefined;
 
   mouseX: number | undefined;
@@ -38,7 +41,7 @@ export class FaultComponent implements OnInit, OnChanges {
   onRightBorder: boolean;
 
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
-              private translateService: TranslateService, public rbacService: RbacService) {
+              private translateService: TranslocoService, public rbacService: RbacService) {
   }
 
   ngOnInit(): void {
@@ -113,10 +116,10 @@ export class FaultComponent implements OnInit, OnChanges {
       seconds = seconds % 60;
       let text: string = "";
       if (minutes) {
-        text += minutes + " " + this.translateService.instant('minutesAbbreviation') + " ";
+        text += minutes + " " + this.translateService.translate('minutesAbbreviation') + " ";
       }
       if (seconds) {
-        text += seconds + " " + this.translateService.instant('secondsAbbreviation') + " ";
+        text += seconds + " " + this.translateService.translate('secondsAbbreviation') + " ";
       }
       this.timeRepresentation = text;
     } else {
@@ -128,7 +131,7 @@ export class FaultComponent implements OnInit, OnChanges {
     if (!this.timeRepresentation || this.timeRepresentation.length == 0) {
       return "";
     }
-    let tooltipText: string = '<b>' + this.translateService.instant('fault') + '</b><br>' +
+    let tooltipText: string = '<b>' + this.translateService.translate('fault') + '</b><br>' +
       '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip">' + this.timeRepresentation + '</span></div>';
     return tooltipText;
   }

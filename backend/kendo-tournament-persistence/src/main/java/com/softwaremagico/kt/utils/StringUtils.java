@@ -35,6 +35,9 @@ public final class StringUtils {
     }
 
     public static String setCase(String value) {
+        if (value == null) {
+            return null;
+        }
         final StringBuilder caseString = new StringBuilder();
         final String[] data = value.split(" ");
         for (final String datum : data) {

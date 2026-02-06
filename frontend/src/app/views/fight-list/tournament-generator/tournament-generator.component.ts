@@ -7,8 +7,6 @@ import {TournamentService} from "../../../services/tournament.service";
 import {
   TournamentBracketsEditorComponent
 } from "../../../components/tournament-brackets-editor/tournament-brackets-editor.component";
-import {ConfirmationDialogComponent} from "../../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Fight} from "../../../models/fight";
 import {FightService} from "../../../services/fight.service";
 import {MessageService} from "../../../services/message.service";
@@ -22,6 +20,7 @@ import {NumberOfWinnersUpdatedService} from "../../../services/notifications/num
 import {
   TournamentChangedService
 } from "../../../components/tournament-brackets-editor/tournament-brackets/tournament-changed.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -43,9 +42,12 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   totalTeams: number;
 
   numberOfWinners: number = 1;
+  protected updatingGroup: boolean = false;
+  protected generateGroupConfirmation: boolean = false;
+  loadingGlobal: boolean = false;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
-              private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
+              private fightService: FightService, private messageService: MessageService,
               private groupService: GroupService, private tournamentChangedService: TournamentChangedService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
               private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
@@ -76,33 +78,25 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   addGroup(): void {
-    if (this.groupsLevelZero.length < this.totalTeams / 2) {
+    if (this.groupsLevelZero.length < this.totalTeams / 2 && !this.updatingGroup) {
+      this.updatingGroup = true;
       this.tournamentBracketsEditorComponent.addGroup();
     }
   }
 
   deleteGroup(): void {
-    this.tournamentBracketsEditorComponent.deleteLast();
-  }
-
-  openConfirmationGenerateElementsDialog(): void {
-    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "deleteFightsWarning"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.generateElements();
-      }
-    });
+    if (!this.updatingGroup) {
+      this.updatingGroup = true;
+      this.tournamentBracketsEditorComponent.deleteLast();
+    }
   }
 
   generateElements(): void {
+    this.loadingGlobal = true;
     this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
       this.messageService.infoMessage("infoFightCreated");
       this.goBackToFights();
-    });
+    }).add(() => this.loadingGlobal = false);
   }
 
   groupsUpdated(groups: Group[]): void {
@@ -110,6 +104,10 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     this.groupsLevelZero = this.groups.filter((g: Group): boolean => {
       return g.level === 0;
     });
+  }
+
+  groupsActionsDisabled(disabled: boolean) {
+    this.updatingGroup = false;
   }
 
   teamsSizeUpdated(totalTeams: number): void {
@@ -159,4 +157,13 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }
+
+  refreshGroups() {
+    this.loadingGlobal = true;
+    this.groupService.refreshNonStartedGroups(this.tournamentId, 1).subscribe((): void => {
+      this.tournamentBracketsEditorComponent.updateData(true, true);
+    }).add(() => this.loadingGlobal = false);
+  }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }

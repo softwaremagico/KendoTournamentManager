@@ -1,14 +1,15 @@
-<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2" align="middle"> 
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle"> 
 
-***REMOVED***
+---
 
 [![Languages](https://img.shields.io/badge/languages-%F0%9F%87%AA%F0%9F%87%B8%20%F0%9F%87%AC%F0%9F%87%A7%20%F0%9F%87%AE%F0%9F%87%B9%20-blue.svg)]()
-[![GNU GPL 3.0 License](https://img.shields.io/badge/license-GNU_GPL_3.0-brightgreen.svg)](https://github.com/softwaremagico/KendoTournamentManager/blob/main/LICENSE)
-[![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
+[![Weblate Translations](https://hosted.weblate.org/widget/kendotournamentmanager/svg-badge.svg)](https://hosted.weblate.org/engage/kendotournamentmanager/)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-brightgreen.svg)](https://github.com/softwaremagico/KendoTournamentManager/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
+[![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-665.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-818.5h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -22,14 +23,14 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
-The Kendo Tournament Manager v2 is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
+The Kendo Tournament Manager NG is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
 designed to efficiently manage all your kendo tournament data in one convenient location.
 It caters to tournaments of varying sizes, offering versatility to accommodate any type of event for your kendo club.
 Drawing on 15 years of experience with different fighting structures, this tool aims to provide flexibility that serves
 your club's needs effectively.
 
 <p align="center">
-    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
+    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="800" alt="Scores example">
 </p>
 
 A significant upgrade from the previous Kendo Tournament
@@ -75,6 +76,21 @@ the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
 For detailed guidance on the installation process, please refer to
 the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation).
 But for your convenience, here is an overview:
+
+### Using Docker
+
+Deploying the application as a [docker](https://www.docker.com/) container is the best option.
+If you prefer deploying it as a Docker container, refer to the guidelines provided in this
+project's [documentation](./docker/README.md).
+Using Docker is recommended for deployment due to its ease of use once you are familiar with it.
+Remember that you can also use the official images from docker hub:
+
+- [Backend](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-backend/general)
+- [Frontend](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-frontend)
+- [Proxy](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-rproxy)
+
+Please, check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation-using-docker-hub) for further information about how
+to customize the configuration.
 
 ### From a release version
 
@@ -151,13 +167,6 @@ The backend requires a database for data persistence.
 You have flexibility in choosing your preferred database provider.
 Refer to [the documentation](./backend/README.md) for guidance on configuring your chosen database engine.
 
-### Using Docker
-
-Furthermore, deploying the application as a [docker](https://www.docker.com/) container is an option.
-If you prefer deploying it as a Docker container, refer to the guidelines provided in this
-project's [documentation](./docker/README.md).
-Using Docker is recommended for deployment due to its ease of use once you are familiar with it.
-
 ## Hardware Requirements
 
 ### Hosting
@@ -186,7 +195,7 @@ password to log in, and the system will immediately create an administrator acco
 This feature is only available if there are no users in the system, so it will be disabled as soon as you create the
 first administrator. Please make a note of the generated username and password and store it in a safe place.
 
-# Contributing to Kendo Tournament Manager v2
+# Contributing to Kendo Tournament Manager NG
 
 There are various ways to contribute to this project:
 
@@ -195,7 +204,7 @@ There are various ways to contribute to this project:
 - Translating the application into different languages is also appreciated.
 - Any suggestions for improving the design are welcome.
 
-To contribute code to Kendo Tournament Manager v2, please follow these steps:
+To contribute code to Kendo Tournament Manager NG, please follow these steps:
 
     Fork this repository.
     Create a branch: git checkout -b <branch_name>.

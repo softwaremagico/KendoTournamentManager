@@ -23,10 +23,12 @@ package com.softwaremagico.kt.websockets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.websockets.models.MessageContent;
@@ -45,6 +47,7 @@ import java.util.List;
 public class WebSocketController {
 
     public static final String FIGHTS_MAPPING = "/fights";
+    public static final String UNTIES_MAPPING = "/unties";
     public static final String GROUPS_MAPPING = "/groups";
     public static final String CREATING_MAPPING = "/creates";
     public static final String UPDATING_MAPPING = "/updates";
@@ -71,13 +74,12 @@ public class WebSocketController {
      * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
      *
      * @param element the element created.
-     * @return
      */
-    public void elementCreated(@Payload ElementDTO element, String actor) {
+    public void elementCreated(@Payload ElementDTO element, String actor, String session) {
         try {
             WebsocketsLogger.debug(this.getClass(), "Creating element '{}'.", element);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + CREATING_MAPPING,
-                    new MessageContent(element.getClass().getSimpleName(), toJson(element), MessageContentType.CREATED, actor));
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), MessageContentType.CREATED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
@@ -87,13 +89,12 @@ public class WebSocketController {
      * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
      *
      * @param element the element created.
-     * @return
      */
-    public void elementUpdated(@Payload ElementDTO element, String actor) {
+    public void elementUpdated(@Payload ElementDTO element, String actor, String session) {
         try {
             WebsocketsLogger.debug(this.getClass(), "Updating element '{}'.", element);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + UPDATING_MAPPING,
-                    new MessageContent(element.getClass().getSimpleName(), toJson(element), MessageContentType.UPDATED, actor));
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), MessageContentType.UPDATED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
@@ -103,13 +104,12 @@ public class WebSocketController {
      * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
      *
      * @param element the element created.
-     * @return
      */
-    public void elementDeleted(@Payload ElementDTO element, String actor) {
+    public void elementDeleted(@Payload ElementDTO element, String actor, String session) {
         try {
             WebsocketsLogger.debug(this.getClass(), "Deleting element '{}'.", element);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + DELETES_MAPPING,
-                    new MessageContent(element.getClass().getSimpleName(), toJson(element), MessageContentType.DELETED, actor));
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), MessageContentType.DELETED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
@@ -119,13 +119,12 @@ public class WebSocketController {
      * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #FIGHTS_MAPPING}.
      *
      * @param fight the fight to send.
-     * @return
      */
-    public void fightUpdated(@Payload FightDTO fight, String actor) {
+    public void fightUpdated(@Payload FightDTO fight, String actor, String session) {
         try {
             WebsocketsLogger.debug(this.getClass(), "Sending fight '{}'.", fight);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING,
-                    new MessageContent(Fight.class.getSimpleName(), toJson(fight), MessageContentType.UPDATED, actor));
+                    new MessageContent(Fight.class.getSimpleName(), toJson(fight), MessageContentType.UPDATED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
@@ -135,13 +134,27 @@ public class WebSocketController {
      * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #FIGHTS_MAPPING}.
      *
      * @param fights the fight to send.
-     * @return
      */
-    public void fightsCreated(@Payload List<FightDTO> fights, String actor) {
+    public void fightsCreated(@Payload List<FightDTO> fights, String actor, String session) {
         try {
             WebsocketsLogger.debug(this.getClass(), "Sending fights '{}'.", fights);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING,
-                    new MessageContent(Fight.class.getSimpleName(), toJson(fights), MessageContentType.CREATED, actor));
+                    new MessageContent(Fight.class.getSimpleName(), toJson(fights), MessageContentType.CREATED, actor, session));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    /**
+     * Sends a duelDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #UNTIES_MAPPING}.
+     *
+     * @param duelDTO the duelDTO to send.
+     */
+    public void untieUpdated(@Payload DuelDTO duelDTO, String actor, String session) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Sending duelDTO '{}'.", duelDTO);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + UNTIES_MAPPING,
+                    new MessageContent(Duel.class.getSimpleName(), toJson(duelDTO), MessageContentType.UPDATED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
@@ -152,13 +165,12 @@ public class WebSocketController {
      * + {@value #GROUPS_MAPPING}.
      *
      * @param tournamentDTO the tournament that is modified.
-     * @return
      */
-    public void groupsUpdated(@Payload TournamentDTO tournamentDTO, String actor) {
+    public void groupsUpdated(@Payload TournamentDTO tournamentDTO, String actor, String session) {
         try {
             WebsocketsLogger.debug(this.getClass(), "Groups from  '{}' has been updated.", tournamentDTO);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + GROUPS_MAPPING,
-                    new MessageContent(Group.class.getSimpleName(), toJson(tournamentDTO), MessageContentType.UPDATED, actor));
+                    new MessageContent(Group.class.getSimpleName(), toJson(tournamentDTO), MessageContentType.UPDATED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }

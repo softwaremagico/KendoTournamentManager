@@ -1,143 +1,149 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTable, MatTableDataSource} from "@angular/material/table";
-import {MatSort} from "@angular/material/sort";
-import {MatDialog} from "@angular/material/dialog";
-import {MessageService} from "../../services/message.service";
-import {TranslateService} from "@ngx-translate/core";
-import {SelectionModel} from "@angular/cdk/collections";
-import {Action} from "../../action";
+import {AfterViewInit, Component} from '@angular/core';
+import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {AuthenticatedUser} from "../../models/authenticated-user";
-import {LoginService} from "../../services/login.service";
-import {
-  AuthenticatedUserDialogBoxComponent
-} from "./authenticated-user-dialog-box/authenticated-user-dialog-box.component";
 import {UserService} from "../../services/user.service";
 import {UserRoles} from "../../services/rbac/user-roles";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {combineLatest} from "rxjs";
+import {UserSessionService} from "../../services/user-session.service";
+import {DatePipe} from "@angular/common";
+import {Constants} from "../../constants";
 
 @Component({
   selector: 'app-authenticated-user-list',
   templateUrl: './authenticated-user-list.component.html',
-  styleUrls: ['./authenticated-user-list.component.scss']
+  styleUrls: ['./authenticated-user-list.component.scss'],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      multi: true,
+      useValue: {scope: '', alias: 't'}
+    }
+  ]
 })
-export class AuthenticatedUserListComponent extends RbacBasedComponent implements OnInit {
+export class AuthenticatedUserListComponent extends RbacBasedComponent implements AfterViewInit {
 
-  basicTableData: BasicTableData<AuthenticatedUser> = new BasicTableData<AuthenticatedUser>("AuthenticatedUser");
+  protected readonly AuthenticatedUser = AuthenticatedUser;
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  protected columns: DatatableColumn[] = [];
+  protected pageSize: number = 10;
+  protected pageSizes: number[] = [10, 25, 50, 100];
+  protected users: AuthenticatedUser[];
+  protected target: AuthenticatedUser | null;
+  protected roleSelector: boolean = false;
+  protected confirm: boolean = false;
 
-  constructor(private loginService: LoginService, private userService: UserService, public dialog: MatDialog, private messageService: MessageService,
-              private translateService: TranslateService, rbacService: RbacService) {
+  protected loading: boolean = false;
+
+  constructor(private userService: UserService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private userSessionService: UserSessionService, private transloco: TranslocoService,
+              private biitSnackbarService: BiitSnackbarService, private _datePipe: DatePipe) {
     super(rbacService);
-    this.basicTableData.columns = ['id', 'username', 'name', 'lastname', 'roles'];
-    this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname', 'roles'];
-    this.basicTableData.visibleColumns = ['username', 'name', 'lastname'];
-    this.basicTableData.selection = new SelectionModel<AuthenticatedUser>(false, []);
-    this.basicTableData.dataSource = new MatTableDataSource<AuthenticatedUser>();
   }
 
-  ngOnInit(): void {
-    this.showAllElements();
+  datePipe() {
+    return {
+      transform: (value: any) => {
+        if (!value) {
+          value = 0;
+        }
+        return this._datePipe.transform(value, Constants.FORMAT.DATE);
+      }
+    }
   }
 
-  showAllElements(): void {
-    this.userService.getAll().subscribe(authenticatedUsers => {
-      this.basicTableData.dataSource.data = authenticatedUsers;
+  ngAfterViewInit() {
+    combineLatest(
+      [
+        this.transloco.selectTranslate('id'),
+        this.transloco.selectTranslate('username'),
+        this.transloco.selectTranslate('name'),
+        this.transloco.selectTranslate('lastname'),
+        this.transloco.selectTranslate('roles'),
+        this.transloco.selectTranslate('createdBy'),
+        this.transloco.selectTranslate('createdAt'),
+        this.transloco.selectTranslate('updatedBy'),
+        this.transloco.selectTranslate('updatedAt'),
+      ]
+    ).subscribe(([id, username, name, lastname, roles, createdBy, createdAt, updatedBy, updatedAt]) => {
+      this.columns = [
+        new DatatableColumn(id, 'id', false, 80),
+        new DatatableColumn(name, 'name'),
+        new DatatableColumn(lastname, 'lastname'),
+        new DatatableColumn(username, 'username'),
+        new DatatableColumn(roles, 'roles'),
+        new DatatableColumn(createdBy, 'createdBy', false),
+        new DatatableColumn(createdAt, 'createdAt', undefined, undefined, undefined, this.datePipe()),
+        new DatatableColumn(updatedBy, 'updatedBy', false),
+        new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+      ];
+      this.loadData();
+    });
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.systemOverloadService.isTransactionalBusy.next(true);
+    this.userService.getAll().subscribe({
+      next: (_users: AuthenticatedUser[]): void => {
+        this.users = _users.map(_user => AuthenticatedUser.clone(_user));
+      },
+      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+    }).add(() => {
+      this.loading = false;
+      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
   addElement(): void {
     const authenticatedUser: AuthenticatedUser = new AuthenticatedUser();
     authenticatedUser.roles[0] = UserRoles.VIEWER;
-    this.openDialog(this.translateService.instant('authenticatedUserAdd'), Action.Add, new AuthenticatedUser());
+    this.target = authenticatedUser;
   }
 
-  editElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('authenticatedUserEdit'), Action.Update, this.basicTableData.selectedElement);
+  editElement(authenticatedUser: AuthenticatedUser): void {
+    if (authenticatedUser) {
+      this.target = authenticatedUser;
     }
   }
 
-  deleteElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('authenticatedUserDelete'), Action.Delete, this.basicTableData.selectedElement);
+  deleteElement(authenticatedUsers: AuthenticatedUser[], confirmed: boolean): void {
+    if (authenticatedUsers.some(user => user.username === this.userSessionService.getUser()?.username)) {
+      this.biitSnackbarService.showNotification(this.transloco.translate('youCannotDeleteYourself'), NotificationType.WARNING);
+      return;
+    }
+    if (authenticatedUsers) {
+      combineLatest(authenticatedUsers.map(authenticatedUser => this.userService.delete(authenticatedUser))).subscribe({
+        next: (): void => {
+          this.confirm = false;
+          this.loadData();
+          this.transloco.selectTranslate('infoAuthenticatedUserDeleted').subscribe(
+            translation => {
+              this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
+            }
+          );
+        },
+        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      });
     }
   }
 
-  setSelectedItem(row: AuthenticatedUser): void {
-    if (row === this.basicTableData.selectedElement) {
-      this.basicTableData.selectedElement = undefined;
-    } else {
-      this.basicTableData.selectedElement = row;
+  getUserNames(authenticatedUsers: AuthenticatedUser[]): string {
+    if (authenticatedUsers) {
+      return authenticatedUsers.map(authenticatedUser => authenticatedUser.username).join(', ');
     }
+    return "";
   }
 
-  openDialog(title: string, action: Action, authenticatedUser: AuthenticatedUser): void {
-    const dialogRef = this.dialog.open(AuthenticatedUserDialogBoxComponent, {
-      panelClass: 'pop-up-panel',
-      width: '400px',
-      data: {title: title, action: action, entity: authenticatedUser}
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result == Action.Cancel) {
-        //Do nothing
-      } else if (result?.action == Action.Add) {
-        this.addRowData(result.data);
-      } else if (result?.action == Action.Update) {
-        this.updateRowData(result.data);
-      } else if (result?.action == Action.Delete) {
-        this.deleteRowData(result.data);
-      }
-    });
+  onSaved(authenticatedUser: AuthenticatedUser) {
+    //Saved already on the popup.
+    this.biitSnackbarService.showNotification(this.transloco.translate('infoAuthenticatedUserStored'), NotificationType.INFO);
+    this.loadData();
+    this.target = null;
   }
-
-  addRowData(authenticatedUser: AuthenticatedUser): void {
-    this.userService.add(authenticatedUser).subscribe((_authenticatedUser: AuthenticatedUser): void => {
-      //If data is not already added though table webservice.
-      if (this.basicTableData.dataSource.data.findIndex((obj: AuthenticatedUser): boolean => obj.id === _authenticatedUser.id) < 0) {
-        this.basicTableData.dataSource.data.push(_authenticatedUser);
-        this.basicTableData.dataSource._updateChangeSubscription();
-      }
-      this.basicTableData.selectItem(_authenticatedUser);
-      this.basicTableData.selectedElement = _authenticatedUser;
-      this.messageService.infoMessage('infoAuthenticatedUserStored');
-    });
-  }
-
-  updateRowData(authenticatedUser: AuthenticatedUser): void {
-    this.userService.update(authenticatedUser).subscribe((_authenticatedUser: AuthenticatedUser): void => {
-        this.messageService.infoMessage('infoAuthenticatedUserUpdated');
-        let index: number = this.basicTableData.dataSource.data.findIndex((obj: AuthenticatedUser): boolean => obj.id === _authenticatedUser.id);
-        if (index >= 0) {
-          this.basicTableData.dataSource.data[index] = _authenticatedUser;
-          this.basicTableData.dataSource._updateChangeSubscription();
-        }
-        this.basicTableData.selectedElement = _authenticatedUser;
-      this.basicTableData.selectItem(_authenticatedUser);
-      }
-    );
-  }
-
-  deleteRowData(authenticatedUser: AuthenticatedUser): void {
-    this.userService.delete(authenticatedUser).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_authenticatedUser: AuthenticatedUser): boolean => _authenticatedUser.id !== authenticatedUser.id);
-        this.messageService.infoMessage('infoAuthenticatedUserDeleted');
-        this.basicTableData.selectedElement = undefined;
-      }
-    );
-  }
-
-  disableRow(argument: any): boolean {
-    return false;
-  }
-
-
 }

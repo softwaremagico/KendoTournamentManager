@@ -15,6 +15,8 @@ import {TournamentType} from "../../models/tournament-type";
 })
 export class FightComponent extends RbacBasedComponent implements OnInit {
 
+  readonly ROW_HIGH: number = 70;
+
   @Input()
   fight: Fight;
 
@@ -26,6 +28,9 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   locked: boolean;
+
+  @Input()
+  projectMode: boolean;
 
   @Output()
   onSelectedDuel: EventEmitter<Duel> = new EventEmitter();
@@ -41,9 +46,11 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-
   @Input()
   showAvatars: boolean = false;
+
+  @Input()
+  onlyShow: boolean = false;
 
   constructor(private duelChangedService: DuelChangedService, rbacService: RbacService) {
     super(rbacService);

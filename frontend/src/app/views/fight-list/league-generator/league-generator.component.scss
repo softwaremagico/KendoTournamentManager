@@ -1,10 +1,45 @@
+.canvas {
+  width: 100%;
+  min-width: 40vw;
+  height: 100%;
+  max-height: 80vh;
+
+  align-items: center;
+  gap: 4.5rem;
+  padding: 2.5rem 2.5rem 1.5rem;
+  background: var(--body-background);
+}
+
+::ng-deep .team-list {
+  height: 55vh !important;
+  max-height: 55vh !important;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 1em;
+}
+
+.settings-button {
+  position: absolute;
+  top: 92px;
+  right: 85px;
+}
+
+.team-grid {
+  height: 55vh;
+}
+
 .league-creator {
   display: flex;
-  height: 80vh;
+  height: 60vh;
 }
 
 .teams-container {
-  overflow: auto;
+  overflow: clip;
 }
 
 .league-creator div {
@@ -17,13 +52,8 @@
 }
 
 .sorted-teams {
-  overflow: auto;
-  padding-left: 10px;
-}
-
-//Padding between roles
-.ng-star-inserted {
- // padding-bottom: 20px;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .header {
@@ -31,33 +61,18 @@
   height: 40px;
 }
 
-.final-team-list{
-  border-color: #c3d1e1;
-  border-radius: 15px;
-  border-style: dotted;
-  padding-right: 10px;
-  min-height: 50vh;
-  height: 65vh;
+.final-team-list {
+  border: 3px solid var(--component-color);
+  min-height: 40vh;
+  height: 90%;
   overflow: scroll;
-}
-
-.mat-dialog-actions {
+  background-color: var(--popup-background);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
 }
 
-.mat-raised-button {
-  width: 150px;
-}
-
-.fight-button {
-  padding-bottom: 0;
-}
-
-.extra-properties{
-  margin: 20px;
-  padding-bottom: 0;
-}
 
 @media screen and (max-width: 1250px) {
   .reverse-button {

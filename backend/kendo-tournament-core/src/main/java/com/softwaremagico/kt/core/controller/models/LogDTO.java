@@ -21,7 +21,11 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
 public class LogDTO {
+
+    @NotNull
     private String message;
 
     public String getMessage() {

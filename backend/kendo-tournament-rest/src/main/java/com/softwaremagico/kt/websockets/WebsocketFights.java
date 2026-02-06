@@ -31,7 +31,10 @@ public class WebsocketFights {
     public WebsocketFights(DuelController duelController, FightController fightController, WebSocketController webSocketController) {
 
         //Refresh screens when a duel is updated.
-        duelController.addFightUpdatedListener(((tournament, fight, duel, actor) -> webSocketController.fightUpdated(fight, actor)));
+        duelController.addFightUpdatedListener(((tournament, fight, duel, actor, session) ->
+                webSocketController.fightUpdated(fight, actor, session)));
+        duelController.addUntieUpdatedListener(((tournament, duel, actor, session) ->
+                webSocketController.untieUpdated(duel, actor, session)));
         fightController.addFightsAddedListeners((webSocketController::fightsCreated));
 
     }

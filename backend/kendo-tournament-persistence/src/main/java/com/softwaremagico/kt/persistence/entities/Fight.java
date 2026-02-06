@@ -21,11 +21,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -38,7 +36,6 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,10 +69,6 @@ public class Fight extends Element {
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
-
-    @Column(name = "finished_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
-    private LocalDateTime finishedAt;
 
     @Column(name = "fight_level", nullable = false)
     private Integer level = 0;
@@ -216,9 +209,18 @@ public class Fight extends Element {
     public Integer getScore(Participant competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(Duel::getCompetitor1ScoreValue).sum();
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(Duel::getCompetitor2ScoreValue).sum();
+        return score;
+    }
+
+    public Integer getScoreAgainst(Participant competitor) {
+        int score = 0;
+        score += getDuels().stream().filter(duel ->
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(Duel::getCompetitor2ScoreValue).sum();
+        score += getDuels().stream().filter(duel ->
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(Duel::getCompetitor1ScoreValue).sum();
         return score;
     }
 
@@ -278,12 +280,22 @@ public class Fight extends Element {
         return 0;
     }
 
+    public Integer getScoreAgainst(Team team) {
+        if (Objects.equals(team1, team)) {
+            return getScoreTeam2();
+        }
+        if (Objects.equals(team2, team)) {
+            return getScoreTeam1();
+        }
+        return 0;
+    }
+
     public Integer getScoreTeam1() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        return getDuels().stream().mapToInt(Duel::getCompetitor1ScoreValue).sum();
     }
 
     public Integer getScoreTeam2() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return getDuels().stream().mapToInt(Duel::getCompetitor2ScoreValue).sum();
     }
 }
 

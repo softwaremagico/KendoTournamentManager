@@ -49,9 +49,9 @@ import java.time.LocalDateTime;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
 public class Tournament extends Element implements IName {
-    private static final int DEFAULT_DURATION = 180;
+    public static final int DEFAULT_DURATION = 180;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
@@ -96,7 +96,7 @@ public class Tournament extends Element implements IName {
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy) {
-        this(name, shiaijos, teamSize, type, createdBy, ScoreType.CLASSIC);
+        this(name, shiaijos, teamSize, type, createdBy, ScoreType.INTERNATIONAL);
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy, ScoreType scoreType) {

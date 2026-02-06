@@ -818,10 +818,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
 
         duels.forEach(duel -> {
-            if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
+            if (duel.getCompetitor1ScoreValue() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor1());
             }
-            if (duel.getCompetitor2Score().size() < Duel.POINTS_TO_WIN) {
+            if (duel.getCompetitor2ScoreValue() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor2());
             }
         });
@@ -876,19 +876,19 @@ public class AchievementController extends BasicInsertableController<Achievement
 
         duels.forEach(duel -> {
             //Max score competitor 1.
-            if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
+            if (duel.getCompetitor1ScoreValue() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor1());
             }
             //No hits against him
-            if (!duel.getCompetitor2Score().isEmpty()) {
+            if (duel.getCompetitor2ScoreValue() > 0) {
                 competitors.remove(duel.getCompetitor1());
             }
             //Max score competitor 2.
-            if (duel.getCompetitor2Score().size() < Duel.POINTS_TO_WIN) {
+            if (duel.getCompetitor2ScoreValue() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor2());
             }
             //No hits against him
-            if (!duel.getCompetitor1Score().isEmpty()) {
+            if (duel.getCompetitor1ScoreValue() > 0) {
                 competitors.remove(duel.getCompetitor2());
             }
         });

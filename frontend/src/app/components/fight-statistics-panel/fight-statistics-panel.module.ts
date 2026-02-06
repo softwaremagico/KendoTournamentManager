@@ -2,8 +2,8 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FightStatisticsPanelComponent} from "./fight-statistics-panel.component";
 import {MatIconModule} from "@angular/material/icon";
+import {TranslocoModule} from "@ngneat/transloco";
 import {MatTooltipModule} from "@angular/material/tooltip";
-import {TranslateModule} from "@ngx-translate/core";
 
 
 @NgModule({
@@ -14,8 +14,8 @@ import {TranslateModule} from "@ngx-translate/core";
   imports: [
     CommonModule,
     MatIconModule,
+    TranslocoModule,
     MatTooltipModule,
-    TranslateModule,
   ]
 })
 export class FightStatisticsPanelModule { }

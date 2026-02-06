@@ -21,6 +21,14 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.providers.links.Pool11To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool11To8winners1;
+import com.softwaremagico.kt.core.providers.links.Pool12To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool13To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool3to4winners2;
+import com.softwaremagico.kt.core.providers.links.Pool6to4winners1;
+import com.softwaremagico.kt.core.providers.links.Pool6to8winners2;
+import com.softwaremagico.kt.core.providers.links.Pool9to8winners1;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -36,8 +44,23 @@ import java.util.Objects;
 
 import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAULT_ODD_TEAMS_RESOLUTION_ASAP;
 
+/**
+ * Requeriements for championships arrows calculations: *
+ * -   One pool must always have one team.
+ * -   two 1st winners cannot be assigned to the same pool.
+ * -   When possible, 1st winners must not change shiaijo.
+ * -   Only a 2nd winner can be on a bye, if all 1st winners are on a bye.
+ * -   Two teams that have been faced in the first column must avoid to face again until the end of the tournament
+ */
 @Service
 public class GroupLinkProvider {
+
+    private static final int SOURCE_13 = 13;
+    private static final int SOURCE_12 = 12;
+    private static final int SOURCE_11 = 11;
+    private static final int SOURCE_9 = 9;
+    private static final int SOURCE_6 = 6;
+    private static final int SOURCE_3 = 3;
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final GroupProvider groupProvider;
@@ -100,8 +123,24 @@ public class GroupLinkProvider {
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
                     //If it has the same number of groups, can be use the standard way.
                     && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size())) {
-                return nextLevelGroups.get(obtainPositionOfWinnerRemovingOddNumbers(sourceGroup.getIndex(),
-                        currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
+                final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(),
+                        numberOfWinners, winnerOrder);
+                //Special case, use federation templates.
+                if (templateDestination >= 0) {
+                    return nextLevelGroups.get(templateDestination);
+                }
+                if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
+                    return nextLevelGroups.get(spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
+                            currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
+                } else {
+                    if (currentLevelGroups.size() % 2 == 0) {
+                        return nextLevelGroups.get(spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
+                                currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
+                    } else {
+                        return nextLevelGroups.get(obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroup.getIndex(),
+                                currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
+                    }
+                }
             } else {
                 return nextLevelGroups.get(obtainPositionOfWinnerAsBinaryTree(groups, sourceGroup.getIndex(),
                         currentLevelGroups.size(), numberOfWinners, winnerOrder, sourceGroup.getLevel()));
@@ -110,6 +149,7 @@ public class GroupLinkProvider {
             return null;
         }
     }
+
 
     private int obtainPositionOfWinnerAsBinaryTree(List<Group> groups, int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners,
                                                    int winnerOrder, int sourceLevel) {
@@ -160,17 +200,17 @@ public class GroupLinkProvider {
         }
     }
 
-    private int obtainPositionOfWinnerRemovingOddNumbers(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize,
-                                                         int winnerOrder) {
+    private int obtainPositionOfWinnerNonBinaryTreeOddSize(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize,
+                                                           int winnerOrder) {
         //Standard case.
         if (winnerOrder == 0) {
             if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
-                return sourceGroupLevelIndex;
+                return sourceGroupLevelIndex / 2;
             } else {
-                return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex - 1) - 1;
+                return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex) / 2 - 1;
             }
         } else if (winnerOrder == 1) {
-            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+            if (sourceGroupLevelIndex <= (sourceGroupLevelSize) / 2) {
                 //Last -1 is for list starts at 0.
                 return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex / 2);
             } else {
@@ -179,5 +219,64 @@ public class GroupLinkProvider {
         } else {
             return -1;
         }
+    }
+
+
+    private int spreadWinnersOnTreeAsMuchAsPossible(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize,
+                                                    int winnerOrder) {
+        if (winnerOrder == 0) {
+            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+                return sourceGroupLevelIndex;
+            } else {
+                return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex - 1) - 1;
+            }
+        } else if (winnerOrder == 1) {
+            final int groupsDifferenceBetweenSecondAndFirstLevel = destinationGroupLevelSize - sourceGroupLevelSize;
+            final int firstHalf = (sourceGroupLevelSize + 1) / 2;
+            if (groupsDifferenceBetweenSecondAndFirstLevel > firstHalf) {
+                if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+                    return destinationGroupLevelSize - sourceGroupLevelSize + sourceGroupLevelIndex;
+                } else {
+                    return sourceGroupLevelIndex;
+                }
+            } else {
+                if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+                    return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex) - (destinationGroupLevelSize - sourceGroupLevelSize) / 2;
+                } else {
+                    return (destinationGroupLevelSize / 2) - (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
+                }
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder) {
+        if (sourceGroupLevelSize == SOURCE_13 && numberOfWinners == 2) {
+            return Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
+            return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 1) {
+            return Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 2) {
+            return Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_9 && numberOfWinners == 1) {
+            return Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_6) {
+            if (numberOfWinners == 1) {
+                return Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+            } else {
+                return Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+            }
+        }
+        if (sourceGroupLevelSize == SOURCE_3 && numberOfWinners == 2) {
+            return Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        return -1;
     }
 }

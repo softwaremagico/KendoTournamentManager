@@ -155,7 +155,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             fightController.generateDuels(fight, null);
         });
         group.getUnties().clear();
-        groupController.update(group, null);
+        groupController.update(group, null, null);
     }
 
     private void resetGroup(TournamentDTO tournamentDTO) {
@@ -255,7 +255,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .perform(post("/tournaments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE)))
+                        .content(toJson(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE, null)))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();

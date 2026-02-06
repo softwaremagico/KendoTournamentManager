@@ -4,7 +4,7 @@ import {UserScoreComponent} from "./user-score.component";
 import {ScoreModule} from "./score/score.module";
 import {FaultModule} from "./fault/fault.module";
 import {UserNameModule} from "./user-name/user-name.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 import {ParticipantPictureModule} from "../../../participant-picture/participant-picture.module";
 
 
@@ -18,7 +18,7 @@ import {ParticipantPictureModule} from "../../../participant-picture/participant
     ScoreModule,
     FaultModule,
     UserNameModule,
-    TranslateModule,
+    TranslocoModule,
     ParticipantPictureModule
   ]
 })

@@ -3,7 +3,10 @@
             [showAvatar]="showAvatars"
             [locked]="locked"
             [highlightedParticipantId]="highlightedParticipantId"
-            [swapTeams]="swapTeams" cdkDropList
+            [fightSelected]="fightSelected"
+            [swapTeams]="swapTeams"
+            [projectMode]="projectMode"
+            cdkDropList
             class="user-score"></user-score>
 <draw [duel]="duel" class="draw-score"></draw>
 <user-score (cdkDropListDropped)="drop($event, false)"
@@ -12,6 +15,9 @@
             [showAvatar]="showAvatars"
             [locked]="locked"
             [highlightedParticipantId]="highlightedParticipantId"
-            [swapTeams]="swapTeams" cdkDropList
+            [fightSelected]="fightSelected"
+            [swapTeams]="swapTeams"
+            [projectMode]="projectMode"
+            cdkDropList
             class="user-score"></user-score>
 

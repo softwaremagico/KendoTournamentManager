@@ -1,0 +1,100 @@
+.image-preview {
+  height: 99%;
+}
+
+::ng-deep #biit-popup .content {
+  overflow-y: clip;
+}
+
+.image-editor {
+  width: 800px;
+  height: 600px;
+  display: flex;
+  justify-content: space-between;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.empty-image {
+  border: var(--component-color) 2px solid;
+}
+
+.tab-row {
+  max-height: 60vh;
+  height: 600px;
+  display: inline
+}
+
+.content {
+  display: block;
+  margin-right: auto;
+  object-fit: fill;
+  width: 380px;
+}
+
+.controls {
+  width: 50px;
+  gap: 1em;
+  justify-content: center;
+}
+
+.arrow {
+  padding: 0 0 0 0;
+  min-width: 0;
+  margin-left: -50px;
+  position: absolute;
+}
+
+.up-double-arrow {
+  margin-top: 200px;
+}
+
+.up-arrow {
+  margin-top: 255px;
+}
+
+.down-arrow {
+  margin-top: 305px;
+}
+
+.down-double-arrow {
+  margin-top: 360px;
+}
+
+.name-line {
+  position: absolute;
+  height: 3px;
+  background: var(--warning-color);
+  width: 87.5%;
+}
+
+.name {
+  position: absolute;
+  width: 800px;
+  font-size: 48px;
+  text-align: center;
+}
+
+//Floating menu
+
+.floating-menu {
+  position: relative;
+  z-index: 999;
+  top: -600px;
+  left: 300px;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}
+
+.floating-button {
+  border: 3px solid var(--component-color);
+  background-color: var(--floating-background);
+  &:hover {
+    background-color: var(--main-background);
+  }
+}

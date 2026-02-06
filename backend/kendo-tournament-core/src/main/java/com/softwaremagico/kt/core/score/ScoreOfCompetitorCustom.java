@@ -58,7 +58,7 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
             }
         }
 
-        // Same obtained score, order by name;
+        // Same obtained score, order by name
         return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
     }
 }

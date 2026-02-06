@@ -23,7 +23,7 @@ package com.softwaremagico.kt.utils;
 
 public final class NameUtils {
 
-    private static final String DEFAULT_NAME = " ***REMOVED*** ***REMOVED*** ";
+    private static final String DEFAULT_NAME = " --- --- ";
 
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
@@ -174,7 +174,7 @@ public final class NameUtils {
 
     public static String getShortName(IParticipantName participant, int length) {
         if (participant == null) {
-            return " ***REMOVED*** ";
+            return " --- ";
         }
         return getShortName(participant.getName(), length);
     }
@@ -192,7 +192,7 @@ public final class NameUtils {
 
     public static String getShortName(IParticipantName participant) {
         if (participant == null) {
-            return " ***REMOVED*** ";
+            return " --- ";
         }
         return getShortName(participant.getName());
     }

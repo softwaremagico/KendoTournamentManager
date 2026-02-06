@@ -1,0 +1,9 @@
+{
+  "validationFailed": "Validatiefout. Controleer of er velden leeg of ongeldig zijn.",
+  "dataIsMandatory": "Dit veld is verplicht.",
+  "minLengthError": "De ingevoerde gegevens zijn te kort.",
+  "maxLengthError": "De ingevoerde gegevens zijn te lang.",
+  "passwordMismatch": "De wachtwoorden komen niet overeen.",
+  "usernameInvalid": "De gebruikersnaam heeft een ongeldig formaat. Verwijder alle spaties.",
+  "formatInvalid": "Het veldformaat is ongeldig."
+}

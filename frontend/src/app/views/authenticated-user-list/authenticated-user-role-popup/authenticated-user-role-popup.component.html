@@ -1,0 +1,27 @@
+<biit-popup id="user-role-popup"
+            [title]="t('t.userRoleTitle')"
+            (onClosed)="onClosed.emit()"
+            closable
+            *transloco="let t"
+>
+  <div class="content">
+    <biit-dropdown id="tournament-type"
+                   [ngModel]="selectedRole | dropdownInterface: translatedRoles"
+                   (ngModelChange)="selectedRole = $event.value"
+                   [data]="translatedRoles"
+                   [label]="'label'"
+                   [value]="'value'"
+                   [title]="t('roles')"
+                   [descriptionLabel]="'description'"
+                   [disabled]="!(RbacActivity.EDIT_USER | hasPermission)"
+    ></biit-dropdown>
+    <div class="button-container">
+      <button biit-button (click)="saveAction()" secondary>
+        {{'accept' | transloco}}
+      </button>
+      <button biit-button (click)="closeDialog()" primary>
+        {{'close' | transloco}}
+      </button>
+    </div>
+  </div>
+</biit-popup>

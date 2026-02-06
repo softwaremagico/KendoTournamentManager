@@ -66,6 +66,7 @@ export class ActivityService {
     this.removeActivity(adminActivities, RbacActivity.DELETE_USER);
     this.removeActivity(adminActivities, RbacActivity.EDIT_LOCKED_TOURNAMENT);
     this.removeActivity(adminActivities, RbacActivity.LINK_QR_CODE);
+    this.removeActivity(adminActivities, RbacActivity.UPDATE_OTHERS_PASSWORD);
     return adminActivities;
   }
 
@@ -91,7 +92,9 @@ export class ActivityService {
       RbacActivity.DOWNLOAD_QR_CODE,
       RbacActivity.DOWNLOAD_PDF,
       RbacActivity.SHOW_TIMER,
+      RbacActivity.PLAY_WHISTLE,
       RbacActivity.EDIT_FIGHT_TIME,
+      RbacActivity.WIKI_ACCESS,
     ];
   }
 
@@ -110,6 +113,10 @@ export class ActivityService {
       RbacActivity.VIEW_PARTICIPANT_FIGHTS,
       RbacActivity.VIEW_PARTICIPANT_STATISTICS
     ];
+  }
+
+  public clear(): void {
+    this.activities = [];
   }
 
 }

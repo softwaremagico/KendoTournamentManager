@@ -22,6 +22,8 @@ package com.softwaremagico.kt.rest.exceptions;
  */
 
 import com.softwaremagico.kt.core.exceptions.InvalidChallengeDistanceException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvRowException;
 import com.softwaremagico.kt.core.exceptions.InvalidFightException;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
@@ -29,7 +31,7 @@ import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -186,6 +188,26 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_fight", ex), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidCsvFieldException.class)
+    public ResponseEntity<Object> invalidCsvFieldException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "Invalid field: " + ((InvalidCsvFieldException) ex).getHeader(), ex),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCsvRowException.class)
+    public ResponseEntity<Object> invalidCsvRowException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "Elements failed: " + ((InvalidCsvRowException) ex).getNumberOfFailedRows(), ex),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Object> invalidPasswordException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_password", ex), HttpStatus.BAD_REQUEST);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -196,12 +218,11 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             final String fieldName = error.getField();
             final String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            if (errorMessage != null) {
+                errors.put(fieldName, errorMessage);
+            }
         });
 
-        final StringBuilder message = new StringBuilder();
-        errors.forEach((key, value) -> message.append(key).append(": ").append(value).append("\n"));
-        final ErrorResponse error = new ErrorResponse(message.toString(), ex);
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(errors.toString(), "input_data_is_invalid"), HttpStatus.BAD_REQUEST);
     }
 }

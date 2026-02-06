@@ -9,7 +9,7 @@
     <parent>
         <artifactId>kendo-tournament-backend</artifactId>
         <groupId>com.softwaremagico</groupId>
-        <version>2.17.6</version>
+        <version>3.1.1</version>
     </parent>
 
 
@@ -57,7 +57,7 @@
             <version>${javassist.version}</version>
         </dependency>
 
-        <!***REMOVED***Testing -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

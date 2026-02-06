@@ -59,6 +59,11 @@ public class ScoreOfTeamEuropean implements Comparator<ScoreOfTeam> {
             return scoreOfTeam2.getHits().compareTo(scoreOfTeam1.getHits());
         }
 
+        // Fewer hits lost
+        if (!Objects.equals(scoreOfTeam1.getHitsLost(), scoreOfTeam2.getHitsLost())) {
+            return scoreOfTeam1.getHitsLost().compareTo(scoreOfTeam2.getHitsLost());
+        }
+
         return scoreOfTeam2.getUntieDuels().compareTo(scoreOfTeam1.getUntieDuels());
     }
 }

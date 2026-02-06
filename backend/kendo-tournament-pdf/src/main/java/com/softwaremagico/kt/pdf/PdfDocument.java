@@ -44,7 +44,7 @@ public abstract class PdfDocument {
     protected Document addMetaData(Document document) {
         document.addTitle("List Report");
         document.addAuthor("Software Mágico");
-        document.addCreator("Kendo Tournament Generator v2");
+        document.addCreator("Kendo Tournament Generator NG");
         document.addSubject("Kendo");
         document.addKeywords("Kendo, League");
         document.addCreationDate();

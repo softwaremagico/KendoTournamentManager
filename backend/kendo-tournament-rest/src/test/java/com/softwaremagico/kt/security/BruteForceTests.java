@@ -87,34 +87,20 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         request.setPassword("invalidPassword");
 
         // 3 attempts to block the user.
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
+        for (int i = 0; i < BruteForceService.MAX_ATTEMPTS; i++) {
+            this.mockMvc
+                    .perform(post("/auth/public/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(toJson(request))
+                            .with(csrf()))
+                    .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                    .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
+                    .andReturn();
+        }
 
         //Correct password, user blocked.
         request.setPassword(USER_PASSWORD);
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +108,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isLocked())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test

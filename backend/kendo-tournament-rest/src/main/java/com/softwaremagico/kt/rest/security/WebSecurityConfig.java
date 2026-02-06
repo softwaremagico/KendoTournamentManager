@@ -55,7 +55,7 @@ import java.util.List;
 )
 public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            // ***REMOVED***Swagger
+            // -- Swagger
             "/v3/api-docs/**", "/swagger-ui/**",
             // Own
             "/",
@@ -128,6 +128,8 @@ public class WebSecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
+        configuration.addExposedHeader(HttpHeaders.EXPIRES);
+        configuration.addExposedHeader(AuthApi.SESSION_HEADER);
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

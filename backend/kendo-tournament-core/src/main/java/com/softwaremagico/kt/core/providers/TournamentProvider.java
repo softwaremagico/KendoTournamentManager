@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -57,6 +58,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
@@ -290,5 +292,19 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             return tournaments.get(0);
         }
         return null;
+    }
+
+    public Optional<Tournament> findByName(String name) {
+        //If encrypt is enabled.
+        if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
+            final List<Tournament> tournaments = getRepository().findAll();
+            for (Tournament tournament : tournaments) {
+                if (tournament.getName().equalsIgnoreCase(name)) {
+                    return Optional.of(tournament);
+                }
+            }
+            return Optional.empty();
+        }
+        return getRepository().findByName(name);
     }
 }

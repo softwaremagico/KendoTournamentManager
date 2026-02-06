@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'app-progress-bar',
+  selector: 'progress-bar',
   templateUrl: './progress-bar.component.html',
   styleUrls: ['./progress-bar.component.scss'],
   encapsulation: ViewEncapsulation.None,

@@ -4,7 +4,7 @@ import {DuelComponent} from "./duel.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {UserScoreModule} from "./user-score/user-score.module";
 import {DrawModule} from "./draw/draw.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 @NgModule({
@@ -17,7 +17,7 @@ import {TranslateModule} from "@ngx-translate/core";
     DragDropModule,
     UserScoreModule,
     DrawModule,
-    TranslateModule
+    TranslocoModule
   ]
 })
 export class DuelModule {
