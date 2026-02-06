@@ -305,6 +305,7 @@
   "passwordChange": "Canvia la teva contrasenya",
   "name": "Nom",
   "teamSize": "Grandària del Equip",
+  "tournamentFightSize": "Grandària del partit",
   "tournamentType": "Tipus",
   "competitor": "Competidor",
   "referee": "Àrbitro",
@@ -765,5 +766,6 @@
   "defaultPicture": "Imatge predeterminada",
   "preview": "Vista preliminar",
   "selectDiplomaRoles": "Selecciona els rols amb diploma",
-  "userRoleTitle":"Definir el rol del compte"
+  "userRoleTitle":"Definir el rol del compte",
+  "teamsSmallerThanFights": "La mida dels equips ha de ser igual o més gran que la mida dels partits."
 }

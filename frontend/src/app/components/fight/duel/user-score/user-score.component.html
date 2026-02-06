@@ -2,26 +2,33 @@
      [class.highlightParticipant]="highlightedParticipantId!=undefined"
      [class.fightSelected]="fightSelected"
      [class.showAvatar]="participantWindowOpened">
-  <score *ngIf="!left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
-         [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
-  <score *ngIf="!left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
-         [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
-  <fault *ngIf="!left" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [projectMode]="projectMode"
-         [locked]="duel.tournament.locked || locked"></fault>
-  <participant-picture *ngIf="showAvatar && !left" [participant]="getParticipant()"
-                       (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
-                       class="participant-picture"></participant-picture>
-  <user-name [duel]="duel" [left]="left" [memberIndex]="duelIndex" [participant]="getParticipant()"
-             [swapTeams]="swapTeams"
-             [highlightedParticipantId]="highlightedParticipantId"
-             class="user-name"></user-name>
-  <participant-picture *ngIf="showAvatar && left" [participant]="getParticipant()"
-                       (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
-                       class="participant-picture"></participant-picture>
-  <fault *ngIf="left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"
-         [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></fault>
-  <score *ngIf="left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
-         [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
-  <score *ngIf="left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
-         [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+    <score *ngIf="!left && !substitute" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+           [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+    <score *ngIf="!left && !substitute" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left"
+           [swapTeams]="swapTeams"
+           [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+    <fault *ngIf="!left && !substitute" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [projectMode]="projectMode"
+           [locked]="duel.tournament.locked || locked"></fault>
+    <div *ngIf="!left && substitute" class="substitute-separation"></div>
+    <participant-picture *ngIf="showAvatar && !left" [participant]="getParticipant()"
+                         (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
+                         class="participant-picture"></participant-picture>
+    <user-name [fight]="fight"
+               [duel]="duel"
+               [left]="left"
+               [memberIndex]="duelIndex"
+               [participant]="getParticipant()"
+               [swapTeams]="swapTeams"
+               [highlightedParticipantId]="highlightedParticipantId"
+               class="user-name"></user-name>
+    <participant-picture *ngIf="showAvatar && left" [participant]="getParticipant()"
+                         (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
+                         class="participant-picture"></participant-picture>
+    <div *ngIf="left && substitute" class="substitute-separation"></div>
+    <fault *ngIf="left && !substitute" [duel]="duel" [left]="left" [swapTeams]="swapTeams"
+           [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></fault>
+    <score *ngIf="left && !substitute" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
+           [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+    <score *ngIf="left && !substitute" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+           [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
 </div>

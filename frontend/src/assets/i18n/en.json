@@ -235,6 +235,7 @@
   "name": "Name",
   "lastname": "Last Name",
   "teamSize": "Team Size",
+  "tournamentFightSize": "Match Size",
   "tournamentType": "Type",
   "participantName": "First Name",
   "country": "Country",
@@ -768,5 +769,6 @@
     "de":"Deutsche"
   },
   "selectDiplomaRoles": "Select the roles with diploma",
-  "userRoleTitle":"Define the account's role"
+  "userRoleTitle":"Define the account's role",
+  "teamsSmallerThanFights": "The size of the teams must be equal to or greater than the size of the matches.\n\n"
 }

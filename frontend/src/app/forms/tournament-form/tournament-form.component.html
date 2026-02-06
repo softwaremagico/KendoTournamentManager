@@ -38,6 +38,18 @@
       ></biit-input-text>
     </div>
     <div class="row" *ngIf="tournament && tournament.type!== TournamentType.SENBATSU">
+      <biit-input-text id="tournament-fight-size" [(ngModel)]="tournament.fightSize"
+                       [placeholder]="t('tournamentFightSize')"
+                       [type]="Type.NUMBER"
+                       [min]="TOURNAMENT_MIN_FIGHT"
+                       [max]="TOURNAMENT_MAX_FIGHT"
+                       error="{{errors | mapGet: TournamentFormValidationFields.FIGHT_ERRORS}}"
+                       [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
+          || this.selectedType == typeLeague || this.selectedType == typeKing || this.selectedType == typeSorting"
+                       [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission) || this.tournamentWithTeams"
+      ></biit-input-text>
+    </div>
+    <div class="row" *ngIf="tournament && tournament.type!== TournamentType.SENBATSU">
       <biit-input-text id="tournament-team-size" [(ngModel)]="tournament.teamSize"
                        [placeholder]="t('tournamentTeamSize')"
                        [type]="Type.NUMBER"

@@ -142,8 +142,8 @@ public abstract class LeagueHandler implements ITournamentManager {
     public void removeTeams(Tournament tournament, Integer level) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
-            groups.get(0).getTeams().clear();
-            groupProvider.save(groups.get(0));
+            groups.getFirst().getTeams().clear();
+            groupProvider.save(groups.getFirst());
         }
     }
 

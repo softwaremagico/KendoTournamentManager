@@ -85,6 +85,7 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     private static final String TOURNAMENT_NAME = "tournament";
     private static final Integer TOURNAMENT_SHIAIJOS = 3;
     private static final Integer TOURNAMENT_TEAM_SIZE = 42;
+    private static final Integer TOURNAMENT_FIGHT_SIZE = 3;
     private static final TournamentType TOURNAMENT_TYPE = TournamentType.LOOP;
 
     private static final int DUELS_DURATION = 180;
@@ -189,6 +190,7 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
         tournament.setName(TOURNAMENT_NAME);
         tournament.setShiaijos(TOURNAMENT_SHIAIJOS);
         tournament.setTeamSize(TOURNAMENT_TEAM_SIZE);
+        tournament.setFightSize(TOURNAMENT_FIGHT_SIZE);
         tournament.setType(TOURNAMENT_TYPE);
         tournament.setTournamentScore(createTournamentScore());
         tournament.setDuelsDuration(DUELS_DURATION);
@@ -199,6 +201,7 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournament.getName(), TOURNAMENT_NAME);
         Assert.assertEquals(tournament.getShiaijos(), TOURNAMENT_SHIAIJOS);
         Assert.assertEquals(tournament.getTeamSize(), TOURNAMENT_TEAM_SIZE);
+        Assert.assertEquals(tournament.getFightSize(), TOURNAMENT_FIGHT_SIZE);
         Assert.assertEquals(tournament.getType(), TOURNAMENT_TYPE);
         checkTournamentScore(tournament.getTournamentScore());
     }

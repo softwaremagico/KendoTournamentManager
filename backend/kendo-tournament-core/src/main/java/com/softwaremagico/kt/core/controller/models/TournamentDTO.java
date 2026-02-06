@@ -44,6 +44,8 @@ public class TournamentDTO extends ElementDTO implements IName {
     @NotNull
     private Integer teamSize;
 
+    private Integer fightSize;
+
     @NotNull
     private TournamentType type;
 
@@ -156,6 +158,14 @@ public class TournamentDTO extends ElementDTO implements IName {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    public Integer getFightSize() {
+        return fightSize;
+    }
+
+    public void setFightSize(Integer fightSize) {
+        this.fightSize = fightSize;
     }
 
     @Override
