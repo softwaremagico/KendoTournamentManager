@@ -79,9 +79,12 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
         final TournamentImageDTO result = convert(getProvider().get(tournament, type).orElse(null));
         if (result != null) {
+            result.setDefaultImage(false);
             return result;
         }
-        return convert(getProvider().getDefaultImage(tournament, type));
+        final TournamentImageDTO tournamentImageDTO = convert(getProvider().getDefaultImage(tournament, type));
+        tournamentImageDTO.setDefaultImage(true);
+        return tournamentImageDTO;
     }
 
     public TournamentImageDTO add(MultipartFile file, Integer tournamentId, TournamentImageType type, ImageCompression imageCompression,
