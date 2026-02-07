@@ -50,6 +50,8 @@ public class TournamentImageDTO extends ElementDTO {
     @NotNull
     private ImageCompression imageCompression;
 
+    private boolean defaultImage = false;
+
     public TournamentDTO getTournament() {
         return tournament;
     }
@@ -80,6 +82,14 @@ public class TournamentImageDTO extends ElementDTO {
 
     public void setImageCompression(ImageCompression imageCompression) {
         this.imageCompression = imageCompression;
+    }
+
+    public boolean isDefaultImage() {
+        return defaultImage;
+    }
+
+    public void setDefaultImage(boolean defaultImage) {
+        this.defaultImage = defaultImage;
     }
 
     @JsonGetter
