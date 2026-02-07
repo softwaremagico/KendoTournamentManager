@@ -108,6 +108,9 @@ import {
 import {ClubFormPopupModule} from "./views/club-list/club-form-popup/club-form-popup.module";
 import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
 import {KeyReversePipe} from "./pipes/keyReverse.pipe";
+import {
+  AuthenticatedUserRolePopupModule
+} from "./views/authenticated-user-list/authenticated-user-role-popup/authenticated-user-role-popup.module";
 
 
 registerLocaleData(localeES, "es");
@@ -214,7 +217,8 @@ registerLocaleData(localeNL, "nl");
     BiitPopupModule,
     TournamentFormPopupModule,
     AuthenticatedUserFormPopupModule,
-    ClubFormPopupModule
+    ClubFormPopupModule,
+    AuthenticatedUserRolePopupModule
   ],
   providers: [
     {

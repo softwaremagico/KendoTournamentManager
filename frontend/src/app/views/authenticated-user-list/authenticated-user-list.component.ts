@@ -35,6 +35,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
   protected pageSizes: number[] = [10, 25, 50, 100];
   protected users: AuthenticatedUser[];
   protected target: AuthenticatedUser | null;
+  protected roleSelector: boolean = false;
   protected confirm: boolean = false;
 
   protected loading: boolean = false;

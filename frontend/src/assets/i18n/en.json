@@ -162,7 +162,7 @@
   "refereeListBad": "A problem has been found when generating the list of referees file. There is any other program accessing to this file?",
   "diplomaOK": "Diplomas have been created in a PDF file.",
   "diplomaBad": "A problem has been found when generating the tournament's diplomas. There is any other program accessing to this file?",
-  "roleChanged": "The role of the participant has been changed.",
+  "roleChanged": "The role has been changed.",
   "roleDeleteQuestion": "The role of the participant will be deleted. Are you sure you want to continue?",
   "roleDeleted": "Role has been deleted!",
   "noAccessParticipant": "The selected user has not granted access to the database into the remote machine.",
@@ -411,9 +411,13 @@
   "logoutWarning": "Are you sure you want to log out?",
   "logout": "Logout",
   "admin": "Administrator",
+  "adminHint": "You can perform any action",
   "editor": "Editor",
+  "editorHint": "You can edit information related to tournaments",
   "viewer": "Viewer",
+  "viewerHint": "You can read information but not modify it.",
   "guest": "Guest",
+  "guestHint": "Temporary account with very limited access.",
   "roles": "Role",
   "addRoleToTournament": "Define the roles of the championship",
   "profile": "Profile",
@@ -763,5 +767,6 @@
     "nl": "Nederlandse" ,
     "de":"Deutsche"
   },
-  "selectDiplomaRoles": "Select the roles with diploma"
+  "selectDiplomaRoles": "Select the roles with diploma",
+  "userRoleTitle":"Define the account's role"
 }

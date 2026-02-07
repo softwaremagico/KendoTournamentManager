@@ -228,7 +228,7 @@
   "refereeListBad": "A ocurrido un problema cuando se intentaba generar el archivo con la lista de árbitros. ¿Existe algún otro programa intentando acceder al archivo?",
   "diplomaOK": "Los diplomas han sido creados en un archivo PDF.",
   "diplomaBad": "A ocurrido un problema cuando se intentaba generar los diplomas. ¿Existe algún otro programa intentando acceder al archivo?",
-  "roleChanged": "Se ha cambiado el rol del participante.",
+  "roleChanged": "Se ha cambiado el rol.",
   "roleDeleteQuestion": "Se va a eliminar el rol del participante seleccionado. ¿Desea Continuar?",
   "roleDeleted": "Se ha eliminado el rol.",
   "noAccessParticipant": "El usuario seleccionado no tiene permiso para acceder a la base de datos de la máquina indicada.",
@@ -411,9 +411,13 @@
   "logoutWarning": "¿Estas seguro de querer cerrar sesión?",
   "logout": "Cerrar sesión",
   "admin": "Administrador",
+  "adminHint": "Puerde realizar cualquier acción",
   "editor": "Editor",
+  "editorHint": "Puede editar información relativa a los torneos",
   "viewer": "Espectador",
+  "viewerHint": "Puede leer información pero no modificarla",
   "guest": "Invitado",
+  "guestHint": "Cuenta temporal con acceso muy limitado.",
   "profile": "Perfil",
   "back": "Volver",
   "chronometerOn": "Mostrar cronómetro",
@@ -756,5 +760,6 @@
   "uploadCsvFile": "Subir un fichero CSV",
   "defaultPicture": "Imagen predeterminada",
   "preview": "Vista Preliminar",
-  "selectDiplomaRoles": "Selecciona los roles con diploma"
+  "selectDiplomaRoles": "Selecciona los roles con diploma",
+  "userRoleTitle":"Define el rol de la cuenta"
 }
