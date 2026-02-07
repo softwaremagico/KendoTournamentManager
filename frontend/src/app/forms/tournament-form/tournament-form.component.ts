@@ -67,7 +67,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
 
   constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
               private tournamentService: TournamentService, private fightService: FightService) {
-    super(rbacService)
+    super(rbacService);
   }
 
   ngOnInit() {
