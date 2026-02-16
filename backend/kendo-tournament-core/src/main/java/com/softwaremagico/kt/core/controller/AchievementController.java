@@ -1752,9 +1752,9 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheWinnerTeamTournament(Tournament tournament) {
         if (tournament.getTeamSize() > 1) {
             final List<ScoreOfTeam> scoreOfTeams = rankingProvider.getTeamsScoreRanking(tournament);
-            if (!scoreOfTeams.isEmpty() && scoreOfTeams.get(0).getTeam().getMembers().size() > 1) {
+            if (!scoreOfTeams.isEmpty() && scoreOfTeams.getFirst().getTeam().getMembers().size() > 1) {
                 return generateAchievement(AchievementType.THE_WINNER_TEAM, AchievementGrade.NORMAL,
-                        scoreOfTeams.get(0).getTeam().getMembers(), tournament);
+                        scoreOfTeams.getFirst().getTeam().getMembers(), tournament);
             }
         }
         return new ArrayList<>();

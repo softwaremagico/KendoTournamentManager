@@ -91,33 +91,33 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     }
 
     public TournamentFightStatistics estimate(Tournament tournament, Collection<Team> teams) {
-        return estimate(tournament, tournament.getTeamSize(), teams);
+        return estimate(tournament, tournament.getFightSize(), teams);
     }
 
     public TournamentFightStatistics estimateByRoles(Tournament tournament, Collection<Role> roles) {
         return estimate(tournament, emulateTeams(tournament, roles.stream().map(Role::getParticipant).toList()));
     }
 
-    public TournamentFightStatistics estimate(Tournament tournament, int teamSize, Collection<Team> teams) {
+    public TournamentFightStatistics estimate(Tournament tournament, int fightSize, Collection<Team> teams) {
         if (tournament == null || teams == null || teams.size() < 2) {
             return null;
         }
         switch (tournament.getType()) {
             case LEAGUE:
-                return estimateLeagueStatistics(teamSize, teams);
+                return estimateLeagueStatistics(fightSize, teams);
             case LOOP:
-                return estimateLoopStatistics(tournament, teamSize, teams);
+                return estimateLoopStatistics(tournament, fightSize, teams);
             case CUSTOMIZED, KING_OF_THE_MOUNTAIN:
             default:
                 return null;
         }
     }
 
-    public TournamentFightStatistics estimateLeagueStatistics(int teamSize, Collection<Team> teams) {
+    public TournamentFightStatistics estimateLeagueStatistics(int fightSize, Collection<Team> teams) {
         final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
         tournamentFightStatistics.setFightsNumber((((long) teams.size() * (teams.size() - 1)) / 2));
         tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1));
-        tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
+        tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), fightSize, teams));
         final Long durationAverage = duelProvider.getDurationAverage();
         if (durationAverage != null && durationAverage > 0 && tournamentFightStatistics.getDuelsNumber() != null) {
             tournamentFightStatistics.setAverageTime(durationAverage);
@@ -127,7 +127,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         return tournamentFightStatistics;
     }
 
-    public TournamentFightStatistics estimateLoopStatistics(Tournament tournament, int teamSize, Collection<Team> teams) {
+    public TournamentFightStatistics estimateLoopStatistics(Tournament tournament, int fightSize, Collection<Team> teams) {
         final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
                 TournamentExtraPropertyKey.AVOID_DUPLICATES);
@@ -139,7 +139,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
             tournamentFightStatistics.setFightsNumber(((long) teams.size() * teams.size() - 1) / 2);
             tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1));
         }
-        tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
+        tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), fightSize, teams));
         if (duelProvider.getDurationAverage() != null) {
             final Long average = duelProvider.getDurationAverage();
             if (tournamentFightStatistics.getDuelsNumber() != null) {
@@ -151,13 +151,13 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         return tournamentFightStatistics;
     }
 
-    private long getDuels(long fightByTeam, int teamSize, Collection<Team> teams) {
+    private long getDuels(long fightByTeam, int fightSize, Collection<Team> teams) {
         final AtomicLong counter = new AtomicLong();
         final AtomicLong missingMembers = new AtomicLong();
 
         teams.forEach(team -> {
             counter.addAndGet((team.getMembers().size() * fightByTeam) - missingMembers.get());
-            missingMembers.addAndGet((long) teamSize - team.getMembers().size());
+            missingMembers.addAndGet((long) fightSize - team.getMembers().size());
         });
 
         //Duels are counted twice, once for each team

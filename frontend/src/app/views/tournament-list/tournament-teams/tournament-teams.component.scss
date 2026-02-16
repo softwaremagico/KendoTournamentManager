@@ -69,6 +69,14 @@ h2 {
   background-color: var(--main-background);
 }
 
+.team-member-room.substitute {
+  background-color: var(--secondary-background-color);
+}
+
+.substitute .team-card {
+  background-color: var(--secondary-background-color);
+}
+
 .team-title-edition {
   font-size: 20px;
   width: 98%;

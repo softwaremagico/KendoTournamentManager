@@ -65,6 +65,7 @@ public class Fight extends Element {
     @Column(name = "shiaijo", nullable = false)
     private Integer shiaijo = 0;
 
+    //If tournament.fightSize < tournament.teamSize latest duels will not have score.
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "duel_index")
@@ -144,7 +145,7 @@ public class Fight extends Element {
         if (points > 0) {
             return team2;
         }
-        // If are draw rounds, winner is who has more points.
+        // If are draw rounds, the winner is who has more points.
         int pointLeft = 0;
         int pointRight = 0;
         for (int i = 0; i < getDuels().size(); i++) {
@@ -197,10 +198,12 @@ public class Fight extends Element {
     public void generateDuels(String createdBy) {
         duels.clear();
         if (team1 != null && team2 != null) {
-            for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
+            for (int i = 0; i < tournament.getTeamSize(); i++) {
                 final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
                         i < team2.getMembers().size() ? team2.getMembers().get(i) : null, tournament, createdBy);
                 duel.setTotalDuration(tournament.getDuelsDuration());
+                //Substitute fights are marked as over.
+                duel.setSubstitute(i >= tournament.getFightSize());
                 duels.add(duel);
             }
         }
