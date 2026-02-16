@@ -63,6 +63,10 @@ public class Tournament extends Element implements IName {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer teamSize;
 
+    @Column(name = "fight_size")
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer fightSize;
+
     @Column(name = "tournament_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @Convert(converter = TournamentTypeCryptoConverter.class)
@@ -183,6 +187,17 @@ public class Tournament extends Element implements IName {
 
     public void setStartedAt(LocalDateTime startedAt) {
         this.startedAt = startedAt;
+    }
+
+    public Integer getFightSize() {
+        if (fightSize != null) {
+            return fightSize;
+        }
+        return teamSize;
+    }
+
+    public void setFightSize(Integer fightSize) {
+        this.fightSize = fightSize;
     }
 
     public void updateFinishedAt(LocalDateTime finishedAt) {

@@ -315,6 +315,7 @@
   "tournamentName": "Toernooi naam",
   "tournamentShiaijos": "Aantal Shiaijos",
   "tournamentTeamSize": "Team Grootte",
+  "tournamentFightSize": "Overeenkomende maat",
   "tournamentDuelsDurations": "Duur van Gevechten",
   "tournamentAdd": "Toernooi Toevoegen",
   "tournamentEdit": "Toernooi Bewerken",
@@ -745,5 +746,6 @@
   "defaultPicture": "Standaard afbeelding",
   "preview": "Voorbeeld",
   "selectDiplomaRoles": "Selecteer de functies waarvoor een diploma vereist is.",
-  "userRoleTitle":"Definieer de accountrol"
+  "userRoleTitle":"Definieer de accountrol",
+  "teamsSmallerThanFights": "De teams moeten minstens even groot zijn als de wedstrijden."
 }

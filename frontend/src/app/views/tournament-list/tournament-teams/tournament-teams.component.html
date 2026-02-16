@@ -45,11 +45,13 @@
                    [cdkDropListDisabled]="isTeamLocked(team)"
                    [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)"
                    cdkDropList
-                   class="team-member-room">
+                   class="team-member-room"
+                   [class.substitute]="i>=tournament.fightSize">
                 <mat-card *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
                           [cdkDragData]="getMember(team, i)"
                           [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | hasPermission) || getMember(team, i)!.locked"
+                          [class.substitute]="i>=tournament.fightSize"
                           cdkDrag
                           class="user-card">
                   <mat-card-header class="team-card" [attr.data-tournament-size]="tournament.teamSize">

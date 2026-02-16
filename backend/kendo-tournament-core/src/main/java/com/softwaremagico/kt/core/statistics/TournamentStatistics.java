@@ -45,6 +45,8 @@ public class TournamentStatistics {
 
     private Integer teamSize;
 
+    private Integer fightSize;
+
     private Map<RoleType, Long> numberOfParticipants = new EnumMap<>(RoleType.class);
 
     public TournamentFightStatistics getFightStatistics() {
@@ -124,5 +126,13 @@ public class TournamentStatistics {
 
     public void setTeamSize(Integer teamsMember) {
         this.teamSize = teamsMember;
+    }
+
+    public Integer getFightSize() {
+        return fightSize;
+    }
+
+    public void setFightSize(Integer fightSize) {
+        this.fightSize = fightSize;
     }
 }

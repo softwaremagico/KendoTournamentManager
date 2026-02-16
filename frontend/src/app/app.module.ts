@@ -40,7 +40,6 @@ import {PasswordsComponent} from './views/passwords/passwords.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "./pipes/rbac-pipe/rbac.module";
 import {DrawModule} from "./components/fight/duel/draw/draw.module";
-import {UserScoreModule} from "./components/fight/duel/user-score/user-score.module";
 import {DuelModule} from "./components/fight/duel/duel.module";
 import {MatSpinnerOverlayModule} from "./components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {FightModule} from "./components/fight/fight.module";
@@ -111,6 +110,7 @@ import {KeyReversePipe} from "./pipes/keyReverse.pipe";
 import {
   AuthenticatedUserRolePopupModule
 } from "./views/authenticated-user-list/authenticated-user-role-popup/authenticated-user-role-popup.module";
+import {UserScoreModule} from "./components/fight/duel/user-score/user-score.module";
 
 
 registerLocaleData(localeES, "es");

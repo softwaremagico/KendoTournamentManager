@@ -65,6 +65,7 @@ public class DuelDTO extends ElementDTO {
     private Integer totalDuration;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
+    private Boolean substitute;
 
     public DuelDTO() {
         super();
@@ -321,5 +322,13 @@ public class DuelDTO extends ElementDTO {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    public Boolean getSubstitute() {
+        return substitute;
+    }
+
+    public void setSubstitute(Boolean substitute) {
+        this.substitute = substitute;
     }
 }

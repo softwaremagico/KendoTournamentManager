@@ -617,6 +617,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   finishDuel(): void {
+    //Hide member order.
+    this.enableMemberOrder(false);
     this.finishedGroup = null;
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
@@ -662,6 +664,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   unfinishDuel(): void {
+    //Hide member order.
+    this.enableMemberOrder(false);
     if (this.selectedDuel) {
       this.removeIpponScores(this.selectedDuel);
       this.selectedDuel.finished = false;
@@ -733,20 +737,23 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   selectDuel(duel: Duel): void {
-    this.selectedDuel = duel;
-    this.duelChangedService.isDuelUpdated.next(duel);
-    if (duel) {
-      if (duel.duration) {
-        this.timeChangedService.isElapsedTimeChanged.next(duel.duration);
-      } else {
-        this.timeChangedService.isElapsedTimeChanged.next(0);
+    //substitute are not selectable.
+    if(!duel.substitute) {
+      this.selectedDuel = duel;
+      this.duelChangedService.isDuelUpdated.next(duel);
+      if (duel) {
+        if (duel.duration) {
+          this.timeChangedService.isElapsedTimeChanged.next(duel.duration);
+        } else {
+          this.timeChangedService.isElapsedTimeChanged.next(0);
+        }
       }
-    }
-    if (duel) {
-      if (duel.totalDuration) {
-        this.timeChangedService.isTotalTimeChanged.next(duel.totalDuration);
-      } else {
-        this.timeChangedService.isTotalTimeChanged.next(this.tournament.duelsDuration);
+      if (duel) {
+        if (duel.totalDuration) {
+          this.timeChangedService.isTotalTimeChanged.next(duel.totalDuration);
+        } else {
+          this.timeChangedService.isTotalTimeChanged.next(this.tournament.duelsDuration);
+        }
       }
     }
   }
@@ -782,14 +789,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (fights) {
       for (const fight of fights) {
         for (const duel of unties) {
-          if (!duel.finished) {
+          if (!duel.finished && !duel.substitute) {
             this.selectedFight = undefined;
             this.selectDuel(duel);
             return true;
           }
         }
         for (const duel of fight.duels) {
-          if (!duel.finished) {
+          if (!duel.finished && !duel.substitute) {
             this.selectFight(fight);
             this.selectDuel(duel);
             return true;

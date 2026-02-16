@@ -13,6 +13,7 @@ export class Tournament extends Element {
   public name: string;
   public shiaijos?: number;
   public teamSize: number = 3;
+  public fightSize: number = 3;
   public type?: TournamentType;
   public duelsDuration: number;
   public tournamentScore: TournamentScore;
@@ -35,6 +36,7 @@ export class Tournament extends Element {
     target.name = source.name;
     target.shiaijos = source.shiaijos;
     target.teamSize = source.teamSize;
+    target.fightSize = source.fightSize;
     target.type = source.type;
     target.duelsDuration = source.duelsDuration;
     target.tournamentScore = TournamentScore.clone(source.tournamentScore);

@@ -10,6 +10,12 @@
   color: var(--component-color);
 }
 
+.substitute-separation{
+  min-width: 135px;
+  height: 50px;
+  margin: 2px 0;
+}
+
 @media screen and (max-width: 1024px) {
   .participant-picture {
     display: none !important;
