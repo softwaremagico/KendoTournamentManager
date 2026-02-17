@@ -1,11 +1,9 @@
-import {Component, HostBinding, Renderer2} from '@angular/core';
+import {Component} from '@angular/core';
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./interceptors/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
-import {OverlayContainer} from "@angular/cdk/overlay";
-import {DarkModeService} from "./services/notifications/dark-mode.service";
 import {ProjectModeChangedService} from "./services/notifications/project-mode-changed.service";
 import {AvailableLangs, TranslocoService} from "@ngneat/transloco";
 import {BiitIconService} from "@biit-solutions/wizardry-theme/icon";
@@ -22,21 +20,16 @@ export class AppComponent extends RbacBasedComponent {
   selectedLanguage = 'en';
   loggedIn = false;
   selectedRow: string = '';
-  nightModeEnabled: boolean = false;
-  @HostBinding('class') className = '';
   hideMenu = false;
 
   constructor(public translocoService: TranslocoService, public loginService: LoginService, public loggedInService: LoggedInService,
-              protected userSessionService: UserSessionService, private overlay: OverlayContainer, private _renderer: Renderer2,
-              rbacService: RbacService, biitIconService: BiitIconService,
-              private darkModeService: DarkModeService, projectModeChangedService: ProjectModeChangedService,
+              protected userSessionService: UserSessionService, rbacService: RbacService, biitIconService: BiitIconService,
+              projectModeChangedService: ProjectModeChangedService,
               protected sessionService: UserSessionService, private activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
     biitIconService.registerIcons(completeIconSet);
     this.loggedInService.isUserLoggedIn.subscribe((value: boolean) => this.loggedIn = value);
-    this.nightModeEnabled = userSessionService.getNightMode();
-    this.setDarkModeTheme();
     this.setPermissions();
     projectModeChangedService.isProjectMode.subscribe((_mode: boolean): void => {
       this.hideMenu = _mode;
@@ -63,26 +56,6 @@ export class AppComponent extends RbacBasedComponent {
       this.selectedRow = '';
     } else {
       this.selectedRow = selectedRow;
-    }
-  }
-
-  switchDarkMode(): void {
-    this.nightModeEnabled = !this.nightModeEnabled;
-    this.userSessionService.setNightMode(this.nightModeEnabled);
-    this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
-    this.setDarkModeTheme();
-  }
-
-  private setDarkModeTheme(): void {
-    this.className = this.nightModeEnabled ? 'dark-mode' : '';
-    if (this.nightModeEnabled) {
-      this.overlay.getContainerElement().classList.add('dark-mode');
-      //For drag and drop preview.
-      this._renderer.addClass(document.body, 'dark-mode');
-    } else {
-      this.overlay.getContainerElement().classList.remove('dark-mode');
-      //For drag and drop preview.
-      this._renderer.removeClass(document.body, 'dark-mode');
     }
   }
 

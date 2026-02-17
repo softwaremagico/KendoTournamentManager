@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
 import {provideTranslocoScope, TranslocoService} from '@ngneat/transloco';
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
@@ -13,6 +13,8 @@ import {ParticipantListComponent} from "../../../views/participant-list/particip
 import {UserListComponent} from "../../basic/user-list/user-list.component";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentListComponent} from "../../../views/tournament-list/tournament-list.component";
+import {OverlayContainer} from "@angular/cdk/overlay";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 
 @Component({
   selector: 'navbar',
@@ -33,12 +35,19 @@ export class NavbarComponent implements OnInit {
   protected languagePopup: boolean = false;
   protected passwordPopup: boolean = false;
 
+  nightModeEnabled: boolean = false;
+  @HostBinding('class') className = '';
+
   constructor(protected router: Router,
               private contextMenuService: ContextMenuService<void>,
               private translocoService: TranslocoService,
               protected sessionService: UserSessionService,
               private activityService: ActivityService,
+              protected userSessionService: UserSessionService,
+              private overlay: OverlayContainer, private _renderer: Renderer2,
+              private darkModeService: DarkModeService,
               protected rbacService: RbacService) {
+    this.nightModeEnabled = userSessionService.getNightMode();
   }
 
   routes: Route[] = [];
@@ -157,6 +166,26 @@ export class NavbarComponent implements OnInit {
 
   openAbout(): void {
     window.open("https://github.com/softwaremagico/KendoTournamentManager", "_blank");
+  }
+
+  switchDarkMode(): void {
+    this.nightModeEnabled = !this.nightModeEnabled;
+    this.userSessionService.setNightMode(this.nightModeEnabled);
+    this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
+    this.setDarkModeTheme();
+  }
+
+  private setDarkModeTheme(): void {
+    this.className = this.nightModeEnabled ? 'dark-mode' : '';
+    if (this.nightModeEnabled) {
+      this.overlay.getContainerElement().classList.add('dark-mode');
+      //For drag and drop preview.
+      this._renderer.addClass(document.body, 'dark-mode');
+    } else {
+      this.overlay.getContainerElement().classList.remove('dark-mode');
+      //For drag and drop preview.
+      this._renderer.removeClass(document.body, 'dark-mode');
+    }
   }
 }
 
