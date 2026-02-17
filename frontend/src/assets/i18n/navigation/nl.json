@@ -12,5 +12,7 @@
   "wiki": "Wiki",
   "licenses": "Licenties",
   "about": "Over",
-  "list": "Lijst"
+  "list": "Lijst",
+  "darkMode": "Dunkler Modus",
+  "lightMode": "Heller Modus"
 }

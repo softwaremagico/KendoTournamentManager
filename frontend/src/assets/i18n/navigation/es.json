@@ -12,5 +12,7 @@
   "wiki": "Wiki",
   "licenses": "Licencias",
   "about": "Acerca de",
-  "list": "Lista"
+  "list": "Lista",
+  "darkMode": "Modo Oscuro",
+  "lightMode": "Modo Claro"
 }

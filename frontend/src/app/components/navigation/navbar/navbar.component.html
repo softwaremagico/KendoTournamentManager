@@ -22,6 +22,18 @@
           {{ t('t.language') }}
         </span>
     </ng-template>
+<!--    <ng-template contextMenuItem *ngIf="RbacActivity.DARK_MODE | hasPermission"-->
+<!--                 (execute)="">-->
+<!--        <span id="dark-mode">-->
+<!--          {{ t('t.darkMode') }}-->
+<!--        </span>-->
+<!--    </ng-template>-->
+<!--    <ng-template contextMenuItem *ngIf="RbacActivity.DARK_MODE | hasPermission"-->
+<!--                 (execute)="">-->
+<!--        <span id="light-mode">-->
+<!--          {{ t('t.lightMode') }}-->
+<!--        </span>-->
+<!--    </ng-template>-->
     <ng-template contextMenuItem *ngIf="RbacActivity.CHANGE_PASSWORD | hasPermission"
                  (execute)="passwordPopup=true">
         <span id="password-option">
