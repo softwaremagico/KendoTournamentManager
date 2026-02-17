@@ -54,6 +54,8 @@ export enum AchievementType {
 
   CLIMB_THE_LADDER = 'CLIMB_THE_LADDER',
 
+  LONG_PATH = 'LONG_PATH',
+
 }
 
 export namespace AchievementType {

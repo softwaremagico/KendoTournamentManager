@@ -77,7 +77,9 @@ public enum AchievementType {
 
     DETHRONE_THE_KING,
 
-    CLIMB_THE_LADDER;
+    CLIMB_THE_LADDER,
+
+    LONG_PATH;
 
 
     public static AchievementType getType(String name) {

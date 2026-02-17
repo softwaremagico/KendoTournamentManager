@@ -33,6 +33,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.repositories.GroupLinkRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAU
  * -   Two teams that have been faced in the first column must avoid to face again until the end of the tournament
  */
 @Service
-public class GroupLinkProvider {
+public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLinkRepository> {
 
     private static final int SOURCE_13 = 13;
     private static final int SOURCE_12 = 12;
@@ -65,10 +66,20 @@ public class GroupLinkProvider {
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final GroupProvider groupProvider;
 
-    public GroupLinkProvider(TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
+    public GroupLinkProvider(GroupLinkRepository repository,
+                             TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
                              GroupProvider groupProvider) {
+        super(repository);
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
         this.groupProvider = groupProvider;
+    }
+
+    public List<GroupLink> getGroupLinks(Tournament tournament) {
+        final List<GroupLink> storedGroupLinks = getRepository().findByTournament(tournament);
+        if (!storedGroupLinks.isEmpty()) {
+            return storedGroupLinks;
+        }
+        return generateLinks(tournament);
     }
 
     public List<GroupLink> generateLinks(Tournament tournament) {
@@ -86,13 +97,18 @@ public class GroupLinkProvider {
     }
 
     public List<GroupLink> generateLinks(List<Group> groups, int tournamentWinners, int tournamentLevels) {
+        return generateLinks(groups, tournamentWinners, tournamentLevels, 0);
+    }
+
+    public List<GroupLink> generateLinks(List<Group> groups, int tournamentWinners, int tournamentLevels, int fromLevel) {
         final List<GroupLink> groupLinks = new ArrayList<>();
         groups.forEach(group -> {
-            if (group.getLevel() < tournamentLevels) {
+            if (group.getLevel() < tournamentLevels && group.getLevel() >= fromLevel) {
                 final int numberOfWinners = getNumberOfTotalTeamsPassNextRound(group, tournamentWinners);
                 for (int winner = 0; winner < numberOfWinners; winner++) {
                     final GroupLink groupLink = new GroupLink();
                     groupLink.setSource(group);
+                    groupLink.setTournament(group.getTournament());
                     final Group destination = getDestination(group, numberOfWinners, winner, groups);
                     if (destination != null) {
                         groupLink.setDestination(destination);
@@ -278,5 +294,9 @@ public class GroupLinkProvider {
             return Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
         return -1;
+    }
+
+    public void deleteByTournament(Tournament tournament) {
+        getRepository().deleteByTournament(tournament);
     }
 }

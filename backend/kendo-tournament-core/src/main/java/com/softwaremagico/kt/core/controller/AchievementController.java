@@ -61,6 +61,8 @@ import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -136,6 +138,12 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
     private static final int MIN_TOURNAMENT_FIGHTS = 5;
+
+    //100 hours
+    private static final int LONG_PATH_NORMAL_DURATION = 100 * 60 * 60 * MILLIS;
+    private static final int LONG_PATH_BRONZE_DURATION = 150 * 60 * 60 * MILLIS;
+    private static final int LONG_PATH_SILVER_DURATION = 200 * 60 * 60 * MILLIS;
+    private static final int LONG_PATH_GOLD_DURATION = 250 * 60 * 60 * MILLIS;
 
 
     private final TournamentConverter tournamentConverter;
@@ -311,7 +319,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
             final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament, MAX_PREVIOUS_TOURNAMENTS);
             //Also current tournament!
-            previousTournaments.add(0, tournament);
+            previousTournaments.addFirst(tournament);
 
             getParticipantsFromTournament(tournament).forEach(participant ->
                     totalScoreFromParticipant.put(participant, duelProvider.countScoreFromCompetitor(participant, previousTournaments)));
@@ -325,7 +333,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
             final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament, MAX_PREVIOUS_TOURNAMENTS);
             //Also current tournament!
-            previousTournaments.add(0, tournament);
+            previousTournaments.addFirst(tournament);
 
             getParticipantsFromTournament(tournament).forEach(participant ->
                     totalScoreAgainstParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant, previousTournaments)));
@@ -575,6 +583,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateVendettaAchievementBronze(tournament));
         achievementsGenerated.addAll(generateVendettaAchievementSilver(tournament));
         achievementsGenerated.addAll(generateVendettaAchievementGold(tournament));
+
+        achievementsGenerated.addAll(generateLongPathAchievement(tournament));
+
         return convertAll(achievementsGenerated);
     }
 
@@ -606,7 +617,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         }
         final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament, consecutiveTournaments - 1);
         //Also current tournament!
-        previousTournaments.add(0, tournament);
+        previousTournaments.addFirst(tournament);
 
         if (previousTournaments.size() < consecutiveTournaments) {
             return new ArrayList<>();
@@ -936,7 +947,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
             if (!scoreOfCompetitors.isEmpty()) {
                 return generateAchievement(AchievementType.THE_KING, AchievementGrade.NORMAL,
-                        Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+                        Collections.singletonList(scoreOfCompetitors.getFirst().getCompetitor()), tournament);
             }
         }
         return new ArrayList<>();
@@ -986,7 +997,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
             if (!scoreOfCompetitors.isEmpty()) {
                 return generateAchievement(AchievementType.MASTER_THE_LOOP, AchievementGrade.NORMAL,
-                        Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+                        Collections.singletonList(scoreOfCompetitors.getFirst().getCompetitor()), tournament);
             }
         }
         return new ArrayList<>();
@@ -1438,11 +1449,11 @@ public class AchievementController extends BasicInsertableController<Achievement
         final Set<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.HANSOKU);
         final Set<Participant> participants = new HashSet<>();
         duels.forEach(duel -> {
-            if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().get(0) == Score.HANSOKU
+            if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().getFirst() == Score.HANSOKU
                     && duel.getCompetitor1Score().get(1) == Score.HANSOKU) {
                 participants.add(duel.getCompetitor2());
             }
-            if (duel.getCompetitor2Score().size() == 2 && duel.getCompetitor2Score().get(0) == Score.HANSOKU
+            if (duel.getCompetitor2Score().size() == 2 && duel.getCompetitor2Score().getFirst() == Score.HANSOKU
                     && duel.getCompetitor2Score().get(1) == Score.HANSOKU) {
                 participants.add(duel.getCompetitor1());
             }
@@ -1705,7 +1716,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
         if (!scoreOfCompetitors.isEmpty()) {
             return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL,
-                    Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+                    Collections.singletonList(scoreOfCompetitors.getFirst().getCompetitor()), tournament);
         }
         return new ArrayList<>();
     }
@@ -2085,14 +2096,14 @@ public class AchievementController extends BasicInsertableController<Achievement
         final List<Participant> participants = new ArrayList<>();
         getFightsFromTournament().forEach(fight -> fight.getDuels().forEach(duel -> {
             if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                    && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
-                    && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0)
+                    && duel.getCompetitor1ScoreTime().getFirst() != null && duel.getCompetitor2ScoreTime().getFirst() != null
+                    && duel.getCompetitor1ScoreTime().getFirst() < duel.getCompetitor2ScoreTime().getFirst()
                     && duel.getWinner() == 2) {
                 participants.add(duel.getCompetitor2());
             }
             if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                    && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
-                    && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0)
+                    && duel.getCompetitor1ScoreTime().getFirst() != null && duel.getCompetitor2ScoreTime().getFirst() != null
+                    && duel.getCompetitor2ScoreTime().getFirst() < duel.getCompetitor1ScoreTime().getFirst()
                     && duel.getWinner() == 1) {
                 participants.add(duel.getCompetitor1());
             }
@@ -2153,12 +2164,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (tournament.getType() == TournamentType.BUBBLE_SORT) {
             final List<Group> groups = groupProvider.getGroups(tournament);
             if (groups.size() > 1) {
-                final List<Team> startingRanking = groups.get(0).getTeams();
-                final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.get(groups.size() - 1),
+                final List<Team> startingRanking = groups.getFirst().getTeams();
+                final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.getLast(),
                         bubbleSortTournamentHandler.getDrawResolution(tournament));
 
                 //The King is the last one.
-                final Team kingTeam = endingRanking.get(endingRanking.size() - 1);
+                final Team kingTeam = endingRanking.getLast();
 
                 //How much have fought to be the king:
                 final int startingPosition = startingRanking.indexOf(kingTeam);
@@ -2192,7 +2203,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (tournament.getType() == TournamentType.SENBATSU) {
 
             final List<Group> groups = groupProvider.getGroups(tournament);
-            final List<Team> startingRanking = groups.get(0).getTeams();
+            final List<Team> startingRanking = groups.getFirst().getTeams();
             final List<Team> endingRanking = senbatsuTournamentHandler.getFinalRanking(tournament);
 
             //Hay many rungs have you climbed?
@@ -2215,6 +2226,84 @@ public class AchievementController extends BasicInsertableController<Achievement
                 }
             });
         }
+        return achievements;
+    }
+
+    /**
+     * When you has been fighting for more than X hours.
+     *
+     * @param tournament
+     */
+    private List<Achievement> generateLongPathAchievement(Tournament tournament) {
+        final List<Achievement> achievements = new ArrayList<>();
+        final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament);
+        //Also the current tournament!
+        previousTournaments.addFirst(tournament);
+        final Map<Participant, Long> tournamentDuration = new HashMap<>();
+        for (Tournament oldTournament : previousTournaments) {
+            final List<Duel> duels = duelProvider.get(oldTournament);
+            if (duels.isEmpty()) {
+                continue;
+            }
+            //Obtain tournament duration. From first score to latest one.
+            LocalDateTime startingTime = LocalDateTime.MAX;
+            LocalDateTime endingTime = LocalDateTime.MIN;
+            for (Duel duel : duels) {
+                if (duel.getStartedAt() != null && duel.getStartedAt().isBefore(startingTime)) {
+                    startingTime = duel.getStartedAt();
+                }
+                if (duel.getFinishedAt() != null && duel.getFinishedAt().isAfter(endingTime)) {
+                    endingTime = duel.getFinishedAt();
+                }
+            }
+            try {
+                final long durationOfTournament = endingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        - startingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                final List<Participant> participants = participantProvider.get(tournament);
+                //Increase tournament duration by participant.
+                participants.forEach(participant -> tournamentDuration.merge(participant, durationOfTournament, Long::sum));
+            } catch (ArithmeticException e) {
+                //Ignore invalid dates.
+                continue;
+            }
+        }
+
+        final Set<Participant> alreadyWithNormalAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.NORMAL)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+        final Set<Participant> alreadyWithBronzeAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.BRONZE)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+        final Set<Participant> alreadyWithSilverAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.SILVER)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+        final Set<Participant> alreadyWithGoldAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.GOLD)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+
+
+        final Set<Participant> normalAchievements = new HashSet<>();
+        final Set<Participant> bronzeAchievements = new HashSet<>();
+        final Set<Participant> silverAchievements = new HashSet<>();
+        final Set<Participant> goldAchievements = new HashSet<>();
+
+        //Count achievements.
+        for (Map.Entry<Participant, Long> duration : tournamentDuration.entrySet()) {
+            if (duration.getValue() > LONG_PATH_NORMAL_DURATION && !alreadyWithNormalAchievements.contains(duration.getKey())) {
+                normalAchievements.add(duration.getKey());
+            }
+            if (duration.getValue() > LONG_PATH_BRONZE_DURATION && !alreadyWithBronzeAchievements.contains(duration.getKey())) {
+                bronzeAchievements.add(duration.getKey());
+            }
+            if (duration.getValue() > LONG_PATH_SILVER_DURATION && !alreadyWithSilverAchievements.contains(duration.getKey())) {
+                silverAchievements.add(duration.getKey());
+            }
+            if (duration.getValue() > LONG_PATH_GOLD_DURATION && !alreadyWithGoldAchievements.contains(duration.getKey())) {
+                goldAchievements.add(duration.getKey());
+            }
+        }
+
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.NORMAL, normalAchievements, tournament));
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.BRONZE, bronzeAchievements, tournament));
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.SILVER, silverAchievements, tournament));
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.GOLD, goldAchievements, tournament));
+
         return achievements;
     }
 

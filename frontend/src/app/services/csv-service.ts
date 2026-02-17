@@ -7,9 +7,10 @@ import {LoginService} from "./login.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Club} from "../models/club";
 import {Observable} from "rxjs";
-import {catchError, tap} from "rxjs/operators";
+import {tap} from "rxjs/operators";
 import {Participant} from "../models/participant";
 import {Team} from "../models/team";
+import {GroupLink} from "../models/group-link.model";
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +69,23 @@ export class CsvService {
       .pipe(
         tap({
           next: (_teams: Team[]) => this.loggerService.info(`adding teams as csv`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        })
+      );
+  }
+
+
+  addGroupLinks(file: File, tournamentId: number): Observable<GroupLink[]> {
+    this.systemOverloadService.isBusy.next(true);
+    let url: string = `${this.baseUrl}/groups-link/tournaments/${tournamentId}`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("reportProgress", "true");
+    return this.http.post<GroupLink[]>(url, formData)
+      .pipe(
+        tap({
+          next: (_groupLinks: GroupLink[]) => this.loggerService.info(`adding group links as csv`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         })

@@ -25,6 +25,9 @@ import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
 import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
+import {CsvService} from "../../services/csv-service";
+import {MessageService} from "../../services/message.service";
+import {TranslocoService} from "@ngneat/transloco";
 
 @Component({
   selector: 'tournament-brackets-editor',
@@ -81,7 +84,8 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
               public rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
               private rxStompService: RxStompService, private environmentService: EnvironmentService,
-              private tournamentChangedService: TournamentChangedService) {
+              private tournamentChangedService: TournamentChangedService, private csvService: CsvService,
+              private messageService: MessageService, private translateService: TranslocoService) {
   }
 
   ngOnInit(): void {
@@ -317,5 +321,24 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     this.groupService.deleteAllTeamsFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addGroupLinks(file, this.tournament.id!).subscribe(_groupLinks => {
+          if (_groupLinks.length == 0) {
+            this.messageService.infoMessage('groupLinkStored');
+          } else {
+            const parameters: object = {element: _groupLinks[0].source.index + " --" + _groupLinks[0].winner + "--> " + _groupLinks[0].destination.index};
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
+          }
+          this.updateData(true, false);
+        });
+      }
+    }
   }
 }

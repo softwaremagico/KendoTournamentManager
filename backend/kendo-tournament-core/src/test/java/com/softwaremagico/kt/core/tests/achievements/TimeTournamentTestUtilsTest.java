@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests.achievements;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -23,10 +23,7 @@ package com.softwaremagico.kt.core.tests.achievements;
 
 import com.softwaremagico.kt.core.TournamentTestUtils;
 import com.softwaremagico.kt.core.controller.AchievementController;
-import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
-import com.softwaremagico.kt.core.controller.RoleController;
-import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
@@ -77,15 +74,6 @@ public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
     private static final String TOURNAMENT20_NAME = "Tournament 20";
 
     @Autowired
-    private TournamentController tournamentController;
-
-    @Autowired
-    private RoleController roleController;
-
-    @Autowired
-    private FightController fightController;
-
-    @Autowired
     private AchievementController achievementController;
 
     @Autowired
@@ -102,6 +90,14 @@ public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
     private TournamentDTO tournament9DTO;
     private TournamentDTO tournament10DTO;
     private TournamentDTO tournament11DTO;
+    private TournamentDTO tournament12DTO;
+    private TournamentDTO tournament13DTO;
+    private TournamentDTO tournament14DTO;
+    private TournamentDTO tournament15DTO;
+    private TournamentDTO tournament16DTO;
+    private TournamentDTO tournament17DTO;
+    private TournamentDTO tournament18DTO;
+    private TournamentDTO tournament19DTO;
     private TournamentDTO tournament20DTO;
 
 
@@ -119,123 +115,141 @@ public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
 
     @BeforeClass(dependsOnMethods = "prepareData")
     public void prepareTournament1() {
-        //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 20);
+        solveFights(tournament1DTO, 20);
         achievementController.generateAchievements(tournament1DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament1")
     public void prepareTournament2() {
-        //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 19);
+        solveFights(tournament2DTO, 19);
         achievementController.generateAchievements(tournament2DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament2")
     public void prepareTournament3() {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 18);
-        //Create Tournament
+        solveFights(tournament3DTO, 18);
         achievementController.generateAchievements(tournament3DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament3")
     public void prepareTournament4() {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 17);
-        //Create Tournament
+        solveFights(tournament2DTO, 17);
         achievementController.generateAchievements(tournament4DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament4")
     public void prepareTournament5() {
         tournament5DTO = addTournament(TOURNAMENT5_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 16);
-        //Create Tournament
+        solveFights(tournament5DTO, 16);
         achievementController.generateAchievements(tournament5DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament5")
     public void prepareTournament6() {
         tournament6DTO = addTournament(TOURNAMENT6_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 15);
-        //Create Tournament
+        solveFights(tournament6DTO, 15);
         achievementController.generateAchievements(tournament6DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament6")
     public void prepareTournament7() {
         tournament7DTO = addTournament(TOURNAMENT7_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 14);
-        //Create Tournament
+        solveFights(tournament7DTO, 14);
         achievementController.generateAchievements(tournament7DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament7")
     public void prepareTournament8() {
         tournament8DTO = addTournament(TOURNAMENT8_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 13);
-        //Create Tournament
+        solveFights(tournament8DTO, 13);
         achievementController.generateAchievements(tournament8DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament8")
     public void prepareTournament9() {
         tournament9DTO = addTournament(TOURNAMENT9_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 12);
-        //Create Tournament
+        solveFights(tournament9DTO, 12);
         achievementController.generateAchievements(tournament9DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament9")
     public void prepareTournament10() {
         tournament10DTO = addTournament(TOURNAMENT10_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 11);
-        //Create Tournament
+        solveFights(tournament10DTO, 11);
         achievementController.generateAchievements(tournament10DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament10")
     public void prepareTournament11() {
         tournament11DTO = addTournament(TOURNAMENT11_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 10);
+        solveFights(tournament11DTO, 10);
         achievementController.generateAchievements(tournament11DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament11")
     public void prepareTournament12() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT12_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 9));
+        tournament12DTO = addTournament(TOURNAMENT12_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 9);
+        solveFights(tournament12DTO, 9);
+        achievementController.generateAchievements(tournament12DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament12")
     public void prepareTournament13() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT13_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 8));
+        tournament13DTO = addTournament(TOURNAMENT13_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 8);
+        solveFights(tournament13DTO, 8);
+        achievementController.generateAchievements(tournament13DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament13")
     public void prepareTournament14() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT14_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 7));
+        tournament14DTO = addTournament(TOURNAMENT14_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 7);
+        solveFights(tournament14DTO, 7);
+        achievementController.generateAchievements(tournament14DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament14")
     public void prepareTournament15() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT15_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 6));
+        tournament15DTO = addTournament(TOURNAMENT15_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 6);
+        solveFights(tournament15DTO, 6);
+        achievementController.generateAchievements(tournament15DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament15")
     public void prepareTournament16() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT16_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 5));
+        tournament16DTO = addTournament(TOURNAMENT16_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 5);
+        solveFights(tournament16DTO, 5);
+        achievementController.generateAchievements(tournament16DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament16")
     public void prepareTournament17() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT17_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 4));
+        tournament17DTO = addTournament(TOURNAMENT17_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 4);
+        solveFights(tournament17DTO, 4);
+        achievementController.generateAchievements(tournament17DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament17")
     public void prepareTournament18() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT18_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3));
+        tournament18DTO = addTournament(TOURNAMENT18_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
+        solveFights(tournament18DTO, 3);
+        achievementController.generateAchievements(tournament18DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament18")
     public void prepareTournament19() {
-        achievementController.generateAchievements(addTournament(TOURNAMENT19_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2));
+        tournament19DTO = addTournament(TOURNAMENT19_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
+        solveFights(tournament19DTO, 2);
+        achievementController.generateAchievements(tournament19DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament19")
     public void prepareTournament20() {
         tournament20DTO = addTournament(TOURNAMENT20_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
+        solveFights(tournament20DTO, 1);
         achievementController.generateAchievements(tournament20DTO);
     }
 
@@ -263,8 +277,21 @@ public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
                 MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS - 20);
     }
 
+    @Test
+    public void checkLongPathAchievement() {
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.LONG_PATH, AchievementGrade.NORMAL).size(),
+                MEMBERS * TEAMS + VOLUNTEER + REFEREES + PRESS + ORGANIZER);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.LONG_PATH, AchievementGrade.BRONZE).size(),
+                MEMBERS * TEAMS + VOLUNTEER + REFEREES + PRESS + ORGANIZER);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.LONG_PATH, AchievementGrade.SILVER).size(),
+                MEMBERS * TEAMS + VOLUNTEER + REFEREES + PRESS + ORGANIZER);
+        //The Total is 232 minutes, that is less than 250 for a gold achievement.
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.LONG_PATH, AchievementGrade.GOLD).size(),
+                0);
+    }
+
     @AfterClass(alwaysRun = true)
-     @Override
+    @Override
     public void wipeOut() {
         super.wipeOut();
     }
