@@ -763,5 +763,6 @@
   "preview": "Vista Preliminar",
   "selectDiplomaRoles": "Selecciona los roles con diploma",
   "userRoleTitle":"Define el rol de la cuenta",
-  "teamsSmallerThanFights": "El tamaño de los equipos debe ser igual o mayor al tamaño de los partidos."
+  "teamsSmallerThanFights": "El tamaño de los equipos debe ser igual o mayor al tamaño de los partidos.",
+  "groupLinkStored": "Se han agregado las relaciones entre grupos a la base de datos."
 }

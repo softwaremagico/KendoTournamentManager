@@ -22,27 +22,39 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.GroupLinkDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.ClubConverter;
+import com.softwaremagico.kt.core.converters.GroupLinkConverter;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
+import com.softwaremagico.kt.core.converters.models.GroupLinkConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.csv.ClubCsv;
+import com.softwaremagico.kt.core.csv.GroupLinkCsv;
 import com.softwaremagico.kt.core.csv.ParticipantCsv;
 import com.softwaremagico.kt.core.csv.TeamCsv;
 import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.core.providers.GroupLinkProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.stereotype.Controller;
 
@@ -65,11 +77,19 @@ public class CsvController {
     private final TeamProvider teamProvider;
     private final TeamConverter teamConverter;
 
+    private final GroupLinkCsv groupLinkCsv;
+    private final GroupLinkProvider groupLinkProvider;
+    private final GroupLinkConverter groupLinkConverter;
+
     private final RoleProvider roleProvider;
+    private final TournamentProvider tournamentProvider;
+    private final GroupProvider groupProvider;
 
     public CsvController(ClubCsv clubCsv, ClubProvider clubProvider, ClubConverter clubConverter,
                          ParticipantCsv participantCsv, ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                         TeamCsv teamCsv, TeamProvider teamProvider, TeamConverter teamConverter, RoleProvider roleProvider) {
+                         TeamCsv teamCsv, TeamProvider teamProvider, TeamConverter teamConverter, GroupLinkCsv groupLinkCsv,
+                         GroupLinkProvider groupLinkProvider, GroupLinkConverter groupLinkConverter, RoleProvider roleProvider,
+                         TournamentProvider tournamentProvider, GroupProvider groupProvider) {
         this.clubCsv = clubCsv;
         this.clubProvider = clubProvider;
         this.clubConverter = clubConverter;
@@ -79,7 +99,12 @@ public class CsvController {
         this.teamCsv = teamCsv;
         this.teamProvider = teamProvider;
         this.teamConverter = teamConverter;
+        this.groupLinkCsv = groupLinkCsv;
+        this.groupLinkProvider = groupLinkProvider;
+        this.groupLinkConverter = groupLinkConverter;
         this.roleProvider = roleProvider;
+        this.tournamentProvider = tournamentProvider;
+        this.groupProvider = groupProvider;
     }
 
 
@@ -182,5 +207,88 @@ public class CsvController {
                 roleProvider.save(role);
             }
         });
+    }
+
+    public List<GroupLinkDTO> addGroupLinks(Integer tournamentId, String csvContent, String uploadedBy) {
+        final Tournament tournament = tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO));
+
+        //Define groups of the tournament.
+        final int totalSourceGroups = groupLinkCsv.getSourceGroupSize(csvContent);
+        final int totalDestinationGroups = groupLinkCsv.getDestinationGroupSize(csvContent);
+        final int levels = generateCustomGroupTree(tournament, totalSourceGroups, totalDestinationGroups);
+
+        //Assign the links
+        groupLinkProvider.deleteByTournament(tournament);
+        final List<GroupLink> groupLinks = groupLinkCsv.readCSV(tournament, csvContent);
+        final List<GroupLinkDTO> failedGroupLinks = new ArrayList<>();
+
+        //Set the links.
+        for (GroupLink groupLink : groupLinks) {
+            groupLink.setTournament(tournament);
+            groupLink.setUpdatedBy(uploadedBy);
+            try {
+                groupLinkProvider.save(groupLink);
+            } catch (Exception e) {
+                KendoTournamentLogger.errorMessage(this.getClass(), e);
+                failedGroupLinks.add(groupLinkConverter.convert(new GroupLinkConverterRequest(groupLink)));
+            }
+        }
+
+        generateInnerLevelLinks(tournament, levels);
+
+        return failedGroupLinks;
+    }
+
+    private List<GroupLink> generateInnerLevelLinks(Tournament tournament, int totalLevels) {
+        //Update other levels links.
+        final List<Group> groupsOfTournament = groupProvider.getGroups(tournament);
+        return groupLinkProvider.save(groupLinkProvider.generateLinks(
+                groupsOfTournament,
+                1, totalLevels, 1));
+    }
+
+
+    private int generateCustomGroupTree(Tournament tournament, int levelZeroSize, int levelOneSize) {
+        groupProvider.delete(tournament);
+
+        //Define Level 0
+        for (int i = 0; i < levelZeroSize; i++) {
+            final Group levelGroup = new Group(tournament, 0, i);
+            groupProvider.addGroup(tournament, levelGroup);
+        }
+
+        //Define Level 1
+        for (int i = 0; i < levelOneSize; i++) {
+            final Group levelGroup = new Group(tournament, 1, i);
+            groupProvider.addGroup(tournament, levelGroup);
+        }
+
+        //Define other levels groups.
+        int previousLevelSize = levelOneSize;
+        int newLevel = 2;
+        while (previousLevelSize > 1) {
+            final List<Group> generatedGroups = generateGroupsOnLevel(tournament, previousLevelSize, newLevel);
+            previousLevelSize = generatedGroups.size();
+            newLevel++;
+        }
+        return newLevel - 1;
+    }
+
+    private List<Group> generateGroupsOnLevel(Tournament tournament, int lastLevelSize, int currentLevel) {
+        if (lastLevelSize <= 1) {
+            return List.of();
+        }
+
+        //On inner tree, always one winner by group.
+        final int groupSize = (lastLevelSize + 1) / 2;
+
+        final List<Group> groups = new ArrayList<>();
+        for (int i = 0; i < groupSize; i++) {
+            final Group levelGroup = new Group(tournament, currentLevel, i);
+            groups.add(groupProvider.addGroup(tournament, levelGroup));
+        }
+        return groups;
     }
 }

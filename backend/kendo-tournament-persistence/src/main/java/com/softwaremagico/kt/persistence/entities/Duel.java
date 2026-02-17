@@ -355,6 +355,9 @@ public class Duel extends Element {
     }
 
     public Boolean getSubstitute() {
+        if (substitute == null) {
+            return false;
+        }
         return substitute;
     }
 

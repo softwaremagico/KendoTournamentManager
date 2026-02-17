@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core;
  */
 
 import com.softwaremagico.kt.core.controller.ClubController;
+import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
@@ -29,14 +30,18 @@ import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +74,9 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
 
     @Autowired
     private TournamentController tournamentController;
+
+    @Autowired
+    private FightController fightController;
 
     @Autowired
     private TournamentExtraPropertyController tournamentExtraPropertyController;
@@ -141,7 +149,7 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
         TeamDTO teamDTO = null;
         int teamMember = 0;
 
-        final GroupDTO groupDTO = groupController.get(tournamentDTO).get(0);
+        final GroupDTO groupDTO = groupController.get(tournamentDTO).getFirst();
 
         for (RoleDTO competitorRoleDTO : competitorsRolesDTO) {
             // Create a new team.
@@ -184,6 +192,25 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
         generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
         addTeams(tournamentDTO, members);
         return tournamentDTO;
+    }
+
+    protected void solveFights(TournamentDTO tournamentDTO, int minutesPast) {
+        final List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournamentDTO.getId(), TeamsOrder.SORTED, 0, null, null));
+        LocalDateTime startingTime = LocalDateTime.now().plusMinutes(minutesPast);
+        LocalDateTime endingTime = startingTime.plusSeconds(tournamentDTO.getDuelsDuration());
+        for (FightDTO fightDTO : fightDTOs) {
+            for (DuelDTO duelDTO : fightDTO.getDuels()) {
+                duelDTO.addCompetitor1Score(Score.MEN);
+                duelDTO.addCompetitor1ScoreTime(11);
+                duelDTO.setStartedAt(startingTime);
+                duelDTO.setFinishedAt(endingTime);
+                duelDTO.setFinished(true);
+                //Extending duration for Long Path achievement.
+                startingTime = endingTime.plusMinutes(40);
+                endingTime = startingTime.plusSeconds(tournamentDTO.getDuelsDuration());
+            }
+            fightDTOs.set(0, fightController.update(fightDTO, null, null));
+        }
     }
 
     public void wipeOut() {
