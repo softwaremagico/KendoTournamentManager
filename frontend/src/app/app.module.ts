@@ -30,6 +30,7 @@ import {IconModule} from "./components/icons";
 import {registerLocaleData} from "@angular/common";
 import localeES from "@angular/common/locales/es";
 import localeCAT from "@angular/common/locales/ca-ES-valencia";
+import localeFR from "@angular/common/locales/fr";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
@@ -118,6 +119,7 @@ registerLocaleData(localeIT, "it");
 registerLocaleData(localeCAT, "ca");
 registerLocaleData(localeDE, "de");
 registerLocaleData(localeNL, "nl");
+registerLocaleData(localeFR, "fr");
 
 @NgModule({
   declarations: [
@@ -239,7 +241,7 @@ registerLocaleData(localeNL, "nl");
     }, {
       provide: TRANSLOCO_CONFIG,
       useValue: translocoConfig({
-        availableLangs: ['en', 'es', 'ca', 'it', 'nl', 'de'],
+        availableLangs: ['en', 'es', 'ca', 'it', 'nl', 'de', 'fr'],
         defaultLang: 'en',
         fallbackLang: 'en',
         missingHandler: {
