@@ -361,14 +361,14 @@ public class TreeTournamentHandler extends LeagueHandler {
 
 
     private void populateLevel(Tournament tournament, int level) throws LevelNotFinishedException {
-        final List<GroupLink> links = groupLinkProvider.generateLinks(tournament);
+        final List<GroupLink> links = groupLinkProvider.getGroupLinks(tournament);
         final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level).toList();
         final Set<Group> groupsOfLevel = new HashSet<>();
         for (GroupLink link : levelLinks) {
             final List<ScoreOfTeam> teamsRanking = rankingProvider.getTeamsScoreRanking(link.getSource());
             checkDrawScore(link.getSource(), teamsRanking, link.getWinner());
             if (link.getWinner() != null && teamsRanking.get(link.getWinner()) != null && teamsRanking.get(link.getWinner()).getTeam() != null
-            && !link.getDestination().getTeams().contains(teamsRanking.get(link.getWinner()).getTeam())) {
+                    && !link.getDestination().getTeams().contains(teamsRanking.get(link.getWinner()).getTeam())) {
                 link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
             } else {
                 KendoTournamentLogger.warning(this.getClass(), "Missing data for level '{}' population with winner '{}' using ranking:\n\t{}",
