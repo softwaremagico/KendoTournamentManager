@@ -1,4 +1,4 @@
-<div mat-dialog-content>
+<div>
   <div class="picture-engine">
     <div class="canvas">
       <div class="camera-frame">
@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <div class="button-container" mat-dialog-actions>
+  <div class="button-container">
     <button biit-button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | hasPermission)" quaternary>
       {{ 'photo' | transloco }}
       <!--      <mat-icon>add_a_photo</mat-icon>-->

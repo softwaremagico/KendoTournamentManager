@@ -49,12 +49,17 @@ team-list {
 
 .floating-button {
   z-index: 999;
-  right: 100px;
+  right: 5em;
   position: fixed;
-  border: 3px solid var(--component-color);
-  background-color: var(--floating-background);
-  justify-content: center;
-  gap: 1em;
+
+  &:hover {
+    background-color: var(--main-background);
+  }
+}
+
+.menu-button {
+  padding: 0 0 0 8px;
+  width: 2.125em;
 
   &:hover {
     background-color: var(--main-background);
