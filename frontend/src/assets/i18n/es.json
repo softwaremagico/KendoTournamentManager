@@ -138,7 +138,7 @@
   "customChampionshipHint": "Personalizado",
   "loop": "Rueda (Saotori shiai sin descanso)",
   "loopHint": "Rueda o Saotori shiai sin decanso. Cada competidor se enfrenta contra todos de forma consecutiva.",
-  "maxFightsCheckBox": "Crea todos los combates posibles",
+  "maxFightsCheckBox": "Crea todos los partidos posibles",
   "kingOfTheMountain": "Kachinuki",
   "kingOfTheMountainHint": "El Rey de la Montaña",
   "redTeamButton": "Equipo Rojo",
@@ -736,8 +736,8 @@
     "userAdminGenerated": "Usuario {{userName}} ha sido creado!"
   },
   "daysFrom": "Aplica solo estos días",
-  "oddFightsResolvedAsap": "Resuelve las exenciones sin combates lo antes posible",
-  "oddFightsResolvedAsapHint": "Si el numero de equipos o grupos del torneo es impar, es posible que durante los cruces algunos equipos no tengan combates asociados y se clasifiquen para la fase siguiente automaticamente (exenciones). Con esta opción te aseguras que estos casos se resuelven lo antes posible.",
+  "oddFightsResolvedAsap": "Resuelve las exenciones sin partidos lo antes posible",
+  "oddFightsResolvedAsapHint": "Si el numero de equipos o grupos del torneo es impar, es posible que durante los cruces algunos equipos no tengan partidos asociados y se clasifiquen para la fase siguiente automaticamente (exenciones). Con esta opción te aseguras que estos casos se resuelven lo antes posible.",
   "bubbleSort": "Torneo Destronar al Rey",
   "bubbleSortHint": "Competidores con peores rangos intentan subir en su ranking hasta ganar al rey. El que no lo consigue se convierte en su vasayo y lucha por proteger al rey.",
   "senbatsu": "Senbatsu",
@@ -762,7 +762,7 @@
   "defaultPicture": "Imagen predeterminada",
   "preview": "Vista Preliminar",
   "selectDiplomaRoles": "Selecciona los roles con diploma",
-  "userRoleTitle":"Define el rol de la cuenta",
+  "userRoleTitle": "Define el rol de la cuenta",
   "teamsSmallerThanFights": "El tamaño de los equipos debe ser igual o mayor al tamaño de los partidos.",
   "groupLinkStored": "Se han agregado las relaciones entre grupos a la base de datos."
 }
