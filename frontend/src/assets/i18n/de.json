@@ -747,5 +747,6 @@
   "preview": "Vorschau",
   "selectDiplomaRoles": "Wählen Sie die Rollen mit einem Diplom aus.",
   "userRoleTitle":"Definieren Sie die Kontorolle",
-  "teamsSmallerThanFights": "Die Größe der Mannschaften muss mindestens der Größe der Spiele entsprechen."
+  "teamsSmallerThanFights": "Die Größe der Mannschaften muss mindestens der Größe der Spiele entsprechen.",
+  "groupLinkStored": "Beziehungen zwischen Pools wurden der Datenbank hinzugefügt."
 }

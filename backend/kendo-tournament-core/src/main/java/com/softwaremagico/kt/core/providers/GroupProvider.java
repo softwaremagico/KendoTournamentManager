@@ -96,6 +96,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         if (index == null) {
             index = 0;
         }
+        groupLinkRepository.deleteByTournament(tournament);
         return getRepository().deleteByTournamentAndLevelAndIndex(tournament, level, index) > 0;
     }
 
