@@ -766,6 +766,7 @@
   "defaultPicture": "Imatge predeterminada",
   "preview": "Vista preliminar",
   "selectDiplomaRoles": "Selecciona els rols amb diploma",
-  "userRoleTitle":"Definir el rol del compte",
-  "teamsSmallerThanFights": "La mida dels equips ha de ser igual o més gran que la mida dels partits."
+  "userRoleTitle": "Definir el rol del compte",
+  "teamsSmallerThanFights": "La mida dels equips ha de ser igual o més gran que la mida dels partits.",
+  "groupLinkStored": "S'han afegit les relacions entre grups a la base de dades."
 }

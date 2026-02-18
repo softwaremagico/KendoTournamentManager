@@ -112,7 +112,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 5);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 6);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -127,7 +127,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 1);
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 2);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 2);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -137,7 +137,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 0);
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 0);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 0);
     }
 
@@ -150,7 +150,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 6);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournament);
         Assert.assertEquals(groupLinks.size(), 5);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -170,7 +170,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 10);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 12);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -199,7 +199,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 7);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournament);
         Assert.assertEquals(groupLinks.size(), 6);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -221,7 +221,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 11);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 14);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -245,7 +245,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 3);
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 10);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 12);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -275,7 +275,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 12);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournament);
         Assert.assertEquals(groupLinks.size(), 11);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -304,7 +304,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 20);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 24);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -339,7 +339,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 4);
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 11);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 14);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -372,7 +372,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 13);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournament);
         Assert.assertEquals(groupLinks.size(), 12);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -436,7 +436,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 21);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 26);
 
         checkLink(groupLinks.get(0), 0, 0, 0);

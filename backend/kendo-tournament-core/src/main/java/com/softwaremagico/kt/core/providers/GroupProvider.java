@@ -33,6 +33,7 @@ import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
+import com.softwaremagico.kt.persistence.repositories.GroupLinkRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +51,15 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
 
     private final FightRepository fightRepository;
     private final DuelRepository duelRepository;
+    private final GroupLinkRepository groupLinkRepository;
 
     @Autowired
-    public GroupProvider(GroupRepository repository, FightRepository fightRepository, DuelRepository duelRepository) {
+    public GroupProvider(GroupRepository repository, FightRepository fightRepository, DuelRepository duelRepository,
+                         GroupLinkRepository groupLinkRepository) {
         super(repository);
         this.fightRepository = fightRepository;
         this.duelRepository = duelRepository;
+        this.groupLinkRepository = groupLinkRepository;
     }
 
     private List<Group> sort(List<Group> groups) {
@@ -92,6 +96,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         if (index == null) {
             index = 0;
         }
+        groupLinkRepository.deleteByTournament(tournament);
         return getRepository().deleteByTournamentAndLevelAndIndex(tournament, level, index) > 0;
     }
 
@@ -108,20 +113,24 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public Group addGroup(Tournament tournament, Group group) {
+        groupLinkRepository.deleteByTournament(tournament);
         group.setTournament(tournament);
         return getRepository().save(group);
     }
 
     public List<Group> addGroups(Tournament tournament, Collection<Group> groups) {
+        groupLinkRepository.deleteByTournament(tournament);
         groups.forEach(group -> group.setTournament(tournament));
         return getRepository().saveAll(groups);
     }
 
     public long delete(Tournament tournament) {
+        groupLinkRepository.deleteByTournament(tournament);
         return getRepository().deleteByTournament(tournament);
     }
 
     public void delete(Tournament tournament, Group group) {
+        groupLinkRepository.deleteByTournament(tournament);
         if (Objects.equals(group.getTournament(), tournament)) {
             deleteGroupByLevelAndIndex(tournament, group.getLevel(), group.getIndex());
         }
@@ -131,6 +140,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         final List<Group> groups = getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
         long deleted = 0;
+        groupLinkRepository.deleteByTournament(tournament);
         if (!groups.isEmpty()) {
             if (!groupsByLevel.get(0).isEmpty()) {
                 for (int i = level; i <= groups.get(groups.size() - 1).getLevel(); i++) {

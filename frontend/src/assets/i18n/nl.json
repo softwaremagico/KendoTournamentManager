@@ -747,5 +747,6 @@
   "preview": "Voorbeeld",
   "selectDiplomaRoles": "Selecteer de functies waarvoor een diploma vereist is.",
   "userRoleTitle":"Definieer de accountrol",
-  "teamsSmallerThanFights": "De teams moeten minstens even groot zijn als de wedstrijden."
+  "teamsSmallerThanFights": "De teams moeten minstens even groot zijn als de wedstrijden.",
+  "groupLinkStored": "Relaties tussen zwembaden zijn aan de database toegevoegd."
 }

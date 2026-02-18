@@ -71,7 +71,7 @@ public class GroupLinkController {
     }
 
     public List<GroupLinkDTO> getLinks(Tournament tournament) {
-        return convertAll(groupLinkProvider.generateLinks(tournament));
+        return convertAll(groupLinkProvider.getGroupLinks(tournament));
     }
 
     private List<GroupLinkDTO> convertAll(Collection<GroupLink> entities) {

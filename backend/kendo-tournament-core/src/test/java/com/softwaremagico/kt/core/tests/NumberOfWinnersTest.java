@@ -104,7 +104,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
 
         Assert.assertEquals(groupProvider.getGroups(tournamentChangingWinners).size(), 3);
 
-        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentChangingWinners);
+        List<GroupLink> groupLinks = groupLinkProvider.getGroupLinks(tournamentChangingWinners);
         Assert.assertEquals(groupLinks.size(), 2);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -115,7 +115,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
 
         Assert.assertEquals(groupProvider.getGroups(tournamentChangingWinners).size(), 5);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentChangingWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentChangingWinners);
         Assert.assertEquals(groupLinks.size(), 6);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -132,7 +132,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
         //Groups already there
         Assert.assertEquals(groupProvider.getGroups(tournamentChangingWinners).size(), 3);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentChangingWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentChangingWinners);
         Assert.assertEquals(groupLinks.size(), 2);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -143,7 +143,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
 
         Assert.assertEquals(groupProvider.getGroups(tournamentChangingWinners).size(), 5);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentChangingWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentChangingWinners);
         Assert.assertEquals(groupLinks.size(), 6);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
@@ -160,7 +160,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
         //Groups already there
         Assert.assertEquals(groupProvider.getGroups(tournamentChangingWinners).size(), 3);
 
-        groupLinks = groupLinkProvider.generateLinks(tournamentChangingWinners);
+        groupLinks = groupLinkProvider.getGroupLinks(tournamentChangingWinners);
         Assert.assertEquals(groupLinks.size(), 2);
 
         checkLink(groupLinks.get(0), 0, 0, 0);

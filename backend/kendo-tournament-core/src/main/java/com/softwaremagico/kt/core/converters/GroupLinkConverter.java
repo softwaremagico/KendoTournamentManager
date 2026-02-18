@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.converters;
 import com.softwaremagico.kt.core.controller.models.GroupLinkDTO;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.GroupLinkConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -31,9 +32,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class GroupLinkConverter extends ElementConverter<GroupLink, GroupLinkDTO, GroupLinkConverterRequest> {
     private final GroupConverter groupConverter;
+    private final TournamentConverter tournamentConverter;
 
-    public GroupLinkConverter(GroupConverter groupConverter) {
+    public GroupLinkConverter(GroupConverter groupConverter, TournamentConverter tournamentConverter) {
         this.groupConverter = groupConverter;
+        this.tournamentConverter = tournamentConverter;
     }
 
     @Override
@@ -42,6 +45,7 @@ public class GroupLinkConverter extends ElementConverter<GroupLink, GroupLinkDTO
         BeanUtils.copyProperties(from.getEntity(), groupLinkDTO);
         groupLinkDTO.setSource(groupConverter.convert(new GroupConverterRequest(from.getEntity().getSource())));
         groupLinkDTO.setDestination(groupConverter.convert(new GroupConverterRequest(from.getEntity().getDestination())));
+        groupLinkDTO.setTournament(tournamentConverter.convert(new TournamentConverterRequest(from.getEntity().getTournament())));
         return groupLinkDTO;
     }
 
@@ -51,6 +55,7 @@ public class GroupLinkConverter extends ElementConverter<GroupLink, GroupLinkDTO
         BeanUtils.copyProperties(to, groupLink);
         groupLink.setSource(groupConverter.reverse(to.getSource()));
         groupLink.setDestination(groupConverter.reverse(to.getDestination()));
+        groupLink.setTournament(tournamentConverter.reverse(to.getTournament()));
         return groupLink;
     }
 }

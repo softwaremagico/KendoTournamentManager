@@ -770,5 +770,6 @@
   },
   "selectDiplomaRoles": "Select the roles with diploma",
   "userRoleTitle":"Define the account's role",
-  "teamsSmallerThanFights": "The size of the teams must be equal to or greater than the size of the matches.\n\n"
+  "teamsSmallerThanFights": "The size of the teams must be equal to or greater than the size of the matches.",
+  "groupLinkStored": "Relationships between pools have been added to the database."
 }

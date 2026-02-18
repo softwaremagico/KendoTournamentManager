@@ -23,16 +23,19 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.CsvController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.GroupLinkDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
 import com.softwaremagico.kt.core.exceptions.InvalidCsvRowException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -91,5 +94,20 @@ public class CsvServices {
             throw new InvalidCsvRowException(this.getClass(), "Some teams have not been inserted correctly!", failedTeams.size());
         }
         return failedTeams;
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Add championship arrows from a CSV file. Returns any failed arrow.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/groups-link/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<GroupLinkDTO> addGroupLinks(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                            Integer tournamentId,
+                                            @RequestParam("file") MultipartFile file,
+                                            Authentication authentication, HttpServletRequest request) throws IOException, InvalidCsvFieldException {
+        final List<GroupLinkDTO> failedGroups = csvController.addGroupLinks(tournamentId, new String(file.getBytes(), StandardCharsets.UTF_8),
+                authentication.getName());
+        if (!failedGroups.isEmpty()) {
+            throw new InvalidCsvRowException(this.getClass(), "Some links have not been inserted correctly!", failedGroups.size());
+        }
+        return failedGroups;
     }
 }

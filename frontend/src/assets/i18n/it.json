@@ -752,5 +752,6 @@
   "preview": "Anteprima",
   "selectDiplomaRoles": "Seleziona i ruoli con diploma",
   "userRoleTitle":"Definire il ruolo dell'account",
-  "teamsSmallerThanFights": "La dimensione delle squadre deve essere uguale o superiore alla dimensione delle partite.\n\n"
+  "teamsSmallerThanFights": "La dimensione delle squadre deve essere uguale o superiore alla dimensione delle partite.",
+  "groupLinkStored": "Le relazioni tra i gruppi sono state aggiunte al database."
 }
