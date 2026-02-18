@@ -146,6 +146,8 @@ export class NavbarComponent implements OnInit {
         this.translocoService.selectTranslate(child.title as string, {}, {scope: 'navigation'}).subscribe(value => child.title = value);
       })
     });
+
+    this.setDarkModeTheme();
   }
 
   protected onContextMenu($event: Event): void {

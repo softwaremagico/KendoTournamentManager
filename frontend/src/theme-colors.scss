@@ -1,5 +1,6 @@
 :root {
   --main-color: #001fff;
+  --popup-background-color: rgba(0, 0, 0, 0.15);
   --main-background: #D9D9D9;
   --body-background: #EDEDED;
   --floating-background: #FFFFFF;
@@ -7,6 +8,7 @@
   --disabled-primary-color: #808080;
   --disabled-floating-color: #D9D9D9;
   --disabled-menu-color: #D9D9D9;
+  --disabled-menu-color-hover: #FFFFFF;
   --disabled-secondary-color: var(--main-color);
   --border-color: #262626;
   --light-background: #D7D7D7;
@@ -29,11 +31,15 @@
   --quaternary-button-active-background: #00A618;
   --text-hover-color: #5A6473;
   --selected-color: #ebf6ff;
-  --popup-background: #FFFFFF;
+  --chart-background: #FFFFFF;
+  --chart-component-color: var(--component-color);
   --icon-color: var(--component-color);
   --table-header-color: var(--component-color);
   --table-border-color: var(--table-header-color);
   --table-header-text: var(--main-background);
+  --table-selected-row-color: var(--main-background);
+  --table-background-color: white;
+  --table-text-color: var(--secondary-text-color);
   --scrollbar-color: var(--main-color);
   --fight-color: var(--popup-background);
   --duel-selected-color: var(--selected-color);
@@ -44,30 +50,41 @@
   --red-team-color: #FF2222;
   --white-team-color: var(--body-background);
   --secondary-team-arrow: var(--main-color);
+  --nav-menu-hover-color: var(--main-background);
+  --nav-menu-text-hover-color: var(--text-hover-color);
+  --nav-menu-active-background: var(--hover-color);
+  --nav-menu-disable-background: var(--hover-color);
+  --nav-menu-separator-color: var(--secondary-color);
+  --nav-menu-font-color: var(--main-font-color);
+  --nav-menu-background-color: white;
+  --nav-menu-border-color: var(--component-color);
+  --body-background-color: #EDEDED;
 
   .dark-mode {
     --main-color: #4C6FFF;
+    --popup-background-color: #191919;
     --main-background: #1A1D24;
     --body-background: #0F1115;
     --floating-background: #1E222B;
     --main-font-color: #F5F7FA;
     --disabled-primary-color: #5C6370;
     --disabled-floating-color: #2A2F3A;
-    --disabled-menu-color: #2A2F3A;
+    --disabled-menu-color: #565b6e;
+    --disabled-menu-color-hover: #202D30;
     --disabled-secondary-color: var(--main-color);
     --border-color: #2F3542;
     --light-background: #232834;
     --error-color: #FF4D6D;
     --warning-color: #FF7A45;
     --secondary-color: #9CA3AF;
-    --secondary-text-color: #C9D1D9;
+    --secondary-text-color: #262626;
     --secondary-background-color: #2C313C;
     --component-color: #E4E7EC;
     --active-color: var(--component-color);
     --hover-color: #2A2F3A;
     --hover-primary-color: var(--main-color);
     --secondary-button-color: #E4E7EC;
-    --secondary-button-background-color: var(--main-font-color);
+    --secondary-button-background-color: var(--secondary-background-color);
     --secondary-button-hover-background: var(--main-background);
     --secondary-button-active-background: var(--main-background);
     --quaternary-button-color: var(--main-font-color);
@@ -76,11 +93,15 @@
     --quaternary-button-active-background: #14A44D;
     --text-hover-color: #B0BAC5;
     --selected-color: #1E3A8A;
-    --popup-background: #1E222B;
+    --chart-background: #1E222B;
+    --chart-component-color: var(--component-color);
     --icon-color: var(--component-color);
     --table-header-color: var(--component-color);
     --table-border-color: var(--table-header-color);
     --table-header-text: var(--main-background);
+    --table-selected-row-color: #a4a5ac;
+    --table-background-color: #1E222B;
+    --table-text-color: var(--main-font-color);
     --scrollbar-color: var(--main-color);
     --fight-color: var(--popup-background);
     --duel-selected-color: var(--selected-color);
@@ -91,5 +112,14 @@
     --red-team-color: #FF4D4F;
     --white-team-color: var(--body-background);
     --secondary-team-arrow: var(--main-color);
+    --nav-menu-hover-color: var(--main-background);
+    --nav-menu-text-hover-color: var(--text-hover-color);
+    --nav-menu-active-background: var(--body-background-color);
+    --nav-menu-disable-background: var(--hover-color);
+    --nav-menu-separator-color: var(--secondary-color);
+    --nav-menu-font-color: var(--main-font-color);
+    --nav-menu-background-color: #585b65;
+    --nav-menu-border-color: var(--main-font-color);
+    --body-background-color: #4b5160;
   }
 }
