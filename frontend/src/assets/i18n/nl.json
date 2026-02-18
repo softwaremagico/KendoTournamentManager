@@ -1,10 +1,11 @@
 {
   "ca": "Català",
-  "de": "Deutsch",
-  "nl": "Dutch",
+  "de": "Deutsche",
+  "nl": "Nederlands",
   "en": "English",
   "es": "Español",
   "it": "Italiano",
+  "fr": "Française",
   "tournaments": "Toernooien",
   "clubs": "Clubs",
   "reports": "Rapporten",
