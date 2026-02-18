@@ -36,6 +36,8 @@ public class GroupLinkDTO extends ElementDTO {
     @NotNull
     private GroupDTO destination;
 
+    private TournamentDTO tournament;
+
     private int winner = 0;
 
     public GroupDTO getSource() {
@@ -60,6 +62,14 @@ public class GroupLinkDTO extends ElementDTO {
 
     public void setWinner(int winner) {
         this.winner = winner;
+    }
+
+    public TournamentDTO getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(TournamentDTO tournament) {
+        this.tournament = tournament;
     }
 
     @Override

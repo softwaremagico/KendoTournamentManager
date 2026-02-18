@@ -9,7 +9,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {TranslocoModule} from "@ngneat/transloco";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
-import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
+import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 import {MatTooltipModule} from "@angular/material/tooltip";
@@ -23,23 +23,24 @@ import {MatButtonModule} from "@angular/material/button";
   exports: [
     TournamentBracketsEditorComponent
   ],
-  imports: [
-    CommonModule,
-    TournamentBracketsModule,
-    DragDropModule,
-    TeamCardModule,
-    TeamListModule,
-    MatButtonModule,
-    MatIconModule,
-    RbacModule,
-    TranslocoModule,
-    HasPermissionPipe,
-    BiitButtonModule,
-    BiitPopupModule,
-    BiitIconButtonModule,
-    BiitProgressBarModule,
-    MatTooltipModule
-  ]
+    imports: [
+        CommonModule,
+        TournamentBracketsModule,
+        DragDropModule,
+        TeamCardModule,
+        TeamListModule,
+        MatButtonModule,
+        MatIconModule,
+        RbacModule,
+        TranslocoModule,
+        HasPermissionPipe,
+        BiitButtonModule,
+        BiitPopupModule,
+        BiitIconButtonModule,
+        BiitProgressBarModule,
+        MatTooltipModule,
+        BiitActionButtonModule
+    ]
 })
 export class TournamentBracketsEditorModule {
 }
