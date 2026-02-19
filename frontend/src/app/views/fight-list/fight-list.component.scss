@@ -1,3 +1,5 @@
+$fight-border-color: var(--fight-border-color);
+
 .fights-container {
   flex: 1 1 auto;
   max-height: 88vh;
@@ -26,7 +28,7 @@
   display: flex;
   gap: 1em;
   height: 50px;
-  background-color: var(--body-background);
+  background-color: var(--body-background-color);
 }
 
 .upper-menu button {
@@ -67,7 +69,7 @@
 }
 
 .fights-of-group {
-  border: #001239 3px solid;
+  border: $fight-border-color 3px solid;
   padding: 5px;
   margin: 5px 5px 20px;
   background-color: var(--popup-background);

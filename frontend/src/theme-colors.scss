@@ -1,5 +1,7 @@
 :root {
   --main-color: #001fff;
+  --logo-color: var(--main-color);
+  --body-background-color: #EDEDED;
   --popup-background-color: rgba(0, 0, 0, 0.15);
   --main-background: #D9D9D9;
   --body-background: #EDEDED;
@@ -34,12 +36,14 @@
   --chart-background: #FFFFFF;
   --chart-component-color: var(--component-color);
   --icon-color: var(--component-color);
-  --table-header-color: var(--component-color);
-  --table-border-color: var(--table-header-color);
+  --table-header-color: var(--border-color);
   --table-header-text: var(--main-background);
+  --table-background-color: var(--chart-background);
+  --table-hover-background-color: var(--selected-color);
+  --table-border-color: var(--table-header-color);
   --table-selected-row-color: var(--main-background);
-  --table-background-color: white;
-  --table-text-color: var(--secondary-text-color);
+  --table-text-color: var(--border-color);
+  --table-active-row-backgorund-color: var(--main-background);
   --scrollbar-color: var(--main-color);
   --fight-color: var(--popup-background);
   --duel-selected-color: var(--selected-color);
@@ -58,11 +62,25 @@
   --nav-menu-font-color: var(--main-font-color);
   --nav-menu-background-color: white;
   --nav-menu-border-color: var(--component-color);
-  --body-background-color: #EDEDED;
+  --nav-menu-active-color: var(--hover-color);
+  --input-text-background: var(--main-background);
+  --input-text-focus-background: var(--main-background);
+  --input-text-hover-background: var(--main-background);
+  --popup-color: var(--component-color);
+  --popup-background: #FFFFFF;
+  --popup-error-color: var(--error-color);
+  --popup-close-button: var(--main-color);
+  --image-canvas-color: var(--main-background);
+  --fight-border-color: #001239;
+  --fight-ribbon-border-color: var(--component-color);
+  --bracket-group-color: var(--component-color);
+  --link-color: var(--main-color);
 
   .dark-mode {
-    --main-color: #4C6FFF;
-    --popup-background-color: #191919;
+    --main-color: #001fff;
+    --logo-color: var(--body-background-color);
+    --body-background-color: #4b5160;
+    --popup-background-color: rgba(0, 0, 0, 0.60);
     --main-background: #1A1D24;
     --body-background: #0F1115;
     --floating-background: #1E222B;
@@ -97,11 +115,13 @@
     --chart-component-color: var(--component-color);
     --icon-color: var(--component-color);
     --table-header-color: var(--component-color);
-    --table-border-color: var(--table-header-color);
     --table-header-text: var(--main-background);
-    --table-selected-row-color: #a4a5ac;
     --table-background-color: #1E222B;
+    --table-hover-background-color: var(--selected-color);
+    --table-border-color: var(--table-header-color);
+    --table-selected-row-color: #a4a5ac;
     --table-text-color: var(--main-font-color);
+    --table-active-row-backgorund-color: var(--secondary-color);
     --scrollbar-color: var(--main-color);
     --fight-color: var(--popup-background);
     --duel-selected-color: var(--selected-color);
@@ -110,7 +130,7 @@
     --active-fight-color-selected: var(--body-background);
     --active-fight-color: var(--floating-background);
     --red-team-color: #FF4D4F;
-    --white-team-color: var(--body-background);
+    --white-team-color: white;
     --secondary-team-arrow: var(--main-color);
     --nav-menu-hover-color: var(--main-background);
     --nav-menu-text-hover-color: var(--text-hover-color);
@@ -120,6 +140,24 @@
     --nav-menu-font-color: var(--main-font-color);
     --nav-menu-background-color: #585b65;
     --nav-menu-border-color: var(--main-font-color);
-    --body-background-color: #4b5160;
+    --nav-menu-active-color: var(--body-background-color);
+    --input-text-background: var(--main-background);
+    --input-text-focus-background: var(--main-background);
+    --input-text-hover-background: var(--main-background);
+    --popup-background: var(--body-background-color);
+    --popup-color: var(--table-background-color);
+    --popup-error-color: var(--error-color);
+    --ngx-contextmenu-background-color: var(--nav-menu-background-color);
+    --ngx-contextmenu-border: 1px solid var(--nav-menu-background-color);
+    --ngx-contextmenu-box-shadow: 0 6px 12px var(--nav-menu-background-color);
+    --ngx-contextmenu-outline: 1px solid var(--nav-menu-border-color);
+    --ngx-contextmenu-text-color: var(--nav-menu-font-color);
+    --ngx-contextmenu-text-disabled-color: var(--nav-menu-font-disabled-color);
+    --popup-close-button: var(--component-color);
+    --image-canvas-color: var(--main-background);
+    --fight-border-color: #bec4d5;
+    --fight-ribbon-border-color: var(--secondary-background-color);
+    --bracket-group-color: var(--body-background-color);
+    --link-color: var(--main-font-color);
   }
 }
