@@ -36,11 +36,11 @@
   border-style: solid;
   text-transform: uppercase;
   border-width: 2px;
-  border-color: var(--component-color);
+  border-color: var(--fight-ribbon-border-color);
   line-height: 25px;
   max-width: 56px;
   overflow: clip;
-  background: var(--component-color);
+  background: var(--fight-ribbon-border-color);
 }
 
 .right-team {
@@ -50,11 +50,11 @@
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   text-transform: uppercase;
   border-width: 2px 2px 2px 0;
-  border-color: var(--component-color);
+  border-color: var(--fight-ribbon-border-color);
   line-height: 25px;
   max-width: 56px;
   overflow: clip;
-  background: var(--component-color);
+  background: var(--fight-ribbon-border-color);
 }
 
 .red-ribbon {

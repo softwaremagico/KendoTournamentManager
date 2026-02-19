@@ -120,15 +120,15 @@
 }
 
 .ranking-normal {
-  color: #000000;
+  color: var(--ranking-normal);
 }
 
 .ranking-bad {
-  color: #ff4a4a;
+  color: var(--ranking-bad);
 }
 
 .ranking-very-bad {
-  color: #ff2525;
+  color: var(--ranking-very-bad);
 }
 
 .your-ranking {

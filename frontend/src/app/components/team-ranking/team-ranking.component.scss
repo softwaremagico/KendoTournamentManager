@@ -56,31 +56,31 @@
 
 .team-ranking-value.team-name.finished {
   font-weight: bold;
-  color: #4d6d95;
+  color: var(--team-ranking-finished);
 }
 
 .team-ranking-value.team-name.winner {
-  color: #001239;
+  color: var(--team-ranking-winner);
 }
 
 .team-ranking-value.team-name.winner.draw {
-  color: #ff0000;
+  color: var(--team-ranking-winner-draw);
 }
 
 .team-ranking-value.team-name.finalist {
-  color: #274e7e;
+  color: var(--team-ranking-finalist);
 }
 
 .team-ranking-value.team-name.finalist.draw {
-  color: #FF9800;
+  color: var(--team-ranking-finalist-draw);
 }
 
 .team-ranking-value.team-name.semifinalist {
-  color: #4d6d95;
+  color: var(--team-ranking-semifinalist)
 }
 
 .team-ranking-value.team-name.semifinalist.draw {
-  color: #ffd740;
+  color: var(--team-ranking-semifinalist-draw);
 }
 
 .button-container {

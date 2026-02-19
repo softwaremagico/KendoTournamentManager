@@ -75,6 +75,17 @@
   --fight-ribbon-border-color: var(--component-color);
   --bracket-group-color: var(--component-color);
   --link-color: var(--main-color);
+  --team-ranking-finished: #4d6d95;
+  --team-ranking-winner: #001239;
+  --team-ranking-winner-draw: #ff0000;
+  --team-ranking-finalist: #274e7e;
+  --team-ranking-finalist-draw: #FF9800;
+  --team-ranking-semifinalist: #4d6d95;
+  --team-ranking-semifinalist-draw: #ffd740;
+  --ranking-normal: #000000;
+  --ranking-bad: #ff4a4a;
+  --ranking-very-bad: #ff2525;
+  --text-highlighted: var(--main-color);
 
   .dark-mode {
     --main-color: #001fff;
@@ -159,5 +170,16 @@
     --fight-ribbon-border-color: var(--secondary-background-color);
     --bracket-group-color: var(--body-background-color);
     --link-color: var(--main-font-color);
+    --team-ranking-finished: #E4E7EC;
+    --team-ranking-winner: #001239;
+    --team-ranking-winner-draw: #ff0000;
+    --team-ranking-finalist: #9CA3AF;
+    --team-ranking-finalist-draw: #FF9800;
+    --team-ranking-semifinalist: #E4E7EC;
+    --team-ranking-semifinalist-draw: #ffd740;
+    --ranking-normal: var(--component-color);
+    --ranking-bad: #ff4a4a;
+    --ranking-very-bad: #ff2525;
+    --text-highlighted: var(--main-color);
   }
 }
