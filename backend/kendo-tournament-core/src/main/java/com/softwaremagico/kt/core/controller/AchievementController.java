@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -491,6 +491,8 @@ public class AchievementController extends BasicInsertableController<Achievement
                 entrenchedAchievements.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
         achievementsGenerated.addAll(generateBoneBreakerAchievement(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
+        achievementsGenerated.addAll(generateHeadShotAchievement(tournament));
+        achievementsGenerated.addAll(generateYouAreUnderArrestAchievement(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
         achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
         achievementsGenerated.addAll(generateTheWinnerTournament(tournament));
@@ -571,6 +573,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateWoodcutterAchievementBronze(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievementSilver(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievementGold(tournament));
+        achievementsGenerated.addAll(generateHeadShotAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateHeadShotAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateHeadShotAchievementGold(tournament));
+        achievementsGenerated.addAll(generateYouAreUnderArrestAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateYouAreUnderArrestAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateYouAreUnderArrestAchievementGold(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementBronze(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementSilver(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementGold(tournament));
@@ -1469,40 +1477,67 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievement(Tournament tournament) {
+        //Create new achievement for the participants.
+        return generateAchievement(AchievementType.WOODCUTTER, AchievementGrade.NORMAL, generateScoreBasedAchievement(Score.DO), tournament);
+    }
+
+    /**
+     * When somebody only performs 'men' scores in a tournament and all fights has at least a 'men'.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateHeadShotAchievement(Tournament tournament) {
+        //Create new achievement for the participants.
+        return generateAchievement(AchievementType.HEAD_SHOT, AchievementGrade.NORMAL, generateScoreBasedAchievement(Score.MEN), tournament);
+    }
+
+    /**
+     * When somebody only performs 'men' scores in a tournament and all fights has at least a 'men'.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateYouAreUnderArrestAchievement(Tournament tournament) {
+        //Create new achievement for the participants.
+        return generateAchievement(AchievementType.YOU_ARE_UNDER_ARREST, AchievementGrade.NORMAL, generateScoreBasedAchievement(Score.KOTE), tournament);
+    }
+
+    private Set<Participant> generateScoreBasedAchievement(Score scoreToCompare) {
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
         final List<Duel> duels = new ArrayList<>(getDuelsFromTournament());
-        final Set<Participant> woodcutters = new HashSet<>();
-        duels.forEach(duel -> woodcutters.addAll(duel.getCompetitors()));
+        final Set<Participant> participantsWithScore = new HashSet<>();
+        duels.forEach(duel -> participantsWithScore.addAll(duel.getCompetitors()));
         //Only applied to competitors.
         getRolesFromTournament().forEach(role -> {
             if (role.getRoleType() != RoleType.COMPETITOR) {
-                woodcutters.remove(role.getParticipant());
+                participantsWithScore.remove(role.getParticipant());
             }
         });
         //Retain all competitors that are in a fight.
         //Must have at least one hit, and cannot have something different that a 'Do'.
         duels.forEach(duel -> {
             if (duel.getCompetitor1Score().isEmpty()) {
-                woodcutters.remove(duel.getCompetitor1());
+                participantsWithScore.remove(duel.getCompetitor1());
             }
             duel.getCompetitor1Score().forEach(score -> {
-                if (score != Score.DO) {
-                    woodcutters.remove(duel.getCompetitor1());
+                if (score != scoreToCompare) {
+                    participantsWithScore.remove(duel.getCompetitor1());
                 }
             });
             if (duel.getCompetitor2Score().isEmpty()) {
-                woodcutters.remove(duel.getCompetitor2());
+                participantsWithScore.remove(duel.getCompetitor2());
             }
             duel.getCompetitor2Score().forEach(score -> {
-                if (score != Score.DO) {
-                    woodcutters.remove(duel.getCompetitor2());
+                if (score != scoreToCompare) {
+                    participantsWithScore.remove(duel.getCompetitor2());
                 }
             });
         });
-        //Create new achievement for the participants.
-        return generateAchievement(AchievementType.WOODCUTTER, AchievementGrade.NORMAL, woodcutters, tournament);
+
+        return participantsWithScore;
     }
 
     /**
@@ -1533,6 +1568,68 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateWoodcutterAchievementGold(Tournament tournament) {
         return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.WOODCUTTER, AchievementGrade.GOLD);
+    }
+
+    /**
+     * When somebody only performs 'men' scores in a tournament and all fights has at least a 'men' in at least two consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateHeadShotAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.HEAD_SHOT, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * When somebody only performs 'men' scores in a tournament and all fights has at least a 'men' in at least three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateHeadShotAchievementSilver(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.HEAD_SHOT, AchievementGrade.SILVER);
+    }
+
+    /**
+     * When somebody only performs 'men' scores in a tournament and all fights has at least a 'men' in at least five consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateHeadShotAchievementGold(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.HEAD_SHOT, AchievementGrade.GOLD);
+    }
+
+    /**
+     * When somebody only performs 'kote' scores in a tournament and all fights has at least a 'kote' in at least two consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateYouAreUnderArrestAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.YOU_ARE_UNDER_ARREST,
+                AchievementGrade.BRONZE);
+    }
+
+    /**
+     * When somebody only performs 'kote' scores in a tournament and all fights has at least a 'kote' in at least three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateYouAreUnderArrestAchievementSilver(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.YOU_ARE_UNDER_ARREST,
+                AchievementGrade.SILVER);
+    }
+
+    /**
+     * When somebody only performs 'kote' scores in a tournament and all fights has at least a 'kote' in at least five consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateYouAreUnderArrestAchievementGold(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.YOU_ARE_UNDER_ARREST, AchievementGrade.GOLD);
     }
 
 
@@ -2264,7 +2361,6 @@ public class AchievementController extends BasicInsertableController<Achievement
                 participants.forEach(participant -> tournamentDuration.merge(participant, durationOfTournament, Long::sum));
             } catch (ArithmeticException e) {
                 //Ignore invalid dates.
-                continue;
             }
         }
 

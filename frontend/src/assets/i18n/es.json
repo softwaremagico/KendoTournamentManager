@@ -714,6 +714,30 @@
       "bronze": "Sube cuatro escalones.",
       "silver": "Sube cinco escalones.",
       "gold": "Sube siete escalones."
+    },
+    "longPath": {
+      "title": "It is along path...",
+      "description": "Participa durante varias horas en los torneos.",
+      "normal": "Participa durante 100 horas en los torneos.",
+      "bronze": "Participa durante 150 horas en los torneos.",
+      "silver": "Participa durante 200 horas en los torneos.",
+      "gold": "Participa durante 250 horas en los torneos."
+    },
+    "headShot": {
+      "title": "Headshooooot!",
+      "description": "Obtén solo puntos 'Men' y obtén al menos un 'Men' en cada combate.",
+      "normal": "Puntuar solo 'Men' durante un torneo.",
+      "bronze": "Obtén solo 'Men' durante dos torneos sucesivos.",
+      "silver": "Obtén solo 'Men' durante tres torneos sucesivos.",
+      "gold": "Obtén solo 'Men' durante cinco torneos sucesivos."
+    },
+    "youAreUnderArrest": {
+      "title": "You are under arrest!",
+      "description": "Obtén solo puntos 'Kote' y obtén al menos un 'Kote' en cada combate.",
+      "normal": "Puntuar solo 'Kote' durante un torneo.",
+      "bronze": "Obtén solo 'Kote' durante dos torneos sucesivos.",
+      "silver": "Obtén solo 'Kote' durante tres torneos sucesivos.",
+      "gold": "Obtén solo 'Kote' durante cinco torneos sucesivos."
     }
   },
   "removeTeams": "Quitar equipos",

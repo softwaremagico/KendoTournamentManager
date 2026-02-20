@@ -641,6 +641,30 @@
       "bronze": "Monter quatre échelons.",
       "silver": "Monter cinq échelons.",
       "gold": "Monter sept échelons."
+    },
+    "longPath": {
+      "title": "C’est un long chemin...",
+      "description": "Participe pendant plusieurs heures aux tournois.",
+      "normal": "Participe pendant 100 heures aux tournois.",
+      "bronze": "Participe pendant 150 heures aux tournois.",
+      "silver": "Participe pendant 200 heures aux tournois.",
+      "gold": "Participe pendant 250 heures aux tournois."
+    },
+    "headShot": {
+      "title": "Tir en pleine tête !",
+      "description": "Marque uniquement des points 'Men' et obtiens au moins un 'Men' à chaque combat.",
+      "normal": "Marque uniquement 'Men' pendant un tournoi.",
+      "bronze": "Obtiens uniquement 'Men' pendant deux tournois consécutifs.",
+      "silver": "Obtiens uniquement 'Men' pendant trois tournois consécutifs.",
+      "gold": "Obtiens uniquement 'Men' pendant cinq tournois consécutifs."
+    },
+    "youAreUnderArrest": {
+      "title": "Vous êtes en état d’arrestation!",
+      "description": "Marque uniquement des points 'Kote' et obtiens au moins un 'Kote' à chaque combat.",
+      "normal": "Marque uniquement 'Kote' pendant un tournoi.",
+      "bronze": "Obtiens uniquement 'Kote' pendant deux tournois consécutifs.",
+      "silver": "Obtiens uniquement 'Kote' pendant trois tournois consécutifs.",
+      "gold": "Obtiens uniquement 'Kote' pendant cinq tournois consécutifs."
     }
   },
   "removeTeams": "Retirer les équipes",

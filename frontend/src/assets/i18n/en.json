@@ -718,6 +718,30 @@
       "bronze": "Go up four steps.",
       "silver": "Go up five steps.",
       "gold": "Go up seven steps."
+    },
+    "longPath": {
+      "title": "It’s a long road...",
+      "description": "Participate for several hours in tournaments.",
+      "normal": "Participate for 100 hours in tournaments.",
+      "bronze": "Participate for 150 hours in tournaments.",
+      "silver": "Participate for 200 hours in tournaments.",
+      "gold": "Participate for 250 hours in tournaments."
+    },
+    "headShot": {
+      "title": "Heaaadshoooot!",
+      "description": "Score only 'Men' points and achieve at least one 'Men' in every match.",
+      "normal": "Score only 'Men' during a tournament.",
+      "bronze": "Score only 'Men' in two consecutive tournaments.",
+      "silver": "Score only 'Men' in three consecutive tournaments.",
+      "gold": "Score only 'Men' in five consecutive tournaments."
+    },
+    "youAreUnderArrest": {
+      "title": "You are under arrest!",
+      "description": "Score only 'Kote' points and achieve at least one 'Kote' in every match.",
+      "normal": "Score only 'Kote' during a tournament.",
+      "bronze": "Score only 'Kote' in two consecutive tournaments.",
+      "silver": "Score only 'Kote' in three consecutive tournaments.",
+      "gold": "Score only 'Kote' in five consecutive tournaments."
     }
   },
   "removeTeams": "Remove Teams",

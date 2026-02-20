@@ -703,6 +703,30 @@
       "bronze": "Gehen Sie vier Stufen hinauf.",
       "silver": "Gehen Sie fünf Stufen hinauf.",
       "gold": "Gehen Sie sieben Stufen hinauf."
+    },
+    "longPath": {
+      "title": "Es ist ein langer Weg...",
+      "description": "Nimm mehrere Stunden lang an Turnieren teil.",
+      "normal": "Nimm 100 Stunden lang an Turnieren teil.",
+      "bronze": "Nimm 150 Stunden lang an Turnieren teil.",
+      "silver": "Nimm 200 Stunden lang an Turnieren teil.",
+      "gold": "Nimm 250 Stunden lang an Turnieren teil."
+    },
+    "headShot": {
+      "title": "Kopfschuss!",
+      "description": "Erziele ausschließlich 'Men'-Punkte und erreiche mindestens ein 'Men' in jedem Kampf.",
+      "normal": "Erziele nur 'Men' während eines Turniers.",
+      "bronze": "Erziele nur 'Men' in zwei aufeinanderfolgenden Turnieren.",
+      "silver": "Erziele nur 'Men' in drei aufeinanderfolgenden Turnieren.",
+      "gold": "Erziele nur 'Men' in fünf aufeinanderfolgenden Turnieren."
+    },
+    "youAreUnderArrest": {
+      "title": "Sie sind verhaftet!",
+      "description": "Erziele ausschließlich 'Kote'-Punkte und erreiche mindestens ein 'Kote' in jedem Kampf.",
+      "normal": "Erziele nur 'Kote' während eines Turniers.",
+      "bronze": "Erziele nur 'Kote' in zwei aufeinanderfolgenden Turnieren.",
+      "silver": "Erziele nur 'Kote' in drei aufeinanderfolgenden Turnieren.",
+      "gold": "Erziele nur 'Kote' in fünf aufeinanderfolgenden Turnieren."
     }
   },
   "removeTeams": "Teams entfernenn",

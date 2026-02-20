@@ -708,6 +708,30 @@
       "bronze": "Sali quattro gradini.",
       "silver": "Sali cinque gradini.",
       "gold": "Sali sette gradini."
+    },
+    "longPath": {
+      "title": "È un lungo cammino...",
+      "description": "Partecipa per diverse ore ai tornei.",
+      "normal": "Partecipa per 100 ore ai tornei.",
+      "bronze": "Partecipa per 150 ore ai tornei.",
+      "silver": "Partecipa per 200 ore ai tornei.",
+      "gold": "Partecipa per 250 ore ai tornei."
+    },
+    "headShot": {
+      "title": "Colpo alla testa!",
+      "description": "Ottieni solo punti 'Men' e realizza almeno un 'Men' in ogni combattimento.",
+      "normal": "Segna solo 'Men' durante un torneo.",
+      "bronze": "Ottieni solo 'Men' per due tornei consecutivi.",
+      "silver": "Ottieni solo 'Men' per tre tornei consecutivi.",
+      "gold": "Ottieni solo 'Men' per cinque tornei consecutivi."
+    },
+    "youAreUnderArrest": {
+      "title": "Sei in arresto!",
+      "description": "Ottieni solo punti 'Kote' e realizza almeno un 'Kote' in ogni combattimento.",
+      "normal": "Segna solo 'Kote' durante un torneo.",
+      "bronze": "Ottieni solo 'Kote' per due tornei consecutivi.",
+      "silver": "Ottieni solo 'Kote' per tre tornei consecutivi.",
+      "gold": "Ottieni solo 'Kote' per cinque tornei consecutivi."
     }
   },
   "removeTeams": "Rimuovi squadre",
