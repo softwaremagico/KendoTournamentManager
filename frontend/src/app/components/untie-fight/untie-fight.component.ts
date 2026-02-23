@@ -3,7 +3,6 @@ import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/notifications/duel-changed.service";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
-import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'untie-fight',
@@ -16,7 +15,7 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
   duel: Duel;
 
   @Input()
-  selected: boolean;
+  duelSelected: Duel | undefined;
 
   @Input()
   over: boolean;
@@ -38,11 +37,7 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
 
   ngOnInit(): void {
     this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
-      if (selectedDuel && this.duel) {
-        if (selectedDuel.id === this.duel.id) {
-          this.selected = true;
-        }
-      }
+      this.duelSelected = selectedDuel;
     });
   }
 
