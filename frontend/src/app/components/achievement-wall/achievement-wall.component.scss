@@ -1,7 +1,6 @@
 .achievement-wall {
   max-height: 100%;
   padding: 10px;
-
   display: grid;
   margin: 0 auto;
   grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));

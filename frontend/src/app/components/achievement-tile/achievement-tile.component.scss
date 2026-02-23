@@ -130,11 +130,8 @@
   font-size: 12px;
 
   /* Position the tooltip text */
-  position: absolute;
+  position: fixed;
   z-index: 1000000;
-  bottom: 95%;
-  left: 50%;
-  margin-left: -150px;
 
   /* Fade in tooltip */
   opacity: 0;
@@ -153,24 +150,12 @@
   margin-left: -150px;
 }
 
-/* Tooltip arrow */
-.tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555555 transparent transparent transparent;
+.tooltiptext.top-border {
+  margin-top: 20px;
 }
 
-.tooltiptext.left-border::after {
-  margin-left: -115px;
-}
-
-.tooltiptext.right-border::after {
-  margin-left: 105px;
+.tooltiptext.bottom-border {
+  margin-top: -240px;
 }
 
 
