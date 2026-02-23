@@ -47,6 +47,7 @@
   max-height: 33vh;
   padding: 1rem;
   gap: 1rem;
+  overflow: auto;
 }
 
 @media screen and (max-height: 800px) {
