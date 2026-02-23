@@ -34,7 +34,13 @@ $main-black: #262626;
   gap: $space;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 600px) {
+  .divider {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 1000px) {
   .extra-menu {
     display: none;
   }

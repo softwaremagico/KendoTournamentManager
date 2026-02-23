@@ -30,27 +30,25 @@
                 (click)="addPhoto=true"
                 [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
         ></button>
-        <mat-divider [vertical]="true"></mat-divider>
+        <mat-divider class="divider" [vertical]="true"></mat-divider>
         <button mat-button *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
                 [title]="t('titleStatistics')"
                 (click)="openStatistics(table.selectedRows[0])"
                 [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" class="extra-menu"></mat-divider>
-        <span class="extra-menu">
-          <button mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
-                  [title]="t('competitorsRanking')"
-                  (click)="showRanking=true">
-            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-          </button>
-          <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
-                  [title]="t('qrCodeHint')"
-                  (click)="showQr=true"
-                  [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+        <mat-divider [vertical]="true" class="divider"></mat-divider>
+        <button id="competitors-ranking" mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
+                [title]="t('competitorsRanking')"
+                (click)="showRanking=true">
+          <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+        </button>
+        <button id="qr-code" mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
+                [title]="t('qrCodeHint')"
+                (click)="showQr=true"
+                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
           <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
-          </button>
-        </span>
+        </button>
       </ng-template>
     </biit-datatable>
   </div>
