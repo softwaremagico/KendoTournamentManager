@@ -167,7 +167,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.refreshFights();
     });
     this.groupUpdatedService.isGroupUpdated.pipe(takeUntil(this.destroySubject)).subscribe((_group: Group): void => {
+      this.selectedFight = undefined;
+      this.selectedDuel = undefined;
       this.replaceGroup(_group);
+      if (_group && _group.fights.length > 0 && _group.fights[0].duels.length > 0) {
+        this.selectedGroup = _group;
+        this.selectedFight = _group.fights[0];
+        this.selectDuel(_group.fights[0].duels[0]);
+      }
     })
 
     this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe((_fight: Fight): void => {
@@ -275,7 +282,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       } else {
         this.selectFight(this.selectedFight);
       }
-      if (this.selectedFight && selectedDuelIndex && this.selectedFight?.duels[selectedDuelIndex]) {
+      if (this.selectedFight && selectedDuelIndex != undefined && this.selectedFight?.duels[selectedDuelIndex]) {
         this.selectDuel(this.selectedFight.duels[selectedDuelIndex]);
       }
     }
@@ -738,7 +745,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectDuel(duel: Duel): void {
     //substitute are not selectable.
-    if(!duel.substitute) {
+    if (!duel.substitute) {
       this.selectedDuel = duel;
       this.duelChangedService.isDuelUpdated.next(duel);
       if (duel) {
@@ -752,7 +759,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (duel.totalDuration) {
           this.timeChangedService.isTotalTimeChanged.next(duel.totalDuration);
         } else {
-          this.timeChangedService.isTotalTimeChanged.next(this.tournament.duelsDuration);
+          this.timeChangedService.isTotalTimeChanged.next(this.tournament?.duelsDuration);
         }
       }
     }
