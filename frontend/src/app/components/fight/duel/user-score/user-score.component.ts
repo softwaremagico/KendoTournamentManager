@@ -30,7 +30,7 @@ export class UserScoreComponent {
     showAvatar: boolean = false;
 
     @Input()
-    fightSelected: boolean;
+    isSelected: boolean;
 
     @Input()
     locked: boolean = false;
