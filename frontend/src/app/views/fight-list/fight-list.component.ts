@@ -189,9 +189,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               onlyNewFights = true;
             }
             if (onlyNewFights) {
-              if (this.updateTeamOrder(fight, _fight)) {
-                updatedFights = true;
-              }
+              updatedFights = this.updateTeamOrder(fight, _fight);
             }
           }
         }
@@ -232,17 +230,24 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (fight.duels[i] && !fight.duels[i].duration) {
         if (fight.team1.id === fightReordered.team1.id) {
           fight.duels[i].competitor1 = fightReordered.duels[i].competitor1;
-        } else if (fight.team2.id === fightReordered.team1.id) {
-          fight.duels[i].competitor2 = fightReordered.duels[i].competitor1;
-        } else if (fight.team1.id === fightReordered.team2.id) {
-          fight.duels[i].competitor1 = fightReordered.duels[i].competitor2;
-        } else if (fight.team2.id === fightReordered.team2.id) {
-          fight.duels[i].competitor2 = fightReordered.duels[i].competitor2;
-        } else {
-          continue;
+          updatedFights = true;
+          this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
         }
-        this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
-        updatedFights = true;
+        if (fight.team2.id === fightReordered.team1.id) {
+          fight.duels[i].competitor2 = fightReordered.duels[i].competitor1;
+          updatedFights = true;
+          this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
+        }
+        if (fight.team1.id === fightReordered.team2.id) {
+          fight.duels[i].competitor1 = fightReordered.duels[i].competitor2;
+          updatedFights = true;
+          this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
+        }
+        if (fight.team2.id === fightReordered.team2.id) {
+          fight.duels[i].competitor2 = fightReordered.duels[i].competitor2;
+          updatedFights = true;
+          this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
+        }
       }
     }
     return updatedFights;
