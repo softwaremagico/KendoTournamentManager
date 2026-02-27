@@ -80,4 +80,13 @@ export class Group extends Element {
     }
     return true;
   }
+
+  public override toString = (): string => {
+    return "Group{"
+      + "tournament=" + this.tournament
+      + ", shiaijo=" + this.shiaijo
+      + ", level=" + this.level
+      + ", index=" + this.index
+      + '}';
+  }
 }

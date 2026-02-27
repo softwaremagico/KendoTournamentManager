@@ -176,7 +176,7 @@
                            (click)="selectDuel(duel)"
                            (keydown)="selectDuel(duel)"
                            [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
-                           [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                           [duelSelected]="selectedDuel" [swapColors]="swappedColors"
                            [projectMode]="projectorMode"
                            [swapTeams]="swappedTeams"></untie-fight>
             </div>
