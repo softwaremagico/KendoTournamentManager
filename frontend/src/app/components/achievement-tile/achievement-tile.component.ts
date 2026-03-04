@@ -33,6 +33,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   screenWidth: number | undefined;
   onLeftBorder: boolean;
   onRightBorder: boolean;
+  onBottomBorder: boolean;
   newAchievement: boolean;
   totalAchievements: number;
 
@@ -267,6 +268,9 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     }
     if (this.mouseX! + 150 > this.screenWidth) {
       this.onRightBorder = true;
+    }
+    if (this.mouseY! + 250 > this.screenHeight) {
+      this.onBottomBorder = true;
     }
   }
 }

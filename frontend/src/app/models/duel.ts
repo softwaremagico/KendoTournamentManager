@@ -93,4 +93,8 @@ export class Duel extends Element {
       || this.competitor1Score.length > 0 || this.competitor2Score.length > 0
       || this.competitor1Fault || this.competitor2Fault;
   }
+
+  public override toString = (): string => {
+    return `Duel{${this.competitor1} vs ${this.competitor2}}`;
+  }
 }

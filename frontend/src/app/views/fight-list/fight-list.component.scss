@@ -147,9 +147,7 @@ h2.level-name {
   .expand-button {
     display: none !important;
   }
-}
 
-@media screen and (max-width: 1450px) {
   .download-button {
     display: none !important;
   }
@@ -157,18 +155,28 @@ h2.level-name {
   .download-divider {
     display: none !important;
   }
+}
 
+@media screen and (max-width: 1450px) {
+  .filter-fights {
+    display: none !important;
+  }
   .shiaijo-label {
     display: none !important;
   }
+  .shiaijo-name {
+    display: none !important;
+  }
+}
 
+@media screen and (max-width: 1100px) {
   .whisper-button {
     display: none !important;
   }
 }
 
-@media screen and (max-width: 1300px) {
 
+@media screen and (max-width: 900px) {
   .exchange-colors {
     display: none !important;
   }
@@ -176,10 +184,6 @@ h2.level-name {
   .exchange-teams {
     display: none !important;
   }
-}
-
-
-@media screen and (max-width: 1100px) {
 
   .member-order {
     display: none !important;
