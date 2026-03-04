@@ -31,7 +31,7 @@ export class DuelComponent extends KendoComponent implements OnInit {
   fightSelected: boolean;
 
   @Input()
-  selected: boolean;
+  duelSelected: Duel | undefined;
 
   @Input()
   swapTeams: boolean;
@@ -54,9 +54,7 @@ export class DuelComponent extends KendoComponent implements OnInit {
 
   ngOnInit(): void {
     this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
-      if (selectedDuel && this.duel) {
-        this.selected = (selectedDuel.id === this.duel.id);
-      }
+      this.duelSelected = selectedDuel;
     });
   }
 

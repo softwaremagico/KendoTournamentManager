@@ -4,7 +4,7 @@
 
 .statistics-layout {
   display: grid;
-  gap: 2em;
+  height: calc(100vh - 60px);
 }
 
 .statistics-layout .upper-menu {
@@ -29,10 +29,11 @@
   background-color: var(--floating-background);
   border: 3px solid var(--component-color);
   margin: 0 2em 0 2em;
+  height: calc(100vh - 100px);
 }
 
 .statistics-container {
-  height: 78vh;
+  height: calc(100% - 95px);
   overflow-y: auto;
   margin-top: 1em;
 }
@@ -41,6 +42,7 @@
   display: grid;
   margin: 0 auto;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  overflow-x: clip;
 }
 
 
@@ -120,15 +122,15 @@
 }
 
 .ranking-normal {
-  color: #000000;
+  color: var(--ranking-normal);
 }
 
 .ranking-bad {
-  color: #ff4a4a;
+  color: var(--ranking-bad);
 }
 
 .ranking-very-bad {
-  color: #ff2525;
+  color: var(--ranking-very-bad);
 }
 
 .your-ranking {

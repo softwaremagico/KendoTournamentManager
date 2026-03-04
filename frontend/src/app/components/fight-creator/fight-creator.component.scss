@@ -56,6 +56,11 @@
   min-height: 20vh;
   max-height: 400px;
   gap: 1rem;
+  margin-top: 0;
+}
+
+::ng-deep .team-grid.grid {
+  overflow-x: hidden !important;
 }
 
 .new-fight-title {
@@ -101,10 +106,14 @@
 .canvas {
   width: 100%;
   min-width: 40vw;
-  height: 100%;
+  height: 75vh;
   overflow-y: auto;
   padding: 1.5rem 0 1.5rem;
   background: var(--body-background);
+}
+
+.buttons-row {
+  padding-bottom: 1rem;
 }
 
 

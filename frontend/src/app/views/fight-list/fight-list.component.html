@@ -129,10 +129,10 @@
           <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+                     *ngIf="(RbacActivity.PROJECTOR_MODE | hasPermission) && (!tournament || tournament.locked)"
                      class="expand-divider"></mat-divider>
         <button biit-icon class="expand-button"
-                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && (!tournament || tournament.locked)"
+                *ngIf="(RbacActivity.PROJECTOR_MODE | hasPermission) && (!tournament || tournament.locked)"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 (click)="projector()"
                 [title]="t('projectMode')">
@@ -176,7 +176,7 @@
                            (click)="selectDuel(duel)"
                            (keydown)="selectDuel(duel)"
                            [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
-                           [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                           [duelSelected]="selectedDuel" [swapColors]="swappedColors"
                            [projectMode]="projectorMode"
                            [swapTeams]="swappedTeams"></untie-fight>
             </div>

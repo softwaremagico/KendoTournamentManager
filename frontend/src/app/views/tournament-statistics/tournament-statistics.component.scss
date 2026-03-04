@@ -4,7 +4,7 @@
 
 .statistics-layout {
   display: grid;
-  gap: 2em;
+  height: calc(100vh - 60px);
 }
 
 .statistics-layout .upper-menu {
@@ -25,10 +25,11 @@
   background-color: var(--floating-background);
   border: 3px solid var(--component-color);
   margin: 0 2em 0 2em;
+  height: calc(100vh - 100px);
 }
 
 .statistics-container {
-  height: 78vh;
+  height: calc(100% - 95px);
   overflow-y: auto;
   margin-top: 1em;
 }
@@ -37,6 +38,7 @@
   display: grid;
   margin: 0 auto;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  overflow-x: clip;
 }
 
 .frame {
