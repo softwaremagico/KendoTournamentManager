@@ -95,6 +95,7 @@ export class ActivityService {
       RbacActivity.PLAY_WHISTLE,
       RbacActivity.EDIT_FIGHT_TIME,
       RbacActivity.WIKI_ACCESS,
+      RbacActivity.DARK_MODE
     ];
   }
 
@@ -111,7 +112,9 @@ export class ActivityService {
       RbacActivity.READ_COMPETITORS_RANKINGS,
       RbacActivity.CAN_LOGOUT,
       RbacActivity.VIEW_PARTICIPANT_FIGHTS,
-      RbacActivity.VIEW_PARTICIPANT_STATISTICS
+      RbacActivity.VIEW_PARTICIPANT_STATISTICS,
+      RbacActivity.WIKI_ACCESS,
+      RbacActivity.DARK_MODE
     ];
   }
 
