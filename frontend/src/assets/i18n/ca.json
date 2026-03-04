@@ -713,6 +713,30 @@
       "bronze": "Puja quatre graons.",
       "silver": "Puja cinc graons.",
       "gold": "Puja set graons."
+    },
+    "longPath": {
+      "title": "És un camí llarg...",
+      "description": "Participa durant diverses hores als tornejos.",
+      "normal": "Participa durant 100 hores als tornejos.",
+      "bronze": "Participa durant 150 hores als tornejos.",
+      "silver": "Participa durant 200 hores als tornejos.",
+      "gold": "Participa durant 250 hores als tornejos."
+    },
+    "headShot": {
+      "title": "Tret al cap!",
+      "description": "Aconsegueix només punts 'Men' i obtén almenys un 'Men' a cada combat.",
+      "normal": "Puntua només 'Men' durant un torneig.",
+      "bronze": "Aconsegueix només 'Men' durant dos tornejos consecutius.",
+      "silver": "Aconsegueix només 'Men' durant tres tornejos consecutius.",
+      "gold": "Aconsegueix només 'Men' durant cinc tornejos consecutius."
+    },
+    "youAreUnderArrest": {
+      "title": "Estàs sota arrest!",
+      "description": "Aconsegueix només punts 'Kote' i obtén almenys un 'Kote' a cada combat.",
+      "normal": "Puntua només 'Kote' durant un torneig.",
+      "bronze": "Aconsegueix només 'Kote' durant dos tornejos consecutius.",
+      "silver": "Aconsegueix només 'Kote' durant tres tornejos consecutius.",
+      "gold": "Aconsegueix només 'Kote' durant cinc tornejos consecutius."
     }
   },
   "removeTeams": "Treure Equips",

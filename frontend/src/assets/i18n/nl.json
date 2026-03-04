@@ -703,6 +703,30 @@
       "bronze": "Ga vier treden omhoog.",
       "silver": "Ga vijf treden omhoog.",
       "gold": "Ga zeven treden omhoog."
+    },
+    "longPath": {
+      "title": "Het is een lange weg...",
+      "description": "Neem meerdere uren deel aan toernooien.",
+      "normal": "Neem 100 uur deel aan toernooien.",
+      "bronze": "Neem 150 uur deel aan toernooien.",
+      "silver": "Neem 200 uur deel aan toernooien.",
+      "gold": "Neem 250 uur deel aan toernooien."
+    },
+    "headShot": {
+      "title": "Hoofdschot!",
+      "description": "Behaal alleen 'Men'-punten en scoor minstens één 'Men' in elk gevecht.",
+      "normal": "Scoor alleen 'Men' tijdens een toernooi.",
+      "bronze": "Scoor alleen 'Men' in twee opeenvolgende toernooien.",
+      "silver": "Scoor alleen 'Men' in drie opeenvolgende toernooien.",
+      "gold": "Scoor alleen 'Men' in vijf opeenvolgende toernooien."
+    },
+    "youAreUnderArrest": {
+      "title": "U bent gearresteerd!",
+      "description": "Behaal alleen 'Kote'-punten en scoor minstens één 'Kote' in elk gevecht.",
+      "normal": "Scoor alleen 'Kote' tijdens een toernooi.",
+      "bronze": "Scoor alleen 'Kote' in twee opeenvolgende toernooien.",
+      "silver": "Scoor alleen 'Kote' in drie opeenvolgende toernooien.",
+      "gold": "Scoor alleen 'Kote' in vijf opeenvolgende toernooien."
     }
   },
   "removeTeams": "Teams verwijderen",
