@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -66,6 +66,10 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
 
     private static final String TOURNAMENT4_NAME = "Tournament 4";
 
+    private static final String TOURNAMENT5_NAME = "Tournament 5";
+
+    private static final String TOURNAMENT6_NAME = "Tournament 6";
+
     @Autowired
     private TournamentController tournamentController;
 
@@ -82,12 +86,26 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     private TournamentDTO tournament2DTO;
     private TournamentDTO tournament3DTO;
     private TournamentDTO tournament4DTO;
+    private TournamentDTO tournament5DTO;
+    private TournamentDTO tournament6DTO;
 
     private ParticipantDTO woodCutter;
 
     private ParticipantDTO noWoodCutter1;
 
     private ParticipantDTO noWoodCutter2;
+
+    private ParticipantDTO headShot;
+
+    private ParticipantDTO noHeadShot1;
+
+    private ParticipantDTO noHeadShot2;
+
+    private ParticipantDTO youAreUnderArrest;
+
+    private ParticipantDTO noYouAreUnderArrest1;
+
+    private ParticipantDTO noYouAreUnderArrest2;
 
     private ParticipantDTO boneBreaker;
 
@@ -305,6 +323,118 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         achievementController.generateAchievements(tournament4DTO);
     }
 
+    @BeforeClass(dependsOnMethods = "prepareData")
+    public void prepareTournament5() {
+        //Create Tournament
+        tournament5DTO = addTournament(TOURNAMENT5_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament5DTO.getId(), TeamsOrder.SORTED, 0, null, null));
+
+        //Headshot
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(0).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
+        headShot = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
+
+        //No Headshot
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor2Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(1).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
+        noHeadShot1 = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
+        noHeadShot2 = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
+
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
+
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
+
+        //Headshot
+        fightDTOs.get(3).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(3).getDuels().get(0).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
+
+        //No Headshot has a 'Kote' here!
+        fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(3).getDuels().get(1).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
+
+
+        //Headshot
+        fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(4).getDuels().get(0).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
+
+        //No Headshot and now Terminator!
+        fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(4).getDuels().get(1).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
+        fightDTOs.get(4).getDuels().get(1).getCompetitor1();
+
+        achievementController.generateAchievements(tournament5DTO);
+    }
+
+    @BeforeClass(dependsOnMethods = "prepareData")
+    public void prepareTournament6() {
+        //Create Tournament
+        tournament6DTO = addTournament(TOURNAMENT6_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament6DTO.getId(), TeamsOrder.SORTED, 0, null, null));
+
+        //YouAreUnderArrest
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(0).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
+        youAreUnderArrest = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
+
+        //No YouAreUnderArrest
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor2Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(1).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
+        noYouAreUnderArrest1 = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
+        noYouAreUnderArrest2 = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
+
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
+
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
+
+        //YouAreUnderArrest
+        fightDTOs.get(3).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(3).getDuels().get(0).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
+
+        //No YouAreUnderArrest has a 'Do' here!
+        fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.DO);
+        fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(3).getDuels().get(1).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
+
+
+        //YouAreUnderArrest
+        fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(4).getDuels().get(0).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
+
+        //No YouAreUnderArrest and now Terminator!
+        fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(4).getDuels().get(1).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null, null));
+        fightDTOs.get(4).getDuels().get(1).getCompetitor1();
+
+        achievementController.generateAchievements(tournament6DTO);
+    }
+
     @Test
     public void checkWoodCutterAchievement() {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.WOODCUTTER);
@@ -321,6 +451,38 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noWoodCutter1);
         // noWoodCutter2 has only one 'D'.
         Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noWoodCutter2);
+    }
+
+    @Test
+    public void checkHeadShotAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament5DTO, AchievementType.HEAD_SHOT);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), headShot);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.HEAD_SHOT).size(), 1);
+    }
+
+    @Test
+    public void checkNoHeadShotCutter() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament5DTO, AchievementType.HEAD_SHOT);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noHeadShot1);
+        Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noHeadShot2);
+    }
+
+    @Test
+    public void checkYouAreUnderArrestAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament6DTO, AchievementType.YOU_ARE_UNDER_ARREST);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), youAreUnderArrest);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.HEAD_SHOT).size(), 1);
+    }
+
+    @Test
+    public void checkNoYouAreUnderArrestCutter() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament6DTO, AchievementType.YOU_ARE_UNDER_ARREST);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noYouAreUnderArrest1);
+        Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noYouAreUnderArrest2);
     }
 
     @Test
@@ -350,7 +512,8 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.TERMINATOR);
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), terminator);
-        Assert.assertEquals(achievementController.getAchievements(AchievementType.TERMINATOR).size(), 1);
+        //Tournament1, Tournament5 and Tournament6
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.TERMINATOR).size(), 5);
     }
 
     @Test

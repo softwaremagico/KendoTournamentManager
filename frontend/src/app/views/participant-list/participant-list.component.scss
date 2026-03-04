@@ -8,7 +8,7 @@ $main-black: #262626;
   padding: 2rem;
   margin: 2rem;
   border: solid 0.2rem $main-black;
-  background: white;
+  background: var(--table-background-color);
   overflow-x: hidden;
 }
 

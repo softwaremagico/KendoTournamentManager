@@ -12,5 +12,7 @@
   "wiki": "Wiki",
   "licenses": "Llicències",
   "about": "Quan a",
-  "list": "Llista"
+  "list": "Llista",
+  "darkMode": "Mode Fosc",
+  "lightMode": "Mode Clar"
 }

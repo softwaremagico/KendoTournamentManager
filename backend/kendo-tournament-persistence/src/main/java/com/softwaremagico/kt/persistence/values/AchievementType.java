@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.values;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -56,6 +56,10 @@ public enum AchievementType {
     THE_WINNER_TEAM,
 
     WOODCUTTER,
+
+    HEAD_SHOT,
+
+    YOU_ARE_UNDER_ARREST,
 
     THE_NEVER_ENDING_STORY,
 
