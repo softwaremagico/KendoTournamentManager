@@ -16,12 +16,23 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
+[![Docker Pulls](https://img.shields.io/docker/pulls/softwaremagico/kendo-tournament-manager-backend)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
+[![Docker Image Version](https://img.shields.io/docker/v/softwaremagico/kendo-tournament-manager-backend?sort=semver)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
+[![Docker Image Size](https://img.shields.io/docker/image-size/softwaremagico/kendo-tournament-manager-backend/latest)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20angular-red.svg?logo=angular&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
+[![Docker Pulls](https://img.shields.io/docker/pulls/softwaremagico/kendo-tournament-manager-frontend)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend)
+[![Docker Image Version](https://img.shields.io/docker/v/softwaremagico/kendo-tournament-manager-frontend?sort=semver)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend)
+[![Docker Image Size](https://img.shields.io/docker/image-size/softwaremagico/kendo-tournament-manager-frontend/latest)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend)
+
+[![TraefikProxy](https://img.shields.io/badge/powered%20by%20traeffik-%252300314b.svg?&logo=traefikproxy&logoColor=white)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+[![Docker Pulls](https://img.shields.io/docker/pulls/softwaremagico/kendo-tournament-manager-rproxy)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+[![Docker Image Version](https://img.shields.io/docker/v/softwaremagico/kendo-tournament-manager-rproxy?sort=semver)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+[![Docker Image Size](https://img.shields.io/docker/image-size/softwaremagico/kendo-tournament-manager-rproxy/latest)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
 
 The Kendo Tournament Manager NG is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
 designed to efficiently manage all your kendo tournament data in one convenient location.
