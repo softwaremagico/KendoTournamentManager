@@ -26,7 +26,7 @@
           (teamScore.sortingIndex===1 && isDrawWinner(1)) ||
           (teamScore.sortingIndex===2 && isDrawWinner(2))}"
           [matTooltipShowDelay]="500"
-          matTooltip="{{getTeamMembers(teamScore.team)}}"
+          matTooltip="{{nameUtils.getTeamMembers(teamScore.team)}}"
           matTooltipClass="tooltip-with-lines"
           class="team-ranking-value team-name">{{ teamScore.team.name }}
       </td>

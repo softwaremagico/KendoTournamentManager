@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Team} from "../../models/team";
+import {NameUtilsService} from "../../services/name-utils.service";
 
 @Component({
   selector: 'team-card',
@@ -19,5 +20,8 @@ export class TeamCardComponent {
 
   @Output()
   onClick: EventEmitter<Team> = new EventEmitter<Team>();
+
+  constructor(protected nameUtils: NameUtilsService) {
+  }
 
 }

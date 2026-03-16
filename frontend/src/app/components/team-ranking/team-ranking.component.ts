@@ -45,7 +45,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   constructor(private rankingService: RankingService, public translateService: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
               public override rbacService: RbacService, private router: Router,
-              private nameUtils: NameUtilsService) {
+              protected nameUtils: NameUtilsService) {
     super(rbacService);
   }
 

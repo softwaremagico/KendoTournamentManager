@@ -73,7 +73,7 @@
   --image-canvas-color: var(--main-background);
   --fight-border-color: #001239;
   --fight-ribbon-border-color: var(--component-color);
-  --bracket-group-color: var(--component-color);
+  --bracket-group-color: var(--fight-color);
   --link-color: var(--main-color);
   --team-ranking-finished: #4d6d95;
   --team-ranking-winner: #001239;
@@ -168,7 +168,7 @@
     --image-canvas-color: var(--main-background);
     --fight-border-color: #bec4d5;
     --fight-ribbon-border-color: var(--secondary-background-color);
-    --bracket-group-color: var(--body-background-color);
+    --bracket-group-color: var(--secondary-background-color);
     --link-color: var(--main-font-color);
     --team-ranking-finished: #E4E7EC;
     --team-ranking-winner: #001239;
