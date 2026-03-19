@@ -1,7 +1,7 @@
 <mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify"
           [ngClass]="{'locked': team.locked || disableDrag}"
           [matTooltipShowDelay]="500"
-          matTooltip="{{nameUtils.getTeamMembers(team)}}"
+          matTooltip="{{minify? nameUtils.getTeamMembers(team) : null}}"
           matTooltipClass="tooltip-with-lines"
           (click)="onClick.emit(team)" (keydown)="onClick.emit(team)">
   <mat-card-header class="team-card-header">
