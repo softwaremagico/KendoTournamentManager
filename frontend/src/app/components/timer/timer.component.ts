@@ -29,6 +29,9 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   private keysControls: boolean;
 
   @Input()
+  duelDuration: number;
+
+  @Input()
   set startingSeconds(value: number) {
     this.seconds = value;
   }
@@ -49,7 +52,6 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   elapsedSeconds: number = 0;
   private alarmRinging: boolean;
   totalTime: number;
-  increasedTime: number = 0;
   started: boolean = false;
   minutesEditable: boolean = false;
   secondsEditable: boolean = false;
@@ -127,12 +129,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
 
   resetVariablesAsSeconds(rawSeconds: number, started: boolean): void {
-    rawSeconds = rawSeconds - this.elapsedSeconds;
-    if (rawSeconds < 0) {
-      rawSeconds = 0;
-    }
-    this.seconds = rawSeconds % 60;
-    this.minutes = Math.floor(rawSeconds / 60);
+    this.correctSecondsAndMinutes(rawSeconds - this.elapsedSeconds, 0);
     this.started = started;
   }
 
@@ -167,8 +164,9 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   restoreTimer(): void {
     this.elapsedSeconds = 0;
-    this.onTimerChanged.emit([this.elapsedSeconds]);
-    this.resetVariablesAsSeconds(this.totalTime + this.increasedTime, false);
+    this.resetVariablesAsSeconds(this.duelDuration, false);
+    this.onTimerChanged.emit([0]);
+    this.timeDurationChanged.emit([this.duelDuration]);
     this.alarmRinging = false;
   }
 
@@ -225,9 +223,14 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   };
 
   addTime(time: number): void {
-    this.seconds += time;
-    this.increasedTime += time;
-    let rawSeconds: number = this.seconds + this.minutes * 60;
+    const rawSeconds: number = this.correctSecondsAndMinutes(this.seconds + time, this.minutes);
+    this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
+    console.log('rawSeconds', rawSeconds);
+    this.alarmRinging = false;
+  }
+
+  correctSecondsAndMinutes(seconds: number, minutes: number): number {
+    let rawSeconds: number = seconds + minutes * 60;
     if (rawSeconds < 0) {
       rawSeconds = 0;
     }
@@ -236,9 +239,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     if (this.minutes > 20) {
       this.minutes = 20;
     }
-    this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
-    this.onTimerChanged.emit([this.elapsedSeconds]);
-    this.alarmRinging = false;
+    return this.minutes * 60 + this.seconds;
   }
 
   setMinutesEditable(editable: boolean): void {
@@ -309,7 +310,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   updateElapsedTime(): void {
-    this.elapsedSeconds = (this.totalTime + this.increasedTime - this.minutes * 60 - this.seconds);
+    this.elapsedSeconds = (this.totalTime - this.minutes * 60 - this.seconds);
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 

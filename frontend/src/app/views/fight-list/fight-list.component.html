@@ -197,7 +197,8 @@
                [resetTimerPosition]="resetTimerPosition"
                [startingMinutes]="getDuelDefaultMinutesDuration()"
                [shown]="timer"
-               [startingSeconds]="getDuelDefaultSecondsDuration()"></popup-timer>
+               [startingSeconds]="getDuelDefaultSecondsDuration()"
+               [duelDuration]="this.tournament.duelsDuration" ></popup-timer>
 
   <biit-popup id="competitors-ranking-popup" *ngIf="showCompetitorsRanking"
               [title]="t('competitorsRanking')">
