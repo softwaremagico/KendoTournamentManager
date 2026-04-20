@@ -52,7 +52,7 @@
                 class="rewind timer-button">-10"
         </button>
         <button (click)="confirmReset=true" *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)"
-                [disabled]="this.elapsedSeconds === 0 || !editable"
+                [disabled]="this.elapsedSeconds === 0 && !editable"
                 class="restore timer-button">
           <mat-icon class="kendo-icon stop timer-button" svgIcon="rewind"></mat-icon>
         </button>
