@@ -59,9 +59,14 @@ export class CsvService {
   }
 
 
-  addTeams(file: File): Observable<Team[]> {
+  addTeams(file: File, tournamentId: number | undefined): Observable<Team[]> {
     this.systemOverloadService.isBusy.next(true);
-    let url: string = `${this.baseUrl}/teams`;
+    let url: string;
+    if (!tournamentId) {
+      url = `${this.baseUrl}/teams`;
+    } else {
+      url = `${this.baseUrl}/teams/tournaments/${tournamentId}`;
+    }
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");

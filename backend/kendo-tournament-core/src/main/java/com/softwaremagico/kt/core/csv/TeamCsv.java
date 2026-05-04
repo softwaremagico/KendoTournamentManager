@@ -21,7 +21,6 @@ package com.softwaremagico.kt.core.csv;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
@@ -79,9 +78,7 @@ public class TeamCsv extends CsvReader<Team> {
             final Team team = new Team();
             team.setName(getField(teamLine, nameIndex));
             try {
-                team.setTournament(tournamentProvider.findByName(getField(teamLine, tournamentIndex)).orElseThrow(()
-                        -> new TournamentNotFoundException(this.getClass(), "No tournament with name '"
-                        + getField(teamLine, tournamentIndex) + "' exists.")));
+                team.setTournament(tournamentProvider.findByName(getField(teamLine, tournamentIndex)).orElse(null));
             } catch (Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
