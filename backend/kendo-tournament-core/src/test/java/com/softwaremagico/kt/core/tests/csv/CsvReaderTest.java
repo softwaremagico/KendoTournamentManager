@@ -77,6 +77,8 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private TeamProvider teamProvider;
 
+    private TournamentDTO tournament;
+
     private String readCsvFile(String fileName) throws URISyntaxException, IOException {
         return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader()
                 .getResource(fileName).toURI())));
@@ -85,7 +87,7 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
     @BeforeClass
     public void prepareTournament1() {
         //Create Tournament
-        tournamentController.create(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE), null, null);
+        tournament = tournamentController.create(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE), null, null);
     }
 
     @Test
@@ -125,7 +127,7 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "addMultipleParticipant")
     public void addOneTeam() throws URISyntaxException, IOException {
         Assert.assertEquals(teamProvider.count(), 0);
-        csvController.addTeams(readCsvFile(ONE_TEAM_CSV_FILE_PATH), null);
+        csvController.addTeams(readCsvFile(ONE_TEAM_CSV_FILE_PATH), tournament.getId(), null);
         Assert.assertEquals(teamProvider.count(), 1);
         Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(0).getIdCard(), "00000003");
         Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(1).getIdCard(), "00000001");
@@ -135,7 +137,7 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "addOneTeam")
     public void addMultipleTeams() throws URISyntaxException, IOException {
         Assert.assertEquals(teamProvider.count(), 1);
-        csvController.addTeams(readCsvFile(TEAMS_CSV_FILE_PATH), null);
+        csvController.addTeams(readCsvFile(TEAMS_CSV_FILE_PATH), tournament.getId(), null);
         Assert.assertEquals(teamProvider.count(), 6);
         //Members order is corrected.
         Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(0).getIdCard(), "00000001");
@@ -145,7 +147,7 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidTeamCSV() throws URISyntaxException, IOException {
-        csvController.addTeams(readCsvFile(CLUBS_CSV_FILE_PATH), null);
+        csvController.addTeams(readCsvFile(CLUBS_CSV_FILE_PATH), tournament.getId(), null);
     }
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)

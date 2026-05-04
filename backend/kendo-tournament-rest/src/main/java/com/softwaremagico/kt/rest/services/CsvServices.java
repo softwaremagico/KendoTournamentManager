@@ -89,7 +89,24 @@ public class CsvServices {
     @PostMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> addTeams(@RequestParam("file") MultipartFile file,
                                   Authentication authentication, HttpServletRequest request) throws IOException, InvalidCsvFieldException {
-        final List<TeamDTO> failedTeams = csvController.addTeams(new String(file.getBytes(), StandardCharsets.UTF_8), authentication.getName());
+        final List<TeamDTO> failedTeams = csvController.addTeams(new String(file.getBytes(), StandardCharsets.UTF_8),
+                null, authentication.getName());
+        if (!failedTeams.isEmpty()) {
+            throw new InvalidCsvRowException(this.getClass(), "Some teams have not been inserted correctly!", failedTeams.size());
+        }
+        return failedTeams;
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Add teams from a CSV file. Returns any failed team attempt.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/teams/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TeamDTO> addTeams(@Parameter(description = "Id of an existing tournament", required = true)
+                                  @PathVariable("tournamentId") Integer tournamentId,
+                                  @RequestParam("file") MultipartFile file,
+                                  Authentication authentication, HttpServletRequest request) throws IOException, InvalidCsvFieldException {
+        final List<TeamDTO> failedTeams = csvController.addTeams(new String(file.getBytes(), StandardCharsets.UTF_8), tournamentId,
+                authentication.getName());
         if (!failedTeams.isEmpty()) {
             throw new InvalidCsvRowException(this.getClass(), "Some teams have not been inserted correctly!", failedTeams.size());
         }

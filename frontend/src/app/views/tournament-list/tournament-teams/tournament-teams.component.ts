@@ -504,7 +504,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     if (fileList) {
       const file: File | null = fileList.item(0);
       if (file) {
-        this.csvService.addTeams(file).subscribe(_teams => {
+        this.csvService.addTeams(file, this.tournament.id).subscribe(_teams => {
           if (_teams.length == 0) {
             this.messageService.infoMessage('teamStored');
             //We cancel action or will be saved later again.

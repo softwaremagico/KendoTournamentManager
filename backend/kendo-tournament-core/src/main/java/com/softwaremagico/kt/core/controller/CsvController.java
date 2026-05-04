@@ -161,14 +161,19 @@ public class CsvController {
     }
 
 
-    public List<TeamDTO> addTeams(String csvContent, String uploadedBy) {
+    public List<TeamDTO> addTeams(String csvContent, Integer tournamentId, String uploadedBy) {
         final List<Team> teams = teamCsv.readCSV(csvContent);
         final List<TeamDTO> failedTeams = new ArrayList<>();
+        final Optional<Tournament> selectedTournament = tournamentProvider.get(tournamentId);
         for (Team team : teams) {
             if (team.getTournament() == null) {
-                KendoTournamentLogger.severe(this.getClass().getName(), "Team '" + team.getName() + "' has assigned a tournament that does not exists.");
-                failedTeams.add(teamConverter.convert(new TeamConverterRequest(team)));
-                continue;
+                if (tournamentId != null && selectedTournament.isPresent()) {
+                    team.setTournament(selectedTournament.get());
+                } else {
+                    KendoTournamentLogger.severe(this.getClass().getName(), "Team '" + team.getName() + "' has assigned a tournament that does not exists.");
+                    failedTeams.add(teamConverter.convert(new TeamConverterRequest(team)));
+                    continue;
+                }
             }
             if (team.getMembers().size() > team.getTournament().getTeamSize()) {
                 throw new InvalidCsvFieldException(this.getClass(), "Team size is incorrect!", null);

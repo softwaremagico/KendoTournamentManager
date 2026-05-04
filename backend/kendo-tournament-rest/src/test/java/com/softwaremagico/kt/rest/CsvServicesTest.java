@@ -140,6 +140,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
         final byte[] bytes = Files.readAllBytes(Paths.get(getClass().getClassLoader()
                 .getResource(CLUBS_CSV_FILE_PATH).toURI()));
 
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(multipart("/csv/clubs")
                         .file("file", bytes)
@@ -147,6 +148,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
     }
 
 
