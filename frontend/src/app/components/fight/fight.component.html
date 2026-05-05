@@ -20,7 +20,7 @@
           [duel]="duel"
           [duelIndex]="i"
           [substitute]="duel.substitute"
-          [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | hasPermission) && !projectMode,
+          [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | hasPermission) && !projectMode && !locked,
             over: isOver(duel), teamDuel: this.fight.tournament.teamSize==1, onlyShow:onlyShow, substitute: duel.substitute, reordering: reorderAllowed}"
           [fightSelected]="selectedDuel!=undefined"
           [duelSelected]="selectedDuel"
@@ -29,6 +29,7 @@
           [locked]="locked"
           [projectMode]="projectMode"
           [highlightedParticipantId]="highlightedParticipantId"
+          [over]="isOver(duel)"
           class="duel"></duel>
   </div>
   <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true" [class.red-ribbon]="swapColors"

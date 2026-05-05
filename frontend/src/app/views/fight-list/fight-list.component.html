@@ -8,26 +8,27 @@
                 [title]="t('back')">
           <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
         </button>
-        <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission)"
+        <button biit-icon *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission) && !tournament.locked"
                 (click)="confirmResetFights=true"
                 [title]="t('wizard')">
           <mat-icon class="kendo-icon" svgIcon="wand"></mat-icon>
         </button>
         <button id="button-plus" biit-icon class="add-button"
-                *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
+                *ngIf="(RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType && !tournament.locked"
                 (click)="addElement()"
                 [disabled]="tournament && (tournament.locked || (tournament.type == TournamentType.SENBATSU && this.selectedGroup?.teams?.length == 0))"
                 [title]="t('addFight')"
                 icon="plus">
         </button>
         <button id="button-minus" biit-icon class="warning"
-                *ngIf="(RbacActivity.DELETE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType"
+                *ngIf="(RbacActivity.DELETE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType && !tournament.locked"
                 (click)="openDeleteElement()"
                 [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
                 [title]="t('delete')"
                 icon="minus">
         </button>
-        <button biit-icon *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | hasPermission)"
+        <button biit-icon
+                *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | hasPermission)"
                 (click)="openBracketsManager()"
                 [disabled]="(tournament && tournament.locked)"
                 [title]="t('groups')">
@@ -36,72 +37,72 @@
         <mat-divider [vertical]="true" class="timer-divider"
                      *ngIf="(RbacActivity.EDIT_FIGHT | hasPermission)"></mat-divider>
         <button biit-icon
-                *ngIf="(RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel?.finished == false)"
+                *ngIf="(RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel?.finished == false) && !tournament.locked"
                 (click)="finishDuel()"
                 [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
                 [title]="t('finishFight')">
           <mat-icon class="kendo-icon" svgIcon="check"></mat-icon>
         </button>
         <button biit-icon
-                *ngIf="(RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished == true"
+                *ngIf="(RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished == true && !tournament.locked"
                 (click)="unfinishDuel()"
                 [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
                 [title]="t('reopenFight')">
           <mat-icon class="kendo-icon" svgIcon="uncheck"></mat-icon>
         </button>
         <button biit-icon class="timer-button"
-                *ngIf="!timer && (RbacActivity.SHOW_TIMER | hasPermission)"
+                *ngIf="!timer && (RbacActivity.SHOW_TIMER | hasPermission) && !tournament.locked"
                 (click)="showTimer(canStartFight(selectedDuel))"
                 [disabled]="selectedDuel===undefined || selectedDuel.substitute || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [title]="t('chronometerOn')">
           <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
         </button>
         <button biit-icon class="timer-button"
-                *ngIf="timer && (RbacActivity.EDIT_FIGHT | hasPermission)"
+                *ngIf="timer && (RbacActivity.EDIT_FIGHT | hasPermission) && !tournament.locked"
                 (click)="showTimer(false)"
                 [disabled]="selectedDuel===undefined || selectedDuel.substitute || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [title]="t('chronometerOff')">
           <mat-icon class="kendo-icon" svgIcon="timer_off"></mat-icon>
         </button>
         <button biit-icon class="whisper-button"
-                *ngIf="(RbacActivity.PLAY_WHISTLE | hasPermission)"
+                *ngIf="(RbacActivity.PLAY_WHISTLE | hasPermission) && !tournament.locked"
                 (mousedown)="playWhistle()"
                 (mouseup)="stopWhistle()"
                 [title]="t('playWhistle')">
           <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
+        <mat-divider [vertical]="true" *ngIf="((RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
           || (RbacActivity.SWAP_FIGHTS | hasPermission)
-          || (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
+          || (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)) && !tournament.locked"
                      class="actions-divider"></mat-divider>
         <button biit-icon class="exchange-colors"
-                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)"
+                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | hasPermission) && !tournament.locked"
                 (click)="swapColors()"
                 [title]="t('swapColors')">
           <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
         </button>
         <button biit-icon class="exchange-teams"
-                *ngIf="(RbacActivity.SWAP_FIGHTS | hasPermission)"
+                *ngIf="(RbacActivity.SWAP_FIGHTS | hasPermission) && !tournament.locked"
                 (click)="swapTeams()"
                 [title]="t('swapTeams')">
           <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
         </button>
         <button biit-icon class="member-order"
-                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
+                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission) && !tournament.locked"
                 [disabled]="this.tournament && this.tournament.teamSize > 1 && (tournament && tournament.locked)"
                 (click)="enableMemberOrder(true)"
                 [title]="t('membersOrder')">
           <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
         </button>
         <button biit-icon class="member-order"
-                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)"
+                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission) && !tournament.locked"
                 [disabled]="(tournament && tournament.locked)"
                 (click)="enableMemberOrder(false)"
                 [title]="t('membersOrder')">
           <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
-            (RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)"
+        <mat-divider [vertical]="true" *ngIf="((RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
+            (RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)) && !tournament.locked"
                      class="order-divider"></mat-divider>
         <button biit-icon
                 *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
@@ -119,7 +120,7 @@
           <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
+                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && !tournament.locked"
                      class="download-divider"></mat-divider>
         <button biit-icon class="download-button"
                 *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)"
@@ -168,6 +169,7 @@
                    [showAvatars]="showAvatars"
                    [swapColors]="swappedColors"
                    [swapTeams]="swappedTeams"
+                   [locked]="tournament && tournament.locked"
                    [projectMode]="projectorMode"></fight>
 
             <div class="unties-list">
@@ -198,7 +200,7 @@
                [startingMinutes]="getDuelDefaultMinutesDuration()"
                [shown]="timer"
                [startingSeconds]="getDuelDefaultSecondsDuration()"
-               [duelDuration]="this.tournament.duelsDuration" ></popup-timer>
+               [duelDuration]="this.tournament.duelsDuration"></popup-timer>
 
   <biit-popup id="competitors-ranking-popup" *ngIf="showCompetitorsRanking"
               [title]="t('competitorsRanking')">

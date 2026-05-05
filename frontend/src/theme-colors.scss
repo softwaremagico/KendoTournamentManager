@@ -86,6 +86,7 @@
   --ranking-bad: #ff4a4a;
   --ranking-very-bad: #ff2525;
   --text-highlighted: var(--main-color);
+  --fight-over: var(--disabled-primary-color);
 
   .dark-mode {
     --main-color: #001fff;
@@ -181,5 +182,6 @@
     --ranking-bad: #ff4a4a;
     --ranking-very-bad: #ff2525;
     --text-highlighted: var(--main-color);
+    --fight-over: var(--disabled-primary-color);
   }
 }

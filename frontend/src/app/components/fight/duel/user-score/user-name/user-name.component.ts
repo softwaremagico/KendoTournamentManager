@@ -36,6 +36,12 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   @Input()
   highlightedParticipantId: number | undefined;
 
+  @Input()
+  locked: boolean = false;
+
+  @Input()
+  over: boolean;
+
   reorderAllowed: boolean = true;
 
   resizeSubscription$: Subscription;
