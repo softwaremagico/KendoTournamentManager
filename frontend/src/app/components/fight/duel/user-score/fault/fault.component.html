@@ -1,10 +1,10 @@
-<div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" class="fault" *ngIf="!locked &&
-(RbacActivity.ASSIGN_FAULTS | hasPermission)">
+<div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu"
+     class="fault" *ngIf="!locked &&(RbacActivity.ASSIGN_FAULTS | hasPermission)" [class.over]="over && !locked">
   <mat-menu #menu="matMenu">
     <button [disabled]="duel.finished" (click)="updateFault(true)"
-            mat-menu-item>{{'fault' | transloco}}
+            mat-menu-item>{{ 'fault' | transloco }}
     </button>
-    <button [disabled]="duel.finished" (click)="updateFault(false)" mat-menu-item>{{'clear' | transloco}}</button>
+    <button [disabled]="duel.finished" (click)="updateFault(false)" mat-menu-item>{{ 'clear' | transloco }}</button>
   </mat-menu>
   <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
        this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
@@ -21,7 +21,7 @@
   </div>
 </div>
 <!-- Fault representation when menu is disabled -->
-<div class="fault" *ngIf="locked || !(RbacActivity.ASSIGN_FAULTS | hasPermission)">
+<div class="fault" *ngIf="locked || !(RbacActivity.ASSIGN_FAULTS | hasPermission)" [class.over]="over && !locked">
   <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
        this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
        class="fault-content">

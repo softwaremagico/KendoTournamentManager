@@ -83,7 +83,8 @@
   visibility: visible;
   opacity: 1;
   background: var(--floating-background);
-  img{
+
+  img {
     margin-top: 10px;
   }
 }
@@ -115,4 +116,17 @@
   .mat-mdc-menu-item.mdc-list-item:hover {
     background: var(--hover-color);
   }
+}
+
+.score-area.over {
+  color: var(--fight-over);
+}
+
+.score.over {
+  color: var(--fight-over);
+}
+
+.point.over {
+  color: var(--fight-over);
+  border-color: var(--fight-over);
 }

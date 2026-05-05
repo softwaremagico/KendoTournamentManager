@@ -5,68 +5,71 @@ import {Participant} from "../../../../models/participant";
 import {Fight} from "../../../../models/fight";
 
 @Component({
-    selector: 'user-score',
-    templateUrl: './user-score.component.html',
-    styleUrls: ['./user-score.component.scss']
+  selector: 'user-score',
+  templateUrl: './user-score.component.html',
+  styleUrls: ['./user-score.component.scss']
 })
 export class UserScoreComponent {
 
-    @Input()
-    fight: Fight;
+  @Input()
+  fight: Fight;
 
-    @Input()
-    duel: Duel;
+  @Input()
+  duel: Duel;
 
-    @Input()
-    duelIndex: number;
+  @Input()
+  duelIndex: number;
 
-    @Input()
-    left: boolean;
+  @Input()
+  left: boolean;
 
-    @Input()
-    swapTeams: boolean;
+  @Input()
+  swapTeams: boolean;
 
-    @Input()
-    showAvatar: boolean = false;
+  @Input()
+  showAvatar: boolean = false;
 
-    @Input()
-    isSelected: boolean;
+  @Input()
+  isSelected: boolean;
 
-    @Input()
-    locked: boolean = false;
+  @Input()
+  locked: boolean = false;
 
-    @Input()
-    projectMode: boolean;
+  @Input()
+  projectMode: boolean;
 
-    @Input()
-    highlightedParticipantId: number | undefined;
+  @Input()
+  highlightedParticipantId: number | undefined;
 
-    @Input()
-    substitute: boolean = false;
+  @Input()
+  substitute: boolean = false;
 
-    participantWindowOpened: boolean = false;
+  @Input()
+  over: boolean = false;
 
-    isUntie(): boolean {
-        return this.duel.type === DuelType.UNDRAW;
+  participantWindowOpened: boolean = false;
+
+  isUntie(): boolean {
+    return this.duel.type === DuelType.UNDRAW;
+  }
+
+  getParticipant(): Participant | undefined {
+    if (this.left) {
+      if (!this.swapTeams) {
+        return this.duel.competitor1;
+      } else {
+        return this.duel.competitor2;
+      }
+    } else {
+      if (!this.swapTeams) {
+        return this.duel.competitor2;
+      } else {
+        return this.duel.competitor1;
+      }
     }
+  }
 
-    getParticipant(): Participant | undefined {
-        if (this.left) {
-            if (!this.swapTeams) {
-                return this.duel.competitor1;
-            } else {
-                return this.duel.competitor2;
-            }
-        } else {
-            if (!this.swapTeams) {
-                return this.duel.competitor2;
-            } else {
-                return this.duel.competitor1;
-            }
-        }
-    }
-
-    isParticipantPhotoWindowVisible($event: boolean) {
-        this.participantWindowOpened = $event;
-    }
+  isParticipantPhotoWindowVisible($event: boolean) {
+    this.participantWindowOpened = $event;
+  }
 }

@@ -10,10 +10,14 @@
   color: var(--component-color);
 }
 
-.substitute-separation{
+.substitute-separation {
   min-width: 135px;
   height: 50px;
   margin: 2px 0;
+}
+
+participant-picture.over {
+  opacity: 30%;
 }
 
 @media screen and (max-width: 1024px) {

@@ -31,6 +31,9 @@ export class FaultComponent implements OnInit, OnChanges {
   @Input()
   projectMode: boolean;
 
+  @Input()
+  over: boolean = false;
+
   timeRepresentation: string | undefined;
 
   mouseX: number | undefined;

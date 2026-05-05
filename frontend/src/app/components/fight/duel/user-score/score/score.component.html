@@ -1,5 +1,5 @@
 <div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" class="score-area" *ngIf="!locked &&
-(RbacActivity.EDIT_DUEL | hasPermission)">
+(RbacActivity.EDIT_DUEL | hasPermission)" [class.over]="over && !locked">
   <mat-menu #menu="matMenu">
     <button [disabled]="duel.finished" (click)="updateScore(score)" *ngFor="let score of possibleScores()"
             mat-menu-item>{{ Score.toCamel(score) | transloco }}
@@ -8,7 +8,7 @@
   <div (mouseout)="clearCoordinates()" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
        (focus)="clearCoordinates();"
        (blur)="clearCoordinates();"
-       class="point" [ngClass]="{'hidden-point': scoreRepresentation === 'F'}">
+       class="point" [ngClass]="{'hidden-point': scoreRepresentation === 'F'}" [class.over]="over && !locked">
     <span class="point-value">{{ scoreRepresentation }}</span>
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
          [ngClass]="{
@@ -22,8 +22,8 @@
   </div>
 </div>
 <!-- Score representation when menu is disabled -->
-<div class="score-area" *ngIf="locked || !(RbacActivity.EDIT_DUEL | hasPermission)">
-  <div class="point" *ngIf="scoreRepresentation!==''">
+<div class="score-area" *ngIf="locked || !(RbacActivity.EDIT_DUEL | hasPermission)" [class.over]="over && !locked">
+  <div class="point" *ngIf="scoreRepresentation!==''" [class.over]="over && !locked">
     {{ scoreRepresentation }}
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
          [ngClass]="{

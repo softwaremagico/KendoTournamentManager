@@ -114,7 +114,7 @@
 }
 
 .duel.over {
-  color: red;
+  color: grey;
 }
 
 .duel.over.substitute {
@@ -126,7 +126,7 @@
 }
 
 .duel.duelSelected.over {
-  opacity: 30%;
+  color: grey;
 }
 
 .duel.duelSelected {
@@ -154,7 +154,7 @@
 
 .duel:has(user-score .highlightParticipant) {
   background: var(--active-fight-color);
-  opacity: 30%;
+  color: grey;
 }
 
 .duel:has(user-score .showAvatar) {

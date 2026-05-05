@@ -6,10 +6,11 @@
             [showAvatar]="showAvatars"
             [locked]="locked"
             [highlightedParticipantId]="highlightedParticipantId"
-            [isSelected]="duelSelected?.id == duel.id"
+            [isSelected]="duelSelected?.id == duel.id && !locked"
             [swapTeams]="swapTeams"
             [projectMode]="projectMode"
             [substitute]="substitute"
+            [over]="over && !locked"
             cdkDropList
             class="user-score"></user-score>
 <draw *ngIf="!duel.substitute" [duel]="duel" class="draw-score"></draw>
@@ -23,10 +24,11 @@
             [showAvatar]="showAvatars"
             [locked]="locked"
             [highlightedParticipantId]="highlightedParticipantId"
-            [isSelected]="duelSelected?.id == duel.id"
+            [isSelected]="duelSelected?.id == duel.id && !locked"
             [swapTeams]="swapTeams"
             [projectMode]="projectMode"
             [substitute]="substitute"
+            [over]="over && !locked"
             cdkDropList
             class="user-score"></user-score>
 
