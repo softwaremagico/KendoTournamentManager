@@ -20,6 +20,10 @@
                 <include name="participantAccess"/>
                 <include name="dataValidation"/>
                 <include name="csvServices"/>
+                <include name="restErrorResponse"/>
+                <include name="createUserRequest"/>
+                <include name="jwtTokenUtil"/>
+                <include name="exceptionAdvice"/>
             </run>
         </groups>
         <classes>
@@ -33,6 +37,10 @@
             <class name="com.softwaremagico.kt.rest.ParticipantAccessTests"/>
             <class name="com.softwaremagico.kt.rest.DataValidationTest"/>
             <class name="com.softwaremagico.kt.rest.CsvServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.exceptions.ErrorResponseTest"/>
+            <class name="com.softwaremagico.kt.rest.security.dto.CreateUserRequestTest"/>
+            <class name="com.softwaremagico.kt.rest.security.JwtTokenUtilTest"/>
+            <class name="com.softwaremagico.kt.rest.exceptions.ExceptionControllerAdviceTest"/>
             <class name="com.softwaremagico.kt.websockets.BasicWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
         </classes>
