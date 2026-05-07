@@ -155,8 +155,8 @@ describe('AchievementTileComponent', () => {
   });
 
   it('should update tooltip border flags based on mouse position', () => {
-    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 800 });
-    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 600 });
+    spyOnProperty(window, 'innerWidth', 'get').and.returnValue(800);
+    spyOnProperty(window, 'innerHeight', 'get').and.returnValue(600);
 
     component.updateCoordinates({ clientX: 10, clientY: 500 } as MouseEvent);
 
