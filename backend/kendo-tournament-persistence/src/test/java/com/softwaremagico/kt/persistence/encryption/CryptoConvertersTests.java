@@ -45,7 +45,9 @@ public class CryptoConvertersTests {
 	// FloatCryptoConverter tests
 	@Test
 	public void testFloatConverterWithNull() {
-		Assert.assertNull(floatConverter.convertToDatabaseColumn(null));
+		final String encrypted = floatConverter.convertToDatabaseColumn(null);
+		Assert.assertNull(encrypted);
+		Assert.assertNotEquals(encrypted, "");
 	}
 
 	@Test
@@ -53,6 +55,7 @@ public class CryptoConvertersTests {
 		final Float originalValue = 123.45f;
 		final String encrypted = floatConverter.convertToDatabaseColumn(originalValue);
 		Assert.assertNotNull(encrypted);
+		Assert.assertFalse(encrypted.isEmpty());
 	}
 
 	@Test
@@ -61,8 +64,9 @@ public class CryptoConvertersTests {
 		final String encrypted = floatConverter.convertToDatabaseColumn(originalValue);
 		final Float decrypted = floatConverter.convertToEntityAttribute(encrypted);
 		Assert.assertNotNull(decrypted);
-		// Note: Float comparison with precision
 		Assert.assertEquals(decrypted, originalValue, 0.001f);
+		Assert.assertNotEquals(decrypted, 0f);
+		Assert.assertNotEquals(decrypted, -originalValue);
 	}
 
 	@Test
@@ -70,7 +74,10 @@ public class CryptoConvertersTests {
 		final Float originalValue = 0f;
 		final String encrypted = floatConverter.convertToDatabaseColumn(originalValue);
 		final Float decrypted = floatConverter.convertToEntityAttribute(encrypted);
+		Assert.assertNotNull(decrypted);
 		Assert.assertEquals(decrypted, originalValue);
+		Assert.assertEquals(decrypted, 0f);
+		Assert.assertNotEquals(decrypted, 1f);
 	}
 
 	@Test
@@ -78,7 +85,10 @@ public class CryptoConvertersTests {
 		final Float originalValue = -456.78f;
 		final String encrypted = floatConverter.convertToDatabaseColumn(originalValue);
 		final Float decrypted = floatConverter.convertToEntityAttribute(encrypted);
+		Assert.assertNotNull(decrypted);
 		Assert.assertEquals(decrypted, originalValue, 0.001f);
+		Assert.assertTrue(decrypted < 0);
+		Assert.assertFalse(decrypted > 0);
 	}
 
 	@Test
@@ -102,7 +112,9 @@ public class CryptoConvertersTests {
 	// BooleanCryptoConverter tests
 	@Test
 	public void testBooleanConverterWithNull() {
-		Assert.assertNull(booleanConverter.convertToDatabaseColumn(null));
+		final String encrypted = booleanConverter.convertToDatabaseColumn(null);
+		Assert.assertNull(encrypted);
+		Assert.assertNotEquals(encrypted, "");
 	}
 
 	@Test
@@ -110,6 +122,7 @@ public class CryptoConvertersTests {
 		final Boolean originalValue = true;
 		final String encrypted = booleanConverter.convertToDatabaseColumn(originalValue);
 		Assert.assertNotNull(encrypted);
+		Assert.assertFalse(encrypted.isEmpty());
 	}
 
 	@Test
@@ -117,6 +130,7 @@ public class CryptoConvertersTests {
 		final Boolean originalValue = false;
 		final String encrypted = booleanConverter.convertToDatabaseColumn(originalValue);
 		Assert.assertNotNull(encrypted);
+		Assert.assertFalse(encrypted.isEmpty());
 	}
 
 	@Test
@@ -124,7 +138,10 @@ public class CryptoConvertersTests {
 		final Boolean originalValue = true;
 		final String encrypted = booleanConverter.convertToDatabaseColumn(originalValue);
 		final Boolean decrypted = booleanConverter.convertToEntityAttribute(encrypted);
+		Assert.assertNotNull(decrypted);
 		Assert.assertEquals(decrypted, originalValue);
+		Assert.assertTrue(decrypted);
+		Assert.assertFalse(!decrypted);
 	}
 
 	@Test
@@ -132,7 +149,10 @@ public class CryptoConvertersTests {
 		final Boolean originalValue = false;
 		final String encrypted = booleanConverter.convertToDatabaseColumn(originalValue);
 		final Boolean decrypted = booleanConverter.convertToEntityAttribute(encrypted);
+		Assert.assertNotNull(decrypted);
 		Assert.assertEquals(decrypted, originalValue);
+		Assert.assertFalse(decrypted);
+		Assert.assertTrue(!decrypted);
 	}
 
 	@Test
@@ -153,6 +173,9 @@ public class CryptoConvertersTests {
 		final Boolean originalValue2 = false;
 		final String encrypted1 = booleanConverter.convertToDatabaseColumn(originalValue1);
 		final String encrypted2 = booleanConverter.convertToDatabaseColumn(originalValue2);
+		Assert.assertNotNull(encrypted1);
+		Assert.assertNotNull(encrypted2);
 		Assert.assertNotEquals(encrypted1, encrypted2);
+		Assert.assertFalse(encrypted1.equals(encrypted2));
 	}
 }

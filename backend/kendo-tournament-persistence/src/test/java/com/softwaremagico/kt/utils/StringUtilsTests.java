@@ -29,92 +29,130 @@ public class StringUtilsTests {
 
     @Test
     public void testSetCaseWithNull() {
-        Assert.assertNull(StringUtils.setCase(null));
+        final String result = StringUtils.setCase(null);
+        Assert.assertNull(result);
     }
 
     @Test
     public void testSetCaseWithSingleWord() {
-        Assert.assertEquals(StringUtils.setCase("john"), "John");
+        final String result = StringUtils.setCase("john");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result, "John");
+        Assert.assertFalse(result.equals("john"));
     }
 
     @Test
     public void testSetCaseWithMultipleWords() {
-        Assert.assertEquals(StringUtils.setCase("john doe"), "John Doe");
+        final String result = StringUtils.setCase("john doe");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result, "John Doe");
+        Assert.assertTrue(result.startsWith("John"));
+        Assert.assertTrue(result.endsWith("Doe"));
     }
 
     @Test
     public void testSetCaseWithMultipleWordsAndSemicolon() {
-        String result = StringUtils.setCase("john;doe");
+        final String result = StringUtils.setCase("john;doe");
         Assert.assertNotNull(result);
         Assert.assertTrue(result.contains(","));
+        Assert.assertFalse(result.contains(";"));
     }
 
     @Test
     public void testSetCaseWithShortWord() {
-        Assert.assertEquals(StringUtils.setCase("a b c"), "a b c");
+        final String result = StringUtils.setCase("a b c");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result, "a b c");
     }
 
     @Test
     public void testSetCaseWithMixedCase() {
-        Assert.assertEquals(StringUtils.setCase("JOHN DOE"), "John Doe");
+        final String result = StringUtils.setCase("JOHN DOE");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result, "John Doe");
+        Assert.assertNotEquals(result, "JOHN DOE");
+        Assert.assertNotEquals(result, "john doe");
     }
 
     @Test
     public void testSetCaseWithNumbers() {
-        Assert.assertEquals(StringUtils.setCase("john123 doe456"), "John123 Doe456");
+        final String result = StringUtils.setCase("john123 doe456");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result, "John123 Doe456");
+        Assert.assertTrue(result.contains("123"));
+        Assert.assertTrue(result.contains("456"));
     }
 
     @Test
     public void testSetCaseWithLeadingAndTrailingSpaces() {
-        Assert.assertEquals(StringUtils.setCase("  john doe  "), "John Doe");
+        final String result = StringUtils.setCase("  john doe  ");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result, "John Doe");
+        Assert.assertFalse(result.startsWith(" "));
+        Assert.assertFalse(result.endsWith(" "));
     }
 
     @Test
     public void testSetCaseWithMultipleSemicolons() {
-        String result = StringUtils.setCase("john;doe;smith");
+        final String result = StringUtils.setCase("john;doe;smith");
         Assert.assertNotNull(result);
         Assert.assertTrue(result.contains(","));
+        Assert.assertFalse(result.contains(";"));
+        Assert.assertTrue(result.length() > 0);
     }
 
     @Test
     public void testGenerateRandomTokenLength() {
-        String token = StringUtils.generateRandomToken(10);
+        final String token = StringUtils.generateRandomToken(10);
+        Assert.assertNotNull(token);
         Assert.assertEquals(token.length(), 10);
+        Assert.assertNotEquals(token.length(), 11);
+        Assert.assertNotEquals(token.length(), 9);
     }
 
     @Test
     public void testGenerateRandomTokenNotNull() {
-        String token = StringUtils.generateRandomToken(5);
+        final String token = StringUtils.generateRandomToken(5);
         Assert.assertNotNull(token);
+        Assert.assertTrue(token.length() > 0);
     }
 
     @Test
     public void testGenerateRandomTokenUniqueness() {
-        String token1 = StringUtils.generateRandomToken(20);
-        String token2 = StringUtils.generateRandomToken(20);
+        final String token1 = StringUtils.generateRandomToken(20);
+        final String token2 = StringUtils.generateRandomToken(20);
+        Assert.assertNotNull(token1);
+        Assert.assertNotNull(token2);
         Assert.assertNotEquals(token1, token2);
     }
 
     @Test
     public void testGenerateRandomTokenValidCharacters() {
-        String token = StringUtils.generateRandomToken(100);
+        final String token = StringUtils.generateRandomToken(100);
+        Assert.assertNotNull(token);
         for (char c : token.toCharArray()) {
-            int ascii = (int) c;
+            final int ascii = (int) c;
             Assert.assertTrue(ascii >= 33 && ascii <= 90,
                     "Character '" + c + "' with ASCII " + ascii + " is outside expected range [33-90]");
+            Assert.assertFalse(ascii < 33, "ASCII value should not be less than 33");
+            Assert.assertFalse(ascii > 90, "ASCII value should not be greater than 90");
         }
     }
 
     @Test
     public void testGenerateRandomTokenZeroLength() {
-        String token = StringUtils.generateRandomToken(0);
+        final String token = StringUtils.generateRandomToken(0);
+        Assert.assertNotNull(token);
         Assert.assertEquals(token.length(), 0);
     }
 
     @Test
     public void testGenerateRandomTokenLargeLength() {
-        String token = StringUtils.generateRandomToken(1000);
+        final String token = StringUtils.generateRandomToken(1000);
+        Assert.assertNotNull(token);
         Assert.assertEquals(token.length(), 1000);
+        Assert.assertNotEquals(token.length(), 999);
+        Assert.assertNotEquals(token.length(), 1001);
     }
 }
 

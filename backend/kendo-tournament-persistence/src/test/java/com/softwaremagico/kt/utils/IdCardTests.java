@@ -29,66 +29,91 @@ public class IdCardTests {
 
     @Test
     public void testNifFromDniWithNull() {
-        Assert.assertNull(IdCard.nifFromDni(null));
+        final String result = IdCard.nifFromDni(null);
+        Assert.assertNull(result);
     }
 
     @Test
     public void testNifFromDniWithZero() {
-        Assert.assertEquals(IdCard.nifFromDni(0), "0T");
+        final String nif = IdCard.nifFromDni(0);
+        Assert.assertNotNull(nif);
+        Assert.assertEquals(nif, "0T");
+        Assert.assertTrue(nif.startsWith("0"));
+        Assert.assertTrue(nif.endsWith("T"));
     }
 
     @Test
     public void testNifFromDniWithOne() {
-        Assert.assertEquals(IdCard.nifFromDni(1), "1R");
+        final String nif = IdCard.nifFromDni(1);
+        Assert.assertNotNull(nif);
+        Assert.assertEquals(nif, "1R");
+        Assert.assertNotEquals(nif, "1T");
     }
 
     @Test
     public void testNifFromDniWithSmallNumber() {
-        Assert.assertEquals(IdCard.nifFromDni(12345678), "12345678Z");
-    }
-
-    @Test
-    public void testNifFromDniWithDifferentNumbers() {
-        String nif1 = IdCard.nifFromDni(11111111);
-        String nif2 = IdCard.nifFromDni(22222222);
-        Assert.assertNotEquals(nif1, nif2);
-    }
-
-    @Test
-    public void testNifFromDniReturnsString() {
-        String nif = IdCard.nifFromDni(123);
+        final String nif = IdCard.nifFromDni(12345678);
         Assert.assertNotNull(nif);
-        Assert.assertTrue(nif.matches("\\d+[A-Z]"));
-    }
-
-    @Test
-    public void testNifFromDniContainsLetter() {
-        String nif = IdCard.nifFromDni(999);
-        Assert.assertTrue(nif.length() > 0);
+        Assert.assertEquals(nif, "12345678Z");
+        Assert.assertTrue(nif.startsWith("12345678"));
         Assert.assertTrue(Character.isLetter(nif.charAt(nif.length() - 1)));
     }
 
     @Test
+    public void testNifFromDniWithDifferentNumbers() {
+        final String nif1 = IdCard.nifFromDni(11111111);
+        final String nif2 = IdCard.nifFromDni(22222222);
+        Assert.assertNotNull(nif1);
+        Assert.assertNotNull(nif2);
+        Assert.assertNotEquals(nif1, nif2);
+        Assert.assertNotEquals(nif1.charAt(nif1.length() - 1), nif2.charAt(nif2.length() - 1));
+    }
+
+    @Test
+    public void testNifFromDniReturnsString() {
+        final String nif = IdCard.nifFromDni(123);
+        Assert.assertNotNull(nif);
+        Assert.assertTrue(nif.matches("\\d+[A-Z]"));
+        Assert.assertTrue(nif.length() > 1);
+    }
+
+    @Test
+    public void testNifFromDniContainsLetter() {
+        final String nif = IdCard.nifFromDni(999);
+        Assert.assertNotNull(nif);
+        Assert.assertTrue(nif.length() > 0);
+        Assert.assertTrue(Character.isLetter(nif.charAt(nif.length() - 1)));
+        Assert.assertFalse(Character.isDigit(nif.charAt(nif.length() - 1)));
+    }
+
+    @Test
     public void testNifFromDniValidCharacters() {
-        String nifChars = "TRWAGMYFPDXBNJZSQVHLCKE";
+        final String nifChars = "TRWAGMYFPDXBNJZSQVHLCKE";
         for (int i = 0; i < 23; i++) {
-            String nif = IdCard.nifFromDni(i);
+            final String nif = IdCard.nifFromDni(i);
+            Assert.assertNotNull(nif);
             Assert.assertTrue(nif.contains(String.valueOf(nifChars.charAt(i))),
                     "NIF for " + i + " should contain letter " + nifChars.charAt(i));
+            // Verify the letter is indeed at the end
+            Assert.assertEquals(nif.charAt(nif.length() - 1), nifChars.charAt(i));
         }
     }
 
     @Test
     public void testNifFromDniFormat() {
-        String nif = IdCard.nifFromDni(456789);
+        final String nif = IdCard.nifFromDni(456789);
+        Assert.assertNotNull(nif);
         Assert.assertTrue(nif.startsWith("456789"));
+        Assert.assertTrue(nif.length() == "456789".length() + 1);
     }
 
     @Test
     public void testNifFromDniBigNumber() {
-        String nif = IdCard.nifFromDni(Integer.MAX_VALUE);
+        final String nif = IdCard.nifFromDni(Integer.MAX_VALUE);
         Assert.assertNotNull(nif);
         Assert.assertTrue(nif.matches("\\d+[A-Z]"));
+        Assert.assertTrue(nif.length() > 1);
+        Assert.assertTrue(nif.startsWith(String.valueOf(Integer.MAX_VALUE)));
     }
 }
 

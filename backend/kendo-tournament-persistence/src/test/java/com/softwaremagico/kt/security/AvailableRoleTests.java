@@ -29,65 +29,95 @@ public class AvailableRoleTests {
 
     @Test
     public void testGetWithValidRoleViewer() {
-        Assert.assertEquals(AvailableRole.get("viewer"), AvailableRole.VIEWER);
+        final AvailableRole role = AvailableRole.get("viewer");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.VIEWER);
+        Assert.assertNotEquals(role, AvailableRole.EDITOR);
     }
 
     @Test
     public void testGetWithValidRoleEditor() {
-        Assert.assertEquals(AvailableRole.get("editor"), AvailableRole.EDITOR);
+        final AvailableRole role = AvailableRole.get("editor");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.EDITOR);
+        Assert.assertNotEquals(role, AvailableRole.VIEWER);
     }
 
     @Test
     public void testGetWithValidRoleAdmin() {
-        Assert.assertEquals(AvailableRole.get("admin"), AvailableRole.ADMIN);
+        final AvailableRole role = AvailableRole.get("admin");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.ADMIN);
+        Assert.assertFalse(role.equals(AvailableRole.VIEWER));
     }
 
     @Test
     public void testGetWithValidRoleParticipant() {
-        Assert.assertEquals(AvailableRole.get("participant"), AvailableRole.PARTICIPANT);
+        final AvailableRole role = AvailableRole.get("participant");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.PARTICIPANT);
     }
 
     @Test
     public void testGetWithValidRoleGuest() {
-        Assert.assertEquals(AvailableRole.get("guest"), AvailableRole.GUEST);
+        final AvailableRole role = AvailableRole.get("guest");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.GUEST);
     }
 
     @Test
     public void testGetWithUppercaseRole() {
-        Assert.assertEquals(AvailableRole.get("VIEWER"), AvailableRole.VIEWER);
+        final AvailableRole role = AvailableRole.get("VIEWER");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.VIEWER);
+        Assert.assertTrue(role == AvailableRole.VIEWER);
     }
 
     @Test
     public void testGetWithMixedCaseRole() {
-        Assert.assertEquals(AvailableRole.get("EdItOr"), AvailableRole.EDITOR);
+        final AvailableRole role = AvailableRole.get("EdItOr");
+        Assert.assertNotNull(role);
+        Assert.assertEquals(role, AvailableRole.EDITOR);
+        Assert.assertFalse(role.equals(AvailableRole.VIEWER));
     }
 
     @Test
     public void testGetWithInvalidRole() {
-        Assert.assertNull(AvailableRole.get("invalid"));
+        final AvailableRole role = AvailableRole.get("invalid");
+        Assert.assertNull(role);
+        Assert.assertNotEquals(role, AvailableRole.VIEWER);
     }
 
     @Test
     public void testGetWithNullRole() {
-        Assert.assertNull(AvailableRole.get(null));
+        final AvailableRole role = AvailableRole.get(null);
+        Assert.assertNull(role);
     }
 
     @Test
     public void testGetWithEmptyRole() {
-        Assert.assertNull(AvailableRole.get(""));
+        final AvailableRole role = AvailableRole.get("");
+        Assert.assertNull(role);
     }
 
     @Test
     public void testAllRolesCanBeRetrieved() {
         for (AvailableRole role : AvailableRole.values()) {
-            Assert.assertEquals(AvailableRole.get(role.name()), role);
+            final AvailableRole retrieved = AvailableRole.get(role.name());
+            Assert.assertNotNull(retrieved);
+            Assert.assertEquals(retrieved, role);
+            Assert.assertTrue(retrieved == role);
         }
     }
 
     @Test
     public void testGetReturnsDifferentRoles() {
-        Assert.assertNotEquals(AvailableRole.get("viewer"), AvailableRole.get("admin"));
-        Assert.assertNotEquals(AvailableRole.get("editor"), AvailableRole.get("participant"));
+        final AvailableRole role1 = AvailableRole.get("viewer");
+        final AvailableRole role2 = AvailableRole.get("admin");
+        Assert.assertNotNull(role1);
+        Assert.assertNotNull(role2);
+        Assert.assertNotEquals(role1, role2);
+        Assert.assertFalse(role1.equals(role2));
     }
 }
 
