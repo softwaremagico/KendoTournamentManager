@@ -1,0 +1,28 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="1" verbose="1" name="KendoTournamentLogger">
+    <listeners>
+        <listener class-name="com.softwaremagico.kt.logger.TestListener"/>
+    </listeners>
+
+    <test name="KendoTournamentLogger" enabled="true" preserve-order="true">
+        <groups>
+            <run>
+                <include name="loggerTests"/>
+                <include name="abstractLoggingTests"/>
+                <include name="basicLoggerTests"/>
+                <include name="loggedExceptionTests"/>
+                <include name="exceptionTypeTests"/>
+                <include name="kendoTournamentLoggerTests"/>
+                <include name="basicLoggingTests"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.softwaremagico.kt.logger.tests.BasicLoggerTest"/>
+            <class name="com.softwaremagico.kt.logger.tests.AbstractLoggingTest"/>
+            <class name="com.softwaremagico.kt.logger.tests.LoggedExceptionTest"/>
+            <class name="com.softwaremagico.kt.logger.tests.KendoTournamentLoggerTest"/>
+            <class name="com.softwaremagico.kt.logger.tests.BasicLoggingTest"/>
+        </classes>
+    </test>
+</suite>
+
