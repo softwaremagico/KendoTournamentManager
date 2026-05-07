@@ -16,12 +16,17 @@ describe('TeamCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatCardModule, MatTooltipModule, DragDropModule, NoopAnimationsModule, ParticipantNamePipe],
+      imports: [
+        MatCardModule,
+        MatTooltipModule,
+        DragDropModule,
+        NoopAnimationsModule,
+        ParticipantNamePipe
+      ],
       declarations: [TeamCardComponent],
       providers: [NameUtilsService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -36,7 +41,7 @@ describe('TeamCardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 });

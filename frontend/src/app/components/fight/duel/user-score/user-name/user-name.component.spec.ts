@@ -18,7 +18,12 @@ describe('UserNameComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CommonModule, DragDropModule, MatIconModule, RouterTestingModule],
+      imports: [
+        CommonModule,
+        DragDropModule,
+        MatIconModule,
+        RouterTestingModule
+      ],
       declarations: [UserNameComponent, UserNameHostComponent],
       providers: [NameUtilsService, MembersOrderChangedService]
     }).compileComponents();
@@ -30,11 +35,11 @@ describe('UserNameComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the host component', () => {
     expect(userNameHostComponent).toBeTruthy();
   });
 
-  it('participant name', () => {
+  it('should render the participant name in the medium-width display format', () => {
     const participant: Participant = new Participant();
     participant.name = 'name';
     participant.lastname = 'of family';
@@ -48,7 +53,7 @@ describe('UserNameComponent', () => {
     expect(fixture.nativeElement.querySelector('.user-name-text').innerText.trim()).toEqual('of Family, N.');
   });
 
-  it('participant shortLastname', () => {
+  it('should render the participant short last name on narrow screens', () => {
     const participant: Participant = new Participant();
     participant.name = 'name';
     participant.lastname = 'of Royal Family';

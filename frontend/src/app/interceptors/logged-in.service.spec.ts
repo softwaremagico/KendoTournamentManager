@@ -3,13 +3,19 @@ import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {LoggedInService} from './logged-in.service';
 
 describe('LoggedInService', () => {
-  it('debe bloquear y redirigir al login cuando no hay JWT y la ruta no esta en lista blanca', () => {
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    const loginServiceSpy = jasmine.createSpyObj('LoginService', ['getJwtValue', 'refreshDataFormJwt']);
+  let routerSpy: jasmine.SpyObj<any>;
+  let loginServiceSpy: jasmine.SpyObj<any>;
+  let service: LoggedInService;
 
+  beforeEach(() => {
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', ['getJwtValue', 'refreshDataFormJwt']);
+    service = new LoggedInService(routerSpy, loginServiceSpy, {} as any);
+  });
+
+  it('should block access and redirect to the login page when there is no JWT and the route is not whitelisted', () => {
     loginServiceSpy.getJwtValue.and.returnValue(null);
 
-    const service = new LoggedInService(routerSpy, loginServiceSpy, {} as any);
     const state = {url: '/admin/secure?page=2'} as RouterStateSnapshot;
 
     const canActivate = service.canActivate({} as ActivatedRouteSnapshot, state);
