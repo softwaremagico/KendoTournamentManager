@@ -24,21 +24,27 @@ package com.softwaremagico.kt.persistence.encryption;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+/**
+ * Converter for boolean values. Boolean fields are stored as plain
+ * "true"/"false" strings without encryption to comply with H2 database check
+ * constraints that restrict values to 'true' or 'false'.
+ */
 @Converter
-public class BooleanCryptoConverter extends AbstractCryptoConverter<Boolean> implements AttributeConverter<Boolean, String> {
+public class BooleanCryptoConverter implements AttributeConverter<Boolean, String> {
 
     @Override
-    protected boolean isNotNullOrEmpty(Boolean attribute) {
-        return attribute != null;
+    public String convertToDatabaseColumn(Boolean attribute) {
+        if (attribute == null) {
+            return null;
+        }
+        return attribute.toString();
     }
 
     @Override
-    protected Boolean stringToEntityAttribute(String dbData) {
-        return (dbData == null || dbData.isEmpty()) ? null : Boolean.parseBoolean(dbData);
-    }
-
-    @Override
-    protected String entityAttributeToString(Boolean attribute) {
-        return attribute == null ? null : attribute.toString();
+    public Boolean convertToEntityAttribute(String dbData) {
+        if (dbData == null || dbData.isEmpty()) {
+            return null;
+        }
+        return Boolean.parseBoolean(dbData);
     }
 }

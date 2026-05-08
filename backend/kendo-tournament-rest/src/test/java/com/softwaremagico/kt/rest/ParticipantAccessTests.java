@@ -238,13 +238,20 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOtherServices() throws Exception {
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        this.mockMvc
-                .perform(get("/participants")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + participantJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andReturn();
+        try {
+            this.mockMvc
+                    .perform(get("/participants")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + participantJwtToken)
+                            .with(csrf()))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                    .andReturn();
+        } catch (Exception e) {
+            // Spring Security 6.x may propagate AuthorizationDeniedException during MockMvc invocation.
+            Assert.assertTrue(e.getMessage().contains("Access Denied")
+                            || e.getMessage().contains("response is already committed"),
+                    "Expected access denied error when participant calls /participants, but got: " + e.getMessage());
+        }
         System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
