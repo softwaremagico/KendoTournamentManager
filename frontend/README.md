@@ -28,5 +28,14 @@ The resulting artifacts will be saved in the `dist/` directory.
 
 Execute `ng test` to perform unit tests using [Karma](https://karma-runner.github.io).
 
+### Check coverage
+
+Execute the following command to run tests and check code coverage:
+
+```
+npm run test -- --browsers=ChromeHeadless --watch=false --code-coverage 2>&1 | tail -120
+```
+
+
 # 3rd party components
 
