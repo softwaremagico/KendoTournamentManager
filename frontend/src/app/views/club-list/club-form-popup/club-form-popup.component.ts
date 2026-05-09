@@ -64,5 +64,5 @@ export class ClubFormPopupComponent implements OnInit {
     }
   }
 
-    protected readonly RbacActivity = RbacActivity;
+  protected readonly RbacActivity = RbacActivity;
 }
