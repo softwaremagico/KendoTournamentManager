@@ -47,6 +47,7 @@ import java.util.Objects;
  * </p>
  * <p>
  * Subclasses implement scoring-rule variants:
+ * </p>
  * <ul>
  *   <li>{@link ScoreOfCompetitorClassic} — traditional Spanish kendo scoring</li>
  *   <li>{@link ScoreOfCompetitorEuropean} — EKF scoring rules</li>
@@ -54,7 +55,6 @@ import java.util.Objects;
  *   <li>{@link ScoreOfCompetitorWinOverDraws} — wins weighted over draws</li>
  *   <li>{@link ScoreOfCompetitorCustom} — fully configurable rule set</li>
  * </ul>
- * </p>
  */
 public class ScoreOfCompetitor {
 

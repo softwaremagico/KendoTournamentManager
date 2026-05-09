@@ -2,6 +2,7 @@ version: 2.1
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     docker:
       - image: 'cimg/openjdk:21.0'
     working_directory: ~/KendoTournamentManager/backend
@@ -15,24 +16,14 @@ jobs:
 
 
   frontend-test:
-    docker:
-      - image: 'cimg/node:18.20.4-browsers'
-    working_directory: ~/KendoTournamentManager/frontend
-    steps:
-      - checkout:
-          method: blobless
-          path: ~/KendoTournamentManager
-      - run:
-          name: Install Chromium
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y chromium-browser
-      - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Run tests
-          command: CHROME_BIN=/usr/bin/chromium-browser npm test -- --watch=false --browsers=ChromeHeadless
+    - uses: actions/checkout@v6 #Checkout Repo
+    - uses: actions/setup-node@v6 #Setup Node
+      with:
+        node-version: '18'
+    - name: Run Karma Tests
+      run: |
+        npm install
+        npm run test        
 
 workflows:
   main:
