@@ -45,7 +45,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   protected showRanking: boolean = false;
   protected addPhoto: boolean = false;
 
-  protected readonly port: number = +window.location.port;
+  protected readonly port: number = +globalThis.location.port;
 
   constructor(private router: Router, private userSessionService: UserSessionService,
               private participantService: ParticipantService,

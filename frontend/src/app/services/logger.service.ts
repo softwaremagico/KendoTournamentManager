@@ -24,8 +24,6 @@ export class LoggerService {
 
   sendInfo(log: Log) {
     const url: string = `${this.baseUrl}/info`;
-
-    console.log(log.message);
     return this.http.post(url, log).pipe(
       catchError(this.handleErrorConsole('sendInfo'))
     ).subscribe();
@@ -59,14 +57,12 @@ export class LoggerService {
 
   handleErrorConsole<T>(_operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(error);
       return of(result as T);
     };
   }
 
   handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(error); // Also log to console.
       this.error(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.

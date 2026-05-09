@@ -11,8 +11,6 @@ export class LocalErrorHandler implements ErrorHandler {
   }
 
   handleError(error: any): void {
-    //Show on console!
-    console.error(error);
     //These errors are already handled by HttpErrorInterceptor. If ok is set, already shown to the user.
     if (error instanceof HttpErrorResponse && !error.ok) {
       //Show error

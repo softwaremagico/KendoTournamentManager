@@ -94,13 +94,13 @@ describe('TournamentQrCodeComponent', () => {
 
     component.tournament = tournament;
     qrServiceSpy.getGuestsQrAsPdf.and.returnValue(of(blob));
-    spyOn(window.URL, 'createObjectURL').and.returnValue('blob:mock-url');
+    spyOn(globalThis.URL, 'createObjectURL').and.returnValue('blob:mock-url');
     spyOn(document, 'createElement').and.returnValue(anchorMock as any);
 
     component.downloadQrAsPdf();
 
     expect(qrServiceSpy.getGuestsQrAsPdf).toHaveBeenCalledOnceWith(tournament);
-    expect(window.URL.createObjectURL).toHaveBeenCalled();
+    expect(globalThis.URL.createObjectURL).toHaveBeenCalled();
     expect(anchorMock.href).toBe('blob:mock-url');
     expect(anchorMock.download).toContain('Tournament -');
     expect((anchorMock.click as jasmine.Spy)).toHaveBeenCalled();

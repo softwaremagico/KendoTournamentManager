@@ -25,7 +25,7 @@ export class AppComponent extends RbacBasedComponent {
   constructor(public translocoService: TranslocoService, public loginService: LoginService, public loggedInService: LoggedInService,
               protected userSessionService: UserSessionService, rbacService: RbacService, biitIconService: BiitIconService,
               projectModeChangedService: ProjectModeChangedService,
-              protected sessionService: UserSessionService, private activityService: ActivityService) {
+              private activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
     biitIconService.registerIcons(completeIconSet);
@@ -60,7 +60,7 @@ export class AppComponent extends RbacBasedComponent {
   }
 
   private setPermissions(): void {
-    const user: AuthenticatedUser | undefined = this.sessionService.getUser();
+    const user: AuthenticatedUser | undefined = this.userSessionService.getUser();
     if (!user) {
       return;
     }

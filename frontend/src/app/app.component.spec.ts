@@ -59,7 +59,6 @@ describe('AppComponent', () => {
       rbacServiceSpy,
       biitIconServiceSpy,
       projectModeChangedServiceMock,
-      userSessionServiceSpy,
       activityServiceSpy
     );
   });
@@ -92,7 +91,6 @@ describe('AppComponent', () => {
       rbacServiceSpy,
       biitIconServiceSpy,
       projectModeChangedServiceMock,
-      userSessionServiceSpy,
       activityServiceSpy
     );
 
@@ -143,7 +141,6 @@ describe('AppComponent', () => {
       rbacServiceSpy,
       biitIconServiceSpy,
       projectModeChangedServiceMock,
-      userSessionServiceSpy,
       activityServiceSpy
     );
 
