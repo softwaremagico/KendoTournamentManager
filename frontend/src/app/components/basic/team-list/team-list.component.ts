@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {TeamListData} from "./team-list-data";
 import {Team} from "../../../models/team";
 
@@ -7,7 +7,7 @@ import {Team} from "../../../models/team";
   templateUrl: './team-list.component.html',
   styleUrls: ['./team-list.component.scss']
 })
-export class TeamListComponent implements OnInit {
+export class TeamListComponent {
 
   @Input()
   teamListData: TeamListData;
@@ -23,10 +23,6 @@ export class TeamListComponent implements OnInit {
 
   @Input()
   teamsDragDisabled: Team[] = [];
-
-  ngOnInit(): void {
-    // This is intentional
-  }
 
   filter(filter: string) {
     this.teamListData.filter(filter);

@@ -101,34 +101,34 @@ describe('FightComponent', () => {
   it('should select duel and emit event when RBAC allows and duel is not substitute', () => {
     rbacServiceSpy.isAllowed.and.returnValue(true);
     const duel = createDuel(1, false);
-    spyOn(component.onSelectedDuel, 'emit');
+    spyOn(component.selectedFightDuel, 'emit');
 
     component.selectDuel(duel);
 
     expect(component.selectedDuel).toBe(duel);
-    expect(component.onSelectedDuel.emit).toHaveBeenCalledOnceWith(duel);
+    expect(component.selectedFightDuel.emit).toHaveBeenCalledOnceWith(duel);
   });
 
   it('should not select duel when duel is substitute', () => {
     rbacServiceSpy.isAllowed.and.returnValue(true);
     const duel = createDuel(1, true);
-    spyOn(component.onSelectedDuel, 'emit');
+    spyOn(component.selectedFightDuel, 'emit');
 
     component.selectDuel(duel);
 
     expect(component.selectedDuel).toBeUndefined();
-    expect(component.onSelectedDuel.emit).not.toHaveBeenCalled();
+    expect(component.selectedFightDuel.emit).not.toHaveBeenCalled();
   });
 
   it('should not select duel when RBAC does not allow', () => {
     rbacServiceSpy.isAllowed.and.returnValue(false);
     const duel = createDuel(1, false);
-    spyOn(component.onSelectedDuel, 'emit');
+    spyOn(component.selectedFightDuel, 'emit');
 
     component.selectDuel(duel);
 
     expect(component.selectedDuel).toBeUndefined();
-    expect(component.onSelectedDuel.emit).not.toHaveBeenCalled();
+    expect(component.selectedFightDuel.emit).not.toHaveBeenCalled();
   });
 
   it('should return true from isOver when duel is substitute', () => {

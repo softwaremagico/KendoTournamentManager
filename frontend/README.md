@@ -179,7 +179,7 @@ The compiled artifacts will be placed in the `dist/` directory and can be served
 Run the following command to execute the unit test suite using [Karma](https://karma-runner.github.io):
 
 ```bash
-ng test
+npm test -- --watch=false 
 ```
 
 ### Check coverage

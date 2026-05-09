@@ -150,12 +150,12 @@ describe('AuthenticatedUserFormComponent', () => {
     component.user.password = undefined as any;
     (component as any).pwdVerification = '';
     userServiceSpy.update.and.returnValue(of(component.user));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     (component as any).onSave();
 
     expect(userServiceSpy.update).toHaveBeenCalledWith(component.user);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should call add service when user has no id on onSave', () => {
@@ -163,12 +163,12 @@ describe('AuthenticatedUserFormComponent', () => {
     component.user.password = 'SecurePass123';
     (component as any).pwdVerification = 'SecurePass123';
     userServiceSpy.add.and.returnValue(of(component.user));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     (component as any).onSave();
 
     expect(userServiceSpy.add).toHaveBeenCalledWith(component.user);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should show warning notification when validation fails on onSave', () => {

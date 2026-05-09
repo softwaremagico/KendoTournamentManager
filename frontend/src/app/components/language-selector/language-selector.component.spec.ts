@@ -38,11 +38,11 @@ describe('LanguageSelectorComponent', () => {
   });
 
   it('should emit onClosed event when close is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.close();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith();
+    expect(component.closed.emit).toHaveBeenCalledOnceWith();
   });
 
   it('should switch language by calling both services', () => {

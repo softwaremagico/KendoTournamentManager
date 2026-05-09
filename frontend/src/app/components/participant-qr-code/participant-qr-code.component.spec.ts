@@ -78,11 +78,11 @@ describe('ParticipantQrCodeComponent', () => {
   });
 
   it('should emit onClosed when close is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.close();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith();
+    expect(component.closed.emit).toHaveBeenCalledOnceWith();
   });
 });
 

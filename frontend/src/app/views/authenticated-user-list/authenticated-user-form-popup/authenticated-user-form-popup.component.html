@@ -1,13 +1,13 @@
 <biit-popup id="user-popup"
             [title]="user.id ? t('t.authenticatedUserEdit') : t('t.authenticatedUserAdd')"
-            (onClosed)="onClosed.emit()"
+            (onClosed)="closed.emit()"
             closable sixty-view
             *transloco="let t"
 >
   <authenticated-user-form class="form-container"
                    [user]="user"
-                   (onSaved)="onSaved"
-                   [onSaved]="onSaved"
-                   (onError)="onError"
-                   [onError]="onError"></authenticated-user-form>
+                   (saved)="saved"
+                   [saved]="saved"
+                   (errorEvent)="errorEvent"
+                   [errorEvent]="errorEvent"></authenticated-user-form>
 </biit-popup>

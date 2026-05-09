@@ -120,11 +120,11 @@ describe('TeamRankingComponent', () => {
   });
 
   it('should emit onClosed when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith();
+    expect(component.closed.emit).toHaveBeenCalledOnceWith();
   });
 
   it('should set untie teams popup and draw teams when untieTeams is called', () => {
@@ -140,23 +140,23 @@ describe('TeamRankingComponent', () => {
 
   it('should close untie popup and emit duels on untieFights when duels exist', () => {
     const duels = [new Duel()];
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     (component as any).untieTeamsPopup = true;
 
     component.untieFights(duels);
 
     expect((component as any).untieTeamsPopup).toBeFalse();
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith(duels);
+    expect(component.closed.emit).toHaveBeenCalledOnceWith(duels);
   });
 
   it('should close untie popup and not emit when untieFights receives empty duels', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     (component as any).untieTeamsPopup = true;
 
     component.untieFights([]);
 
     expect((component as any).untieTeamsPopup).toBeFalse();
-    expect(component.onClosed.emit).not.toHaveBeenCalled();
+    expect(component.closed.emit).not.toHaveBeenCalled();
   });
 
   it('should navigate to statistics and close dialog when openStatistics is called', () => {

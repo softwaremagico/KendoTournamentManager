@@ -35,7 +35,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   @Input()
   showIndex: boolean | undefined;
   @Output()
-  onClosed: EventEmitter<Duel[]> = new EventEmitter<Duel[]>();
+  closed: EventEmitter<Duel[]> = new EventEmitter<Duel[]>();
   existsDraws: boolean = false;
   numberOfWinners: number;
   protected untieTeamsPopup: boolean = false;
@@ -101,7 +101,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   downloadPDF(): void {
@@ -150,7 +150,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   untieFights(duels: Duel[]) {
     this.untieTeamsPopup = false;
     if (duels && duels.length > 0) {
-      this.onClosed.emit(duels);
+      this.closed.emit(duels);
     }
   }
 

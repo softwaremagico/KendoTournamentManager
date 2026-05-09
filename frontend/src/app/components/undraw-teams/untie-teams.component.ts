@@ -23,14 +23,14 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
   tournament: Tournament;
   @Input()
   groupId: number | undefined;
-  @Output() onClosed: EventEmitter<Duel[]> = new EventEmitter<Duel[]>();
+  @Output() closed: EventEmitter<Duel[]> = new EventEmitter<Duel[]>();
 
   duels: Duel[];
 
   totalDuels: number;
 
-  constructor(private untieAddedService: UntieAddedService,
-              private groupServices: GroupService, private messageService: MessageService,
+  constructor(private readonly untieAddedService: UntieAddedService,
+              private readonly groupServices: GroupService, private readonly messageService: MessageService,
               rbacService: RbacService) {
     super(rbacService);
     this.totalDuels = this.getTotalDuels();
@@ -77,13 +77,13 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
       this.groupServices.addUnties(this.groupId, this.duels).subscribe((): void => {
         this.messageService.infoMessage("addFight");
         this.untieAddedService.isDuelsAdded.next(this.duels);
-        this.onClosed.emit(this.duels);
+        this.closed.emit(this.duels);
       });
     }
   }
 
   closeDialog(): void {
-    this.onClosed.emit([]);
+    this.closed.emit([]);
   }
 
   setCompetitor1(duelIndex: number, participant: Participant[]): void {

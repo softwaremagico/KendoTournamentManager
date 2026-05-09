@@ -69,14 +69,14 @@ describe('RoleSelectorComponent', () => {
   });
 
   it('should emit onClosed with tournament, roles and newOnes flag when setRoles is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     component.tournament = tournament;
     const roleType = component.roleTypes[0];
     component.select(true, roleType);
 
     component.setRoles(true);
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith({
+    expect(component.closed.emit).toHaveBeenCalledOnceWith({
       tournament: tournament,
       roles: [roleType],
       newOnes: true
@@ -84,20 +84,20 @@ describe('RoleSelectorComponent', () => {
   });
 
   it('should emit onClosed without payload when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith();
+    expect(component.closed.emit).toHaveBeenCalledOnceWith();
   });
 
   it('should emit onClosed with newOnes false when setRoles(false) is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     component.tournament = tournament;
 
     component.setRoles(false);
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith({
+    expect(component.closed.emit).toHaveBeenCalledOnceWith({
       tournament: tournament,
       roles: [],
       newOnes: false

@@ -20,9 +20,9 @@ import {BiitProgressBarType, BiitSnackbarService} from "@biit-solutions/wizardry
 export class ResetPasswordComponent implements OnInit {
 
   @Input() user: AuthenticatedUser;
-  @Input() @Output() onSaved: EventEmitter<AuthenticatedUser> = new EventEmitter<AuthenticatedUser>();
-  @Input() @Output() onError: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Input() @Output() saved: EventEmitter<AuthenticatedUser> = new EventEmitter<AuthenticatedUser>();
+  @Input() @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
   protected PASSWORD_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
 
@@ -65,7 +65,7 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   close() {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   changePassword(): void {

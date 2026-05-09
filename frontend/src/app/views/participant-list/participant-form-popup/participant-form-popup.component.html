@@ -1,15 +1,15 @@
 <biit-popup id="participant-popup"
             [title]="participant.id ? t('t.participantEdit') : t('t.participantAdd')"
-            (onClosed)="onClosed.emit()"
+            (onClosed)="closed.emit()"
             closable sixty-view
             *transloco="let t"
 >
   <participant-form class="form-container"
                     [participant]="participant"
-                    (onSaved)="onSaved"
-                    [onSaved]="onSaved"
-                    (onError)="onError"
-                    [onError]="onError"></participant-form>
+                    (saved)="saved"
+                    [saved]="saved"
+                    (errorEvent)="errorEvent"
+                    [errorEvent]="errorEvent"></participant-form>
 
   <biit-action-button class="floating-menu" position="top-right">
     <button biit-icon *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"

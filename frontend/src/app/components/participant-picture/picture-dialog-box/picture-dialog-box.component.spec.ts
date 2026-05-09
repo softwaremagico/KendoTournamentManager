@@ -21,11 +21,11 @@ describe('PictureDialogBoxComponent', () => {
   });
 
   it('should emit onClosed when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith();
+    expect(component.closed.emit).toHaveBeenCalledOnceWith();
   });
 });
 

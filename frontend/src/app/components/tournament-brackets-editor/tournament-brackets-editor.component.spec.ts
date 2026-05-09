@@ -139,24 +139,24 @@ describe('TournamentBracketsEditorComponent', () => {
   it('should select group and emit when RBAC allows', () => {
     rbacServiceSpy.isAllowed.and.returnValue(true);
     const group = createGroup(10, 0, 0);
-    spyOn(component.onSelectedGroup, 'emit');
+    spyOn(component.editorSelectedGroup, 'emit');
 
     component.selectGroup(group);
 
     expect(rbacServiceSpy.isAllowed).toHaveBeenCalledOnceWith(RbacActivity.SELECT_GROUP);
     expect(component.selectedGroup).toBe(group);
-    expect(component.onSelectedGroup.emit).toHaveBeenCalledOnceWith(group);
+    expect(component.editorSelectedGroup.emit).toHaveBeenCalledOnceWith(group);
   });
 
   it('should not select group when RBAC does not allow', () => {
     rbacServiceSpy.isAllowed.and.returnValue(false);
     const group = createGroup(10, 0, 0);
-    spyOn(component.onSelectedGroup, 'emit');
+    spyOn(component.editorSelectedGroup, 'emit');
 
     component.selectGroup(group);
 
     expect(component.selectedGroup).toBeUndefined();
-    expect(component.onSelectedGroup.emit).not.toHaveBeenCalled();
+    expect(component.editorSelectedGroup.emit).not.toHaveBeenCalled();
   });
 
   it('should remove team and call deleteTeamsFromTournament', () => {

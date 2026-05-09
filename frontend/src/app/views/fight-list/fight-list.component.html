@@ -163,7 +163,7 @@
               class="group-name">{{ 'group' | transloco }} {{ group.index + 1 }}</h3>
           <div *ngIf="filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0"
                [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
-            <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
+            <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (selectedFightDuel)="selectDuel($event)"
                    *ngFor="let fight of filteredFights.get(group.id!)"
                    [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectorMode"
                    [showAvatars]="showAvatars"
@@ -191,8 +191,8 @@
     </div>
   </div>
 
-  <popup-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
-               (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
+  <popup-timer (playPressed)="duelStarted($event[0])" (softTimerChanged)="updateDuelElapsedTime($event[0], false)"
+               (timerChanged)="updateDuelElapsedTime($event[0], true)" (timerFinished)="finishDuel()"
                (timeDurationChanged)="updateDuelDuration($event[0])"
                (timerClosed)="showTimer(false)"
                [editable]="tournament && !tournament.locked" [hidden]="!timer"
@@ -216,7 +216,7 @@
       [showIndex]="true"
       [fightsFinished]="areAllDuelsOver()"
       [group]="groupRankingToShow()"
-      (onClosed)="showTeamsRanking=false"></team-ranking>
+      (closed)="showTeamsRanking=false"></team-ranking>
   </biit-popup>
 
 

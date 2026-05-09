@@ -105,23 +105,23 @@ describe('ClubFormComponent', () => {
 
   it('should call update service when club has id on onSave', () => {
     clubServiceSpy.update.and.returnValue(of(component.club));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(clubServiceSpy.update).toHaveBeenCalledWith(component.club);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should call add service when club has no id on onSave', () => {
     component.club.id = undefined as any;
     clubServiceSpy.add.and.returnValue(of(component.club));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(clubServiceSpy.add).toHaveBeenCalledWith(component.club);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should show warning notification when validation fails on onSave', () => {

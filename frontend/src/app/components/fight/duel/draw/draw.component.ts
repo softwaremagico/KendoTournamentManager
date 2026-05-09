@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Duel} from "../../../../models/duel";
 
 @Component({
@@ -6,13 +6,9 @@ import {Duel} from "../../../../models/duel";
   templateUrl: './draw.component.html',
   styleUrls: ['./draw.component.scss']
 })
-export class DrawComponent implements OnInit {
+export class DrawComponent {
 
   @Input()
   duel: Duel;
-
-  ngOnInit(): void {
-    // This is intentional
-  }
 
 }

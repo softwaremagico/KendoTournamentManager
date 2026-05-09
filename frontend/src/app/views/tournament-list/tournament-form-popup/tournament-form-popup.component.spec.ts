@@ -42,9 +42,9 @@ describe('TournamentFormPopupComponent', () => {
   });
 
   it('should initialize EventEmitters on creation', () => {
-    expect(component.onClosed).toBeTruthy();
-    expect(component.onSaved).toBeTruthy();
-    expect(component.onError).toBeTruthy();
+    expect(component.closed).toBeTruthy();
+    expect(component.saved).toBeTruthy();
+    expect(component.errorEvent).toBeTruthy();
   });
 
   it('should load the logged user in ngOnInit', () => {

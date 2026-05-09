@@ -130,23 +130,23 @@ describe('ParticipantFormComponent', () => {
 
   it('should call update when participant has id on save', () => {
     participantServiceSpy.update.and.returnValue(of(component.participant));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(participantServiceSpy.update).toHaveBeenCalledWith(component.participant);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should call add when participant has no id on save', () => {
     component.participant = buildParticipant(undefined);
     participantServiceSpy.add.and.returnValue(of(component.participant));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(participantServiceSpy.add).toHaveBeenCalledWith(component.participant);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should show warning and stop save when validation fails', () => {

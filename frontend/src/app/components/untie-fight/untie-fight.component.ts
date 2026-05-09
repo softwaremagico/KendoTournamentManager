@@ -29,9 +29,9 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
   @Input()
   projectMode: boolean;
 
-  @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
+  @Output() selectedDuel: EventEmitter<any> = new EventEmitter();
 
-  constructor(private duelChangedService: DuelChangedService) {
+  constructor(private readonly duelChangedService: DuelChangedService) {
     super();
   }
 
@@ -42,7 +42,7 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
   }
 
   selectDuel(duel: Duel) {
-    this.onSelectedDuel.emit([duel]);
+    this.selectedDuel.emit([duel]);
   }
 
   isOver(duel: Duel): boolean {

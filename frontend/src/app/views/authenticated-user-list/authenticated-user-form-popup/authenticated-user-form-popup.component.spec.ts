@@ -17,9 +17,9 @@ describe('AuthenticatedUserFormPopupComponent', () => {
   });
 
   it('should initialize output event emitters', () => {
-    expect(component.onClosed instanceof EventEmitter).toBeTrue();
-    expect(component.onSaved instanceof EventEmitter).toBeTrue();
-    expect(component.onError instanceof EventEmitter).toBeTrue();
+    expect(component.closed instanceof EventEmitter).toBeTrue();
+    expect(component.saved instanceof EventEmitter).toBeTrue();
+    expect(component.errorEvent instanceof EventEmitter).toBeTrue();
   });
 
   it('should initialize errors map as empty', () => {

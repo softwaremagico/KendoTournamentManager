@@ -41,7 +41,7 @@ describe('MemberSelectorComponent', () => {
   });
 
   it('should select a single participant when selections is 1', () => {
-    spyOn(component.onSelectedMember, 'emit');
+    spyOn(component.selectedMember, 'emit');
     component.selections = 1;
 
     const participant = new Participant();
@@ -52,11 +52,11 @@ describe('MemberSelectorComponent', () => {
 
     expect(component.selectedMembers.length).toBe(1);
     expect(component.selectedMembers[0]).toEqual(participant);
-    expect(component.onSelectedMember.emit).toHaveBeenCalledOnceWith([participant]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant]);
   });
 
   it('should replace the previous selection when selections is 1 and a new user is selected', () => {
-    spyOn(component.onSelectedMember, 'emit');
+    spyOn(component.selectedMember, 'emit');
     component.selections = 1;
 
     const participant1 = new Participant();
@@ -65,17 +65,17 @@ describe('MemberSelectorComponent', () => {
     participant2.name = 'User 2';
 
     component.selectUser(participant1);
-    (component.onSelectedMember.emit as jasmine.Spy).calls.reset();
+    (component.selectedMember.emit as jasmine.Spy).calls.reset();
 
     component.selectUser(participant2);
 
     expect(component.selectedMembers.length).toBe(1);
     expect(component.selectedMembers[0]).toEqual(participant2);
-    expect(component.onSelectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
   });
 
   it('should add participant to selection when selections > 1 and participant is not selected', () => {
-    spyOn(component.onSelectedMember, 'emit');
+    spyOn(component.selectedMember, 'emit');
     component.selections = 2;
     component.selectedMembers = [];
 
@@ -85,11 +85,11 @@ describe('MemberSelectorComponent', () => {
     component.selectUser(participant);
 
     expect(component.selectedMembers).toContain(participant);
-    expect(component.onSelectedMember.emit).toHaveBeenCalledOnceWith([participant]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant]);
   });
 
   it('should remove participant from selection when selections > 1 and participant is already selected', () => {
-    spyOn(component.onSelectedMember, 'emit');
+    spyOn(component.selectedMember, 'emit');
     component.selections = 2;
 
     const participant1 = new Participant();
@@ -103,11 +103,11 @@ describe('MemberSelectorComponent', () => {
 
     expect(component.selectedMembers).not.toContain(participant1);
     expect(component.selectedMembers).toEqual([participant2]);
-    expect(component.onSelectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
   });
 
   it('should allow multiple selections when selections > 1', () => {
-    spyOn(component.onSelectedMember, 'emit');
+    spyOn(component.selectedMember, 'emit');
     component.selections = 3;
     component.selectedMembers = [];
 

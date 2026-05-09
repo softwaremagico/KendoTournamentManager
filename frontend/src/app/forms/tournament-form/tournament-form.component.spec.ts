@@ -127,23 +127,23 @@ describe('TournamentFormComponent', () => {
 
   it('should call update on save for existing tournament', () => {
     tournamentServiceSpy.update.and.returnValue(of(component.tournament));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(tournamentServiceSpy.update).toHaveBeenCalledWith(component.tournament);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should call add on save for new tournament', () => {
     component.tournament = buildTournament(undefined);
     tournamentServiceSpy.add.and.returnValue(of(component.tournament));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(tournamentServiceSpy.add).toHaveBeenCalledWith(component.tournament);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should show warning and stop save when validation fails', () => {

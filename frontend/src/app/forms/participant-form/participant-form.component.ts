@@ -31,9 +31,9 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   @Input()
   participant: Participant;
   @Input() @Output()
-  onSaved: EventEmitter<Participant> = new EventEmitter<Participant>();
+  saved: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Input() @Output()
-  onError: EventEmitter<any> = new EventEmitter<any>();
+  errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   participantPicture: string | undefined = undefined;
 
@@ -45,9 +45,9 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   protected saving: boolean = false;
   protected addPhoto: boolean = false;
 
-  constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private participantService: ParticipantService, private clubService: ClubService,
-              private pictureUpdatedService: PictureUpdatedService, private fileService: FileService,
+  constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly biitSnackbarService: BiitSnackbarService,
+              private readonly participantService: ParticipantService, private readonly clubService: ClubService,
+              private readonly pictureUpdatedService: PictureUpdatedService, private readonly fileService: FileService,
               public messageService: MessageService) {
     super(rbacService);
     this.loadClubs();
@@ -131,7 +131,7 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
     if (this.participant.id) {
       this.participantService.update(this.participant).subscribe({
         next: (participant: Participant): void => {
-          this.onSaved.emit(participant);
+          this.saved.emit(participant);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {
@@ -140,7 +140,7 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
     } else {
       this.participantService.add(this.participant).subscribe({
         next: (participant: Participant): void => {
-          this.onSaved.emit(participant);
+          this.saved.emit(participant);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {

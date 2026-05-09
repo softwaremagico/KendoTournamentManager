@@ -47,11 +47,11 @@ describe('AuthenticatedUserRolePopupComponent', () => {
   });
 
   it('should emit onClosed when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalled();
+    expect(component.closed.emit).toHaveBeenCalled();
   });
 
   it('should update user role and emit onSaved when saveAction succeeds', () => {
@@ -62,14 +62,14 @@ describe('AuthenticatedUserRolePopupComponent', () => {
     component.user = user;
     component.selectedRole = UserRoles.ADMIN;
     userServiceSpy.update.and.returnValue(of(user));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     component.saveAction();
 
     expect(user.roles).toEqual([UserRoles.ADMIN]);
     expect(userServiceSpy.update).toHaveBeenCalledOnceWith(component.user as any);
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledOnceWith('roleChanged');
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should not call update when user is undefined', () => {

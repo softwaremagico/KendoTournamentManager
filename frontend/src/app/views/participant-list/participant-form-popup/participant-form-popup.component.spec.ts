@@ -43,7 +43,7 @@ describe('ParticipantFormPopupComponent', () => {
 
   it('should import participants, show success notification and emit onSaved when csv has no errors', () => {
     csvServiceSpy.addParticipants.and.returnValue(of([]));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     const file = new File(['name,lastname'], 'participants.csv', { type: 'text/csv' });
     const input = document.createElement('input');
@@ -62,7 +62,7 @@ describe('ParticipantFormPopupComponent', () => {
     expect(csvServiceSpy.addParticipants).toHaveBeenCalledOnceWith(file);
     expect(translocoServiceSpy.selectTranslate).toHaveBeenCalledWith('infoParticipantStored');
     expect(biitSnackbarServiceSpy.showNotification).toHaveBeenCalledWith('translated message', NotificationType.SUCCESS);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should show error notification when csv import returns failing participants', () => {

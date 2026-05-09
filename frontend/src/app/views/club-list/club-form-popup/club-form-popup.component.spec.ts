@@ -43,7 +43,7 @@ describe('ClubFormPopupComponent', () => {
 
   it('should import clubs, show success notification and emit onSaved when csv has no errors', () => {
     csvServiceSpy.addClubs.and.returnValue(of([]));
-    spyOn(component.onSaved, 'emit');
+    spyOn(component.saved, 'emit');
 
     const file = new File(['name,country'], 'clubs.csv', { type: 'text/csv' });
     const input = document.createElement('input');
@@ -62,7 +62,7 @@ describe('ClubFormPopupComponent', () => {
     expect(csvServiceSpy.addClubs).toHaveBeenCalledOnceWith(file);
     expect(translocoServiceSpy.selectTranslate).toHaveBeenCalledWith('clubStored');
     expect(biitSnackbarServiceSpy.showNotification).toHaveBeenCalledWith('translated message', NotificationType.SUCCESS);
-    expect(component.onSaved.emit).toHaveBeenCalled();
+    expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should show error notification when csv import returns failing clubs', () => {

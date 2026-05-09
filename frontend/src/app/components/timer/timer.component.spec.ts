@@ -93,50 +93,50 @@ describe('TimerComponent', () => {
   });
 
   it('should start timer and emit onPlayPressed', () => {
-    spyOn(component.onPlayPressed, 'emit');
+    spyOn(component.playPressed, 'emit');
     component.elapsedSeconds = 5;
 
     component.startTimer();
 
     expect(component.started).toBeTrue();
-    expect(component.onPlayPressed.emit).toHaveBeenCalledOnceWith([5]);
+    expect(component.playPressed.emit).toHaveBeenCalledOnceWith([5]);
   });
 
   it('should pause timer and emit onTimerChanged', () => {
-    spyOn(component.onTimerChanged, 'emit');
+    spyOn(component.timerChanged, 'emit');
     component.started = true;
     component.elapsedSeconds = 10;
 
     component.pauseTimer();
 
     expect(component.started).toBeFalse();
-    expect(component.onTimerChanged.emit).toHaveBeenCalledOnceWith([10]);
+    expect(component.timerChanged.emit).toHaveBeenCalledOnceWith([10]);
   });
 
   it('should finish timer and emit onTimerFinished', () => {
-    spyOn(component.onTimerFinished, 'emit');
+    spyOn(component.timerFinished, 'emit');
     component.minutes = 2;
     component.seconds = 30;
     component.elapsedSeconds = 15;
 
     component.finishTimer();
 
-    expect(component.onTimerFinished.emit).toHaveBeenCalledOnceWith([true]);
+    expect(component.timerFinished.emit).toHaveBeenCalledOnceWith([true]);
     expect(component.elapsedSeconds).toBe(0);
     expect(component.started).toBeFalse();
   });
 
   it('should set elapsedSeconds to 1 if it is 0 when finishing', () => {
-    spyOn(component.onTimerFinished, 'emit');
+    spyOn(component.timerFinished, 'emit');
     component.elapsedSeconds = 0;
 
     component.finishTimer();
 
-    expect(component.onTimerFinished.emit).toHaveBeenCalled();
+    expect(component.timerFinished.emit).toHaveBeenCalled();
   });
 
   it('should restore timer to initial duration', () => {
-    spyOn(component.onTimerChanged, 'emit');
+    spyOn(component.timerChanged, 'emit');
     spyOn(component.timeDurationChanged, 'emit');
     component.duelDuration = 330;
     component.elapsedSeconds = 50;
@@ -144,7 +144,7 @@ describe('TimerComponent', () => {
     component.restoreTimer();
 
     expect(component.elapsedSeconds).toBe(0);
-    expect(component.onTimerChanged.emit).toHaveBeenCalledOnceWith([0]);
+    expect(component.timerChanged.emit).toHaveBeenCalledOnceWith([0]);
     expect(component.timeDurationChanged.emit).toHaveBeenCalledOnceWith([330]);
   });
 

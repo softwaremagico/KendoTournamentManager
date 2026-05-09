@@ -12,7 +12,7 @@ export class LanguageSelectorComponent {
   protected languages: string[];
   protected selectedLanguage: string;
 
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private translocoService: TranslocoService, private userSessionService: UserSessionService) {
     this.languages = this.translocoService.getAvailableLangs() as string[];
@@ -20,7 +20,7 @@ export class LanguageSelectorComponent {
   }
 
   close() {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   switchLanguage(): void {

@@ -22,9 +22,9 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
 })
 export class ClubFormPopupComponent implements OnInit {
   @Input() club: Club;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onSaved: EventEmitter<Club> = new EventEmitter<Club>();
-  @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() saved: EventEmitter<Club> = new EventEmitter<Club>();
+  @Output() error: EventEmitter<any> = new EventEmitter<any>();
 
   protected errors: Map<ClubFormValidationFields, string> = new Map<ClubFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;
@@ -50,7 +50,7 @@ export class ClubFormPopupComponent implements OnInit {
                 this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
               }
             );
-            this.onSaved.emit();
+            this.saved.emit();
           } else {
             const parameters: object = {element: _clubs[0].name};
             this.transloco.selectTranslate('failedOnCsvField', parameters).subscribe(

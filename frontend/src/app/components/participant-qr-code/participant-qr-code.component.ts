@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {QrCode} from "../../models/qr-code.model";
 import {QrService} from "../../services/qr.service";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -17,7 +17,7 @@ export class ParticipantQrCodeComponent implements OnInit {
   participant: Participant;
   @Input()
   port: number;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
   protected qrCode: string | undefined;
   protected link: string | undefined;
@@ -42,6 +42,6 @@ export class ParticipantQrCodeComponent implements OnInit {
   }
 
   close() {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 }

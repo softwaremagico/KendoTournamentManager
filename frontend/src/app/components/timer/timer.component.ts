@@ -39,10 +39,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   @Input()
   resetTimerPosition: Subject<boolean>;
 
-  @Output() onTimerFinished: EventEmitter<boolean[]> = new EventEmitter();
-  @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
-  @Output() onSoftTimerChanged: EventEmitter<any> = new EventEmitter();
-  @Output() onPlayPressed: EventEmitter<any> = new EventEmitter();
+  @Output() timerFinished: EventEmitter<boolean[]> = new EventEmitter();
+  @Output() timerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() softTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() playPressed: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
   @Output() timerClosed: EventEmitter<any> = new EventEmitter();
 
@@ -139,20 +139,20 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   startTimer(): void {
     this.started = true;
-    this.onPlayPressed.emit([this.elapsedSeconds]);
+    this.playPressed.emit([this.elapsedSeconds]);
     this.alarmRinging = false;
   };
 
   pauseTimer(): void {
     this.started = false;
-    this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.timerChanged.emit([this.elapsedSeconds]);
   };
 
   finishTimer() {
     if (!this.elapsedSeconds) {
       this.elapsedSeconds = 1;
     }
-    this.onTimerFinished.emit([true]);
+    this.timerFinished.emit([true]);
     this.resetVariables(this.minutes, this.seconds, false);
     this.alarmRinging = false;
     this.elapsedSeconds = 0;
@@ -165,13 +165,13 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   restoreTimer(): void {
     this.elapsedSeconds = 0;
     this.resetVariablesAsSeconds(this.duelDuration, false);
-    this.onTimerChanged.emit([0]);
+    this.timerChanged.emit([0]);
     this.timeDurationChanged.emit([this.duelDuration]);
     this.alarmRinging = false;
   }
 
   timerComplete(): void {
-    this.onTimerFinished.emit([true]);
+    this.timerFinished.emit([true]);
     this.started = false;
   }
 
@@ -197,9 +197,9 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
     this.elapsedSeconds++;
     if (this.seconds % 3 == 0) {
-      this.onTimerChanged.emit([this.elapsedSeconds]);
+      this.timerChanged.emit([this.elapsedSeconds]);
     } else {
-      this.onSoftTimerChanged.emit([this.elapsedSeconds]);
+      this.softTimerChanged.emit([this.elapsedSeconds]);
     }
   }
 
@@ -311,7 +311,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   updateElapsedTime(): void {
     this.elapsedSeconds = (this.totalTime - this.minutes * 60 - this.seconds);
-    this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.timerChanged.emit([this.elapsedSeconds]);
   }
 
   dragEnd($event: CdkDragEnd): void {

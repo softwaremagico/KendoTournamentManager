@@ -19,7 +19,7 @@ export class TeamCardComponent {
   disableDrag: boolean = false;
 
   @Output()
-  onClick: EventEmitter<Team> = new EventEmitter<Team>();
+  click: EventEmitter<Team> = new EventEmitter<Team>();
 
   constructor(protected nameUtils: NameUtilsService) {
   }

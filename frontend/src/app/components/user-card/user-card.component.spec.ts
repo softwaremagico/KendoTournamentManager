@@ -105,13 +105,13 @@ describe('UserCardComponent', () => {
   });
 
   it('should emit onClick event when user is clicked', () => {
-    spyOn(component.onClick, 'emit');
+    spyOn(component.click, 'emit');
     const participant = createParticipant(1, 'John', 'Doe');
     component.user = participant;
 
-    component.onClick.emit(participant);
+    component.click.emit(participant);
 
-    expect(component.onClick.emit).toHaveBeenCalledOnceWith(participant);
+    expect(component.click.emit).toHaveBeenCalledOnceWith(participant);
   });
 
   it('should set activity property', () => {

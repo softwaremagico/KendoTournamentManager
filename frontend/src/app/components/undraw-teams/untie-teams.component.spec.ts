@@ -141,14 +141,14 @@ describe('UntieTeamsComponent', () => {
     component.groupId = 10;
     component.duels = [new Duel()];
     groupServiceSpy.addUnties.and.returnValue(of({} as any));
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.createFights();
 
     expect(groupServiceSpy.addUnties).toHaveBeenCalledOnceWith(10, component.duels);
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledOnceWith('addFight');
     expect((untieAddedServiceMock.isDuelsAdded.next as jasmine.Spy)).toHaveBeenCalledOnceWith(component.duels);
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith(component.duels);
+    expect(component.closed.emit).toHaveBeenCalledOnceWith(component.duels);
   });
 
   it('should not call addUnties when groupId is undefined', () => {
@@ -160,11 +160,11 @@ describe('UntieTeamsComponent', () => {
   });
 
   it('should emit empty array when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith([]);
+    expect(component.closed.emit).toHaveBeenCalledOnceWith([]);
   });
 });
 

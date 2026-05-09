@@ -26,9 +26,9 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
   @Input()
   user: AuthenticatedUser;
   @Input() @Output()
-  onSaved: EventEmitter<AuthenticatedUser> = new EventEmitter<AuthenticatedUser>();
+  saved: EventEmitter<AuthenticatedUser> = new EventEmitter<AuthenticatedUser>();
   @Input() @Output()
-  onError: EventEmitter<any> = new EventEmitter<any>();
+  errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   protected USERNAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
   protected USERNAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
@@ -51,8 +51,8 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
   protected readonly Type = Type;
 
 
-  constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private userService: UserService, private sessionService: UserSessionService, private activityService: ActivityService) {
+  constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly biitSnackbarService: BiitSnackbarService,
+              private readonly userService: UserService, private readonly sessionService: UserSessionService, private readonly activityService: ActivityService) {
     super(rbacService)
   }
 
@@ -83,7 +83,7 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
     if (this.user.id) {
       this.userService.update(this.user).subscribe({
         next: (_authenticatedUser: AuthenticatedUser): void => {
-          this.onSaved.emit(_authenticatedUser);
+          this.saved.emit(_authenticatedUser);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {
@@ -92,7 +92,7 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
     } else {
       this.userService.add(this.user).subscribe({
         next: (_authenticatedUser: AuthenticatedUser): void => {
-          this.onSaved.emit(_authenticatedUser);
+          this.saved.emit(_authenticatedUser);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {

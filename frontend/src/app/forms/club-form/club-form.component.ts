@@ -36,17 +36,17 @@ export class ClubFormComponent extends RbacBasedComponent {
   club: Club;
 
   @Input() @Output()
-  onSaved: EventEmitter<Club> = new EventEmitter<Club>();
+  saved: EventEmitter<Club> = new EventEmitter<Club>();
   @Input() @Output()
-  onError: EventEmitter<any> = new EventEmitter<any>();
+  errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   protected errors: Map<ClubFormValidationFields, string> = new Map<ClubFormValidationFields, string>();
   protected readonly ClubFormValidationFields = ClubFormValidationFields;
 
   protected saving: boolean = false;
 
-  constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private clubService: ClubService,) {
+  constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly biitSnackbarService: BiitSnackbarService,
+              private readonly clubService: ClubService,) {
     super(rbacService)
   }
 
@@ -69,7 +69,7 @@ export class ClubFormComponent extends RbacBasedComponent {
     if (!this.club.country || this.club.country.length == 0) {
       verdict = false;
       this.errors.set(ClubFormValidationFields.COUNTRY_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    }else {
+    } else {
       if (this.club.country && this.club.country.length < this.CLUB_COUNTRY_MIN_LENGTH) {
         verdict = false;
         this.errors.set(ClubFormValidationFields.COUNTRY_ERRORS, this.transloco.translate(`v.minLengthError`));
@@ -82,7 +82,7 @@ export class ClubFormComponent extends RbacBasedComponent {
     if (!this.club.city || this.club.city.length == 0) {
       verdict = false;
       this.errors.set(ClubFormValidationFields.CITY_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    }else {
+    } else {
       if (this.club.city && this.club.city.length < this.CLUB_CITY_MIN_LENGTH) {
         verdict = false;
         this.errors.set(ClubFormValidationFields.CITY_ERRORS, this.transloco.translate(`v.minLengthError`));
@@ -144,7 +144,7 @@ export class ClubFormComponent extends RbacBasedComponent {
     if (this.club.id) {
       this.clubService.update(this.club).subscribe({
         next: (club: Club): void => {
-          this.onSaved.emit(club);
+          this.saved.emit(club);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {
@@ -153,7 +153,7 @@ export class ClubFormComponent extends RbacBasedComponent {
     } else {
       this.clubService.add(this.club).subscribe({
         next: (club: Club): void => {
-          this.onSaved.emit(club);
+          this.saved.emit(club);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {

@@ -17,14 +17,14 @@ export class TournamentQrCodeComponent implements OnInit {
   tournament: Tournament;
   @Input()
   port: number;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
   qrCode: string | undefined;
   link: string | undefined;
 
   protected readonly RbacActivity = RbacActivity;
 
-  constructor(private qrService: QrService, private userSessionService: UserSessionService, public rbacService: RbacService) {
+  constructor(private readonly qrService: QrService, private readonly userSessionService: UserSessionService, public rbacService: RbacService) {
 
   }
 
@@ -42,7 +42,7 @@ export class TournamentQrCodeComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
 

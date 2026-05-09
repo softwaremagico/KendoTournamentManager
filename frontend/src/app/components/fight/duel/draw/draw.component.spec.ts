@@ -22,9 +22,5 @@ describe('DrawComponent', () => {
 
     expect(component.duel).toBe(duel);
   });
-
-  it('should run ngOnInit without throwing', () => {
-    expect(() => component.ngOnInit()).not.toThrow();
-  });
 });
 

@@ -67,12 +67,12 @@
 
   <biit-popup id="language-selector-popup" *ngIf="languagePopup" closable
               [title]="t('selectLanguage')">
-    <language-selector (onClosed)="languagePopup=false" style="width:100%"></language-selector>
+    <language-selector (closed)="languagePopup=false" style="width:100%"></language-selector>
   </biit-popup>
 
   <biit-popup id="password-change-popup" *ngIf="passwordPopup && this.user" closable
               [title]="t('passwordChange')" (onClosed)="passwordPopup=false">
-    <reset-password (onClosed)="passwordPopup=false" style="width:100%"
+    <reset-password (closed)="passwordPopup=false" style="width:100%"
                     [user]="this.user"></reset-password>
   </biit-popup>
 

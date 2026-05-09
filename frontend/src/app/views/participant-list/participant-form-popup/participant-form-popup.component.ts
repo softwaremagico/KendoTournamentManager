@@ -25,9 +25,9 @@ import {FileService} from "../../../services/file.service";
 })
 export class ParticipantFormPopupComponent implements OnInit {
   @Input() participant: Participant;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onSaved: EventEmitter<Participant> = new EventEmitter<Participant>();
-  @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() saved: EventEmitter<Participant> = new EventEmitter<Participant>();
+  @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   protected readonly RbacActivity = RbacActivity;
 
@@ -55,7 +55,7 @@ export class ParticipantFormPopupComponent implements OnInit {
                 this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
               }
             );
-            this.onSaved.emit();
+            this.saved.emit();
           } else {
             const parameters: object = {element: _participants[0].name};
             this.transloco.selectTranslate('failedOnCsvField', parameters).subscribe(

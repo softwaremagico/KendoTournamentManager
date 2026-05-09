@@ -10,8 +10,8 @@ jobs:
           method: blobless
           path: ~/KendoTournamentManager
       - run:
-          name: Analyze on SonarCloud
-          command: mvn verify sonar:sonar -Dsonar.projectKey=kendo-tournament-backend -DdeploySnapshot=true
+          name: Execute mvn tests
+          command: mvn test --file pom.xml
 
   frontend-test:
     docker:

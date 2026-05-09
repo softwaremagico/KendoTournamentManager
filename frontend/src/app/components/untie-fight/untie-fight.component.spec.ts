@@ -42,11 +42,11 @@ describe('UntieFightComponent', () => {
 
   it('should emit selected duel wrapped in an array when selectDuel is called', () => {
     const duel = createDuel(false);
-    spyOn(component.onSelectedDuel, 'emit');
+    spyOn(component.selectedDuel, 'emit');
 
     component.selectDuel(duel);
 
-    expect(component.onSelectedDuel.emit).toHaveBeenCalledOnceWith([duel]);
+    expect(component.selectedDuel.emit).toHaveBeenCalledOnceWith([duel]);
   });
 
   it('should return true from isOver when duel.finished is true', () => {
