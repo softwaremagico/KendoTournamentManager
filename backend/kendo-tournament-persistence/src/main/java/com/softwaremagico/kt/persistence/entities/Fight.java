@@ -103,6 +103,17 @@ public class Fight extends Element {
         super();
     }
 
+    /**
+     * Creates a fully initialised fight and immediately generates the individual duels
+     * for each member pair using the tournament's team size and fight size configuration.
+     *
+     * @param tournament the tournament this fight belongs to
+     * @param team1      the first (left / red) competing team
+     * @param team2      the second (right / white) competing team
+     * @param shiaijo    zero-based index of the shiaijo where the fight takes place
+     * @param level      zero-based round level within the tournament bracket
+     * @param createdBy  the username of the user creating this fight
+     */
     public Fight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
         this();
         setTournament(tournament);
@@ -154,11 +165,28 @@ public class Fight extends Element {
         this.duels = duels;
     }
 
+    /**
+     * Returns all duels in this fight in which the specified competitor participates,
+     * either as competitor 1 or competitor 2.
+     *
+     * @param competitor the participant to filter by
+     * @return list of duels involving the competitor; empty list if the competitor is not part of this fight
+     */
     public List<Duel> getDuels(Participant competitor) {
         return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor)
                 || Objects.equals(duel.getCompetitor2(), competitor)).toList();
     }
 
+    /**
+     * Determines the winning team of this fight.
+     * <p>
+     * The winner is the team whose members won the most individual duels. If both
+     * teams have the same number of duel victories, total ippon points are compared
+     * as a tiebreaker.
+     * </p>
+     *
+     * @return the winning team, or {@code null} if the fight is a draw
+     */
     public Team getWinner() {
         int points = 0;
         for (int i = 0; i < getDuels().size(); i++) {
@@ -186,6 +214,11 @@ public class Fight extends Element {
         return null;
     }
 
+    /**
+     * Returns the losing team of this fight.
+     *
+     * @return the losing team, or {@code null} if the fight is a draw
+     */
     public Team getLoser() {
         final Team winner = getWinner();
         if (winner == null) {
@@ -197,6 +230,11 @@ public class Fight extends Element {
         return team1;
     }
 
+    /**
+     * Returns {@code true} if all duels in this fight are finished.
+     *
+     * @return {@code true} when every duel has been completed
+     */
     public boolean isOver() {
         return duels.stream().allMatch(Duel::isOver);
     }
@@ -220,6 +258,17 @@ public class Fight extends Element {
         return text.append("\n").toString();
     }
 
+    /**
+     * Populates the duel list from the current team member rosters.
+     * <p>
+     * One duel is created for each position up to {@code tournament.teamSize}.
+     * Duels at positions equal to or beyond {@code tournament.fightSize} are marked
+     * as substitute duels and are automatically set to finished (no scoring impact).
+     * Any previously existing duels are cleared before generation.
+     * </p>
+     *
+     * @param createdBy the username of the user triggering the generation
+     */
     public void generateDuels(String createdBy) {
         duels.clear();
         if (team1 != null && team2 != null) {
@@ -234,6 +283,13 @@ public class Fight extends Element {
         }
     }
 
+    /**
+     * Returns the total number of valid ippon points scored by the specified competitor
+     * across all duels in this fight.
+     *
+     * @param competitor the participant whose score is requested
+     * @return total ippon-equivalent points scored by the competitor
+     */
     public Integer getScore(Participant competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
@@ -243,6 +299,13 @@ public class Fight extends Element {
         return score;
     }
 
+    /**
+     * Returns the total number of ippon points scored against the specified competitor
+     * (i.e. points conceded) across all duels in this fight.
+     *
+     * @param competitor the participant whose points conceded are requested
+     * @return total ippon-equivalent points conceded by the competitor
+     */
     public Integer getScoreAgainst(Participant competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
@@ -252,11 +315,23 @@ public class Fight extends Element {
         return score;
     }
 
+    /**
+     * Returns the number of duels that ended in a draw and involved the specified competitor.
+     *
+     * @param competitor the participant to count draw duels for
+     * @return number of draw duels for the competitor in this fight
+     */
     public Integer getDrawDuels(Participant competitor) {
         return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0
                 && (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
     }
 
+    /**
+     * Returns the number of drawn duels for the specified team in this fight.
+     *
+     * @param team the team to count draw duels for
+     * @return number of draw duels, or {@code 0} if the team is not part of this fight
+     */
     public Integer getDrawDuels(Team team) {
         int drawDuels = 0;
         if ((getTeam1().equals(team) || getTeam2().equals(team))) {
@@ -265,6 +340,12 @@ public class Fight extends Element {
         return drawDuels;
     }
 
+    /**
+     * Returns the number of duels won by the specified competitor in this fight.
+     *
+     * @param competitor the participant to count victories for
+     * @return number of duels won by the competitor
+     */
     public Integer getDuelsWon(Participant competitor) {
         int numberOfDuels = 0;
         numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1
@@ -274,6 +355,12 @@ public class Fight extends Element {
         return numberOfDuels;
     }
 
+    /**
+     * Returns {@code true} if the specified competitor's team won this fight.
+     *
+     * @param competitor the participant to check
+     * @return {@code true} if the competitor belongs to the winning team
+     */
     public boolean isWon(Participant competitor) {
         if (competitor != null) {
             if (team1.isMember(competitor) && Objects.equals(getWinner(), team1)) {
@@ -284,10 +371,21 @@ public class Fight extends Element {
         return false;
     }
 
+    /**
+     * Returns {@code true} if this fight ended without a winner (both teams tied).
+     *
+     * @return {@code true} if the fight is a draw
+     */
     public boolean isDrawFight() {
         return getWinner() == null;
     }
 
+    /**
+     * Returns the number of duels won by the specified team in this fight.
+     *
+     * @param team the team to count victories for
+     * @return number of duels won, or {@code 0} if the team is not part of this fight
+     */
     public int getWonDuels(Team team) {
         if (Objects.equals(team1, team)) {
             return (int) getDuels().stream().filter(duel -> duel.getWinner() == -1).count();

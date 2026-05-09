@@ -95,19 +95,41 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         return converter;
     }
 
+    /**
+     * Registers a listener that is notified asynchronously when an entity is created.
+     *
+     * @param listener the listener to register
+     */
     public void addElementCreatedListeners(ElementCreatedListener listener) {
         elementCreatedListeners.add(listener);
     }
 
+    /**
+     * Registers a listener that is notified asynchronously when an entity is updated.
+     *
+     * @param listener the listener to register
+     */
     public void addElementUpdatedListeners(ElementUpdatedListener listener) {
         elementUpdatedListeners.add(listener);
     }
 
+    /**
+     * Registers a listener that is notified asynchronously when an entity is deleted.
+     *
+     * @param listener the listener to register
+     */
     public void addElementDeletedListeners(ElementDeletedListener listener) {
         elementDeletedListeners.add(listener);
     }
 
 
+    /**
+     * Retrieves the entity with the given ID and converts it to a DTO.
+     *
+     * @param id the primary key of the entity
+     * @return the entity as a DTO
+     * @throws com.softwaremagico.kt.core.exceptions.NotFoundException if no entity with the given ID exists
+     */
     public DTO get(Integer id) {
         final ENTITY entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
                 ExceptionType.INFO));
@@ -124,6 +146,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         return convertAll(getProvider().get(ids));
     }
 
+    /**
+     * Persists the given DTO, notifying all registered {@link ElementUpdatedListener}s
+     * asynchronously after the transaction commits.
+     *
+     * @param dto      the entity data to persist
+     * @param username the authenticated user performing the update
+     * @param session  the client session identifier for WebSocket notifications
+     * @return the updated entity as a DTO
+     */
     @Transactional
     public DTO update(DTO dto, String username, String session) {
         dto.setUpdatedBy(username);
@@ -140,6 +171,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         }
     }
 
+    /**
+     * Persists all DTOs in the list, notifying registered {@link ElementUpdatedListener}s
+     * asynchronously for each updated entity.
+     *
+     * @param dtos     the list of entity data to persist
+     * @param username the authenticated user performing the update
+     * @param session  the client session identifier for WebSocket notifications
+     * @return the updated entities as DTOs, in the same order as the input list
+     */
     @Transactional
     public List<DTO> updateAll(List<DTO> dtos, String username, String session) {
         final List<DTO> refreshedData = new ArrayList<>();
@@ -158,6 +198,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         }
     }
 
+    /**
+     * Validates, persists and converts a single DTO, then notifies all registered
+     * {@link ElementCreatedListener}s asynchronously.
+     *
+     * @param dto      the entity data to create
+     * @param username the authenticated user performing the creation
+     * @param session  the client session identifier for WebSocket notifications
+     * @return the persisted entity as a DTO
+     */
     @Transactional
     public DTO create(DTO dto, String username, String session) {
         if (dto.getCreatedBy() == null && username != null) {
@@ -176,6 +225,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         }
     }
 
+    /**
+     * Validates, persists and converts a collection of DTOs, notifying
+     * {@link ElementCreatedListener}s for each created entity.
+     *
+     * @param dtos     the entities to create
+     * @param username the authenticated user performing the creation
+     * @param session  the client session identifier for WebSocket notifications
+     * @return the persisted entities as a list of DTOs
+     */
     @Transactional
     public List<DTO> create(Collection<DTO> dtos, String username, String session) {
         dtos.forEach(dto -> {
@@ -197,6 +255,14 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     }
 
 
+    /**
+     * Deletes the entity represented by the given DTO, then notifies all registered
+     * {@link ElementDeletedListener}s asynchronously.
+     *
+     * @param entity   the DTO of the entity to delete
+     * @param username the authenticated user performing the deletion
+     * @param session  the client session identifier for WebSocket notifications
+     */
     public void delete(DTO entity, String username, String session) {
         try {
             getProvider().delete(reverse(entity));
@@ -208,6 +274,14 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         }
     }
 
+    /**
+     * Deletes all entities represented by the given DTOs, notifying
+     * {@link ElementDeletedListener}s for each deleted entity.
+     *
+     * @param entities the DTOs of the entities to delete
+     * @param username the authenticated user performing the deletion
+     * @param session  the client session identifier for WebSocket notifications
+     */
     public void delete(Collection<DTO> entities, String username, String session) {
         try {
             getProvider().delete(reverseAll(entities));
@@ -232,10 +306,22 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         return requests;
     }
 
+    /**
+     * Converts a JPA entity to its corresponding DTO using the bound converter.
+     *
+     * @param entity the entity to convert
+     * @return the converted DTO
+     */
     protected DTO convert(ENTITY entity) {
         return converter.convert(createConverterRequest(entity));
     }
 
+    /**
+     * Converts a DTO back to its corresponding JPA entity using the bound converter.
+     *
+     * @param dto the DTO to reverse-convert
+     * @return the corresponding entity
+     */
     protected ENTITY reverse(DTO dto) {
         return converter.reverse(dto);
     }

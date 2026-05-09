@@ -126,6 +126,12 @@ public abstract class Element implements Serializable {
         return createdBy;
     }
 
+    /**
+     * Sets the username of the creator and simultaneously updates the SHA-512 hash
+     * used for tamper detection.
+     *
+     * @param createdBy the username to store
+     */
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
         this.createdByHash = createdBy;
@@ -143,6 +149,12 @@ public abstract class Element implements Serializable {
         return updatedBy;
     }
 
+    /**
+     * Sets the username of the last editor and simultaneously updates the SHA-512 hash
+     * used for tamper detection.
+     *
+     * @param updatedBy the username to store
+     */
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
         this.updatedByHash = updatedBy;
@@ -156,6 +168,10 @@ public abstract class Element implements Serializable {
         this.updatedByHash = updatedByHash;
     }
 
+    /**
+     * Two entities are considered equal when they share the same database primary key.
+     * A {@code null} ID (transient entity) is never equal to another entity.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

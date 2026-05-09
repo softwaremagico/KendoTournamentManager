@@ -181,6 +181,14 @@ public class Duel extends Element {
         setType(DuelType.STANDARD);
     }
 
+    /**
+     * Creates a fully initialised duel between two competitors within the given tournament.
+     *
+     * @param competitor1 the first (left / red) competitor; may be {@code null} if the position is empty
+     * @param competitor2 the second (right / white) competitor; may be {@code null} if the position is empty
+     * @param tournament  the tournament this duel belongs to
+     * @param createdBy   the username of the user creating this duel
+     */
     public Duel(Participant competitor1, Participant competitor2, Tournament tournament, String createdBy) {
         this();
         setCompetitor1(competitor1);
@@ -189,6 +197,12 @@ public class Duel extends Element {
         setCreatedBy(createdBy);
     }
 
+    /**
+     * Returns both competitors of this duel as a set.
+     * Competitors with a {@code null} value are excluded from the result.
+     *
+     * @return a set containing the non-null participants in this duel
+     */
     public Set<Participant> getCompetitors() {
         final Set<Participant> competitors = new HashSet<>();
         if (competitor1 != null) {
@@ -216,6 +230,11 @@ public class Duel extends Element {
         this.competitor2 = competitor2;
     }
 
+    /**
+     * Appends a score entry for competitor 1, lazily initialising the score list if necessary.
+     *
+     * @param score the score to add
+     */
     public void addCompetitor1Score(Score score) {
         if (this.competitor1Score == null) {
             this.competitor1Score = new ArrayList<>();
@@ -239,6 +258,11 @@ public class Duel extends Element {
         this.competitor2Score = competitor2Score;
     }
 
+    /**
+     * Appends a score entry for competitor 2, lazily initialising the score list if necessary.
+     *
+     * @param score the score to add
+     */
     public void addCompetitor2Score(Score score) {
         if (this.competitor2Score == null) {
             this.competitor2Score = new ArrayList<>();
@@ -281,6 +305,11 @@ public class Duel extends Element {
         return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
     }
 
+    /**
+     * Returns the winning competitor of this duel, or {@code null} if the duel is a draw.
+     *
+     * @return the winning {@link Participant}, or {@code null} on a draw
+     */
     public Participant getCompetitorWinner() {
         if (getWinner() < 0) {
             return getCompetitor1();
@@ -290,6 +319,11 @@ public class Duel extends Element {
         return null;
     }
 
+    /**
+     * Returns the losing competitor of this duel, or {@code null} if the duel is a draw.
+     *
+     * @return the losing {@link Participant}, or {@code null} on a draw
+     */
     public Participant getCompetitorLooser() {
         if (getWinner() < 0) {
             return getCompetitor2();
@@ -299,10 +333,21 @@ public class Duel extends Element {
         return null;
     }
 
+    /**
+     * Returns the number of valid ippon points scored by competitor 1.
+     * Scores of type {@link Score#HANSOKU} and other non-valid entries are excluded.
+     *
+     * @return valid ippon count for competitor 1
+     */
     public Integer getCompetitor1ScoreValue() {
         return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
     }
 
+    /**
+     * Returns the number of valid ippon points scored by competitor 2.
+     *
+     * @return valid ippon count for competitor 2
+     */
     public Integer getCompetitor2ScoreValue() {
         return (int) competitor2Score.stream().filter(Score::isValidPoint).count();
     }
@@ -395,6 +440,12 @@ public class Duel extends Element {
         this.finishedAt = finishedAt;
     }
 
+    /**
+     * Returns whether this duel involves a substitute member.
+     * Substitute duels are always marked as finished and do not affect rankings.
+     *
+     * @return {@code true} if this is a substitute duel; never {@code null}
+     */
     public Boolean getSubstitute() {
         if (substitute == null) {
             return false;

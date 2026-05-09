@@ -143,6 +143,12 @@ public class JwtTokenUtil {
         this.jwtParticipantExpiration = calculatedParticipantJwtExpiration;
     }
 
+    /**
+     * Generates a cryptographically secure random alphanumeric string of length
+     * {@link #RANDOM_LENGTH} to be used as a JWT signing secret when none is configured.
+     *
+     * @return a random secret string
+     */
     private String generateRandomSecret() {
         return RANDOM.ints(RANDOM_LEFT_LIMIT, RANDOM_RIGHT_LIMIT + 1)
                 .limit(RANDOM_LENGTH)
@@ -151,18 +157,54 @@ public class JwtTokenUtil {
     }
 
 
+    /**
+     * Generates a standard JWT access token for the given user with a new random session ID.
+     *
+     * @param user   the authenticated user for whom the token is generated
+     * @param userIp the IP address of the client making the request
+     * @return a signed JWT string
+     */
     public String generateAccessToken(IAuthenticatedUser user, String userIp) {
         return generateAccessToken(user, userIp, jwtExpiration, UUID.randomUUID().toString());
     }
 
+    /**
+     * Generates a standard JWT access token for the given user with an explicit session ID.
+     *
+     * @param user    the authenticated user for whom the token is generated
+     * @param userIp  the IP address of the client making the request
+     * @param session the session identifier to embed in the token
+     * @return a signed JWT string
+     */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, String session) {
         return generateAccessToken(user, userIp, jwtExpiration, session);
     }
 
+    /**
+     * Generates a JWT access token with a custom expiration time and a new random session ID.
+     *
+     * @param user           the authenticated user for whom the token is generated
+     * @param userIp         the IP address of the client making the request
+     * @param expirationTime token validity period in milliseconds from now
+     * @return a signed JWT string
+     */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime) {
         return generateAccessToken(user, userIp, expirationTime, UUID.randomUUID().toString());
     }
 
+    /**
+     * Generates a signed JWT access token embedding the user identity, session, client IP and
+     * server MAC address in the token subject as a comma-separated string.
+     * <p>
+     * Subject format: {@code id,username,session,ip,mac}
+     * </p>
+     *
+     * @param user           the authenticated user for whom the token is generated
+     * @param userIp         the IP address of the client making the request
+     * @param expirationTime token validity period in milliseconds from now
+     * @param session        the session identifier to embed in the token
+     * @return a signed JWT string
+     */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime, String session) {
         return Jwts.builder()
                 .setSubject(String.format("%s,%s,%s,%s,%s", user.getId(), user.getUsername(), session != null ? session : UUID.randomUUID(),
@@ -175,22 +217,38 @@ public class JwtTokenUtil {
     }
 
     /**
-     * Gets current expiration time in milliseconds.
+     * Returns the absolute expiration timestamp for a standard user token.
      *
-     * @return unix epoch time in milliseconds.
+     * @return current time plus the configured standard expiration, in Unix epoch milliseconds
      */
     public long getJwtExpirationTime() {
         return (System.currentTimeMillis() + jwtExpiration);
     }
 
+    /**
+     * Returns the absolute expiration timestamp for a guest token.
+     *
+     * @return current time plus the configured guest expiration, in Unix epoch milliseconds
+     */
     public long getJwtGuestExpirationTime() {
         return (System.currentTimeMillis() + jwtGuestExpiration);
     }
 
+    /**
+     * Returns the absolute expiration timestamp for a participant token.
+     *
+     * @return current time plus the configured participant expiration, in Unix epoch milliseconds
+     */
     public long getJwtParticipantExpirationTime() {
         return (System.currentTimeMillis() + jwtParticipantExpiration);
     }
 
+    /**
+     * Extracts the entity ID from the JWT token subject.
+     *
+     * @param token the JWT string to parse
+     * @return the user entity ID, or {@code null} if the claim is absent or the token is malformed
+     */
     public String getUserId(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -205,6 +263,12 @@ public class JwtTokenUtil {
         }
     }
 
+    /**
+     * Extracts the username from the JWT token subject.
+     *
+     * @param token the JWT string to parse
+     * @return the username, or {@code null} if the claim is absent or the token is malformed
+     */
     public String getUsername(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -219,6 +283,12 @@ public class JwtTokenUtil {
         }
     }
 
+    /**
+     * Extracts the session identifier from the JWT token subject.
+     *
+     * @param token the JWT string to parse
+     * @return the session ID, or {@code null} if the claim is absent or the token is malformed
+     */
     public String getSession(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -232,6 +302,12 @@ public class JwtTokenUtil {
         }
     }
 
+    /**
+     * Extracts the client IP address from the JWT token subject.
+     *
+     * @param token the JWT string to parse
+     * @return the IP address string, or {@code null} if the claim is absent or the token is malformed
+     */
     public String getUserIp(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -245,6 +321,12 @@ public class JwtTokenUtil {
         }
     }
 
+    /**
+     * Extracts the server MAC address from the JWT token subject.
+     *
+     * @param token the JWT string to parse
+     * @return the MAC address string, or {@code null} if the claim is absent or the token is malformed
+     */
     public String getHostMac(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -258,6 +340,12 @@ public class JwtTokenUtil {
         }
     }
 
+    /**
+     * Returns the expiration date embedded in the given JWT token.
+     *
+     * @param token the JWT string to parse
+     * @return the expiration {@link Date}
+     */
     public Date getExpirationDate(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -267,6 +355,13 @@ public class JwtTokenUtil {
         return claims.getExpiration();
     }
 
+    /**
+     * Validates the given JWT token by verifying its signature, structure and expiration.
+     *
+     * @param token the JWT string to validate
+     * @return {@code true} if the token is valid; {@code false} if it is expired, malformed,
+     *         has an invalid signature, or is otherwise unacceptable
+     */
     public boolean validate(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
