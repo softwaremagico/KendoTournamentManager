@@ -13,13 +13,14 @@ jobs:
           name: Analyze on SonarCloud
           command: mvn verify sonar:sonar -Dsonar.projectKey=kendo-tournament-backend -DdeploySnapshot=true
   frontend-test:
-    docker:
-      - image: 'cimg/node:18'
-    working_directory: ~/KendoTournamentManager/frontend
+    defaults:
+        run:
+            working_directory: ~/KendoTournamentManager/frontend
     steps:
-      - checkout:
-          method: blobless
-          path: ~/KendoTournamentManager
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 18
       - run:
           name: Install dependencies
           command: npm install
