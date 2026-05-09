@@ -1,14 +1,14 @@
-import { of, Subject } from 'rxjs';
-import { ElementRef, Renderer2 } from '@angular/core';
-import { ContextMenuService } from '@perfectmemory/ngx-contextmenu';
-import { Router } from '@angular/router';
-import { TranslocoService } from '@ngneat/transloco';
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { ActivityService } from '../../../services/rbac/activity.service';
-import { UserSessionService } from '../../../services/user-session.service';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { RbacService } from '../../../services/rbac/rbac.service';
-import { NavbarComponent } from './navbar.component';
+import {of, Subject} from 'rxjs';
+import {ElementRef, Renderer2} from '@angular/core';
+import {ContextMenuService} from '@perfectmemory/ngx-contextmenu';
+import {Router} from '@angular/router';
+import {TranslocoService} from '@ngneat/transloco';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {ActivityService} from '../../../services/rbac/activity.service';
+import {UserSessionService} from '../../../services/user-session.service';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {RbacService} from '../../../services/rbac/rbac.service';
+import {NavbarComponent} from './navbar.component';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -36,7 +36,7 @@ describe('NavbarComponent', () => {
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
 
     userSessionServiceSpy.getNightMode.and.returnValue(false);
-    userSessionServiceSpy.getUser.and.returnValue({ email: 'john@doe.com' } as any);
+    userSessionServiceSpy.getUser.and.returnValue({email: 'john@doe.com'} as any);
     activityServiceSpy.isAllowed.and.returnValue(true);
     translocoServiceSpy.selectTranslate.and.returnValue(of('translated-title'));
 
@@ -44,7 +44,7 @@ describe('NavbarComponent', () => {
       add: jasmine.createSpy('add'),
       remove: jasmine.createSpy('remove')
     };
-    overlayContainerSpy.getContainerElement.and.returnValue({ classList: classListMock } as any);
+    overlayContainerSpy.getContainerElement.and.returnValue({classList: classListMock} as any);
 
     component = new NavbarComponent(
       routerSpy,
@@ -72,7 +72,7 @@ describe('NavbarComponent', () => {
   it('should initialize user and routes on ngOnInit', () => {
     component.ngOnInit();
 
-    expect(component.user).toEqual({ email: 'john@doe.com' } as any);
+    expect(component.user).toEqual({email: 'john@doe.com'} as any);
     expect(component.routes.length).toBe(4);
     expect(translocoServiceSpy.selectTranslate).toHaveBeenCalled();
   });
@@ -114,7 +114,7 @@ describe('NavbarComponent', () => {
 
     component.openWiki();
 
-    expect(window.open).toHaveBeenCalledOnceWith('https://github.com/softwaremagico/KendoTournamentManager/wiki', '_blank');
+    expect(window.open).toHaveBeenCalledOnceWith('https://github.com/softwaremagico/KendoTournamentManager/wiki', '_blank', 'noopener');
   });
 
   it('should open about page in new tab', () => {
@@ -122,7 +122,7 @@ describe('NavbarComponent', () => {
 
     component.openAbout();
 
-    expect(window.open).toHaveBeenCalledOnceWith('https://github.com/softwaremagico/KendoTournamentManager', '_blank');
+    expect(window.open).toHaveBeenCalledOnceWith('https://github.com/softwaremagico/KendoTournamentManager', '_blank', 'noopener');
   });
 
   it('should switch dark mode on and notify services', () => {
