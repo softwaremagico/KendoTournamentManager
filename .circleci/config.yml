@@ -12,10 +12,12 @@ jobs:
       - run:
           name: Analyze on SonarCloud
           command: mvn verify sonar:sonar -Dsonar.projectKey=kendo-tournament-backend -DdeploySnapshot=true
+
+
   frontend-test:
     defaults:
-        run:
-            working_directory: ~/KendoTournamentManager/frontend
+      run:
+        working_directory: ~/KendoTournamentManager/frontend
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
