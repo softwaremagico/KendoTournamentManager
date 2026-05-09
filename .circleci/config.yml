@@ -2,7 +2,6 @@ version: 2.1
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     docker:
       - image: 'cimg/openjdk:21.0'
     working_directory: ~/KendoTournamentManager/backend
@@ -14,19 +13,27 @@ jobs:
           name: Analyze on SonarCloud
           command: mvn verify sonar:sonar -Dsonar.projectKey=kendo-tournament-backend -DdeploySnapshot=true
 
-
   frontend-test:
-    runs-on: ubuntu-latest
+    docker:
+      - image: 'cimg/node:18.20.4'
     working_directory: ~/KendoTournamentManager/frontend
     steps:
-    - uses: actions/checkout@v6 #Checkout Repo
-    - uses: actions/setup-node@v6 #Setup Node
-      with:
-        node-version: '18'
-    - name: Run Karma Tests
-      run: |
-        npm install
-        npm run test        
+      - checkout:
+          method: blobless
+          path: ~/KendoTournamentManager
+      - run:
+          name: Install Chrome
+          command: |
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm test -- --watch=false --browsers=ChromeHeadless
 
 workflows:
   main:
