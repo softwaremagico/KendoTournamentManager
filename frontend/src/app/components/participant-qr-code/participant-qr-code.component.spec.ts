@@ -1,10 +1,10 @@
-import { of } from 'rxjs';
-import { Participant } from '../../models/participant';
-import { QrCode } from '../../models/qr-code.model';
-import { QrService } from '../../services/qr.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { ParticipantQrCodeComponent } from './participant-qr-code.component';
+import {of} from 'rxjs';
+import {Participant} from '../../models/participant';
+import {QrCode} from '../../models/qr-code.model';
+import {QrService} from '../../services/qr.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {ParticipantQrCodeComponent} from './participant-qr-code.component';
 
 describe('ParticipantQrCodeComponent', () => {
   let component: ParticipantQrCodeComponent;

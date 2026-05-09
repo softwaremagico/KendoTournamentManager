@@ -1,7 +1,7 @@
-import { Duel } from '../../../../models/duel';
-import { DuelType } from '../../../../models/duel-type';
-import { Participant } from '../../../../models/participant';
-import { UserScoreComponent } from './user-score.component';
+import {Duel} from '../../../../models/duel';
+import {DuelType} from '../../../../models/duel-type';
+import {Participant} from '../../../../models/participant';
+import {UserScoreComponent} from './user-score.component';
 
 describe('UserScoreComponent', () => {
   let component: UserScoreComponent;

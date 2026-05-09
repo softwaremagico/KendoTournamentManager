@@ -1,9 +1,9 @@
-import { Subject } from 'rxjs';
-import { LineChartComponent } from './line-chart.component';
-import { LineChartData } from './line-chart-data';
-import { Colors } from '../colors';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { UserSessionService } from '../../../services/user-session.service';
+import {Subject} from 'rxjs';
+import {LineChartComponent} from './line-chart.component';
+import {LineChartData} from './line-chart-data';
+import {Colors} from '../colors';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {UserSessionService} from '../../../services/user-session.service';
 
 describe('LineChartComponent', () => {
   let component: LineChartComponent;

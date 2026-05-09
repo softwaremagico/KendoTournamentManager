@@ -1,5 +1,5 @@
-import { Participant } from './participant';
-import { ParticipantImage } from './participant-image.model';
+import {Participant} from './participant';
+import {ParticipantImage} from './participant-image.model';
 
 describe('ParticipantImage', () => {
   const buildParticipant = (): Participant => {

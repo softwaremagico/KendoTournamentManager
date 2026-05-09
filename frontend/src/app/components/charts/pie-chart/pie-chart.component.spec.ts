@@ -1,9 +1,9 @@
-import { Subject } from 'rxjs';
-import { PieChartComponent } from './pie-chart.component';
-import { PieChartData } from './pie-chart-data';
-import { Colors } from '../colors';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { UserSessionService } from '../../../services/user-session.service';
+import {Subject} from 'rxjs';
+import {PieChartComponent} from './pie-chart.component';
+import {PieChartData} from './pie-chart-data';
+import {Colors} from '../colors';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {UserSessionService} from '../../../services/user-session.service';
 
 describe('PieChartComponent', () => {
   let component: PieChartComponent;

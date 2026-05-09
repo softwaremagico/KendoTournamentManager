@@ -1,9 +1,9 @@
-import { Subject } from 'rxjs';
-import { StackedBarsChartComponent } from './stacked-bars-chart.component';
-import { StackedBarChartData, StackedBarChartDataElement } from './stacked-bars-chart-data';
-import { Colors } from '../colors';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { UserSessionService } from '../../../services/user-session.service';
+import {Subject} from 'rxjs';
+import {StackedBarsChartComponent} from './stacked-bars-chart.component';
+import {StackedBarChartData, StackedBarChartDataElement} from './stacked-bars-chart-data';
+import {Colors} from '../colors';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {UserSessionService} from '../../../services/user-session.service';
 
 describe('StackedBarsChartComponent', () => {
   let component: StackedBarsChartComponent;

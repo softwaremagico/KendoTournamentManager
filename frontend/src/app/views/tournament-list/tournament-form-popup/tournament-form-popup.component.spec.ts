@@ -1,10 +1,10 @@
-import { of } from 'rxjs';
-import { TournamentFormPopupComponent } from './tournament-form-popup.component';
-import { UserSessionService } from '../../../services/user-session.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { Tournament } from '../../../models/tournament';
-import { AuthenticatedUser } from '../../../models/authenticated-user';
-import { TournamentScore } from '../../../models/tournament-score.model';
+import {of} from 'rxjs';
+import {TournamentFormPopupComponent} from './tournament-form-popup.component';
+import {UserSessionService} from '../../../services/user-session.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {Tournament} from '../../../models/tournament';
+import {AuthenticatedUser} from '../../../models/authenticated-user';
+import {TournamentScore} from '../../../models/tournament-score.model';
 
 describe('TournamentFormPopupComponent', () => {
   let component: TournamentFormPopupComponent;

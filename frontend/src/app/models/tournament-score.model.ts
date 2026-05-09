@@ -1,6 +1,5 @@
 import {ScoreType} from "./score-type";
 import {Element} from "./element";
-import {TournamentType} from "./tournament-type";
 
 export class TournamentScore extends Element {
   public scoreType: ScoreType;

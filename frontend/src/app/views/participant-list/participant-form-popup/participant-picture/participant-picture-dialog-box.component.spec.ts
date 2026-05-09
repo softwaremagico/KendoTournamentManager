@@ -1,13 +1,13 @@
-import { Subject, of } from 'rxjs';
-import { WebcamImage, WebcamInitError } from 'ngx-webcam';
-import { ParticipantPictureDialogBoxComponent } from './participant-picture-dialog-box.component';
-import { RbacService } from '../../../../services/rbac/rbac.service';
-import { MessageService } from '../../../../services/message.service';
-import { FileService } from '../../../../services/file.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { PictureUpdatedService } from '../../../../services/notifications/picture-updated.service';
-import { Participant } from '../../../../models/participant';
-import { ParticipantImage } from '../../../../models/participant-image.model';
+import {of, Subject} from 'rxjs';
+import {WebcamImage, WebcamInitError} from 'ngx-webcam';
+import {ParticipantPictureDialogBoxComponent} from './participant-picture-dialog-box.component';
+import {RbacService} from '../../../../services/rbac/rbac.service';
+import {MessageService} from '../../../../services/message.service';
+import {FileService} from '../../../../services/file.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {PictureUpdatedService} from '../../../../services/notifications/picture-updated.service';
+import {Participant} from '../../../../models/participant';
+import {ParticipantImage} from '../../../../models/participant-image.model';
 
 describe('ParticipantPictureDialogBoxComponent', () => {
   let component: ParticipantPictureDialogBoxComponent;

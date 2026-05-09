@@ -1,7 +1,7 @@
-import { Achievement } from './achievement.model';
-import { Participant } from './participant';
-import { Tournament } from './tournament';
-import { TournamentScore } from './tournament-score.model';
+import {Achievement} from './achievement.model';
+import {Participant} from './participant';
+import {Tournament} from './tournament';
+import {TournamentScore} from './tournament-score.model';
 
 describe('Achievement', () => {
   const buildParticipant = (): Participant => {

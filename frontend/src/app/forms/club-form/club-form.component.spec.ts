@@ -1,12 +1,11 @@
-import { of } from 'rxjs';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { ClubFormComponent } from './club-form.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { ClubService } from '../../services/club.service';
-import { Club } from '../../models/club';
-import { ClubFormValidationFields } from './club-form-validation-fields';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {ClubFormComponent} from './club-form.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {ClubService} from '../../services/club.service';
+import {Club} from '../../models/club';
+import {ClubFormValidationFields} from './club-form-validation-fields';
 
 describe('ClubFormComponent', () => {
   let component: ClubFormComponent;

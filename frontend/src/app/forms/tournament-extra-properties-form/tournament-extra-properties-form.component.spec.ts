@@ -1,15 +1,15 @@
-import { of } from 'rxjs';
-import { TournamentExtraPropertiesFormComponent } from './tournament-extra-properties-form.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { TournamentExtendedPropertiesService } from '../../services/tournament-extended-properties.service';
-import { MessageService } from '../../services/message.service';
-import { Tournament } from '../../models/tournament';
-import { TournamentScore } from '../../models/tournament-score.model';
-import { TournamentType } from '../../models/tournament-type';
-import { TournamentExtraPropertyKey } from '../../models/tournament-extra-property-key';
-import { DrawResolution } from '../../models/draw-resolution';
-import { LeagueFightsOrder } from '../../models/league-fights-order';
+import {of} from 'rxjs';
+import {TournamentExtraPropertiesFormComponent} from './tournament-extra-properties-form.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {TournamentExtendedPropertiesService} from '../../services/tournament-extended-properties.service';
+import {MessageService} from '../../services/message.service';
+import {Tournament} from '../../models/tournament';
+import {TournamentScore} from '../../models/tournament-score.model';
+import {TournamentType} from '../../models/tournament-type';
+import {TournamentExtraPropertyKey} from '../../models/tournament-extra-property-key';
+import {DrawResolution} from '../../models/draw-resolution';
+import {LeagueFightsOrder} from '../../models/league-fights-order';
 
 describe('TournamentExtraPropertiesFormComponent', () => {
   let component: TournamentExtraPropertiesFormComponent;

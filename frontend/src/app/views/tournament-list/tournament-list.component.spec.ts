@@ -1,21 +1,20 @@
-import { of } from 'rxjs';
-import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { TournamentListComponent } from './tournament-list.component';
-import { UserSessionService } from '../../services/user-session.service';
-import { TournamentService } from '../../services/tournament.service';
-import { RankingService } from '../../services/ranking.service';
-import { MessageService } from '../../services/message.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { SystemOverloadService } from '../../services/notifications/system-overload.service';
-import { AchievementsService } from '../../services/achievements.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { TableColumnTranslationPipe } from '../../pipes/visualization/table-column-translation-pipe';
-import { Tournament } from '../../models/tournament';
-import { TournamentScore } from '../../models/tournament-score.model';
-import { RoleType } from '../../models/role-type';
+import {of} from 'rxjs';
+import {Router} from '@angular/router';
+import {DatePipe} from '@angular/common';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {TournamentListComponent} from './tournament-list.component';
+import {UserSessionService} from '../../services/user-session.service';
+import {TournamentService} from '../../services/tournament.service';
+import {RankingService} from '../../services/ranking.service';
+import {MessageService} from '../../services/message.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {SystemOverloadService} from '../../services/notifications/system-overload.service';
+import {AchievementsService} from '../../services/achievements.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {TableColumnTranslationPipe} from '../../pipes/visualization/table-column-translation-pipe';
+import {Tournament} from '../../models/tournament';
+import {TournamentScore} from '../../models/tournament-score.model';
+import {RoleType} from '../../models/role-type';
 
 describe('TournamentListComponent', () => {
   let component: TournamentListComponent;

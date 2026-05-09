@@ -1,13 +1,13 @@
-import { of, Subject } from 'rxjs';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { SenbatsuFightCreatorComponent } from './senbatsu-fight-creator.component';
-import { TeamService } from '../../services/team.service';
-import { FightService } from '../../services/fight.service';
-import { GroupService } from '../../services/group.service';
-import { MessageService } from '../../services/message.service';
-import { GroupUpdatedService } from '../../services/notifications/group-updated.service';
-import { TournamentExtendedPropertiesService } from '../../services/tournament-extended-properties.service';
-import { Team } from '../../models/team';
+import {of, Subject} from 'rxjs';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import {SenbatsuFightCreatorComponent} from './senbatsu-fight-creator.component';
+import {TeamService} from '../../services/team.service';
+import {FightService} from '../../services/fight.service';
+import {GroupService} from '../../services/group.service';
+import {MessageService} from '../../services/message.service';
+import {GroupUpdatedService} from '../../services/notifications/group-updated.service';
+import {TournamentExtendedPropertiesService} from '../../services/tournament-extended-properties.service';
+import {Team} from '../../models/team';
 
 describe('SenbatsuFightCreatorComponent', () => {
   let component: SenbatsuFightCreatorComponent;

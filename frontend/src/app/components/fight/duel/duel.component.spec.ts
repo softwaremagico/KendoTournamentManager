@@ -1,11 +1,11 @@
-import { Subject } from 'rxjs';
-import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
-import { Duel } from '../../../models/duel';
-import { Fight } from '../../../models/fight';
-import { Participant } from '../../../models/participant';
-import { DuelChangedService } from '../../../services/notifications/duel-changed.service';
-import { MembersOrderChangedService } from '../../../services/notifications/members-order-changed.service';
-import { DuelComponent } from './duel.component';
+import {Subject} from 'rxjs';
+import {CdkDrag, CdkDropList} from '@angular/cdk/drag-drop';
+import {Duel} from '../../../models/duel';
+import {Fight} from '../../../models/fight';
+import {Participant} from '../../../models/participant';
+import {DuelChangedService} from '../../../services/notifications/duel-changed.service';
+import {MembersOrderChangedService} from '../../../services/notifications/members-order-changed.service';
+import {DuelComponent} from './duel.component';
 
 describe('DuelComponent', () => {
   let component: DuelComponent;

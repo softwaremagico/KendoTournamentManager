@@ -1,19 +1,19 @@
-import { of } from 'rxjs';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { LeagueGeneratorComponent } from './league-generator.component';
-import { TeamService } from '../../../services/team.service';
-import { RbacService } from '../../../services/rbac/rbac.service';
-import { TournamentExtendedPropertiesService } from '../../../services/tournament-extended-properties.service';
-import { MessageService } from '../../../services/message.service';
-import { RankingService } from '../../../services/ranking.service';
-import { Tournament } from '../../../models/tournament';
-import { TournamentScore } from '../../../models/tournament-score.model';
-import { TournamentType } from '../../../models/tournament-type';
-import { Team } from '../../../models/team';
-import { Participant } from '../../../models/participant';
-import { DrawResolution } from '../../../models/draw-resolution';
-import { LeagueFightsOrder } from '../../../models/league-fights-order';
-import { TournamentExtraPropertyKey } from '../../../models/tournament-extra-property-key';
+import {of} from 'rxjs';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
+import {LeagueGeneratorComponent} from './league-generator.component';
+import {TeamService} from '../../../services/team.service';
+import {RbacService} from '../../../services/rbac/rbac.service';
+import {TournamentExtendedPropertiesService} from '../../../services/tournament-extended-properties.service';
+import {MessageService} from '../../../services/message.service';
+import {RankingService} from '../../../services/ranking.service';
+import {Tournament} from '../../../models/tournament';
+import {TournamentScore} from '../../../models/tournament-score.model';
+import {TournamentType} from '../../../models/tournament-type';
+import {Team} from '../../../models/team';
+import {Participant} from '../../../models/participant';
+import {DrawResolution} from '../../../models/draw-resolution';
+import {LeagueFightsOrder} from '../../../models/league-fights-order';
+import {TournamentExtraPropertyKey} from '../../../models/tournament-extra-property-key';
 
 describe('LeagueGeneratorComponent', () => {
   let component: LeagueGeneratorComponent;

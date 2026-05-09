@@ -1,15 +1,12 @@
-import { of } from 'rxjs';
-import { DatatableColumn } from '@biit-solutions/wizardry-theme/table';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { ClubListComponent } from './club-list.component';
-import { ClubService } from '../../services/club.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { DatePipe } from '@angular/common';
-import { CustomDatePipe } from '../../pipes/visualization/custom-date-pipe';
-import { SystemOverloadService } from '../../services/notifications/system-overload.service';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { Club } from '../../models/club';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {ClubListComponent} from './club-list.component';
+import {ClubService} from '../../services/club.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {DatePipe} from '@angular/common';
+import {SystemOverloadService} from '../../services/notifications/system-overload.service';
+import {Club} from '../../models/club';
 
 describe('ClubListComponent', () => {
   let component: ClubListComponent;
@@ -47,7 +44,7 @@ describe('ClubListComponent', () => {
     translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['selectTranslate', 'translate']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     systemOverloadServiceSpy = jasmine.createSpyObj('SystemOverloadService', [], {
-      isTransactionalBusy: { next: jasmine.createSpy('next') }
+      isTransactionalBusy: {next: jasmine.createSpy('next')}
     });
     biitSnackbarServiceSpy = jasmine.createSpyObj('BiitSnackbarService', ['showNotification']);
     datePipeSpy = jasmine.createSpyObj('DatePipe', ['transform']);

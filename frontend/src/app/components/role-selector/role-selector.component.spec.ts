@@ -1,9 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RoleSelectorComponent } from './role-selector.component';
-import { Tournament } from '../../models/tournament';
-import { RoleType } from '../../models/role-type';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { TranslocoModule } from '@ngneat/transloco';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {RoleSelectorComponent} from './role-selector.component';
+import {Tournament} from '../../models/tournament';
+import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {TranslocoModule} from '@ngneat/transloco';
 
 describe('RoleSelectorComponent', () => {
   let component: RoleSelectorComponent;

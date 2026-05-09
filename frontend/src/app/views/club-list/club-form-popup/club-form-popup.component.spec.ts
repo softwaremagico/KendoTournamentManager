@@ -1,10 +1,9 @@
-import { of } from 'rxjs';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { ClubFormPopupComponent } from './club-form-popup.component';
-import { UserSessionService } from '../../../services/user-session.service';
-import { CsvService } from '../../../services/csv-service';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { TranslocoService } from '@ngneat/transloco';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {ClubFormPopupComponent} from './club-form-popup.component';
+import {UserSessionService} from '../../../services/user-session.service';
+import {CsvService} from '../../../services/csv-service';
+import {TranslocoService} from '@ngneat/transloco';
 
 describe('ClubFormPopupComponent', () => {
   let component: ClubFormPopupComponent;

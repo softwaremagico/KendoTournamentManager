@@ -1,9 +1,9 @@
-import { Subject } from 'rxjs';
-import { GaugeChartComponent } from './gauge-chart.component';
-import { GaugeChartData } from './gauge-chart-data';
-import { Colors } from '../colors';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { UserSessionService } from '../../../services/user-session.service';
+import {Subject} from 'rxjs';
+import {GaugeChartComponent} from './gauge-chart.component';
+import {GaugeChartData} from './gauge-chart-data';
+import {Colors} from '../colors';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {UserSessionService} from '../../../services/user-session.service';
 
 describe('GaugeChartComponent', () => {
   let component: GaugeChartComponent;

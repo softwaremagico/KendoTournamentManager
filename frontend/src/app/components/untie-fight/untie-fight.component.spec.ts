@@ -1,7 +1,7 @@
-import { BehaviorSubject } from 'rxjs';
-import { Duel } from '../../models/duel';
-import { DuelChangedService } from '../../services/notifications/duel-changed.service';
-import { UntieFightComponent } from './untie-fight.component';
+import {BehaviorSubject} from 'rxjs';
+import {Duel} from '../../models/duel';
+import {DuelChangedService} from '../../services/notifications/duel-changed.service';
+import {UntieFightComponent} from './untie-fight.component';
 
 describe('UntieFightComponent', () => {
   let component: UntieFightComponent;

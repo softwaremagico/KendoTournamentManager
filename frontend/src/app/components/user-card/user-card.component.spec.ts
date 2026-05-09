@@ -1,12 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserCardComponent } from './user-card.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { RbacActivity } from '../../services/rbac/rbac.activity';
-import { Participant } from '../../models/participant';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HasPermissionPipe } from '../../pipes/has-permission.pipe';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {UserCardComponent} from './user-card.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {RbacActivity} from '../../services/rbac/rbac.activity';
+import {Participant} from '../../models/participant';
+import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {MatCardModule} from '@angular/material/card';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {HasPermissionPipe} from '../../pipes/has-permission.pipe';
 
 describe('UserCardComponent', () => {
   let component: UserCardComponent;

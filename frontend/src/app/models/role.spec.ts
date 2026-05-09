@@ -1,8 +1,8 @@
-import { Role } from './role';
-import { RoleType } from './role-type';
-import { Tournament } from './tournament';
-import { TournamentScore } from './tournament-score.model';
-import { Participant } from './participant';
+import {Role} from './role';
+import {RoleType} from './role-type';
+import {Tournament} from './tournament';
+import {TournamentScore} from './tournament-score.model';
+import {Participant} from './participant';
 
 describe('Role', () => {
   const buildTournament = (): Tournament => {

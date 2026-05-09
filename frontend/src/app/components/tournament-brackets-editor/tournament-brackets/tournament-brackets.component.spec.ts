@@ -1,8 +1,8 @@
-import { Subject } from 'rxjs';
-import { Group } from '../../../models/group';
-import { Team } from '../../../models/team';
-import { GroupsUpdatedService } from './groups-updated.service';
-import { TournamentBracketsComponent } from './tournament-brackets.component';
+import {Subject} from 'rxjs';
+import {Group} from '../../../models/group';
+import {Team} from '../../../models/team';
+import {GroupsUpdatedService} from './groups-updated.service';
+import {TournamentBracketsComponent} from './tournament-brackets.component';
 
 describe('TournamentBracketsComponent', () => {
   let component: TournamentBracketsComponent;

@@ -1,14 +1,13 @@
-import { of } from 'rxjs';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { AuthenticatedUserFormComponent } from './authenticated-user-form.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { UserService } from '../../services/user.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { ActivityService } from '../../services/rbac/activity.service';
-import { AuthenticatedUser } from '../../models/authenticated-user';
-import { AuthenticatedUserFormValidationFields } from './authenticated-user-form-validation-fields';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {AuthenticatedUserFormComponent} from './authenticated-user-form.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {UserService} from '../../services/user.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {ActivityService} from '../../services/rbac/activity.service';
+import {AuthenticatedUser} from '../../models/authenticated-user';
+import {AuthenticatedUserFormValidationFields} from './authenticated-user-form-validation-fields';
 
 describe('AuthenticatedUserFormComponent', () => {
   let component: AuthenticatedUserFormComponent;

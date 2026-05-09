@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ParticipantPictureComponent } from './participant-picture.component';
-import { FileService } from '../../services/file.service';
-import { NameUtilsService } from '../../services/name-utils.service';
-import { Participant } from '../../models/participant';
-import { ParticipantImage } from '../../models/participant-image.model';
-import { of } from 'rxjs';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ParticipantPictureComponent} from './participant-picture.component';
+import {FileService} from '../../services/file.service';
+import {NameUtilsService} from '../../services/name-utils.service';
+import {Participant} from '../../models/participant';
+import {ParticipantImage} from '../../models/participant-image.model';
+import {of} from 'rxjs';
 
 describe('ParticipantPictureComponent', () => {
   let component: ParticipantPictureComponent;

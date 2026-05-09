@@ -1,9 +1,9 @@
-import { Subject } from 'rxjs';
-import { BarChartComponent } from './bar-chart.component';
-import { BarChartData } from './bar-chart-data';
-import { Colors } from '../colors';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { UserSessionService } from '../../../services/user-session.service';
+import {Subject} from 'rxjs';
+import {BarChartComponent} from './bar-chart.component';
+import {BarChartData} from './bar-chart-data';
+import {Colors} from '../colors';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {UserSessionService} from '../../../services/user-session.service';
 
 describe('BarChartComponent', () => {
   let component: BarChartComponent;

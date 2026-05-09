@@ -1,16 +1,15 @@
-import { of } from 'rxjs';
-import { ParticipantFightListComponent } from './participant-fight-list.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { Router } from '@angular/router';
-import { SystemOverloadService } from '../../services/notifications/system-overload.service';
-import { FightService } from '../../services/fight.service';
-import { DuelService } from '../../services/duel.service';
-import { Tournament } from '../../models/tournament';
-import { Fight } from '../../models/fight';
-import { Duel } from '../../models/duel';
-import { Team } from '../../models/team';
-import { Participant } from '../../models/participant';
-import { TournamentScore } from '../../models/tournament-score.model';
+import {of} from 'rxjs';
+import {ParticipantFightListComponent} from './participant-fight-list.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {Router} from '@angular/router';
+import {SystemOverloadService} from '../../services/notifications/system-overload.service';
+import {FightService} from '../../services/fight.service';
+import {DuelService} from '../../services/duel.service';
+import {Tournament} from '../../models/tournament';
+import {Fight} from '../../models/fight';
+import {Team} from '../../models/team';
+import {Participant} from '../../models/participant';
+import {TournamentScore} from '../../models/tournament-score.model';
 
 describe('ParticipantFightListComponent', () => {
   let component: ParticipantFightListComponent;
@@ -55,13 +54,13 @@ describe('ParticipantFightListComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'getCurrentNavigation']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     systemOverloadServiceSpy = jasmine.createSpyObj('SystemOverloadService', [], {
-      isTransactionalBusy: { next: jasmine.createSpy('next') }
+      isTransactionalBusy: {next: jasmine.createSpy('next')}
     });
     fightServiceSpy = jasmine.createSpyObj('FightService', ['getFromParticipant']);
     duelServiceSpy = jasmine.createSpyObj('DuelService', ['getUntiesFromParticipant']);
 
     routerSpy.getCurrentNavigation.and.returnValue({
-      extras: { state: { participantId: 42 } }
+      extras: {state: {participantId: 42}}
     } as any);
 
     rbacServiceSpy.isAllowed.and.returnValue(true);
@@ -87,7 +86,7 @@ describe('ParticipantFightListComponent', () => {
 
   it('should navigate back to statistics when participantId is not a number', () => {
     routerSpy.getCurrentNavigation.and.returnValue({
-      extras: { state: { participantId: 'invalid' } }
+      extras: {state: {participantId: 'invalid'}}
     } as any);
 
     component = new ParticipantFightListComponent(
@@ -100,7 +99,7 @@ describe('ParticipantFightListComponent', () => {
 
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       ['/participants/statistics'],
-      { state: { participantId: undefined } }
+      {state: {participantId: undefined}}
     );
   });
 
@@ -127,7 +126,7 @@ describe('ParticipantFightListComponent', () => {
 
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       ['/participants/statistics'],
-      { state: { participantId: undefined } }
+      {state: {participantId: undefined}}
     );
   });
 
@@ -200,7 +199,7 @@ describe('ParticipantFightListComponent', () => {
 
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       ['/participants/statistics'],
-      { state: { participantId: 42 } }
+      {state: {participantId: 42}}
     );
   });
 });

@@ -1,21 +1,18 @@
-import { of } from 'rxjs';
-import { ParticipantStatisticsComponent } from './participant-statistics.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-import { SystemOverloadService } from '../../services/notifications/system-overload.service';
-import { StatisticsService } from '../../services/statistics.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { RankingService } from '../../services/ranking.service';
-import { AchievementsService } from '../../services/achievements.service';
-import { ParticipantService } from '../../services/participant.service';
-import { LoginService } from '../../services/login.service';
-import { EnvironmentService } from '../../environment.service';
-import { ParticipantStatistics } from '../../models/participant-statistics.model';
-import { ParticipantFightStatistics } from '../../models/participant-fight-statistics.model';
-import { RoleType } from '../../models/role-type';
-import { Score } from '../../models/score';
+import {ParticipantStatisticsComponent} from './participant-statistics.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {SystemOverloadService} from '../../services/notifications/system-overload.service';
+import {StatisticsService} from '../../services/statistics.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {RankingService} from '../../services/ranking.service';
+import {AchievementsService} from '../../services/achievements.service';
+import {ParticipantService} from '../../services/participant.service';
+import {LoginService} from '../../services/login.service';
+import {EnvironmentService} from '../../environment.service';
+import {ParticipantStatistics} from '../../models/participant-statistics.model';
+import {ParticipantFightStatistics} from '../../models/participant-fight-statistics.model';
+import {RoleType} from '../../models/role-type';
 
 describe('ParticipantStatisticsComponent', () => {
   let component: ParticipantStatisticsComponent;

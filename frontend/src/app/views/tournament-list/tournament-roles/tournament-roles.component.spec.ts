@@ -1,17 +1,17 @@
-import { of } from 'rxjs';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { TournamentRolesComponent } from './tournament-roles.component';
-import { ParticipantService } from '../../../services/participant.service';
-import { RoleService } from '../../../services/role.service';
-import { MessageService } from '../../../services/message.service';
-import { RbacService } from '../../../services/rbac/rbac.service';
-import { FilterResetService } from '../../../services/notifications/filter-reset.service';
-import { StatisticsChangedService } from '../../../services/notifications/statistics-changed.service';
-import { TeamService } from '../../../services/team.service';
-import { Participant } from '../../../models/participant';
-import { Role } from '../../../models/role';
-import { RoleType } from '../../../models/role-type';
-import { Team } from '../../../models/team';
+import {of} from 'rxjs';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import {TournamentRolesComponent} from './tournament-roles.component';
+import {ParticipantService} from '../../../services/participant.service';
+import {RoleService} from '../../../services/role.service';
+import {MessageService} from '../../../services/message.service';
+import {RbacService} from '../../../services/rbac/rbac.service';
+import {FilterResetService} from '../../../services/notifications/filter-reset.service';
+import {StatisticsChangedService} from '../../../services/notifications/statistics-changed.service';
+import {TeamService} from '../../../services/team.service';
+import {Participant} from '../../../models/participant';
+import {Role} from '../../../models/role';
+import {RoleType} from '../../../models/role-type';
+import {Team} from '../../../models/team';
 
 describe('TournamentRolesComponent', () => {
   let component: TournamentRolesComponent;

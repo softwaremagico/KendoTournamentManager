@@ -1,9 +1,9 @@
-import { BehaviorSubject, of } from 'rxjs';
-import { TournamentFightStatistics } from '../../models/tournament-fight-statistics.model';
-import { Tournament } from '../../models/tournament';
-import { StatisticsService } from '../../services/statistics.service';
-import { StatisticsChangedService } from '../../services/notifications/statistics-changed.service';
-import { FightStatisticsPanelComponent } from './fight-statistics-panel.component';
+import {BehaviorSubject, of} from 'rxjs';
+import {TournamentFightStatistics} from '../../models/tournament-fight-statistics.model';
+import {Tournament} from '../../models/tournament';
+import {StatisticsService} from '../../services/statistics.service';
+import {StatisticsChangedService} from '../../services/notifications/statistics-changed.service';
+import {FightStatisticsPanelComponent} from './fight-statistics-panel.component';
 
 describe('FightStatisticsPanelComponent', () => {
   let component: FightStatisticsPanelComponent;

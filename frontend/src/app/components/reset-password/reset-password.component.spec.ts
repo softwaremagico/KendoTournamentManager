@@ -1,11 +1,10 @@
-import { of } from 'rxjs';
-import { AuthenticatedUser } from '../../models/authenticated-user';
-import { MessageService } from '../../services/message.service';
-import { RbacActivity } from '../../services/rbac/rbac.activity';
-import { UserService } from '../../services/user.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { PasswordFormValidationFields } from './password-form-validation-fields';
-import { ResetPasswordComponent } from './reset-password.component';
+import {of} from 'rxjs';
+import {AuthenticatedUser} from '../../models/authenticated-user';
+import {MessageService} from '../../services/message.service';
+import {UserService} from '../../services/user.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {PasswordFormValidationFields} from './password-form-validation-fields';
+import {ResetPasswordComponent} from './reset-password.component';
 
 describe('ResetPasswordComponent', () => {
   let component: ResetPasswordComponent;

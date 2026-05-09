@@ -1,10 +1,10 @@
-import { of } from 'rxjs';
-import { AuthenticatedUserRolePopupComponent } from './authenticated-user-role-popup.component';
-import { RbacService } from '../../../services/rbac/rbac.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { UserService } from '../../../services/user.service';
-import { MessageService } from '../../../services/message.service';
-import { UserRoles } from '../../../services/rbac/user-roles';
+import {of} from 'rxjs';
+import {AuthenticatedUserRolePopupComponent} from './authenticated-user-role-popup.component';
+import {RbacService} from '../../../services/rbac/rbac.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {UserService} from '../../../services/user.service';
+import {MessageService} from '../../../services/message.service';
+import {UserRoles} from '../../../services/rbac/user-roles';
 
 describe('AuthenticatedUserRolePopupComponent', () => {
   let component: AuthenticatedUserRolePopupComponent;

@@ -1,5 +1,5 @@
-import { getBalancedMember } from './members';
-import { Participant } from '../../models/participant';
+import {getBalancedMember} from './members';
+import {Participant} from '../../models/participant';
 
 describe('getBalancedMember', () => {
   const buildParticipant = (id: number): Participant => ({

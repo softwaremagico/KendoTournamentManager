@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FloatingDeleteButtonComponent } from './floating-delete-button.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {FloatingDeleteButtonComponent} from './floating-delete-button.component';
+import {NO_ERRORS_SCHEMA} from '@angular/core';
 
 describe('FloatingDeleteButtonComponent', () => {
   let component: FloatingDeleteButtonComponent;

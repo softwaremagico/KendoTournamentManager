@@ -1,14 +1,14 @@
-import { of, Subject } from 'rxjs';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { FightCreator } from './fight-creator.component';
-import { TeamService } from '../../services/team.service';
-import { FightService } from '../../services/fight.service';
-import { GroupService } from '../../services/group.service';
-import { MessageService } from '../../services/message.service';
-import { GroupUpdatedService } from '../../services/notifications/group-updated.service';
-import { Team } from '../../models/team';
-import { Fight } from '../../models/fight';
-import { Group } from '../../models/group';
+import {of, Subject} from 'rxjs';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import {FightCreator} from './fight-creator.component';
+import {TeamService} from '../../services/team.service';
+import {FightService} from '../../services/fight.service';
+import {GroupService} from '../../services/group.service';
+import {MessageService} from '../../services/message.service';
+import {GroupUpdatedService} from '../../services/notifications/group-updated.service';
+import {Team} from '../../models/team';
+import {Fight} from '../../models/fight';
+import {Group} from '../../models/group';
 
 describe('FightCreator', () => {
   let component: FightCreator;

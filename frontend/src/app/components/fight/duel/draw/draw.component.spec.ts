@@ -1,5 +1,5 @@
-import { Duel } from '../../../../models/duel';
-import { DrawComponent } from './draw.component';
+import {Duel} from '../../../../models/duel';
+import {DrawComponent} from './draw.component';
 
 describe('DrawComponent', () => {
   let component: DrawComponent;

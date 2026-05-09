@@ -1,4 +1,4 @@
-import { ParticipantFightStatistics } from './participant-fight-statistics.model';
+import {ParticipantFightStatistics} from './participant-fight-statistics.model';
 
 describe('ParticipantFightStatistics', () => {
   const buildStats = (): ParticipantFightStatistics => {

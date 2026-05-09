@@ -1,11 +1,11 @@
-import { SimpleChange } from '@angular/core';
-import { Duel } from '../../../../../models/duel';
-import { DuelService } from '../../../../../services/duel.service';
-import { MessageService } from '../../../../../services/message.service';
-import { ScoreUpdatedService } from '../../../../../services/notifications/score-updated.service';
-import { RbacService } from '../../../../../services/rbac/rbac.service';
-import { BehaviorSubject, of } from 'rxjs';
-import { FaultComponent } from './fault.component';
+import {SimpleChange} from '@angular/core';
+import {Duel} from '../../../../../models/duel';
+import {DuelService} from '../../../../../services/duel.service';
+import {MessageService} from '../../../../../services/message.service';
+import {ScoreUpdatedService} from '../../../../../services/notifications/score-updated.service';
+import {RbacService} from '../../../../../services/rbac/rbac.service';
+import {of} from 'rxjs';
+import {FaultComponent} from './fault.component';
 
 describe('FaultComponent', () => {
   let component: FaultComponent;

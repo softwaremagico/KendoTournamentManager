@@ -1,10 +1,10 @@
-import { of } from 'rxjs';
-import { QrCode } from '../../models/qr-code.model';
-import { Tournament } from '../../models/tournament';
-import { QrService } from '../../services/qr.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { TournamentQrCodeComponent } from './tournament-qr-code.component';
+import {of} from 'rxjs';
+import {QrCode} from '../../models/qr-code.model';
+import {Tournament} from '../../models/tournament';
+import {QrService} from '../../services/qr.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {TournamentQrCodeComponent} from './tournament-qr-code.component';
 
 describe('TournamentQrCodeComponent', () => {
   let component: TournamentQrCodeComponent;

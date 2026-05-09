@@ -1,16 +1,16 @@
-import { Subject, of, throwError } from 'rxjs';
-import { UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LoginComponent } from './login.component';
-import { LoginService } from '../../services/login.service';
-import { MessageService } from '../../services/message.service';
-import { LoggerService } from '../../services/logger.service';
-import { InfoService } from '../../services/info.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { EnvironmentService } from '../../environment.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { ActivityService } from '../../services/rbac/activity.service';
-import { Constants } from '../../constants';
+import {of, Subject, throwError} from 'rxjs';
+import {UntypedFormBuilder} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {LoginComponent} from './login.component';
+import {LoginService} from '../../services/login.service';
+import {MessageService} from '../../services/message.service';
+import {LoggerService} from '../../services/logger.service';
+import {InfoService} from '../../services/info.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {EnvironmentService} from '../../environment.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {ActivityService} from '../../services/rbac/activity.service';
+import {Constants} from '../../constants';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;

@@ -1,15 +1,14 @@
-import { of } from 'rxjs';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { TournamentFormComponent } from './tournament-form.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { TournamentService } from '../../services/tournament.service';
-import { FightService } from '../../services/fight.service';
-import { Tournament } from '../../models/tournament';
-import { TournamentScore } from '../../models/tournament-score.model';
-import { TournamentType } from '../../models/tournament-type';
-import { TournamentFormValidationFields } from './tournament-form-validation-fields';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {TournamentFormComponent} from './tournament-form.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {TournamentService} from '../../services/tournament.service';
+import {FightService} from '../../services/fight.service';
+import {Tournament} from '../../models/tournament';
+import {TournamentScore} from '../../models/tournament-score.model';
+import {TournamentType} from '../../models/tournament-type';
+import {TournamentFormValidationFields} from './tournament-form-validation-fields';
 
 describe('TournamentFormComponent', () => {
   let component: TournamentFormComponent;

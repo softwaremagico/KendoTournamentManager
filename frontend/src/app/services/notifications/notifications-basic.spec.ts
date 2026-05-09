@@ -1,17 +1,17 @@
-import { UserSessionService } from '../user-session.service';
-import { DarkModeService } from './dark-mode.service';
-import { TimeChangedService } from './time-changed.service';
-import { DuelChangedService } from './duel-changed.service';
-import { UntieAddedService } from './untie-added.service';
-import { GroupUpdatedService } from './group-updated.service';
-import { ProjectModeChangedService } from './project-mode-changed.service';
-import { StatisticsChangedService } from './statistics-changed.service';
-import { NumberOfWinnersUpdatedService } from './number-of-winners-updated.service';
-import { PictureUpdatedService } from './picture-updated.service';
-import { Duel } from '../../models/duel';
-import { Group } from '../../models/group';
-import { Fight } from '../../models/fight';
-import { MembersOrderChangedService } from './members-order-changed.service';
+import {UserSessionService} from '../user-session.service';
+import {DarkModeService} from './dark-mode.service';
+import {TimeChangedService} from './time-changed.service';
+import {DuelChangedService} from './duel-changed.service';
+import {UntieAddedService} from './untie-added.service';
+import {GroupUpdatedService} from './group-updated.service';
+import {ProjectModeChangedService} from './project-mode-changed.service';
+import {StatisticsChangedService} from './statistics-changed.service';
+import {NumberOfWinnersUpdatedService} from './number-of-winners-updated.service';
+import {PictureUpdatedService} from './picture-updated.service';
+import {Duel} from '../../models/duel';
+import {Group} from '../../models/group';
+import {Fight} from '../../models/fight';
+import {MembersOrderChangedService} from './members-order-changed.service';
 
 describe('Notification services', () => {
   it('should initialize DarkModeService from user session preference', () => {

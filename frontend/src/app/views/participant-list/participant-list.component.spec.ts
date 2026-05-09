@@ -1,20 +1,17 @@
-import { of } from 'rxjs';
-import { DatatableColumn } from '@biit-solutions/wizardry-theme/table';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { ParticipantListComponent } from './participant-list.component';
-import { ParticipantService } from '../../services/participant.service';
-import { ClubService } from '../../services/club.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { Router } from '@angular/router';
-import { UserSessionService } from '../../services/user-session.service';
-import { DatePipe } from '@angular/common';
-import { CustomDatePipe } from '../../pipes/visualization/custom-date-pipe';
-import { SystemOverloadService } from '../../services/notifications/system-overload.service';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { ClubNamePipe } from '../../pipes/visualization/club-name-pipe';
-import { Participant } from '../../models/participant';
-import { Club } from '../../models/club';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {ParticipantListComponent} from './participant-list.component';
+import {ParticipantService} from '../../services/participant.service';
+import {ClubService} from '../../services/club.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {Router} from '@angular/router';
+import {UserSessionService} from '../../services/user-session.service';
+import {DatePipe} from '@angular/common';
+import {SystemOverloadService} from '../../services/notifications/system-overload.service';
+import {ClubNamePipe} from '../../pipes/visualization/club-name-pipe';
+import {Participant} from '../../models/participant';
+import {Club} from '../../models/club';
 
 describe('ParticipantListComponent', () => {
   let component: ParticipantListComponent;

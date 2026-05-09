@@ -1,14 +1,14 @@
-import { of } from 'rxjs';
-import { Duel } from '../../models/duel';
-import { DuelType } from '../../models/duel-type';
-import { Participant } from '../../models/participant';
-import { Team } from '../../models/team';
-import { Tournament } from '../../models/tournament';
-import { GroupService } from '../../services/group.service';
-import { MessageService } from '../../services/message.service';
-import { UntieAddedService } from '../../services/notifications/untie-added.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { UntieTeamsComponent } from './untie-teams.component';
+import {of} from 'rxjs';
+import {Duel} from '../../models/duel';
+import {DuelType} from '../../models/duel-type';
+import {Participant} from '../../models/participant';
+import {Team} from '../../models/team';
+import {Tournament} from '../../models/tournament';
+import {GroupService} from '../../services/group.service';
+import {MessageService} from '../../services/message.service';
+import {UntieAddedService} from '../../services/notifications/untie-added.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {UntieTeamsComponent} from './untie-teams.component';
 
 describe('UntieTeamsComponent', () => {
   let component: UntieTeamsComponent;

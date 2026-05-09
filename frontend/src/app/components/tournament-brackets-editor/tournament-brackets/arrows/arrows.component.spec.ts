@@ -1,8 +1,9 @@
-import { Subject } from 'rxjs';
-import { Group } from '../../../../models/group';
-import { GroupsUpdatedService } from '../groups-updated.service';
-import { BracketsMeasures } from '../brackets-measures';
-import { ArrowsComponent } from './arrows.component';
+import {Subject} from 'rxjs';
+import {Group} from '../../../../models/group';
+import {GroupsUpdatedService} from '../groups-updated.service';
+import {BracketsMeasures} from '../brackets-measures';
+import {ArrowsComponent} from './arrows.component';
+
 describe('ArrowsComponent', () => {
   let component: ArrowsComponent;
   let areGroupsUpdatedSubject: Subject<Group[]>;

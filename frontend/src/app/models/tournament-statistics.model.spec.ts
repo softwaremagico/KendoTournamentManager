@@ -1,6 +1,6 @@
-import { TournamentStatistics } from './tournament-statistics.model';
-import { TournamentFightStatistics } from './tournament-fight-statistics.model';
-import { RoleType } from './role-type';
+import {TournamentStatistics} from './tournament-statistics.model';
+import {TournamentFightStatistics} from './tournament-fight-statistics.model';
+import {RoleType} from './role-type';
 
 describe('TournamentStatistics', () => {
   const buildStats = (): TournamentStatistics => {

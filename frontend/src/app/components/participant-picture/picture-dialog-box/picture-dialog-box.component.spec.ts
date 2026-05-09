@@ -1,5 +1,5 @@
-import { RbacService } from '../../../services/rbac/rbac.service';
-import { PictureDialogBoxComponent } from './picture-dialog-box.component';
+import {RbacService} from '../../../services/rbac/rbac.service';
+import {PictureDialogBoxComponent} from './picture-dialog-box.component';
 
 describe('PictureDialogBoxComponent', () => {
   let component: PictureDialogBoxComponent;

@@ -1,12 +1,8 @@
-import { of } from 'rxjs';
-import {
-  confirmPasswordValidator,
-  MyErrorStateMatcher,
-  PasswordsComponent
-} from './passwords.component';
-import { UserService } from '../../services/user.service';
-import { MessageService } from '../../services/message.service';
-import { RbacService } from '../../services/rbac/rbac.service';
+import {of} from 'rxjs';
+import {confirmPasswordValidator, MyErrorStateMatcher, PasswordsComponent} from './passwords.component';
+import {UserService} from '../../services/user.service';
+import {MessageService} from '../../services/message.service';
+import {RbacService} from '../../services/rbac/rbac.service';
 
 describe('PasswordsComponent', () => {
   let component: PasswordsComponent;

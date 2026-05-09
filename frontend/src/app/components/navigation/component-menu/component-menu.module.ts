@@ -1,7 +1,6 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ComponentMenuComponent } from './component-menu.component';
-
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ComponentMenuComponent} from './component-menu.component';
 
 
 @NgModule({

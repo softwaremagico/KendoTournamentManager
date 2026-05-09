@@ -1,15 +1,14 @@
-import { DatePipe } from '@angular/common';
-import { of } from 'rxjs';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { AuthenticatedUserListComponent } from './authenticated-user-list.component';
-import { UserService } from '../../services/user.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { SystemOverloadService } from '../../services/notifications/system-overload.service';
-import { UserSessionService } from '../../services/user-session.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { AuthenticatedUser } from '../../models/authenticated-user';
-import { UserRoles } from '../../services/rbac/user-roles';
+import {DatePipe} from '@angular/common';
+import {of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {AuthenticatedUserListComponent} from './authenticated-user-list.component';
+import {UserService} from '../../services/user.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {SystemOverloadService} from '../../services/notifications/system-overload.service';
+import {UserSessionService} from '../../services/user-session.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {AuthenticatedUser} from '../../models/authenticated-user';
+import {UserRoles} from '../../services/rbac/user-roles';
 
 describe('AuthenticatedUserListComponent', () => {
   let component: AuthenticatedUserListComponent;

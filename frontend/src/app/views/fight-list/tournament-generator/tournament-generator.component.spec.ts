@@ -1,19 +1,21 @@
-import { BehaviorSubject, of } from 'rxjs';
-import { TournamentGeneratorComponent } from './tournament-generator.component';
-import { Router } from '@angular/router';
-import { RbacService } from '../../../services/rbac/rbac.service';
-import { TournamentService } from '../../../services/tournament.service';
-import { FightService } from '../../../services/fight.service';
-import { MessageService } from '../../../services/message.service';
-import { GroupService } from '../../../services/group.service';
-import { TournamentChangedService } from '../../../components/tournament-brackets-editor/tournament-brackets/tournament-changed.service';
-import { TournamentExtendedPropertiesService } from '../../../services/tournament-extended-properties.service';
-import { NumberOfWinnersUpdatedService } from '../../../services/notifications/number-of-winners-updated.service';
-import { Tournament } from '../../../models/tournament';
-import { TournamentScore } from '../../../models/tournament-score.model';
-import { TournamentType } from '../../../models/tournament-type';
-import { Group } from '../../../models/group';
-import { TournamentExtraPropertyKey } from '../../../models/tournament-extra-property-key';
+import {BehaviorSubject, of} from 'rxjs';
+import {TournamentGeneratorComponent} from './tournament-generator.component';
+import {Router} from '@angular/router';
+import {RbacService} from '../../../services/rbac/rbac.service';
+import {TournamentService} from '../../../services/tournament.service';
+import {FightService} from '../../../services/fight.service';
+import {MessageService} from '../../../services/message.service';
+import {GroupService} from '../../../services/group.service';
+import {
+  TournamentChangedService
+} from '../../../components/tournament-brackets-editor/tournament-brackets/tournament-changed.service';
+import {TournamentExtendedPropertiesService} from '../../../services/tournament-extended-properties.service';
+import {NumberOfWinnersUpdatedService} from '../../../services/notifications/number-of-winners-updated.service';
+import {Tournament} from '../../../models/tournament';
+import {TournamentScore} from '../../../models/tournament-score.model';
+import {TournamentType} from '../../../models/tournament-type';
+import {Group} from '../../../models/group';
+import {TournamentExtraPropertyKey} from '../../../models/tournament-extra-property-key';
 
 describe('TournamentGeneratorComponent', () => {
   let component: TournamentGeneratorComponent;

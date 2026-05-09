@@ -1,14 +1,14 @@
-import { SimpleChange } from '@angular/core';
-import { of } from 'rxjs';
-import { TranslocoService } from '@ngneat/transloco';
-import { registerLocaleData } from '@angular/common';
+import {SimpleChange} from '@angular/core';
+import {of} from 'rxjs';
+import {TranslocoService} from '@ngneat/transloco';
+import {registerLocaleData} from '@angular/common';
 import localeEs from '@angular/common/locales/es';
-import { AchievementTileComponent } from './achievement-tile.component';
-import { Achievement } from '../../models/achievement.model';
-import { AchievementGrade } from '../../models/achievement-grade.model';
-import { AchievementType } from '../../models/achievement-type.model';
-import { NameUtilsService } from '../../services/name-utils.service';
-import { AchievementsService } from '../../services/achievements.service';
+import {AchievementTileComponent} from './achievement-tile.component';
+import {Achievement} from '../../models/achievement.model';
+import {AchievementGrade} from '../../models/achievement-grade.model';
+import {AchievementType} from '../../models/achievement-type.model';
+import {NameUtilsService} from '../../services/name-utils.service';
+import {AchievementsService} from '../../services/achievements.service';
 
 registerLocaleData(localeEs, 'es-ES');
 

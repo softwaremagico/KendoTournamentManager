@@ -1,12 +1,12 @@
-import { SimpleChange } from '@angular/core';
-import { BehaviorSubject, of } from 'rxjs';
-import { Duel } from '../../../../../models/duel';
-import { Score } from '../../../../../models/score';
-import { DuelService } from '../../../../../services/duel.service';
-import { MessageService } from '../../../../../services/message.service';
-import { ScoreUpdatedService } from '../../../../../services/notifications/score-updated.service';
-import { RbacService } from '../../../../../services/rbac/rbac.service';
-import { ScoreComponent } from './score.component';
+import {SimpleChange} from '@angular/core';
+import {BehaviorSubject, of} from 'rxjs';
+import {Duel} from '../../../../../models/duel';
+import {Score} from '../../../../../models/score';
+import {DuelService} from '../../../../../services/duel.service';
+import {MessageService} from '../../../../../services/message.service';
+import {ScoreUpdatedService} from '../../../../../services/notifications/score-updated.service';
+import {RbacService} from '../../../../../services/rbac/rbac.service';
+import {ScoreComponent} from './score.component';
 
 describe('ScoreComponent', () => {
   let component: ScoreComponent;

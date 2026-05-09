@@ -1,9 +1,9 @@
-import { Subject } from 'rxjs';
-import { RadialChartComponent } from './radial-chart.component';
-import { RadialChartData } from './radial-chart-data';
-import { Colors } from '../colors';
-import { DarkModeService } from '../../../services/notifications/dark-mode.service';
-import { UserSessionService } from '../../../services/user-session.service';
+import {Subject} from 'rxjs';
+import {RadialChartComponent} from './radial-chart.component';
+import {RadialChartData} from './radial-chart-data';
+import {Colors} from '../colors';
+import {DarkModeService} from '../../../services/notifications/dark-mode.service';
+import {UserSessionService} from '../../../services/user-session.service';
 
 describe('RadialChartComponent', () => {
   let component: RadialChartComponent;

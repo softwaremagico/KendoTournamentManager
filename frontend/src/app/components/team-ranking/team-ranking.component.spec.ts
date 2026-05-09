@@ -1,16 +1,16 @@
-import { of } from 'rxjs';
-import { Duel } from '../../models/duel';
-import { Group } from '../../models/group';
-import { ScoreOfTeam } from '../../models/score-of-team';
-import { Team } from '../../models/team';
-import { Tournament } from '../../models/tournament';
-import { TournamentType } from '../../models/tournament-type';
-import { RankingService } from '../../services/ranking.service';
-import { MessageService } from '../../services/message.service';
-import { NameUtilsService } from '../../services/name-utils.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { TournamentExtendedPropertiesService } from '../../services/tournament-extended-properties.service';
-import { TeamRankingComponent } from './team-ranking.component';
+import {of} from 'rxjs';
+import {Duel} from '../../models/duel';
+import {Group} from '../../models/group';
+import {ScoreOfTeam} from '../../models/score-of-team';
+import {Team} from '../../models/team';
+import {Tournament} from '../../models/tournament';
+import {TournamentType} from '../../models/tournament-type';
+import {RankingService} from '../../services/ranking.service';
+import {MessageService} from '../../services/message.service';
+import {NameUtilsService} from '../../services/name-utils.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {TournamentExtendedPropertiesService} from '../../services/tournament-extended-properties.service';
+import {TeamRankingComponent} from './team-ranking.component';
 
 describe('TeamRankingComponent', () => {
   let component: TeamRankingComponent;

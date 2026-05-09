@@ -1,11 +1,10 @@
-import { Subject } from 'rxjs';
-import { Duel } from '../../models/duel';
-import { Fight } from '../../models/fight';
-import { DuelChangedService } from '../../services/notifications/duel-changed.service';
-import { MembersOrderChangedService } from '../../services/notifications/members-order-changed.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { RbacActivity } from '../../services/rbac/rbac.activity';
-import { FightComponent } from './fight.component';
+import {Subject} from 'rxjs';
+import {Duel} from '../../models/duel';
+import {Fight} from '../../models/fight';
+import {DuelChangedService} from '../../services/notifications/duel-changed.service';
+import {MembersOrderChangedService} from '../../services/notifications/members-order-changed.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {FightComponent} from './fight.component';
 
 describe('FightComponent', () => {
   let component: FightComponent;

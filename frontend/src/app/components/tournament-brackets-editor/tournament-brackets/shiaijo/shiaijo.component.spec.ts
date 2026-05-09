@@ -1,7 +1,7 @@
-import { Group } from '../../../../models/group';
-import { Tournament } from '../../../../models/tournament';
-import { BracketsMeasures } from '../brackets-measures';
-import { ShiaijoComponent } from './shiaijo.component';
+import {Group} from '../../../../models/group';
+import {Tournament} from '../../../../models/tournament';
+import {BracketsMeasures} from '../brackets-measures';
+import {ShiaijoComponent} from './shiaijo.component';
 
 describe('ShiaijoComponent', () => {
   let component: ShiaijoComponent;

@@ -1,12 +1,11 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { TimerComponent } from './timer.component';
-import { AudioService } from '../../services/audio.service';
-import { TimeChangedService } from '../../services/notifications/time-changed.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { FilterFocusService } from '../../services/notifications/filter-focus.service';
-import { RbacActivity } from '../../services/rbac/rbac.activity';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {TimerComponent} from './timer.component';
+import {AudioService} from '../../services/audio.service';
+import {TimeChangedService} from '../../services/notifications/time-changed.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {FilterFocusService} from '../../services/notifications/filter-focus.service';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('TimerComponent', () => {
   let component: TimerComponent;

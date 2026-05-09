@@ -1,11 +1,11 @@
-import { of } from 'rxjs';
-import { Club } from '../../models/club';
-import { Participant } from '../../models/participant';
-import { ScoreOfCompetitor } from '../../models/score-of-competitor';
-import { Tournament } from '../../models/tournament';
-import { RankingService } from '../../services/ranking.service';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { CompetitorsRankingComponent } from './competitors-ranking.component';
+import {of} from 'rxjs';
+import {Club} from '../../models/club';
+import {Participant} from '../../models/participant';
+import {ScoreOfCompetitor} from '../../models/score-of-competitor';
+import {Tournament} from '../../models/tournament';
+import {RankingService} from '../../services/ranking.service';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {CompetitorsRankingComponent} from './competitors-ranking.component';
 
 describe('CompetitorsRankingComponent', () => {
   let component: CompetitorsRankingComponent;

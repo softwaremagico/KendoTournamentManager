@@ -1,14 +1,14 @@
-import { BehaviorSubject } from 'rxjs';
-import { AppComponent } from './app.component';
-import { TranslocoService } from '@ngneat/transloco';
-import { LoginService } from './services/login.service';
-import { LoggedInService } from './interceptors/logged-in.service';
-import { UserSessionService } from './services/user-session.service';
-import { RbacService } from './services/rbac/rbac.service';
-import { BiitIconService } from '@biit-solutions/wizardry-theme/icon';
-import { ProjectModeChangedService } from './services/notifications/project-mode-changed.service';
-import { ActivityService } from './services/rbac/activity.service';
-import { AuthenticatedUser } from './models/authenticated-user';
+import {BehaviorSubject} from 'rxjs';
+import {AppComponent} from './app.component';
+import {TranslocoService} from '@ngneat/transloco';
+import {LoginService} from './services/login.service';
+import {LoggedInService} from './interceptors/logged-in.service';
+import {UserSessionService} from './services/user-session.service';
+import {RbacService} from './services/rbac/rbac.service';
+import {BiitIconService} from '@biit-solutions/wizardry-theme/icon';
+import {ProjectModeChangedService} from './services/notifications/project-mode-changed.service';
+import {ActivityService} from './services/rbac/activity.service';
+import {AuthenticatedUser} from './models/authenticated-user';
 
 describe('AppComponent', () => {
   let component: AppComponent;

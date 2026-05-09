@@ -1,15 +1,15 @@
-import { of } from 'rxjs';
-import { TournamentImagesComponent } from './tournament-images.component';
-import { RbacService } from '../../../../services/rbac/rbac.service';
-import { MessageService } from '../../../../services/message.service';
-import { FileService } from '../../../../services/file.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { TournamentExtendedPropertiesService } from '../../../../services/tournament-extended-properties.service';
-import { TournamentService } from '../../../../services/tournament.service';
-import { Tournament } from '../../../../models/tournament';
-import { TournamentScore } from '../../../../models/tournament-score.model';
-import { TournamentImageType } from '../../../../models/tournament-image-type';
-import { TournamentExtendedProperty } from '../../../../models/tournament-extended-property.model';
+import {of} from 'rxjs';
+import {TournamentImagesComponent} from './tournament-images.component';
+import {RbacService} from '../../../../services/rbac/rbac.service';
+import {MessageService} from '../../../../services/message.service';
+import {FileService} from '../../../../services/file.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {TournamentExtendedPropertiesService} from '../../../../services/tournament-extended-properties.service';
+import {TournamentService} from '../../../../services/tournament.service';
+import {Tournament} from '../../../../models/tournament';
+import {TournamentScore} from '../../../../models/tournament-score.model';
+import {TournamentImageType} from '../../../../models/tournament-image-type';
+import {TournamentExtendedProperty} from '../../../../models/tournament-extended-property.model';
 
 describe('TournamentImagesComponent', () => {
   let component: TournamentImagesComponent;

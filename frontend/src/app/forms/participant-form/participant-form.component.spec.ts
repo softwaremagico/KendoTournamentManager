@@ -1,17 +1,16 @@
-import { BehaviorSubject, of } from 'rxjs';
-import { NotificationType } from '@biit-solutions/wizardry-theme/info';
-import { ParticipantFormComponent } from './participant-form.component';
-import { RbacService } from '../../services/rbac/rbac.service';
-import { TranslocoService } from '@ngneat/transloco';
-import { BiitSnackbarService } from '@biit-solutions/wizardry-theme/info';
-import { ParticipantService } from '../../services/participant.service';
-import { ClubService } from '../../services/club.service';
-import { PictureUpdatedService } from '../../services/notifications/picture-updated.service';
-import { FileService } from '../../services/file.service';
-import { MessageService } from '../../services/message.service';
-import { Participant } from '../../models/participant';
-import { Club } from '../../models/club';
-import { ParticipantFormValidationFields } from './participant-form-validation-fields';
+import {BehaviorSubject, of} from 'rxjs';
+import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
+import {ParticipantFormComponent} from './participant-form.component';
+import {RbacService} from '../../services/rbac/rbac.service';
+import {TranslocoService} from '@ngneat/transloco';
+import {ParticipantService} from '../../services/participant.service';
+import {ClubService} from '../../services/club.service';
+import {PictureUpdatedService} from '../../services/notifications/picture-updated.service';
+import {FileService} from '../../services/file.service';
+import {MessageService} from '../../services/message.service';
+import {Participant} from '../../models/participant';
+import {Club} from '../../models/club';
+import {ParticipantFormValidationFields} from './participant-form-validation-fields';
 
 describe('ParticipantFormComponent', () => {
   let component: ParticipantFormComponent;

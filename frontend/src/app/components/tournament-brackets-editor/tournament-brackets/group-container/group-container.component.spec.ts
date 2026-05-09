@@ -1,10 +1,10 @@
-import { of, Subject } from 'rxjs';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Team } from '../../../../models/team';
-import { Group } from '../../../../models/group';
-import { GroupService } from '../../../../services/group.service';
-import { GroupsUpdatedService } from '../groups-updated.service';
-import { GroupContainerComponent } from './group-container.component';
+import {of, Subject} from 'rxjs';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import {Team} from '../../../../models/team';
+import {Group} from '../../../../models/group';
+import {GroupService} from '../../../../services/group.service';
+import {GroupsUpdatedService} from '../groups-updated.service';
+import {GroupContainerComponent} from './group-container.component';
 
 describe('GroupContainerComponent', () => {
   let component: GroupContainerComponent;
