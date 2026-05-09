@@ -16,7 +16,7 @@ jobs:
 
   frontend-test:
     docker:
-      - image: 'cimg/node:18.20.4'
+      - image: 'cimg/node:18.20.4-browsers'
     working_directory: ~/KendoTournamentManager/frontend
     steps:
       - checkout:
