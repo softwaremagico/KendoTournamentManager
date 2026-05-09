@@ -25,7 +25,7 @@ export class AppComponent extends RbacBasedComponent {
   constructor(public translocoService: TranslocoService, public loginService: LoginService, public loggedInService: LoggedInService,
               protected userSessionService: UserSessionService, rbacService: RbacService, biitIconService: BiitIconService,
               projectModeChangedService: ProjectModeChangedService,
-              private activityService: ActivityService) {
+              protected sessionService: UserSessionService, private activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
     biitIconService.registerIcons(completeIconSet);
