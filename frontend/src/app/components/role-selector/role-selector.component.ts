@@ -15,7 +15,7 @@ export class RoleSelectorComponent {
   roles: RoleType[] = [];
 
   @Output()
-  onClosed: EventEmitter<{ tournament: Tournament, roles: RoleType[], newOnes: boolean }> = new EventEmitter<{
+  closed: EventEmitter<{ tournament: Tournament, roles: RoleType[], newOnes: boolean }> = new EventEmitter<{
     tournament: Tournament,
     roles: RoleType[],
     newOnes: boolean
@@ -27,11 +27,11 @@ export class RoleSelectorComponent {
   }
 
   setRoles(newOnes: boolean): void {
-    this.onClosed.emit({tournament: this.tournament, roles: this.roles, newOnes: newOnes})
+    this.closed.emit({tournament: this.tournament, roles: this.roles, newOnes: newOnes})
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   select(checked: boolean, roleType: RoleType): void {

@@ -7,9 +7,6 @@ import {ParticipantFormValidationFields} from "../../../forms/participant-form/p
 import {CsvService} from "../../../services/csv-service";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
-import {ParticipantImage} from "../../../models/participant-image.model";
-import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
-import {FileService} from "../../../services/file.service";
 
 @Component({
   selector: 'participant-form-popup',
@@ -25,9 +22,9 @@ import {FileService} from "../../../services/file.service";
 })
 export class ParticipantFormPopupComponent implements OnInit {
   @Input() participant: Participant;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onSaved: EventEmitter<Participant> = new EventEmitter<Participant>();
-  @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() saved: EventEmitter<Participant> = new EventEmitter<Participant>();
+  @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   protected readonly RbacActivity = RbacActivity;
 
@@ -55,7 +52,7 @@ export class ParticipantFormPopupComponent implements OnInit {
                 this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
               }
             );
-            this.onSaved.emit();
+            this.saved.emit();
           } else {
             const parameters: object = {element: _participants[0].name};
             this.transloco.selectTranslate('failedOnCsvField', parameters).subscribe(

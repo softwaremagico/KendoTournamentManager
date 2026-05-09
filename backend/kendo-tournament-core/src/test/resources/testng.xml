@@ -39,6 +39,9 @@
                 <include name="shiaijosTest"/>
                 <include name="tournamentLinkTest"/>
                 <include name="csvReader"/>
+                <include name="imageUtils"/>
+                <include name="converterUtils"/>
+                <include name="coreExceptions"/>
             </run>
         </groups>
         <classes>
@@ -79,6 +82,9 @@
             <class name="com.softwaremagico.kt.core.tests.WorstNightmareTest"/>
             <class name="com.softwaremagico.kt.core.tests.ValidationTests"/>
             <class name="com.softwaremagico.kt.core.tests.csv.CsvReaderTest"/>
+            <class name="com.softwaremagico.kt.core.tests.ImageUtilsTests"/>
+            <class name="com.softwaremagico.kt.core.tests.ConverterUtilsTests"/>
+            <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsTests"/>
         </classes>
     </test>
 </suite>

@@ -41,6 +41,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Business-logic controller for {@link Tournament} entities.
+ * <p>
+ * Extends {@link BasicInsertableController} with tournament-specific behaviour:
+ * </p>
+ * <ul>
+ *   <li><b>create</b> — After persisting the tournament, automatically creates a
+ *       default {@link Group} so that teams can be assigned immediately.</li>
+ *   <li><b>update</b> — Manages the locked-state transition: sets
+ *       {@code lockedAt} and {@code finishedAt} timestamps when the tournament is
+ *       first locked; clears them when unlocked. Also propagates any change to
+ *       {@code duelsDuration} to all existing {@link Duel}s in the tournament.</li>
+ * </ul>
+ * <p>
+ * The {@code "tournaments-by-id"} cache is evicted on every update.
+ * </p>
+ */
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
         TournamentProvider, TournamentConverterRequest, TournamentConverter> {
@@ -61,6 +78,15 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         return new TournamentConverterRequest(entity);
     }
 
+    /**
+     * Creates a new tournament and immediately adds a default empty {@link Group}
+     * so that teams can be assigned without a separate API call.
+     *
+     * @param tournamentDTO the tournament data to persist
+     * @param username      the authenticated user performing the creation
+     * @param session       the client session identifier for WebSocket notifications
+     * @return the persisted tournament as a DTO
+     */
     @Override
     public TournamentDTO create(TournamentDTO tournamentDTO, String username, String session) {
         final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username, session);
@@ -70,6 +96,27 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         return createdTournamentDTO;
     }
 
+    /**
+     * Updates an existing tournament.
+     * <p>
+     * In addition to the standard update, this method handles the locked-state
+     * transition: if the tournament is being locked for the first time,
+     * {@code lockedAt} and {@code finishedAt} timestamps are set to the current
+     * time. If it is being unlocked, both timestamps are cleared.
+     * </p>
+     * <p>
+     * If the {@code duelsDuration} has changed, all existing incomplete duels (and
+     * duels whose duration is shorter than the new value) are updated accordingly.
+     * </p>
+     * <p>
+     * The {@code "tournaments-by-id"} cache is evicted on every call.
+     * </p>
+     *
+     * @param tournamentDTO the updated tournament data
+     * @param username      the authenticated user performing the update
+     * @param session       the client session identifier for WebSocket notifications
+     * @return the updated tournament as a DTO
+     */
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public TournamentDTO update(TournamentDTO tournamentDTO, String username, String session) {
@@ -101,18 +148,49 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         }
     }
 
+    /**
+     * Creates a new tournament from individual parameters rather than from a full DTO.
+     *
+     * @param name     the unique name of the tournament
+     * @param shiaijos the number of simultaneous fighting areas
+     * @param teamSize the number of members per team
+     * @param type     the structural format of the tournament
+     * @param username the authenticated user performing the creation
+     * @return the persisted tournament as a DTO
+     */
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
         return convert(getProvider().create(name, shiaijos, teamSize, type, username));
     }
 
+    /**
+     * Creates a deep copy of the tournament identified by the given ID.
+     *
+     * @param tournamentId the ID of the tournament to clone
+     * @param username     the authenticated user performing the operation
+     * @return the cloned tournament as a DTO
+     */
     public TournamentDTO clone(Integer tournamentId, String username) {
         return clone(get(tournamentId), username);
     }
 
+    /**
+     * Creates a deep copy of the given tournament DTO.
+     *
+     * @param tournamentDTO the tournament to clone
+     * @param username      the authenticated user performing the operation
+     * @return the cloned tournament as a DTO
+     */
     public TournamentDTO clone(TournamentDTO tournamentDTO, String username) {
         return convert(getProvider().clone(reverse(tournamentDTO), username));
     }
 
+    /**
+     * Sets the number of winning teams per group for the given tournament.
+     *
+     * @param tournamentId    the ID of the tournament to update
+     * @param numberOfWinners the number of teams that advance from each group
+     * @param updatedBy       the username of the user performing the update
+     */
     public void setNumberOfWinners(Integer tournamentId, Integer numberOfWinners, String updatedBy) {
         getProvider().setNumberOfWinners(tournamentId, numberOfWinners, updatedBy);
     }
@@ -122,10 +200,23 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         delete(get(id), username, session);
     }
 
+    /**
+     * Returns a list of tournaments that ended before the given tournament,
+     * limited to the specified number of results.
+     *
+     * @param tournamentDTO      the reference tournament
+     * @param elementsToRetrieve maximum number of previous tournaments to return
+     * @return list of previous tournaments ordered by finish date descending
+     */
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
         return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
     }
 
+    /**
+     * Returns the most recently modified tournament that has not been locked.
+     *
+     * @return the latest unlocked tournament as a DTO, or {@code null} if none exists
+     */
     public TournamentDTO getLatestUnlocked() {
         return convert(getProvider().findLastByUnlocked());
     }

@@ -11,6 +11,19 @@ import {Achievement} from "../models/achievement.model";
 import {AchievementType} from "../models/achievement-type.model";
 import {AchievementGrade} from "../models/achievement-grade.model";
 
+/**
+ * Angular service for querying and managing participant achievements.
+ *
+ * Wraps the backend {@code /achievements} REST endpoints. Provides:
+ * - Fetching achievements earned by a specific participant.
+ * - Fetching all achievements unlocked in a specific tournament.
+ * - Filtering achievements by type ({@link AchievementType}) and grade ({@link AchievementGrade}).
+ * - Forcing regeneration of achievements for a tournament (PATCH).
+ *
+ * Achievements are automatically computed by the backend when a tournament
+ * concludes. This service allows the UI to display achievement badges in the
+ * {@code achievement-wall} and {@code achievement-tile} components.
+ */
 @Injectable({
   providedIn: 'root'
 })

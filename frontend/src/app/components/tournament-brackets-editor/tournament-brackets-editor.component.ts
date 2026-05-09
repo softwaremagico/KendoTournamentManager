@@ -48,16 +48,16 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   groupsDisabled: boolean = true;
 
   @Output()
-  onSelectedGroup: EventEmitter<Group> = new EventEmitter();
+  editorSelectedGroup: EventEmitter<Group> = new EventEmitter();
 
   @Output()
-  onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
+  editorGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
 
   @Output()
-  onGroupsDisabled: EventEmitter<boolean> = new EventEmitter();
+  editorGroupsDisabled: EventEmitter<boolean> = new EventEmitter();
 
   @Output()
-  onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
+  editorTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
   @ViewChild('tournamentBracketsComponent', {read: ElementRef})
   public tournamentBracketsComponent: ElementRef;
@@ -129,11 +129,11 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         }
 
         this.groups = _groups;
-        this.onGroupsUpdated.emit(_groups);
-        this.onGroupsDisabled.emit(ownAction);
+        this.editorGroupsUpdated.emit(_groups);
+        this.editorGroupsDisabled.emit(ownAction);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
         const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
-        this.onTeamsLengthUpdated.next(_teams.length);
+        this.editorTeamsLengthUpdated.next(_teams.length);
         this.totalTeams = _teams.length;
         _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
 
@@ -150,7 +150,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   selectGroup(group: Group): void {
     if (this.rbacService.isAllowed(RbacActivity.SELECT_GROUP)) {
       this.selectedGroup = group;
-      this.onSelectedGroup.emit(group);
+      this.editorSelectedGroup.emit(group);
     }
   }
 

@@ -109,8 +109,8 @@
 
   <tournament-form-popup *ngIf="target"
                          [tournament]="target"
-                         (onClosed)="this.target = null; loadData();"
-                         (onSaved)="onSaved($event)"
+                         (closed)="this.target = null; loadData();"
+                         (saved)="onSaved($event)"
   />
 
   <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
@@ -148,7 +148,7 @@
     <tournament-qr-code
       [tournament]="table.selectedRows[0]"
       [port]="port"
-      (onClosed)="showQr=false"></tournament-qr-code>
+      (closed)="showQr=false"></tournament-qr-code>
   </biit-popup>
 
   <biit-popup id="tournament-roles" *ngIf="showTournamentRoles" closable
@@ -171,14 +171,14 @@
               [title]="t('selectDiplomaRoles')" (onClosed)="showAccreditationRoles=false">
     <role-selector
       [tournament]="table.selectedRows[0]"
-      (onClosed)="downloadAccreditations($event)"></role-selector>
+      (closed)="downloadAccreditations($event)"></role-selector>
   </biit-popup>
 
   <biit-popup id="diplomas-role-selector" *ngIf="showDiplomasRoles" closable
               [title]="t('selectDiplomaRoles')" (onClosed)="showDiplomasRoles=false">
     <role-selector
       [tournament]="table.selectedRows[0]"
-      (onClosed)="downloadDiplomas($event)"></role-selector>
+      (closed)="downloadDiplomas($event)"></role-selector>
   </biit-popup>
 
 </ng-container>

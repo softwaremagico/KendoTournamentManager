@@ -1,5 +1,4 @@
 import {UserRoles} from "../services/rbac/user-roles";
-import {DatabaseObject} from "./database-object";
 import {Element} from "./element";
 
 export class AuthenticatedUser extends Element {

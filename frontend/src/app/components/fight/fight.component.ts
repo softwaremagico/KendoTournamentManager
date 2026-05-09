@@ -36,7 +36,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   projectMode: boolean;
 
   @Output()
-  onSelectedDuel: EventEmitter<Duel> = new EventEmitter();
+  selectedFightDuel: EventEmitter<Duel> = new EventEmitter();
 
   selectedDuel: Duel | undefined;
 
@@ -87,7 +87,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   selectDuel(duel: Duel): void {
     if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL) && !duel.substitute) {
       this.selectedDuel = duel;
-      this.onSelectedDuel.emit(duel);
+      this.selectedFightDuel.emit(duel);
     }
   }
 

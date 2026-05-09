@@ -51,6 +51,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Servlet filter that validates the JWT Bearer token on every incoming HTTP request.
+ * <p>
+ * The filter runs once per request ({@link OncePerRequestFilter}). It:
+ * </p>
+ * <ol>
+ *   <li>Extracts the {@code Authorization: Bearer &lt;token&gt;} header.</li>
+ *   <li>Validates the token signature and expiration via {@link JwtTokenUtil}.</li>
+ *   <li>Optionally verifies that the client IP stored in the token matches the
+ *       request source IP (enabled via {@code jwt.ip.check=true}).</li>
+ *   <li>Optionally verifies the MAC address for additional network-level binding
+ *       when available.</li>
+ *   <li>If all checks pass, sets a {@link UsernamePasswordAuthenticationToken} in
+ *       the {@link SecurityContextHolder} to authenticate the request.</li>
+ * </ol>
+ * <p>
+ * When {@code enable.participant.access=true}, participant accounts can also
+ * obtain and use JWT tokens with reduced privileges (VIEWER role).
+ * </p>
+ * <p>
+ * The filter inspects a list of proxy headers ({@link #HEADERS_TO_TRY}) to obtain
+ * the real client IP when the server is behind a reverse proxy.
+ * </p>
+ */
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 

@@ -40,8 +40,8 @@
 
   <club-form-popup *ngIf="target"
                    [club]="target"
-                   (onClosed)="this.target = null"
-                   (onSaved)="onSaved($event)"
+                   (closed)="this.target = null"
+                   (saved)="onSaved($event)"
   />
 
 

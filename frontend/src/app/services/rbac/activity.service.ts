@@ -2,6 +2,23 @@ import {Injectable} from "@angular/core";
 import {RbacActivity} from "./rbac.activity";
 import {UserRoles} from "./user-roles";
 
+/**
+ * Angular service that maps user roles to the set of allowed UI activities.
+ *
+ * Maintains an in-memory list of {@link RbacActivity} values derived from the
+ * roles currently assigned to the authenticated user. The mapping is additive:
+ * each role contributes its own subset of activities. Roles and their activity
+ * subsets are:
+ * <ul>
+ *   <li><b>GUEST</b> — read-only access to a single tournament via QR code</li>
+ *   <li><b>VIEWER</b> — read-only access to all tournaments plus timer and PDF export</li>
+ *   <li><b>EDITOR</b> — all VIEWER activities plus fight/score management and team editing</li>
+ *   <li><b>ADMIN</b> — all activities including user management and tournament deletion</li>
+ * </ul>
+ *
+ * Call {@link setRoles} whenever the authenticated user's roles change, then use
+ * {@link isAllowed} in templates and guards to gate UI elements.
+ */
 @Injectable({
   providedIn: 'root'
 })

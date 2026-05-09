@@ -62,9 +62,9 @@
       <tournament-brackets-editor [tournament]="tournament"
                                       [droppingDisabled]="groupsDisabled"
                                       [groupsDisabled]="groupsDisabled"
-                                      (onGroupsUpdated)="groupsUpdated($event)"
-                                      (onGroupsDisabled)="groupsActionsDisabled($event)"
-                                      (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
+                                      (editorGroupsUpdated)="groupsUpdated($event)"
+                                      (editorGroupsDisabled)="groupsActionsDisabled($event)"
+                                      (editorTeamsLengthUpdated)="teamsSizeUpdated($event)">
       </tournament-brackets-editor>
     </div>
   </div>

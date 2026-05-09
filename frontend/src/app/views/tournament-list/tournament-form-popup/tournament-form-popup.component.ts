@@ -21,9 +21,9 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
 export class TournamentFormPopupComponent implements OnInit {
   @Input() tournament: Tournament;
   originalTournament: Tournament;
-  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
-  @Output() onSaved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
-  @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  @Output() saved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;

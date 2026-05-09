@@ -10,7 +10,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 export class PictureDialogBoxComponent extends RbacBasedComponent {
 
   @Output()
-  onClosed: EventEmitter<void> = new EventEmitter<void>();
+  closed: EventEmitter<void> = new EventEmitter<void>();
 
   @Input()
   participantPicture: string;
@@ -20,7 +20,7 @@ export class PictureDialogBoxComponent extends RbacBasedComponent {
   }
 
   closeDialog() {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
 }

@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ParticipantPictureComponent} from "./participant-picture.component";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {
-    TournamentExtraPropertiesFormModule
+  TournamentExtraPropertiesFormModule
 } from "../../forms/tournament-extra-properties-form/tournament-extra-properties-form.module";
 import {PictureDialogBoxModule} from "./picture-dialog-box/picture-dialog-box.module";
 

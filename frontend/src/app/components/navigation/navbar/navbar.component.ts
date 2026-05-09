@@ -163,11 +163,11 @@ export class NavbarComponent implements OnInit {
   }
 
   openWiki(): void {
-    window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank");
+    window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank", "noopener");
   }
 
   openAbout(): void {
-    window.open("https://github.com/softwaremagico/KendoTournamentManager", "_blank");
+    window.open("https://github.com/softwaremagico/KendoTournamentManager", "_blank", "noopener");
   }
 
   switchDarkMode(): void {

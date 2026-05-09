@@ -55,8 +55,8 @@
 
   <participant-form-popup *ngIf="target"
                           [participant]="target"
-                          (onClosed)="this.target = null"
-                          (onSaved)="onSaved($event)"
+                          (closed)="this.target = null"
+                          (saved)="onSaved($event)"
   />
 
   <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
@@ -79,7 +79,7 @@
     <participant-qr-code
       [participant]="table.selectedRows[0]"
       [port]="port"
-      (onClosed)="showQr=false"></participant-qr-code>
+      (closed)="showQr=false"></participant-qr-code>
   </biit-popup>
 
 

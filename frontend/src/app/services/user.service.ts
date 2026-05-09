@@ -11,6 +11,21 @@ import {MessageService} from "./message.service";
 import {LoginService} from "./login.service";
 import {UserRoles} from "./rbac/user-roles";
 
+/**
+ * Angular service for authenticated-user account management.
+ *
+ * Wraps the backend {@code /auth/register} and {@code /auth/update-password}
+ * REST endpoints (ADMIN-only operations). Provides:
+ * - Retrieving the full list of registered users.
+ * - Creating new user accounts.
+ * - Updating existing user details and roles.
+ * - Deleting user accounts.
+ * - Resetting or updating passwords.
+ *
+ * All write operations require the ADMIN role. The service maps the raw
+ * {@code roles} string array returned by the backend to typed
+ * {@link UserRoles} values.
+ */
 @Injectable({
   providedIn: 'root'
 })

@@ -14,6 +14,23 @@ import {UserRoles} from "./rbac/user-roles";
 import {UserSessionService} from "./user-session.service";
 import {RbacService} from "./rbac/rbac.service";
 
+/**
+ * Angular service that manages authentication state for the Kendo Tournament Manager.
+ *
+ * Handles four authentication flows:
+ * 1. **Standard login** — username + password → JWT + expiry stored in session storage.
+ * 2. **Guest login** — tournament ID only → limited-privilege JWT (QR-code access).
+ * 3. **Participant login** — participant token (from QR code) → self-service JWT.
+ * 4. **Token renewal** — proactive background renewal scheduled
+ *    {@link JWT_RENEW_MARGIN} ms before expiry.
+ *
+ * After a successful login the JWT is stored in session storage and the user is
+ * routed to the home page. On logout the storage is cleared and the user is
+ * redirected to the login page.
+ *
+ * Role-based access control is evaluated by {@link RbacService} and
+ * {@link ActivityService} using the roles returned by the backend.
+ */
 @Injectable({
   providedIn: 'root'
 })

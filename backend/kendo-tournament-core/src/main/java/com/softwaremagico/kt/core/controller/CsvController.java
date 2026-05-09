@@ -86,10 +86,11 @@ public class CsvController {
     private final GroupProvider groupProvider;
 
     public CsvController(ClubCsv clubCsv, ClubProvider clubProvider, ClubConverter clubConverter,
-                         ParticipantCsv participantCsv, ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                         TeamCsv teamCsv, TeamProvider teamProvider, TeamConverter teamConverter, GroupLinkCsv groupLinkCsv,
-                         GroupLinkProvider groupLinkProvider, GroupLinkConverter groupLinkConverter, RoleProvider roleProvider,
-                         TournamentProvider tournamentProvider, GroupProvider groupProvider) {
+            ParticipantCsv participantCsv, ParticipantProvider participantProvider,
+            ParticipantConverter participantConverter, TeamCsv teamCsv, TeamProvider teamProvider,
+            TeamConverter teamConverter, GroupLinkCsv groupLinkCsv, GroupLinkProvider groupLinkProvider,
+            GroupLinkConverter groupLinkConverter, RoleProvider roleProvider, TournamentProvider tournamentProvider,
+            GroupProvider groupProvider) {
         this.clubCsv = clubCsv;
         this.clubProvider = clubProvider;
         this.clubConverter = clubConverter;
@@ -107,14 +108,13 @@ public class CsvController {
         this.groupProvider = groupProvider;
     }
 
-
     public List<ClubDTO> addClubs(String csvContent, String uploadedBy) {
-        final List<Club> clubs = clubCsv.readCSV(csvContent);
+        final List<Club> clubs = this.clubCsv.readCSV(csvContent);
         final List<ClubDTO> failedClubs = new ArrayList<>();
-        for (Club club : clubs) {
+        for (final Club club : clubs) {
             try {
                 if (club.getName() != null && club.getCity() != null) {
-                    final Optional<Club> storedClub = clubProvider.findBy(club.getName(), club.getCity());
+                    final Optional<Club> storedClub = this.clubProvider.findBy(club.getName(), club.getCity());
                     if (storedClub.isPresent()) {
                         KendoTournamentLogger.warning(this.getClass(), "Club '" + club.getName() + "' from '"
                                 + club.getCity() + "' already exists. Will be updated.");
@@ -123,76 +123,78 @@ public class CsvController {
                     } else {
                         club.setCreatedBy(uploadedBy);
                     }
-                    clubProvider.save(club);
+                    this.clubProvider.save(club);
                 } else {
                     KendoTournamentLogger.warning(this.getClass(), "Club with invalid name and/or city.");
-                    failedClubs.add(clubConverter.convert(new ClubConverterRequest(club)));
+                    failedClubs.add(this.clubConverter.convert(new ClubConverterRequest(club)));
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
-                failedClubs.add(clubConverter.convert(new ClubConverterRequest(club)));
+                failedClubs.add(this.clubConverter.convert(new ClubConverterRequest(club)));
             }
         }
         return failedClubs;
     }
 
-
     public List<ParticipantDTO> addParticipants(String csvContent, String uploadedBy) {
-        final List<Participant> participants = participantCsv.readCSV(csvContent);
+        final List<Participant> participants = this.participantCsv.readCSV(csvContent);
         final List<ParticipantDTO> failedParticipants = new ArrayList<>();
-        for (Participant participant : participants) {
+        for (final Participant participant : participants) {
             try {
-                if (participantProvider.findByIdCard(participant.getIdCard()).isPresent()) {
-                    KendoTournamentLogger.severe(this.getClass().getName(), "Participant '" + participant.getIdCard() + "' with name '"
-                            + participant.getName() + " " + participant.getLastname() + "' already exists.");
+                if (this.participantProvider.findByIdCard(participant.getIdCard()).isPresent()) {
+                    KendoTournamentLogger.severe(this.getClass().getName(),
+                            "Participant '" + participant.getIdCard() + "' with name '" + participant.getName() + " "
+                                    + participant.getLastname() + "' already exists.");
                     participant.setUpdatedBy(uploadedBy);
-                    failedParticipants.add(participantConverter.convert(new ParticipantConverterRequest(participant)));
+                    failedParticipants
+                            .add(this.participantConverter.convert(new ParticipantConverterRequest(participant)));
                 } else {
                     participant.setCreatedBy(uploadedBy);
-                    participantProvider.save(participant);
+                    this.participantProvider.save(participant);
                 }
-            } catch (Exception e) {
-                KendoTournamentLogger.severe(this.getClass().getName(), "Error when inserting '" + participant + "'.");
-                KendoTournamentLogger.errorMessage(this.getClass(), e);
-                failedParticipants.add(participantConverter.convert(new ParticipantConverterRequest(participant)));
+            } catch (final Exception e) {
+                KendoTournamentLogger.severe(this.getClass().getName(),
+                        "Error when inserting '" + participant + "': " + e.getMessage());
+                failedParticipants.add(this.participantConverter.convert(new ParticipantConverterRequest(participant)));
             }
         }
         return failedParticipants;
     }
 
-
     public List<TeamDTO> addTeams(String csvContent, Integer tournamentId, String uploadedBy) {
-        final List<Team> teams = teamCsv.readCSV(csvContent);
+        final List<Team> teams = this.teamCsv.readCSV(csvContent);
         final List<TeamDTO> failedTeams = new ArrayList<>();
-        final Optional<Tournament> selectedTournament = tournamentProvider.get(tournamentId);
-        for (Team team : teams) {
+        final Optional<Tournament> selectedTournament = this.tournamentProvider.get(tournamentId);
+        for (final Team team : teams) {
             if (team.getTournament() == null) {
                 if (tournamentId != null && selectedTournament.isPresent()) {
                     team.setTournament(selectedTournament.get());
                 } else {
-                    KendoTournamentLogger.severe(this.getClass().getName(), "Team '" + team.getName() + "' has assigned a tournament that does not exists.");
-                    failedTeams.add(teamConverter.convert(new TeamConverterRequest(team)));
+                    KendoTournamentLogger.severe(this.getClass().getName(),
+                            "Team '" + team.getName() + "' has assigned a tournament that does not exists.");
+                    failedTeams.add(this.teamConverter.convert(new TeamConverterRequest(team)));
                     continue;
                 }
             }
             if (team.getMembers().size() > team.getTournament().getTeamSize()) {
                 throw new InvalidCsvFieldException(this.getClass(), "Team size is incorrect!", null);
             }
-            setTeamMemberRoles(team);
+            this.setTeamMemberRoles(team);
             try {
-                final Optional<Team> storedTeam = teamProvider.get(team.getTournament(), team.getName());
+                final Optional<Team> storedTeam = this.teamProvider.get(team.getTournament(), team.getName());
                 if (storedTeam.isPresent()) {
-                    KendoTournamentLogger.warning(this.getClass(), "Team '" + team.getName() + "' already exists on tournament '"
-                            + team.getTournament().getName() + "'. Will be updated.");
+                    KendoTournamentLogger.warning(this.getClass(),
+                            "Team '" + team.getName() + "' already exists on tournament '"
+                                    + team.getTournament().getName() + "'. Will be updated.");
                     team.setId(storedTeam.get().getId());
                     team.setUpdatedBy(uploadedBy);
                 } else {
                     team.setCreatedBy(uploadedBy);
                 }
-                teamProvider.save(team);
-            } catch (Exception e) {
+                this.teamProvider.save(team);
+            } catch (final Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
-                failedTeams.add(teamConverter.convert(new TeamConverterRequest(team)));
+                failedTeams.add(this.teamConverter.convert(new TeamConverterRequest(team)));
             }
         }
         return failedTeams;
@@ -202,79 +204,76 @@ public class CsvController {
         if (team.getTournament() == null) {
             return;
         }
-        //Define roles for team members.
+        // Define roles for team members.
         team.getMembers().forEach(member -> {
-            final Role role = roleProvider.get(team.getTournament(), member);
+            final Role role = this.roleProvider.get(team.getTournament(), member);
             if (role == null) {
-                roleProvider.save(new Role(team.getTournament(), member, RoleType.COMPETITOR));
+                this.roleProvider.save(new Role(team.getTournament(), member, RoleType.COMPETITOR));
             } else {
                 role.setRoleType(RoleType.COMPETITOR);
-                roleProvider.save(role);
+                this.roleProvider.save(role);
             }
         });
     }
 
     public List<GroupLinkDTO> addGroupLinks(Integer tournamentId, String csvContent, String uploadedBy) {
-        final Tournament tournament = tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
-                        ExceptionType.INFO));
+        final Tournament tournament = this.tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
+                        "No tournament found with id '" + tournamentId + "',", ExceptionType.INFO));
 
-        //Define groups of the tournament.
-        final int totalSourceGroups = groupLinkCsv.getSourceGroupSize(csvContent);
-        final int totalDestinationGroups = groupLinkCsv.getDestinationGroupSize(csvContent);
-        final int levels = generateCustomGroupTree(tournament, totalSourceGroups, totalDestinationGroups);
+        // Define groups of the tournament.
+        final int totalSourceGroups = this.groupLinkCsv.getSourceGroupSize(csvContent);
+        final int totalDestinationGroups = this.groupLinkCsv.getDestinationGroupSize(csvContent);
+        final int levels = this.generateCustomGroupTree(tournament, totalSourceGroups, totalDestinationGroups);
 
-        //Assign the links
-        groupLinkProvider.deleteByTournament(tournament);
-        final List<GroupLink> groupLinks = groupLinkCsv.readCSV(tournament, csvContent);
+        // Assign the links
+        this.groupLinkProvider.deleteByTournament(tournament);
+        final List<GroupLink> groupLinks = this.groupLinkCsv.readCSV(tournament, csvContent);
         final List<GroupLinkDTO> failedGroupLinks = new ArrayList<>();
 
-        //Set the links.
-        for (GroupLink groupLink : groupLinks) {
+        // Set the links.
+        for (final GroupLink groupLink : groupLinks) {
             groupLink.setTournament(tournament);
             groupLink.setUpdatedBy(uploadedBy);
             try {
-                groupLinkProvider.save(groupLink);
-            } catch (Exception e) {
+                this.groupLinkProvider.save(groupLink);
+            } catch (final Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
-                failedGroupLinks.add(groupLinkConverter.convert(new GroupLinkConverterRequest(groupLink)));
+                failedGroupLinks.add(this.groupLinkConverter.convert(new GroupLinkConverterRequest(groupLink)));
             }
         }
 
-        generateInnerLevelLinks(tournament, levels);
+        this.generateInnerLevelLinks(tournament, levels);
 
         return failedGroupLinks;
     }
 
     private List<GroupLink> generateInnerLevelLinks(Tournament tournament, int totalLevels) {
-        //Update other levels links.
-        final List<Group> groupsOfTournament = groupProvider.getGroups(tournament);
-        return groupLinkProvider.save(groupLinkProvider.generateLinks(
-                groupsOfTournament,
-                1, totalLevels, 1));
+        // Update other levels links.
+        final List<Group> groupsOfTournament = this.groupProvider.getGroups(tournament);
+        return this.groupLinkProvider.save(this.groupLinkProvider.generateLinks(groupsOfTournament, 1, totalLevels, 1));
     }
 
-
     private int generateCustomGroupTree(Tournament tournament, int levelZeroSize, int levelOneSize) {
-        groupProvider.delete(tournament);
+        this.groupProvider.delete(tournament);
 
-        //Define Level 0
+        // Define Level 0
         for (int i = 0; i < levelZeroSize; i++) {
             final Group levelGroup = new Group(tournament, 0, i);
-            groupProvider.addGroup(tournament, levelGroup);
+            this.groupProvider.addGroup(tournament, levelGroup);
         }
 
-        //Define Level 1
+        // Define Level 1
         for (int i = 0; i < levelOneSize; i++) {
             final Group levelGroup = new Group(tournament, 1, i);
-            groupProvider.addGroup(tournament, levelGroup);
+            this.groupProvider.addGroup(tournament, levelGroup);
         }
 
-        //Define other levels groups.
+        // Define other levels groups.
         int previousLevelSize = levelOneSize;
         int newLevel = 2;
         while (previousLevelSize > 1) {
-            final List<Group> generatedGroups = generateGroupsOnLevel(tournament, previousLevelSize, newLevel);
+            final List<Group> generatedGroups = this.generateGroupsOnLevel(tournament, previousLevelSize, newLevel);
             previousLevelSize = generatedGroups.size();
             newLevel++;
         }
@@ -286,13 +285,13 @@ public class CsvController {
             return List.of();
         }
 
-        //On inner tree, always one winner by group.
+        // On inner tree, always one winner by group.
         final int groupSize = (lastLevelSize + 1) / 2;
 
         final List<Group> groups = new ArrayList<>();
         for (int i = 0; i < groupSize; i++) {
             final Group levelGroup = new Group(tournament, currentLevel, i);
-            groups.add(groupProvider.addGroup(tournament, levelGroup));
+            groups.add(this.groupProvider.addGroup(tournament, levelGroup));
         }
         return groups;
     }

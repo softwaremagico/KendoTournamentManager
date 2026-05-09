@@ -1,6 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {TranslocoService} from "@ngneat/transloco";
-import {TournamentType} from "../../models/tournament-type";
 import {DatePipe} from "@angular/common";
 import {UserSessionService} from "../../services/user-session.service";
 

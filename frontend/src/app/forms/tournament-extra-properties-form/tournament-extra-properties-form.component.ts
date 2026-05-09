@@ -22,7 +22,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
   @Input()
   tournament: Tournament;
   @Output()
-  onClosed: EventEmitter<void> = new EventEmitter<void>();
+  closed: EventEmitter<void> = new EventEmitter<void>();
 
   drawResolution: DrawResolution[];
 

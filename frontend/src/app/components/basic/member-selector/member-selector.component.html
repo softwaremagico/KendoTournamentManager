@@ -1,7 +1,8 @@
 <div class="team-area">
   <div class="team-name">{{ team.name }}</div>
   <div class="users-container">
-    <user-card *ngFor="let user of members" [user]="user" [dragDisabled]="true" (onClick)="selectUser($event)"
+    <user-card *ngFor="let user of members" [user]="user" [dragDisabled]="true"
+               (clickEvent)="selectUser($event)"
                [ngClass]="{'selected': selectedMembers.indexOf(user)>-1}"></user-card>
   </div>
 </div>

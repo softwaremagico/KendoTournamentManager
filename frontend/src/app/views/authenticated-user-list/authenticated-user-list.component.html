@@ -36,14 +36,14 @@
 
   <authenticated-user-form-popup *ngIf="target"
                                  [user]="target"
-                                 (onClosed)="this.target = null"
-                                 (onSaved)="onSaved($event)"
+                                 (closed)="this.target = null"
+                                 (saved)="onSaved($event)"
   />
 
   <authenticated-user-role-popup *ngIf="roleSelector"
                                  [user]="table.selectedRows[0]"
-                                 (onClosed)="this.roleSelector = false"
-                                 (onSaved)="this.loadData();this.roleSelector = false"
+                                 (closed)="this.roleSelector = false"
+                                 (saved)="this.loadData();this.roleSelector = false"
   />
 
   <biit-popup id="confirmation-delete-popup" *ngIf="confirm"

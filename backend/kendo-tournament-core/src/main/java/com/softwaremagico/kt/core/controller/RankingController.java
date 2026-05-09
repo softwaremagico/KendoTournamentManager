@@ -85,6 +85,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Business-logic controller for computing and caching competitor and team rankings.
+ * <p>
+ * Ranking data is derived from the scored {@link com.softwaremagico.kt.persistence.entities.Duel}s
+ * and {@link com.softwaremagico.kt.persistence.entities.Fight}s stored for a tournament or group.
+ * The computation is delegated to {@link RankingProvider} which selects the appropriate
+ * {@link com.softwaremagico.kt.core.score.ScoreOfCompetitor} / {@link com.softwaremagico.kt.core.score.ScoreOfTeam}
+ * implementation based on the tournament's {@link com.softwaremagico.kt.persistence.values.ScoreType}.
+ * </p>
+ * <p>
+ * Results are cached for {@value #CACHE_EXPIRATION_TIME} ms to avoid recomputing rankings
+ * on every WebSocket refresh. The cache is evicted by {@link #reportCacheEvict()} which is
+ * scheduled to run every 10 minutes.
+ * </p>
+ * <p>
+ * In addition to per-tournament rankings, this controller provides cross-tournament
+ * global rankings aggregated over all scored fights for a given list of participants,
+ * optionally filtered to fights within the last N days.
+ * </p>
+ */
 @Controller
 public class RankingController {
     private static final int CACHE_EXPIRATION_TIME = 10 * 60 * 1000;

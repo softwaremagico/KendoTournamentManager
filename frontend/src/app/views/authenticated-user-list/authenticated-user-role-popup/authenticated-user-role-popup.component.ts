@@ -21,8 +21,8 @@ import {MessageService} from "../../../services/message.service";
 })
 export class AuthenticatedUserRolePopupComponent extends RbacBasedComponent implements OnInit {
   @Input() user: AuthenticatedUser | null;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onSaved: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() saved: EventEmitter<void> = new EventEmitter<void>();
   protected translatedRoles: { value: string, label: string, description: string }[] = [];
   selectedRole: string;
 
@@ -50,7 +50,7 @@ export class AuthenticatedUserRolePopupComponent extends RbacBasedComponent impl
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   saveAction() {
@@ -61,7 +61,7 @@ export class AuthenticatedUserRolePopupComponent extends RbacBasedComponent impl
         this.user.roles.push(userRole);
         this.userService.update(this.user).subscribe((_user: AuthenticatedUser) => {
             this.messageService.infoMessage("roleChanged");
-            this.onSaved.emit();
+            this.saved.emit();
           }
         );
       }

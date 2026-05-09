@@ -10,6 +10,17 @@ import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 
+/**
+ * Angular service for all fight-related HTTP operations.
+ *
+ * Wraps the backend {@code /fights} REST endpoints. Provides methods to:
+ * - Retrieve all fights or fights filtered by tournament.
+ * - Create, update, and delete individual fights or collections.
+ * - Generate the next round of fights for dynamic tournament formats.
+ * - Download fight lists as PDF documents.
+ *
+ * All HTTP calls update the system-overload indicator on completion or error.
+ */
 @Injectable({
   providedIn: 'root'
 })

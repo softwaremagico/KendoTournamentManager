@@ -5,6 +5,22 @@ import {UserRoles} from "./user-roles";
 import {CookieService} from "ngx-cookie-service";
 import {ActivityService} from "./activity.service";
 
+/**
+ * Angular service providing role-based access control (RBAC) checks for the UI.
+ *
+ * Acts as a thin facade over {@link ActivityService}. On initialisation it fetches
+ * the current user's roles from the backend and passes them to
+ * {@link ActivityService#setRoles} so that all subsequent {@link isAllowed} calls
+ * reflect the server-assigned permissions.
+ *
+ * Roles are cached in a cookie so that they survive page refreshes without requiring
+ * a network call on every navigation.
+ *
+ * Usage:
+ * ```ts
+ * if (this.rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)) { ... }
+ * ```
+ */
 @Injectable({
   providedIn: 'root'
 })

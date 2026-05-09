@@ -4,24 +4,65 @@ import {Score} from "./score";
 import {DuelType} from "./duel-type";
 import {Tournament} from "./tournament";
 
+/**
+ * Client-side representation of a single match between two individual competitors
+ * within a {@link Fight}.
+ *
+ * A duel runs for at most {@code tournament.duelsDuration} seconds. The first
+ * competitor to score {@code POINTS_TO_WIN} ippon-equivalent points wins the duel.
+ * Each scored point is recorded in an ordered {@link Score} list; the parallel
+ * {@code *ScoreTime} list captures the time (in seconds) at which each score was made.
+ *
+ * A duel of type {@link DuelType#UNDECIDED} is an untie duel used to break a draw.
+ */
 export class Duel extends Element {
+  /** The first (left / red) competitor. */
   public competitor1?: Participant;
+  /** The second (right / white) competitor. */
   public competitor2?: Participant;
+  /** Whether competitor 1 has been awarded a hansoku (serious penalty). */
   public competitor1Fault: boolean;
+  /** Whether competitor 2 has been awarded a hansoku (serious penalty). */
   public competitor2Fault: boolean;
+  /**
+   * Ordered list of ippon scores for competitor 1.
+   * Each element is a {@link Score} value (M=Men, K=Kote, T=Do, D=Tsuki, H=Hansoku, I=Invalid).
+   */
   public competitor1Score: Score[];
+  /**
+   * Ordered list of ippon scores for competitor 2.
+   * @see competitor1Score
+   */
   public competitor2Score: Score[];
+  /**
+   * Time (in seconds from duel start) of each score in {@link competitor1Score}.
+   * Parallel list — index i corresponds to competitor1Score[i].
+   */
   public competitor1ScoreTime: number[];
+  /**
+   * Time (in seconds from duel start) of each score in {@link competitor2Score}.
+   * @see competitor1ScoreTime
+   */
   public competitor2ScoreTime: number[];
+  /** Time (in seconds) at which competitor 1 received a fault, or {@code undefined} if none. */
   public competitor1FaultTime: number | undefined;
+  /** Time (in seconds) at which competitor 2 received a fault, or {@code undefined} if none. */
   public competitor2FaultTime: number | undefined;
+  /** The type of this duel (regular, untie, etc.). */
   public type: DuelType;
+  /** Configured maximum duration of this duel in seconds. */
   public duration?: number;
+  /** Total elapsed time (in seconds) from start to finish, including overtime. */
   public totalDuration?: number;
+  /** Whether the duel has been finished (either by score or timeout). */
   public finished: boolean;
+  /** Timestamp at which the duel started. */
   public startedAt: Date | undefined;
+  /** Timestamp at which the duel was concluded. */
   public finishedAt: Date | undefined;
+  /** The tournament this duel belongs to. */
   public tournament: Tournament;
+  /** Whether this duel involves a substitute member (no ranking impact). */
   public substitute: boolean = false;
 
   public static override copy(source: Duel, target: Duel): void {

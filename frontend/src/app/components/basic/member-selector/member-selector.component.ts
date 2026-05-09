@@ -16,7 +16,7 @@ export class MemberSelectorComponent implements OnChanges {
   @Input()
   selections: number = 1;
 
-  @Output() onSelectedMember: EventEmitter<Participant[]> = new EventEmitter<Participant[]>();
+  @Output() selectedMember: EventEmitter<Participant[]> = new EventEmitter<Participant[]>();
 
   members: Participant[];
   selectedMembers: Participant[] = [];
@@ -52,6 +52,6 @@ export class MemberSelectorComponent implements OnChanges {
       this.selectedMembers = [];
       this.selectedMembers.push(participant);
     }
-    this.onSelectedMember.emit(this.selectedMembers);
+    this.selectedMember.emit(this.selectedMembers);
   }
 }

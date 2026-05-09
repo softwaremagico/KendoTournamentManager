@@ -36,9 +36,9 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   @Input()
   tournament: Tournament;
   @Input() @Output()
-  onSaved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  saved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Input() @Output()
-  onError: EventEmitter<any> = new EventEmitter<any>();
+  errorEvent: EventEmitter<any> = new EventEmitter<any>();
   protected addPhoto: boolean = false;
 
   protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
@@ -179,7 +179,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     if (this.tournament.id) {
       this.tournamentService.update(this.tournament).subscribe({
         next: (tournament: Tournament): void => {
-          this.onSaved.emit(tournament);
+          this.saved.emit(tournament);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {
@@ -188,7 +188,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     } else {
       this.tournamentService.add(this.tournament).subscribe({
         next: (tournament: Tournament): void => {
-          this.onSaved.emit(tournament);
+          this.saved.emit(tournament);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
       }).add(() => {

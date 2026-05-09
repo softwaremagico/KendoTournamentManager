@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ParticipantFormComponent } from './participant-form.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ParticipantFormComponent} from './participant-form.component';
 import {BiitDropdownModule, BiitInputTextModule} from "@biit-solutions/wizardry-theme/inputs";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {MapGetPipeModule} from "@biit-solutions/wizardry-theme/utils";
@@ -13,7 +13,6 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {
   ParticipantPictureDialogModule
 } from "../../views/participant-list/participant-form-popup/participant-picture/participant-picture-dialog-box.module";
-
 
 
 @NgModule({

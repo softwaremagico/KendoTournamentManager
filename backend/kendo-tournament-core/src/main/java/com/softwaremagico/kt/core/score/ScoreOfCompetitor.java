@@ -31,23 +31,91 @@ import com.softwaremagico.kt.utils.NameUtils;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Aggregated scoring summary for a single competitor in a tournament or group.
+ * <p>
+ * An instance is computed from all {@link Fight}s that involve the competitor's
+ * {@link com.softwaremagico.kt.persistence.entities.Team} and from any optional untie {@link Duel}s. Statistics are lazily
+ * calculated the first time each getter is invoked and cached until {@link #update()}
+ * is called.
+ * </p>
+ * <p>
+ * Fields annotated with {@link JsonIgnore} are omitted from REST responses (e.g. the
+ * raw fight list and untie duels) to keep the payload small. The computed numeric
+ * values (won/draw/total fights and duels, hits, etc.) are serialised and returned
+ * to clients.
+ * </p>
+ * <p>
+ * Subclasses implement scoring-rule variants:
+ * </p>
+ * <ul>
+ *   <li>{@link ScoreOfCompetitorClassic} — traditional Spanish kendo scoring</li>
+ *   <li>{@link ScoreOfCompetitorEuropean} — EKF scoring rules</li>
+ *   <li>{@link ScoreOfCompetitorInternational} — IKF scoring rules</li>
+ *   <li>{@link ScoreOfCompetitorWinOverDraws} — wins weighted over draws</li>
+ *   <li>{@link ScoreOfCompetitorCustom} — fully configurable rule set</li>
+ * </ul>
+ */
 public class ScoreOfCompetitor {
 
+    /**
+     * All fights that the competitor's team participated in. Not serialised into JSON.
+     */
     @JsonIgnore
     private List<Fight> fights;
+    /**
+     * The competitor whose score this object represents.
+     */
     private Participant competitor;
+    /**
+     * Extra untie duels used to break ties after regular fights. Not serialised into JSON.
+     */
     @JsonIgnore
     private List<Duel> unties;
+    /**
+     * Number of duels the competitor won outright (2 ippon).
+     */
     private Integer wonDuels = null;
+    /**
+     * Number of duels that ended in a draw (equal ippon).
+     */
     private Integer drawDuels = null;
+    /**
+     * Number of untie duels won by the competitor.
+     */
     private Integer untieDuels = null;
+    /**
+     * Total ippon-equivalent points scored by the competitor across all duels.
+     */
     private Integer hits = null;
+    /**
+     * Total points conceded by the competitor across all duels.
+     */
     private Integer hitsLost = null;
+    /**
+     * Ippon-equivalent points scored in untie duels.
+     */
     private Integer untieHits = null;
+    /**
+     * Total number of duels the competitor participated in.
+     */
     private Integer duelsDone = null;
+    /**
+     * Number of fights in which the competitor's team won.
+     */
     private Integer wonFights = null;
+    /**
+     * Number of fights that ended in a tie for the competitor's team.
+     */
     private Integer drawFights = null;
+    /**
+     * Total number of fights the competitor's team participated in.
+     */
     private Integer totalFights = null;
+    /**
+     * When {@code true}, duels that were not finished (i.e. timed out) are still
+     * counted in the statistics. Defaults to {@code false}.
+     */
     @JsonIgnore
     private boolean countNotOver = false;
 
@@ -79,6 +147,14 @@ public class ScoreOfCompetitor {
         this.unties = unties;
     }
 
+    /**
+     * Resets all cached computed statistics and recalculates them from the current
+     * values of {@link #fights}, {@link #unties} and {@link #competitor}.
+     * <p>
+     * Must be called after modifying the underlying fight or duel data so that the
+     * computed fields stay consistent.
+     * </p>
+     */
     public void update() {
         wonFights = null;
         drawFights = null;
@@ -107,6 +183,10 @@ public class ScoreOfCompetitor {
         this.competitor = competitor;
     }
 
+    /**
+     * Computes and stores the total number of duels participated in by the competitor,
+     * counting only duels from finished fights (or all fights if {@link #countNotOver} is {@code true}).
+     */
     public void setDuelsDone() {
         duelsDone = 0;
         fights.forEach(fight -> {
@@ -116,6 +196,9 @@ public class ScoreOfCompetitor {
         });
     }
 
+    /**
+     * Computes and stores the number of duels won by the competitor across all relevant fights.
+     */
     public void setDuelsWon() {
         wonDuels = 0;
         fights.forEach(fight -> {
@@ -125,6 +208,9 @@ public class ScoreOfCompetitor {
         });
     }
 
+    /**
+     * Computes and stores the number of fights whose result was a win for the competitor's team.
+     */
     public void setFightsWon() {
         wonFights = 0;
         for (final Fight fight : fights) {
@@ -134,6 +220,10 @@ public class ScoreOfCompetitor {
         }
     }
 
+    /**
+     * Computes and stores the number of fights that ended in a draw and in which
+     * the competitor's team participated.
+     */
     public void setFightsDraw() {
         drawFights = 0;
         for (final Fight fight : fights) {
@@ -145,6 +235,9 @@ public class ScoreOfCompetitor {
         }
     }
 
+    /**
+     * Computes and stores the total number of fights in which the competitor's team participated.
+     */
     public void setTotalFights() {
         totalFights = 0;
         for (final Fight fight : fights) {
@@ -155,6 +248,10 @@ public class ScoreOfCompetitor {
         }
     }
 
+    /**
+     * Computes and stores the number of duels that ended in a draw and in which
+     * the competitor participated.
+     */
     public void setDuelsDraw() {
         drawDuels = 0;
         for (final Fight fight : fights) {
@@ -164,6 +261,9 @@ public class ScoreOfCompetitor {
         }
     }
 
+    /**
+     * Computes and stores the total ippon points scored by the competitor across all fights.
+     */
     public void setHits() {
         hits = 0;
         for (final Fight fight : fights) {
@@ -173,6 +273,9 @@ public class ScoreOfCompetitor {
         }
     }
 
+    /**
+     * Computes and stores the total ippon points conceded by the competitor across all fights.
+     */
     public void setHitsLost() {
         hitsLost = 0;
         for (final Fight fight : fights) {
@@ -182,6 +285,9 @@ public class ScoreOfCompetitor {
         }
     }
 
+    /**
+     * Computes and stores the number of untie duels won by the competitor.
+     */
     public void setUntieDuels() {
         untieDuels = 0;
         unties.forEach(duel -> {
@@ -192,6 +298,9 @@ public class ScoreOfCompetitor {
         });
     }
 
+    /**
+     * Computes and stores the total ippon points scored by the competitor in untie duels.
+     */
     public void setUntieHits() {
         untieHits = 0;
         unties.forEach(duel -> {

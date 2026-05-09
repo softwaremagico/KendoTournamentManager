@@ -19,9 +19,9 @@ import {
 })
 export class AuthenticatedUserFormPopupComponent {
   @Input() user: AuthenticatedUser;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onSaved: EventEmitter<AuthenticatedUser> = new EventEmitter<AuthenticatedUser>();
-  @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() saved: EventEmitter<AuthenticatedUser> = new EventEmitter<AuthenticatedUser>();
+  @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
 
   protected errors: Map<AuthenticatedUserFormValidationFields, string> = new Map<AuthenticatedUserFormValidationFields, string>();
 

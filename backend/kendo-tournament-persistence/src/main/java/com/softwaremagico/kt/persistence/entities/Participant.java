@@ -53,8 +53,24 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * A registered person is any person that is in a tournament. Can be a
- * competitor, referee, public, etc.
+ * JPA entity representing any person registered in the system.
+ * <p>
+ * A participant may hold one or more {@link Role}s within a tournament (e.g.
+ * competitor, referee, volunteer). Participants can optionally be granted
+ * temporary authentication credentials so they can log in as a limited
+ * {@code VIEWER} with access to their own fight schedule.
+ * </p>
+ * <p>
+ * The entity implements both {@link UserDetails} (for Spring Security integration)
+ * and {@link IAuthenticatedUser} (for the application's own JWT-based auth).
+ * Participant accounts expire after {@value #TEMPORARY_PARTICIPANT_ACCOUNT_DURATION} days.
+ * Temporary tokens (e.g. for QR-code access) are valid for
+ * {@value #TEMPORARY_TOKEN_DURATION} seconds.
+ * </p>
+ * <p>
+ * Sensitive fields (idCard, name, lastName) are encrypted at rest via
+ * {@link com.softwaremagico.kt.persistence.encryption.StringCryptoConverter}.
+ * </p>
  */
 @Entity
 @Cacheable

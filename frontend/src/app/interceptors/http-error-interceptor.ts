@@ -24,12 +24,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       catchError((error) => {
         if (error.error instanceof Error) {
           // A client-side or network error occurred. Handle it accordingly.
-          console.error('An error occurred:', error.error.message);
         } else {
           // Log error.
           if (error.error && !error.ok) {
             ErrorHandler.notify(error, this.transloco, this.biitSnackbarService);
-            console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
             //Set to 'ok' so it is not handled again by local error handler.
             error.ok = true;
           }
@@ -39,10 +37,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           if (error.url.startsWith(this.environmentService.getBackendUrl())) {
             this.loginService.logout();
             this.messageService.warningMessage("userLoggedOutMessage");
-            this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}})
-              .then((r: boolean) => console.log("User redirected to login window."));
-          } else {
-            console.error(`Error from ${error.url}`);
+            this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
           }
         }
         throw error;
