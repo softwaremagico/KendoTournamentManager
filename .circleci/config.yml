@@ -16,6 +16,9 @@ jobs:
 
 
   frontend-test:
+    runs-on: ubuntu-latest
+    working_directory: ~/KendoTournamentManager/frontend
+    steps:
     - uses: actions/checkout@v6 #Checkout Repo
     - uses: actions/setup-node@v6 #Setup Node
       with:
