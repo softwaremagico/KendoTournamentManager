@@ -64,6 +64,27 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * REST controller that exposes competitor and team ranking endpoints under {@code /rankings}.
+ * <p>
+ * Delegates computation to {@link RankingController} and exposes the results via
+ * several scoped endpoints:
+ * <ul>
+ *   <li>{@code GET /competitors/groups/{id}} — competitor scores for a single group</li>
+ *   <li>{@code GET /competitors/tournaments/{id}} — competitor scores across a tournament</li>
+ *   <li>{@code GET /competitors/tournaments/{id}/pdf} — competitor ranking as PDF</li>
+ *   <li>{@code POST /competitors} — global competitor ranking for an arbitrary participant list</li>
+ *   <li>{@code GET /teams/groups/{id}} — team scores for a single group</li>
+ *   <li>{@code GET /teams/tournaments/{id}} — team scores across a tournament</li>
+ *   <li>{@code GET /teams/tournaments/{id}/pdf} — team ranking as PDF</li>
+ *   <li>{@code GET /bracket/{id}} — bracket ranking for championship-style tournaments</li>
+ * </ul>
+ * </p>
+ * <p>
+ * All endpoints require at least the VIEWER role. PDF download endpoints additionally
+ * set appropriate {@code Content-Disposition} headers for browser-initiated downloads.
+ * </p>
+ */
 @RestController
 @RequestMapping("/rankings")
 public class RankingServices {

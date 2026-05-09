@@ -41,6 +41,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Business-logic controller for {@link Tournament} entities.
+ * <p>
+ * Extends {@link BasicInsertableController} with tournament-specific behaviour:
+ * <ul>
+ *   <li><b>create</b> — After persisting the tournament, automatically creates a
+ *       default {@link Group} so that teams can be assigned immediately.</li>
+ *   <li><b>update</b> — Manages the locked-state transition: sets
+ *       {@code lockedAt} and {@code finishedAt} timestamps when the tournament is
+ *       first locked; clears them when unlocked. Also propagates any change to
+ *       {@code duelsDuration} to all existing {@link Duel}s in the tournament.</li>
+ * </ul>
+ * The {@code "tournaments-by-id"} cache is evicted on every update.
+ * </p>
+ */
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
         TournamentProvider, TournamentConverterRequest, TournamentConverter> {

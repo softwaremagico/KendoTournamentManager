@@ -42,6 +42,19 @@ import org.hibernate.annotations.FetchMode;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JPA entity that represents a pool or bracket node within a tournament.
+ * <p>
+ * In league-style tournaments there is a single group containing all teams.
+ * In championship (tree) tournaments the bracket is represented as a set of groups
+ * arranged by {@code level} and {@code index}: level 0 holds the initial pools,
+ * level 1 holds the second-round pools, and so on.
+ * </p>
+ * <p>
+ * Each group is associated with a shiaijo so that parallel fighting areas can
+ * operate independently.
+ * </p>
+ */
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -50,30 +63,49 @@ import java.util.List;
 })
 public class Group extends Element {
 
+    /** The tournament this group belongs to. */
     @ManyToOne
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
+    /**
+     * Ordered list of teams in this group.
+     * The order determines the team's seeding position within the group.
+     */
     @ManyToMany
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "teams_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "team_id"))
     @OrderColumn(name = "group_index")
     private List<Team> teams;
 
+    /** Zero-based index of the shiaijo (fighting area) assigned to this group. */
     @Column(name = "shiaijo", nullable = false)
     private Integer shiaijo = 0;
 
+    /**
+     * Round level of this group within the tournament bracket.
+     * Level 0 is the initial round; each subsequent level is a later knockout round.
+     */
     @Column(name = "group_level", nullable = false)
     private Integer level = 0;
 
+    /** Zero-based position of this group among all groups at the same {@code level}. */
     @Column(name = "group_index", nullable = false)
     private Integer index = 0;
 
+    /**
+     * All scheduled fights within this group, in the order they were generated.
+     * Orphan fights are removed automatically when the group is saved.
+     */
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
     @OrderColumn(name = "group_index")
     private List<Fight> fights;
 
+    /**
+     * How many top-ranked teams from this group advance to the next round.
+     * Typically 1, but can be set to 2 for larger championships.
+     */
     @Column(name = "number_of_winners", nullable = false)
     private int numberOfWinners = 1;
 
@@ -218,4 +250,3 @@ public class Group extends Element {
                 + '}';
     }
 }
-

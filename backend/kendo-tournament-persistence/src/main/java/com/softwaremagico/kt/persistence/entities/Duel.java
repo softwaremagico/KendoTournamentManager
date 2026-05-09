@@ -48,6 +48,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * JPA entity that represents a single match between two individual competitors within a {@link Fight}.
+ * <p>
+ * In kendo team tournaments a {@link Fight} between two {@link Team}s is composed of
+ * several duels — one per member pair. Each duel runs for at most
+ * {@code tournament.duelsDuration} seconds. The first competitor to score
+ * {@link #POINTS_TO_WIN} ippon-equivalent points wins the duel.
+ * </p>
+ * <p>
+ * Scores are stored as ordered lists of {@link Score} values, where each element
+ * corresponds to one ippon scored by the respective competitor. Hansoku (penalty)
+ * points are recorded in the same lists using {@link Score#HANSOKU}.
+ * Score timestamps (in seconds from duel start) are stored in parallel lists so
+ * that the time of each score can be replayed or audited.
+ * </p>
+ * <p>
+ * A duel can be played as an untie duel (type = {@link com.softwaremagico.kt.persistence.values.DuelType#UNDECIDED})
+ * when the parent fight is tied and an additional match is needed to determine a winner.
+ * </p>
+ */
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -57,17 +77,25 @@ import java.util.Set;
         @Index(name = "ind_competitor2", columnList = "competitor2")
 })
 public class Duel extends Element {
+    /** Default duel duration indicator when set individually (typically 1 minute for untie duels). */
     public static final int DEFAULT_DURATION = 1;
+    /** Number of points required to win a duel outright. */
     public static final int POINTS_TO_WIN = 2;
 
+    /** The first (left / red) competitor in the duel. */
     @ManyToOne
     @JoinColumn(name = "competitor1")
     private Participant competitor1;
 
+    /** The second (right / white) competitor in the duel. */
     @ManyToOne
     @JoinColumn(name = "competitor2")
     private Participant competitor2;
 
+    /**
+     * Ordered list of scores earned by competitor 1.
+     * Valid values are the {@link Score} enum entries: M (Men), K (Kote), T (Do), D (Tsuki), H (Hansoku), I (Invalid).
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score")
     @Fetch(value = FetchMode.SUBSELECT)
@@ -75,6 +103,10 @@ public class Duel extends Element {
     @OrderColumn(name = "score_index")
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
 
+    /**
+     * Ordered list of scores earned by competitor 2.
+     * @see #competitor1Score
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score")
     @Fetch(value = FetchMode.SUBSELECT)
@@ -82,18 +114,27 @@ public class Duel extends Element {
     @OrderColumn(name = "score_index")
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
+    /**
+     * Timestamps (in seconds from duel start) of each score in {@link #competitor1Score}.
+     * Parallel list — index {@code i} in this list corresponds to index {@code i} in {@code competitor1Score}.
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
     @OrderColumn(name = "score_index")
     private List<Integer> competitor1ScoreTime = new ArrayList<>();
 
+    /**
+     * Timestamps (in seconds from duel start) of each score in {@link #competitor2Score}.
+     * @see #competitor1ScoreTime
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
     @OrderColumn(name = "score_index")
     private List<Integer> competitor2ScoreTime = new ArrayList<>();
 
+    /** Time (in seconds) at which competitor 1 received a fault (hansoku-make), or {@code null} if none. */
     @Column(name = "competitor_1_fault_time")
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer competitor1FaultTime;

@@ -42,6 +42,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller that exposes participant management endpoints under {@code /participants}.
+ * <p>
+ * In addition to the inherited CRUD operations from {@link BasicServices}, this
+ * controller provides:
+ * <ul>
+ *   <li>{@code GET /jwt} — retrieves the participant data matching the authenticated
+ *       user's JWT token (useful for the self-service view).</li>
+ *   <li>{@code POST /token} — generates a short-lived temporal token for a
+ *       participant, enabling QR-code login access.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The {@code GET /{id}} endpoint is additionally available to PARTICIPANT-role users
+ * (i.e. participants who have logged in with their own token), unlike the default
+ * VIEWER-only access in {@link BasicServices}.
+ * </p>
+ */
 @RestController
 @RequestMapping("/participants")
 public class ParticipantServices extends BasicServices<Participant, ParticipantDTO, ParticipantRepository,

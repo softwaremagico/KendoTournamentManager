@@ -39,40 +39,62 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Abstract base class for all JPA-managed domain entities.
+ * <p>
+ * Provides common auditing fields (createdAt, createdBy, updatedAt, updatedBy), an
+ * auto-generated primary key, an optimistic-locking version counter, and a SHA-512
+ * hash of the {@code createdBy} / {@code updatedBy} values for tamper detection.
+ * </p>
+ * <p>
+ * Field-level encryption of sensitive audit strings is delegated to
+ * {@link com.softwaremagico.kt.persistence.encryption.StringCryptoConverter}.
+ * The hashes are stored in plain text so they can be verified without decrypting
+ * the originals.
+ * </p>
+ */
 @MappedSuperclass
 public abstract class Element implements Serializable {
     protected static final int MAX_UNIQUE_COLUMN_LENGTH = 190;
 
+    /** Auto-generated surrogate primary key. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    /** Timestamp populated automatically by Hibernate when the row is first inserted. */
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    /** Username (encrypted at rest) of the user who created this record. */
     @Access(AccessType.PROPERTY)
     @Column(name = "created_by")
     @Convert(converter = StringCryptoConverter.class)
     private String createdBy;
 
+    /** SHA-512 hash of {@code createdBy}, stored in plain text for integrity verification. */
     @Column(name = "created_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
     @Convert(converter = SHA512HashGenerator.class)
     private String createdByHash;
 
+    /** Timestamp updated automatically by Hibernate on every flush. */
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    /** Username (encrypted at rest) of the user who last modified this record. */
     @Access(AccessType.PROPERTY)
     @Column(name = "updated_by")
     @Convert(converter = StringCryptoConverter.class)
     private String updatedBy;
 
+    /** SHA-512 hash of {@code updatedBy}, stored in plain text for integrity verification. */
     @Column(name = "updated_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
     @Convert(converter = SHA512HashGenerator.class)
     private String updatedByHash;
 
+    /** Optimistic-locking version counter incremented by Hibernate on every update. */
     @Version
     private Integer version;
 

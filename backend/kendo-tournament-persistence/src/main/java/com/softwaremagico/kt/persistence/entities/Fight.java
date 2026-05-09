@@ -40,6 +40,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * JPA entity that represents a single fight between two {@link Team}s.
+ * <p>
+ * A fight contains one {@link Duel} per active member in the fight size. If the
+ * tournament's {@code fightSize} is smaller than its {@code teamSize}, the last
+ * duels in the list belong to substitute members and are not scored.
+ * </p>
+ * <p>
+ * Fights are grouped into {@link Group}s and ordered by their {@code level} within
+ * the tournament bracket. A {@code level} of 0 represents the first (initial) round;
+ * higher levels correspond to later rounds in knockout-style formats.
+ * </p>
+ */
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -50,27 +63,39 @@ import java.util.Objects;
 })
 public class Fight extends Element {
 
+    /** The first (left / red) team competing in this fight. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team1", nullable = false)
     private Team team1;
 
+    /** The second (right / white) team competing in this fight. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team2", nullable = false)
     private Team team2;
 
+    /** The tournament this fight belongs to. Loaded lazily to avoid N+1 issues when listing fights. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
+    /** Zero-based index of the shiaijo (fighting area) on which this fight takes place. */
     @Column(name = "shiaijo", nullable = false)
     private Integer shiaijo = 0;
 
-    //If tournament.fightSize < tournament.teamSize latest duels will not have score.
+    /**
+     * Individual duels between the members of the two teams.
+     * The list is ordered by member position (index).
+     * Duels beyond {@code tournament.fightSize} belong to substitutes and have no scoring.
+     */
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
 
+    /**
+     * Round level within the tournament bracket.
+     * Level 0 is the initial round; each subsequent level is a later knockout round.
+     */
     @Column(name = "fight_level", nullable = false)
     private Integer level = 0;
 
@@ -301,4 +326,3 @@ public class Fight extends Element {
         return getDuels().stream().mapToInt(Duel::getCompetitor2ScoreValue).sum();
     }
 }
-

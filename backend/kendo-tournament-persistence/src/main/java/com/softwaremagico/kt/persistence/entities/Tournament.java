@@ -44,53 +44,85 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity that represents a kendo tournament.
+ * <p>
+ * A tournament groups a collection of {@link Team}s that compete in {@link Fight}s
+ * across one or more shiaijos (fighting areas). The tournament format is determined
+ * by {@link TournamentType} and may be further customised through
+ * {@link TournamentExtraProperty} records.
+ * </p>
+ * <p>
+ * Sensitive fields (name, durations, type) are encrypted at rest using the configured
+ * {@link com.softwaremagico.kt.persistence.encryption.StringCryptoConverter} converters.
+ * The second-level cache is enabled for read-heavy workloads.
+ * </p>
+ */
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
 public class Tournament extends Element implements IName {
+    /** Default duel duration in seconds (3 minutes). */
     public static final int DEFAULT_DURATION = 180;
 
+    /** Human-readable name of the tournament. Must be unique across the system. */
     @Column(name = "name", nullable = false, unique = true)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
+    /** Number of simultaneous shiaijos (fighting areas) available in this tournament. */
     @Column(name = "shiaijos", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijos;
 
+    /** Maximum number of members a team can have (including substitutes). */
     @Column(name = "team_size", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer teamSize;
 
+    /**
+     * Number of members per team that actually compete in each fight.
+     * When {@code fightSize < teamSize}, the remaining members are substitutes.
+     */
     @Column(name = "fight_size")
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer fightSize;
 
+    /** The structural format of this tournament (league, championship, kachinuki, etc.). */
     @Column(name = "tournament_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
+    /** Scoring rules configuration that determines how team/competitor rankings are calculated. */
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "tournament_score")
     private TournamentScore tournamentScore;
 
+    /** Maximum duration of each duel in seconds. Defaults to {@link #DEFAULT_DURATION} (180 s). */
     @Column(name = "duels_duration", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer duelsDuration = DEFAULT_DURATION;
 
+    /**
+     * Whether the tournament is locked. A locked tournament prevents further score edits
+     * and is treated as finished from the system's perspective.
+     */
     @Column(name = "locked", nullable = false)
     private boolean locked = false;
 
+    /** Timestamp at which this tournament was locked, or {@code null} if still open. */
     @Column(name = "locked_at")
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime lockedAt;
 
+    /** Timestamp at which the first fight was started, or {@code null} if not yet begun. */
     @Column(name = "started_at")
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime startedAt;
 
+    /** Timestamp at which the last fight was finished and the tournament concluded. */
     @Column(name = "finished_at")
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime finishedAt;

@@ -44,6 +44,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Tournament handler that implements a bubble-sort style progression.
+ * <p>
+ * In this format teams are continuously re-ranked after each fight: the winner of
+ * a fight advances to face the next higher-ranked team while the loser drops to
+ * face the next lower-ranked team. This produces a sequence of fights that
+ * approximates the final ranking without requiring a traditional bracket.
+ * </p>
+ * <p>
+ * The algorithm works as follows:
+ * <ol>
+ *   <li>Initial fights are created by {@link BubbleSortTournamentManager} from the
+ *       seeded team order (first group, level 0).</li>
+ *   <li>After each fight, {@link #generateNextFights} determines the next matchup.
+ *       If the last fight is over a new group/level is created and the next pair
+ *       of teams is matched based on winner/loser resolution.</li>
+ *   <li>The tournament ends when the total number of groups equals
+ *       {@code teams.size() - 1} and all fights in the last group are complete.</li>
+ * </ol>
+ * </p>
+ * <p>
+ * Draw resolution (both teams eliminated, winner or loser stays) is configurable
+ * via {@link TournamentExtraPropertyKey#KING_DRAW_RESOLUTION}.
+ * </p>
+ */
 @Service
 public class BubbleSortTournamentHandler extends LeagueHandler {
     private final BubbleSortTournamentManager bubbleSortTournamentManager;

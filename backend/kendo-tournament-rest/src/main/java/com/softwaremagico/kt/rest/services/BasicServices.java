@@ -52,6 +52,36 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Abstract generic REST controller that provides standard CRUD HTTP endpoints for
+ * any domain entity managed by a {@link BasicInsertableController}.
+ * <p>
+ * Concrete subclasses bind the seven generic type parameters to a specific domain
+ * aggregate and inherit the following mapped endpoints:
+ * <ul>
+ *   <li>{@code GET /} — list all entities (VIEWER+)</li>
+ *   <li>{@code GET /{id}} — get by ID (role configurable via {@link #requiredRoleForEntityById})</li>
+ *   <li>{@code POST /} — create (EDITOR+)</li>
+ *   <li>{@code PUT /} — update (EDITOR+)</li>
+ *   <li>{@code DELETE /{id}} — delete by ID (ADMIN)</li>
+ *   <li>{@code DELETE /delete} — delete by entity body (ADMIN)</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Access control is enforced via {@link PreAuthorize} expressions that reference
+ * privilege names resolved from {@link KendoSecurityService}. Subclasses may override
+ * {@link #requiredRoleForEntityById()} to grant wider access to the {@code GET /{id}}
+ * endpoint (e.g. GUEST access in {@link TournamentServices}).
+ * </p>
+ *
+ * @param <ENTITY>            the JPA entity type
+ * @param <DTO>               the DTO type exposed via the REST API
+ * @param <REPOSITORY>        the JPA repository for the entity
+ * @param <PROVIDER>          the CRUD provider delegating to the repository
+ * @param <CONVERTER_REQUEST> the converter request wrapper
+ * @param <CONVERTER>         the entity↔DTO converter
+ * @param <CONTROLLER>        the business-logic controller
+ */
 @Validated
 public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,

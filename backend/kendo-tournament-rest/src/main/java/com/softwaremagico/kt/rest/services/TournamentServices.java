@@ -66,6 +66,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * REST controller that exposes tournament management endpoints under {@code /tournaments}.
+ * <p>
+ * Extends {@link BasicServices} to inherit standard CRUD operations and adds
+ * tournament-specific endpoints such as:
+ * <ul>
+ *   <li>Fetching participants of a specific role type within a tournament.</li>
+ *   <li>Generating fights for a tournament (triggers the configured
+ *       {@link com.softwaremagico.kt.core.tournaments.ITournamentManager}).</li>
+ *   <li>Locking and unlocking tournaments.</li>
+ *   <li>Downloading the diplomas, accreditations and tournament summary as PDF.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Access control uses Spring {@code @PreAuthorize} expressions. Most read operations
+ * are permitted to all authenticated roles including GUEST. Write operations require
+ * at least the EDITOR role; administrative actions (e.g. deleting a tournament)
+ * require the ADMIN role.
+ * </p>
+ */
 @RestController
 @RequestMapping("/tournaments")
 public class TournamentServices extends BasicServices<Tournament, TournamentDTO, TournamentRepository,

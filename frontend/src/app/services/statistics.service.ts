@@ -12,6 +12,16 @@ import {TournamentStatistics} from "../models/tournament-statistics.model";
 import {ParticipantStatistics} from "../models/participant-statistics.model";
 import {Participant} from "../models/participant";
 
+/**
+ * Angular service for retrieving tournament and participant statistics.
+ *
+ * Wraps the backend {@code /statistics} REST endpoints. Provides:
+ * - Fight statistics for a tournament (member-level and team-level breakdowns).
+ * - Overall tournament statistics.
+ * - Previous tournament statistics (comparison history).
+ * - Individual participant statistics across all tournaments.
+ * - PDF export of participant statistics.
+ */
 @Injectable({
   providedIn: 'root'
 })

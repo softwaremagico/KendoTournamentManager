@@ -11,6 +11,16 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Participant} from "../models/participant";
 import {RoleType} from "../models/role-type";
 
+/**
+ * Angular service for all tournament-related HTTP operations.
+ *
+ * Wraps the backend {@code /tournaments} REST endpoints and returns typed
+ * {@link Observable}s. All requests automatically include the JWT Bearer token
+ * injected by the HTTP interceptor.
+ *
+ * System-overload signals ({@link SystemOverloadService#isBusy}) are reset on
+ * both error and completion so that loading indicators are always dismissed.
+ */
 @Injectable({
   providedIn: 'root'
 })

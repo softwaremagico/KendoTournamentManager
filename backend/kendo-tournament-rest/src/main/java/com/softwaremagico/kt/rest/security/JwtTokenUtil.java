@@ -40,14 +40,41 @@ import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * Utility component for creating, parsing, and validating JSON Web Tokens (JWT).
+ * <p>
+ * Tokens are signed with HMAC-SHA512. The JWT subject is a pipe-delimited string with
+ * five indexed fields: {@code id|username|session|ip|mac}.
+ * </p>
+ * <p>
+ * The signing secret is read from the {@code jwt.secret} property. If the property is
+ * absent or blank, a cryptographically secure random 32-character secret is generated
+ * at startup — this means tokens will be invalidated on server restart.
+ * </p>
+ * <p>
+ * Three separate expiration periods are supported (all in milliseconds):
+ * <ul>
+ *   <li>{@code jwt.expiration} — standard authenticated user tokens (default: 1 200 000 ms / 20 min)</li>
+ *   <li>{@code jwt.guest.expiration} — guest (QR-code) access tokens</li>
+ *   <li>{@code jwt.participant.expiration} — participant self-service tokens</li>
+ * </ul>
+ * If a per-role expiration is not configured it falls back to the standard value.
+ * </p>
+ */
 @Component
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
+    /** Default token validity period in milliseconds (20 minutes). */
     private static final long JWT_EXPIRATION = 1200000;
+    /** Index of the entity ID field within the pipe-separated token subject. */
     private static final int ID_INDEX = 0;
+    /** Index of the username field within the pipe-separated token subject. */
     private static final int USERNAME_INDEX = 1;
+    /** Index of the session identifier field within the pipe-separated token subject. */
     private static final int SESSION_INDEX = 2;
+    /** Index of the client IP address field within the pipe-separated token subject. */
     private static final int IP_INDEX = 3;
+    /** Index of the network MAC address field within the pipe-separated token subject. */
     private static final int MAC_INDEX = 4;
 
     //JWT Secret key

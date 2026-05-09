@@ -40,6 +40,26 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract base handler for all league-style tournament formats.
+ * <p>
+ * In a league each team faces every other team (or a scheduled subset) in
+ * a round-robin fashion. All matches belong to a single {@link Group} at level 0;
+ * there are no subsequent knockout rounds. Concrete subclasses define the
+ * specific fight-generation algorithm:
+ * <ul>
+ *   <li>{@link SimpleLeagueHandler} — standard round-robin order</li>
+ *   <li>{@link LoopLeagueHandler} — optimised for continuous round-robin loops</li>
+ *   <li>{@link CustomLeagueHandler} — administrator-defined fight order</li>
+ *   <li>{@link BubbleSortTournamentHandler} — real-time ranking via bubble-sort</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The fight generation order (FIFO vs other strategies) is stored as a
+ * {@link TournamentExtraProperty} with key
+ * {@link TournamentExtraPropertyKey#LEAGUE_FIGHTS_ORDER_GENERATION}.
+ * </p>
+ */
 @Service
 public abstract class LeagueHandler implements ITournamentManager {
 
