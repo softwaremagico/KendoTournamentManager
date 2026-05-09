@@ -23,7 +23,7 @@ describe('ClubFormComponent', () => {
     address: '123 Main St',
     email: 'club@example.com',
     phone: '123456789',
-    web: 'http://www.club.com'
+    web: 'https://www.club.com'
   } as Club);
 
   beforeEach(() => {
