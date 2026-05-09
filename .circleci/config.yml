@@ -23,11 +23,16 @@ jobs:
           method: blobless
           path: ~/KendoTournamentManager
       - run:
+          name: Install Chromium
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y chromium-browser
+      - run:
           name: Install dependencies
           command: npm install
       - run:
           name: Run tests
-          command: npm test -- --watch=false --browsers=ChromeHeadless
+          command: CHROME_BIN=/usr/bin/chromium-browser npm test -- --watch=false --browsers=ChromeHeadless
 
 workflows:
   main:
