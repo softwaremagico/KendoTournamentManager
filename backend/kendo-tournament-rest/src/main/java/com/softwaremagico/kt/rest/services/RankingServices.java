@@ -69,6 +69,7 @@ import java.util.Set;
  * <p>
  * Delegates computation to {@link RankingController} and exposes the results via
  * several scoped endpoints:
+ * </p>
  * <ul>
  *   <li>{@code GET /competitors/groups/{id}} — competitor scores for a single group</li>
  *   <li>{@code GET /competitors/tournaments/{id}} — competitor scores across a tournament</li>
@@ -79,7 +80,6 @@ import java.util.Set;
  *   <li>{@code GET /teams/tournaments/{id}/pdf} — team ranking as PDF</li>
  *   <li>{@code GET /bracket/{id}} — bracket ranking for championship-style tournaments</li>
  * </ul>
- * </p>
  * <p>
  * All endpoints require at least the VIEWER role. PDF download endpoints additionally
  * set appropriate {@code Content-Disposition} headers for browser-initiated downloads.

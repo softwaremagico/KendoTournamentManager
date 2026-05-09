@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
  * after {@link #MAX_ATTEMPTS} consecutive failures.
  * <p>
  * The tracking data is held in an in-memory pool ({@link BasePool}) with a TTL of
- * {@value #EXPIRATION_TIME} ms (10 minutes). Entries are automatically evicted after
+ * 600000 ms (10 minutes). Entries are automatically evicted after
  * the expiration window, so a blocked key is automatically unblocked after 10 minutes
  * of inactivity.
  * </p>

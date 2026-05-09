@@ -47,13 +47,13 @@ import java.util.List;
  * a round-robin fashion. All matches belong to a single {@link Group} at level 0;
  * there are no subsequent knockout rounds. Concrete subclasses define the
  * specific fight-generation algorithm:
+ * </p>
  * <ul>
  *   <li>{@link SimpleLeagueHandler} — standard round-robin order</li>
  *   <li>{@link LoopLeagueHandler} — optimised for continuous round-robin loops</li>
  *   <li>{@link CustomLeagueHandler} — administrator-defined fight order</li>
  *   <li>{@link BubbleSortTournamentHandler} — real-time ranking via bubble-sort</li>
  * </ul>
- * </p>
  * <p>
  * The fight generation order (FIFO vs other strategies) is stored as a
  * {@link TournamentExtraProperty} with key

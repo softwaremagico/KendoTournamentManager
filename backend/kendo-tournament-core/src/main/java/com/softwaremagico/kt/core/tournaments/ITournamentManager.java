@@ -35,6 +35,7 @@ import java.util.List;
  * Strategy interface for all tournament management algorithms.
  * <p>
  * Each concrete implementation encodes a specific tournament format:
+ * </p>
  * <ul>
  *   <li>{@link SimpleLeagueHandler} — round-robin league</li>
  *   <li>{@link LoopLeagueHandler} — continuous-loop league</li>
@@ -44,6 +45,7 @@ import java.util.List;
  *   <li>{@link SenbatsuTournamentHandler} — senbatsu (team selection) format</li>
  *   <li>{@link TreeTournamentHandler} — single-elimination bracket</li>
  * </ul>
+ * <p>
  * The correct implementation for a given {@link Tournament} is selected at runtime
  * by {@link TournamentHandlerSelector}.
  * </p>

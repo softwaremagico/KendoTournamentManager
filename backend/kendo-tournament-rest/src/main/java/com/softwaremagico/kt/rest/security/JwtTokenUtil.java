@@ -53,11 +53,13 @@ import java.util.UUID;
  * </p>
  * <p>
  * Three separate expiration periods are supported (all in milliseconds):
+ * </p>
  * <ul>
  *   <li>{@code jwt.expiration} — standard authenticated user tokens (default: 1 200 000 ms / 20 min)</li>
  *   <li>{@code jwt.guest.expiration} — guest (QR-code) access tokens</li>
  *   <li>{@code jwt.participant.expiration} — participant self-service tokens</li>
  * </ul>
+ * <p>
  * If a per-role expiration is not configured it falls back to the standard value.
  * </p>
  */

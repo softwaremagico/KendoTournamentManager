@@ -51,9 +51,10 @@ import java.util.List;
  * Spring Security configuration for the Kendo Tournament Manager REST API.
  * <p>
  * Security is implemented as a stateless, JWT-based scheme:
+ * </p>
  * <ul>
  *   <li>All public paths ({@link #AUTH_WHITELIST}) are permitted without a token,
- *       including Swagger UI, the {@code /*/public/**} namespace and WebSocket
+ *       including Swagger UI, the {@code /} namespace and WebSocket
  *       endpoints (which apply their own security through
  *       {@link WebSocketSecurityConfig}).</li>
  *   <li>Every other endpoint requires a valid {@code Authorization: Bearer} header.
@@ -62,9 +63,8 @@ import java.util.List;
  *   <li>CSRF is disabled because the API is entirely token-based.</li>
  *   <li>Sessions are stateless; no HTTP session is ever created by Spring Security.</li>
  * </ul>
- * </p>
  * <p>
- * CORS is configured through {@link #corsConfigurationSource()} and accepts
+ * CORS is configured through {@link #generateCorsConfigurationSource()} and accepts
  * explicit origins supplied via the {@code server.cors.domains} property. When the
  * property is set to {@code null} (default) CORS is unrestricted, which is
  * appropriate for local development.
@@ -73,6 +73,7 @@ import java.util.List;
  * Passwords are encoded with BCrypt (work-factor 10).
  * </p>
  */
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(

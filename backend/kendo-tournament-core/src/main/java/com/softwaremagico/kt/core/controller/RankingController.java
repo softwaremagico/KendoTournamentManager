@@ -96,7 +96,7 @@ import java.util.stream.Collectors;
  * </p>
  * <p>
  * Results are cached for {@value #CACHE_EXPIRATION_TIME} ms to avoid recomputing rankings
- * on every WebSocket refresh. The cache is evicted by {@link #resetCache()} which is
+ * on every WebSocket refresh. The cache is evicted by {@link #reportCacheEvict()} which is
  * scheduled to run every 10 minutes.
  * </p>
  * <p>

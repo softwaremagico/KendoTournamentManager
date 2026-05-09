@@ -58,6 +58,7 @@ import java.util.Optional;
  * REST controller that exposes statistics endpoints under {@code /statistics}.
  * <p>
  * Provides aggregated metrics for tournaments and individual participants:
+ * </p>
  * <ul>
  *   <li>{@code GET /tournaments/{id}/fights} — fight statistics for a tournament
  *       (hit counts, average durations, etc.). Supports member-level and team-level
@@ -69,7 +70,6 @@ import java.util.Optional;
  *   <li>{@code GET /participants/{id}} — a participant's lifetime statistics
  *       across all tournaments.</li>
  * </ul>
- * </p>
  * <p>
  * All endpoints require at least the VIEWER role.
  * </p>

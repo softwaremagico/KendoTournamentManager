@@ -68,6 +68,7 @@ import java.util.Locale;
  * <p>
  * Provides CRUD operations for {@link Fight} entities and tournament-scoped queries.
  * Key additional endpoints include:
+ * </p>
  * <ul>
  *   <li>Retrieving all fights for a given tournament.</li>
  *   <li>Generating the next set of fights (for dynamic formats such as
@@ -75,7 +76,6 @@ import java.util.Locale;
  *   <li>Downloading fight lists as PDF documents.</li>
  *   <li>Deleting all fights for a tournament (typically before re-generation).</li>
  * </ul>
- * </p>
  * <p>
  * Write operations (create, update, delete) require at least the EDITOR role.
  * Read operations are accessible to VIEWER, EDITOR and ADMIN roles.

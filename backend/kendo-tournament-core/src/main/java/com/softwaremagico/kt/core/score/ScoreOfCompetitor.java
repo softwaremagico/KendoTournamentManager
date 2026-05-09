@@ -35,7 +35,7 @@ import java.util.Objects;
  * Aggregated scoring summary for a single competitor in a tournament or group.
  * <p>
  * An instance is computed from all {@link Fight}s that involve the competitor's
- * {@link Team} and from any optional untie {@link Duel}s. Statistics are lazily
+ * {@link com.softwaremagico.kt.persistence.entities.Team} and from any optional untie {@link Duel}s. Statistics are lazily
  * calculated the first time each getter is invoked and cached until {@link #update()}
  * is called.
  * </p>
@@ -58,33 +58,59 @@ import java.util.Objects;
  */
 public class ScoreOfCompetitor {
 
-    /** All fights that the competitor's team participated in. Not serialised into JSON. */
+    /**
+     * All fights that the competitor's team participated in. Not serialised into JSON.
+     */
     @JsonIgnore
     private List<Fight> fights;
-    /** The competitor whose score this object represents. */
+    /**
+     * The competitor whose score this object represents.
+     */
     private Participant competitor;
-    /** Extra untie duels used to break ties after regular fights. Not serialised into JSON. */
+    /**
+     * Extra untie duels used to break ties after regular fights. Not serialised into JSON.
+     */
     @JsonIgnore
     private List<Duel> unties;
-    /** Number of duels the competitor won outright (2 ippon). */
+    /**
+     * Number of duels the competitor won outright (2 ippon).
+     */
     private Integer wonDuels = null;
-    /** Number of duels that ended in a draw (equal ippon). */
+    /**
+     * Number of duels that ended in a draw (equal ippon).
+     */
     private Integer drawDuels = null;
-    /** Number of untie duels won by the competitor. */
+    /**
+     * Number of untie duels won by the competitor.
+     */
     private Integer untieDuels = null;
-    /** Total ippon-equivalent points scored by the competitor across all duels. */
+    /**
+     * Total ippon-equivalent points scored by the competitor across all duels.
+     */
     private Integer hits = null;
-    /** Total points conceded by the competitor across all duels. */
+    /**
+     * Total points conceded by the competitor across all duels.
+     */
     private Integer hitsLost = null;
-    /** Ippon-equivalent points scored in untie duels. */
+    /**
+     * Ippon-equivalent points scored in untie duels.
+     */
     private Integer untieHits = null;
-    /** Total number of duels the competitor participated in. */
+    /**
+     * Total number of duels the competitor participated in.
+     */
     private Integer duelsDone = null;
-    /** Number of fights in which the competitor's team won. */
+    /**
+     * Number of fights in which the competitor's team won.
+     */
     private Integer wonFights = null;
-    /** Number of fights that ended in a tie for the competitor's team. */
+    /**
+     * Number of fights that ended in a tie for the competitor's team.
+     */
     private Integer drawFights = null;
-    /** Total number of fights the competitor's team participated in. */
+    /**
+     * Total number of fights the competitor's team participated in.
+     */
     private Integer totalFights = null;
     /**
      * When {@code true}, duels that were not finished (i.e. timed out) are still

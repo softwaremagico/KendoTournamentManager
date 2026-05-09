@@ -41,27 +41,22 @@ import java.util.stream.Collectors;
 /**
  * Abstract generic controller that adds full CRUD lifecycle management to
  * {@link StandardController}, including DTO↔entity conversion and event propagation.
- * <p>
- * Concrete subclasses bind the six generic type parameters to a specific domain
- * aggregate (e.g. Tournament, Fight, Participant) and inherit create, update, and
- * delete operations that:
  * <ol>
  *   <li>Convert incoming DTOs to entities via the bound {@link CONVERTER}.</li>
  *   <li>Delegate persistence to the {@link PROVIDER}.</li>
  *   <li>Notify registered {@link ElementCreatedListener}, {@link ElementUpdatedListener}
  *       or {@link ElementDeletedListener} observers (e.g. WebSocket broadcast).</li>
  * </ol>
- * </p>
  * <p>
  * All write operations are transactional by default.
  * </p>
  *
- * @param <ENTITY>           the JPA entity type
- * @param <DTO>              the data-transfer object type exposed by the REST layer
- * @param <REPOSITORY>       the JPA repository for the entity
- * @param <PROVIDER>         the CRUD provider delegating to the repository
+ * @param <ENTITY>            the JPA entity type
+ * @param <DTO>               the data-transfer object type exposed by the REST layer
+ * @param <REPOSITORY>        the JPA repository for the entity
+ * @param <PROVIDER>          the CRUD provider delegating to the repository
  * @param <CONVERTER_REQUEST> the converter request wrapper
- * @param <CONVERTER>        the converter that maps between entity and DTO
+ * @param <CONVERTER>         the converter that maps between entity and DTO
  */
 public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,

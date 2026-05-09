@@ -71,6 +71,7 @@ import java.util.Locale;
  * <p>
  * Extends {@link BasicServices} to inherit standard CRUD operations and adds
  * tournament-specific endpoints such as:
+ * </p>
  * <ul>
  *   <li>Fetching participants of a specific role type within a tournament.</li>
  *   <li>Generating fights for a tournament (triggers the configured
@@ -78,7 +79,6 @@ import java.util.Locale;
  *   <li>Locking and unlocking tournaments.</li>
  *   <li>Downloading the diplomas, accreditations and tournament summary as PDF.</li>
  * </ul>
- * </p>
  * <p>
  * Access control uses Spring {@code @PreAuthorize} expressions. Most read operations
  * are permitted to all authenticated roles including GUEST. Write operations require

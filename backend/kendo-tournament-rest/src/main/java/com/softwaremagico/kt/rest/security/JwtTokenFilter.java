@@ -55,6 +55,7 @@ import java.util.Objects;
  * Servlet filter that validates the JWT Bearer token on every incoming HTTP request.
  * <p>
  * The filter runs once per request ({@link OncePerRequestFilter}). It:
+ * </p>
  * <ol>
  *   <li>Extracts the {@code Authorization: Bearer &lt;token&gt;} header.</li>
  *   <li>Validates the token signature and expiration via {@link JwtTokenUtil}.</li>
@@ -65,7 +66,6 @@ import java.util.Objects;
  *   <li>If all checks pass, sets a {@link UsernamePasswordAuthenticationToken} in
  *       the {@link SecurityContextHolder} to authenticate the request.</li>
  * </ol>
- * </p>
  * <p>
  * When {@code enable.participant.access=true}, participant accounts can also
  * obtain and use JWT tokens with reduced privileges (VIEWER role).

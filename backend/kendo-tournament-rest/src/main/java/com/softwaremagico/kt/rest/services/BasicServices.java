@@ -58,6 +58,7 @@ import java.util.List;
  * <p>
  * Concrete subclasses bind the seven generic type parameters to a specific domain
  * aggregate and inherit the following mapped endpoints:
+ * </p>
  * <ul>
  *   <li>{@code GET /} — list all entities (VIEWER+)</li>
  *   <li>{@code GET /{id}} — get by ID (role configurable via {@link #requiredRoleForEntityById})</li>
@@ -66,7 +67,6 @@ import java.util.List;
  *   <li>{@code DELETE /{id}} — delete by ID (ADMIN)</li>
  *   <li>{@code DELETE /delete} — delete by entity body (ADMIN)</li>
  * </ul>
- * </p>
  * <p>
  * Access control is enforced via {@link PreAuthorize} expressions that reference
  * privilege names resolved from {@link KendoSecurityService}. Subclasses may override

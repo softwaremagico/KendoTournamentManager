@@ -45,6 +45,7 @@ import java.util.Optional;
  * Business-logic controller for {@link Tournament} entities.
  * <p>
  * Extends {@link BasicInsertableController} with tournament-specific behaviour:
+ * </p>
  * <ul>
  *   <li><b>create</b> — After persisting the tournament, automatically creates a
  *       default {@link Group} so that teams can be assigned immediately.</li>
@@ -53,6 +54,7 @@ import java.util.Optional;
  *       first locked; clears them when unlocked. Also propagates any change to
  *       {@code duelsDuration} to all existing {@link Duel}s in the tournament.</li>
  * </ul>
+ * <p>
  * The {@code "tournaments-by-id"} cache is evicted on every update.
  * </p>
  */
@@ -149,11 +151,11 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     /**
      * Creates a new tournament from individual parameters rather than from a full DTO.
      *
-     * @param name      the unique name of the tournament
-     * @param shiaijos  the number of simultaneous fighting areas
-     * @param teamSize  the number of members per team
-     * @param type      the structural format of the tournament
-     * @param username  the authenticated user performing the creation
+     * @param name     the unique name of the tournament
+     * @param shiaijos the number of simultaneous fighting areas
+     * @param teamSize the number of members per team
+     * @param type     the structural format of the tournament
+     * @param username the authenticated user performing the creation
      * @return the persisted tournament as a DTO
      */
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
@@ -185,9 +187,9 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     /**
      * Sets the number of winning teams per group for the given tournament.
      *
-     * @param tournamentId   the ID of the tournament to update
+     * @param tournamentId    the ID of the tournament to update
      * @param numberOfWinners the number of teams that advance from each group
-     * @param updatedBy      the username of the user performing the update
+     * @param updatedBy       the username of the user performing the update
      */
     public void setNumberOfWinners(Integer tournamentId, Integer numberOfWinners, String updatedBy) {
         getProvider().setNumberOfWinners(tournamentId, numberOfWinners, updatedBy);
