@@ -64,7 +64,7 @@ import java.util.Set;
  * that the time of each score can be replayed or audited.
  * </p>
  * <p>
- * A duel can be played as an untie duel (type = {@link com.softwaremagico.kt.persistence.values.DuelType#UNDECIDED})
+ * A duel can be played as an untie duel (type = {@link com.softwaremagico.kt.persistence.entities.DuelType#UNDRAW})
  * when the parent fight is tied and an additional match is needed to determine a winner.
  * </p>
  */
@@ -77,17 +77,25 @@ import java.util.Set;
         @Index(name = "ind_competitor2", columnList = "competitor2")
 })
 public class Duel extends Element {
-    /** Default duel duration indicator when set individually (typically 1 minute for untie duels). */
+    /**
+     * Default duel duration indicator when set individually (typically 1 minute for untie duels).
+     */
     public static final int DEFAULT_DURATION = 1;
-    /** Number of points required to win a duel outright. */
+    /**
+     * Number of points required to win a duel outright.
+     */
     public static final int POINTS_TO_WIN = 2;
 
-    /** The first (left / red) competitor in the duel. */
+    /**
+     * The first (left / red) competitor in the duel.
+     */
     @ManyToOne
     @JoinColumn(name = "competitor1")
     private Participant competitor1;
 
-    /** The second (right / white) competitor in the duel. */
+    /**
+     * The second (right / white) competitor in the duel.
+     */
     @ManyToOne
     @JoinColumn(name = "competitor2")
     private Participant competitor2;
@@ -105,6 +113,7 @@ public class Duel extends Element {
 
     /**
      * Ordered list of scores earned by competitor 2.
+     *
      * @see #competitor1Score
      */
     @ElementCollection(fetch = FetchType.EAGER)
@@ -126,6 +135,7 @@ public class Duel extends Element {
 
     /**
      * Timestamps (in seconds from duel start) of each score in {@link #competitor2Score}.
+     *
      * @see #competitor1ScoreTime
      */
     @ElementCollection(fetch = FetchType.EAGER)
@@ -134,7 +144,9 @@ public class Duel extends Element {
     @OrderColumn(name = "score_index")
     private List<Integer> competitor2ScoreTime = new ArrayList<>();
 
-    /** Time (in seconds) at which competitor 1 received a fault (hansoku-make), or {@code null} if none. */
+    /**
+     * Time (in seconds) at which competitor 1 received a fault (hansoku-make), or {@code null} if none.
+     */
     @Column(name = "competitor_1_fault_time")
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer competitor1FaultTime;
