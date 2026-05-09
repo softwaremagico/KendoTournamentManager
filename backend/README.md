@@ -217,22 +217,45 @@ In development you can use `*` to allow all origins.
 #### Optional access features
 
 ```properties
-enable.guest.user=true         # Allow unauthenticated read-only access
-enable.participant.access=true # Allow participants to log in with a long-lived token
-jwt.ip.check=true              # Bind token validation to the client IP
+# Allow unauthenticated read-only access to a specific tournament via QR code
+enable.guest.user=true
+
+# Allow participants to view their own statistics via a long-lived personal QR code
+enable.participant.access=true
+
+# Bind JWT token validation to the client's IP address (adds extra security,
+# but breaks access for users with dynamic IPs or VPNs)
+jwt.ip.check=false
 ```
+
+**Guest access** generates a temporary JWT for each QR code scan. The token expiration is controlled by
+`jwt.guest.expiration` (milliseconds; default: 14 400 000 ms = 4 hours). Guests can only view the scores of
+the specific tournament for which the QR code was generated; all other views redirect to the login screen.
+To disable guest access globally, set `enable.guest.user=false`.
+
+**Participant access** generates a long-lived personal JWT for each registered participant. The token expiration is
+controlled by `jwt.participant.expiration` (milliseconds; default: 317 098 000 000 ms ≈ 10 years). Participants
+can only view their own statistics and fight history. To disable participant access globally, set
+`enable.participant.access=false`.
 
 #### Initial administrator user
 
-On first startup with an empty database, the application creates an administrator account automatically the first time
-any credentials are used to log in. **Change those credentials immediately** and store them securely; this bootstrap
-mechanism is disabled as soon as the first admin user exists.
+On first startup with an empty database, the application can create a default administrator account automatically.
+This behaviour is controlled by the `database_populate_default_data` property (available via the Docker environment
+variable of the same name):
 
-The default admin script is available at:
-`kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sql`
+| Value | Effect |
+|-------|--------|
+| `always` | A default admin user (`admin@test.com` / `asd123`) is created on every fresh schema. **Not compatible with database encryption.** |
+| `never` | No default data is created. On first login attempt the application prompts you to create the first administrator account interactively. |
 
-Passwords must be stored in **BCrypt** format.
+**Change the default credentials immediately** if you use `always`. Passwords are stored in **BCrypt** format.
 You can generate a BCrypt hash using an online tool such as [bcrypt-generator.com](https://bcrypt-generator.com/).
+
+The default admin SQL script is located at:
+```
+kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sql
+```
 
 ### Database
 
@@ -261,6 +284,42 @@ spring.kendo.datasource.jdbc-url=jdbc:postgresql://localhost:5432/kendotournamen
 spring.kendo.datasource.username=<your user>
 spring.kendo.datasource.password=<your password>
 ```
+
+---
+
+## CSV import / export
+
+The backend supports bulk import of **clubs** and **participants** via CSV files uploaded through the REST API (and
+exposed in the frontend). The CSV format is:
+
+**Clubs**
+```
+#Name; Country; City; Address; Phone; Email; Web;
+```
+
+**Participants**
+```
+#Name; Lastname; idCard; Club; ClubCity
+```
+
+Existing records are skipped (clubs are de-duplicated by name + city; participants are de-duplicated by ID card).
+
+---
+
+## Achievements
+
+The achievement engine runs automatically in the background after each tournament update. It evaluates each
+participant against a set of hidden goals and awards badges at four levels: **normal**, **bronze**, **silver**, and
+**gold**.
+
+Achievements can be **disabled** globally:
+
+```properties
+# In application.properties — set via the achievements_enabled Docker variable
+achievements.enabled=false
+```
+
+When disabled, no achievement calculations are performed and the achievement wall is hidden in the frontend.
 
 ---
 
@@ -347,10 +406,12 @@ The response body contains:
 
 - **ArchitectsDaughter** font by Kimberly Geswein, used in PDF reports —
   [Google Fonts](https://fonts.google.com/specimen/Architects+Daughter/about)
-- **iText** — PDF generation library
+- **OpenPDF** — PDF generation library (LGPL-2.1)
 - **JJWT** — JWT creation and validation
 - **SpringDoc / OpenAPI 3** — interactive API documentation
 - **EhCache** — second-level Hibernate cache
+- **Apache Batik** — SVG/image manipulation for accreditation generation
+- **Qr Code with logo** — QR code generation for guest and participant access
 
 ---
 

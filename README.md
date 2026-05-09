@@ -62,25 +62,127 @@ features and customization choices.
 Alternatively, for practical illustrations, you can directly check out a few description
 [examples](https://github.com/softwaremagico/KendoTournamentManager/wiki/Full-Examples) provided.
 
-## What can this tool do for you or you and your club?
+## What can this tool do for you or your club?
 
-Some improvements that you can quickly notice include:
+### Tournament management
 
 - Streamline the [creation](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition)
-  and [development](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution) of a
-  championship, league, or tournament in various formats, suitable for both professional and amateur levels.
+  and [execution](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution) of championships,
+  leagues, and tournaments in multiple formats suitable for both professional and amateur levels.
+- Supports six distinct tournament types out of the box: **Championship (Senshuken)**, **League (Saotori shiai)**,
+  **Kachinuki**, **Loop**, **Senbatsu**, and **Dethrone the King** — each with configurable options.
+- Handle any number of teams and participants, from small club events to large multi-club championships.
+- Manage [multiple simultaneous shiaijos](https://github.com/softwaremagico/KendoTournamentManager/wiki/Multiples-Shiaijos)
+  with separate devices assigned to each fighting area.
+
+### Scoring and real-time updates
+
 - Prevent scoring errors by
   providing [instant tracking](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#scores)
-  and
-  automated [point counting](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#advancing-on-the-matches).
-- Track participants' advancements while
-  displaying [their statistics](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participants-statistics)
-  to monitor their progress over time.
-- [Encourage](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements) participation from
-  all club members in tournaments, regardless of their skill level.
+  and automated [point counting](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#advancing-on-the-matches),
+  including automatic *hansoku* (fault penalties) assignment.
+- Scores are synchronized across all connected devices in real time via **WebSockets**, so every shiaijo sees
+  the latest data instantly.
+- Handle [tie-breaking (daihyōsen)](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#tie-resolution-daihysen)
+  matches automatically when teams share the same ranking.
+- Built-in [match timer](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#timer)
+  with configurable duration per tournament.
 
-Additionally, there are many more details outlined in
-the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
+### Participant and club management
+
+- Register clubs and participants once; reuse them across any number of tournaments.
+- Assign participants to roles: competitor, referee, volunteer, and more.
+- Upload participant photos for use in score panels and printed accreditations.
+- Bulk-import clubs and participants from **CSV files** for fast onboarding.
+
+### Statistics, rankings, and gamification
+
+- Track participants' progress through
+  detailed [per-tournament and global statistics](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participants-statistics):
+  scores achieved, scores received, wins, losses, time, aggressiveness, and more.
+- Generate global [participant rankings](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participant-ranking)
+  and [club rankings](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Club-ranking),
+  filterable by time period and downloadable as PDF.
+- An [Achievements system](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements)
+  with hidden goals (normal, bronze, silver, gold) to [encourage](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements)
+  participation from all club members, regardless of skill level.
+
+### PDF generation and display
+
+- Generate printable [PDF documents](https://github.com/softwaremagico/KendoTournamentManager/wiki/Support-PDF-Files):
+  club lists, team lists, group lists, match sheets, match results, team rankings, competitor rankings,
+  participant accreditations, and diplomas.
+- Export PDF files directly from the browser using client-side generation.
+
+### Access control and guest features
+
+- Role-based access control (RBAC) with administrator and standard user roles.
+- Optional [guest access via QR codes](https://github.com/softwaremagico/KendoTournamentManager/wiki/Extra-features#Guest-Access):
+  generate a tournament QR code that any spectator can scan to follow live scores from their mobile device —
+  without needing an account.
+- Optional [competitor access via QR codes](https://github.com/softwaremagico/KendoTournamentManager/wiki/Extra-features#Competitor-Access):
+  share a personal long-lived token with club members so they can review their own statistics.
+- [Projector/referee mode](https://github.com/softwaremagico/KendoTournamentManager/wiki/Referee-Support):
+  hide all controls and show a clean scoreboard suitable for a projected display or second screen.
+
+### User experience
+
+- Fully **responsive** web application accessible from any device with a modern browser.
+- **Night mode** for comfortable use in darkened tournament venues.
+- Internationalisation (**i18n**) with community translations hosted on
+  [Weblate](https://hosted.weblate.org/engage/kendotournamentmanager/) — currently supporting
+  Spanish, English, Italian, and more.
+- Colour and team-position customisation on the score panel to match the referee's viewpoint.
+- Keyboard shortcuts for fast score entry during live matches.
+
+### REST API
+
+- Fully documented **REST API** (OpenAPI 3 / Swagger UI) available at
+  `/kendo-tournament-backend/swagger-ui/index.html` once the backend is running.
+- JWT-based authentication enables third-party integrations and custom tooling.
+
+---
+
+For a complete list of features and usage examples, visit the
+[wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
+
+## Architecture
+
+The application follows a standard three-tier architecture deployed as Docker containers:
+
+```
+┌─────────────────────────────┐
+│  Browser (any device)       │
+│  Angular 15 SPA             │
+└────────────┬────────────────┘
+             │ HTTPS / WebSockets
+┌────────────▼────────────────┐
+│  Traefik reverse proxy      │  ← automatic TLS via Let's Encrypt
+│  (kendo-tournament-rproxy)  │
+└────────────┬────────────────┘
+             │ HTTP (internal)
+     ┌───────┴──────┐
+     │              │
+┌────▼────┐  ┌──────▼───────┐
+│Frontend │  │  Backend     │
+│ (Nginx) │  │ Spring Boot  │
+└─────────┘  └──────┬───────┘
+                    │ JDBC
+             ┌──────▼───────┐
+             │  Database    │
+             │(PostgreSQL / │
+             │   MySQL)     │
+             └──────────────┘
+```
+
+| Layer | Technology | Docker Hub image |
+|-------|------------|-----------------|
+| Frontend | Angular 15, served via Nginx | [`softwaremagico/kendo-tournament-manager-frontend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
+| Backend | Java 17, Spring Boot 3, REST + WebSockets | [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend) |
+| Reverse proxy | Traefik (automatic Let's Encrypt TLS) | [`softwaremagico/kendo-tournament-manager-rproxy`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
+| Database | PostgreSQL 14 (default) or MySQL 8 | official image |
+
+---
 
 ## Installation
 
@@ -178,20 +280,39 @@ The backend requires a database for data persistence.
 You have flexibility in choosing your preferred database provider.
 Refer to [the documentation](./backend/README.md) for guidance on configuring your chosen database engine.
 
-## Hardware Requirements
+## Hardware requirements
 
 ### Hosting
 
-The application has been tested on a Raspberry Pi 3 model B with 1GB of RAM and has shown excellent performance for
+The application has been tested on a Raspberry Pi 3 model B with 1 GB of RAM and has shown excellent performance for
 small to medium-sized events.
-For larger events, it is recommended to consider using more specialized hardware hosted in the cloud.
+For larger events or high-availability deployments, it is recommended to use more specialized hardware or a cloud
+hosting solution.
 
-### Client Side
+### Client side
 
-Designed as a web application, it can be accessed by any device with a browser.
-The user experience is optimized for desktop environments and tablets, featuring a responsive design that adapts well to
-most devices in the market.
-However, using mobile devices is not advised due to screen size limitations.
+Designed as a web application, it can be accessed by any device with a modern browser.
+The user experience is optimised for desktop environments and tablets, featuring a responsive design that adapts well to
+most devices.
+Using mobile phones is not recommended due to screen-size limitations that make score entry difficult.
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+If you find a bug or have a feature request, please open an [issue](https://github.com/softwaremagico/KendoTournamentManager/issues).
+
+Translations are managed through [Weblate](https://hosted.weblate.org/engage/kendotournamentmanager/).
+If you would like to add or improve a translation, please contribute there.
+
+---
+
+## License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+See the [LICENSE](LICENSE) file for details.
 
 # Using the application
 

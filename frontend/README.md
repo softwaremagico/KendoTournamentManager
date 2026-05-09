@@ -17,7 +17,7 @@ a comprehensive web application designed to efficiently manage kendo tournament 
 It provides a modern, responsive interface to handle tournaments of varying sizes and formats,
 from small club events to large professional competitions.
 
-Built with **Angular 15** and **Wizardry Theme**, the frontend communicates with a Java Spring Boot backend via REST API
+Built with **Angular 15 LTS** and the **Wizardry Theme** (by BiiT Solutions), the frontend communicates with a Java Spring Boot backend via REST API
 and supports real-time score updates through WebSockets (STOMP over SockJS).
 
 Key features exposed through this UI include:
@@ -134,6 +134,15 @@ Ensure you set the backend server URL appropriately if your frontend and backend
 backendUrl: "http://localhost:8080/kendo-tournament-backend"
 ```
 
+| Environment file | Used for |
+|-----------------|---------|
+| `environment.ts` | Local development (`ng serve`) |
+| `environment.prod.ts` | Production build from release binaries |
+| `environment.docker.ts` | Docker deployment — variables are injected at runtime via `config.js` |
+
+When deploying via Docker, the backend URL and WebSocket URL are configured through the `config.js` file that is
+mounted into the container at runtime (see the [Docker documentation](../docker/README.md) for details).
+
 ---
 
 ## Development server
@@ -198,6 +207,17 @@ For full deployment including backend and reverse proxy, refer to the
 ---
 
 ## Related modules
+
+| Module | Description |
+|--------|-------------|
+| [Backend](../backend/README.md) | Java Spring Boot REST API that this frontend consumes |
+| [Docker](../docker/README.md) | Docker Compose configuration for full-stack deployment |
+| [docker-examples](../docker-examples/) | Ready-to-use `docker-compose.yml` examples for various scenarios |
+
+---
+
+> For full application documentation, installation guides, and usage examples, visit the
+> [project wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
 
 | Module | Description |
 |---|---|
