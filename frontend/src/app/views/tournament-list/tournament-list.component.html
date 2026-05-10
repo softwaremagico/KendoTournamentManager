@@ -7,6 +7,8 @@
                     [pageSize]="pageSize"
                     [pageSizeList]="pageSizes"
                     [loading]="loading"
+                    [rowStylePredicate]="lockedTournaments"
+                    [rowStyleClass]="'locked-row'"
                     (onSelection)="selectTournaments($event)"
                     scrollbarH
                     selectable

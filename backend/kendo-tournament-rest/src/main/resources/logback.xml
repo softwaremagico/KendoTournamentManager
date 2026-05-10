@@ -22,7 +22,7 @@
             <maxHistory>10</maxHistory>
             <!-- daily rollover -->
             <fileNamePattern>/logs/kendo-tournament/kendo.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy">
                 <!-- or whenever the file size reaches 100MB -->
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>

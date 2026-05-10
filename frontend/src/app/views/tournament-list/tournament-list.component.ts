@@ -57,6 +57,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   @ViewChild('table')
   table: BiitDatatableComponent<Tournament>;
 
+  public lockedTournaments: (row: Tournament) => boolean = (row) => row.locked;
+
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService,
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
