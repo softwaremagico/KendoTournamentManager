@@ -48,6 +48,3 @@ button.mdc-button:disabled mat-icon {
   fill: grey !important;
 }
 
-::ng-deep .datatable-body-row.datatable-row-even.locked-row {
-  color: var(--disabled-primary-color);
-}

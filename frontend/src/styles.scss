@@ -148,3 +148,15 @@ button .warning {
   background-color: var(--secondary-color);
   color: var(--secondary-text-color);
 }
+
+/* datatable */
+.datatable-body-row.locked-row {
+  color: var(--disabled-primary-color);
+}
+
+
+datatable-body-row.locked-row:hover {
+  .datatable-body-cell-label {
+    color: var(--table-text-hover-locked-color) !important;
+  }
+}

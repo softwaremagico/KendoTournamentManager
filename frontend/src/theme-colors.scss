@@ -43,6 +43,9 @@
   --table-border-color: var(--table-header-color);
   --table-selected-row-color: var(--main-background);
   --table-text-color: var(--border-color);
+  --table-text-hover-color: #041d5a;
+  --table-text-hover-locked-color: #5A6473;
+  --table-text-active-color: var(--table-text-color);
   --table-active-row-backgorund-color: var(--main-background);
   --scrollbar-color: var(--main-color);
   --fight-color: var(--popup-background);
@@ -133,6 +136,9 @@
     --table-border-color: var(--table-header-color);
     --table-selected-row-color: #a4a5ac;
     --table-text-color: var(--main-font-color);
+    --table-text-hover-color: var(--table-text-color);
+    --table-text-hover-locked-color: #B0BAC5;
+    --table-text-active-color: var(--table-text-color);
     --table-active-row-backgorund-color: var(--secondary-color);
     --scrollbar-color: var(--main-color);
     --fight-color: var(--popup-background);
