@@ -116,7 +116,6 @@ services:
         - database_user
         - database_name
         - database_type
-        - database_dialect
         - database_port
         - database_encryption_key
         - jwt_expiration
