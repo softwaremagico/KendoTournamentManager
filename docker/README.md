@@ -144,7 +144,6 @@ All runtime settings live in the `.env` file. The table below describes every va
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `database_type` | `postgresql` | Database driver: `postgresql`, `mysql`, `h2`, `hsqldb`, `oracle`, … |
-| `database_dialect` | `org.hibernate.dialect.PostgreSQLDialect` | Hibernate dialect class |
 | `database_name` | `postgres` | Database / schema name |
 | `database_user` | `myuser` | Database username |
 | `database_password` | `mypass` | Database password — **change this** |
@@ -198,13 +197,13 @@ public IP before starting the stack for the first time.
 The default database is **PostgreSQL 14**, included in the Compose stack as a service named
 `kendo-tournament-database`.
 
-To use a different engine, update the `database_type`, `database_dialect`, and `database_port` variables in `.env`
+To use a different engine, update the `database_type`, and `database_port` variables in `.env`
 and replace the `kendo-tournament-database` service image in `docker-compose.yml`.
 
-| Engine | `database_type` | `database_dialect` | `database_port` |
-|--------|-----------------|-------------------|-----------------|
-| PostgreSQL 14 (default) | `postgresql` | `org.hibernate.dialect.PostgreSQLDialect` | `5432` |
-| MySQL 8 | `mysql` | `org.hibernate.dialect.MySQL8Dialect` | `3306` |
+| Engine | `database_type` | `database_port` |
+|--------|-----------------|-----------------|
+| PostgreSQL 14 (default) | `postgresql` | `5432` |
+| MySQL 8 | `mysql` | `3306` |
 
 The backend images ship with JDBC drivers for both PostgreSQL and MySQL. For other engines, you will need to add the
 appropriate driver JAR to the image.

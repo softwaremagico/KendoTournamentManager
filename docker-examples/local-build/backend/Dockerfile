@@ -7,7 +7,6 @@ ARG database_user
 ARG database_password
 ARG database_name
 ARG database_type
-ARG database_dialect
 ARG database_port
 ARG database_encryption_key
 ARG jwt_expiration
@@ -52,11 +51,9 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     sed -i "s|spring\.kendo\.datasource\.jpa\.hibernate\.ddl-auto.*|spring.kendo.datasource.jpa.hibernate.ddl-auto=update|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.sql\.init\.data-locations\.*|#spring.sql.init.data-locations|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.datasource\.data\.*||g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
-    sed -i "s|spring\.jpa\.properties\.hibernate\.dialect.*|spring.jpa.properties.hibernate.dialect=${database_dialect}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jdbc-url.*|spring.kendo.datasource.jdbc-url=jdbc:${database_type}://kendo-tournament-database:${database_port}/${database_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.username.*|spring.kendo.datasource.username=${database_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.password.*|spring.kendo.datasource.password=${database_password}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
-    sed -i "s|spring\.jpa\.properties\.hibernate\.dialect.*|spring.jpa.properties.hibernate.dialect=${database_dialect}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.domain.*|server.domain=${machine_domain}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.schema.*|server.schema=${protocol}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.servlet\.context-path.*|server.servlet.context-path=/${project_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
