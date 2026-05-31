@@ -6,7 +6,7 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {AuthenticatedUser} from "../../models/authenticated-user";
-import {HttpHeaders} from "@angular/common/http";
+import { HttpHeaders } from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
 import {TranslocoService} from "@ngneat/transloco";
 import {EnvironmentService} from "../../environment.service";
@@ -15,8 +15,9 @@ import {BiitLogin} from "@biit-solutions/wizardry-theme/models";
 import {UserSessionService} from "../../services/user-session.service";
 import {Constants} from "../../constants";
 import {ActivityService} from "../../services/rbac/activity.service";
+import packageJson from '../../../../package.json';
 
-const {version: appVersion} = require('../../../../package.json')
+const appVersion: string = packageJson.version;
 
 @Component({
   selector: 'app-login',
@@ -121,10 +122,6 @@ export class LoginComponent implements OnInit {
   }
 
   onResetPassword(email: string) {
-
-  }
-
-  login2() {
 
   }
 }

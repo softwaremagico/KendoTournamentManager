@@ -48,7 +48,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   minutes: number;
   seconds: number;
-  private clockHandler: NodeJS.Timeout | null;
+  private clockHandler: ReturnType<typeof setInterval> | null;
   elapsedSeconds: number = 0;
   private alarmRinging: boolean;
   totalTime: number;

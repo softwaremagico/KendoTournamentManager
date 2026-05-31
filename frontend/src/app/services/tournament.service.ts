@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";

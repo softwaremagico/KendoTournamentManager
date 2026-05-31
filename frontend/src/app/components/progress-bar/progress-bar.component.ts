@@ -8,7 +8,7 @@ import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 })
 export class ProgressBarComponent implements OnInit {
 
-  intervalId: NodeJS.Timeout;
+  intervalId: ReturnType<typeof setInterval>;
 
   drawnPercentage: number = 0;
 
