@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Abstract base handler for all league-style tournament formats.
@@ -136,7 +137,14 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public Group addGroup(Tournament tournament, Group group) {
-        if (!groupProvider.getGroups(tournament).isEmpty()) {
+        final List<Group> existingGroups = groupProvider.getGroups(tournament);
+        if (!existingGroups.isEmpty()) {
+            final Group existingGroup = existingGroups.get(0);
+            // For league tournaments there is only one group; if we're updating that same group,
+            // keep the row and update it in-place to avoid detached entity issues.
+            if (group.getId() != null && Objects.equals(existingGroup.getId(), group.getId())) {
+                return groupProvider.addGroup(tournament, group);
+            }
             groupProvider.delete(tournament);
         }
         return groupProvider.addGroup(tournament, group);

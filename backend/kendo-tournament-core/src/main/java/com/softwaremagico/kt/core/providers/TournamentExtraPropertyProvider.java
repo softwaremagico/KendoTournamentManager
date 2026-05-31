@@ -87,12 +87,28 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
             throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
                     + "' cannot have property '" + entity.getPropertyKey() + "'");
         }
-        deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
+        final TournamentExtraProperty entityToSave;
+        final TournamentExtraProperty existing = getByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
+        if (existing != null) {
+            // Hibernate 6.6 is stricter with stale detached instances. Update the managed row instead of delete+insert.
+            existing.setPropertyValue(entity.getPropertyValue());
+            if (entity.getUpdatedBy() != null) {
+                existing.setUpdatedBy(entity.getUpdatedBy());
+            }
+            if (existing.getCreatedBy() == null && entity.getCreatedBy() != null) {
+                existing.setCreatedBy(entity.getCreatedBy());
+            }
+            entityToSave = existing;
+        } else {
+            entityToSave = TournamentExtraProperty.copy(entity);
+            entityToSave.setCreatedBy(entity.getCreatedBy());
+            entityToSave.setUpdatedBy(entity.getUpdatedBy());
+        }
 
         //Refresh groups number of winners.
-        updateGroupNumberOfWinners(entity);
+        updateGroupNumberOfWinners(entityToSave);
 
-        return getRepository().save(entity);
+        return getRepository().save(entityToSave);
     }
 
 
@@ -118,8 +134,6 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
 
     @Override
     public List<TournamentExtraProperty> saveAll(Collection<TournamentExtraProperty> tournamentExtraProperties) {
-        tournamentExtraProperties.forEach(tournamentExtraProperty ->
-                deleteByTournamentAndProperty(tournamentExtraProperty.getTournament(), tournamentExtraProperty.getPropertyKey()));
-        return super.saveAll(tournamentExtraProperties);
+        return tournamentExtraProperties.stream().map(this::save).toList();
     }
 }
