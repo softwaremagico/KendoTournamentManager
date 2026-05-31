@@ -9,6 +9,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {FilterFocusService} from "../../services/notifications/filter-focus.service";
 
 @Component({
+  standalone: false,
   selector: 'popup-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss']
@@ -262,8 +263,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
-  @HostListener('document:click', ['$event.target'])
-  onClick(element: HTMLElement): void {
+  onClick(element: EventTarget | null): void {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
     if (this.minutesEditable && !element.classList.contains('timer-edition-minutes')) {
       this.minutesEditable = false;
       this.validateMinutesElement(this.clickedElement);

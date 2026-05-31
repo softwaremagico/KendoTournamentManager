@@ -7,6 +7,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
+  standalone: false,
   selector: 'tournament-qr-code',
   templateUrl: './tournament-qr-code.component.html',
   styleUrls: ['./tournament-qr-code.component.scss']

@@ -1,5 +1,9 @@
-<div *ngIf="view && groupedAchievements" class="achievement-wall">
-  <achievement-tile class="achievement-tile" *ngFor="let achievementType of totalAchievementsTypes; let i = index"
-                        [achievementType]="achievementType" [achievements]="groupedAchievements.get(achievementType)"
-                        [view]="view"></achievement-tile>
-</div>
+@if (view && groupedAchievements) {
+  <div class="achievement-wall">
+    @for (achievementType of totalAchievementsTypes; track achievementType; let i = $index) {
+      <achievement-tile class="achievement-tile"
+        [achievementType]="achievementType" [achievements]="groupedAchievements.get(achievementType)"
+      [view]="view"></achievement-tile>
+    }
+  </div>
+}

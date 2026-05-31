@@ -1,186 +1,231 @@
-<biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+@if (loadingGlobal) {
+  <biit-progress-bar [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+}
 <ng-container *transloco="let t">
   <div class="table-view">
     <biit-datatable #table id="tournaments-table"
-                    [columns]="columns"
-                    [data]="tournaments"
-                    [pageSize]="pageSize"
-                    [pageSizeList]="pageSizes"
-                    [loading]="loading"
-                    [rowStylePredicate]="lockedTournaments"
-                    [rowStyleClass]="'locked-row'"
-                    (onSelection)="selectTournaments($event)"
-                    scrollbarH
-                    selectable
-    >
+      [columns]="columns"
+      [data]="tournaments"
+      [pageSize]="pageSize"
+      [pageSizeList]="pageSizes"
+      [loading]="loading"
+      [rowStylePredicate]="lockedTournaments"
+      [rowStyleClass]="'locked-row'"
+      (onSelection)="selectTournaments($event)"
+      scrollbarH
+      selectable
+      >
       <ng-template #actions>
-        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_TOURNAMENT | hasPermission"
-                [title]="t('tournamentAdd')"
-                (click)="addElement()"
-        ></button>
-        <button id="button-minus" biit-icon icon="minus" class="warning"
-                *ngIf="RbacActivity.DELETE_TOURNAMENT | hasPermission"
-                [title]="t('delete')"
-                (click)="confirmDelete=true"
-                [disabled]="!table.selectedRows.length"
-        ></button>
-        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_TOURNAMENT | hasPermission"
-                [title]="t('tournamentEdit')"
-                (click)="editElement(table.selectedRows[0])"
-                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
-        ></button>
-        <button mat-button *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | hasPermission)"
-                [title]="t('tournamentClone')"
-                (click)="confirmClone=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
-        </button>
+        @if (RbacActivity.CREATE_TOURNAMENT | hasPermission) {
+          <button id="button-plus" biit-icon icon="plus"
+            [title]="t('tournamentAdd')"
+            (click)="addElement()"
+          ></button>
+        }
+        @if (RbacActivity.DELETE_TOURNAMENT | hasPermission) {
+          <button id="button-minus" biit-icon icon="minus" class="warning"
+            [title]="t('delete')"
+            (click)="confirmDelete=true"
+            [disabled]="!table.selectedRows.length"
+          ></button>
+        }
+        @if (RbacActivity.READ_ONE_TOURNAMENT | hasPermission) {
+          <button id="button-edit" biit-icon icon="edit"
+            [title]="t('tournamentEdit')"
+            (click)="editElement(table.selectedRows[0])"
+            [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+          ></button>
+        }
+        @if ((RbacActivity.READ_ONE_TOURNAMENT | hasPermission)) {
+          <button mat-button
+            [title]="t('tournamentClone')"
+            (click)="confirmClone=true"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
+          </button>
+        }
         <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button *ngIf="(RbacActivity.CREATE_ROLE | hasPermission)"
-                [title]="t('roles')"
-                (click)="showTournamentRoles=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.CREATE_TEAM | hasPermission)"
-                [title]="t('teams')"
-                (click)="showTournamentTeams=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.READ_ALL_FIGHTS | hasPermission)"
-                [title]="t('fights')"
-                (click)="openFights(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
-        </button>
-        <button biit-icon icon="lock"
-                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && (!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked)"
-                [title]="t('tournamentLock')"
-                (click)="lockElement(table.selectedRows[0],true)"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
-        </button>
-        <button biit-icon icon="unlock"
-                *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked && table.selectedRows.length == 1"
-                [title]="t('tournamentUnlock')"
-                (click)="lockElement(table.selectedRows[0],false)"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
-        </button>
+        @if ((RbacActivity.CREATE_ROLE | hasPermission)) {
+          <button mat-button
+            [title]="t('roles')"
+            (click)="showTournamentRoles=true"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
+          </button>
+        }
+        @if ((RbacActivity.CREATE_TEAM | hasPermission)) {
+          <button mat-button
+            [title]="t('teams')"
+            (click)="showTournamentTeams=true"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
+          </button>
+        }
+        @if ((RbacActivity.READ_ALL_FIGHTS | hasPermission)) {
+          <button mat-button
+            [title]="t('fights')"
+            (click)="openFights(table.selectedRows[0])"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
+          </button>
+        }
+        @if ((RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && (!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked)) {
+          <button biit-icon icon="lock"
+            [title]="t('tournamentLock')"
+            (click)="lockElement(table.selectedRows[0],true)"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
+          </button>
+        }
+        @if ((RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked && table.selectedRows.length == 1) {
+          <button biit-icon icon="unlock"
+            [title]="t('tournamentUnlock')"
+            (click)="lockElement(table.selectedRows[0],false)"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
+          </button>
+        }
         <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
         <span class="extra-menu">
-        <button mat-button *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
-                [title]="t('titleStatistics')"
-                (click)="openStatistics(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
-                [title]="t('qrCodeHint')"
-                (click)="showQr=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
-          <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())"
-                [title]="t('accreditationsHint')"
-                (click)="showAccreditationRoles=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())"
-                [title]="t('diplomasHint')"
-                (click)="showDiplomasRoles=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
-          <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-                [title]="t('bloggerStatistics')"
-                (click)="downloadBlogCode(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
-          <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
-        </button>
-        <button mat-button *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())"
-                [title]="t('tournamentListAsZip')"
-                (click)="downloadZip(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
-        </button>
+          @if ((RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())) {
+            <button mat-button
+              [title]="t('titleStatistics')"
+              (click)="openStatistics(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+              <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
+            </button>
+          }
+          @if ((RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())) {
+            <button mat-button
+              [title]="t('qrCodeHint')"
+              (click)="showQr=true"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
+              <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+            </button>
+          }
+          @if ((RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())) {
+            <button mat-button
+              [title]="t('accreditationsHint')"
+              (click)="showAccreditationRoles=true"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+              <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
+            </button>
+          }
+          @if ((RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.getActivities())) {
+            <button mat-button
+              [title]="t('diplomasHint')"
+              (click)="showDiplomasRoles=true"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
+              <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
+            </button>
+          }
+          @if ((RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())) {
+            <button mat-button
+              [title]="t('bloggerStatistics')"
+              (click)="downloadBlogCode(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
+              <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
+            </button>
+          }
+          @if ((RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.getActivities())) {
+            <button mat-button
+              [title]="t('tournamentListAsZip')"
+              (click)="downloadZip(table.selectedRows[0])"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+              <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
+            </button>
+          }
         </span>
       </ng-template>
     </biit-datatable>
   </div>
 
-  <tournament-form-popup *ngIf="target"
-                         [tournament]="target"
-                         (closed)="this.target = null; loadData();"
-                         (saved)="onSaved($event)"
-  />
+  @if (target) {
+    <tournament-form-popup
+      [tournament]="target"
+      (closed)="this.target = null; loadData();"
+      (saved)="onSaved($event)"
+      />
+  }
 
-  <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
-              no-header
-  >
-    <div class="vertical">
-      <span
+  @if (confirmDelete) {
+    <biit-popup id="confirmation-delete-popup"
+      no-header
+      >
+      <div class="vertical">
+        <span
         [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
-      <div class="flex-grow horizontal buttons-row">
-        <button id="delete-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
-        </button>
-        <button id="delete-confirm-button" biit-button primary
-                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
-        </button>
+        <div class="flex-grow horizontal buttons-row">
+          <button id="delete-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
+          </button>
+          <button id="delete-confirm-button" biit-button primary
+            (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
+          </button>
+        </div>
       </div>
-    </div>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="confirmation-clone-popup" *ngIf="confirmClone"
-              no-header
-  >
-    <div class="vertical">
-      <span [innerHTML]="'tournamentCloneWarning' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
-      <div class="flex-grow horizontal buttons-row">
-        <button id="clone-cancel-button" biit-button secondary (click)="confirmClone = false">{{ t('cancel') }}</button>
-        <button id="clone-confirm-button" biit-button primary
-                (click)="cloneElement(table.selectedRows[0])">{{ t('accept') }}
-        </button>
+  @if (confirmClone) {
+    <biit-popup id="confirmation-clone-popup"
+      no-header
+      >
+      <div class="vertical">
+        <span [innerHTML]="'tournamentCloneWarning' | transloco : {name: getTournamentNames(table.selectedRows)}"></span>
+        <div class="flex-grow horizontal buttons-row">
+          <button id="clone-cancel-button" biit-button secondary (click)="confirmClone = false">{{ t('cancel') }}</button>
+          <button id="clone-confirm-button" biit-button primary
+            (click)="cloneElement(table.selectedRows[0])">{{ t('accept') }}
+          </button>
+        </div>
       </div>
-    </div>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="qr-code" *ngIf="showQr" no-header closable
-              (onClosed)="showQr=false">
-    <tournament-qr-code
-      [tournament]="table.selectedRows[0]"
-      [port]="port"
+  @if (showQr) {
+    <biit-popup id="qr-code" no-header closable
+      (onClosed)="showQr=false">
+      <tournament-qr-code
+        [tournament]="table.selectedRows[0]"
+        [port]="port"
       (closed)="showQr=false"></tournament-qr-code>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="tournament-roles" *ngIf="showTournamentRoles" closable
-              (onClosed)="showTournamentRoles=false"
-              [title]="t('addRoleToTournament')">
-    <tournament-roles
-      [tournament]="table.selectedRows[0]"
+  @if (showTournamentRoles) {
+    <biit-popup id="tournament-roles" closable
+      (onClosed)="showTournamentRoles=false"
+      [title]="t('addRoleToTournament')">
+      <tournament-roles
+        [tournament]="table.selectedRows[0]"
       (onClosed)="showTournamentRoles=false"></tournament-roles>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="tournament-teams" *ngIf="showTournamentTeams"
-              (onClosed)="showTournamentTeams=false"
-              [title]="t('addTeamToTournament')">
-    <tournament-teams
-      [tournament]="table.selectedRows[0]"
+  @if (showTournamentTeams) {
+    <biit-popup id="tournament-teams"
+      (onClosed)="showTournamentTeams=false"
+      [title]="t('addTeamToTournament')">
+      <tournament-teams
+        [tournament]="table.selectedRows[0]"
       (onClosed)="showTournamentTeams=false"></tournament-teams>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="accreditations-role-selector" *ngIf="showAccreditationRoles" closable
-              [title]="t('selectDiplomaRoles')" (onClosed)="showAccreditationRoles=false">
-    <role-selector
-      [tournament]="table.selectedRows[0]"
+  @if (showAccreditationRoles) {
+    <biit-popup id="accreditations-role-selector" closable
+      [title]="t('selectDiplomaRoles')" (onClosed)="showAccreditationRoles=false">
+      <role-selector
+        [tournament]="table.selectedRows[0]"
       (closed)="downloadAccreditations($event)"></role-selector>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="diplomas-role-selector" *ngIf="showDiplomasRoles" closable
-              [title]="t('selectDiplomaRoles')" (onClosed)="showDiplomasRoles=false">
-    <role-selector
-      [tournament]="table.selectedRows[0]"
+  @if (showDiplomasRoles) {
+    <biit-popup id="diplomas-role-selector" closable
+      [title]="t('selectDiplomaRoles')" (onClosed)="showDiplomasRoles=false">
+      <role-selector
+        [tournament]="table.selectedRows[0]"
       (closed)="downloadDiplomas($event)"></role-selector>
-  </biit-popup>
+    </biit-popup>
+  }
 
 </ng-container>

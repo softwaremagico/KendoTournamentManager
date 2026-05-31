@@ -12,6 +12,7 @@ import {TranslocoService} from "@ngneat/transloco";
 import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
+  standalone: false,
   selector: 'participant-picture',
   templateUrl: './participant-picture-dialog-box.component.html',
   styleUrls: ['./participant-picture-dialog-box.component.scss']

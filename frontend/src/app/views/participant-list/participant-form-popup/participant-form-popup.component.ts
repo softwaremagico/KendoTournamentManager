@@ -9,6 +9,7 @@ import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-th
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
+  standalone: false,
   selector: 'participant-form-popup',
   templateUrl: './participant-form-popup.component.html',
   styleUrls: ['./participant-form-popup.component.scss'],

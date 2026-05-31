@@ -16,6 +16,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 
 @Component({
+  standalone: false,
   selector: 'app-passwords',
   templateUrl: './passwords.component.html',
   styleUrls: ['./passwords.component.scss']

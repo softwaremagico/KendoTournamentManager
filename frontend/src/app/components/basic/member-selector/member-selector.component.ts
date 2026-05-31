@@ -4,6 +4,7 @@ import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 
 @Component({
+  standalone: false,
   selector: 'member-selector',
   templateUrl: './member-selector.component.html',
   styleUrls: ['./member-selector.component.scss']

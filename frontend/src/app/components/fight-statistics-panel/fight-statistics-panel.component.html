@@ -1,19 +1,21 @@
-<div *ngIf="fightStatistics!==undefined && fightStatistics!==null && fightStatistics.fightsNumber" class="panel">
-  <div class="viewer fights">
-    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedFights' | transloco}}"
-              svgIcon="match"></mat-icon>
-    <span class="text" matTooltip="{{'estimatedFights' | transloco}}">{{fightStatistics.fightsNumber}}</span>
+@if (fightStatistics!==undefined && fightStatistics!==null && fightStatistics.fightsNumber) {
+  <div class="panel">
+    <div class="viewer fights">
+      <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedFights' | transloco}}"
+      svgIcon="match"></mat-icon>
+      <span class="text" matTooltip="{{'estimatedFights' | transloco}}">{{fightStatistics.fightsNumber}}</span>
+    </div>
+    <div class="viewer duels">
+      <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedDuels' | transloco}}"
+      svgIcon="fight"></mat-icon>
+      <span class="text"
+      matTooltip="{{'estimatedDuels' | transloco}}">{{fightStatistics.duelsNumber ? fightStatistics.duelsNumber : "0"}}</span>
+    </div>
+    <div class="viewer time">
+      <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedTime' | transloco}}">timer</mat-icon>
+      <span [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}"
+        class="text"
+      matTooltip="{{'estimatedTime' | transloco}}">{{getTime()}}</span>
+    </div>
   </div>
-  <div class="viewer duels">
-    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedDuels' | transloco}}"
-              svgIcon="fight"></mat-icon>
-    <span class="text"
-          matTooltip="{{'estimatedDuels' | transloco}}">{{fightStatistics.duelsNumber ? fightStatistics.duelsNumber : "0"}}</span>
-  </div>
-  <div class="viewer time">
-    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedTime' | transloco}}">timer</mat-icon>
-    <span [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}"
-          class="text"
-          matTooltip="{{'estimatedTime' | transloco}}">{{getTime()}}</span>
-  </div>
-</div>
+}

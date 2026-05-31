@@ -22,6 +22,7 @@ import {Constants} from "../../constants";
 import {RoleType} from "../../models/role-type";
 
 @Component({
+  standalone: false,
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
   styleUrls: ['./tournament-list.component.scss'],

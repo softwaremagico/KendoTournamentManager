@@ -1,75 +1,93 @@
 <ng-container *transloco="let t">
   <div class="container" cdkDropListGroup>
-    <div class="team-panel" *ngIf="!droppingDisabled">
-      <biit-progress-bar *ngIf="loadingGlobal" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
-      <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)"
-           (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
-           cdkDropList cdkDropListSortingDisabled="true"
-           class="teams-container">
-        <team-list
-          [teamListData]="teamListData" [minify]="true"></team-list>
-      </div>
-      <div *ngIf="!droppingDisabled" class="button-container">
-        <button biit-button secondary (click)="sortedGroups()"
-                *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
+    @if (!droppingDisabled) {
+      <div class="team-panel">
+        @if (loadingGlobal) {
+          <biit-progress-bar [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+        }
+        @if (!droppingDisabled && (RbacActivity.EDIT_GROUP | hasPermission)) {
+          <div
+            (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+            cdkDropList cdkDropListSortingDisabled="true"
+            class="teams-container">
+            <team-list
+            [teamListData]="teamListData" [minify]="true"></team-list>
+          </div>
+        }
+        @if (!droppingDisabled) {
+          <div class="button-container">
+            @if ((RbacActivity.EDIT_GROUP | hasPermission)) {
+              <button biit-button secondary (click)="sortedGroups()"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)">
-          {{ 'sorted' | transloco }}
-        </button>
-        <button biit-button secondary (click)="randomGroups()"
-                *ngIf="(RbacActivity.EDIT_GROUP | hasPermission)"
+                {{ 'sorted' | transloco }}
+              </button>
+            }
+            @if ((RbacActivity.EDIT_GROUP | hasPermission)) {
+              <button biit-button secondary (click)="randomGroups()"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)">
-          {{ 'random' | transloco }}
-        </button>
-        <button biit-button secondary (click)="removeAllTeamsConfirmation=true"
-                *ngIf="(RbacActivity.CLEAN_UP_GROUPS | hasPermission)"
+                {{ 'random' | transloco }}
+              </button>
+            }
+            @if ((RbacActivity.CLEAN_UP_GROUPS | hasPermission)) {
+              <button biit-button secondary (click)="removeAllTeamsConfirmation=true"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 matTooltip="{{'removeTeams' | transloco}}">
-          {{ 'clean' | transloco }}
-        </button>
+                {{ 'clean' | transloco }}
+              </button>
+            }
+          </div>
+        }
       </div>
-    </div>
+    }
     <biit-action-button class="floating-button" position="custom">
-      <button biit-icon *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
-              [icon]="'hamburger'"
-      ></button>
-      <button mat-button class="menu-button"
-              *ngIf="(RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)"
-              (click)="fileInput.click()"
-              [title]="t('uploadCsvFile')">
-        <mat-icon class="kendo-icon" svgIcon="csv-file-small"></mat-icon>
-        <input #fileInput (change)="handleFileInput($event)" accept="text/csv" style="display:none;"
-               type="file"/>
-      </button>
-      <button mat-button class="menu-button" *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)"
-              (click)="downloadAsPdf()">
-        <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
-      </button>
+      @if ((RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)) {
+        <button biit-icon
+          [icon]="'hamburger'"
+        ></button>
+      }
+      @if ((RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)) {
+        <button mat-button class="menu-button"
+          (click)="fileInput.click()"
+          [title]="t('uploadCsvFile')">
+          <mat-icon class="kendo-icon" svgIcon="csv-file-small"></mat-icon>
+          <input #fileInput (change)="handleFileInput($event)" accept="text/csv" style="display:none;"
+            type="file"/>
+        </button>
+      }
+      @if ((RbacActivity.DOWNLOAD_GROUPS_PDF | hasPermission)) {
+        <button mat-button class="menu-button"
+          (click)="downloadAsPdf()">
+          <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
+        </button>
+      }
     </biit-action-button>
     <div class="tournament-brackets-container">
       <tournament-brackets #tournamentBracketsComponent class="tournament-brackets"
-                           [class.started]="droppingDisabled || !(RbacActivity.EDIT_GROUP | hasPermission)"
-                           [tournament]="tournament"
-                           [selectedGroup]="selectedGroup"
-                           [droppingDisabled]="droppingDisabled"
-                           (elementClicked)="selectGroup($event)">
+        [class.started]="droppingDisabled || !(RbacActivity.EDIT_GROUP | hasPermission)"
+        [tournament]="tournament"
+        [selectedGroup]="selectedGroup"
+        [droppingDisabled]="droppingDisabled"
+        (elementClicked)="selectGroup($event)">
       </tournament-brackets>
     </div>
   </div>
 
-  <biit-popup id="confirmation-delete-teams" *ngIf="removeAllTeamsConfirmation"
-              no-header
-  >
-    <div class="vertical">
-      <span [innerHTML]="'questionDeleteTeams' | transloco"></span>
-      <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-delete-cancel-button" biit-button secondary
-                (click)="removeAllTeamsConfirmation = false">{{ t('cancel') }}
-        </button>
-        <button id="confirm-delete-accept-button" biit-button primary
-                (click)="removeAllTeams(); removeAllTeamsConfirmation = false">
-          {{ t('accept') }}
-        </button>
+  @if (removeAllTeamsConfirmation) {
+    <biit-popup id="confirmation-delete-teams"
+      no-header
+      >
+      <div class="vertical">
+        <span [innerHTML]="'questionDeleteTeams' | transloco"></span>
+        <div class="flex-grow horizontal buttons-row">
+          <button id="confirm-delete-cancel-button" biit-button secondary
+            (click)="removeAllTeamsConfirmation = false">{{ t('cancel') }}
+          </button>
+          <button id="confirm-delete-accept-button" biit-button primary
+            (click)="removeAllTeams(); removeAllTeamsConfirmation = false">
+            {{ t('accept') }}
+          </button>
+        </div>
       </div>
-    </div>
-  </biit-popup>
+    </biit-popup>
+  }
 </ng-container>

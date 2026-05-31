@@ -1,21 +1,28 @@
 <div class="content" *transloco="let t">
-  <div *ngIf="!qrCode" class="qr-container">
-    <spinner-overlay></spinner-overlay>
-  </div>
-  <div *ngIf="qrCode" class="qr-container">
-    <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" target=”_blank” *ngIf="link && (RbacActivity.LINK_QR_CODE | hasPermission)"
-       href="{{link}}">{{'orClickHere' | transloco}}</a>
-  </div>
+  @if (!qrCode) {
+    <div class="qr-container">
+      <spinner-overlay></spinner-overlay>
+    </div>
+  }
+  @if (qrCode) {
+    <div class="qr-container">
+      <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
+      @if (link && (RbacActivity.LINK_QR_CODE | hasPermission)) {
+        <a class="link" target=”_blank”
+        href="{{link}}">{{'orClickHere' | transloco}}</a>
+      }
+    </div>
+  }
 </div>
 <div class="button-container">
-  <button biit-button id="tournament-qr-download" secondary
-          *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | hasPermission)"
-          (click)="downloadQrAsPdf()">
-    {{ 'download' | transloco }}
-  </button>
+  @if ((RbacActivity.DOWNLOAD_QR_CODE | hasPermission)) {
+    <button biit-button id="tournament-qr-download" secondary
+      (click)="downloadQrAsPdf()">
+      {{ 'download' | transloco }}
+    </button>
+  }
   <button biit-button id="tournament-qr-close"
-          (click)="closeDialog()">
+    (click)="closeDialog()">
     {{ 'close' | transloco }}
   </button>
 </div>

@@ -3,6 +3,7 @@ import {UserListData} from "./user-list-data";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 
 @Component({
+  standalone: false,
   selector: 'user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']

@@ -20,6 +20,7 @@ import packageJson from '../../../../package.json';
 const appVersion: string = packageJson.version;
 
 @Component({
+  standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']

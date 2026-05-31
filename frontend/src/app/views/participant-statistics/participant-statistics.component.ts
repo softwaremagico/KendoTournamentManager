@@ -25,6 +25,7 @@ import {EnvironmentService} from "../../environment.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  standalone: false,
   selector: 'app-participant-statistics',
   templateUrl: './participant-statistics.component.html',
   styleUrls: ['./participant-statistics.component.scss']

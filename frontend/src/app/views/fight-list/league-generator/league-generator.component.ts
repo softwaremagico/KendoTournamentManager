@@ -22,6 +22,7 @@ import {RankingService} from "../../../services/ranking.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  standalone: false,
   selector: 'league-generator',
   templateUrl: './league-generator.component.html',
   styleUrls: ['./league-generator.component.scss']

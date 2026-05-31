@@ -10,6 +10,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
 
 @Component({
+  standalone: false,
   selector: 'fight',
   templateUrl: './fight.component.html',
   styleUrls: ['./fight.component.scss']
