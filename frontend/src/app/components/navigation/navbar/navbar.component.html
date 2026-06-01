@@ -81,7 +81,7 @@
 
   @if (languagePopup) {
     <biit-popup id="language-selector-popup" closable
-      [title]="t('selectLanguage')">
+      [title]="t('selectLanguage')" (onClosed)="languagePopup=false">
       <language-selector (closed)="languagePopup=false" style="width:100%"></language-selector>
     </biit-popup>
   }
