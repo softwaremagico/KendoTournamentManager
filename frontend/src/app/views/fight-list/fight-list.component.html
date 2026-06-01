@@ -46,7 +46,7 @@
             <mat-divider [vertical]="true" class="timer-divider"
             ></mat-divider>
           }
-          @if ((RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel?.finished == false) && !tournament.locked) {
+          @if ((RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel.finished == false) && !tournament.locked) {
             <button biit-icon
               (click)="finishDuel()"
               [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
