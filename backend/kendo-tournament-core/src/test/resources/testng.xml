@@ -69,6 +69,7 @@
             <class name="com.softwaremagico.kt.core.tests.SenbatsuTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
+            <class name="com.softwaremagico.kt.core.score.ScoreOfCompetitorTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtilsTest"/>
@@ -83,11 +84,19 @@
             <class name="com.softwaremagico.kt.core.providers.GroupProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.TournamentExtraPropertyProviderTest"/>
             <class name="com.softwaremagico.kt.core.controller.GroupControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.CsvControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.AchievementControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.DuelControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.QrControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.RankingControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTOCoverageTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTOTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.DuelDTOTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.FightDTOTest"/>
             <class name="com.softwaremagico.kt.core.tournaments.LeagueHandlerTest"/>
             <class name="com.softwaremagico.kt.core.providers.GroupProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.RankingProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TournamentImageProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.TournamentExtraPropertyProviderTest"/>
             <class name="com.softwaremagico.kt.core.controller.GroupControllerTest"/>
             <class name="com.softwaremagico.kt.core.tournaments.LeagueHandlerTest"/>
