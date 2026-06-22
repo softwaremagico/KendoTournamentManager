@@ -22,6 +22,8 @@
                 <include name="cacheEventLogger"/>
                 <include name="encryptorLogger"/>
                 <include name="cryptoConverters"/>
+                <include name="entityBeans"/>
+                <include name="persistenceValues"/>
             </run>
         </groups>
         <classes>
@@ -33,6 +35,7 @@
             <class name="com.softwaremagico.kt.persistence.repositories.DuelRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptedDataStorageTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptionTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.EncryptionEnginesAdditionalTests"/>
             <class name="com.softwaremagico.kt.utils.StringUtilsTests"/>
             <class name="com.softwaremagico.kt.utils.IdCardTests"/>
             <class name="com.softwaremagico.kt.utils.NameUtilsAdditionalTests"/>
@@ -40,6 +43,9 @@
             <class name="com.softwaremagico.kt.logger.CacheEventLoggerTests"/>
             <class name="com.softwaremagico.kt.logger.EncryptorLoggerTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersTests"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersAdditionalTests"/>
+            <class name="com.softwaremagico.kt.persistence.entities.EntityBeansCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.values.PersistenceValuesCoverageTest"/>
         </classes>
     </test>
 </suite>

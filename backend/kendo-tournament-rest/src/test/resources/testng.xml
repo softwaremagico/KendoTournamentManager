@@ -24,10 +24,13 @@
                 <include name="createUserRequest"/>
                 <include name="jwtTokenUtil"/>
                 <include name="exceptionAdvice"/>
+                <include name="websocketMessages"/>
+                <include name="restServicesUnit"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.security.TestAuthApi"/>
+            <class name="com.softwaremagico.kt.security.AuthApiUnitTests"/>
             <class name="com.softwaremagico.kt.security.RestAccessTests"/>
             <class name="com.softwaremagico.kt.security.BruteForceTests"/>
             <class name="com.softwaremagico.kt.security.PasswordTests"/>
@@ -40,9 +43,20 @@
             <class name="com.softwaremagico.kt.rest.exceptions.ErrorResponseTest"/>
             <class name="com.softwaremagico.kt.rest.security.dto.CreateUserRequestTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenUtilTest"/>
+            <class name="com.softwaremagico.kt.ServerConfigurationTests"/>
+            <class name="com.softwaremagico.kt.rest.security.KendoUserDetailsServiceTests"/>
+            <class name="com.softwaremagico.kt.rest.security.NetworkControllerTests"/>
+            <class name="com.softwaremagico.kt.rest.security.WebSecurityConfigTests"/>
             <class name="com.softwaremagico.kt.rest.exceptions.ExceptionControllerAdviceTest"/>
+            <class name="com.softwaremagico.kt.rest.services.ClubServicesUnitTest"/>
+            <class name="com.softwaremagico.kt.rest.services.InfoTest"/>
+            <class name="com.softwaremagico.kt.rest.services.QrServiceUnitTests"/>
+            <class name="com.softwaremagico.kt.rest.services.RankingServicesUnitTests"/>
+            <class name="com.softwaremagico.kt.rest.services.TeamServicesUnitTest"/>
             <class name="com.softwaremagico.kt.websockets.BasicWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
+            <class name="com.softwaremagico.kt.websockets.WebSocketControllerUnitTests"/>
+            <class name="com.softwaremagico.kt.websockets.WebsocketMessageParametersTest"/>
         </classes>
     </test>
 </suite>
