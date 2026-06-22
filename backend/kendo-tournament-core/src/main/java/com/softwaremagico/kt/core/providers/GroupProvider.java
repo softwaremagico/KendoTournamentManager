@@ -115,6 +115,28 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     public Group addGroup(Tournament tournament, Group group) {
         groupLinkRepository.deleteByTournament(tournament);
         group.setTournament(tournament);
+        if (group.getId() != null) {
+            final Group existing = getRepository().findById(group.getId()).orElse(null);
+            if (existing != null) {
+                // Keep optimistic-lock version from the managed row and copy mutable fields only.
+                existing.setTournament(tournament);
+                existing.setTeams(group.getTeams());
+                existing.setFights(group.getFights());
+                existing.setUnties(group.getUnties());
+                existing.setShiaijo(group.getShiaijo());
+                existing.setLevel(group.getLevel());
+                existing.setIndex(group.getIndex());
+                existing.setNumberOfWinners(group.getNumberOfWinners());
+                if (group.getUpdatedBy() != null) {
+                    existing.setUpdatedBy(group.getUpdatedBy());
+                }
+                return getRepository().save(existing);
+            }
+            // The old row may have been deleted before re-adding the group (league regeneration path).
+            // Persist as new row instead of merging a stale detached instance.
+            group.setId(null);
+            group.setVersion(null);
+        }
         return getRepository().save(group);
     }
 

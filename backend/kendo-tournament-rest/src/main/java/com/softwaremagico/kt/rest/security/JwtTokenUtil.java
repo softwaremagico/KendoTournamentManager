@@ -26,24 +26,26 @@ import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.Date;
-import java.util.Random;
 import java.util.UUID;
 
 /**
  * Utility component for creating, parsing, and validating JSON Web Tokens (JWT).
  * <p>
- * Tokens are signed with HMAC-SHA512. The JWT subject is a pipe-delimited string with
+ * Tokens are signed with HMAC-SHA512. The JWT subject is a comma-delimited string with
  * five indexed fields: {@code id|username|session|ip|mac}.
  * </p>
  * <p>
@@ -83,11 +85,12 @@ public class JwtTokenUtil {
     private static final int RANDOM_LEFT_LIMIT = 48; // numeral '0'
     private static final int RANDOM_RIGHT_LIMIT = 122; // letter 'z'
     private static final int RANDOM_LENGTH = 32; // 32 characters by key
-    private static final Random RANDOM = new SecureRandom();
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final NetworkController networkController;
 
     private final String jwtSecret;
+    private final SecretKey signingKey;
     private final long jwtExpiration;
     private final long jwtGuestExpiration;
     private final long jwtParticipantExpiration;
@@ -116,6 +119,7 @@ public class JwtTokenUtil {
         } else {
             this.jwtSecret = generateRandomSecret();
         }
+        this.signingKey = createSigningKey(this.jwtSecret);
         this.jwtExpiration = calculatedJwtExpiration;
 
         //If not set, guest expiration is the same that the standard one.
@@ -156,6 +160,23 @@ public class JwtTokenUtil {
                 .limit(RANDOM_LENGTH)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
+    }
+
+    private SecretKey createSigningKey(String secret) {
+        try {
+            final byte[] keyBytes = MessageDigest.getInstance("SHA-512").digest(secret.getBytes(StandardCharsets.UTF_8));
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-512 algorithm is not available.", e);
+        }
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token).getPayload();
+    }
+
+    private TokenSubject getTokenSubject(String token) {
+        return TokenSubject.from(getClaims(token).getSubject());
     }
 
 
@@ -208,13 +229,14 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime, String session) {
+        final Instant issuedAt = Instant.now();
         return Jwts.builder()
-                .setSubject(String.format("%s,%s,%s,%s,%s", user.getId(), user.getUsername(), session != null ? session : UUID.randomUUID(),
-                        userIp, networkController.getHostMac()))
-                .setIssuer(JWT_ISSUER)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 1 week
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .subject(new TokenSubject(String.valueOf(user.getId()), user.getUsername(),
+                        session != null ? session : UUID.randomUUID().toString(), userIp, networkController.getHostMac()).value())
+                .issuer(JWT_ISSUER)
+                .issuedAt(Date.from(issuedAt))
+                .expiration(Date.from(issuedAt.plusMillis(expirationTime)))
+                .signWith(signingKey, Jwts.SIG.HS512)
                 .compact();
     }
 
@@ -252,17 +274,12 @@ public class JwtTokenUtil {
      * @return the user entity ID, or {@code null} if the claim is absent or the token is malformed
      */
     public String getUserId(String token) {
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+        final String userId = getTokenSubject(token).userId();
 
-        try {
-            return claims.getSubject().split(",")[ID_INDEX];
-        } catch (Exception e) {
+        if (userId == null) {
             JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
-            return null;
         }
+        return userId;
     }
 
     /**
@@ -272,17 +289,12 @@ public class JwtTokenUtil {
      * @return the username, or {@code null} if the claim is absent or the token is malformed
      */
     public String getUsername(String token) {
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+        final String username = getTokenSubject(token).username();
 
-        try {
-            return claims.getSubject().split(",")[USERNAME_INDEX];
-        } catch (Exception e) {
+        if (username == null) {
             JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
-            return null;
         }
+        return username;
     }
 
     /**
@@ -292,16 +304,11 @@ public class JwtTokenUtil {
      * @return the session ID, or {@code null} if the claim is absent or the token is malformed
      */
     public String getSession(String token) {
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-        try {
-            return claims.getSubject().split(",")[SESSION_INDEX];
-        } catch (Exception e) {
+        final String session = getTokenSubject(token).session();
+        if (session == null) {
             JwtFilterLogger.debug(this.getClass().getName(), "No session information on JWT token!");
-            return null;
         }
+        return session;
     }
 
     /**
@@ -311,16 +318,11 @@ public class JwtTokenUtil {
      * @return the IP address string, or {@code null} if the claim is absent or the token is malformed
      */
     public String getUserIp(String token) {
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-        try {
-            return claims.getSubject().split(",")[IP_INDEX];
-        } catch (Exception e) {
+        final String userIp = getTokenSubject(token).userIp();
+        if (userIp == null) {
             JwtFilterLogger.debug(this.getClass().getName(), "No filed 'user IP' on JWT token!");
-            return null;
         }
+        return userIp;
     }
 
     /**
@@ -330,16 +332,11 @@ public class JwtTokenUtil {
      * @return the MAC address string, or {@code null} if the claim is absent or the token is malformed
      */
     public String getHostMac(String token) {
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-        try {
-            return claims.getSubject().split(",")[MAC_INDEX];
-        } catch (Exception e) {
+        final String hostMac = getTokenSubject(token).hostMac();
+        if (hostMac == null) {
             JwtFilterLogger.debug(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
-            return null;
         }
+        return hostMac;
     }
 
     /**
@@ -349,12 +346,7 @@ public class JwtTokenUtil {
      * @return the expiration {@link Date}
      */
     public Date getExpirationDate(String token) {
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getExpiration();
+        return getClaims(token).getExpiration();
     }
 
     /**
@@ -366,20 +358,32 @@ public class JwtTokenUtil {
      */
     public boolean validate(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            getClaims(token);
             return true;
-        } catch (SignatureException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT signature '{}'", ex.getMessage());
-        } catch (MalformedJwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
         } catch (ExpiredJwtException ex) {
             JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
-        } catch (UnsupportedJwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Unsupported JWT token '{}'", ex.getMessage());
+        } catch (JwtException ex) {
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
         } catch (IllegalArgumentException ex) {
             JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
         }
         return false;
+    }
+
+    private record TokenSubject(String userId, String username, String session, String userIp, String hostMac) {
+        private static TokenSubject from(String subject) {
+            final String[] parts = subject == null ? new String[0] : subject.split(",", -1);
+            return new TokenSubject(getPart(parts, ID_INDEX), getPart(parts, USERNAME_INDEX), getPart(parts, SESSION_INDEX),
+                    getPart(parts, IP_INDEX), getPart(parts, MAC_INDEX));
+        }
+
+        private static String getPart(String[] parts, int index) {
+            return index < parts.length && !parts[index].isBlank() ? parts[index] : null;
+        }
+
+        private String value() {
+            return String.join(",", userId, username, session, userIp, hostMac);
+        }
     }
 
 }

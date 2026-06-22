@@ -190,6 +190,21 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         //Remove all fights and duels from the group. Will be added on the update.
         convert(getProvider().save(reverse(oldGroupDTO)));
 
+        // Reset fight/duel IDs so Hibernate re-inserts them rather than trying to
+        // merge the now-deleted rows (prevents StaleObjectStateException in Hibernate 6+).
+        groupDTO.getFights().forEach(f -> {
+            f.setId(null);
+            f.setVersion(null);
+            f.getDuels().forEach(d -> {
+                d.setId(null);
+                d.setVersion(null);
+            });
+        });
+        groupDTO.getUnties().forEach(d -> {
+            d.setId(null);
+            d.setVersion(null);
+        });
+
         //Ensure that the group contains the teams of the fight.
         groupDTO.getFights().forEach(fightDTO -> {
             if (fightDTO != null) {

@@ -10,12 +10,12 @@ package com.softwaremagico.kt.rest.security;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -23,10 +23,14 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import static org.testng.Assert.*;
@@ -42,6 +46,14 @@ public class JwtTokenUtilTest {
 	public void setUp() {
 		this.networkController = new TestNetworkController();
 		this.user = new TestUser();
+	}
+
+	private SecretKey signingKey(String secret) {
+		try {
+			return Keys.hmacShaKeyFor(MessageDigest.getInstance("SHA-512").digest(secret.getBytes(StandardCharsets.UTF_8)));
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Test(groups = "jwtTokenUtil")
@@ -83,8 +95,8 @@ public class JwtTokenUtilTest {
 	@Test(groups = "jwtTokenUtil")
 	public void shouldReturnNullForMissingSubjectParts() {
 		final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
-		final String malformedSubjectToken = Jwts.builder().setSubject("only-id")
-				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
+		final String malformedSubjectToken = Jwts.builder().subject("only-id")
+				.signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
 
 		assertEquals(util.getUserId(malformedSubjectToken), "only-id");
 		assertNull(util.getUsername(malformedSubjectToken));
@@ -106,10 +118,10 @@ public class JwtTokenUtilTest {
 	@Test(groups = "jwtTokenUtil")
 	public void shouldReturnFalseForExpiredToken() {
 		final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
-		final String expiredToken = Jwts.builder().setSubject("7,user7,s,10.0.0.1,AA-BB")
-				.setIssuedAt(new Date(System.currentTimeMillis() - 10_000L))
-				.setExpiration(new Date(System.currentTimeMillis() - 1_000L))
-				.signWith(SignatureAlgorithm.HS512, SECRET)
+		final String expiredToken = Jwts.builder().subject("7,user7,s,10.0.0.1,AA-BB")
+				.issuedAt(new Date(System.currentTimeMillis() - 10_000L))
+				.expiration(new Date(System.currentTimeMillis() - 1_000L))
+				.signWith(signingKey(SECRET), Jwts.SIG.HS512)
 				.compact();
 
 		assertFalse(util.validate(expiredToken));
@@ -118,10 +130,10 @@ public class JwtTokenUtilTest {
 	@Test(groups = "jwtTokenUtil")
 	public void shouldReturnFalseForTokenWithWrongSignature() {
 		final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
-		final String invalidSignatureToken = Jwts.builder().setSubject("7,user7,s,10.0.0.1,AA-BB")
-				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + 20_000L))
-				.signWith(SignatureAlgorithm.HS512, "different-secret")
+		final String invalidSignatureToken = Jwts.builder().subject("7,user7,s,10.0.0.1,AA-BB")
+				.issuedAt(new Date())
+				.expiration(new Date(System.currentTimeMillis() + 20_000L))
+				.signWith(signingKey("different-secret"), Jwts.SIG.HS512)
 				.compact();
 
 		assertFalse(util.validate(invalidSignatureToken));
@@ -165,8 +177,8 @@ public class JwtTokenUtilTest {
 	@Test(groups = "jwtTokenUtil")
 	public void shouldParsePartialSubjectWithThreeFields() {
 		final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
-		final String partialSubjectToken = Jwts.builder().setSubject("7,user7,session-x")
-				.signWith(SignatureAlgorithm.HS512, SECRET)
+		final String partialSubjectToken = Jwts.builder().subject("7,user7,session-x")
+				.signWith(signingKey(SECRET), Jwts.SIG.HS512)
 				.compact();
 
 		assertEquals(util.getUserId(partialSubjectToken), "7");
