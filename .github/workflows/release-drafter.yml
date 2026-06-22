@@ -15,17 +15,36 @@ permissions:
   contents: read
 
 jobs:
+  check_labels:
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const requiredLabels = [
+              'breaking change', 'feature', 'bug', 'style', 'refactor', 
+              'test', 'chore', 'docs', 'documentation', 'ci', 'dependencies', 'enhancement'
+            ];
+            
+            const prLabels = context.payload.pull_request.labels.map(label => label.name);
+            const hasLabel = requiredLabels.some(label => prLabels.includes(label));
+            
+            if (!hasLabel) {
+              core.setFailed(`⚠️ PR must have at least one label from: ${requiredLabels.join(', ')}`);
+            } else {
+              core.info(`✓ PR has valid label(s): ${prLabels.join(', ')}`);
+            }
+
   update_release_draft:
     permissions:
       contents: write
       pull-requests: write
-      checks: write
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: danielchabr/pr-labels-checker@v3.3
-        with:
-          hasSome: breaking change,feature,bug,style,refactor,test,chore,docs,documentation,ci,dependencies,enhancement,
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
