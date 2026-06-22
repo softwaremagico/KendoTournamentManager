@@ -10,12 +10,12 @@ package com.softwaremagico.kt.rest.exceptions;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
 import java.lang.reflect.Method;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -120,11 +121,11 @@ public class ExceptionControllerAdviceTest {
     }
 
     @Test(groups = "exceptionAdvice")
-    public void shouldHandleMethodArgumentNotValidAndSkipNullMessages() throws NoSuchMethodException {
+    public void shouldHandleMethodArgumentNotValidAndSkipNullMessages() {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new DummyDto(), "dto");
         bindingResult.addError(new FieldError("dto", "username", "must not be blank"));
         bindingResult.addError(new FieldError("dto", "email", null));
-        Method method = DummyController.class.getDeclaredMethod("setDto", DummyDto.class);
+        Method method = DummyController.class.getDeclaredMethods()[0];
         MethodParameter methodParameter = new MethodParameter(method, 0);
         MethodArgumentNotValidException validationException = new MethodArgumentNotValidException(methodParameter, bindingResult);
 
@@ -134,7 +135,7 @@ public class ExceptionControllerAdviceTest {
         ErrorResponse body = (ErrorResponse) response.getBody();
         assertEquals(body.getCode(), "input_data_is_invalid");
         assertTrue(body.getMessage().contains("username=must not be blank"));
-        assertTrue(!body.getMessage().contains("email="));
+        assertFalse(body.getMessage().contains("email="));
     }
 
     private static class DummyDto {

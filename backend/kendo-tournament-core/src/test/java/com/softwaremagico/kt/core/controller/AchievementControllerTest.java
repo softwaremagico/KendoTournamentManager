@@ -53,13 +53,12 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -69,7 +68,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
 
 @Test(groups = "roleAchievementTests")
 public class AchievementControllerTest {
@@ -207,7 +205,7 @@ public class AchievementControllerTest {
     public void shouldGetTournamentAchievementsAndCounters() {
         final Tournament tournament = tournament(55, LocalDateTime.now().minusDays(2));
         final AchievementDTO dto = new AchievementDTO();
-        final Map<AchievementType, Map<AchievementGrade, Integer>> counters = new HashMap<>();
+        final Map<AchievementType, Map<AchievementGrade, Integer>> counters = new EnumMap<>(AchievementType.class);
         counters.put(AchievementType.BILLY_THE_KID, Collections.singletonMap(AchievementGrade.NORMAL, 2));
 
         when(tournamentProvider.get(55)).thenReturn(Optional.of(tournament));

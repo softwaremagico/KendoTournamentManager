@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.providers;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -47,6 +47,9 @@ import static org.testng.Assert.assertTrue;
 
 @Test(groups = {"tournamentExtraProperties"})
 public class TournamentImageProviderTest {
+
+    private static final byte[] MULTIPART_PAYLOAD = new byte[]{1, 2, 3, 4};
+    private static final byte[] DIRECT_IMAGE_PAYLOAD = new byte[]{9, 8, 7};
 
     @Mock
     private TournamentImageRepository repository;
@@ -81,8 +84,7 @@ public class TournamentImageProviderTest {
     @Test
     public void shouldAddMultipartImageAndPersistTournament() throws Exception {
         final Tournament tournament = tournament();
-        final byte[] payload = new byte[]{1, 2, 3, 4};
-        when(multipartFile.getBytes()).thenReturn(payload);
+        when(multipartFile.getBytes()).thenReturn(MULTIPART_PAYLOAD);
 
         final TournamentImage image = provider.add(multipartFile, tournament, TournamentImageType.BANNER,
                 ImageCompression.JPG, "uploader");
@@ -90,7 +92,7 @@ public class TournamentImageProviderTest {
         assertEquals(image.getTournament(), tournament);
         assertEquals(image.getImageType(), TournamentImageType.BANNER);
         assertEquals(image.getImageCompression(), ImageCompression.JPG);
-        assertTrue(Arrays.equals(image.getData(), payload));
+        assertTrue(Arrays.equals(image.getData(), MULTIPART_PAYLOAD));
         assertEquals(image.getCreatedBy(), "uploader");
         verify(repository).deleteByTournamentAndImageType(tournament, TournamentImageType.BANNER);
         verify(tournamentRepository).save(tournament);
@@ -113,7 +115,7 @@ public class TournamentImageProviderTest {
         image.setTournament(tournament);
         image.setImageType(TournamentImageType.DIPLOMA);
         image.setImageCompression(ImageCompression.PNG);
-        image.setData(new byte[]{9, 8, 7});
+        image.setData(DIRECT_IMAGE_PAYLOAD);
 
         final TournamentImage result = provider.add(image, "editor");
 

@@ -10,18 +10,20 @@ package com.softwaremagico.kt.core.pool;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import org.testng.annotations.Test;
+
+import java.time.Duration;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -47,11 +49,11 @@ public class BasePoolTest {
     }
 
     @Test
-    public void shouldReturnNullWhenElementExpires() throws InterruptedException {
+    public void shouldReturnNullWhenElementExpires() {
         final TestPool pool = new TestPool(5L, false);
         pool.addElement("value-2", "key-2");
 
-        Thread.sleep(15L);
+        waitUntil(() -> pool.getElement("key-2") == null, Duration.ofMillis(250));
 
         assertNull(pool.getElement("key-2"));
         assertFalse(pool.getAllPooledKeys().contains("key-2"));
@@ -80,6 +82,14 @@ public class BasePoolTest {
         assertTrue(pool.getAllPooledElements().isEmpty());
         assertTrue(pool.getAllPooledKeys().isEmpty());
         assertTrue(pool.getElementsTime().isEmpty());
+    }
+
+    private void waitUntil(java.util.function.BooleanSupplier condition, Duration timeout) {
+        final long deadline = System.nanoTime() + timeout.toNanos();
+        while (!condition.getAsBoolean() && System.nanoTime() < deadline) {
+            Thread.onSpinWait();
+        }
+        assertTrue(condition.getAsBoolean());
     }
 
     private static final class TestPool extends BasePool<String, String> {

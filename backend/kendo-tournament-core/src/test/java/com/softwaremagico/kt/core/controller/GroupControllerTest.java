@@ -21,21 +21,22 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.DuelDTO;
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -53,297 +54,320 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 @Test(groups = {"groupsTest"})
 public class GroupControllerTest {
 
-    @Mock
-    private GroupProvider groupProvider;
+	@Mock
+	private GroupProvider groupProvider;
 
-    @Mock
-    private GroupConverter groupConverter;
+	@Mock
+	private GroupConverter groupConverter;
 
-    @Mock
-    private TournamentConverter tournamentConverter;
+	@Mock
+	private TournamentConverter tournamentConverter;
 
-    @Mock
-    private TournamentProvider tournamentProvider;
+	@Mock
+	private TournamentProvider tournamentProvider;
 
-    @Mock
-    private FightProvider fightProvider;
+	@Mock
+	private FightProvider fightProvider;
 
-    @Mock
-    private FightConverter fightConverter;
+	@Mock
+	private FightConverter fightConverter;
 
-    @Mock
-    private DuelProvider duelProvider;
+	@Mock
+	private DuelProvider duelProvider;
 
-    @Mock
-    private DuelConverter duelConverter;
+	@Mock
+	private DuelConverter duelConverter;
 
-    @Mock
-    private TeamConverter teamConverter;
+	@Mock
+	private TeamConverter teamConverter;
 
-    @Mock
-    private TournamentHandlerSelector tournamentHandlerSelector;
+	@Mock
+	private TournamentHandlerSelector tournamentHandlerSelector;
 
-    private GroupController controller;
+	@Mock
+	private ITournamentManager tournamentManager;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        controller = org.mockito.Mockito.spy(new GroupController(groupProvider, groupConverter, tournamentConverter,
-                tournamentProvider, fightProvider, fightConverter, duelProvider, duelConverter, teamConverter, tournamentHandlerSelector));
-    }
+	private GroupController controller;
 
-    @Test
-    public void shouldGetGroupsFromTournamentWhenTournamentExists() {
-        final Tournament tournament = tournament();
-        final TournamentDTO tournamentDTO = tournamentDTO();
-        final GroupDTO groupDTO = groupDTO(tournamentDTO);
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+		this.controller = org.mockito.Mockito.spy(new GroupController(this.groupProvider, this.groupConverter,
+				this.tournamentConverter, this.tournamentProvider, this.fightProvider, this.fightConverter,
+				this.duelProvider, this.duelConverter, this.teamConverter, this.tournamentHandlerSelector));
+	}
 
-        when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
-        when(tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
-        doReturn(List.of(groupDTO)).when(controller).get(tournamentDTO);
+	@Test
+	public void shouldGetGroupsFromTournamentWhenTournamentExists() {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final GroupDTO groupDTO = this.groupDTO(tournamentDTO);
 
-        final List<GroupDTO> result = controller.getFromTournament(1);
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+		when(this.tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
+		doReturn(List.of(groupDTO)).when(this.controller).get(tournamentDTO);
 
-        assertEquals(result.size(), 1);
-        assertSame(result.get(0), groupDTO);
-        verify(controller).get(tournamentDTO);
-    }
+		final List<GroupDTO> result = this.controller.getFromTournament(1);
 
-    @Test
-    public void shouldGetGroupByLevelAndIndexFromTournament() {
-        final Tournament tournament = tournament();
-        final TournamentDTO tournamentDTO = tournamentDTO();
-        final Group group = new Group(tournament, 2, 3);
-        final GroupDTO groupDTO = groupDTO(tournamentDTO);
+		assertEquals(result.size(), 1);
+		assertSame(result.get(0), groupDTO);
+		verify(this.controller).get(tournamentDTO);
+	}
 
-        when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
-        when(tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
-        when(groupProvider.getGroupByLevelAndIndex(tournament, 2, 3)).thenReturn(group);
-        doReturn(groupDTO).when(controller).convert(group);
+	@Test
+	public void shouldGetGroupByLevelAndIndexFromTournament() {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final Group group = new Group(tournament, 2, 3);
+		final GroupDTO groupDTO = this.groupDTO(tournamentDTO);
 
-        final GroupDTO result = controller.getFromTournament(1, 2, 3);
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+		when(this.tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+		when(this.groupProvider.getGroupByLevelAndIndex(tournament, 2, 3)).thenReturn(group);
+		doReturn(groupDTO).when(this.controller).convert(group);
 
-        assertSame(result, groupDTO);
-        verify(groupProvider).getGroupByLevelAndIndex(tournament, 2, 3);
-    }
+		final GroupDTO result = this.controller.getFromTournament(1, 2, 3);
 
-    @Test
-    public void shouldRefreshGroupContentForEmptyGroupsAtOrAboveLevel() {
-        final Tournament tournament = tournament();
-        final Group keepGroup = new Group(tournament, 0, 0);
-        keepGroup.setId(1);
-        keepGroup.setTeams(new ArrayList<>(List.of(new Team("keep", tournament))));
-        final Group clearGroup = new Group(tournament, 1, 0);
-        clearGroup.setId(2);
-        clearGroup.setTeams(new ArrayList<>(List.of(new Team("remove", tournament))));
+		assertSame(result, groupDTO);
+		verify(this.groupProvider).getGroupByLevelAndIndex(tournament, 2, 3);
+	}
 
-        when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
-        when(groupProvider.getGroups(tournament)).thenReturn(List.of(keepGroup, clearGroup));
-        when(groupProvider.save(clearGroup)).thenAnswer(invocation -> invocation.getArgument(0));
+	@Test
+	public void shouldRefreshGroupContentForEmptyGroupsAtOrAboveLevel() {
+		final Tournament tournament = this.tournament();
+		final Group keepGroup = new Group(tournament, 0, 0);
+		keepGroup.setId(1);
+		keepGroup.setTeams(new ArrayList<>(List.of(new Team("keep", tournament))));
+		final Group clearGroup = new Group(tournament, 1, 0);
+		clearGroup.setId(2);
+		clearGroup.setTeams(new ArrayList<>(List.of(new Team("remove", tournament))));
 
-        controller.refreshGroupContent(1, 1);
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(keepGroup, clearGroup));
+		when(this.groupProvider.save(clearGroup)).thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertEquals(keepGroup.getTeams().size(), 1);
-        assertTrue(clearGroup.getTeams().isEmpty());
-        verify(groupProvider).save(clearGroup);
-        verify(groupProvider, never()).save(keepGroup);
-    }
+		this.controller.refreshGroupContent(1, 1);
 
-    @Test
-    public void shouldRegisterUpdatedListeners() {
-        final GroupController.GroupsUpdatedListener listener = (tournament, actor, session) -> { };
-        controller.addGroupUpdatedListeners(listener);
+		assertEquals(keepGroup.getTeams().size(), 1);
+		assertTrue(clearGroup.getTeams().isEmpty());
+		verify(this.groupProvider).save(clearGroup);
+		verify(this.groupProvider, never()).save(keepGroup);
+	}
 
-        // Triggering through a no-op refresh keeps this test cheap while covering the listener registration path.
-        assertTrue(true);
-    }
+	@Test
+	public void shouldRegisterUpdatedListeners() {
+		final GroupController.GroupsUpdatedListener listener = (tournament, actor, session) -> {
+		};
+		this.controller.addGroupUpdatedListeners(listener);
 
-    @Test
-    public void shouldAddUntiesAndNotifyUntieListeners() throws InterruptedException {
-        final Tournament tournament = tournament();
-        final TournamentDTO tournamentDTO = tournamentDTO();
-        final GroupDTO groupDTO = groupDTO(tournamentDTO);
-        groupDTO.setId(9);
+		// Triggering through a no-op refresh keeps this test cheap while covering the
+		// listener registration path.
+		assertTrue(true);
+	}
 
-        final DuelDTO duelDTO = new DuelDTO();
-        duelDTO.setId(88);
+	@Test
+	public void shouldAddUntiesAndNotifyUntieListeners() throws InterruptedException {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final GroupDTO groupDTO = this.groupDTO(tournamentDTO);
+		groupDTO.setId(9);
 
-        final Group savedGroup = new Group(tournament, 0, 0);
+		final DuelDTO duelDTO = new DuelDTO();
+		duelDTO.setId(88);
 
-        final CountDownLatch untieNotification = new CountDownLatch(1);
-        controller.addUntieUpdatedListener((t, duel, actor, session) -> untieNotification.countDown());
+		final Group savedGroup = new Group(tournament, 0, 0);
 
-        doReturn(groupDTO).when(controller).get(9);
-        doReturn(savedGroup).when(controller).reverse(groupDTO);
-        when(groupProvider.save(savedGroup)).thenReturn(savedGroup);
-        doReturn(groupDTO).when(controller).convert(savedGroup);
-        when(tournamentProvider.get(tournament.getId())).thenReturn(Optional.of(tournament));
-        when(tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
+		final CountDownLatch untieNotification = new CountDownLatch(1);
+		this.controller.addUntieUpdatedListener((t, duel, actor, session) -> untieNotification.countDown());
 
-        final GroupDTO result = controller.addUnties(9, List.of(duelDTO), "alice", "session-1");
+		doReturn(groupDTO).when(this.controller).get(9);
+		doReturn(savedGroup).when(this.controller).reverse(groupDTO);
+		when(this.groupProvider.save(savedGroup)).thenReturn(savedGroup);
+		doReturn(groupDTO).when(this.controller).convert(savedGroup);
+		when(this.tournamentProvider.get(tournament.getId())).thenReturn(Optional.of(tournament));
+		when(this.tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
 
-        assertSame(result, groupDTO);
-        assertEquals(groupDTO.getUnties().size(), 1);
-        assertEquals(groupDTO.getUnties().get(0).getCreatedBy(), "alice");
-        assertEquals(groupDTO.getUnties().get(0).getTournament(), tournamentDTO);
-        assertEquals(groupDTO.getUpdatedBy(), "alice");
-        assertTrue(untieNotification.await(2, TimeUnit.SECONDS));
-    }
+		final GroupDTO result = this.controller.addUnties(9, List.of(duelDTO), "alice", "session-1");
 
-    @Test
-    public void shouldDeleteTeamsFromTournamentWithSpecificTeamList() throws InterruptedException {
-        final Tournament tournament = tournament();
-        final TournamentDTO tournamentDTO = tournamentDTO();
-        final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
-        final Team team = new Team("A", tournament);
-        final Group group = new Group(tournament, 0, 0);
-        final GroupDTO converted = groupDTO(tournamentDTO);
+		assertSame(result, groupDTO);
+		assertEquals(groupDTO.getUnties().size(), 1);
+		assertEquals(groupDTO.getUnties().get(0).getCreatedBy(), "alice");
+		assertEquals(groupDTO.getUnties().get(0).getTournament(), tournamentDTO);
+		assertEquals(groupDTO.getUpdatedBy(), "alice");
+		assertTrue(untieNotification.await(2, TimeUnit.SECONDS));
+	}
 
-        final CountDownLatch updatedNotification = new CountDownLatch(1);
-        controller.addGroupUpdatedListeners((t, actor, session) -> updatedNotification.countDown());
+	@Test
+	public void shouldDeleteTeamsFromTournamentWithSpecificTeamList() throws InterruptedException {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
+		final Team team = new Team("A", tournament);
+		final Group group = new Group(tournament, 0, 0);
+		final GroupDTO converted = this.groupDTO(tournamentDTO);
 
-        when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
-        when(teamConverter.reverseAll(List.of(teamDTO))).thenReturn(List.of(team));
-        when(groupProvider.deleteTeams(tournament, List.of(team), "tester")).thenReturn(List.of(group));
-        doReturn(List.of(converted)).when(controller).convertAll(List.of(group));
-        when(tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
+		final CountDownLatch updatedNotification = new CountDownLatch(1);
+		this.controller.addGroupUpdatedListeners((t, actor, session) -> updatedNotification.countDown());
 
-        final List<GroupDTO> result = controller.deleteTeamsFromTournament(1, List.of(teamDTO), "tester", "s");
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+		when(this.teamConverter.reverseAll(List.of(teamDTO))).thenReturn(List.of(team));
+		when(this.groupProvider.deleteTeams(tournament, List.of(team), "tester")).thenReturn(List.of(group));
+		doReturn(List.of(converted)).when(this.controller).convertAll(List.of(group));
+		when(this.tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
 
-        assertNotNull(result);
-        assertEquals(result.size(), 1);
-        assertSame(result.get(0), converted);
-        assertTrue(updatedNotification.await(2, TimeUnit.SECONDS));
-    }
+		final List<GroupDTO> result = this.controller.deleteTeamsFromTournament(1, List.of(teamDTO), "tester", "s");
 
-    @Test
-    public void shouldResetFightAndDuelIdsAndEnsureFightTeamsOnUpdate() {
-        final Tournament tournament = tournament();
-        final TournamentDTO tournamentDTO = tournamentDTO();
+		assertNotNull(result);
+		assertEquals(result.size(), 1);
+		assertSame(result.get(0), converted);
+		assertTrue(updatedNotification.await(2, TimeUnit.SECONDS));
+	}
 
-        final GroupDTO oldGroup = groupDTO(tournamentDTO);
-        oldGroup.setId(17);
-        final FightDTO oldFight = new FightDTO();
-        oldFight.setId(500);
-        oldGroup.setFights(new ArrayList<>(List.of(oldFight)));
-        oldGroup.setUnties(new ArrayList<>());
+	@Test
+	public void shouldDeleteEachGroupFromCollection() throws InterruptedException {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final GroupDTO firstGroup = this.groupDTO(tournamentDTO);
+		firstGroup.setId(1);
+		firstGroup.setLevel(0);
+		firstGroup.setIndex(0);
+		final GroupDTO secondGroup = this.groupDTO(tournamentDTO);
+		secondGroup.setId(2);
+		secondGroup.setLevel(0);
+		secondGroup.setIndex(1);
 
-        final GroupDTO input = groupDTO(tournamentDTO);
-        input.setId(17);
+		final CountDownLatch updatedNotification = new CountDownLatch(2);
+		this.controller.addGroupUpdatedListeners((t, actor, session) -> updatedNotification.countDown());
 
-        final TeamDTO team1 = new TeamDTO("Team 1", tournamentDTO);
-        final TeamDTO team2 = new TeamDTO("Team 2", tournamentDTO);
-        final FightDTO newFight = new FightDTO(tournamentDTO, team1, team2, 0, 0);
-        newFight.setId(123);
-        newFight.setVersion(3);
-        final DuelDTO duel = new DuelDTO();
-        duel.setId(321);
-        duel.setVersion(4);
-        newFight.setDuels(new ArrayList<>(List.of(duel)));
-        input.setFights(new ArrayList<>(List.of(newFight)));
+		when(this.tournamentHandlerSelector.selectManager(TournamentType.LEAGUE)).thenReturn(this.tournamentManager);
+		when(this.tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
 
-        final DuelDTO newUntie = new DuelDTO();
-        newUntie.setId(777);
-        newUntie.setVersion(9);
-        input.setUnties(new ArrayList<>(List.of(newUntie)));
+		this.controller.delete(List.of(firstGroup, secondGroup), "tester", "session-delete");
 
-        final Group persisted = new Group(tournament, 0, 0);
+		verify(this.tournamentManager).removeGroup(tournament, 0, 0);
+		verify(this.tournamentManager).removeGroup(tournament, 0, 1);
+		verify(this.tournamentHandlerSelector, times(2)).selectManager(TournamentType.LEAGUE);
+		assertTrue(updatedNotification.await(2, TimeUnit.SECONDS));
+	}
 
-        doReturn(oldGroup).when(controller).get(17);
-        when(fightConverter.reverseAll(anyList())).thenReturn(List.of());
-        when(duelConverter.reverseAll(anyList())).thenReturn(List.of());
-        doReturn(persisted).when(controller).reverse(any(GroupDTO.class));
-        when(groupProvider.save(any(Group.class))).thenReturn(persisted);
-        doReturn(input).when(controller).convert(any(Group.class));
+	@Test
+	public void shouldResetFightAndDuelIdsAndEnsureFightTeamsOnUpdate() {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
 
-        final GroupDTO updated = controller.update(input, "editor", "session-2");
+		final GroupDTO oldGroup = this.groupDTO(tournamentDTO);
+		oldGroup.setId(17);
+		final FightDTO oldFight = new FightDTO();
+		oldFight.setId(500);
+		oldGroup.setFights(new ArrayList<>(List.of(oldFight)));
+		oldGroup.setUnties(new ArrayList<>());
 
-        assertSame(updated, input);
-        assertEquals(input.getTeams().size(), 2);
-        assertTrue(input.getTeams().contains(team1));
-        assertTrue(input.getTeams().contains(team2));
-        assertNull(input.getFights().get(0).getId());
-        assertNull(input.getFights().get(0).getVersion());
-        assertNull(input.getFights().get(0).getDuels().get(0).getId());
-        assertNull(input.getFights().get(0).getDuels().get(0).getVersion());
-        assertNull(input.getUnties().get(0).getId());
-        assertNull(input.getUnties().get(0).getVersion());
-        assertEquals(input.getUpdatedBy(), "editor");
-        verify(fightProvider).delete(anyList());
-        verify(duelProvider).delete(anyList());
-    }
+		final GroupDTO input = this.groupDTO(tournamentDTO);
+		input.setId(17);
 
-    @Test
-    public void shouldDeletePreviousUntiesDuringUpdate() {
-        final Tournament tournament = tournament();
-        final TournamentDTO tournamentDTO = tournamentDTO();
+		final TeamDTO team1 = new TeamDTO("Team 1", tournamentDTO);
+		final TeamDTO team2 = new TeamDTO("Team 2", tournamentDTO);
+		final FightDTO newFight = new FightDTO(tournamentDTO, team1, team2, 0, 0);
+		newFight.setId(123);
+		newFight.setVersion(3);
+		final DuelDTO duel = new DuelDTO();
+		duel.setId(321);
+		duel.setVersion(4);
+		newFight.setDuels(new ArrayList<>(List.of(duel)));
+		input.setFights(new ArrayList<>(List.of(newFight)));
 
-        final GroupDTO oldGroup = groupDTO(tournamentDTO);
-        oldGroup.setId(25);
-        oldGroup.setFights(new ArrayList<>());
-        final DuelDTO previousUntie = new DuelDTO();
-        previousUntie.setId(901);
-        previousUntie.setTournament(tournamentDTO);
-        oldGroup.setUnties(new ArrayList<>(List.of(previousUntie)));
+		final DuelDTO newUntie = new DuelDTO();
+		newUntie.setId(777);
+		newUntie.setVersion(9);
+		input.setUnties(new ArrayList<>(List.of(newUntie)));
 
-        final GroupDTO input = groupDTO(tournamentDTO);
-        input.setId(25);
+		final Group persisted = new Group(tournament, 0, 0);
 
-        final Group persisted = new Group(tournament, 0, 0);
+		doReturn(oldGroup).when(this.controller).get(17);
+		when(this.fightConverter.reverseAll(anyList())).thenReturn(List.of());
+		when(this.duelConverter.reverseAll(anyList())).thenReturn(List.of());
+		doReturn(persisted).when(this.controller).reverse(any(GroupDTO.class));
+		when(this.groupProvider.save(any(Group.class))).thenReturn(persisted);
+		doReturn(input).when(this.controller).convert(any(Group.class));
 
-        doReturn(oldGroup).when(controller).get(25);
-        when(fightConverter.reverseAll(anyList())).thenReturn(List.of());
-        when(duelConverter.reverseAll(anyList())).thenReturn(List.of());
-        doReturn(persisted).when(controller).reverse(any(GroupDTO.class));
-        when(groupProvider.save(any(Group.class))).thenReturn(persisted);
-        doReturn(input).when(controller).convert(any(Group.class));
-        when(tournamentProvider.get(tournament.getId())).thenReturn(Optional.of(tournament));
-        when(tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
+		final GroupDTO updated = this.controller.update(input, "editor", "session-2");
 
-        final GroupDTO updated = controller.update(input, "editor", "session-3");
+		assertSame(updated, input);
+		assertEquals(input.getTeams().size(), 2);
+		assertTrue(input.getTeams().contains(team1));
+		assertTrue(input.getTeams().contains(team2));
+		assertNull(input.getFights().get(0).getId());
+		assertNull(input.getFights().get(0).getVersion());
+		assertNull(input.getFights().get(0).getDuels().get(0).getId());
+		assertNull(input.getFights().get(0).getDuels().get(0).getVersion());
+		assertNull(input.getUnties().get(0).getId());
+		assertNull(input.getUnties().get(0).getVersion());
+		assertEquals(input.getUpdatedBy(), "editor");
+		verify(this.fightProvider).delete(anyList());
+		verify(this.duelProvider).delete(anyList());
+	}
 
-        assertSame(updated, input);
-        verify(duelProvider).delete(anyList());
-    }
+	@Test
+	public void shouldDeletePreviousUntiesDuringUpdate() {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
 
-    private Tournament tournament() {
-        final Tournament tournament = new Tournament("Tournament", 1, 3, TournamentType.LEAGUE, "tester");
-        tournament.setId(303);
-        return tournament;
-    }
+		final GroupDTO oldGroup = this.groupDTO(tournamentDTO);
+		oldGroup.setId(25);
+		oldGroup.setFights(new ArrayList<>());
+		final DuelDTO previousUntie = new DuelDTO();
+		previousUntie.setId(901);
+		previousUntie.setTournament(tournamentDTO);
+		oldGroup.setUnties(new ArrayList<>(List.of(previousUntie)));
 
-    private TournamentDTO tournamentDTO() {
-        final TournamentDTO tournamentDTO = new TournamentDTO("Tournament", 1, 3, TournamentType.LEAGUE);
-        tournamentDTO.setId(303);
-        return tournamentDTO;
-    }
+		final GroupDTO input = this.groupDTO(tournamentDTO);
+		input.setId(25);
 
-    private GroupDTO groupDTO(TournamentDTO tournamentDTO) {
-        final GroupDTO groupDTO = new GroupDTO();
-        groupDTO.setTournament(tournamentDTO);
-        groupDTO.setLevel(2);
-        groupDTO.setIndex(3);
-        groupDTO.setTeams(new ArrayList<>());
-        groupDTO.setFights(new ArrayList<>());
-        groupDTO.setUnties(new ArrayList<>());
-        groupDTO.setNumberOfWinners(1);
-        return groupDTO;
-    }
+		final Group persisted = new Group(tournament, 0, 0);
+
+		doReturn(oldGroup).when(this.controller).get(25);
+		when(this.fightConverter.reverseAll(anyList())).thenReturn(List.of());
+		when(this.duelConverter.reverseAll(anyList())).thenReturn(List.of());
+		doReturn(persisted).when(this.controller).reverse(any(GroupDTO.class));
+		when(this.groupProvider.save(any(Group.class))).thenReturn(persisted);
+		doReturn(input).when(this.controller).convert(any(Group.class));
+		when(this.tournamentProvider.get(tournament.getId())).thenReturn(Optional.of(tournament));
+		when(this.tournamentConverter.convert(any(TournamentConverterRequest.class))).thenReturn(tournamentDTO);
+
+		final GroupDTO updated = this.controller.update(input, "editor", "session-3");
+
+		assertSame(updated, input);
+		verify(this.duelProvider).delete(anyList());
+	}
+
+	private Tournament tournament() {
+		final Tournament tournament = new Tournament("Tournament", 1, 3, TournamentType.LEAGUE, "tester");
+		tournament.setId(303);
+		return tournament;
+	}
+
+	private TournamentDTO tournamentDTO() {
+		final TournamentDTO tournamentDTO = new TournamentDTO("Tournament", 1, 3, TournamentType.LEAGUE);
+		tournamentDTO.setId(303);
+		return tournamentDTO;
+	}
+
+	private GroupDTO groupDTO(TournamentDTO tournamentDTO) {
+		final GroupDTO groupDTO = new GroupDTO();
+		groupDTO.setTournament(tournamentDTO);
+		groupDTO.setLevel(2);
+		groupDTO.setIndex(3);
+		groupDTO.setTeams(new ArrayList<>());
+		groupDTO.setFights(new ArrayList<>());
+		groupDTO.setUnties(new ArrayList<>());
+		groupDTO.setNumberOfWinners(1);
+		return groupDTO;
+	}
 }
-
-

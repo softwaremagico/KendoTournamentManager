@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests.models;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -86,7 +86,7 @@ public class ControllerModelsCoverageTest {
                 if (writeMethod != null && Modifier.isPublic(writeMethod.getModifiers())) {
                     try {
                         writeMethod.invoke(instance, sampleValue(writeMethod.getParameterTypes()[0]));
-                    } catch (Exception ignored) {
+                    } catch (Exception _) {
                         // Some DTO setters validate values or require richer state.
                     }
                 }
@@ -94,7 +94,7 @@ public class ControllerModelsCoverageTest {
                 if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
                     try {
                         readMethod.invoke(instance);
-                    } catch (Exception ignored) {
+                    } catch (Exception _) {
                         // Some DTO getters compute values from optional internals.
                     }
                 }
@@ -102,12 +102,14 @@ public class ControllerModelsCoverageTest {
 
             try {
                 instance.hashCode();
-            } catch (Exception ignored) {
+            } catch (Exception _) {
+                // Some DTOs derive hashCode from optional nested content.
             }
             instance.equals(instance);
             try {
                 instance.toString();
-            } catch (Exception ignored) {
+            } catch (Exception _) {
+                // Some DTOs derive toString from optional nested content.
             }
         }
     }
@@ -118,7 +120,7 @@ public class ControllerModelsCoverageTest {
                 constructor.setAccessible(true);
                 try {
                     return constructor.newInstance();
-                } catch (InstantiationException ignored) {
+                } catch (InstantiationException _) {
                     return null;
                 }
             }

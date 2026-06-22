@@ -1,18 +1,15 @@
-FROM traefik:latest
+FROM traefik:v2.11.0
 
 ARG email
 ARG timezone
 
 #Set timezone.
 ENV TZ=${timezone}
-RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
-
-#Prepare folders structure
-RUN mkdir -p /config
+RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezone && \
+	mkdir -p /config
 
 #Copy configuration
-#ADD config/* /config/
-ADD traefik.yml /traefik.yml
+COPY traefik.yml /traefik.yml
 
 # Replace email
 RUN sed -i "s|CUSTOM_EMAIL|${email}|g" /traefik.yml

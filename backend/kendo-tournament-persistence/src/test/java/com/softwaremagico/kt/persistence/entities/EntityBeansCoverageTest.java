@@ -10,12 +10,12 @@ package com.softwaremagico.kt.persistence.entities;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -74,7 +74,7 @@ public class EntityBeansCoverageTest {
                     final Class<?> parameterType = writeMethod.getParameterTypes()[0];
                     try {
                         writeMethod.invoke(instance, sampleValue(parameterType));
-                    } catch (Exception ignored) {
+                    } catch (Exception _) {
                         // Some write methods validate domain rules and may reject synthetic values.
                     }
                 }
@@ -82,7 +82,7 @@ public class EntityBeansCoverageTest {
                 if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
                     try {
                         readMethod.invoke(instance);
-                    } catch (Exception ignored) {
+                    } catch (Exception _) {
                         // Some read methods depend on richer object graphs.
                     }
                 }
@@ -90,13 +90,13 @@ public class EntityBeansCoverageTest {
 
             try {
                 instance.hashCode();
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // Some entities compute hash from nullable binary fields.
             }
             instance.equals(instance);
             try {
                 instance.toString();
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // Some entities compute toString from nullable binary fields.
             }
         }
@@ -108,7 +108,7 @@ public class EntityBeansCoverageTest {
                 constructor.setAccessible(true);
                 try {
                     return constructor.newInstance();
-                } catch (InstantiationException ignored) {
+                } catch (InstantiationException _) {
                     return null;
                 }
             }

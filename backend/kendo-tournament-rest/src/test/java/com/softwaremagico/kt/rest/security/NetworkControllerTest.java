@@ -156,7 +156,7 @@ class NetworkControllerTest {
 
     @Test
     void testConstructor() {
-        assertDoesNotThrow(() -> new NetworkController());
+        assertDoesNotThrow(NetworkController::new);
     }
 
     @Test

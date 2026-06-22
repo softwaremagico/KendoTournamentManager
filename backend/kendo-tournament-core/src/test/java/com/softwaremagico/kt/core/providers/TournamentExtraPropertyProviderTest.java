@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.providers;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -34,8 +34,9 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BooleanSupplier;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -49,6 +50,9 @@ import static org.testng.Assert.fail;
 
 @Test(groups = {"tournamentExtraProperties"})
 public class TournamentExtraPropertyProviderTest {
+
+    private static final int WAIT_ATTEMPTS = 20;
+    private static final long PAUSE_MILLIS = 50L;
 
     @Mock
     private TournamentExtraPropertyRepository repository;
@@ -119,7 +123,7 @@ public class TournamentExtraPropertyProviderTest {
     }
 
     @Test
-    public void shouldUpdateNumberOfWinnersInGroupsInBackground() throws InterruptedException {
+    public void shouldUpdateNumberOfWinnersInGroupsInBackground() {
         final Tournament tournament = tournament();
         final TournamentExtraProperty property = new TournamentExtraProperty(tournament,
                 TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2");
@@ -138,7 +142,7 @@ public class TournamentExtraPropertyProviderTest {
 
         provider.save(property);
 
-        waitUntil(() -> firstLevelGroup.getNumberOfWinners() == 2, 20, 50L);
+        waitUntil(() -> firstLevelGroup.getNumberOfWinners() == 2, WAIT_ATTEMPTS, PAUSE_MILLIS);
 
         assertEquals(firstLevelGroup.getNumberOfWinners(), 2);
         assertEquals(secondLevelGroup.getNumberOfWinners(), 1);
@@ -146,12 +150,12 @@ public class TournamentExtraPropertyProviderTest {
         verify(groupRepository, never()).save(secondLevelGroup);
     }
 
-    private void waitUntil(BooleanSupplier condition, int attempts, long pauseMillis) throws InterruptedException {
+    private void waitUntil(BooleanSupplier condition, int attempts, long pauseMillis) {
         for (int i = 0; i < attempts; i++) {
             if (condition.getAsBoolean()) {
                 return;
             }
-            Thread.sleep(pauseMillis);
+            LockSupport.parkNanos(Duration.ofMillis(pauseMillis).toNanos());
         }
         assertTrue(condition.getAsBoolean());
     }
