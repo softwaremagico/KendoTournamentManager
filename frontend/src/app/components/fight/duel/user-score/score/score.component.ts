@@ -9,6 +9,7 @@ import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
 @Component({
+  standalone: false,
   selector: 'score',
   templateUrl: './score.component.html',
   styleUrls: ['./score.component.scss'],

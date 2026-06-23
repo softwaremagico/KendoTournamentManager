@@ -17,7 +17,7 @@ import {BarChartData} from "./bar-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 
 type BarChartOptions = {
@@ -36,6 +36,7 @@ type BarChartOptions = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']

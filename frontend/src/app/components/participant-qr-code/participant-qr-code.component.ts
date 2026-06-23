@@ -7,6 +7,7 @@ import {UserSessionService} from "../../services/user-session.service";
 import {Participant} from "../../models/participant";
 
 @Component({
+  standalone: false,
   selector: 'participant-qr-code',
   templateUrl: './participant-qr-code.component.html',
   styleUrls: ['./participant-qr-code.component.scss']

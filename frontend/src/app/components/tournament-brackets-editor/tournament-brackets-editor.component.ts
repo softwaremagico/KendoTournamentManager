@@ -19,7 +19,7 @@ import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brac
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 import {random} from "../../utils/random/random";
 import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
-import {Message} from "@stomp/stompjs/esm6";
+import {Message} from "@stomp/stompjs";
 import {MessageContent} from "../../websockets/message-content.model";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
@@ -30,6 +30,7 @@ import {MessageService} from "../../services/message.service";
 import {TranslocoService} from "@ngneat/transloco";
 
 @Component({
+  standalone: false,
   selector: 'tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']

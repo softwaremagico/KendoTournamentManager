@@ -33,6 +33,7 @@ import {TranslocoService} from "@ngneat/transloco";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  standalone: false,
   selector: 'tournament-teams',
   templateUrl: './tournament-teams.component.html',
   styleUrls: ['./tournament-teams.component.scss']
@@ -125,8 +126,10 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     })
   }
 
-  @HostListener('document:click', ['$event.target'])
-  onClick(element: HTMLElement): void {
+  onClick(element: EventTarget | null): void {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
     if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
       if (this.teams) {
         for (let team of this.teams) {

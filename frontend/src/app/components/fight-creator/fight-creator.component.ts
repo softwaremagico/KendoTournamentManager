@@ -12,6 +12,7 @@ import {FightService} from "../../services/fight.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 
 @Component({
+  standalone: false,
   selector: 'fight-creator',
   templateUrl: './fight-creator.component.html',
   styleUrls: ['./fight-creator.component.scss']

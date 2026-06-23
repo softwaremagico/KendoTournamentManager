@@ -17,6 +17,7 @@ import {OverlayContainer} from "@angular/cdk/overlay";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 
 @Component({
+  standalone: false,
   selector: 'navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],

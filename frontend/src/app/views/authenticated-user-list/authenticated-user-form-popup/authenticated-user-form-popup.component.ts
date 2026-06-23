@@ -6,6 +6,7 @@ import {
 } from "../../../forms/authenticated-user-form/authenticated-user-form-validation-fields";
 
 @Component({
+  standalone: false,
   selector: 'authenticated-user-form-popup',
   templateUrl: './authenticated-user-form-popup.component.html',
   styleUrls: ['./authenticated-user-form-popup.component.scss'],

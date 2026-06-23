@@ -1,42 +1,62 @@
 <div [class.left]="left" [class.right]="!left" class="user-score"
-     [class.highlightParticipant]="highlightedParticipantId!=undefined"
-     [class.fightSelected]="isSelected"
-     [class.showAvatar]="participantWindowOpened">
-  <score *ngIf="!left && !substitute" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
-         [class.over]="over && !locked"
-         [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
-  <score *ngIf="!left && !substitute" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left"
-         [class.over]="over && !locked"
-         [swapTeams]="swapTeams"
-         [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
-  <fault *ngIf="!left && !substitute" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [projectMode]="projectMode"
-         [class.over]="over && !locked"
-         [over]="over" [locked]="duel.tournament.locked || locked"></fault>
-  <div *ngIf="!left && substitute" class="substitute-separation"></div>
-  <participant-picture *ngIf="showAvatar && !left" [participant]="getParticipant()" [class.over]="over && !locked"
-                       (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
-                       class="participant-picture"></participant-picture>
+  [class.highlightParticipant]="highlightedParticipantId!=undefined"
+  [class.fightSelected]="isSelected"
+  [class.showAvatar]="participantWindowOpened">
+  @if (!left && !substitute) {
+    <score [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+      [class.over]="over && !locked"
+    [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+  }
+  @if (!left && !substitute) {
+    <score [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left"
+      [class.over]="over && !locked"
+      [swapTeams]="swapTeams"
+    [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+  }
+  @if (!left && !substitute) {
+    <fault [duel]="duel" [left]="left" [swapTeams]="swapTeams" [projectMode]="projectMode"
+      [class.over]="over && !locked"
+    [over]="over" [locked]="duel.tournament.locked || locked"></fault>
+  }
+  @if (!left && substitute) {
+    <div class="substitute-separation"></div>
+  }
+  @if (showAvatar && !left) {
+    <participant-picture [participant]="getParticipant()" [class.over]="over && !locked"
+      (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
+    class="participant-picture"></participant-picture>
+  }
   <user-name [fight]="fight" [class.over]="over && !locked"
-             [duel]="duel"
-             [left]="left"
-             [memberIndex]="duelIndex"
-             [participant]="getParticipant()"
-             [swapTeams]="swapTeams"
-             [highlightedParticipantId]="highlightedParticipantId"
-             [locked]="duel.tournament.locked || locked"
-             [over]="over"
-             class="user-name"></user-name>
-  <participant-picture *ngIf="showAvatar && left" [participant]="getParticipant()" [class.over]="over && !locked"
-                       (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
-                       class="participant-picture"></participant-picture>
-  <div *ngIf="left && substitute" class="substitute-separation"></div>
-  <fault *ngIf="left && !substitute" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [class.over]="over && !locked"
-         [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></fault>
-  <score *ngIf="left && !substitute" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left"
-         [class.over]="over && !locked"
-         [swapTeams]="swapTeams"
-         [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
-  <score *ngIf="left && !substitute" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
-         [class.over]="over && !locked"
-         [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+    [duel]="duel"
+    [left]="left"
+    [memberIndex]="duelIndex"
+    [participant]="getParticipant()"
+    [swapTeams]="swapTeams"
+    [highlightedParticipantId]="highlightedParticipantId"
+    [locked]="duel.tournament.locked || locked"
+    [over]="over"
+  class="user-name"></user-name>
+  @if (showAvatar && left) {
+    <participant-picture [participant]="getParticipant()" [class.over]="over && !locked"
+      (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
+    class="participant-picture"></participant-picture>
+  }
+  @if (left && substitute) {
+    <div class="substitute-separation"></div>
+  }
+  @if (left && !substitute) {
+    <fault [duel]="duel" [left]="left" [swapTeams]="swapTeams" [class.over]="over && !locked"
+    [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></fault>
+  }
+  @if (left && !substitute) {
+    <score [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left"
+      [class.over]="over && !locked"
+      [swapTeams]="swapTeams"
+    [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+  }
+  @if (left && !substitute) {
+    <score [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+      [class.over]="over && !locked"
+    [over]="over" [locked]="duel.tournament.locked || locked" [projectMode]="projectMode"></score>
+  }
 </div>

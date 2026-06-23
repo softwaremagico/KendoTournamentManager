@@ -1,67 +1,81 @@
 <spinner-overlay [overlay]="true"></spinner-overlay>
 <ng-container *transloco="let t">
-<div class="days-selector" *ngIf="!this.club && !this.tournament" >
-  <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
-                   [placeholder]="t('daysFrom')"
-                   [type]="Type.NUMBER"
-                   [min]="0"
-                   [max]="10000"
-                   (onActionPerformed)="daysChanged()"
-  ></biit-input-text>
-  <button (click)="daysChanged()" class="day-input" biit-icon icon="refresh">
-  </button>
-</div>
-<div class="table-container">
-  <table class="competitor-ranking-table">
-    <thead>
-    <tr>
-      <th *ngIf="showIndex" class="competitor-ranking-header">#</th>
-      <th class="competitor-ranking-header">{{ 'competitor' | transloco }}</th>
-      <th class="competitor-ranking-header">{{ 'duelsWon' | transloco }}</th>
-      <th class="competitor-ranking-header">{{ 'duelsDraw' | transloco }}</th>
-      <th class="competitor-ranking-header">{{ 'hitsWon' | transloco }}</th>
-      <th *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
-          class="competitor-ranking-header">{{ 'hitsLost' | transloco }}
-      </th>
-      <th class="competitor-ranking-header">{{ 'totalFights' | transloco }}</th>
-    </tr>
-    </thead>
-    <tr *ngFor="let scoreOfCompetitor of competitorsScore; let i = index">
-      <td *ngIf="showIndex" [ngClass]="{
+  @if (!this.club && !this.tournament) {
+    <div class="days-selector" >
+      <biit-input-text id="days-selector-input" [(ngModel)]="numberOfDays"
+        [placeholder]="t('daysFrom')"
+        [type]="Type.NUMBER"
+        [min]="0"
+        [max]="10000"
+        (onActionPerformed)="daysChanged()"
+      ></biit-input-text>
+      <button (click)="daysChanged()" class="day-input" biit-icon icon="refresh">
+      </button>
+    </div>
+  }
+  <div class="table-container">
+    <table class="competitor-ranking-table">
+      <thead>
+        <tr>
+          @if (showIndex) {
+            <th class="competitor-ranking-header">#</th>
+          }
+          <th class="competitor-ranking-header">{{ 'competitor' | transloco }}</th>
+          <th class="competitor-ranking-header">{{ 'duelsWon' | transloco }}</th>
+          <th class="competitor-ranking-header">{{ 'duelsDraw' | transloco }}</th>
+          <th class="competitor-ranking-header">{{ 'hitsWon' | transloco }}</th>
+          @if (tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN) {
+            <th
+              class="competitor-ranking-header">{{ 'hitsLost' | transloco }}
+            </th>
+          }
+          <th class="competitor-ranking-header">{{ 'totalFights' | transloco }}</th>
+        </tr>
+      </thead>
+      @for (scoreOfCompetitor of competitorsScore; track scoreOfCompetitor; let i = $index) {
+        <tr>
+          @if (showIndex) {
+<td [ngClass]="{
           'selected': competitor?.id === scoreOfCompetitor.competitor.id
         }"
-          class="competitor-ranking-value">{{ i + 1 }}
-      </td>
+              class="competitor-ranking-value">{{ i + 1 }}
+            </td>
+          }
       <td [id]="scoreOfCompetitor.competitor.id" [ngClass]="{
           'selected': competitor?.id === scoreOfCompetitor.competitor.id
         }"
-          class="competitor-ranking-value competitor-name">{{ scoreOfCompetitor.competitor.lastname }}
-        , {{ scoreOfCompetitor.competitor.name }}
-      </td>
-      <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
-          class="competitor-ranking-value">{{ scoreOfCompetitor.wonDuels }}{{ (scoreOfCompetitor.untieDuels ? "*" : "") }}
-      </td>
-      <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
-          class="competitor-ranking-value">{{ scoreOfCompetitor.drawDuels }}
-      </td>
-      <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
-          class="competitor-ranking-value">{{ scoreOfCompetitor.hits }}{{ (scoreOfCompetitor.untieHits ? "*" : "") }}
-      </td>
-      <td *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN"
-          [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
-          class="competitor-ranking-value">{{ scoreOfCompetitor.hitsLost }}
-      </td>
-      <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
-          class="competitor-ranking-value">{{ scoreOfCompetitor.totalFights }}
-      </td>
-    </tr>
-  </table>
-</div>
-<div class="button-container">
-  <button biit-button (click)="downloadPDF()" *ngIf="(RbacActivity.DOWNLOAD_PDF | hasPermission)"
-          secondary>
-    {{ 'download' | transloco }}
-  </button>
-  <button biit-button (click)="closeDialog()">{{ 'close' | transloco }}</button>
-</div>
+            class="competitor-ranking-value competitor-name">{{ scoreOfCompetitor.competitor.lastname }}
+            , {{ scoreOfCompetitor.competitor.name }}
+          </td>
+          <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+            class="competitor-ranking-value">{{ scoreOfCompetitor.wonDuels }}{{ (scoreOfCompetitor.untieDuels ? "*" : "") }}
+          </td>
+          <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+            class="competitor-ranking-value">{{ scoreOfCompetitor.drawDuels }}
+          </td>
+          <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+            class="competitor-ranking-value">{{ scoreOfCompetitor.hits }}{{ (scoreOfCompetitor.untieHits ? "*" : "") }}
+          </td>
+          @if (tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN) {
+            <td
+              [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+              class="competitor-ranking-value">{{ scoreOfCompetitor.hitsLost }}
+            </td>
+          }
+          <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+            class="competitor-ranking-value">{{ scoreOfCompetitor.totalFights }}
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
+  <div class="button-container">
+    @if ((RbacActivity.DOWNLOAD_PDF | hasPermission)) {
+      <button biit-button (click)="downloadPDF()"
+        secondary>
+        {{ 'download' | transloco }}
+      </button>
+    }
+    <button biit-button (click)="closeDialog()">{{ 'close' | transloco }}</button>
+  </div>
 </ng-container>

@@ -12,6 +12,7 @@ import {MessageService} from "../../services/message.service";
 import {BiitProgressBarType, BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  standalone: false,
   selector: 'reset-password',
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss'],

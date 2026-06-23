@@ -11,6 +11,7 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 
 @Component({
+  standalone: false,
   selector: 'untie-teams',
   templateUrl: './untie-teams.component.html',
   styleUrls: ['./untie-teams.component.scss']

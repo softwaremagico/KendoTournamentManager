@@ -5,6 +5,7 @@ import {Tournament} from "../../../models/tournament";
 import {BracketsMeasures} from "./brackets-measures";
 
 @Component({
+  standalone: false,
   selector: 'tournament-brackets',
   templateUrl: './tournament-brackets.component.html',
   styleUrls: ['./tournament-brackets.component.scss']

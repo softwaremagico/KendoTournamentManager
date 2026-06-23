@@ -1,5 +1,5 @@
 import {ErrorHandler, Injectable} from "@angular/core";
-import {HttpErrorResponse} from "@angular/common/http";
+import { HttpErrorResponse } from "@angular/common/http";
 import {MessageService} from "../services/message.service";
 import {LoggerService} from "../services/logger.service";
 

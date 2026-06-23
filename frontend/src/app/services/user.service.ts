@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {catchError, map, tap} from "rxjs/operators";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {CookieService} from "ngx-cookie-service";
 import {SystemOverloadService} from "./notifications/system-overload.service";

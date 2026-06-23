@@ -3,6 +3,7 @@ import {Tournament} from "../../models/tournament";
 import {RoleType} from "../../models/role-type";
 
 @Component({
+  standalone: false,
   selector: 'role-selector',
   templateUrl: './role-selector.component.html',
   styleUrls: ['./role-selector.component.scss']

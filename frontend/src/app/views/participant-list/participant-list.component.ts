@@ -19,6 +19,7 @@ import {Constants} from "../../constants";
 import {ClubNamePipe} from "../../pipes/visualization/club-name-pipe";
 
 @Component({
+  standalone: false,
   selector: 'app-participant-list',
   templateUrl: './participant-list.component.html',
   styleUrls: ['./participant-list.component.scss'],

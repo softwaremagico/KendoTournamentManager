@@ -7,7 +7,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {ClubListComponent} from './views/club-list/club-list.component';
@@ -121,136 +121,131 @@ registerLocaleData(localeDE, "de");
 registerLocaleData(localeNL, "nl");
 registerLocaleData(localeFR, "fr");
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    ClubListComponent,
-    AuthenticatedUserListComponent,
-    PasswordsComponent,
-    TournamentStatisticsComponent,
-    ParticipantStatisticsComponent
-  ],
-  imports: [
-    NavbarModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSliderModule,
-    AppRoutingModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatMenuModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    MatSortModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatExpansionModule,
-    MatCheckboxModule,
-    MatAutocompleteModule,
-    DragDropModule,
-    IconModule,
-    MatTabsModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-    RbacModule,
-    DrawModule,
-    UserScoreModule,
-    DuelModule,
-    MatSpinnerOverlayModule,
-    FightModule,
-    UntieFightModule,
-    TimerModule,
-    CompetitorsRankingModule,
-    FightCreatorModule,
-    LeagueGeneratorModule,
-    TeamRankingModule,
-    ParticipantPictureDialogModule,
-    TournamentTeamsModule,
-    TournamentRolesModule,
-    UndrawTeamsModule,
-    FightListModule,
-    FightStatisticsPanelModule,
-    MatSlideToggleModule,
-    WebcamModule,
-    ParticipantPictureModule,
-    PictureDialogBoxModule,
-    RoleSelectorModule,
-    AchievementTileModule,
-    AchievementWallModule,
-    BarChartModule,
-    PieChartModule,
-    StackedBarsChartModule,
-    LineChartModule,
-    RadarChartModule,
-    NgApexchartsModule,
-    RadialChartModule,
-    GaugeChartModule,
-    ProgressBarModule,
-    TournamentListModule,
-    ParticipantListModule,
-    TournamentBracketsModule,
-    ShiaijoModule,
-    TournamentBracketsEditorModule,
-    TournamentGeneratorModule,
-    TournamentQrCodeModule,
-    ParticipantQrCodeModule,
-    ParticipantFightListModule,
-    BiitButtonModule,
-    BiitProgressBarModule,
-    BiitSnackbarModule,
-    TranslocoModule,
-    BiitCookiesConsentModule,
-    HasPermissionPipe,
-    KeyReversePipe,
-    BiitDatatableModule,
-    BiitIconButtonModule,
-    BiitPopupModule,
-    TournamentFormPopupModule,
-    AuthenticatedUserFormPopupModule,
-    ClubFormPopupModule,
-    AuthenticatedUserRolePopupModule
-  ],
-  providers: [
-    {
-      provide: ErrorHandler,
-      useClass: LocalErrorHandler
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HeaderInterceptor,
-      multi: true
-    }, {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    }, {
-      provide: RxStompService,
-      useFactory: rxStompServiceFactory,
-    }, {
-      provide: TRANSLOCO_CONFIG,
-      useValue: translocoConfig({
-        availableLangs: ['en', 'es', 'ca', 'it', 'nl', 'de', 'fr'],
-        defaultLang: 'en',
-        fallbackLang: 'en',
-        missingHandler: {
-          useFallbackTranslation: true
+@NgModule({ declarations: [
+        AppComponent,
+        ClubListComponent,
+        AuthenticatedUserListComponent,
+        PasswordsComponent,
+        TournamentStatisticsComponent,
+        ParticipantStatisticsComponent
+    ],
+    bootstrap: [AppComponent], imports: [NavbarModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSliderModule,
+        AppRoutingModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatMenuModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatDialogModule,
+        MatSortModule,
+        MatInputModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatCardModule,
+        MatExpansionModule,
+        MatCheckboxModule,
+        MatAutocompleteModule,
+        DragDropModule,
+        IconModule,
+        MatTabsModule,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
+        RbacModule,
+        DrawModule,
+        UserScoreModule,
+        DuelModule,
+        MatSpinnerOverlayModule,
+        FightModule,
+        UntieFightModule,
+        TimerModule,
+        CompetitorsRankingModule,
+        FightCreatorModule,
+        LeagueGeneratorModule,
+        TeamRankingModule,
+        ParticipantPictureDialogModule,
+        TournamentTeamsModule,
+        TournamentRolesModule,
+        UndrawTeamsModule,
+        FightListModule,
+        FightStatisticsPanelModule,
+        MatSlideToggleModule,
+        WebcamModule,
+        ParticipantPictureModule,
+        PictureDialogBoxModule,
+        RoleSelectorModule,
+        AchievementTileModule,
+        AchievementWallModule,
+        BarChartModule,
+        PieChartModule,
+        StackedBarsChartModule,
+        LineChartModule,
+        RadarChartModule,
+        NgApexchartsModule,
+        RadialChartModule,
+        GaugeChartModule,
+        ProgressBarModule,
+        TournamentListModule,
+        ParticipantListModule,
+        TournamentBracketsModule,
+        ShiaijoModule,
+        TournamentBracketsEditorModule,
+        TournamentGeneratorModule,
+        TournamentQrCodeModule,
+        ParticipantQrCodeModule,
+        ParticipantFightListModule,
+        BiitButtonModule,
+        BiitProgressBarModule,
+        BiitSnackbarModule,
+        TranslocoModule,
+        BiitCookiesConsentModule,
+        HasPermissionPipe,
+        KeyReversePipe,
+        BiitDatatableModule,
+        BiitIconButtonModule,
+        BiitPopupModule,
+        TournamentFormPopupModule,
+        AuthenticatedUserFormPopupModule,
+        ClubFormPopupModule,
+        AuthenticatedUserRolePopupModule], providers: [
+        {
+            provide: ErrorHandler,
+            useClass: LocalErrorHandler
         },
-        reRenderOnLangChange: true,
-        prodMode: !isDevMode()
-      })
-    },
-    RedirectGuard],
-  bootstrap: [AppComponent]
-})
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HeaderInterceptor,
+            multi: true
+        }, {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true
+        }, {
+            provide: RxStompService,
+            useFactory: rxStompServiceFactory,
+        }, {
+            provide: TRANSLOCO_CONFIG,
+            useValue: translocoConfig({
+                availableLangs: ['en', 'es', 'ca', 'it', 'nl', 'de', 'fr'],
+                defaultLang: 'en',
+                fallbackLang: 'en',
+                missingHandler: {
+                    useFallbackTranslation: true
+                },
+                reRenderOnLangChange: true,
+                prodMode: !isDevMode()
+            })
+        },
+        RedirectGuard,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
 }

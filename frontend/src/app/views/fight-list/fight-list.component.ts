@@ -34,6 +34,7 @@ import {TournamentImageType} from "../../models/tournament-image-type";
 import {FileService} from "../../services/file.service";
 
 @Component({
+  standalone: false,
   selector: 'fight-list',
   templateUrl: './fight-list.component.html',
   styleUrls: ['./fight-list.component.scss']

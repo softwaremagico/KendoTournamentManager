@@ -5,6 +5,7 @@ import {NameUtilsService} from "../../services/name-utils.service";
 import {ParticipantImage} from "../../models/participant-image.model";
 
 @Component({
+  standalone: false,
   selector: 'participant-picture',
   templateUrl: './participant-picture.component.html',
   styleUrls: ['./participant-picture.component.scss']

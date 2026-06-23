@@ -1,23 +1,29 @@
 <mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify"
-          [ngClass]="{'locked': team.locked || disableDrag}"
-          [matTooltipShowDelay]="500"
-          matTooltip="{{minify? nameUtils.getTeamMembers(team) : null}}"
-          matTooltipClass="tooltip-with-lines"
-          (click)="clickEvent.emit(team)" (keydown)="clickEvent.emit(team)">
+  [ngClass]="{'locked': team.locked || disableDrag}"
+  [matTooltipShowDelay]="500"
+  matTooltip="{{minify? nameUtils.getTeamMembers(team) : null}}"
+  matTooltipClass="tooltip-with-lines"
+  (click)="clickEvent.emit(team)" (keydown)="clickEvent.emit(team)">
   <mat-card-header class="team-card-header">
     <mat-card-title class="team-card-title">{{ team.name }}</mat-card-title>
     <mat-card-subtitle class="team-card-subtitle"></mat-card-subtitle>
-    <biit-icon *ngIf="team.locked || disableDrag" [name]="'exclamation'"
-               [svgStyle]="{backgroundColor: 'transparent'}"
-               [pathStyle]="{fill: '#001fff'}"
-               style="width: 24px; height: 24px; position: absolute; right: 16px; top: 16px;"></biit-icon>
+    @if (team.locked || disableDrag) {
+      <biit-icon [name]="'exclamation'"
+        [svgStyle]="{backgroundColor: 'transparent'}"
+        [pathStyle]="{fill: '#001fff'}"
+      style="width: 24px; height: 24px; position: absolute; right: 16px; top: 16px;"></biit-icon>
+    }
   </mat-card-header>
-  <mat-card-content class="team-card-content" *ngIf="!minify">
-    <ul class="team-card-content-list">
-      <li *ngFor="let user of team.members" class="team-member">
-        {{ user | participantNamePipe }}
-      </li>
-    </ul>
-  </mat-card-content>
+  @if (!minify) {
+    <mat-card-content class="team-card-content">
+      <ul class="team-card-content-list">
+        @for (user of team.members; track user) {
+          <li class="team-member">
+            {{ user | participantNamePipe }}
+          </li>
+        }
+      </ul>
+    </mat-card-content>
+  }
 </mat-card>
 

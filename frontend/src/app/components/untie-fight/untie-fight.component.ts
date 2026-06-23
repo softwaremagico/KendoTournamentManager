@@ -5,6 +5,7 @@ import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
 
 @Component({
+  standalone: false,
   selector: 'untie-fight',
   templateUrl: './untie-fight.component.html',
   styleUrls: ['./untie-fight.component.scss']

@@ -1,99 +1,122 @@
 <ng-container *transloco="let t">
   <div class="table-view">
     <biit-datatable #table id="participants-table"
-                    [columns]="columns"
-                    [data]="participants"
-                    [pageSize]="pageSize"
-                    [pageSizeList]="pageSizes"
-                    [loading]="loading"
-                    scrollbarH
-                    selectable
-    >
+      [columns]="columns"
+      [data]="participants"
+      [pageSize]="pageSize"
+      [pageSizeList]="pageSizes"
+      [loading]="loading"
+      scrollbarH
+      selectable
+      >
       <ng-template #actions>
-        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_PARTICIPANT | hasPermission"
-                [title]="t('participantAdd')"
-                (click)="addElement()"
-        ></button>
-        <button id="button-minus" biit-icon icon="minus" class="warning"
-                *ngIf="RbacActivity.DELETE_PARTICIPANT | hasPermission"
-                [title]="t('delete')"
-                (click)="confirmDelete=true"
-                [disabled]="!table.selectedRows.length"
-        ></button>
-        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_PARTICIPANT | hasPermission"
-                [title]="t('participantEdit')"
-                (click)="editElement(table.selectedRows[0])"
-                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
-        ></button>
-        <button id="button-camera" biit-icon icon="camera" *ngIf="RbacActivity.READ_ONE_PARTICIPANT | hasPermission"
-                [title]="t('photo')"
-                (click)="addPhoto=true"
-                [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
-        ></button>
+        @if (RbacActivity.CREATE_PARTICIPANT | hasPermission) {
+          <button id="button-plus" biit-icon icon="plus"
+            [title]="t('participantAdd')"
+            (click)="addElement()"
+          ></button>
+        }
+        @if (RbacActivity.DELETE_PARTICIPANT | hasPermission) {
+          <button id="button-minus" biit-icon icon="minus" class="warning"
+            [title]="t('delete')"
+            (click)="confirmDelete=true"
+            [disabled]="!table.selectedRows.length"
+          ></button>
+        }
+        @if (RbacActivity.READ_ONE_PARTICIPANT | hasPermission) {
+          <button id="button-edit" biit-icon icon="edit"
+            [title]="t('participantEdit')"
+            (click)="editElement(table.selectedRows[0])"
+            [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+          ></button>
+        }
+        @if (RbacActivity.READ_ONE_PARTICIPANT | hasPermission) {
+          <button id="button-camera" biit-icon icon="camera"
+            [title]="t('photo')"
+            (click)="addPhoto=true"
+            [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+          ></button>
+        }
         <mat-divider class="divider" [vertical]="true"></mat-divider>
-        <button mat-button *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
-                [title]="t('titleStatistics')"
-                (click)="openStatistics(table.selectedRows[0])"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
-        </button>
+        @if ((RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)) {
+          <button mat-button
+            [title]="t('titleStatistics')"
+            (click)="openStatistics(table.selectedRows[0])"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
+          </button>
+        }
         <mat-divider [vertical]="true" class="divider"></mat-divider>
-        <button id="competitors-ranking" mat-button *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)"
-                [title]="t('competitorsRanking')"
-                (click)="showRanking=true">
-          <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-        </button>
-        <button id="qr-code" mat-button *ngIf="(RbacActivity.SEE_QR_CODE | hasPermission)"
-                [title]="t('qrCodeHint')"
-                (click)="showQr=true"
-                [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
-          <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
-        </button>
+        @if ((RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)) {
+          <button id="competitors-ranking" mat-button
+            [title]="t('competitorsRanking')"
+            (click)="showRanking=true">
+            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+          </button>
+        }
+        @if ((RbacActivity.SEE_QR_CODE | hasPermission)) {
+          <button id="qr-code" mat-button
+            [title]="t('qrCodeHint')"
+            (click)="showQr=true"
+            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+          </button>
+        }
       </ng-template>
     </biit-datatable>
   </div>
 
-  <participant-form-popup *ngIf="target"
-                          [participant]="target"
-                          (closed)="this.target = null"
-                          (saved)="onSaved($event)"
-  />
+  @if (target) {
+    <participant-form-popup
+      [participant]="target"
+      (closed)="this.target = null"
+      (saved)="onSaved($event)"
+      />
+  }
 
-  <biit-popup id="confirmation-delete-popup" *ngIf="confirmDelete"
-              no-header
-  >
-    <div class="vertical">
-      <span
+  @if (confirmDelete) {
+    <biit-popup id="confirmation-delete-popup"
+      no-header
+      >
+      <div class="vertical">
+        <span
         [innerHTML]="'tournamentDeleteQuestion' | transloco : {name: getParticipantNames(table.selectedRows)}"></span>
-      <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
-        </button>
-        <button id="confirm-delete-button" biit-button primary
-                (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
-        </button>
+        <div class="flex-grow horizontal buttons-row">
+          <button id="confirm-cancel-button" biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}
+          </button>
+          <button id="confirm-delete-button" biit-button primary
+            (click)="deleteElements(table.selectedRows)">{{ t('delete') }}
+          </button>
+        </div>
       </div>
-    </div>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="qr-code-popup" *ngIf="showQr" no-header>
-    <participant-qr-code
-      [participant]="table.selectedRows[0]"
-      [port]="port"
+  @if (showQr) {
+    <biit-popup id="qr-code-popup" no-header>
+      <participant-qr-code
+        [participant]="table.selectedRows[0]"
+        [port]="port"
       (closed)="showQr=false"></participant-qr-code>
-  </biit-popup>
+    </biit-popup>
+  }
 
 
-  <biit-popup id="ranking-popup" *ngIf="showRanking"
-              [title]="t('competitorsRanking')">
-    <competitors-ranking
-      [competitor]="table.selectedRows[0]"
-      [showIndex]="true"
+  @if (showRanking) {
+    <biit-popup id="ranking-popup"
+      [title]="t('competitorsRanking')">
+      <competitors-ranking
+        [competitor]="table.selectedRows[0]"
+        [showIndex]="true"
       (onClosed)="showRanking=false"></competitors-ranking>
-  </biit-popup>
+    </biit-popup>
+  }
 
-  <biit-popup id="photo-popup" *ngIf="addPhoto" no-header>
-    <participant-picture
-      [participant]="table.selectedRows[0]"
+  @if (addPhoto) {
+    <biit-popup id="photo-popup" no-header>
+      <participant-picture
+        [participant]="table.selectedRows[0]"
       (onClosed)="addPhoto=false"></participant-picture>
-  </biit-popup>
+    </biit-popup>
+  }
 </ng-container>

@@ -15,6 +15,7 @@ import {Participant} from "../../../../models/participant";
 import {TournamentService} from "../../../../services/tournament.service";
 
 @Component({
+  standalone: false,
   selector: 'tournament-images',
   templateUrl: './tournament-images.component.html',
   styleUrls: ['./tournament-images.component.scss']

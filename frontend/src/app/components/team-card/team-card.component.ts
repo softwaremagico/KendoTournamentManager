@@ -3,6 +3,7 @@ import {Team} from "../../models/team";
 import {NameUtilsService} from "../../services/name-utils.service";
 
 @Component({
+  standalone: false,
   selector: 'team-card',
   templateUrl: './team-card.component.html',
   styleUrls: ['./team-card.component.scss']

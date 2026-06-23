@@ -15,6 +15,7 @@ import {DatePipe} from "@angular/common";
 import {Constants} from "../../constants";
 
 @Component({
+  standalone: false,
   selector: 'app-authenticated-user-list',
   templateUrl: './authenticated-user-list.component.html',
   styleUrls: ['./authenticated-user-list.component.scss'],

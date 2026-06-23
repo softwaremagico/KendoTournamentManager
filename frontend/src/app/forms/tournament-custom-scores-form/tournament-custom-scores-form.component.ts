@@ -7,6 +7,7 @@ import {TournamentFormValidationFields} from "../tournament-form/tournament-form
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
+  standalone: false,
   selector: 'tournament-custom-scores-form',
   templateUrl: './tournament-custom-scores-form.component.html',
   styleUrls: ['./tournament-custom-scores-form.component.scss']
