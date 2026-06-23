@@ -9,7 +9,9 @@
             <span (dblclick)="setMinutesEditable(true)">{{ toDoubleDigit(minutes) }}</span>
           }
           @if (minutesEditable) {
+            <label class="visually-hidden" for="timer-minutes-input">{{ t('minutes') }}</label>
             <input (keyup)="validateInputMinutes($event)" (keyup.enter)="setMinutesEditable(false)"
+              id="timer-minutes-input"
               [value]="this.minutes"
               class="timer-edition timer-edition-minutes"
               max="20" min="0" oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
@@ -21,7 +23,9 @@
             <span (dblclick)="setSecondsEditable(true)">{{ toDoubleDigit(seconds) }}</span>
           }
           @if (secondsEditable) {
+            <label class="visually-hidden" for="timer-seconds-input">{{ t('seconds') }}</label>
             <input (keyup)="validateInputSeconds($event)" (keyup.enter)="setSecondsEditable(false)"
+              id="timer-seconds-input"
               [value]="this.seconds"
               class="timer-edition timer-edition-seconds"
               max="59" min="0" oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"

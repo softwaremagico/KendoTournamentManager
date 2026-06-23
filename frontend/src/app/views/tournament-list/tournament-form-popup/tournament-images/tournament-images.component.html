@@ -26,7 +26,8 @@
             [icon]="'upload_general'">
           </button>
         }
-        <input #fileInputBanner (change)="handleFileInput($event, TournamentImageType.BANNER)"
+        <label class="visually-hidden" for="tournament-banner-file-input">{{ t('upload') }}</label>
+        <input id="tournament-banner-file-input" #fileInputBanner (change)="handleFileInput($event, TournamentImageType.BANNER)"
           accept=".jpg,.jpeg,.png" style="display:none;"
           type="file"/>
         @if ((RbacActivity.UPLOAD_TOURNAMENT_BANNER | hasPermission)) {
@@ -80,7 +81,8 @@
             [icon]="'upload_general'">
           </button>
         }
-        <input #fileInputDiploma (change)="handleFileInput($event, TournamentImageType.DIPLOMA)"
+        <label class="visually-hidden" for="tournament-diploma-file-input">{{ t('upload') }}</label>
+        <input id="tournament-diploma-file-input" #fileInputDiploma (change)="handleFileInput($event, TournamentImageType.DIPLOMA)"
           accept=".jpg,.jpeg,.png" style="display:none;"
           type="file"/>
         @if ((RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | hasPermission)) {
@@ -120,7 +122,8 @@
             [icon]="'upload_general'">
           </button>
         }
-        <input #fileInputAccreditation (change)="handleFileInput($event, TournamentImageType.ACCREDITATION)"
+        <label class="visually-hidden" for="tournament-accreditation-file-input">{{ t('upload') }}</label>
+        <input id="tournament-accreditation-file-input" #fileInputAccreditation (change)="handleFileInput($event, TournamentImageType.ACCREDITATION)"
           accept=".jpg,.jpeg,.png" style="display:none;"
           type="file"/>
         @if ((RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | hasPermission)) {
@@ -160,7 +163,8 @@
             [icon]="'upload_general'">
           </button>
         }
-        <input #fileInputPhoto (change)="handleFileInput($event, TournamentImageType.PHOTO)"
+        <label class="visually-hidden" for="tournament-photo-file-input">{{ t('upload') }}</label>
+        <input id="tournament-photo-file-input" #fileInputPhoto (change)="handleFileInput($event, TournamentImageType.PHOTO)"
           accept=".jpg,.jpeg,.png" style="display:none;"
           type="file"/>
         @if ((RbacActivity.UPLOAD_TOURNAMENT_PHOTO | hasPermission)) {
