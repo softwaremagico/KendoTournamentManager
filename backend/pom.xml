@@ -104,6 +104,9 @@
         <qr-code.version>0.4.0</qr-code.version>
         <apache-batik.version>1.17</apache-batik.version>
         <pitest-maven.version>1.15.0</pitest-maven.version>
+        <jacoco.version>0.8.15</jacoco.version>
+        <!-- JaCoCo argLine placeholder — Surefire picks this up automatically -->
+        <argLine></argLine>
     </properties>
 
     <dependencyManagement>
@@ -289,6 +292,28 @@
                     </excludedClasses>
                     <verbose>false</verbose>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <!-- Prepara el agente JaCoCo antes de los tests -->
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Genera el reporte HTML/XML/CSV por módulo después de los tests -->
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

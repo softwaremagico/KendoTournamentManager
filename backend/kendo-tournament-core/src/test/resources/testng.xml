@@ -78,6 +78,10 @@
             <class name="com.softwaremagico.kt.core.tests.GroupTreeOddTeamsAsapTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
+            <class name="com.softwaremagico.kt.core.providers.GroupProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TournamentExtraPropertyProviderTest"/>
+            <class name="com.softwaremagico.kt.core.controller.GroupControllerTest"/>
+            <class name="com.softwaremagico.kt.core.tournaments.LeagueHandlerTest"/>
             <class name="com.softwaremagico.kt.core.tests.QrTests"/>
             <class name="com.softwaremagico.kt.core.tests.WorstNightmareTest"/>
             <class name="com.softwaremagico.kt.core.tests.ValidationTests"/>
