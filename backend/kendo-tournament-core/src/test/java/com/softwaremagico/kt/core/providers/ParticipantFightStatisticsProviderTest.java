@@ -365,7 +365,7 @@ public class ParticipantFightStatisticsProviderTest {
     public void get_shouldHandleNullScoreTime() {
         Participant participant = createParticipant(1, "Fighter One");
         Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
-        duel.setCompetitor1ScoreTime(List.of(null, 100, null));
+        duel.setCompetitor1ScoreTime(new ArrayList<>(java.util.Arrays.asList(null, 100, null)));
 
         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
@@ -391,6 +391,120 @@ public class ParticipantFightStatisticsProviderTest {
         assertEquals(result.getFaults(), 0L);
     }
 
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldTrackCompetitor2TimesDurationAndFaults() {
+        Participant participant = createParticipant(2, "Fighter Two");
+        Participant opponent = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(opponent, participant);
+        duel.setCompetitor1Score(List.of(Score.MEN));
+        duel.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+        duel.setCompetitor1ScoreTime(List.of(80));
+        duel.setCompetitor2ScoreTime(List.of(35));
+        duel.setCompetitor1Fault(true);
+        duel.setCompetitor2Fault(true);
+        duel.setDuration(150);
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getWonDuels(), 1L);
+        assertEquals(result.getQuickestHit(), 35);
+        assertEquals(result.getQuickestReceivedHit(), 80);
+        assertEquals(result.getTotalDuelsTime(), 150L);
+        assertEquals(result.getAverageWinTime(), 150L);
+        assertEquals(result.getFaults(), 1L);
+        assertEquals(result.getReceivedFaults(), 1L);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldCalculateAverageLostTimeWhenOpponentIsWinner() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Participant opponent = createParticipant(2, "Fighter Two");
+        Duel duel = createDuel(participant, opponent);
+        duel.setCompetitor1Score(List.of(Score.MEN));
+        duel.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+        duel.setDuration(140);
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getLostDuels(), 1L);
+        assertEquals(result.getAverageLostTime(), 140L);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldSetAverageWinTimeToZeroWhenNoWonDuelsWithValidDuration() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+        duel.setCompetitor1Score(List.of(Score.IPPON, Score.IPPON));
+        duel.setCompetitor2Score(List.of(Score.MEN));
+        duel.setDuration(1);
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getWonDuels(), 1L);
+        assertEquals(result.getAverageWinTime(), 0L);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldSetAverageLostTimeToZeroWhenNoLostDuelsWithValidDuration() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Participant opponent = createParticipant(2, "Fighter Two");
+        Duel duel = createDuel(participant, opponent);
+        duel.setCompetitor1Score(List.of(Score.MEN));
+        duel.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+        duel.setDuration(1);
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getLostDuels(), 1L);
+        assertEquals(result.getAverageLostTime(), 0L);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldNotSetQuickestHitWhenEmptyScoreTime() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+        duel.setCompetitor1ScoreTime(new ArrayList<>());
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getQuickestHit(), null);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldNotSetQuickestReceivedHitWhenEmptyReceiverScoreTime() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+        duel.setCompetitor2ScoreTime(new ArrayList<>());
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getQuickestReceivedHit(), null);
+    }
+
     // Helper methods
 
     private Participant createParticipant(int id, String name) {
@@ -413,11 +527,4 @@ public class ParticipantFightStatisticsProviderTest {
         return duel;
     }
 }
-
-
-
-
-
-
-
 

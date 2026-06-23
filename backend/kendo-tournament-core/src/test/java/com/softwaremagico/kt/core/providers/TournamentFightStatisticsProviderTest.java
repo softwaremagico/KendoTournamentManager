@@ -46,6 +46,7 @@ import java.util.List;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -87,8 +88,7 @@ public class TournamentFightStatisticsProviderTest {
 
     @Test(groups = "tournamentFightStatistics")
     public void estimate_shouldReturnNullWhenTournamentIsNull() {
-        TournamentFightStatistics result = provider.estimate(null);
-        assertNull(result);
+        assertThrows(NullPointerException.class, () -> provider.estimate((Tournament) null));
     }
 
     @Test(groups = "tournamentFightStatistics")
@@ -137,6 +137,7 @@ public class TournamentFightStatisticsProviderTest {
     @Test(groups = "tournamentFightStatistics")
     public void estimateByMembers_shouldFilterOnlyCompetitors() {
         Tournament tournament = createTournament();
+        tournament.setTeamSize(2);
         List<Role> mixedRoles = createMixedRoles(tournament);
 
         when(mockRoleProvider.getAll(tournament)).thenReturn(mixedRoles);
@@ -186,8 +187,109 @@ public class TournamentFightStatisticsProviderTest {
         TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
 
         assertNotNull(result);
-        assertEquals(result.getFightsNumber(), 6L);
+        assertEquals(result.getFightsNumber(), 4L);
         assertEquals(result.getFightsByTeam(), 2L);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLeagueStatistics_shouldNotEstimateTimeWhenDurationAverageIsNull() {
+        List<Team> teams = createTeams(null, 4);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(null);
+
+        TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getEstimatedTime());
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLeagueStatistics_shouldEstimateTimeWhenDurationAverageIsNegative() {
+        List<Team> teams = createTeams(null, 4);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(-10L);
+
+        TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getEstimatedTime());
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLoopStatistics_shouldUseDefaultWhenPropertyIsNull() {
+        Tournament tournament = createTournament();
+        tournament.setType(TournamentType.LOOP);
+        List<Team> teams = createTeams(tournament, 3);
+
+        when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                .thenReturn(null);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+        TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+        assertNotNull(result);
+        assertEquals(result.getFightsNumber(), 4L);
+        assertEquals(result.getFightsByTeam(), 2L);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLoopStatistics_shouldSetEstimatedTimeToZeroWhenDurationAverageIsNegative() {
+        Tournament tournament = createTournament();
+        tournament.setType(TournamentType.LOOP);
+        List<Team> teams = createTeams(tournament, 3);
+        TournamentExtraProperty property = new TournamentExtraProperty();
+        property.setPropertyValue("false");
+
+        when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                .thenReturn(property);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(-10L);
+
+        TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+        assertNotNull(result);
+        assertEquals(result.getEstimatedTime(), 0L);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLoopStatistics_shouldNotSetEstimatedTimeWhenDurationAverageIsNull() {
+        Tournament tournament = createTournament();
+        tournament.setType(TournamentType.LOOP);
+        List<Team> teams = createTeams(tournament, 3);
+        TournamentExtraProperty property = new TournamentExtraProperty();
+        property.setPropertyValue("false");
+
+        when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                .thenReturn(property);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(null);
+
+        TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getEstimatedTime());
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void get_shouldSetFightsByTeamToZeroWhenNoTeams() {
+        Tournament tournament = createTournament();
+
+        when(mockFightProvider.count(tournament)).thenReturn(3L);
+        when(mockTeamProvider.count(tournament)).thenReturn(0L);
+        when(mockDuelProvider.count(tournament)).thenReturn(0L);
+        when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(180L);
+        when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(0L);
+        when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(0L);
+        when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(0L);
+        when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(0L);
+        when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(0L);
+        when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(0L);
+        when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(0L);
+        when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(null);
+        when(mockDuelProvider.getLastDuel(tournament)).thenReturn(null);
+        when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(0L);
+        when(mockDuelProvider.countFaults(tournament)).thenReturn(0L);
+
+        TournamentFightStatistics result = provider.get(tournament);
+
+        assertNotNull(result);
+        assertEquals(result.getFightsByTeam(), 0L);
     }
 
     @Test(groups = "tournamentFightStatistics")
@@ -311,6 +413,15 @@ public class TournamentFightStatisticsProviderTest {
     }
 
     @Test(groups = "tournamentFightStatistics")
+    public void estimate_shouldHandleNullTournamentOnFullSignature() {
+        List<Team> teams = createTeams(null, 2);
+
+        TournamentFightStatistics result = provider.estimate(null, 3, teams);
+
+        assertNull(result);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
     public void estimate_shouldHandleLessThanTwoTeams() {
         Tournament tournament = createTournament();
         List<Team> oneTeam = createTeams(tournament, 1);
@@ -342,6 +453,104 @@ public class TournamentFightStatisticsProviderTest {
         assertNull(result);
     }
 
+    @Test(groups = "tournamentFightStatistics")
+    public void estimate_shouldDispatchToLoopStatistics() {
+        Tournament tournament = createTournament();
+        tournament.setType(TournamentType.LOOP);
+        List<Team> teams = createTeams(tournament, 3);
+        TournamentExtraProperty property = new TournamentExtraProperty();
+        property.setPropertyValue("false");
+
+        when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                .thenReturn(property);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+        TournamentFightStatistics result = provider.estimate(tournament, 3, teams);
+
+        assertNotNull(result);
+        assertEquals(result.getFightsByTeam(), 4L);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLeagueStatistics_shouldNotEstimateTimeWhenDurationAverageIsZero() {
+        List<Team> teams = createTeams(null, 4);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(0L);
+
+        TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getEstimatedTime());
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLeagueStatistics_shouldNotEstimateTimeWhenDuelsNumberIsNull() {
+        List<Team> teams = createTeamsWithoutMembers(null, 2);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+        TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getDuelsNumber());
+        assertNull(result.getEstimatedTime());
+        assertNull(result.getAverageTime());
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLoopStatistics_shouldSetEstimatedTimeToZeroWhenDuelsNumberIsNull() {
+        Tournament tournament = createTournament();
+        tournament.setType(TournamentType.LOOP);
+        List<Team> teams = createTeamsWithoutMembers(tournament, 2);
+        TournamentExtraProperty property = new TournamentExtraProperty();
+        property.setPropertyValue("false");
+
+        when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                .thenReturn(property);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+        TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getDuelsNumber());
+        assertEquals(result.getEstimatedTime(), 0L);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLoopStatistics_shouldSetEstimatedTimeToZeroWhenDuelsNumberIsNullAndAvoidDuplicatesEnabled() {
+        Tournament tournament = createTournament();
+        tournament.setType(TournamentType.LOOP);
+        List<Team> teams = createTeamsWithoutMembers(tournament, 2);
+        TournamentExtraProperty property = new TournamentExtraProperty();
+        property.setPropertyValue("true");
+
+        when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                .thenReturn(property);
+        when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+        TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getDuelsNumber());
+        assertEquals(result.getEstimatedTime(), 0L);
+    }
+
+    @Test(groups = "tournamentFightStatistics")
+    public void estimateLeagueStatistics_shouldHandleNullFightsNumberInEstimatedTimeCalculation() {
+        List<Team> teams = new ArrayList<>() {
+            @Override
+            public int size() {
+                return Integer.MIN_VALUE;
+            }
+        };
+        when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+        TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+        assertNotNull(result);
+        assertNull(result.getFightsNumber());
+        assertEquals(result.getDuelsNumber(), 0L);
+        assertEquals(result.getEstimatedTime(), 0L);
+    }
+
     // Helper methods
 
     private Tournament createTournament() {
@@ -365,6 +574,14 @@ public class TournamentFightStatisticsProviderTest {
                 team.addMember(member);
             }
             teams.add(team);
+        }
+        return teams;
+    }
+
+    private List<Team> createTeamsWithoutMembers(Tournament tournament, int count) {
+        List<Team> teams = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            teams.add(new Team("EmptyTeam" + i, tournament));
         }
         return teams;
     }
@@ -407,5 +624,4 @@ public class TournamentFightStatisticsProviderTest {
         return roles;
     }
 }
-
 
