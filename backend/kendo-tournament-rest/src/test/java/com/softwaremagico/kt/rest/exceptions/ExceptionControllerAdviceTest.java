@@ -23,7 +23,11 @@ package com.softwaremagico.kt.rest.exceptions;
 
 import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
 import com.softwaremagico.kt.core.exceptions.InvalidCsvRowException;
+import com.softwaremagico.kt.core.exceptions.InvalidFightException;
+import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
+import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
+import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.core.MethodParameter;
@@ -32,6 +36,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -136,6 +141,132 @@ public class ExceptionControllerAdviceTest {
         assertEquals(body.getCode(), "input_data_is_invalid");
         assertTrue(body.getMessage().contains("username=must not be blank"));
         assertFalse(body.getMessage().contains("email="));
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleUnknownException() {
+        ResponseEntity<Object> response = advice.unknownException(new RuntimeException("boom"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "internal_server_error");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleBadRequestException() {
+        ResponseEntity<Object> response = advice.badRequestException(new BadRequestException(getClass(), "bad request"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "bad_request");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleAccessDeniedException() {
+        ResponseEntity<Object> response = advice.accessDeniedException(new AccessDeniedException("denied"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_credentials");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleUserBlockedException() {
+        ResponseEntity<Object> response = advice.userBlockedException(new UserBlockedException(getClass(), "blocked"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "user_blocked");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleLevelNotFinishedException() {
+        ResponseEntity<Object> response = advice.levelNotFinishedException(new LevelNotFinishedException(getClass(), "level not finished"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.NO_CONTENT);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "level_not_finished");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidMacException() {
+        ResponseEntity<Object> response = advice.invalidMacException(new InvalidMacException(getClass(), "invalid mac"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.CONFLICT);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_mac");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidIpException() {
+        ResponseEntity<Object> response = advice.invalidIpException(new InvalidIpException(getClass(), "invalid ip"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_ip");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidJwtException() {
+        ResponseEntity<Object> response = advice.invalidJwtException(new InvalidJwtException(getClass(), "invalid jwt"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_jwt");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleGuestDisabledException() {
+        ResponseEntity<Object> response = advice.guestDisabledException(new GuestDisabledException(getClass(), "guest disabled"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "guest_disabled");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleTokenExpiredException() {
+        ResponseEntity<Object> response = advice.tokenExpiredException(new TokenExpiredException(getClass(), "expired"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "token_expired");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidRequestException() {
+        ResponseEntity<Object> response = advice.invalidRequestException(new InvalidRequestException(getClass(), "invalid request"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_request");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidGroupException() {
+        ResponseEntity<Object> response = advice.invalidGroupException(new InvalidGroupException(getClass(), "invalid group"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_group");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidFightException() {
+        ResponseEntity<Object> response = advice.invalidFightException(new InvalidFightException(getClass(), "invalid fight"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_fight");
+    }
+
+    @Test(groups = "exceptionAdvice")
+    public void shouldHandleInvalidPasswordException() {
+        ResponseEntity<Object> response = advice.invalidPasswordException(new InvalidPasswordException(getClass(), "invalid password"));
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertEquals(body.getCode(), "invalid_password");
     }
 
     private static class DummyDto {

@@ -26,6 +26,8 @@
                 <include name="exceptionAdvice"/>
                 <include name="websocketMessages"/>
                 <include name="restServicesUnit"/>
+                <include name="duelServices"/>
+                <include name="statisticsServices"/>
             </run>
         </groups>
         <classes>
@@ -49,10 +51,15 @@
             <class name="com.softwaremagico.kt.rest.security.WebSecurityConfigTests"/>
             <class name="com.softwaremagico.kt.rest.exceptions.ExceptionControllerAdviceTest"/>
             <class name="com.softwaremagico.kt.rest.services.ClubServicesUnitTest"/>
+            <class name="com.softwaremagico.kt.rest.services.DuelServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.FightServicesUnitTest"/>
+            <class name="com.softwaremagico.kt.rest.services.GroupServicesUnitTest"/>
             <class name="com.softwaremagico.kt.rest.services.InfoTest"/>
             <class name="com.softwaremagico.kt.rest.services.QrServiceUnitTests"/>
             <class name="com.softwaremagico.kt.rest.services.RankingServicesUnitTests"/>
+            <class name="com.softwaremagico.kt.rest.services.StatisticsServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.TeamServicesUnitTest"/>
+            <class name="com.softwaremagico.kt.rest.services.TournamentServicesUnitTest"/>
             <class name="com.softwaremagico.kt.websockets.BasicWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.WebSocketControllerUnitTests"/>
