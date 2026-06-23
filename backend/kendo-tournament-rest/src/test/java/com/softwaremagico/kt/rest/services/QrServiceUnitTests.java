@@ -37,6 +37,7 @@ import org.springframework.http.MediaType;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
 
 @Test(groups = "restServicesUnit")
 public class QrServiceUnitTests {
@@ -82,6 +84,23 @@ public class QrServiceUnitTests {
     }
 
     @Test
+    public void shouldGenerateGuestQrWithPortJsonAndImage() {
+        final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+        qrCodeDTO.setData(new byte[]{4, 5, 6});
+        when(qrController.generateGuestQrCodeForTournamentFights(10, 4200, false)).thenReturn(qrCodeDTO);
+
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+
+        final QrCodeDTO dto = qrService.generateGuestQrCodeForTournamentFights(10, 4200, Optional.empty(), response, request);
+        final byte[] image = qrService.generateGuestQrCodeForTournamentFightsImage(10, 4200, Optional.empty(), response, request);
+
+        assertNotNull(dto);
+        assertEquals(image, new byte[]{4, 5, 6});
+        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+    }
+
+    @Test
     public void shouldGenerateQrAttendanceImageAndSetHeaders() {
         final QrCodeDTO qrCodeDTO = new QrCodeDTO();
         qrCodeDTO.setData(new byte[]{9, 8});
@@ -92,6 +111,20 @@ public class QrServiceUnitTests {
 
         assertEquals(bytes, new byte[]{9, 8});
         verify(response).setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
+        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+    }
+
+    @Test
+    public void shouldGenerateQrAttendanceSvgAndSetHeaders() {
+        final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+        qrCodeDTO.setData("<svg>ok</svg>".getBytes(StandardCharsets.UTF_8));
+        when(qrController.generateQrCodeAsSvg("hello", false)).thenReturn(qrCodeDTO);
+
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final String svg = qrService.generateQrForAttendanceSvg("hello", Optional.empty(), response, mock(HttpServletRequest.class));
+
+        assertEquals(svg, "<svg>ok</svg>");
+        verify(response).setHeader(HttpHeaders.CONTENT_TYPE, "image/svg+xml");
         verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
     }
 
@@ -110,6 +143,25 @@ public class QrServiceUnitTests {
         final byte[] generated = qrService.getParticipantDiplomaFromTournamentAsPdf(1, Locale.ENGLISH, response, mock(HttpServletRequest.class));
 
         assertEquals(generated, new byte[]{7, 7, 7});
+        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+    }
+
+    @Test
+    public void shouldGenerateTournamentQrPdfWithPortEndpoint() throws Exception {
+        final TournamentDTO tournamentDTO = new TournamentDTO();
+        tournamentDTO.setId(2);
+        tournamentDTO.setName("TournamentNamePort");
+        when(tournamentController.get(2)).thenReturn(tournamentDTO);
+
+        final TournamentQr tournamentQr = mock(TournamentQr.class);
+        // Current implementation ignores received port and passes null to pdf generator.
+        when(pdfController.generateTournamentQr(any(Locale.class), eq(tournamentDTO), eq(null))).thenReturn(tournamentQr);
+        when(tournamentQr.generate()).thenReturn(new byte[]{8, 8, 8});
+
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final byte[] generated = qrService.getParticipantDiplomaFromTournamentAsPdf(2, 4200, Locale.ENGLISH, response, mock(HttpServletRequest.class));
+
+        assertEquals(generated, new byte[]{8, 8, 8});
         verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
     }
 
@@ -138,5 +190,36 @@ public class QrServiceUnitTests {
 
         qrService.getParticipantDiplomaFromTournamentAsPdf(1, Locale.ENGLISH, mock(HttpServletResponse.class), mock(HttpServletRequest.class));
     }
-}
 
+    @Test
+    public void shouldGenerateParticipantQrWithoutAndWithPort() {
+        final QrCodeDTO withoutPort = new QrCodeDTO();
+        withoutPort.setData(new byte[]{1});
+        final QrCodeDTO withPort = new QrCodeDTO();
+        withPort.setData(new byte[]{2});
+
+        when(qrController.generateParticipantQrCodeForStatistics(77, null, true)).thenReturn(withoutPort);
+        when(qrController.generateParticipantQrCodeForStatistics(77, 4300, false)).thenReturn(withPort);
+
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+
+        final QrCodeDTO dto1 = qrService.generateParticipantQrCodeForStatistics(77, Optional.of(true), response, request);
+        final QrCodeDTO dto2 = qrService.generateParticipantQrCodeForStatisticsWithPort(77, 4300, Optional.empty(), response, request);
+
+        assertSame(dto1, withoutPort);
+        assertSame(dto2, withPort);
+    }
+
+    @Test
+    public void shouldUseNightModeDefaultFalseOnGuestJsonWithoutPort() {
+        final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+        qrCodeDTO.setData(new byte[]{3, 3, 3});
+        when(qrController.generateGuestQrCodeForTournamentFights(11, null, false)).thenReturn(qrCodeDTO);
+
+        final QrCodeDTO dto = qrService.generateGuestQrCodeForTournamentFights(11, Optional.empty(), mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+
+        assertSame(dto, qrCodeDTO);
+        verify(qrController).generateGuestQrCodeForTournamentFights(11, null, false);
+    }
+}
