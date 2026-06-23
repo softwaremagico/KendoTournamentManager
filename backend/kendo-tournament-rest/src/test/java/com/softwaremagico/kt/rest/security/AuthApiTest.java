@@ -56,11 +56,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Test(groups = {"authApiTests"})
 public class AuthApiTest {
@@ -89,8 +85,9 @@ public class AuthApiTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		authApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController, bruteForceService,
-				authenticatedUserProvider, participantController, tournamentProvider, "false");
+		this.authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil, this.authenticatedUserController,
+				this.bruteForceService, this.authenticatedUserProvider, this.participantController,
+				this.tournamentProvider, "false");
 	}
 
 	// ========== Login Security Tests ==========
@@ -101,17 +98,17 @@ public class AuthApiTest {
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(true);
-		when(bruteForceService.getElementsTime("192.168.1.1")).thenReturn(10L);
-		when(bruteForceService.getExpirationTime()).thenReturn(300L);
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(true);
+		when(this.bruteForceService.getElementsTime("192.168.1.1")).thenReturn(10L);
+		when(this.bruteForceService.getExpirationTime()).thenReturn(300L);
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
 		assertThat(response.getHeaders().get(HttpHeaders.RETRY_AFTER)).isNotEmpty();
-		verify(bruteForceService, times(1)).isBlocked("192.168.1.1");
+		verify(this.bruteForceService, times(1)).isBlocked("192.168.1.1");
 	}
 
 	@Test
@@ -123,24 +120,24 @@ public class AuthApiTest {
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenReturn(authentication);
-		when(authentication.getName()).thenReturn("testuser");
-		when(authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
-		when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("jwt-token-value");
-		when(jwtTokenUtil.getSession("jwt-token-value")).thenReturn("session-123");
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenReturn(this.authentication);
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("jwt-token-value");
+		when(this.jwtTokenUtil.getSession("jwt-token-value")).thenReturn("session-123");
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("jwt-token-value");
 		assertThat(response.getHeaders().get(AuthApi.SESSION_HEADER)).containsExactly("session-123");
 		assertThat(response.getHeaders().get(HttpHeaders.EXPIRES)).containsExactly("3600000");
-		verify(bruteForceService, times(1)).loginSucceeded("192.168.1.1");
+		verify(this.bruteForceService, times(1)).loginSucceeded("192.168.1.1");
 	}
 
 	@Test
@@ -149,17 +146,17 @@ public class AuthApiTest {
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("wrongpassword");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
-		when(authenticatedUserController.countUsers()).thenReturn(1L);
+		when(this.authenticatedUserController.countUsers()).thenReturn(1L);
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-		verify(bruteForceService, times(1)).loginFailed("192.168.1.1");
+		verify(this.bruteForceService, times(1)).loginFailed("192.168.1.1");
 	}
 
 	@Test
@@ -171,21 +168,22 @@ public class AuthApiTest {
 		final AuthenticatedUser defaultAdmin = new AuthenticatedUser();
 		defaultAdmin.setUsername("admin");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
-		when(authenticatedUserController.countUsers()).thenReturn(0L);
-		when(authenticatedUserController.createUser(null, "admin", "Default", "Admin", "initialpassword", AvailableRole.ADMIN))
-				.thenReturn(defaultAdmin);
-		when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(jwtTokenUtil.generateAccessToken(defaultAdmin, "192.168.1.1")).thenReturn("admin-jwt");
+		when(this.authenticatedUserController.countUsers()).thenReturn(0L);
+		when(this.authenticatedUserController.createUser(null, "admin", "Default", "Admin", "initialpassword",
+				AvailableRole.ADMIN)).thenReturn(defaultAdmin);
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(defaultAdmin, "192.168.1.1")).thenReturn("admin-jwt");
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-		verify(authenticatedUserController, times(1)).createUser(null, "admin", "Default", "Admin", "initialpassword", AvailableRole.ADMIN);
+		verify(this.authenticatedUserController, times(1)).createUser(null, "admin", "Default", "Admin",
+				"initialpassword", AvailableRole.ADMIN);
 	}
 
 	@Test
@@ -194,14 +192,14 @@ public class AuthApiTest {
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1,10.0.0.2,10.0.0.3");
-		when(bruteForceService.isBlocked("10.0.0.1")).thenReturn(true);
-		when(bruteForceService.getElementsTime("10.0.0.1")).thenReturn(5L);
-		when(bruteForceService.getExpirationTime()).thenReturn(100L);
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1,10.0.0.2,10.0.0.3");
+		when(this.bruteForceService.isBlocked("10.0.0.1")).thenReturn(true);
+		when(this.bruteForceService.getElementsTime("10.0.0.1")).thenReturn(5L);
+		when(this.bruteForceService.getExpirationTime()).thenReturn(100L);
 
-		authApi.login(authRequest, httpRequest);
+		this.authApi.login(authRequest, this.httpRequest);
 
-		verify(bruteForceService, times(1)).isBlocked("10.0.0.1");
+		verify(this.bruteForceService, times(1)).isBlocked("10.0.0.1");
 	}
 
 	@Test
@@ -210,15 +208,15 @@ public class AuthApiTest {
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenReturn(authentication);
-		when(authentication.getName()).thenReturn("testuser");
-		when(authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.empty());
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenReturn(this.authentication);
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.empty());
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
@@ -230,33 +228,33 @@ public class AuthApiTest {
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
 
-		assertThatThrownBy(() -> authApi.loginAsGuest(guestRequest, httpRequest))
-				.isInstanceOf(GuestDisabledException.class)
-				.hasMessageContaining("disabled");
+		assertThatThrownBy(() -> this.authApi.loginAsGuest(guestRequest, this.httpRequest))
+				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("disabled");
 	}
 
 	@Test
 	public void testLoginAsGuestWithGuestUserNotFound() {
-		final AuthApi guestEnabledApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-				bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, httpRequest))
-				.isInstanceOf(GuestDisabledException.class)
-				.hasMessageContaining("not found");
+		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
+				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("not found");
 	}
 
 	@Test
 	public void testLoginAsGuestWithLockedTournament() {
-		final AuthApi guestEnabledApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-				bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
 		final AuthenticatedUser guestUser = new AuthenticatedUser();
 		guestUser.setUsername(AuthenticatedUserProvider.GUEST_USER);
@@ -268,21 +266,21 @@ public class AuthApiTest {
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.of(guestUser));
-		when(tournamentProvider.get(1)).thenReturn(Optional.of(lockedTournament));
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(lockedTournament));
 
-		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, httpRequest))
-				.isInstanceOf(GuestDisabledException.class)
-				.hasMessageContaining("finished");
+		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
+				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("finished");
 	}
 
 	@Test
 	public void testLoginAsGuestWithUnlockedTournament() {
-		final AuthApi guestEnabledApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-				bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
 		final AuthenticatedUser guestUser = new AuthenticatedUser();
 		guestUser.setUsername(AuthenticatedUserProvider.GUEST_USER);
@@ -294,16 +292,16 @@ public class AuthApiTest {
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.of(guestUser));
-		when(tournamentProvider.get(1)).thenReturn(Optional.of(unlockedTournament));
-		when(jwtTokenUtil.getJwtGuestExpirationTime()).thenReturn(1800000L);
-		when(jwtTokenUtil.generateAccessToken(guestUser, "192.168.1.1", 1800000L)).thenReturn("guest-jwt");
-		when(jwtTokenUtil.getSession("guest-jwt")).thenReturn("guest-session");
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(unlockedTournament));
+		when(this.jwtTokenUtil.getJwtGuestExpirationTime()).thenReturn(1800000L);
+		when(this.jwtTokenUtil.generateAccessToken(guestUser, "192.168.1.1", 1800000L)).thenReturn("guest-jwt");
+		when(this.jwtTokenUtil.getSession("guest-jwt")).thenReturn("guest-session");
 
-		final ResponseEntity<?> response = guestEnabledApi.loginAsGuest(guestRequest, httpRequest);
+		final ResponseEntity<?> response = guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("guest-jwt");
@@ -318,9 +316,9 @@ public class AuthApiTest {
 		final AuthenticatedUser user2 = new AuthenticatedUser();
 		user2.setUsername("user2");
 
-		when(authenticatedUserController.findAll()).thenReturn(List.of(user1, user2));
+		when(this.authenticatedUserController.findAll()).thenReturn(List.of(user1, user2));
 
-		final Collection<AuthenticatedUser> users = authApi.getAll(httpRequest);
+		final Collection<AuthenticatedUser> users = this.authApi.getAll(this.httpRequest);
 
 		assertThat(users).hasSize(2).containsExactlyInAnyOrder(user1, user2);
 	}
@@ -333,13 +331,14 @@ public class AuthApiTest {
 		final AuthenticatedUser createdUser = new AuthenticatedUser();
 		createdUser.setUsername("newuser");
 
-		when(authentication.getName()).thenReturn("admin");
-		when(authenticatedUserController.createUser("admin", createUserRequest)).thenReturn(createdUser);
+		when(this.authentication.getName()).thenReturn("admin");
+		when(this.authenticatedUserController.createUser("admin", createUserRequest)).thenReturn(createdUser);
 
-		final AuthenticatedUser result = authApi.register(createUserRequest, authentication, httpRequest);
+		final AuthenticatedUser result = this.authApi.register(createUserRequest, this.authentication,
+				this.httpRequest);
 
 		assertThat(result).isNotNull().extracting(AuthenticatedUser::getUsername).isEqualTo("newuser");
-		verify(authenticatedUserController, times(1)).createUser("admin", createUserRequest);
+		verify(this.authenticatedUserController, times(1)).createUser("admin", createUserRequest);
 	}
 
 	@Test
@@ -350,31 +349,30 @@ public class AuthApiTest {
 		final AuthenticatedUser updatedUser = new AuthenticatedUser();
 		updatedUser.setUsername("existinguser");
 
-		when(authentication.getName()).thenReturn("admin");
-		when(authenticatedUserController.updateUser("admin", updateRequest)).thenReturn(updatedUser);
+		when(this.authentication.getName()).thenReturn("admin");
+		when(this.authenticatedUserController.updateUser("admin", updateRequest)).thenReturn(updatedUser);
 
-		final AuthenticatedUser result = authApi.update(updateRequest, authentication, httpRequest);
+		final AuthenticatedUser result = this.authApi.update(updateRequest, this.authentication, this.httpRequest);
 
 		assertThat(result).isNotNull().extracting(AuthenticatedUser::getUsername).isEqualTo("existinguser");
-		verify(authenticatedUserController, times(1)).updateUser("admin", updateRequest);
+		verify(this.authenticatedUserController, times(1)).updateUser("admin", updateRequest);
 	}
 
 	@Test
 	public void testDeleteOwnAccountThrowsException() {
-		when(authentication.getName()).thenReturn("admin");
+		when(this.authentication.getName()).thenReturn("admin");
 
-		assertThatThrownBy(() -> authApi.delete("admin", authentication, httpRequest))
-				.isInstanceOf(InvalidRequestException.class)
-				.hasMessageContaining("cannot delete the current user");
+		assertThatThrownBy(() -> this.authApi.delete("admin", this.authentication, this.httpRequest))
+				.isInstanceOf(InvalidRequestException.class).hasMessageContaining("cannot delete the current user");
 	}
 
 	@Test
 	public void testDeleteOtherUser() {
-		when(authentication.getName()).thenReturn("admin");
+		when(this.authentication.getName()).thenReturn("admin");
 
-		authApi.delete("otheruser", authentication, httpRequest);
+		this.authApi.delete("otheruser", this.authentication, this.httpRequest);
 
-		verify(authenticatedUserController, times(1)).deleteUser("admin", "otheruser");
+		verify(this.authenticatedUserController, times(1)).deleteUser("admin", "otheruser");
 	}
 
 	// ========== Password Management Tests ==========
@@ -385,13 +383,14 @@ public class AuthApiTest {
 		passwordRequest.setOldPassword("oldpassword");
 		passwordRequest.setNewPassword("newpassword");
 
-		when(authentication.getName()).thenReturn("testuser");
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 
-		authApi.updatePassword(passwordRequest, authentication, httpRequest);
+		this.authApi.updatePassword(passwordRequest, this.authentication, this.httpRequest);
 
-		verify(authenticatedUserController, times(1)).updatePassword("testuser", "oldpassword", "newpassword", "testuser");
+		verify(this.authenticatedUserController, times(1)).updatePassword("testuser", "oldpassword", "newpassword",
+				"testuser");
 	}
 
 	@Test
@@ -399,29 +398,14 @@ public class AuthApiTest {
 		final UpdatePasswordRequest passwordRequest = new UpdatePasswordRequest();
 		passwordRequest.setNewPassword("newpassword");
 
-		when(authentication.getName()).thenReturn("admin");
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.authentication.getName()).thenReturn("admin");
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 
-		authApi.updateUserPassword("otheruser", passwordRequest, authentication, httpRequest);
+		this.authApi.updateUserPassword("otheruser", passwordRequest, this.authentication, this.httpRequest);
 
-		verify(authenticatedUserController, times(1)).updatePassword("admin", "otheruser", "newpassword", "newpassword");
-	}
-
-	@Test
-	public void testUpdateUserPasswordAdminHandlesException() throws InterruptedException {
-		final UpdatePasswordRequest passwordRequest = new UpdatePasswordRequest();
-		passwordRequest.setNewPassword("newpassword");
-
-		when(authentication.getName()).thenReturn("admin");
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-
-		// Mock the method to throw an exception
-		// The API catches and logs it
-		authApi.updateUserPassword("otheruser", passwordRequest, authentication, httpRequest);
-
-		verify(authenticatedUserController, times(1)).updatePassword("admin", "otheruser", "newpassword", "newpassword");
+		verify(this.authenticatedUserController, times(1)).updatePassword("admin", "otheruser", "newpassword",
+				"newpassword");
 	}
 
 	// ========== JWT Token Tests ==========
@@ -430,10 +414,10 @@ public class AuthApiTest {
 	public void testGetUserRoles() {
 		final Set<String> roles = Set.of("ADMIN", "EDITOR");
 
-		when(authentication.getName()).thenReturn("testuser");
-		when(authenticatedUserController.getRoles("testuser")).thenReturn(roles);
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.authenticatedUserController.getRoles("testuser")).thenReturn(roles);
 
-		final Set<String> result = authApi.getRoles(authentication, httpRequest);
+		final Set<String> result = this.authApi.getRoles(this.authentication, this.httpRequest);
 
 		assertThat(result).containsExactlyInAnyOrder("ADMIN", "EDITOR");
 	}
@@ -443,16 +427,17 @@ public class AuthApiTest {
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
 
-		when(authentication.getName()).thenReturn("testuser");
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(httpRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("old-jwt-token");
-		when(authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
-		when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("new-jwt-token");
-		when(jwtTokenUtil.getSession("new-jwt-token")).thenReturn("new-session");
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.httpRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("old-jwt-token");
+		when(this.authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("new-jwt-token");
+		when(this.jwtTokenUtil.getSession("new-jwt-token")).thenReturn("new-session");
 
-		final ResponseEntity<Void> response = authApi.getNewJWT(authentication, httpRequest, "old-jwt-token");
+		final ResponseEntity<Void> response = this.authApi.getNewJWT(this.authentication, this.httpRequest,
+				"old-jwt-token");
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("new-jwt-token");
@@ -461,10 +446,10 @@ public class AuthApiTest {
 
 	@Test
 	public void testRenewJWTTokenWithMissingUser() {
-		when(authentication.getName()).thenReturn("unknownuser");
-		when(authenticatedUserProvider.findByUsername("unknownuser")).thenReturn(Optional.empty());
+		when(this.authentication.getName()).thenReturn("unknownuser");
+		when(this.authenticatedUserProvider.findByUsername("unknownuser")).thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> authApi.getNewJWT(authentication, httpRequest, "jwt-token"))
+		assertThatThrownBy(() -> this.authApi.getNewJWT(this.authentication, this.httpRequest, "jwt-token"))
 				.isInstanceOf(UsernameNotFoundException.class);
 	}
 
@@ -474,9 +459,9 @@ public class AuthApiTest {
 	public void testAddUserAdminGeneratedListener() {
 		final AuthApi.UserAdminGeneratedListener listener = mock(AuthApi.UserAdminGeneratedListener.class);
 
-		authApi.addUserAdminGeneratedListeners(listener);
+		this.authApi.addUserAdminGeneratedListeners(listener);
 
-		assertThat(authApi).isNotNull();
+		assertThat(this.authApi).isNotNull();
 	}
 
 	@Test
@@ -489,20 +474,20 @@ public class AuthApiTest {
 		newAdmin.setUsername("admin");
 
 		final AuthApi.UserAdminGeneratedListener mockListener = mock(AuthApi.UserAdminGeneratedListener.class);
-		authApi.addUserAdminGeneratedListeners(mockListener);
+		this.authApi.addUserAdminGeneratedListeners(mockListener);
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
-		when(authenticatedUserController.countUsers()).thenReturn(0L);
-		when(authenticatedUserController.createUser(null, "admin", "Default", "Admin", "password", AvailableRole.ADMIN))
-				.thenReturn(newAdmin);
-		when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(jwtTokenUtil.generateAccessToken(newAdmin, "192.168.1.1")).thenReturn("jwt-token");
+		when(this.authenticatedUserController.countUsers()).thenReturn(0L);
+		when(this.authenticatedUserController.createUser(null, "admin", "Default", "Admin", "password",
+				AvailableRole.ADMIN)).thenReturn(newAdmin);
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(newAdmin, "192.168.1.1")).thenReturn("jwt-token");
 
-		authApi.login(authRequest, httpRequest);
+		this.authApi.login(authRequest, this.httpRequest);
 
 		verify(mockListener, times(1)).generated("admin");
 	}
@@ -518,21 +503,22 @@ public class AuthApiTest {
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenReturn(authentication);
-		when(authentication.getName()).thenReturn("testuser");
-		when(authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
-		when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("jwt-token");
-		when(jwtTokenUtil.getSession("jwt-token")).thenReturn("session-value");
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenReturn(this.authentication);
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("jwt-token");
+		when(this.jwtTokenUtil.getSession("jwt-token")).thenReturn("session-value");
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getHeaders().get(AuthApi.SESSION_HEADER)).containsExactly("session-value");
-		assertThat(response.getHeaders().get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS)).containsExactly(AuthApi.SESSION_HEADER);
+		assertThat(response.getHeaders().get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS))
+				.containsExactly(AuthApi.SESSION_HEADER);
 	}
 
 	@Test
@@ -544,21 +530,19 @@ public class AuthApiTest {
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
 
-		when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenReturn(authentication);
-		when(authentication.getName()).thenReturn("testuser");
-		when(authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
-		when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("jwt-token");
-		when(jwtTokenUtil.getSession("jwt-token")).thenReturn("session-value");
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenReturn(this.authentication);
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(user));
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(user, "192.168.1.1")).thenReturn("jwt-token");
+		when(this.jwtTokenUtil.getSession("jwt-token")).thenReturn("session-value");
 
-		final ResponseEntity<?> response = authApi.login(authRequest, httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
 		assertThat(response.getHeaders().get(HttpHeaders.EXPIRES)).containsExactly("3600000");
 	}
 }
-
-
