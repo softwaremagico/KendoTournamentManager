@@ -34,6 +34,7 @@
             ],
             "styles": [
               "./node_modules/@biit-solutions/wizardry-theme/styles.scss",
+              "./node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
@@ -41,6 +42,16 @@
                 "./node_modules"
               ]
             },
+            "allowedCommonJsDependencies": [
+              "flat",
+              "@stomp/stompjs",
+              "core-js",
+              "canvg",
+              "raf",
+              "rgbcolor",
+              "apexcharts",
+              "dom-to-image"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -155,6 +166,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {

@@ -1,6 +1,4 @@
-@import "@biit-solutions/wizardry-theme/styles";
-@import "theme-colors";
-@import '@angular/cdk/overlay-prebuilt';
+@use "theme-colors";
 
 $background: var(--body-background-color);
 $space: 0.7rem;
