@@ -505,6 +505,88 @@ public class ParticipantFightStatisticsProviderTest {
         assertEquals(result.getQuickestReceivedHit(), null);
     }
 
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldHandleNullCompetitor2FaultAndMixedReceivedScoreTimesAsCompetitor1() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+        duel.setCompetitor2Fault(null);
+        duel.setCompetitor2ScoreTime(new ArrayList<>(java.util.Arrays.asList(null, 40, 60)));
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getReceivedFaults(), 0L);
+        assertEquals(result.getQuickestReceivedHit(), 40);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldHandleDrawAndThresholdDurationWhenParticipantIsCompetitor2() {
+        Participant participant = createParticipant(2, "Fighter Two");
+        Participant opponent = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(opponent, participant);
+        duel.setCompetitor1Score(List.of(Score.MEN));
+        duel.setCompetitor2Score(List.of(Score.MEN));
+        duel.setCompetitor2Fault(null);
+        duel.setCompetitor1Fault(true);
+        duel.setCompetitor2ScoreTime(new ArrayList<>(java.util.Arrays.asList(null, 30, 50)));
+        duel.setCompetitor1ScoreTime(new ArrayList<>(java.util.Arrays.asList(null, 40, 60)));
+        duel.setDuration(1);
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getDrawDuels(), 1L);
+        assertEquals(result.getFaults(), 0L);
+        assertEquals(result.getReceivedFaults(), 0L);
+        assertEquals(result.getQuickestHit(), 30);
+        assertEquals(result.getQuickestReceivedHit(), 40);
+        assertEquals(result.getTotalDuelsTime(), 0L);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldNotCountReceivedFaultWhenCompetitor2FaultIsTrueButCompetitor1FaultIsFalse() {
+        Participant participant = createParticipant(2, "Fighter Two");
+        Participant opponent = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(opponent, participant);
+        duel.setCompetitor2Fault(true);
+        duel.setCompetitor1Fault(false);
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getFaults(), 1L);
+        assertEquals(result.getReceivedFaults(), 0L);
+    }
+
+    @Test(groups = "participantFightStatistics")
+    public void get_shouldIgnoreNonScoringValuesOnScoreSwitches() {
+        Participant participant = createParticipant(1, "Fighter One");
+        Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+        duel.setCompetitor1Score(List.of(Score.EMPTY, Score.FAULT, Score.DRAW));
+        duel.setCompetitor2Score(List.of(Score.DO, Score.TSUKI, Score.HANSOKU, Score.FUSEN_GACHI, Score.EMPTY, Score.FAULT, Score.DRAW));
+
+        when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+        when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+        ParticipantFightStatistics result = provider.get(participant);
+
+        assertNotNull(result);
+        assertEquals(result.getMenNumber(), 0L);
+        assertEquals(result.getReceivedDoNumber(), 1L);
+        assertEquals(result.getReceivedTsukiNumber(), 1L);
+        assertEquals(result.getReceivedHansokuNumber(), 1L);
+        assertEquals(result.getReceivedFusenGachiNumber(), 1L);
+    }
+
     // Helper methods
 
     private Participant createParticipant(int id, String name) {
