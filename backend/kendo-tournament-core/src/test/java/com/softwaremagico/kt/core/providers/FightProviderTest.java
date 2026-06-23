@@ -147,6 +147,40 @@ public class FightProviderTest {
     }
 
     @Test
+    public void shouldReturnFalseAreOverWhenAnyDuelIsNotOver() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel duel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getTeam1()).thenReturn(Mockito.mock(Team.class));
+        when(fight.getTeam2()).thenReturn(Mockito.mock(Team.class));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        when(duel.isOver()).thenReturn(false);
+
+        assertFalse(provider.areOver(tournament));
+    }
+
+    @Test
+    public void shouldFindNotOverDuelInsideSameFightAfterSkippingOverOne() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel overDuel = Mockito.mock(Duel.class);
+        final Duel notOverDuel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getTeam1()).thenReturn(Mockito.mock(Team.class));
+        when(fight.getTeam2()).thenReturn(Mockito.mock(Team.class));
+        when(fight.getDuels()).thenReturn(List.of(overDuel, notOverDuel));
+        when(overDuel.isOver()).thenReturn(true);
+        when(notOverDuel.isOver()).thenReturn(false);
+
+        final Fight result = provider.getFirstNotOver(tournament);
+
+        assertSame(result, fight);
+    }
+
+    @Test
     public void shouldReturnCurrentFightAndSetTournamentOnFightAndTeams() {
         final Tournament tournament = tournament();
         final Fight fight = Mockito.mock(Fight.class);
@@ -364,6 +398,76 @@ public class FightProviderTest {
         final Fight fight = Mockito.mock(Fight.class);
         when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
         when(fight.getDuels()).thenReturn(null);
+
+        assertFalse(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
+    }
+
+    @Test
+    public void shouldReturnTrueWhenSecondCompetitorScoresGoFromNameToCenter() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel duel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        when(duel.getCompetitor1Score()).thenReturn(List.of(Score.MEN));
+        when(duel.getCompetitor2Score()).thenReturn(new ArrayList<>(Arrays.asList(null, Score.KOTE)));
+
+        assertTrue(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenScoreSecondElementIsNull() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel duel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>(Arrays.asList(null, null)));
+        when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
+
+        assertFalse(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenScoreSecondElementIsEmpty() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel duel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>(Arrays.asList(null, Score.EMPTY)));
+        when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
+
+        assertFalse(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenScoreStartsAtCompetitorNameColumn() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel duel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>(Arrays.asList(Score.MEN, Score.KOTE)));
+        when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
+
+        assertFalse(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenScoreListIsEmpty() {
+        final Tournament tournament = tournament();
+        final Fight fight = Mockito.mock(Fight.class);
+        final Duel duel = Mockito.mock(Duel.class);
+
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>());
+        when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
 
         assertFalse(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
     }

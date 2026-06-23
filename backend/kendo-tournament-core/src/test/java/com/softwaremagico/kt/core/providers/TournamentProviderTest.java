@@ -30,6 +30,7 @@ import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
+import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
@@ -43,6 +44,7 @@ import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.persistence.encryption.KeyProperty;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -63,6 +65,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -95,9 +99,9 @@ public class TournamentProviderTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        provider = new TournamentProvider(tournamentRepository, tournamentExtraPropertyRepository,
+        provider = spy(new TournamentProvider(tournamentRepository, tournamentExtraPropertyRepository,
                 groupRepository, fightRepository, duelRepository, teamRepository, roleRepository,
-                tournamentHandlerSelector, tournamentImageRepository, achievementRepository);
+                tournamentHandlerSelector, tournamentImageRepository, achievementRepository));
     }
 
     // ========== getPreviousTo Tests ==========
@@ -242,6 +246,19 @@ public class TournamentProviderTest {
         final long count = provider.countTournamentsAfter(LocalDateTime.now().minusDays(30));
 
         assertThat(count).isZero();
+    }
+
+    @Test
+    public void testCountTournamentsAfterWithNullDateExcludesNullCreatedAt() {
+        final Tournament withoutDate = new Tournament("NoDate", 1, 3, TournamentType.LEAGUE, "user");
+        final Tournament recentTournament = tournamentWithDate("Recent", LocalDateTime.now().minusDays(2));
+        final Tournament oldTournament = tournamentWithDate("Old", LocalDateTime.now().minusYears(2));
+
+        when(tournamentRepository.findAll()).thenReturn(List.of(withoutDate, recentTournament, oldTournament));
+
+        final long count = provider.countTournamentsAfter(null);
+
+        assertThat(count).isEqualTo(1L);
     }
 
     // ========== findLastByUnlocked Tests ==========
@@ -646,9 +663,11 @@ public class TournamentProviderTest {
           final Tournament tournament = new Tournament("NewT", 1, 3, TournamentType.LEAGUE, "user");
           tournament.setId(null);
 
-          final TournamentExtraProperty prop1 = new TournamentExtraProperty();
-          prop1.setId(1);
-          prop1.setTournament(new Tournament("OldT", 1, 3, TournamentType.LEAGUE, "user"));
+            final Tournament sourceTournament = new Tournament("OldT", 1, 3, TournamentType.LEAGUE, "user");
+            sourceTournament.setId(99);
+            final TournamentExtraProperty prop1 = new TournamentExtraProperty(sourceTournament,
+                    TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "3", "otherUser");
+            prop1.setId(1);
 
           when(tournamentRepository.save(any(Tournament.class))).thenAnswer(invocation -> {
               Tournament t = invocation.getArgument(0);
@@ -659,25 +678,40 @@ public class TournamentProviderTest {
                   .thenReturn(new ArrayList<>(List.of(prop1)));
 
           final Tournament result = provider.save(tournament);
+          final ArgumentCaptor<List<TournamentExtraProperty>> propertiesCaptor = ArgumentCaptor.forClass(List.class);
 
           assertThat(result).isNotNull();
-          verify(tournamentExtraPropertyRepository).saveAll(any());
+          verify(tournamentExtraPropertyRepository).saveAll(propertiesCaptor.capture());
+          assertThat(propertiesCaptor.getValue()).hasSize(1);
+          assertThat(propertiesCaptor.getValue().get(0))
+                  .isNotSameAs(prop1)
+                  .extracting(TournamentExtraProperty::getTournament,
+                          TournamentExtraProperty::getPropertyKey,
+                          TournamentExtraProperty::getPropertyValue,
+                          TournamentExtraProperty::getCreatedBy)
+                  .containsExactly(result, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "3", "user");
       }
 
       @Test
       public void testCloneTournamentWithTournamentScore() {
           final Tournament source = new Tournament("Source", 1, 3, TournamentType.LEAGUE, "user1");
           source.setId(1);
+          final TournamentScore tournamentScore = new TournamentScore();
+          tournamentScore.setId(7);
+          source.setTournamentScore(tournamentScore);
 
-          // Create a mock tournament score
-          source.setTournamentScore(new org.mockito.Mockito().mock(com.softwaremagico.kt.persistence.entities.TournamentScore.class));
+          final Team sourceTeam = new Team();
+          sourceTeam.setId(1);
+          sourceTeam.setTournament(source);
+          final ArrayList<com.softwaremagico.kt.persistence.entities.Participant> originalMembers = new ArrayList<>();
+          sourceTeam.setMembers(originalMembers);
 
           final Tournament cloned = new Tournament("Copy of Source", 1, 3, TournamentType.LEAGUE, "user2");
           cloned.setId(2);
 
           when(tournamentRepository.save(any(Tournament.class))).thenReturn(cloned);
           when(roleRepository.findByTournament(source)).thenReturn(new ArrayList<>());
-          when(teamRepository.findByTournament(source)).thenReturn(new ArrayList<>());
+          when(teamRepository.findByTournament(source)).thenReturn(new ArrayList<>(List.of(sourceTeam)));
           when(tournamentExtraPropertyRepository.findByTournament(source)).thenReturn(new ArrayList<>());
           when(tournamentImageRepository.findByTournament(source)).thenReturn(new ArrayList<>());
           when(tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc("user2"))
@@ -686,7 +720,8 @@ public class TournamentProviderTest {
           final Tournament result = provider.clone(source, "user2");
 
           assertThat(result).isEqualTo(cloned);
-          assertThat(cloned.getTournamentScore()).isNotNull();
+          assertThat(source.getTournamentScore().getId()).isNull();
+          assertThat(sourceTeam.getMembers()).isNotSameAs(originalMembers).isEmpty();
       }
 
       @Test
@@ -729,6 +764,29 @@ public class TournamentProviderTest {
       }
 
       @Test
+      public void testSaveNewTournamentSkipsPropertiesFromSameTournament() {
+          final Tournament tournament = new Tournament("NewT", 1, 3, TournamentType.LEAGUE, "user");
+          final TournamentExtraProperty prop = new TournamentExtraProperty();
+          final Tournament sameTournament = new Tournament("SameT", 1, 3, TournamentType.LEAGUE, "user");
+          sameTournament.setId(1);
+          prop.setTournament(sameTournament);
+          prop.setPropertyKey(TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+          prop.setPropertyValue("4");
+
+          when(tournamentRepository.save(any(Tournament.class))).thenAnswer(invocation -> {
+              final Tournament savedTournament = invocation.getArgument(0);
+              savedTournament.setId(1);
+              return savedTournament;
+          });
+          when(tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc("user"))
+                  .thenReturn(new ArrayList<>(List.of(prop)));
+
+          provider.save(tournament);
+
+          verify(tournamentExtraPropertyRepository, never()).saveAll(any());
+      }
+
+      @Test
       public void testUpdateLockedAtTransition() {
           final Tournament tournament = new Tournament("T", 1, 3, TournamentType.LEAGUE, "user");
           tournament.setId(1);
@@ -741,6 +799,20 @@ public class TournamentProviderTest {
 
           assertThat(tournament.getLockedAt()).isNull();
           verify(tournamentRepository).save(tournament);
+      }
+
+      @Test
+      public void testMarkAsFinishedIsIdempotent() {
+          final Tournament tournament = new Tournament("T", 1, 3, TournamentType.LEAGUE, "user");
+          tournament.setId(1);
+
+          provider.markAsFinished(tournament, true);
+          final LocalDateTime firstFinishedAt = tournament.getFinishedAt();
+
+          provider.markAsFinished(tournament, true);
+
+          assertThat(tournament.getFinishedAt()).isEqualTo(firstFinishedAt);
+          verify(tournamentRepository, times(1)).save(tournament);
       }
 
       @Test
@@ -763,14 +835,58 @@ public class TournamentProviderTest {
 
           final TreeTournamentHandler handler = org.mockito.Mockito.mock(TreeTournamentHandler.class);
 
-          when(provider.get(1)).thenReturn(Optional.of(tournament));
+          doReturn(Optional.of(tournament)).when(provider).get(1);
           when(tournamentHandlerSelector.selectManager(TournamentType.TREE)).thenReturn(handler);
           when(groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament)).thenReturn(new ArrayList<>());
 
           provider.setNumberOfWinners(1, 4, "admin");
 
+          verify(groupRepository, never()).saveAll(any());
+          verify(handler).recreateGroupSize(eq(tournament), eq(4));
           verify(tournamentExtraPropertyRepository).deleteByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
           verify(tournamentExtraPropertyRepository).save(any(TournamentExtraProperty.class));
+      }
+
+      @Test
+      public void testSetNumberOfWinnersUpdatesLevelZeroGroupsAndRecreatesBracket() {
+          final Tournament tournament = new Tournament("T", 1, 3, TournamentType.TREE, "user");
+          tournament.setId(1);
+
+          final Group firstLevelGroup = new Group();
+          firstLevelGroup.setId(10);
+          firstLevelGroup.setTournament(tournament);
+          firstLevelGroup.setLevel(0);
+          final Group secondLevelGroup = new Group();
+          secondLevelGroup.setId(11);
+          secondLevelGroup.setTournament(tournament);
+          secondLevelGroup.setLevel(0);
+          final Group upperLevelGroup = new Group();
+          upperLevelGroup.setId(12);
+          upperLevelGroup.setTournament(tournament);
+          upperLevelGroup.setLevel(1);
+          final int originalUpperLevelWinners = upperLevelGroup.getNumberOfWinners();
+
+          final TreeTournamentHandler handler = org.mockito.Mockito.mock(TreeTournamentHandler.class);
+          final ArgumentCaptor<List<Group>> groupsCaptor = ArgumentCaptor.forClass(List.class);
+          final InOrder inOrder = inOrder(tournamentExtraPropertyRepository, groupRepository, handler);
+
+          doReturn(Optional.of(tournament)).when(provider).get(1);
+          when(tournamentHandlerSelector.selectManager(TournamentType.TREE)).thenReturn(handler);
+          when(groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament))
+                  .thenReturn(new ArrayList<>(List.of(firstLevelGroup, secondLevelGroup, upperLevelGroup)));
+
+          provider.setNumberOfWinners(1, 4, "admin");
+
+          assertThat(firstLevelGroup.getNumberOfWinners()).isEqualTo(4);
+          assertThat(secondLevelGroup.getNumberOfWinners()).isEqualTo(4);
+          assertThat(upperLevelGroup.getNumberOfWinners()).isEqualTo(originalUpperLevelWinners);
+          verify(groupRepository).saveAll(groupsCaptor.capture());
+          assertThat(groupsCaptor.getValue()).containsExactly(firstLevelGroup, secondLevelGroup);
+          inOrder.verify(tournamentExtraPropertyRepository).deleteByTournamentAndPropertyKey(tournament,
+                  TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+          inOrder.verify(tournamentExtraPropertyRepository).save(any(TournamentExtraProperty.class));
+          inOrder.verify(groupRepository).saveAll(any());
+          inOrder.verify(handler).recreateGroupSize(eq(tournament), eq(4));
       }
 
       @Test
@@ -808,6 +924,20 @@ public class TournamentProviderTest {
       }
 
       @Test
+      public void testCountTournamentsAfterUsesStartOfDayForCutoff() {
+          final LocalDateTime cutoff = LocalDateTime.of(2026, 6, 10, 13, 45);
+          final Tournament beforeCutoffDay = tournamentWithDate("BeforeCutoffDay", LocalDateTime.of(2026, 6, 9, 23, 59));
+          final Tournament atStartOfDay = tournamentWithDate("AtStartOfDay", LocalDateTime.of(2026, 6, 10, 0, 0));
+          final Tournament afterStartOfDay = tournamentWithDate("AfterStartOfDay", LocalDateTime.of(2026, 6, 10, 0, 1));
+
+          when(tournamentRepository.findAll()).thenReturn(List.of(beforeCutoffDay, atStartOfDay, afterStartOfDay));
+
+          final long count = provider.countTournamentsAfter(cutoff);
+
+          assertThat(count).isEqualTo(1L);
+      }
+
+      @Test
       public void testGetPreviousToSingleElement() {
           final Tournament t1 = tournamentWithDate("T1", LocalDateTime.now().minusDays(1));
 
@@ -841,6 +971,29 @@ public class TournamentProviderTest {
       }
 
       @Test
+      public void testCloneTournamentWithoutTournamentScore() {
+          final Tournament source = new Tournament("Source", 1, 3, TournamentType.LEAGUE, "user1");
+          source.setId(1);
+          source.setTournamentScore(null);
+
+          final Tournament cloned = new Tournament("Copy of Source", 1, 3, TournamentType.LEAGUE, "user2");
+          cloned.setId(2);
+
+          when(tournamentRepository.save(any(Tournament.class))).thenReturn(cloned);
+          when(roleRepository.findByTournament(source)).thenReturn(new ArrayList<>());
+          when(teamRepository.findByTournament(source)).thenReturn(new ArrayList<>());
+          when(tournamentExtraPropertyRepository.findByTournament(source)).thenReturn(new ArrayList<>());
+          when(tournamentImageRepository.findByTournament(source)).thenReturn(new ArrayList<>());
+          when(tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc("user2"))
+                  .thenReturn(new ArrayList<>());
+
+          final Tournament result = provider.clone(source, "user2");
+
+          assertThat(result).isEqualTo(cloned);
+          assertThat(source.getTournamentScore()).isNull();
+      }
+
+      @Test
       public void testSaveNewTournamentCallsSetDefaultPropertiesWithProperties() {
           final Tournament tournament = new Tournament("NewT", 1, 3, TournamentType.LEAGUE, "user");
           tournament.setId(null);
@@ -865,6 +1018,7 @@ public class TournamentProviderTest {
 
     private Tournament tournamentWithDate(String name, LocalDateTime createdAt) {
         final Tournament tournament = new Tournament(name, 1, 3, TournamentType.LEAGUE, "user");
+        tournament.setId(Math.abs(name.hashCode()));
         tournament.setCreatedAt(createdAt);
         return tournament;
     }
