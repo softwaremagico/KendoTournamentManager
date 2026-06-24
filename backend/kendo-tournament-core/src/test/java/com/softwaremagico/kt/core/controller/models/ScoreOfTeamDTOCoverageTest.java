@@ -1,4 +1,3 @@
-
 package com.softwaremagico.kt.core.controller.models;
 
 /*-
@@ -150,6 +149,89 @@ public class ScoreOfTeamDTOCoverageTest {
 		fight.setDuels(duels);
 		return fight;
 	}
+
+	@Test
+	public void shouldCoverTeamTournamentAndLambdaBranches() {
+		final TournamentDTO tournament = this.tournament();
+		final TeamDTO team1 = this.team(21, "A", tournament);
+		final TeamDTO team2 = this.team(22, "B", tournament);
+		final ParticipantDTO p1 = this.participant(31, "P1", "One", this.club(201, "ClubA"));
+		final ParticipantDTO p2 = this.participant(32, "P2", "Two", this.club(202, "ClubB"));
+		team1.setMembers(new java.util.ArrayList<>(java.util.List.of(p1)));
+		team2.setMembers(new java.util.ArrayList<>(java.util.List.of(p2)));
+
+		// fight where team1 participates, is over and draw
+		final DuelDTO drawDuel = this.duel(team1, team2, p1, p2, List.of(Score.MEN), List.of(Score.KOTE), true);
+		final FightDTO drawFight = this.fight(tournament, team1, team2, 2, List.of(drawDuel));
+		// fight where team1 participates but not over
+		final DuelDTO notOverDuel = this.duel(team1, team2, p1, p2, List.of(), List.of(), false);
+		final FightDTO notOverFight = this.fight(tournament, team1, team2, 3, List.of(notOverDuel));
+		// fight where team1 does not participate
+		final TeamDTO team3 = this.team(23, "C", tournament);
+		team3.setMembers(new java.util.ArrayList<>());
+		final FightDTO outsiderFight = this.fight(tournament, team2, team3, 4, List.of(notOverDuel));
+
+		// unties: win from competitor1 and competitor2 perspectives + losing cases
+		final DuelDTO untieWinAsCompetitor1 = this.duel(team1, team2, p1, p2, List.of(Score.MEN, Score.DO), List.of(), true); // winner -1
+		final DuelDTO untieWinAsCompetitor2 = this.duel(team2, team1, p2, p1, List.of(), List.of(Score.MEN, Score.KOTE), true); // team1 member as competitor2, winner 1
+		final DuelDTO untieLose = this.duel(team1, team2, p1, p2, List.of(), List.of(Score.MEN, Score.KOTE), true);
+
+		final ScoreOfTeamDTO dto = new ScoreOfTeamDTO(team1,
+				List.of(drawFight, notOverFight, outsiderFight),
+				List.of(untieWinAsCompetitor1, untieWinAsCompetitor2, untieLose));
+
+		assertEquals(dto.getTournament(), tournament);
+		assertEquals(dto.getDrawFights(), Integer.valueOf(1));
+		assertEquals(dto.getFightsDone(), Integer.valueOf(2));
+		assertEquals(dto.getUntieDuels(), Integer.valueOf(2));
+		assertEquals(dto.getLevel(), Integer.valueOf(3));
+	}
+
+	@Test
+	public void shouldCountWonFightsOnlyWhenWinnerMatchesTeam() {
+		final TournamentDTO tournament = this.tournament();
+		final TeamDTO team1 = this.team(24, "A", tournament);
+		final TeamDTO team2 = this.team(25, "B", tournament);
+		final ParticipantDTO p1 = this.participant(33, "P1", "One", this.club(203, "ClubA"));
+		final ParticipantDTO p2 = this.participant(34, "P2", "Two", this.club(204, "ClubB"));
+		team1.setMembers(new java.util.ArrayList<>(java.util.List.of(p1)));
+		team2.setMembers(new java.util.ArrayList<>(java.util.List.of(p2)));
+
+		final DuelDTO team1Win = this.duel(team1, team2, p1, p2, List.of(Score.MEN, Score.KOTE), List.of(), true);
+		final DuelDTO team2Win = this.duel(team1, team2, p1, p2, List.of(), List.of(Score.MEN, Score.KOTE), true);
+		final DuelDTO draw = this.duel(team1, team2, p1, p2, List.of(Score.MEN), List.of(Score.KOTE), true);
+
+		final FightDTO winFight = this.fight(tournament, team1, team2, 1, List.of(team1Win));
+		final FightDTO loseFight = this.fight(tournament, team1, team2, 1, List.of(team2Win));
+		final FightDTO drawFight = this.fight(tournament, team1, team2, 1, List.of(draw));
+
+		final ScoreOfTeamDTO dto = new ScoreOfTeamDTO(team1, List.of(winFight, loseFight, drawFight), List.of());
+		assertEquals(dto.getWonFights(), Integer.valueOf(1));
+	}
+
+	@Test
+	public void shouldCoverRemainingLambdaBranchesFromTeam2Perspective() {
+		final TournamentDTO tournament = this.tournament();
+		final TeamDTO team1 = this.team(30, "A", tournament);
+		final TeamDTO team2 = this.team(31, "B", tournament);
+		final ParticipantDTO p1 = this.participant(41, "P1", "One", this.club(301, "ClubA"));
+		final ParticipantDTO p2 = this.participant(42, "P2", "Two", this.club(302, "ClubB"));
+		team1.setMembers(new java.util.ArrayList<>(java.util.List.of(p1)));
+		team2.setMembers(new java.util.ArrayList<>(java.util.List.of(p2)));
+
+		final DuelDTO drawDuel = this.duel(team1, team2, p1, p2, List.of(Score.MEN), List.of(Score.KOTE), true);
+		final FightDTO drawFight = this.fight(tournament, team1, team2, 2, List.of(drawDuel));
+		final FightDTO notOverFight = this.fight(tournament, team1, team2, 3,
+				List.of(this.duel(team1, team2, p1, p2, List.of(), List.of(), false)));
+
+		// competitor2 belongs to team2 but winner is 0 -> should not add untie point
+		final DuelDTO untieNoWin = this.duel(team1, team2, p1, p2, List.of(Score.MEN), List.of(Score.KOTE), true);
+
+		final ScoreOfTeamDTO dto = new ScoreOfTeamDTO(team2, List.of(drawFight, notOverFight), List.of(untieNoWin));
+		assertEquals(dto.getFightsDone(), Integer.valueOf(2));
+		assertEquals(dto.getDrawFights(), Integer.valueOf(1));
+		assertEquals(dto.getLevel(), Integer.valueOf(3));
+		assertEquals(dto.getUntieDuels(), Integer.valueOf(0));
+	}
+
 }
-
-

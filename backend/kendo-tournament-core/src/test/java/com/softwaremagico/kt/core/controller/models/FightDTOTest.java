@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.controller.models;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -317,6 +317,18 @@ public class FightDTOTest {
     }
 
     @Test
+    public void shouldReturnIsWonFalseForCompetitorNotInAnyTeam() {
+        final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 1);
+        final ParticipantDTO outsider = participant("Out", "Side");
+
+        final DuelDTO duel1 = duelWithScores(competitor1A, competitor2A,
+                List.of(Score.MEN, Score.KOTE), List.of());
+        fight.setDuels(List.of(duel1));
+
+        assertFalse(fight.isWon(outsider));
+    }
+
+    @Test
     public void shouldSetAndGetFinishedAt() {
         final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 1);
         final java.time.LocalDateTime now = java.time.LocalDateTime.now();
@@ -330,5 +342,130 @@ public class FightDTOTest {
         fight.setId(1);
         assertTrue(fight.equals(fight));
     }
-}
 
+    @Test
+    public void shouldReturnIsWonTrueForCompetitorOnTeam2WhenTeam2Wins() {
+        final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 1);
+
+        final DuelDTO duel1 = duelWithScores(competitor1A, competitor2A,
+                List.of(), List.of(Score.MEN, Score.KOTE));
+        fight.setDuels(List.of(duel1));
+
+        assertTrue(fight.isWon(competitor2A));
+        assertFalse(fight.isWon(competitor1A));
+    }
+
+    @Test
+    public void shouldCountDrawDuelsForTeam2AndIgnoreNonDraws() {
+        final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 1);
+
+        final DuelDTO draw = duelWithScores(competitor1A, competitor2A,
+                List.of(Score.MEN), List.of(Score.KOTE));
+        final DuelDTO nonDraw = duelWithScores(competitor1B, competitor2B,
+                List.of(Score.MEN, Score.KOTE), List.of());
+        fight.setDuels(List.of(draw, nonDraw));
+
+        assertEquals((int) fight.getDrawDuels(team2), 1);
+    }
+
+    @Test
+    public void shouldReturnOnlyDuelsForMatchingCompetitor() {
+        final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 1);
+        final DuelDTO duel1 = duelWithScores(competitor1A, competitor2A, List.of(), List.of());
+        final DuelDTO duel2 = duelWithScores(competitor1B, competitor2B, List.of(), List.of());
+        fight.setDuels(List.of(duel1, duel2));
+
+        assertEquals(fight.getDuels(competitor2B).size(), 1);
+        assertSame(fight.getDuels(competitor2B).get(0), duel2);
+    }
+
+    @Test
+    public void shouldBeEqualWhenAllRelevantFieldsMatch() {
+        final FightDTO left = new FightDTO(tournament, team1, team2, 0, 1);
+        left.setId(100);
+        left.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        final DuelDTO duel = duelWithScores(competitor1A, competitor2A, List.of(Score.MEN), List.of());
+        left.setDuels(List.of(duel));
+
+        final FightDTO right = new FightDTO(tournament, team1, team2, 0, 1);
+        right.setId(100);
+        right.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        right.setDuels(List.of(duel));
+
+        assertTrue(left.equals(right));
+        assertEquals(left.hashCode(), right.hashCode());
+    }
+
+    @Test
+    public void shouldNotBeEqualForDifferentTypeOrDifferentFields() {
+        final FightDTO base = new FightDTO(tournament, team1, team2, 0, 1);
+        base.setId(200);
+        base.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        base.setDuels(List.of());
+
+        assertFalse(base.equals("not-fight"));
+
+        final FightDTO differentTeam1 = new FightDTO(tournament, null, team2, 0, 1);
+        differentTeam1.setId(200);
+        differentTeam1.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        assertFalse(base.equals(differentTeam1));
+
+        final FightDTO differentTeam2 = new FightDTO(tournament, team1, null, 0, 1);
+        differentTeam2.setId(200);
+        differentTeam2.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        assertFalse(base.equals(differentTeam2));
+
+        final FightDTO differentTournament = new FightDTO(null, team1, team2, 0, 1);
+        differentTournament.setId(200);
+        differentTournament.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        assertFalse(base.equals(differentTournament));
+
+        final FightDTO differentShiaijo = new FightDTO(tournament, team1, team2, 9, 1);
+        differentShiaijo.setId(200);
+        differentShiaijo.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        assertFalse(base.equals(differentShiaijo));
+
+        final FightDTO differentLevel = new FightDTO(tournament, team1, team2, 0, 2);
+        differentLevel.setId(200);
+        differentLevel.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        assertFalse(base.equals(differentLevel));
+    }
+
+    @Test
+    public void shouldHandleEqualsWhenTeamsAndTournamentAreAllNull() {
+        final FightDTO left = new FightDTO(null, null, null, 0, 1);
+        left.setId(300);
+        left.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        left.setDuels(List.of());
+
+        final FightDTO right = new FightDTO(null, null, null, 0, 1);
+        right.setId(300);
+        right.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        right.setDuels(List.of());
+
+        assertTrue(left.equals(right));
+    }
+
+    @Test
+    public void shouldNotBeEqualWhenDuelsOrFinishedAtDiffer() {
+        final FightDTO base = new FightDTO(tournament, team1, team2, 0, 1);
+        base.setId(301);
+        base.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        base.setDuels(List.of(duelWithScores(competitor1A, competitor2A, List.of(Score.MEN), List.of())));
+        base.setFinishedAt(java.time.LocalDateTime.of(2026, 1, 1, 11, 0));
+
+        final FightDTO differentDuels = new FightDTO(tournament, team1, team2, 0, 1);
+        differentDuels.setId(301);
+        differentDuels.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        differentDuels.setDuels(List.of());
+        differentDuels.setFinishedAt(java.time.LocalDateTime.of(2026, 1, 1, 11, 0));
+        assertFalse(base.equals(differentDuels));
+
+        final FightDTO differentFinishedAt = new FightDTO(tournament, team1, team2, 0, 1);
+        differentFinishedAt.setId(301);
+        differentFinishedAt.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+        differentFinishedAt.setDuels(List.of(duelWithScores(competitor1A, competitor2A, List.of(Score.MEN), List.of())));
+        differentFinishedAt.setFinishedAt(java.time.LocalDateTime.of(2026, 1, 1, 12, 0));
+        assertFalse(base.equals(differentFinishedAt));
+    }
+}

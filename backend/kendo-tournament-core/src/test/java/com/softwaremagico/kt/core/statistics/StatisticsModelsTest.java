@@ -106,6 +106,200 @@ public class StatisticsModelsTest {
         assertThat(statistics.getFightsNumber()).isNull();
         assertThat(statistics.getDuelsNumber()).isNull();
     }
+
+    @Test
+    public void testParticipantFightStatisticsAllFields() {
+        final ParticipantFightStatistics stats = new ParticipantFightStatistics();
+
+        // Test all hit setters/getters
+        stats.setMenNumber(1L);
+        assertThat(stats.getMenNumber()).isEqualTo(1L);
+
+        stats.setKoteNumber(2L);
+        assertThat(stats.getKoteNumber()).isEqualTo(2L);
+
+        stats.setDoNumber(3L);
+        assertThat(stats.getDoNumber()).isEqualTo(3L);
+
+        stats.setTsukiNumber(4L);
+        assertThat(stats.getTsukiNumber()).isEqualTo(4L);
+
+        stats.setHansokuNumber(5L);
+        assertThat(stats.getHansokuNumber()).isEqualTo(5L);
+
+        stats.setIpponNumber(6L);
+        assertThat(stats.getIpponNumber()).isEqualTo(6L);
+
+        stats.setFusenGachiNumber(7L);
+        assertThat(stats.getFusenGachiNumber()).isEqualTo(7L);
+
+        stats.setFaults(8L);
+        assertThat(stats.getFaults()).isEqualTo(8L);
+
+        // Test all received hit setters/getters
+        stats.setReceivedMenNumber(10L);
+        assertThat(stats.getReceivedMenNumber()).isEqualTo(10L);
+
+        stats.setReceivedKoteNumber(11L);
+        assertThat(stats.getReceivedKoteNumber()).isEqualTo(11L);
+
+        stats.setReceivedDoNumber(12L);
+        assertThat(stats.getReceivedDoNumber()).isEqualTo(12L);
+
+        stats.setReceivedTsukiNumber(13L);
+        assertThat(stats.getReceivedTsukiNumber()).isEqualTo(13L);
+
+        stats.setReceivedHansokuNumber(14L);
+        assertThat(stats.getReceivedHansokuNumber()).isEqualTo(14L);
+
+        stats.setReceivedIpponNumber(15L);
+        assertThat(stats.getReceivedIpponNumber()).isEqualTo(15L);
+
+        stats.setReceivedFusenGachiNumber(16L);
+        assertThat(stats.getReceivedFusenGachiNumber()).isEqualTo(16L);
+
+        stats.setReceivedFaults(17L);
+        assertThat(stats.getReceivedFaults()).isEqualTo(17L);
+    }
+
+    @Test
+    public void testParticipantFightStatisticsNullDefaults() {
+        final ParticipantFightStatistics stats = new ParticipantFightStatistics();
+
+        // All null fields should return 0L when using getters with default fallback
+        assertThat(stats.getMenNumber()).isZero();
+        assertThat(stats.getKoteNumber()).isZero();
+        assertThat(stats.getDoNumber()).isZero();
+        assertThat(stats.getTsukiNumber()).isZero();
+        assertThat(stats.getHansokuNumber()).isZero();
+        assertThat(stats.getIpponNumber()).isZero();
+        assertThat(stats.getFusenGachiNumber()).isZero();
+        assertThat(stats.getFaults()).isZero();
+        assertThat(stats.getReceivedMenNumber()).isZero();
+        assertThat(stats.getReceivedKoteNumber()).isZero();
+        assertThat(stats.getReceivedDoNumber()).isZero();
+        assertThat(stats.getReceivedTsukiNumber()).isZero();
+        assertThat(stats.getReceivedHansokuNumber()).isZero();
+        assertThat(stats.getReceivedIpponNumber()).isZero();
+        assertThat(stats.getReceivedFusenGachiNumber()).isZero();
+        assertThat(stats.getReceivedFaults()).isZero();
+    }
+
+    @Test
+    public void testParticipantFightStatisticsTimeFields() {
+        final ParticipantFightStatistics stats = new ParticipantFightStatistics();
+
+        stats.setAverageTime(100L);
+        assertThat(stats.getAverageTime()).isEqualTo(100L);
+
+        stats.setAverageWinTime(200L);
+        assertThat(stats.getAverageWinTime()).isEqualTo(200L);
+
+        stats.setAverageLostTime(300L);
+        assertThat(stats.getAverageLostTime()).isEqualTo(300L);
+
+        stats.setTotalDuelsTime(400L);
+        assertThat(stats.getTotalDuelsTime()).isEqualTo(400L);
+
+        stats.setQuickestHit(50L);
+        assertThat(stats.getQuickestHit()).isEqualTo(50L);
+
+        stats.setQuickestReceivedHit(60L);
+        assertThat(stats.getQuickestReceivedHit()).isEqualTo(60L);
+    }
+
+    @Test
+    public void testParticipantFightStatisticsWinLossDraw() {
+        final ParticipantFightStatistics stats = new ParticipantFightStatistics();
+
+        stats.setWonDuels(10L);
+        assertThat(stats.getWonDuels()).isEqualTo(10L);
+
+        stats.setLostDuels(5L);
+        assertThat(stats.getLostDuels()).isEqualTo(5L);
+
+        stats.setDrawDuels(2L);
+        assertThat(stats.getDrawDuels()).isEqualTo(2L);
+    }
+
+    @Test
+    public void testTournamentFightStatisticsAllFields() {
+        final TournamentFightStatistics stats = new TournamentFightStatistics();
+
+        // Test hit setters/getters
+        stats.setMenNumber(1L);
+        assertThat(stats.getMenNumber()).isEqualTo(1L);
+
+        stats.setKoteNumber(2L);
+        assertThat(stats.getKoteNumber()).isEqualTo(2L);
+
+        stats.setDoNumber(3L);
+        assertThat(stats.getDoNumber()).isEqualTo(3L);
+
+        stats.setTsukiNumber(4L);
+        assertThat(stats.getTsukiNumber()).isEqualTo(4L);
+
+        stats.setHansokuNumber(5L);
+        assertThat(stats.getHansokuNumber()).isEqualTo(5L);
+
+        stats.setIpponNumber(6L);
+        assertThat(stats.getIpponNumber()).isEqualTo(6L);
+
+        stats.setFusenGachiNumber(7L);
+        assertThat(stats.getFusenGachiNumber()).isEqualTo(7L);
+    }
+
+    @Test
+    public void testTournamentFightStatisticsCounterFields() {
+        final TournamentFightStatistics stats = new TournamentFightStatistics();
+
+        // Valid values
+        stats.setFightsByTeam(8L);
+        assertThat(stats.getFightsByTeam()).isEqualTo(8L);
+
+        stats.setEstimatedTime(9L);
+        assertThat(stats.getEstimatedTime()).isEqualTo(9L);
+
+        stats.setAverageTime(10L);
+        assertThat(stats.getAverageTime()).isEqualTo(10L);
+
+        stats.setFightsFinished(11L);
+        assertThat(stats.getFightsFinished()).isEqualTo(11L);
+
+        stats.setFaults(12L);
+        assertThat(stats.getFaults()).isEqualTo(12L);
+    }
+
+    @Test
+    public void testTournamentFightStatisticsDateFields() {
+        final TournamentFightStatistics stats = new TournamentFightStatistics();
+        final java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        final java.time.LocalDateTime later = now.plusHours(1);
+
+        stats.setFightsStartedAt(now);
+        assertThat(stats.getFightsStartedAt()).isEqualTo(now);
+
+        stats.setFightsFinishedAt(later);
+        assertThat(stats.getFightsFinishedAt()).isEqualTo(later);
+    }
+
+    @Test
+    public void testTournamentFightStatisticsFightsNumberNegativeValue() {
+        final TournamentFightStatistics stats = new TournamentFightStatistics();
+
+        // Branch: fightsNumber < 0
+        stats.setFightsNumber(-1L);
+        assertThat(stats.getFightsNumber()).isNull();
+    }
+
+    @Test
+    public void testTournamentFightStatisticsDuelsNumberNegativeValue() {
+        final TournamentFightStatistics stats = new TournamentFightStatistics();
+
+        // Branch: duelsNumber < 0
+        stats.setDuelsNumber(-1L);
+        assertThat(stats.getDuelsNumber()).isNull();
+    }
 }
 
 

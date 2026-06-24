@@ -551,77 +551,370 @@ public class TournamentFightStatisticsProviderTest {
         assertEquals(result.getEstimatedTime(), 0L);
     }
 
-    // Helper methods
+     // Helper methods
 
-    private Tournament createTournament() {
-        Tournament tournament = new Tournament();
-        tournament.setId(1);
-        tournament.setName("Test Tournament");
-        tournament.setType(TournamentType.LEAGUE);
-        tournament.setTeamSize(3);
-        tournament.setFightSize(3);
-        return tournament;
-    }
+     private Tournament createTournament() {
+         Tournament tournament = new Tournament();
+         tournament.setId(1);
+         tournament.setName("Test Tournament");
+         tournament.setType(TournamentType.LEAGUE);
+         tournament.setTeamSize(3);
+         tournament.setFightSize(3);
+         return tournament;
+     }
 
-    private List<Team> createTeams(Tournament tournament, int count) {
-        List<Team> teams = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            Team team = new Team("Team" + i, tournament);
-            for (int j = 0; j < 3; j++) {
-                Participant member = new Participant();
-                member.setId(i * 10 + j);
-                member.setName("Member" + i + "_" + j);
-                team.addMember(member);
-            }
-            teams.add(team);
-        }
-        return teams;
-    }
+     private List<Team> createTeams(Tournament tournament, int count) {
+         List<Team> teams = new ArrayList<>();
+         for (int i = 0; i < count; i++) {
+             Team team = new Team("Team" + i, tournament);
+             for (int j = 0; j < 3; j++) {
+                 Participant member = new Participant();
+                 member.setId(i * 10 + j);
+                 member.setName("Member" + i + "_" + j);
+                 team.addMember(member);
+             }
+             teams.add(team);
+         }
+         return teams;
+     }
 
-    private List<Team> createTeamsWithoutMembers(Tournament tournament, int count) {
-        List<Team> teams = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            teams.add(new Team("EmptyTeam" + i, tournament));
-        }
-        return teams;
-    }
+     private List<Team> createTeamsWithoutMembers(Tournament tournament, int count) {
+         List<Team> teams = new ArrayList<>();
+         for (int i = 0; i < count; i++) {
+             teams.add(new Team("EmptyTeam" + i, tournament));
+         }
+         return teams;
+     }
 
-    private List<Role> createRoles(Tournament tournament, int count) {
-        List<Role> roles = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            Role role = new Role();
-            role.setId(i);
-            role.setRoleType(RoleType.COMPETITOR);
-            Participant participant = new Participant();
-            participant.setId(i);
-            participant.setName("Competitor" + i);
-            role.setParticipant(participant);
-            roles.add(role);
-        }
-        return roles;
-    }
+     private List<Role> createRoles(Tournament tournament, int count) {
+         List<Role> roles = new ArrayList<>();
+         for (int i = 0; i < count; i++) {
+             Role role = new Role();
+             role.setId(i);
+             role.setRoleType(RoleType.COMPETITOR);
+             Participant participant = new Participant();
+             participant.setId(i);
+             participant.setName("Competitor" + i);
+             role.setParticipant(participant);
+             roles.add(role);
+         }
+         return roles;
+     }
 
-    private List<Role> createMixedRoles(Tournament tournament) {
-        List<Role> roles = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            Role role = new Role();
-            role.setId(i);
-            role.setRoleType(RoleType.COMPETITOR);
-            Participant participant = new Participant();
-            participant.setId(i);
-            participant.setName("Competitor" + i);
-            role.setParticipant(participant);
-            roles.add(role);
-        }
-        Role arbitrerRole = new Role();
-        arbitrerRole.setId(99);
-        arbitrerRole.setRoleType(RoleType.REFEREE);
-        Participant arbitrer = new Participant();
-        arbitrer.setId(99);
-        arbitrer.setName("Referee");
-        arbitrerRole.setParticipant(arbitrer);
-        roles.add(arbitrerRole);
-        return roles;
-    }
+     private List<Role> createMixedRoles(Tournament tournament) {
+         List<Role> roles = new ArrayList<>();
+         for (int i = 0; i < 3; i++) {
+             Role role = new Role();
+             role.setId(i);
+             role.setRoleType(RoleType.COMPETITOR);
+             Participant participant = new Participant();
+             participant.setId(i);
+             participant.setName("Competitor" + i);
+             role.setParticipant(participant);
+             roles.add(role);
+         }
+         Role arbitrerRole = new Role();
+         arbitrerRole.setId(99);
+         arbitrerRole.setRoleType(RoleType.REFEREE);
+         Participant arbitrer = new Participant();
+         arbitrer.setId(99);
+         arbitrer.setName("Referee");
+         arbitrerRole.setParticipant(arbitrer);
+         roles.add(arbitrerRole);
+         return roles;
+     }
+
+     // ============= Additional comprehensive tests for 90%+ coverage =============
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimate_shouldDispatchToLeagueStatisticsWhenTypeIsLeague() {
+         Tournament tournament = createTournament();
+         tournament.setType(TournamentType.LEAGUE);
+         List<Team> teams = createTeams(tournament, 4);
+
+         when(mockDuelProvider.getDurationAverage()).thenReturn(180L);
+
+         TournamentFightStatistics result = provider.estimate(tournament, 3, teams);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsByTeam(), 3L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimateByMembers_shouldCreateTeamsWhenFiltering() {
+         Tournament tournament = createTournament();
+         tournament.setTeamSize(2);
+         List<Role> roles = createRoles(tournament, 6);
+
+         when(mockRoleProvider.getAll(tournament)).thenReturn(roles);
+         when(mockDuelProvider.getDurationAverage()).thenReturn(150L);
+
+         TournamentFightStatistics result = provider.estimateByMembers(tournament);
+
+         assertNotNull(result);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void get_shouldCountFightsFinished() {
+         Tournament tournament = createTournament();
+
+         when(mockFightProvider.count(tournament)).thenReturn(10L);
+         when(mockTeamProvider.count(tournament)).thenReturn(5L);
+         when(mockDuelProvider.count(tournament)).thenReturn(50L);
+         when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(200L);
+         when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(20L);
+         when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(15L);
+         when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(10L);
+         when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(2L);
+         when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(3L);
+         when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(8L);
+         when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(1L);
+         when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(null);
+         when(mockDuelProvider.getLastDuel(tournament)).thenReturn(null);
+         when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(9L);
+         when(mockDuelProvider.countFaults(tournament)).thenReturn(5L);
+
+         TournamentFightStatistics result = provider.get(tournament);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsFinished(), 9L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void get_shouldSetLastDuelFinishedTime() {
+         Tournament tournament = createTournament();
+         LocalDateTime finishedTime = LocalDateTime.now();
+         Duel lastDuel = new Duel();
+         lastDuel.setFinishedAt(finishedTime);
+
+         when(mockFightProvider.count(tournament)).thenReturn(0L);
+         when(mockTeamProvider.count(tournament)).thenReturn(0L);
+         when(mockDuelProvider.count(tournament)).thenReturn(0L);
+         when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(null);
+         when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(0L);
+         when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(null);
+         when(mockDuelProvider.getLastDuel(tournament)).thenReturn(lastDuel);
+         when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(0L);
+         when(mockDuelProvider.countFaults(tournament)).thenReturn(0L);
+
+         TournamentFightStatistics result = provider.get(tournament);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsFinishedAt(), finishedTime);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimateLeagueStatistics_shouldCalculateWithMultipleTeams() {
+         List<Team> teams = createTeams(null, 6);
+
+         when(mockDuelProvider.getDurationAverage()).thenReturn(200L);
+
+         TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsNumber(), 15L);
+         assertEquals(result.getFightsByTeam(), 5L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimateLoopStatistics_shouldMaximizeFightsWhenPropertyFalse() {
+         Tournament tournament = createTournament();
+         tournament.setType(TournamentType.LOOP);
+         List<Team> teams = createTeams(tournament, 4);
+         TournamentExtraProperty property = new TournamentExtraProperty();
+         property.setPropertyValue("false");
+
+         when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                 .thenReturn(property);
+         when(mockDuelProvider.getDurationAverage()).thenReturn(150L);
+
+         TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsNumber(), 12L);
+         assertEquals(result.getFightsByTeam(), 6L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimateLoopStatistics_shouldAvoidDuplicatesWhenPropertyTrue() {
+         Tournament tournament = createTournament();
+         tournament.setType(TournamentType.LOOP);
+         List<Team> teams = createTeams(tournament, 4);
+         TournamentExtraProperty property = new TournamentExtraProperty();
+         property.setPropertyValue("true");
+
+         when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                 .thenReturn(property);
+         when(mockDuelProvider.getDurationAverage()).thenReturn(150L);
+
+         TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsNumber(), 7L);
+         assertEquals(result.getFightsByTeam(), 3L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void get_shouldAggregateAllScoreTypes() {
+         Tournament tournament = createTournament();
+
+         when(mockFightProvider.count(tournament)).thenReturn(8L);
+         when(mockTeamProvider.count(tournament)).thenReturn(2L);
+         when(mockDuelProvider.count(tournament)).thenReturn(32L);
+         when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(175L);
+         when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(25L);
+         when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(18L);
+         when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(12L);
+         when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(3L);
+         when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(5L);
+         when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(7L);
+         when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(2L);
+         when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(null);
+         when(mockDuelProvider.getLastDuel(tournament)).thenReturn(null);
+         when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(6L);
+         when(mockDuelProvider.countFaults(tournament)).thenReturn(4L);
+
+         TournamentFightStatistics result = provider.get(tournament);
+
+         assertNotNull(result);
+         assertEquals(result.getTsukiNumber(), 5L);
+         assertEquals(result.getFusenGachiNumber(), 2L);
+         assertEquals(result.getHansokuNumber(), 3L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimateLeagueStatistics_shouldIncludeFightsNumberInEstimatedTime() {
+         List<Team> teams = createTeams(null, 5);
+
+         when(mockDuelProvider.getDurationAverage()).thenReturn(190L);
+
+         TournamentFightStatistics result = provider.estimateLeagueStatistics(3, teams);
+
+         assertNotNull(result);
+         assertNotNull(result.getEstimatedTime());
+         assertTrue(result.getEstimatedTime() > 0);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void get_shouldSetFightsByTeamWhenTeamsExist() {
+         Tournament tournament = createTournament();
+
+         when(mockFightProvider.count(tournament)).thenReturn(12L);
+         when(mockTeamProvider.count(tournament)).thenReturn(4L);
+         when(mockDuelProvider.count(tournament)).thenReturn(40L);
+         when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(180L);
+         when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(0L);
+         when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(null);
+         when(mockDuelProvider.getLastDuel(tournament)).thenReturn(null);
+         when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(0L);
+         when(mockDuelProvider.countFaults(tournament)).thenReturn(0L);
+
+         TournamentFightStatistics result = provider.get(tournament);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsByTeam(), 3L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimate_shouldReturnProperValuesForEstimate() {
+         Tournament tournament = createTournament();
+         List<Team> teams = createTeams(tournament, 3);
+
+         when(mockDuelProvider.getDurationAverage()).thenReturn(160L);
+
+         TournamentFightStatistics result = provider.estimate(tournament, 3, teams);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsByTeam(), 2L);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void estimateLoopStatistics_shouldHandleEstimatedTimeCalculationCorrectly() {
+         Tournament tournament = createTournament();
+         tournament.setType(TournamentType.LOOP);
+         List<Team> teams = createTeams(tournament, 3);
+         TournamentExtraProperty property = new TournamentExtraProperty();
+         property.setPropertyValue("true");
+
+         when(mockTournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES))
+                 .thenReturn(property);
+         when(mockDuelProvider.getDurationAverage()).thenReturn(200L);
+
+         TournamentFightStatistics result = provider.estimateLoopStatistics(tournament, 3, teams);
+
+         assertNotNull(result);
+         assertNotNull(result.getEstimatedTime());
+         assertTrue(result.getEstimatedTime() >= 0);
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void get_shouldHandleFirstDuelWithStartedAtNull() {
+         Tournament tournament = createTournament();
+         Duel firstDuel = new Duel();
+         firstDuel.setStartedAt(null);
+
+         when(mockFightProvider.count(tournament)).thenReturn(0L);
+         when(mockTeamProvider.count(tournament)).thenReturn(0L);
+         when(mockDuelProvider.count(tournament)).thenReturn(0L);
+         when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(null);
+         when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(0L);
+         when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(firstDuel);
+         when(mockDuelProvider.getLastDuel(tournament)).thenReturn(null);
+         when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(0L);
+         when(mockDuelProvider.countFaults(tournament)).thenReturn(0L);
+
+         TournamentFightStatistics result = provider.get(tournament);
+
+         assertNotNull(result);
+         assertNull(result.getFightsStartedAt());
+     }
+
+     @Test(groups = "tournamentFightStatistics")
+     public void get_shouldHandleFirstDuelWithFinishedAtValid() {
+         Tournament tournament = createTournament();
+         LocalDateTime finishedTime = LocalDateTime.of(2026, 6, 24, 15, 30);
+         Duel firstDuel = new Duel();
+         firstDuel.setStartedAt(null);
+         firstDuel.setFinishedAt(finishedTime);
+
+         when(mockFightProvider.count(tournament)).thenReturn(0L);
+         when(mockTeamProvider.count(tournament)).thenReturn(0L);
+         when(mockDuelProvider.count(tournament)).thenReturn(0L);
+         when(mockDuelProvider.getDurationAverage(tournament)).thenReturn(null);
+         when(mockDuelProvider.countScore(tournament, Score.MEN)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.DO)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.KOTE)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.HANSOKU)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.TSUKI)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.IPPON)).thenReturn(0L);
+         when(mockDuelProvider.countScore(tournament, Score.FUSEN_GACHI)).thenReturn(0L);
+         when(mockDuelProvider.getFirstDuel(tournament)).thenReturn(firstDuel);
+         when(mockDuelProvider.getLastDuel(tournament)).thenReturn(null);
+         when(mockFightProvider.countByTournamentAndFinished(tournament)).thenReturn(0L);
+         when(mockDuelProvider.countFaults(tournament)).thenReturn(0L);
+
+         TournamentFightStatistics result = provider.get(tournament);
+
+         assertNotNull(result);
+         assertEquals(result.getFightsStartedAt(), finishedTime.minusMinutes(2));
+     }
 }
 

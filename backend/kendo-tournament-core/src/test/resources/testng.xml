@@ -52,6 +52,7 @@
                 <include name="participantFightStatistics"/>
                 <include name="tournamentFightStatistics"/>
                 <include name="rankingProviderTests"/>
+                <include name="controllerModelsCoverageTest"/>
             </run>
         </groups>
         <classes>
@@ -113,6 +114,7 @@
             <class name="com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTOTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.DuelDTOTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.FightDTOTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.ControllerModelsDTOCoverageTest"/>
             <class name="com.softwaremagico.kt.core.tournaments.LeagueHandlerTest"/>
             <class name="com.softwaremagico.kt.core.providers.RankingProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.TournamentImageProviderTest"/>

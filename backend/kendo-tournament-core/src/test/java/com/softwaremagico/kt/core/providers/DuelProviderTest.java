@@ -187,27 +187,300 @@ public class DuelProviderTest {
         assertThat(count).isEqualTo(0L);
     }
 
-    @Test
-    public void testReportCacheEvictIsCallable() {
-        provider.reportCacheEvict();
+     @Test
+     public void testReportCacheEvictIsCallable() {
+         provider.reportCacheEvict();
 
-        verify(duelRepository, org.mockito.Mockito.never()).countByTournament(any(Tournament.class));
-    }
+         verify(duelRepository, org.mockito.Mockito.never()).countByTournament(any(Tournament.class));
+     }
 
-    private Tournament tournament(String name) {
-        final Tournament tournament = new Tournament(name, 2, 3, TournamentType.LEAGUE, "user");
-        tournament.setId(Math.abs(name.hashCode()));
-        return tournament;
-    }
+     // ============= Additional comprehensive tests for 90%+ coverage =============
 
-    private Participant participant(String name) {
-        final Participant participant = new Participant();
-        participant.setId(Math.abs(name.hashCode()));
-        participant.setName(name);
-        participant.setLastname("Lastname");
-        participant.setCreatedBy("user");
-        return participant;
-    }
+     @Test
+     public void testDeleteByTournamentDelegatesToRepository() {
+         final Tournament tournament = tournament("Spring Cup");
+         when(duelRepository.deleteByTournament(tournament)).thenReturn(5L);
+
+         final long deleted = provider.delete(tournament);
+
+         assertThat(deleted).isEqualTo(5L);
+         verify(duelRepository).deleteByTournament(tournament);
+     }
+
+     @Test
+     public void testCountByTournamentDelegatesToRepository() {
+         final Tournament tournament = tournament("Summer Cup");
+         when(duelRepository.countByTournament(tournament)).thenReturn(10L);
+
+         final long count = provider.count(tournament);
+
+         assertThat(count).isEqualTo(10L);
+         verify(duelRepository).countByTournament(tournament);
+     }
+
+     @Test
+     public void testGetByParticipantDelegatesToRepository() {
+         final Participant participant = participant("P1");
+         final List<Duel> duels = List.of(new Duel(), new Duel());
+         when(duelRepository.findByParticipant(participant)).thenReturn(duels);
+
+         final List<Duel> result = provider.get(participant);
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findByParticipant(participant);
+     }
+
+     @Test
+     public void testGetWhenBothAreInvolvedDelegatesToRepository() {
+         final Participant p1 = participant("P1");
+         final Participant p2 = participant("P2");
+         final List<Duel> duels = List.of(new Duel());
+         when(duelRepository.findByParticipants(p1, p2)).thenReturn(duels);
+
+         final List<Duel> result = provider.getWhenBothAreInvolved(p1, p2);
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findByParticipants(p1, p2);
+     }
+
+     @Test
+     public void testGetByTournamentDelegatesToRepository() {
+         final Tournament tournament = tournament("Fall Cup");
+         final List<Duel> duels = List.of(new Duel(), new Duel(), new Duel());
+         when(duelRepository.findByTournament(tournament)).thenReturn(duels);
+
+         final List<Duel> result = provider.get(tournament);
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findByTournament(tournament);
+     }
+
+     @Test
+     public void testGetUntiesByParticipantsDelegatesToRepository() {
+         final Collection<Participant> participants = List.of(participant("P1"), participant("P2"));
+         final List<Duel> duels = List.of(new Duel());
+         when(duelRepository.findUntiesByParticipantIn(participants)).thenReturn(duels);
+
+         final List<Duel> result = provider.getUnties(participants);
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findUntiesByParticipantIn(participants);
+     }
+
+     @Test
+     public void testGetAllUntiesDelegatesToRepository() {
+         final List<Duel> duels = List.of(new Duel(), new Duel());
+         when(duelRepository.findAllUnties()).thenReturn(duels);
+
+         final List<Duel> result = provider.getUnties();
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findAllUnties();
+     }
+
+     @Test
+     public void testGetDurationAverageByParticipantReturnsValueWhenPresent() {
+         final Participant participant = participant("P1");
+         when(duelRepository.getDurationAverage(participant)).thenReturn(100L);
+
+         final Long duration = provider.getDurationAverage(participant);
+
+         assertThat(duration).isEqualTo(100L);
+         verify(duelRepository).getDurationAverage(participant);
+     }
+
+     @Test
+     public void testGetDurationAverageByTournamentDelegatesToRepository() {
+         final Tournament tournament = tournament("Winter Cup");
+         when(duelRepository.getDurationAverage(tournament)).thenReturn(50L);
+
+         final Long duration = provider.getDurationAverage(tournament);
+
+         assertThat(duration).isEqualTo(50L);
+         verify(duelRepository).getDurationAverage(tournament);
+     }
+
+     @Test
+     public void testGetFirstDuelDelegatesToRepository() {
+         final Tournament tournament = tournament("Spring Cup");
+         final Duel duel = new Duel();
+         when(duelRepository.findFirstByTournamentOrderByStartedAtAsc(tournament)).thenReturn(duel);
+
+         final Duel result = provider.getFirstDuel(tournament);
+
+         assertThat(result).isEqualTo(duel);
+         verify(duelRepository).findFirstByTournamentOrderByStartedAtAsc(tournament);
+     }
+
+     @Test
+     public void testGetLastDuelDelegatesToRepository() {
+         final Tournament tournament = tournament("Summer Cup");
+         final Duel duel = new Duel();
+         when(duelRepository.findFirstByTournamentOrderByFinishedAtDesc(tournament)).thenReturn(duel);
+
+         final Duel result = provider.getLastDuel(tournament);
+
+         assertThat(result).isEqualTo(duel);
+         verify(duelRepository).findFirstByTournamentOrderByFinishedAtDesc(tournament);
+     }
+
+     @Test
+     public void testCountScoreDelegatesToRepository() {
+         final Tournament tournament = tournament("Fall Cup");
+         when(duelRepository.countScore(tournament, List.of(Score.MEN))).thenReturn(7L);
+
+         final Long count = provider.countScore(tournament, Score.MEN);
+
+         assertThat(count).isEqualTo(7L);
+         verify(duelRepository).countScore(tournament, List.of(Score.MEN));
+     }
+
+     @Test
+     public void testFindByOnlyScoreRemovesScoreAndEmpty() {
+         final Tournament tournament = tournament("Winter Cup");
+         final java.util.Set<Duel> duels = java.util.Set.of(new Duel());
+         when(duelRepository.findByOnlyScore(any(), any())).thenReturn(duels);
+
+         final java.util.Set<Duel> result = provider.findByOnlyScore(tournament, Score.MEN);
+
+         assertThat(result).isEqualTo(duels);
+     }
+
+     @Test
+     public void testFindByScorePerformedInLessThanDelegatesToRepository() {
+         final Tournament tournament = tournament("Spring Cup");
+         final java.util.Set<Duel> duels = java.util.Set.of(new Duel());
+         when(duelRepository.findByScoreOnTimeLess(tournament, 30)).thenReturn(duels);
+
+         final java.util.Set<Duel> result = provider.findByScorePerformedInLessThan(tournament, 30);
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findByScoreOnTimeLess(tournament, 30);
+     }
+
+     @Test
+     public void testFindByScoreDurationDelegatesToRepository() {
+         final Tournament tournament = tournament("Summer Cup");
+         final List<Duel> duels = List.of(new Duel());
+         when(duelRepository.findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
+                 tournament, 60, 60)).thenReturn(duels);
+
+         final List<Duel> result = provider.findByScoreDuration(tournament, 60);
+
+         assertThat(result).isEqualTo(duels);
+     }
+
+     @Test
+     public void testCountFaultsWithBothValuesPresent() {
+         final Tournament tournament = tournament("Fall Cup");
+         when(duelRepository.countFaultsByTournament(tournament, true)).thenReturn(5L);
+         when(duelRepository.countScore(tournament, List.of(Score.HANSOKU))).thenReturn(3L);
+
+         final long faults = provider.countFaults(tournament);
+
+         assertThat(faults).isEqualTo(11L);
+     }
+
+     @Test
+     public void testCountFaultsWithOnlyFaults() {
+         final Tournament tournament = tournament("Winter Cup");
+         when(duelRepository.countFaultsByTournament(tournament, true)).thenReturn(8L);
+         when(duelRepository.countScore(tournament, List.of(Score.HANSOKU))).thenReturn(null);
+
+         final long faults = provider.countFaults(tournament);
+
+         assertThat(faults).isEqualTo(8L);
+     }
+
+     @Test
+     public void testCountFaultsWithOnlyHansokus() {
+         final Tournament tournament = tournament("Spring Cup");
+         when(duelRepository.countFaultsByTournament(tournament, true)).thenReturn(null);
+         when(duelRepository.countScore(tournament, List.of(Score.HANSOKU))).thenReturn(4L);
+
+         final long faults = provider.countFaults(tournament);
+
+         assertThat(faults).isEqualTo(8L);
+     }
+
+     @Test
+     public void testCountScoreFromCompetitorAddsLeftAndRight() {
+         final Participant participant = participant("P1");
+         final Collection<Tournament> tournaments = List.of(tournament("Autumn Cup"));
+         when(duelRepository.countLeftScoreFromCompetitor(participant, tournaments)).thenReturn(5L);
+         when(duelRepository.countRightScoreFromCompetitor(participant, tournaments)).thenReturn(3L);
+
+         final long count = provider.countScoreFromCompetitor(participant, tournaments);
+
+         assertThat(count).isEqualTo(8L);
+     }
+
+     @Test
+     public void testCountScoreFromCompetitorRightThrowsNullPointer() {
+         final Participant participant = participant("P1");
+         final Collection<Tournament> tournaments = List.of(tournament("Autumn Cup"));
+         when(duelRepository.countLeftScoreFromCompetitor(participant, tournaments)).thenReturn(5L);
+         when(duelRepository.countRightScoreFromCompetitor(participant, tournaments))
+                 .thenThrow(new NullPointerException());
+
+         final long count = provider.countScoreFromCompetitor(participant, tournaments);
+
+         assertThat(count).isEqualTo(0L);
+     }
+
+     @Test
+     public void testCountScoreAgainstCompetitorAddsLeftAndRight() {
+         final Participant participant = participant("P1");
+         final Collection<Tournament> tournaments = List.of(tournament("Autumn Cup"));
+         when(duelRepository.countLeftScoreAgainstCompetitor(participant, tournaments)).thenReturn(2L);
+         when(duelRepository.countRightScoreAgainstCompetitor(participant, tournaments)).thenReturn(4L);
+
+         final long count = provider.countScoreAgainstCompetitor(participant, tournaments);
+
+         assertThat(count).isEqualTo(6L);
+     }
+
+     @Test
+     public void testCountScoreAgainstCompetitorRightThrowsNullPointer() {
+         final Participant participant = participant("P1");
+         final Collection<Tournament> tournaments = List.of(tournament("Autumn Cup"));
+         when(duelRepository.countLeftScoreAgainstCompetitor(participant, tournaments)).thenReturn(2L);
+         when(duelRepository.countRightScoreAgainstCompetitor(participant, tournaments))
+                 .thenThrow(new NullPointerException());
+
+         final long count = provider.countScoreAgainstCompetitor(participant, tournaments);
+
+         assertThat(count).isEqualTo(0L);
+     }
+
+     @Test
+     public void testGetUntiesFromParticipantDelegatesToRepository() {
+         final Participant participant = participant("P1");
+         final List<Duel> duels = List.of(new Duel());
+         when(duelRepository.findUntiesByParticipantIn(List.of(participant))).thenReturn(duels);
+
+         final List<Duel> result = provider.getUntiesFromParticipant(participant);
+
+         assertThat(result).isEqualTo(duels);
+         verify(duelRepository).findUntiesByParticipantIn(List.of(participant));
+     }
+
+     // ============= ParticipantFightStatisticsProvider Tests =============
+
+     private Tournament tournament(String name) {
+         final Tournament tournament = new Tournament(name, 2, 3, TournamentType.LEAGUE, "user");
+         tournament.setId(Math.abs(name.hashCode()));
+         return tournament;
+     }
+
+     private Participant participant(String name) {
+         final Participant participant = new Participant();
+         participant.setId(Math.abs(name.hashCode()));
+         participant.setName(name);
+         participant.setLastname("Lastname");
+         participant.setCreatedBy("user");
+         return participant;
+     }
 }
 
 

@@ -587,26 +587,352 @@ public class ParticipantFightStatisticsProviderTest {
         assertEquals(result.getReceivedFusenGachiNumber(), 1L);
     }
 
-    // Helper methods
+     // Helper methods
 
-    private Participant createParticipant(int id, String name) {
-        Participant participant = new Participant();
-        participant.setId(id);
-        participant.setName(name);
-        return participant;
-    }
+     private Participant createParticipant(int id, String name) {
+         Participant participant = new Participant();
+         participant.setId(id);
+         participant.setName(name);
+         return participant;
+     }
 
-    private Duel createDuel(Participant competitor1, Participant competitor2) {
-        Duel duel = new Duel();
-        duel.setCompetitor1(competitor1);
-        duel.setCompetitor2(competitor2);
-        duel.setCompetitor1Score(new ArrayList<>());
-        duel.setCompetitor2Score(new ArrayList<>());
-        duel.setCompetitor1ScoreTime(new ArrayList<>());
-        duel.setCompetitor2ScoreTime(new ArrayList<>());
-        duel.setCompetitor1Fault(false);
-        duel.setCompetitor2Fault(false);
-        return duel;
-    }
+     private Duel createDuel(Participant competitor1, Participant competitor2) {
+         Duel duel = new Duel();
+         duel.setCompetitor1(competitor1);
+         duel.setCompetitor2(competitor2);
+         duel.setCompetitor1Score(new ArrayList<>());
+         duel.setCompetitor2Score(new ArrayList<>());
+         duel.setCompetitor1ScoreTime(new ArrayList<>());
+         duel.setCompetitor2ScoreTime(new ArrayList<>());
+         duel.setCompetitor1Fault(false);
+         duel.setCompetitor2Fault(false);
+         return duel;
+     }
+
+     // ============= Additional comprehensive tests for 90%+ coverage =============
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldHandleMultipleDuelsAsCompetitor1WithMixedOutcomes() {
+         Participant participant = createParticipant(1, "Fighter One");
+
+         Duel duel1 = createDuel(participant, createParticipant(2, "Fighter Two"));
+         duel1.setCompetitor1Score(List.of(Score.IPPON, Score.IPPON));
+         duel1.setCompetitor2Score(List.of(Score.MEN));
+         duel1.setDuration(150);
+
+         Duel duel2 = createDuel(participant, createParticipant(3, "Fighter Three"));
+         duel2.setCompetitor1Score(List.of(Score.MEN));
+         duel2.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+         duel2.setDuration(180);
+
+         Duel duel3 = createDuel(participant, createParticipant(4, "Fighter Four"));
+         duel3.setCompetitor1Score(List.of(Score.KOTE, Score.KOTE));
+         duel3.setCompetitor2Score(List.of(Score.KOTE, Score.KOTE));
+         duel3.setDuration(120);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel1, duel2, duel3));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(150L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getWonDuels(), 1L);
+         assertEquals(result.getLostDuels(), 1L);
+         assertEquals(result.getDrawDuels(), 1L);
+         assertEquals(result.getDuelsNumber(), 3L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldHandleMultipleDuelsAsCompetitor2WithMixedOutcomes() {
+         Participant participant = createParticipant(2, "Fighter Two");
+
+         Duel duel1 = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel1.setCompetitor1Score(List.of(Score.IPPON, Score.IPPON));
+         duel1.setCompetitor2Score(List.of(Score.MEN));
+         duel1.setDuration(150);
+
+         Duel duel2 = createDuel(createParticipant(3, "Fighter Three"), participant);
+         duel2.setCompetitor1Score(List.of(Score.MEN));
+         duel2.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+         duel2.setDuration(180);
+
+         Duel duel3 = createDuel(createParticipant(4, "Fighter Four"), participant);
+         duel3.setCompetitor1Score(List.of(Score.DO));
+         duel3.setCompetitor2Score(List.of(Score.DO));
+         duel3.setDuration(120);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel1, duel2, duel3));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(150L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getWonDuels(), 1L);
+         assertEquals(result.getLostDuels(), 1L);
+         assertEquals(result.getDrawDuels(), 1L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCountWinnerWithValidDurationAsCompetitor1() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+         duel.setCompetitor1Score(List.of(Score.IPPON, Score.IPPON));
+         duel.setCompetitor2Score(List.of(Score.MEN));
+         duel.setDuration(200);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getAverageWinTime(), 200L);
+         assertEquals(result.getWonDuels(), 1L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCountWinnerWithValidDurationAsCompetitor2() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel.setCompetitor1Score(List.of(Score.MEN));
+         duel.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+         duel.setDuration(180);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getAverageWinTime(), 180L);
+         assertEquals(result.getWonDuels(), 1L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCountLoserWithValidDurationWhenNotWinner() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Participant opponent = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(participant, opponent);
+         duel.setCompetitor1Score(List.of(Score.MEN));
+         duel.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+         duel.setDuration(160);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getAverageLostTime(), 160L);
+         assertEquals(result.getLostDuels(), 1L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldIgnoreLoserWithInvalidDurationWhenNotWinner() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Participant opponent = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(participant, opponent);
+         duel.setCompetitor1Score(List.of(Score.MEN));
+         duel.setCompetitor2Score(List.of(Score.IPPON, Score.IPPON));
+         duel.setDuration(1);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getAverageLostTime(), 0L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldHandleDrawWithoutWinner() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+         duel.setCompetitor1Score(List.of(Score.MEN, Score.MEN));
+         duel.setCompetitor2Score(List.of(Score.MEN, Score.MEN));
+         duel.setDuration(150);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getDrawDuels(), 1L);
+         assertEquals(result.getAverageWinTime(), 0L);
+         assertEquals(result.getAverageLostTime(), 0L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCountCompetitor1FaultAsTrue() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+         duel.setCompetitor1Fault(true);
+         duel.setCompetitor2Fault(false);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getFaults(), 1L);
+         assertEquals(result.getReceivedFaults(), 0L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCountCompetitor2FaultAsTrue() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel.setCompetitor1Fault(false);
+         duel.setCompetitor2Fault(true);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getFaults(), 1L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldTrackMultipleQuickestHitValuesAsCompetitor1() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Duel duel1 = createDuel(participant, createParticipant(2, "Fighter Two"));
+         duel1.setCompetitor1ScoreTime(List.of(100, 50, 200));
+
+         Duel duel2 = createDuel(participant, createParticipant(3, "Fighter Three"));
+         duel2.setCompetitor1ScoreTime(List.of(75, 25, 150));
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel1, duel2));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getQuickestHit(), 25);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldTrackMultipleQuickestReceivedHitValuesAsCompetitor1() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Duel duel1 = createDuel(participant, createParticipant(2, "Fighter Two"));
+         duel1.setCompetitor2ScoreTime(List.of(90, 120, 200));
+
+         Duel duel2 = createDuel(participant, createParticipant(3, "Fighter Three"));
+         duel2.setCompetitor2ScoreTime(List.of(60, 150, 300));
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel1, duel2));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getQuickestReceivedHit(), 60);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldTrackMultipleQuickestHitValuesAsCompetitor2() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel1 = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel1.setCompetitor2ScoreTime(List.of(110, 65, 210));
+
+         Duel duel2 = createDuel(createParticipant(3, "Fighter Three"), participant);
+         duel2.setCompetitor2ScoreTime(List.of(85, 35, 160));
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel1, duel2));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getQuickestHit(), 35);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldTrackMultipleQuickestReceivedHitValuesAsCompetitor2() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel1 = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel1.setCompetitor1ScoreTime(List.of(95, 130, 205));
+
+         Duel duel2 = createDuel(createParticipant(3, "Fighter Three"), participant);
+         duel2.setCompetitor1ScoreTime(List.of(70, 160, 310));
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel1, duel2));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getQuickestReceivedHit(), 70);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCountAllScoreBranchesWithReceivedAsCompetitor2() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel.setCompetitor2Score(List.of(Score.MEN, Score.KOTE, Score.DO, Score.TSUKI, Score.IPPON, Score.HANSOKU, Score.FUSEN_GACHI));
+         duel.setCompetitor1Score(List.of(Score.MEN, Score.KOTE, Score.DO, Score.TSUKI, Score.IPPON, Score.HANSOKU, Score.FUSEN_GACHI));
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getMenNumber(), 1L);
+         assertEquals(result.getReceivedMenNumber(), 1L);
+         assertEquals(result.getKoteNumber(), 1L);
+         assertEquals(result.getReceivedKoteNumber(), 1L);
+         assertEquals(result.getDoNumber(), 1L);
+         assertEquals(result.getReceivedDoNumber(), 1L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldHandleNullReceivedFaultAsCompetitor2() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel.setCompetitor1Fault(null);
+         duel.setCompetitor2Fault(true);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         org.testng.Assert.assertThrows(NullPointerException.class, () -> provider.get(participant));
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldCalculateAverageWithPositiveDurationAverage() {
+         Participant participant = createParticipant(1, "Fighter One");
+         Duel duel = createDuel(participant, createParticipant(2, "Fighter Two"));
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(250L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getAverageTime(), 250L);
+     }
+
+     @Test(groups = "participantFightStatistics")
+     public void get_shouldIgnoreReceivedFaultsWhenCompetitor1FaultIsFalseAsCompetitor2() {
+         Participant participant = createParticipant(2, "Fighter Two");
+         Duel duel = createDuel(createParticipant(1, "Fighter One"), participant);
+         duel.setCompetitor1Fault(false);
+         duel.setCompetitor2Fault(true);
+
+         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
+         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
+
+         ParticipantFightStatistics result = provider.get(participant);
+
+         assertNotNull(result);
+         assertEquals(result.getReceivedFaults(), 0L);
+         assertEquals(result.getFaults(), 1L);
+     }
 }
+
 

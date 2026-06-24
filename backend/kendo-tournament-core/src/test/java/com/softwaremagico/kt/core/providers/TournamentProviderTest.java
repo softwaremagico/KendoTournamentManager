@@ -362,18 +362,26 @@ public class TournamentProviderTest {
         final Tournament tournament = new Tournament("MyTournament", 1, 3, TournamentType.LEAGUE, "user");
         when(tournamentRepository.findByName("MyTournament")).thenReturn(Optional.of(tournament));
 
-        final Optional<Tournament> result = provider.findByName("MyTournament");
+        try (MockedStatic<KeyProperty> keyProperty = mockStatic(KeyProperty.class)) {
+            keyProperty.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
-        assertThat(result).isPresent().contains(tournament);
+            final Optional<Tournament> result = provider.findByName("MyTournament");
+
+            assertThat(result).isPresent().contains(tournament);
+        }
     }
 
      @Test
      public void testFindByNameReturnsEmptyWhenNotFound() {
          when(tournamentRepository.findByName("Unknown")).thenReturn(Optional.empty());
 
-         final Optional<Tournament> result = provider.findByName("Unknown");
+         try (MockedStatic<KeyProperty> keyProperty = mockStatic(KeyProperty.class)) {
+             keyProperty.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
-         assertThat(result).isEmpty();
+             final Optional<Tournament> result = provider.findByName("Unknown");
+
+             assertThat(result).isEmpty();
+         }
      }
 
      // ========== save Tests ==========

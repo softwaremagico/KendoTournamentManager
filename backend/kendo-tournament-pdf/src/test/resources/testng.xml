@@ -26,6 +26,7 @@
              <class name="com.softwaremagico.kt.pdf.DiplomaTests"/>
              <class name="com.softwaremagico.kt.pdf.QrTests"/>
              <class name="com.softwaremagico.kt.html.HtmlTests"/>
+             <class name="com.softwaremagico.kt.html.controller.ZipControllerTest"/>
          </classes>
      </test>
 </suite>

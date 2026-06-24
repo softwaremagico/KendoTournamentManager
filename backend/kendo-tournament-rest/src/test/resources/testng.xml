@@ -45,6 +45,8 @@
             <class name="com.softwaremagico.kt.rest.exceptions.ErrorResponseTest"/>
             <class name="com.softwaremagico.kt.rest.security.dto.CreateUserRequestTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenUtilTest"/>
+            <class name="com.softwaremagico.kt.rest.security.JwtTokenFilterTest"/>
+            <class name="com.softwaremagico.kt.logger.FrontendLoggerTest"/>
             <class name="com.softwaremagico.kt.ServerConfigurationTests"/>
             <class name="com.softwaremagico.kt.rest.security.KendoUserDetailsServiceTests"/>
             <class name="com.softwaremagico.kt.rest.security.NetworkControllerTests"/>
