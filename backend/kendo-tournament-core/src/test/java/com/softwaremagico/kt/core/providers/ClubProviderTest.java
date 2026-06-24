@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
 import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
@@ -43,12 +44,13 @@ import static org.testng.Assert.assertTrue;
 public class ClubProviderTest {
 
     private ClubRepository clubRepository;
+    private ParticipantRepository participantRepository;
     private ClubProvider clubProvider;
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         clubRepository = mock(ClubRepository.class);
-        final ParticipantRepository participantRepository = mock(ParticipantRepository.class);
+        participantRepository = mock(ParticipantRepository.class);
         clubProvider = new ClubProvider(clubRepository, participantRepository);
         new KeyProperty(null, null, null);
     }
@@ -103,5 +105,25 @@ public class ClubProviderTest {
         assertFalse(found.isPresent());
         verify(clubRepository).findAll();
     }
+
+    @Test
+    public void shouldDeleteParticipantsAndClubWhenDeletingById() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        when(clubRepository.findById(1)).thenReturn(Optional.of(club));
+
+        clubProvider.deleteById(1);
+
+        verify(clubRepository).findById(1);
+        verify(clubRepository).deleteById(1);
+        verify(participantRepository).deleteByClubIn(java.util.Collections.singletonList(club));
+    }
+
+    @Test(expectedExceptions = ClubNotFoundException.class)
+    public void shouldThrowClubNotFoundExceptionWhenDeletingByNonExistentId() {
+        when(clubRepository.findById(99)).thenReturn(Optional.empty());
+
+        clubProvider.deleteById(99);
+    }
 }
+
 

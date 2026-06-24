@@ -44,6 +44,7 @@
             <class name="com.softwaremagico.kt.logger.EncryptorLoggerTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersAdditionalTests"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.EnumCryptoConvertersCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.EntityBeansCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.values.PersistenceValuesCoverageTest"/>
         </classes>

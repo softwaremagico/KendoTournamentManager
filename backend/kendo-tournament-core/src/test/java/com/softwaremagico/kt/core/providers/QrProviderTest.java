@@ -25,15 +25,19 @@ import io.github.simonscholz.qrcode.QrPositionalSquaresConfig;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Test(groups = {"qrProviderTests"})
 public class QrProviderTest {
 
-    private QrProvider provider = new QrProvider();
+    private final QrProvider provider = new QrProvider();
 
     // Tests for crateSquareConfig - covering null parameter paths
     @Test
@@ -162,6 +166,93 @@ public class QrProviderTest {
     @Test
     public void testGetQrWithNullInkColor() {
         final BufferedImage qrImage = provider.getQr("TestData", 200, Color.BLACK, null, Color.WHITE, "test.png");
+        assertThat(qrImage).isNotNull();
+    }
+
+    @Test
+    public void testGetQrWithMissingSvgLogoDoesNotFail() {
+        final BufferedImage qrImage = provider.getQr("svg-missing", 200, Color.BLACK, Color.BLACK, Color.WHITE, "/missing-logo.svg");
+        assertThat(qrImage).isNotNull();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testReadSvgResourceCachesByBackgroundColor() throws Exception {
+        final Field cacheField = QrProvider.class.getDeclaredField("qrLogoByBackground");
+        cacheField.setAccessible(true);
+        cacheField.set(null, new HashMap<Color, BufferedImage>());
+
+        final Method readSvg = QrProvider.class.getDeclaredMethod("readSvgResource", String.class, float.class, Color.class, Color.class);
+        readSvg.setAccessible(true);
+
+        final BufferedImage first = (BufferedImage) readSvg.invoke(provider, "/qr/test-logo.svg", 200f, Color.BLACK, Color.WHITE);
+        final BufferedImage second = (BufferedImage) readSvg.invoke(provider, "/qr/test-logo.svg", 200f, Color.BLACK, Color.WHITE);
+
+        assertThat(first).isNotNull();
+        assertThat(second).isNotNull().isSameAs(first);
+
+        final Map<Color, BufferedImage> cache = (Map<Color, BufferedImage>) cacheField.get(null);
+        assertThat(cache).containsKey(Color.WHITE);
+    }
+
+    @Test
+    public void testReadSvgResourceWithNullBackground() throws Exception {
+        final Method readSvg = QrProvider.class.getDeclaredMethod("readSvgResource", String.class, float.class, Color.class, Color.class);
+        readSvg.setAccessible(true);
+
+        final BufferedImage image = (BufferedImage) readSvg.invoke(provider, "/qr/test-logo.svg", 200f, Color.BLACK, null);
+
+        assertThat(image).isNotNull();
+    }
+
+    @Test
+    public void testReadSvgResourceReturnsNullWhenResourceNotFound() throws Exception {
+        final Field cacheField = QrProvider.class.getDeclaredField("qrLogoByBackground");
+        cacheField.setAccessible(true);
+        cacheField.set(null, new HashMap<Color, BufferedImage>());
+
+        final Method readSvg = QrProvider.class.getDeclaredMethod("readSvgResource", String.class, float.class, Color.class, Color.class);
+        readSvg.setAccessible(true);
+
+        final BufferedImage image = (BufferedImage) readSvg.invoke(provider, "/not-found.svg", 200f, Color.BLACK, Color.MAGENTA);
+
+        assertThat(image).isNull();
+    }
+
+    @Test
+    public void testUpdateLogoColorWithNullColors() throws Exception {
+        final String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0L10 0\"/></svg>";
+        final Method updateLogoColor = QrProvider.class.getDeclaredMethod("updateLogoColor", String.class, Color.class, Color.class);
+        updateLogoColor.setAccessible(true);
+
+        final Object svgDocument = updateLogoColor.invoke(provider, svg, null, null);
+
+        assertThat(svgDocument).isNotNull();
+    }
+
+    @Test
+    public void testDrawDotImageWithMissingResourceDoesNotFail() {
+        final BufferedImage image = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D graphics = image.createGraphics();
+        provider.drawDotImage(0, 0, 10, graphics, "/missing-dot.png");
+        graphics.dispose();
+
+        assertThat(image).isNotNull();
+    }
+
+    @Test
+    public void testDrawDotImageWithExistingResource() {
+        final BufferedImage image = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D graphics = image.createGraphics();
+        provider.drawDotImage(0, 0, 10, graphics, "/qr/dot.png");
+        graphics.dispose();
+
+        assertThat(image).isNotNull();
+    }
+
+    @Test
+    public void testGetQrWithExistingPngLogo() {
+        final BufferedImage qrImage = provider.getQr("TestPngLogo", 200, Color.BLACK, Color.BLACK, Color.WHITE, "/qr/dot.png");
         assertThat(qrImage).isNotNull();
     }
 

@@ -84,6 +84,63 @@ public class BasePoolTest {
         assertTrue(pool.getElementsTime().isEmpty());
     }
 
+    @Test
+    public void shouldReturnNullWhenGetKeyCalledWithExpiredElement() {
+        final TestPool pool = new TestPool(5L, false);
+        pool.addElement("value-exp", "key-exp");
+
+        waitUntil(() -> pool.getKey("value-exp") == null, Duration.ofMillis(250));
+
+        assertNull(pool.getKey("value-exp"));
+    }
+
+    @Test
+    public void shouldReturnNullWhenGetKeyCalledWithDirtyElement() {
+        final TestPool pool = new TestPool(1_000L, true);
+        pool.addElement("dirty-val", "key-dirty");
+
+        assertNull(pool.getKey("dirty-val"));
+    }
+
+    @Test
+    public void shouldReturnNullWhenGetKeyCalledWithNonMatchingElement() {
+        final TestPool pool = new TestPool(1_000L, false);
+        pool.addElement("value-a", "key-a");
+
+        assertNull(pool.getKey("value-z"));
+    }
+
+    @Test
+    public void shouldReturnNullWhenRemoveCalledWithNullId() {
+        final TestPool pool = new TestPool(1_000L, false);
+        pool.addElement("value-x", "key-x");
+
+        assertNull(pool.removeElement(null));
+    }
+
+    @Test
+    public void shouldReturnNullWhenGetElementCalledWithNullId() {
+        final TestPool pool = new TestPool(1_000L, false);
+
+        assertNull(pool.getElement(null));
+    }
+
+    @Test
+    public void shouldReturnNullWhenAddElementCalledWithZeroExpirationTime() {
+        final TestPool pool = new TestPool(0L, false);
+        pool.addElement("val", "key");
+
+        assertNull(pool.getElement("key"));
+        assertTrue(pool.getAllPooledElements().isEmpty());
+    }
+
+    @Test
+    public void shouldReturnNullWhenGetElementCalledOnEmptyPool() {
+        final TestPool pool = new TestPool(1_000L, false);
+
+        assertNull(pool.getElement("missing-key"));
+    }
+
     private void waitUntil(java.util.function.BooleanSupplier condition, Duration timeout) {
         final long deadline = System.nanoTime() + timeout.toNanos();
         while (!condition.getAsBoolean() && System.nanoTime() < deadline) {
