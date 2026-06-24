@@ -156,6 +156,21 @@ public class RoleProviderTest {
     }
 
     @Test
+    public void testGetAllForDiplomasWithFalseFlagAndEmptyRoleTypesUsesTournamentQuery() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Role role = role(tournament("Different"), RoleType.ORGANIZER);
+
+        when(roleRepository.findByTournament(tournament)).thenReturn(List.of(role));
+
+        final List<Role> result = provider.getAllForDiplomas(tournament, false, List.of());
+
+        assertThat(result).containsExactly(role);
+        assertThat(role.getTournament()).isEqualTo(tournament);
+        verify(roleRepository).findByTournament(tournament);
+        verify(roleRepository, never()).findByTournamentAndRoleTypeIn(tournament, List.of());
+    }
+
+    @Test
     public void testGetAllForDiplomasWithNullFlagAndEmptyRoleTypesUsesTournamentQuery() {
         final Tournament tournament = tournament("Autumn Cup");
         final Role role = role(tournament("Different"), RoleType.ORGANIZER);
@@ -168,6 +183,21 @@ public class RoleProviderTest {
         assertThat(role.getTournament()).isEqualTo(tournament);
         verify(roleRepository).findByTournament(tournament);
         verify(roleRepository, never()).findByTournamentAndRoleTypeIn(tournament, List.of());
+    }
+
+    @Test
+    public void testGetAllForDiplomasWithNullFlagAndRoleTypesUsesTournamentRoleQuery() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Collection<RoleType> roleTypes = List.of(RoleType.REFEREE, RoleType.ORGANIZER);
+        final Role role = role(tournament("Different"), RoleType.REFEREE);
+
+        when(roleRepository.findByTournamentAndRoleTypeIn(tournament, roleTypes)).thenReturn(List.of(role));
+
+        final List<Role> result = provider.getAllForDiplomas(tournament, null, roleTypes);
+
+        assertThat(result).containsExactly(role);
+        assertThat(role.getTournament()).isEqualTo(tournament);
+        verify(roleRepository).findByTournamentAndRoleTypeIn(tournament, roleTypes);
     }
 
     @Test
@@ -216,6 +246,20 @@ public class RoleProviderTest {
     }
 
     @Test
+    public void testGetAllForAccreditationsWithFalseFlagAndEmptyRoleTypesUsesTournamentQuery() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Role role = role(tournament("Different"), RoleType.PRESS);
+
+        when(roleRepository.findByTournament(tournament)).thenReturn(List.of(role));
+
+        final List<Role> result = provider.getAllForAccreditations(tournament, false, List.of());
+
+        assertThat(result).containsExactly(role);
+        assertThat(role.getTournament()).isEqualTo(tournament);
+        verify(roleRepository).findByTournament(tournament);
+    }
+
+    @Test
     public void testGetAllForAccreditationsWithNullFlagAndEmptyRoleTypesUsesTournamentQuery() {
         final Tournament tournament = tournament("Autumn Cup");
         final Role role = role(tournament("Different"), RoleType.COMPETITOR);
@@ -227,6 +271,21 @@ public class RoleProviderTest {
         assertThat(result).containsExactly(role);
         assertThat(role.getTournament()).isEqualTo(tournament);
         verify(roleRepository).findByTournament(tournament);
+    }
+
+    @Test
+    public void testGetAllForAccreditationsWithNullFlagAndRoleTypesUsesTournamentRoleQuery() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Collection<RoleType> roleTypes = List.of(RoleType.VOLUNTEER);
+        final Role role = role(tournament("Different"), RoleType.VOLUNTEER);
+
+        when(roleRepository.findByTournamentAndRoleTypeIn(tournament, roleTypes)).thenReturn(List.of(role));
+
+        final List<Role> result = provider.getAllForAccreditations(tournament, null, roleTypes);
+
+        assertThat(result).containsExactly(role);
+        assertThat(role.getTournament()).isEqualTo(tournament);
+        verify(roleRepository).findByTournamentAndRoleTypeIn(tournament, roleTypes);
     }
 
     @Test

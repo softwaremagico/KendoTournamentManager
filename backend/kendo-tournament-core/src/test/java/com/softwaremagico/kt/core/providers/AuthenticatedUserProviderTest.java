@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 @Test(groups = "converterTests")
@@ -84,6 +85,18 @@ public class AuthenticatedUserProviderTest {
     }
 
     @Test
+    public void shouldReturnEmptyWhenEncryptionEnabledAndNoMatchesAnywhere() {
+        new KeyProperty("enc-key", null, null);
+        when(authenticatedUserRepository.findByUsernameHash("unknown")).thenReturn(Optional.empty());
+        when(participantProvider.findByTokenUsername("unknown")).thenReturn(Optional.empty());
+
+        final AuthenticatedUserProvider provider = new AuthenticatedUserProvider(authenticatedUserRepository, participantProvider, "false");
+        final Optional<IAuthenticatedUser> found = provider.findByUsername("unknown");
+
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
     public void shouldSearchByPlainUsernameWhenEncryptionDisabled() {
         final AuthenticatedUser auth = new AuthenticatedUser("john");
         when(authenticatedUserRepository.findByUsername("john")).thenReturn(Optional.of(auth));
@@ -93,6 +106,30 @@ public class AuthenticatedUserProviderTest {
 
         assertTrue(found.isPresent());
         assertEquals(found.get().getUsername(), "john");
+    }
+
+    @Test
+    public void shouldSearchByPlainUsernameWhenEncryptionKeyIsBlank() {
+        new KeyProperty("  ", null, null);
+        final AuthenticatedUser auth = new AuthenticatedUser("john");
+        when(authenticatedUserRepository.findByUsername("john")).thenReturn(Optional.of(auth));
+
+        final AuthenticatedUserProvider provider = new AuthenticatedUserProvider(authenticatedUserRepository, participantProvider, "false");
+        final Optional<IAuthenticatedUser> found = provider.findByUsername("john");
+
+        assertTrue(found.isPresent());
+        assertEquals(found.get().getUsername(), "john");
+    }
+
+    @Test
+    public void shouldNotCreateGuestUserWhenGuestDisabled() {
+        when(authenticatedUserRepository.findByUsername(AuthenticatedUserProvider.GUEST_USER)).thenReturn(Optional.empty());
+        when(participantProvider.findByTokenUsername(AuthenticatedUserProvider.GUEST_USER)).thenReturn(Optional.empty());
+
+        final AuthenticatedUserProvider provider = new AuthenticatedUserProvider(authenticatedUserRepository, participantProvider, "false");
+        final Optional<IAuthenticatedUser> found = provider.findByUsername(AuthenticatedUserProvider.GUEST_USER);
+
+        assertTrue(found.isEmpty());
     }
 
     @Test
@@ -136,6 +173,19 @@ public class AuthenticatedUserProviderTest {
         assertNotNull(saved.getRoles());
         assertTrue(saved.getRoles().contains("admin"));
         assertTrue(saved.getRoles().contains("editor"));
+    }
+
+    @Test
+    public void shouldCreateAndSaveUserWithNullRoles() {
+        when(authenticatedUserRepository.findByUsername("john")).thenReturn(Optional.empty());
+        when(participantProvider.findByTokenUsername("john")).thenReturn(Optional.empty());
+        when(authenticatedUserRepository.save(any(AuthenticatedUser.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final AuthenticatedUserProvider provider = new AuthenticatedUserProvider(authenticatedUserRepository, participantProvider, "false");
+        final AuthenticatedUser saved = provider.save("creator", "john", "John", "Doe", "pwd", (String[]) null);
+
+        assertEquals(saved.getUsername(), "john");
+        assertNull(saved.getRoles());
     }
 
     @Test

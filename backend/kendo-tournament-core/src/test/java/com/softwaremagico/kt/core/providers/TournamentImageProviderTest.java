@@ -35,14 +35,18 @@ import org.springframework.web.multipart.MultipartFile;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Field;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 @Test(groups = {"tournamentExtraProperties"})
@@ -65,6 +69,7 @@ public class TournamentImageProviderTest {
         MockitoAnnotations.openMocks(this);
         provider = new TournamentImageProvider(repository, tournamentRepository);
         when(repository.save(any(TournamentImage.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        resetDefaultImages();
     }
 
     @Test
@@ -79,6 +84,60 @@ public class TournamentImageProviderTest {
             assertNotNull(image.getData());
             assertTrue(image.getData().length > 0);
         }
+    }
+
+    @Test
+    public void shouldReuseCachedDefaultImagesWhenAlreadyLoaded() {
+        final Tournament tournament = tournament();
+        final byte[] accreditation = new byte[]{1};
+        final byte[] banner = new byte[]{2};
+        final byte[] diploma = new byte[]{3};
+        final byte[] photo = new byte[]{4};
+        setStaticField("defaultAccreditation", accreditation);
+        setStaticField("defaultBanner", banner);
+        setStaticField("defaultDiploma", diploma);
+        setStaticField("defaultPhoto", photo);
+
+        assertTrue(Arrays.equals(provider.getDefaultImage(tournament, TournamentImageType.ACCREDITATION).getData(), accreditation));
+        assertTrue(Arrays.equals(provider.getDefaultImage(tournament, TournamentImageType.BANNER).getData(), banner));
+        assertTrue(Arrays.equals(provider.getDefaultImage(tournament, TournamentImageType.DIPLOMA).getData(), diploma));
+        assertTrue(Arrays.equals(provider.getDefaultImage(tournament, TournamentImageType.PHOTO).getData(), photo));
+    }
+
+    @Test
+    public void shouldReturnNullDataWhenDefaultResourceStreamIsMissing() {
+        final TournamentImageProvider missingResourceProvider = new TournamentImageProvider(repository, tournamentRepository,
+                resourcePath -> null);
+        final Tournament tournament = tournament();
+        resetDefaultImages();
+
+        for (TournamentImageType type : TournamentImageType.values()) {
+            final TournamentImage image = missingResourceProvider.getDefaultImage(tournament, type);
+            assertEquals(image.getImageType(), type);
+            assertNull(image.getData());
+        }
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenTypeIsNull() {
+        org.testng.Assert.expectThrows(NullPointerException.class,
+                () -> provider.getDefaultImage(tournament(), null));
+    }
+
+    @Test
+    public void shouldDelegateGetDeleteAndGetAllToRepository() {
+        final Tournament tournament = tournament();
+        final TournamentImage image = new TournamentImage();
+        image.setTournament(tournament);
+        image.setImageType(TournamentImageType.BANNER);
+
+        when(repository.findByTournamentAndImageType(tournament, TournamentImageType.BANNER)).thenReturn(Optional.of(image));
+        when(repository.findByTournament(tournament)).thenReturn(List.of(image));
+        when(repository.deleteByTournamentAndImageType(tournament, TournamentImageType.BANNER)).thenReturn(1);
+
+        assertTrue(provider.get(tournament, TournamentImageType.BANNER).isPresent());
+        assertEquals(provider.getAll(tournament).size(), 1);
+        assertEquals(provider.delete(tournament, TournamentImageType.BANNER), 1);
     }
 
     @Test
@@ -129,6 +188,23 @@ public class TournamentImageProviderTest {
         final Tournament tournament = new Tournament("Tournament", 1, 3, TournamentType.LEAGUE, "tester");
         tournament.setId(202);
         return tournament;
+    }
+
+    private void resetDefaultImages() {
+        setStaticField("defaultAccreditation", null);
+        setStaticField("defaultBanner", null);
+        setStaticField("defaultDiploma", null);
+        setStaticField("defaultPhoto", null);
+    }
+
+    private void setStaticField(String fieldName, byte[] value) {
+        try {
+            final Field field = TournamentImageProvider.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(null, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new IllegalStateException("Cannot update static image field '" + fieldName + "'", e);
+        }
     }
 }
 

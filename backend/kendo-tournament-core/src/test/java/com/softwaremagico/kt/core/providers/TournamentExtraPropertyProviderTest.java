@@ -150,6 +150,42 @@ public class TournamentExtraPropertyProviderTest {
         verify(groupRepository, never()).save(secondLevelGroup);
     }
 
+    @Test
+    public void shouldIgnoreInvalidNumberOfWinnersValueInBackgroundUpdate() {
+        final Tournament tournament = tournament();
+        final TournamentExtraProperty property = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "invalid-number");
+
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS)).thenReturn(null);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        provider.save(property);
+
+        waitUntil(() -> true, 2, PAUSE_MILLIS);
+        verify(groupRepository, never()).findByTournamentOrderByLevelAscIndexAsc(tournament);
+        verify(groupRepository, never()).save(any(Group.class));
+    }
+
+    @Test
+    public void shouldNotUpdateFirstLevelGroupWhenNumberOfWinnersAlreadyMatches() {
+        final Tournament tournament = tournament();
+        final TournamentExtraProperty property = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2");
+
+        final Group firstLevelGroup = new Group(tournament, 0, 0);
+        firstLevelGroup.setId(10);
+        firstLevelGroup.setNumberOfWinners(2);
+
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS)).thenReturn(null);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament)).thenReturn(List.of(firstLevelGroup));
+
+        provider.save(property);
+
+        waitUntil(() -> true, 2, PAUSE_MILLIS);
+        verify(groupRepository, never()).save(any(Group.class));
+    }
+
     private void waitUntil(BooleanSupplier condition, int attempts, long pauseMillis) {
         for (int i = 0; i < attempts; i++) {
             if (condition.getAsBoolean()) {
