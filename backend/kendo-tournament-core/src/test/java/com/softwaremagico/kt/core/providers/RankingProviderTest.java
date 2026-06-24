@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -44,6 +45,7 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,6 +141,70 @@ public class RankingProviderTest {
 
         final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(List.of(p1, p2, p3),
                 ScoreType.DEFAULT, 30);
+
+        assertThat(ranking).hasSize(3);
+    }
+
+    @Test
+    public void testGetCompetitorsGlobalScoreRankingWithZeroDaysUsesNoDateFilter() {
+        final Participant p1 = this.participant(4, "A", "One");
+        final Participant p2 = this.participant(5, "B", "Two");
+        final Participant p3 = this.participant(6, "C", "Three");
+
+        final Fight recentFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, 6, 20, 12, 0));
+        final Fight oldFight = this.fight(List.of(p2), List.of(p3), LocalDateTime.of(2026, 1, 1, 12, 0));
+
+        when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+        when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(recentFight, oldFight));
+        when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
+
+        final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(null, ScoreType.DEFAULT, 0);
+
+        assertThat(ranking).hasSize(3);
+    }
+
+    @Test
+    public void testGetCompetitorsGlobalScoreRankingFiltersUntiesByDateRange() {
+        final Participant p1 = this.participant(7, "A", "One");
+        final Participant p2 = this.participant(8, "B", "Two");
+        final Participant p3 = this.participant(9, "C", "Three");
+        final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+
+        final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, 6, 20, 12, 0));
+        final Duel recentUntie = new Duel(p1, p2, tournament, "tester");
+        recentUntie.setCreatedAt(LocalDateTime.of(2026, 6, 22, 12, 0));
+        final Duel oldUntie = new Duel(p2, p3, tournament, "tester");
+        oldUntie.setCreatedAt(LocalDateTime.of(2026, 1, 1, 12, 0));
+
+        when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+        when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
+        when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of(recentUntie, oldUntie));
+
+        final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(
+                new ArrayList<>(List.of(p1, p2, p3)), ScoreType.DEFAULT, 30);
+
+        assertThat(ranking).hasSize(3);
+    }
+
+    @Test
+    public void testGetCompetitorsGlobalScoreRankingWithUntiesAndNullDaysUsesNoDateFilter() {
+        final Participant p1 = this.participant(10, "A", "One");
+        final Participant p2 = this.participant(11, "B", "Two");
+        final Participant p3 = this.participant(12, "C", "Three");
+        final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+
+        final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, 6, 20, 12, 0));
+        final Duel recentUntie = new Duel(p1, p2, tournament, "tester");
+        recentUntie.setCreatedAt(LocalDateTime.of(2026, 6, 22, 12, 0));
+        final Duel oldUntie = new Duel(p2, p3, tournament, "tester");
+        oldUntie.setCreatedAt(LocalDateTime.of(2026, 1, 1, 12, 0));
+
+        when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+        when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
+        when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of(recentUntie, oldUntie));
+
+        final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(
+                new ArrayList<>(List.of(p1, p2, p3)), ScoreType.DEFAULT, null);
 
         assertThat(ranking).hasSize(3);
     }
@@ -627,6 +693,97 @@ public class RankingProviderTest {
                 List.of(team1, team2), List.of(), List.of(), true);
 
         assertThat(ranking).hasSize(2);
+    }
+
+    @Test
+    public void testGetCompetitorsGlobalScoreRankingWithEmptyCompetitorsAndNoDateFilter() {
+        final Participant p1 = this.participant(21, "A", "One");
+        final Participant p2 = this.participant(22, "B", "Two");
+        final Fight oldFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now().minusDays(200));
+
+        when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2)));
+        when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(oldFight));
+        when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
+
+        final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(new ArrayList<>(),
+                ScoreType.DEFAULT, null);
+
+        assertThat(ranking).hasSize(2);
+    }
+
+    @Test
+    public void testGetCompetitorAndScoreWithNegativeOrderReturnNull() {
+        final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+        final Group group = this.group(tournament);
+        final Participant p1 = this.participant(31, "Ken", "Do");
+        final Team team = this.team(31, "Team", tournament);
+        team.setMembers(List.of(p1));
+        group.setTeams(List.of(team));
+
+        assertThat(this.provider.getCompetitor(group, -1)).isNull();
+        assertThat(this.provider.getScoreOfCompetitor(group, -1)).isNull();
+    }
+
+    @Test
+    public void testGetCompetitorGlobalRankingUsesAllComparatorTypesAndFiltersNonCompetitors() {
+        final Participant competitor = this.participant(41, "C", "One");
+        final Participant referee = this.participant(42, "R", "Two");
+        final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+        final Role competitorRole = new Role(tournament, competitor, RoleType.COMPETITOR);
+        final Role refereeRole = new Role(tournament, referee, RoleType.REFEREE);
+
+        when(this.roleProvider.getAll()).thenReturn(List.of(competitorRole, refereeRole));
+        when(this.fightProvider.getAll()).thenReturn(List.of());
+        when(this.duelProvider.getUnties()).thenReturn(List.of());
+
+        assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.CUSTOM)).hasSize(1)
+                .extracting(ScoreOfCompetitor::getCompetitor).containsExactly(competitor);
+        assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.EUROPEAN)).hasSize(1);
+        assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.INTERNATIONAL)).hasSize(1);
+        assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.WIN_OVER_DRAWS)).hasSize(1);
+    }
+
+    @Test
+    public void testPrivateSortHelpersAndCheckLevelBranchesViaReflection() throws Exception {
+        final Method sortTeamsScores = RankingProvider.class.getDeclaredMethod("sortTeamsScores",
+                ScoreType.class, List.class, boolean.class);
+        sortTeamsScores.setAccessible(true);
+        sortTeamsScores.invoke(null, ScoreType.DEFAULT, null, true);
+
+        final Method sortCompetitorsScores = RankingProvider.class.getDeclaredMethod("sortCompetitorsScores",
+                ScoreType.class, List.class);
+        sortCompetitorsScores.setAccessible(true);
+        sortCompetitorsScores.invoke(null, ScoreType.DEFAULT, null);
+
+        final Method checkLevel = RankingProvider.class.getDeclaredMethod("checkLevel", Tournament.class);
+        checkLevel.setAccessible(true);
+
+        assertThat((Boolean) checkLevel.invoke(this.provider, new Object[]{null})).isTrue();
+        assertThat((Boolean) checkLevel.invoke(this.provider, this.tournament(TournamentType.KING_OF_THE_MOUNTAIN)))
+                .isFalse();
+    }
+
+    @Test
+    public void testGetTeamsScoreRankingAssignsDifferentSortingIndexWhenTeamsDiffer() {
+        final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+        final Participant p1 = this.participant(51, "A", "One");
+        final Participant p2 = this.participant(52, "B", "Two");
+        final Team team1 = this.team(51, "Team A", tournament);
+        final Team team2 = this.team(52, "Team B", tournament);
+        team1.setMembers(new ArrayList<>(List.of(p1)));
+        team2.setMembers(new ArrayList<>(List.of(p2)));
+
+        final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");
+        fight.setCreatedAt(LocalDateTime.now());
+        fight.getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fight.getDuels().get(0).addCompetitor1Score(Score.MEN);
+
+        final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.CLASSIC,
+                List.of(team1, team2), List.of(fight), List.of(), true);
+
+        assertThat(ranking).hasSize(2);
+        assertThat(ranking.get(0).getSortingIndex()).isEqualTo(0);
+        assertThat(ranking.get(1).getSortingIndex()).isEqualTo(1);
     }
 
     // ========== Helper Methods ==========

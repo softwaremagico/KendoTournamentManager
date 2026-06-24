@@ -42,6 +42,16 @@
                 <include name="converterUtils"/>
                 <include name="coreExceptions"/>
                 <include name="poolTests"/>
+                <include name="participantImageProviderTests"/>
+                <include name="teamProviderTests"/>
+                <include name="roleProviderTests"/>
+                <include name="achievementProviderTests"/>
+                <include name="duelProviderTests"/>
+                <include name="fightProviderTests"/>
+                <include name="tournamentProviderTests"/>
+                <include name="participantFightStatistics"/>
+                <include name="tournamentFightStatistics"/>
+                <include name="rankingProviderTests"/>
             </run>
         </groups>
         <classes>
@@ -67,6 +77,7 @@
             <class name="com.softwaremagico.kt.core.tests.BubbleSortDrawTest"/>
             <class name="com.softwaremagico.kt.core.tests.SenbatsuTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.StatisticsConvertersTest"/>
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.score.ScoreOfCompetitorTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
@@ -75,12 +86,22 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
+            <class name="com.softwaremagico.kt.core.statistics.StatisticsModelsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeOddTeamsAsapTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
             <class name="com.softwaremagico.kt.core.providers.AuthenticatedUserProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.GroupProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.ParticipantImageProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TeamProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.RoleProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.AchievementProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.DuelProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.FightProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TournamentProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.ParticipantFightStatisticsProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TournamentFightStatisticsProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.TournamentExtraPropertyProviderTest"/>
             <class name="com.softwaremagico.kt.core.controller.GroupControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.CsvControllerTest"/>
