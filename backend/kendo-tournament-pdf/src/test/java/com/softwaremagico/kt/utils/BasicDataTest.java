@@ -10,12 +10,12 @@ package com.softwaremagico.kt.utils;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -58,9 +58,9 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final Integer LEVEL = 0;
     protected ClubDTO club;
     protected TournamentDTO tournament;
-    protected List<ParticipantDTO> members;
+    protected List<ParticipantDTO> participants;
     protected List<RoleDTO> roles;
-    protected List<TeamDTO> teams;
+    protected List<TeamDTO> teamList;
     protected GroupDTO group;
     protected List<FightDTO> fights;
     @Autowired
@@ -83,12 +83,12 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<ParticipantDTO> createParticipants(ClubDTO club) {
-        List<ParticipantDTO> participants = new ArrayList<>();
+        List<ParticipantDTO> participantsCreated = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            participants.add(participantController.create(
+            participantsCreated.add(participantController.create(
                     new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club), null, null));
         }
-        return participants;
+        return participantsCreated;
     }
 
     protected TournamentDTO createTournament() {
@@ -103,9 +103,9 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         return rolesCreated;
     }
 
-    protected RoleDTO createReferee() {
+    protected void createReferee() {
         ParticipantDTO referee = participantController.create(new ParticipantDTO("Ref001", "Referee", "Referee", club), null, null);
-        return roleController.create(new RoleDTO(tournament, referee, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament, referee, RoleType.REFEREE), null, null);
     }
 
     protected List<TeamDTO> createTeams(List<ParticipantDTO> members, TournamentDTO tournament) {
@@ -185,13 +185,13 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
 
     protected void populateData() {
         club = createClub();
-        members = createParticipants(club);
+        participants = createParticipants(club);
         tournament = createTournament();
-        roles = createRoles(members, tournament);
+        roles = createRoles(participants, tournament);
         createReferee();
-        teams = createTeams(members, tournament);
-        group = createGroup(tournament, teams);
-        fights = createFights(tournament, teams, group);
+        teamList = createTeams(participants, tournament);
+        group = createGroup(tournament, teamList);
+        fights = createFights(tournament, teamList, group);
     }
 
     protected boolean deleteDirectory(File directoryToBeDeleted) {
