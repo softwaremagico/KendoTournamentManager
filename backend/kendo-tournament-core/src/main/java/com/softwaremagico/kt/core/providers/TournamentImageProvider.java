@@ -42,126 +42,142 @@ import java.util.Optional;
 @Component
 public class TournamentImageProvider extends CrudProvider<TournamentImage, Integer, TournamentImageRepository> {
 
+    @FunctionalInterface
+    interface ResourceLoader {
+        InputStream getResourceAsStream(String resourcePath);
+    }
+
     private static final String DEFAULT_BANNER_IMAGE = "/images/default-banner.png";
     private static final String DEFAULT_DIPLOMA_IMAGE = "/images/default-diploma.png";
     private static final String DEFAULT_PHOTO_IMAGE = "/images/default-photo.png";
     private static final String DEFAULT_ACCREDITATION_IMAGE = "/images/accreditation-background.png";
 
-    private static byte[] defaultAccreditation;
-    private static byte[] defaultBanner;
-    private static byte[] defaultDiploma;
-    private static byte[] defaultPhoto;
+    private byte[] defaultAccreditation;
+    private byte[] defaultBanner;
+    private byte[] defaultDiploma;
+    private byte[] defaultPhoto;
 
     private final TournamentRepository tournamentRepository;
+    private final ResourceLoader resourceLoader;
 
     @Autowired
     public TournamentImageProvider(TournamentImageRepository repository, TournamentRepository tournamentRepository) {
+        this(repository, tournamentRepository, TournamentImageController.class::getResourceAsStream);
+    }
+
+    TournamentImageProvider(TournamentImageRepository repository, TournamentRepository tournamentRepository,
+                            ResourceLoader resourceLoader) {
         super(repository);
         this.tournamentRepository = tournamentRepository;
+        this.resourceLoader = resourceLoader;
     }
 
     public Optional<TournamentImage> get(Tournament tournament, TournamentImageType imageType) {
-        return getRepository().findByTournamentAndImageType(tournament, imageType);
+        return this.getRepository().findByTournamentAndImageType(tournament, imageType);
     }
 
     public int delete(Tournament tournament, TournamentImageType imageType) {
-        return getRepository().deleteByTournamentAndImageType(tournament, imageType);
+        return this.getRepository().deleteByTournamentAndImageType(tournament, imageType);
     }
 
     public List<TournamentImage> getAll(Tournament tournament) {
-        return getRepository().findByTournament(tournament);
+        return this.getRepository().findByTournament(tournament);
     }
 
-    private static byte[] getDefaultBanner() {
-        if (defaultBanner == null) {
-            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_BANNER_IMAGE)) {
+    private byte[] getDefaultBanner() {
+        if (this.defaultBanner == null) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_BANNER_IMAGE)) {
                 if (inputStream != null) {
-                    defaultBanner = inputStream.readAllBytes();
+                    this.defaultBanner = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ex) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default banner found!");
+            } catch (NullPointerException | IOException _) {
+                KendoTournamentLogger.severe(TournamentImageProvider.class.getName(), "No default banner found!");
             }
         }
-        return defaultBanner;
+        return this.defaultBanner;
     }
 
-    private static byte[] getDefaultAccreditation() {
-        if (defaultAccreditation == null) {
-            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_ACCREDITATION_IMAGE)) {
+    private byte[] getDefaultAccreditation() {
+        if (this.defaultAccreditation == null) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_ACCREDITATION_IMAGE)) {
                 if (inputStream != null) {
-                    defaultAccreditation = inputStream.readAllBytes();
+                    this.defaultAccreditation = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ex) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default accreditation found!");
+            } catch (NullPointerException | IOException _) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(),
+                        "No default accreditation found!");
             }
         }
-        return defaultAccreditation;
+        return this.defaultAccreditation;
     }
 
-    private static byte[] getDefaultDiploma() {
-        if (defaultDiploma == null) {
-            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_DIPLOMA_IMAGE)) {
+    private byte[] getDefaultDiploma() {
+        if (this.defaultDiploma == null) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_DIPLOMA_IMAGE)) {
                 if (inputStream != null) {
-                    defaultDiploma = inputStream.readAllBytes();
+                    this.defaultDiploma = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ex) {
+            } catch (NullPointerException | IOException _) {
                 KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
             }
         }
-        return defaultDiploma;
+        return this.defaultDiploma;
     }
 
-    private static byte[] getDefaultPhoto() {
-        if (defaultPhoto == null) {
-            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_PHOTO_IMAGE)) {
+    private byte[] getDefaultPhoto() {
+        if (this.defaultPhoto == null) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_PHOTO_IMAGE)) {
                 if (inputStream != null) {
-                    defaultPhoto = inputStream.readAllBytes();
+                    this.defaultPhoto = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ex) {
+            } catch (NullPointerException | IOException _) {
                 KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
             }
         }
-        return defaultPhoto;
+        return this.defaultPhoto;
     }
 
     public TournamentImage getDefaultImage(Tournament tournament, TournamentImageType type) {
         final TournamentImage tournamentImage = new TournamentImage();
         tournamentImage.setTournament(tournament);
-        tournamentImage.setImageType(type);
         tournamentImage.setImageCompression(ImageCompression.PNG);
-        switch (type) {
-            case ACCREDITATION -> tournamentImage.setData(getDefaultAccreditation());
-            case BANNER -> tournamentImage.setData(getDefaultBanner());
-            case DIPLOMA -> tournamentImage.setData(getDefaultDiploma());
-            case PHOTO -> tournamentImage.setData(getDefaultPhoto());
-            default -> {
-                //Not needed
-            }
+        if (type == null) {
+            throw new NullPointerException("Image type cannot be null");
+        }
+        tournamentImage.setImageType(type);
+        if (TournamentImageType.ACCREDITATION.equals(type)) {
+            tournamentImage.setData(this.getDefaultAccreditation());
+        } else if (TournamentImageType.BANNER.equals(type)) {
+            tournamentImage.setData(this.getDefaultBanner());
+        } else if (TournamentImageType.DIPLOMA.equals(type)) {
+            tournamentImage.setData(this.getDefaultDiploma());
+        } else {
+            tournamentImage.setData(this.getDefaultPhoto());
         }
         return tournamentImage;
     }
 
-    public TournamentImage add(MultipartFile file, Tournament tournament, TournamentImageType type, ImageCompression imageCompression,
-                               String username) throws DataInputException {
+    public TournamentImage add(MultipartFile file, Tournament tournament, TournamentImageType type,
+                               ImageCompression imageCompression, String username) throws DataInputException {
         try {
-            delete(tournament, type);
+            this.delete(tournament, type);
             final TournamentImage tournamentImage = new TournamentImage();
             tournamentImage.setTournament(tournament);
             tournamentImage.setData(file.getBytes());
             tournamentImage.setCreatedBy(username);
             tournamentImage.setImageType(type);
             tournamentImage.setImageCompression(imageCompression);
-            tournamentRepository.save(tournament);
-            return save(tournamentImage);
-        } catch (IOException e) {
+            this.tournamentRepository.save(tournament);
+            return this.save(tournamentImage);
+        } catch (IOException _) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
     }
 
     public TournamentImage add(TournamentImage tournamentImage, String username) throws DataInputException {
-        delete(tournamentImage.getTournament(), tournamentImage.getImageType());
+        this.delete(tournamentImage.getTournament(), tournamentImage.getImageType());
         tournamentImage.setCreatedBy(username);
-        tournamentRepository.save(tournamentImage.getTournament());
-        return save(tournamentImage);
+        this.tournamentRepository.save(tournamentImage.getTournament());
+        return this.save(tournamentImage);
     }
 }

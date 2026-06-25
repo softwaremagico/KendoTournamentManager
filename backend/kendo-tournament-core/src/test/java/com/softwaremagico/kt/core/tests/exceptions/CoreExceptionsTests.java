@@ -194,6 +194,64 @@ public class CoreExceptionsTests {
 		Assert.assertTrue(warningException.getMessage().contains(message));
 		Assert.assertTrue(infoException.getMessage().contains(message));
 	}
+
+	@Test
+	public void testCsvExceptionsExposeSpecificFields() {
+		final InvalidCsvFieldException fieldException = new InvalidCsvFieldException(this.getClass(), "bad header", "name");
+		final InvalidCsvRowException rowException = new InvalidCsvRowException(this.getClass(), "bad row", 7);
+
+		Assert.assertEquals(fieldException.getHeader(), "name");
+		Assert.assertEquals(rowException.getNumberOfFailedRows(), 7);
+		Assert.assertTrue(fieldException.getMessage().contains("bad header"));
+		Assert.assertTrue(rowException.getMessage().contains("bad row"));
+	}
+
+	@Test
+	public void testNoContentAndCustomFightExceptions() {
+		final NoContentException noContentException = new NoContentException(this.getClass(), "empty");
+		final CustomTournamentFightsException customTournamentFightsException =
+				new CustomTournamentFightsException(this.getClass(), "custom");
+		final DatabaseException databaseException = new DatabaseException(this.getClass(), "db");
+		final DataInputException dataInputException = new DataInputException(this.getClass(), "input");
+
+		Assert.assertEquals(noContentException.getMessage(), "empty");
+		Assert.assertTrue(customTournamentFightsException.getMessage().contains("custom"));
+		Assert.assertTrue(databaseException.getMessage().contains("db"));
+		Assert.assertTrue(dataInputException.getMessage().contains("input"));
+	}
+
+	@Test
+	public void testDefaultConstructorsFromNotFoundHierarchy() {
+		Assert.assertFalse(new DuelNotFoundException(this.getClass()).getMessage().isEmpty());
+		Assert.assertFalse(new GroupNotFoundException(this.getClass()).getMessage().isEmpty());
+		Assert.assertFalse(new ParticipantNotFoundException(this.getClass()).getMessage().isEmpty());
+		Assert.assertFalse(new RoleNotFoundException(this.getClass()).getMessage().isEmpty());
+		Assert.assertFalse(new TokenExpiredException(this.getClass()).getMessage().isEmpty());
+		Assert.assertFalse(new TournamentNotFoundException(this.getClass()).getMessage().isEmpty());
+		Assert.assertFalse(new UserNotFoundException(this.getClass()).getMessage().isEmpty());
+	}
+
+	@Test
+	public void testThrowableConstructorsAndSpecializedExceptions() {
+		final Throwable cause = new IllegalStateException("boom");
+
+		Assert.assertNotNull(new InvalidGroupException(this.getClass(), cause));
+		Assert.assertNotNull(new InvalidFightException(this.getClass(), cause));
+		Assert.assertNotNull(new InvalidExtraPropertyException(this.getClass(), cause));
+		Assert.assertNotNull(new ValidateBadRequestException(this.getClass(), cause));
+		Assert.assertNotNull(new ClubNotFoundException(this.getClass(), cause));
+		Assert.assertNotNull(new TeamNotFoundException(this.getClass(), cause));
+
+		final TournamentFinishedException tournamentFinishedException =
+				new TournamentFinishedException(this.getClass(), "finished");
+		final DuplicatedUserException duplicatedUserException = new DuplicatedUserException(this.getClass(), "dup");
+		final InvalidChallengeDistanceException invalidChallengeDistanceException =
+				new InvalidChallengeDistanceException(this.getClass(), "distance");
+
+		Assert.assertTrue(tournamentFinishedException.getMessage().contains("finished"));
+		Assert.assertTrue(duplicatedUserException.getMessage().contains("dup"));
+		Assert.assertTrue(invalidChallengeDistanceException.getMessage().contains("distance"));
+	}
 }
 
 

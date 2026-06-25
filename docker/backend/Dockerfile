@@ -24,11 +24,12 @@ ENV PATH "$PATH:${JAVA_HOME}/bin"
 
 #Set timezone.
 ENV TZ=${timezone}
-RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && \
+    echo "$TZ" > /etc/timezone && \
+    mkdir -p /opt/libraries/BOOT-INF/lib/
 
 #Copy libraries
-RUN mkdir -p /opt/libraries/BOOT-INF/lib/
-ADD libraries/* /opt/libraries/BOOT-INF/lib/
+COPY libraries/* /opt/libraries/BOOT-INF/lib/
 
 #Download project and install it
 RUN apk --no-cache add curl openssl supervisor unzip zip && \
@@ -70,7 +71,7 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 #Configure files
-RUN  sed -i "s|PROJECT_FOLDER|/opt/${project_name}|g" /etc/supervisor/conf.d/supervisord.conf && \
+RUN sed -i "s|PROJECT_FOLDER|/opt/${project_name}|g" /etc/supervisor/conf.d/supervisord.conf && \
      sed -i "s|PROJECT_NAME|${project_name}|g" /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 8080

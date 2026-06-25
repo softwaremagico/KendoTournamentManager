@@ -14,6 +14,7 @@
                 <include name="exceptionTypeTests"/>
                 <include name="kendoTournamentLoggerTests"/>
                 <include name="basicLoggingTests"/>
+                <include name="loggerAdaptersTests"/>
             </run>
         </groups>
         <classes>
@@ -22,6 +23,8 @@
             <class name="com.softwaremagico.kt.logger.tests.LoggedExceptionTest"/>
             <class name="com.softwaremagico.kt.logger.tests.KendoTournamentLoggerTest"/>
             <class name="com.softwaremagico.kt.logger.tests.BasicLoggingTest"/>
+            <class name="com.softwaremagico.kt.logger.tests.LoggerAdaptersCoverageTest"/>
+            <class name="com.softwaremagico.kt.logger.tests.LoggerAnnotationsCoverageTest"/>
         </classes>
     </test>
 </suite>
