@@ -119,6 +119,22 @@ public class TournamentImageProviderTest {
     }
 
     @Test
+    public void shouldReturnNullDataWhenDefaultResourceLoadingThrowsException() {
+        final TournamentImageProvider failingProvider = new TournamentImageProvider(repository, tournamentRepository,
+                _ -> {
+                    throw new NullPointerException("forced");
+                });
+        final Tournament tournament = tournament();
+        resetDefaultImages(failingProvider);
+
+        for (TournamentImageType type : TournamentImageType.values()) {
+            final TournamentImage image = failingProvider.getDefaultImage(tournament, type);
+            assertEquals(image.getImageType(), type);
+            assertNull(image.getData());
+        }
+    }
+
+    @Test
     public void shouldThrowExceptionWhenTypeIsNull() {
         org.testng.Assert.expectThrows(NullPointerException.class,
                 () -> provider.getDefaultImage(tournament(), null));

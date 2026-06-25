@@ -23,17 +23,27 @@ package com.softwaremagico.kt.rest.security;
 
 import org.springframework.stereotype.Controller;
 
+import java.net.SocketException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 
 
 @Controller
 public class NetworkController {
 
+    protected InetAddress getLocalHost() throws UnknownHostException {
+        return InetAddress.getLocalHost();
+    }
+
+    protected NetworkInterface getByInetAddress(InetAddress address) throws SocketException {
+        return NetworkInterface.getByInetAddress(address);
+    }
+
     public String getHostMac() {
         try {
-            final InetAddress localHost = InetAddress.getLocalHost();
-            final NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
+            final InetAddress localHost = this.getLocalHost();
+            final NetworkInterface ni = this.getByInetAddress(localHost);
             if (ni == null) {
                 return "";
             }

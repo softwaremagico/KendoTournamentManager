@@ -347,6 +347,93 @@ public class GroupControllerTest {
 		verify(this.duelProvider).delete(anyList());
 	}
 
+	@Test
+	public void shouldCreateGroupUsingTournamentManagerAndNotifyListeners() throws InterruptedException {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final GroupDTO input = this.groupDTO(tournamentDTO);
+		final Group persisted = new Group(tournament, input.getLevel(), input.getIndex());
+		final CountDownLatch updatedNotification = new CountDownLatch(1);
+
+		this.controller.addGroupUpdatedListeners((t, actor, session) -> updatedNotification.countDown());
+		when(this.tournamentHandlerSelector.selectManager(TournamentType.LEAGUE)).thenReturn(this.tournamentManager);
+		when(this.tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+		doReturn(new Group(tournament, input.getLevel(), input.getIndex())).when(this.controller).reverse(input);
+		when(this.tournamentManager.addGroup(eq(tournament), any(Group.class))).thenReturn(persisted);
+		doReturn(input).when(this.controller).convert(persisted);
+
+		final GroupDTO result = this.controller.create(input, "creator", "session-create");
+
+		assertSame(result, input);
+		assertTrue(updatedNotification.await(2, TimeUnit.SECONDS));
+		verify(this.tournamentManager).addGroup(eq(tournament), any(Group.class));
+	}
+
+	@Test
+	public void shouldDeleteByIdDelegatingToDelete() {
+		final GroupDTO groupDTO = this.groupDTO(this.tournamentDTO());
+		groupDTO.setId(44);
+		doReturn(groupDTO).when(this.controller).get(44);
+		doNothing().when(this.controller).delete(groupDTO, "deleter", "session-delete-id");
+
+		this.controller.deleteById(44, "deleter", "session-delete-id");
+
+		verify(this.controller).get(44);
+		verify(this.controller).delete(groupDTO, "deleter", "session-delete-id");
+	}
+
+	@Test
+	public void shouldManageTeamsAndNotifyListeners() throws InterruptedException {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final GroupDTO groupDTO = this.groupDTO(tournamentDTO);
+		groupDTO.setId(55);
+		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
+		final Team team = new Team("A", tournament);
+		final Group group = new Group(tournament, 0, 0);
+		group.setId(55);
+		final CountDownLatch updatedNotification = new CountDownLatch(4);
+
+		this.controller.addGroupUpdatedListeners((t, actor, session) -> updatedNotification.countDown());
+		when(this.teamConverter.reverseAll(List.of(teamDTO))).thenReturn(List.of(team));
+		when(this.groupProvider.addTeams(55, List.of(team), "editor")).thenReturn(group);
+		when(this.groupProvider.deleteTeams(55, List.of(team), "editor")).thenReturn(group);
+		when(this.groupProvider.setTeams(55, List.of(team), "editor")).thenReturn(group);
+		doReturn(groupDTO).when(this.controller).convert(group);
+		doReturn(groupDTO).when(this.controller).get(55);
+		doReturn(List.of(groupDTO)).when(this.controller).get(tournamentDTO);
+
+		assertSame(this.controller.addTeams(55, List.of(teamDTO), "editor", "s1"), groupDTO);
+		assertSame(this.controller.deleteTeams(55, List.of(teamDTO), "editor", "s2"), groupDTO);
+		assertSame(this.controller.setTeams(55, List.of(teamDTO), "editor", "s3"), groupDTO);
+		assertSame(this.controller.setTeams(List.of(teamDTO), "editor", "s4"), groupDTO);
+
+		assertTrue(updatedNotification.await(2, TimeUnit.SECONDS));
+	}
+
+	@Test
+	public void shouldGetCountAndDeleteGroupsByTournament() {
+		final Tournament tournament = this.tournament();
+		final TournamentDTO tournamentDTO = this.tournamentDTO();
+		final Group group = new Group(tournament, 0, 0);
+		final GroupDTO groupDTO = this.groupDTO(tournamentDTO);
+
+		when(this.tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		doReturn(List.of(groupDTO)).when(this.controller).convertAll(List.of(group));
+		when(this.groupProvider.count(tournament)).thenReturn(9L);
+		when(this.groupProvider.delete(tournament)).thenReturn(3L);
+
+		final List<GroupDTO> groups = this.controller.get(tournamentDTO);
+		final long count = this.controller.count(tournamentDTO);
+		final long deleted = this.controller.delete(tournamentDTO);
+
+		assertEquals(groups.size(), 1);
+		assertSame(groups.get(0), groupDTO);
+		assertEquals(count, 9L);
+		assertEquals(deleted, 3L);
+	}
+
 	private Tournament tournament() {
 		final Tournament tournament = new Tournament("Tournament", 1, 3, TournamentType.LEAGUE, "tester");
 		tournament.setId(303);

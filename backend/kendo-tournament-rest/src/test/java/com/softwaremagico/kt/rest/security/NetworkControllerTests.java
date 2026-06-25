@@ -24,6 +24,12 @@ package com.softwaremagico.kt.rest.security;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -65,6 +71,76 @@ public class NetworkControllerTests {
             assertFalse(mac.contains("--"));
             assertEquals(mac, mac.toUpperCase());
         }
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenNetworkInterfaceIsNull() {
+        final InetAddress inetAddress = mock(InetAddress.class);
+        final NetworkController controller = new NetworkController() {
+            @Override
+            protected InetAddress getLocalHost() {
+                return inetAddress;
+            }
+
+            @Override
+            protected NetworkInterface getByInetAddress(InetAddress address) {
+                return null;
+            }
+        };
+
+        assertEquals(controller.getHostMac(), "");
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenHardwareAddressIsNull() throws Exception {
+        final InetAddress inetAddress = mock(InetAddress.class);
+        final NetworkInterface networkInterface = mock(NetworkInterface.class);
+        when(networkInterface.getHardwareAddress()).thenReturn(null);
+        final NetworkController controller = new NetworkController() {
+            @Override
+            protected InetAddress getLocalHost() {
+                return inetAddress;
+            }
+
+            @Override
+            protected NetworkInterface getByInetAddress(InetAddress address) {
+                return networkInterface;
+            }
+        };
+
+        assertEquals(controller.getHostMac(), "");
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenHardwareAddressIsEmpty() throws Exception {
+        final InetAddress inetAddress = mock(InetAddress.class);
+        final NetworkInterface networkInterface = mock(NetworkInterface.class);
+        when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{});
+        final NetworkController controller = new NetworkController() {
+            @Override
+            protected InetAddress getLocalHost() {
+                return inetAddress;
+            }
+
+            @Override
+            protected NetworkInterface getByInetAddress(InetAddress address) {
+                return networkInterface;
+            }
+        };
+
+        assertEquals(controller.getHostMac(), "");
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenHostLookupFails() {
+        final NetworkController controller = new NetworkController() {
+            @Override
+            protected InetAddress getLocalHost() {
+                throw new RuntimeException("forced");
+            }
+        };
+
+        assertEquals(controller.getHostMac(), "");
     }
 }
 
