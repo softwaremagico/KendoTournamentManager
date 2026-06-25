@@ -69,7 +69,7 @@ public class TournamentImageProviderTest {
         MockitoAnnotations.openMocks(this);
         provider = new TournamentImageProvider(repository, tournamentRepository);
         when(repository.save(any(TournamentImage.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        resetDefaultImages();
+        resetDefaultImages(provider);
     }
 
     @Test
@@ -93,10 +93,10 @@ public class TournamentImageProviderTest {
         final byte[] banner = new byte[]{2};
         final byte[] diploma = new byte[]{3};
         final byte[] photo = new byte[]{4};
-        setStaticField("defaultAccreditation", accreditation);
-        setStaticField("defaultBanner", banner);
-        setStaticField("defaultDiploma", diploma);
-        setStaticField("defaultPhoto", photo);
+        setField(provider, "defaultAccreditation", accreditation);
+        setField(provider, "defaultBanner", banner);
+        setField(provider, "defaultDiploma", diploma);
+        setField(provider, "defaultPhoto", photo);
 
         assertTrue(Arrays.equals(provider.getDefaultImage(tournament, TournamentImageType.ACCREDITATION).getData(), accreditation));
         assertTrue(Arrays.equals(provider.getDefaultImage(tournament, TournamentImageType.BANNER).getData(), banner));
@@ -109,7 +109,7 @@ public class TournamentImageProviderTest {
         final TournamentImageProvider missingResourceProvider = new TournamentImageProvider(repository, tournamentRepository,
                 resourcePath -> null);
         final Tournament tournament = tournament();
-        resetDefaultImages();
+        resetDefaultImages(missingResourceProvider);
 
         for (TournamentImageType type : TournamentImageType.values()) {
             final TournamentImage image = missingResourceProvider.getDefaultImage(tournament, type);
@@ -190,20 +190,20 @@ public class TournamentImageProviderTest {
         return tournament;
     }
 
-    private void resetDefaultImages() {
-        setStaticField("defaultAccreditation", null);
-        setStaticField("defaultBanner", null);
-        setStaticField("defaultDiploma", null);
-        setStaticField("defaultPhoto", null);
+    private void resetDefaultImages(TournamentImageProvider imageProvider) {
+        setField(imageProvider, "defaultAccreditation", null);
+        setField(imageProvider, "defaultBanner", null);
+        setField(imageProvider, "defaultDiploma", null);
+        setField(imageProvider, "defaultPhoto", null);
     }
 
-    private void setStaticField(String fieldName, byte[] value) {
+    private void setField(TournamentImageProvider imageProvider, String fieldName, byte[] value) {
         try {
             final Field field = TournamentImageProvider.class.getDeclaredField(fieldName);
             field.setAccessible(true);
-            field.set(null, value);
+            field.set(imageProvider, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new IllegalStateException("Cannot update static image field '" + fieldName + "'", e);
+            throw new IllegalStateException("Cannot update image field '" + fieldName + "'", e);
         }
     }
 }
