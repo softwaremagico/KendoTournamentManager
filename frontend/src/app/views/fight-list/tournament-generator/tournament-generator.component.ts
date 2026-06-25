@@ -23,6 +23,7 @@ import {
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  standalone: false,
   selector: 'app-tournament-generator',
   templateUrl: './tournament-generator.component.html',
   styleUrls: ['./tournament-generator.component.scss']

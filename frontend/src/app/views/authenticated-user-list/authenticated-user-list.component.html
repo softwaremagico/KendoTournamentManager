@@ -1,64 +1,77 @@
 <ng-container *transloco="let t">
   <div class="table-view">
     <biit-datatable #table id="users-table"
-                    [columns]="columns"
-                    [data]="users"
-                    [pageSize]="pageSize"
-                    [pageSizeList]="pageSizes"
-                    [loading]="loading"
-                    scrollbarH
-                    selectable
-    >
+      [columns]="columns"
+      [data]="users"
+      [pageSize]="pageSize"
+      [pageSizeList]="pageSizes"
+      [loading]="loading"
+      scrollbarH
+      selectable
+      >
       <ng-template #actions>
-        <button id="button-plus" biit-icon icon="plus" *ngIf="RbacActivity.CREATE_USER | hasPermission"
-                [title]="t('authenticatedUserAdd')"
-                (click)="addElement()"
-        ></button>
-        <button id="button-minus" biit-icon icon="minus" class="warning"
-                *ngIf="RbacActivity.DELETE_USER | hasPermission"
-                [title]="t('authenticatedUserDelete')"
-                (click)="confirm=true"
-                [disabled]="!table.selectedRows.length"
-        ></button>
-        <button id="button-edit" biit-icon icon="edit" *ngIf="RbacActivity.READ_ONE_USER | hasPermission"
-                [title]="t('authenticatedUserEdit')"
-                (click)="editElement(table.selectedRows[0])"
-                [disabled]="!table.selectedRows || table.selectedRows.length != 1"
-        ></button>
-        <button id="button-role" biit-icon icon="badge" *ngIf="RbacActivity.READ_ONE_USER | hasPermission"
-                [title]="t('roles')"
-                (click)="roleSelector=true"
-                [disabled]="!table.selectedRows || table.selectedRows.length != 1">
-        </button>
+        @if (RbacActivity.CREATE_USER | hasPermission) {
+          <button id="button-plus" biit-icon icon="plus"
+            [title]="t('authenticatedUserAdd')"
+            (click)="addElement()"
+          ></button>
+        }
+        @if (RbacActivity.DELETE_USER | hasPermission) {
+          <button id="button-minus" biit-icon icon="minus" class="warning"
+            [title]="t('authenticatedUserDelete')"
+            (click)="confirm=true"
+            [disabled]="!table.selectedRows.length"
+          ></button>
+        }
+        @if (RbacActivity.READ_ONE_USER | hasPermission) {
+          <button id="button-edit" biit-icon icon="edit"
+            [title]="t('authenticatedUserEdit')"
+            (click)="editElement(table.selectedRows[0])"
+            [disabled]="!table.selectedRows || table.selectedRows.length != 1"
+          ></button>
+        }
+        @if (RbacActivity.READ_ONE_USER | hasPermission) {
+          <button id="button-role" biit-icon icon="badge"
+            [title]="t('roles')"
+            (click)="roleSelector=true"
+            [disabled]="!table.selectedRows || table.selectedRows.length != 1">
+          </button>
+        }
       </ng-template>
     </biit-datatable>
   </div>
 
-  <authenticated-user-form-popup *ngIf="target"
-                                 [user]="target"
-                                 (closed)="this.target = null"
-                                 (saved)="onSaved($event)"
-  />
+  @if (target) {
+    <authenticated-user-form-popup
+      [user]="target"
+      (closed)="this.target = null"
+      (saved)="onSaved($event)"
+      />
+  }
 
-  <authenticated-user-role-popup *ngIf="roleSelector"
-                                 [user]="table.selectedRows[0]"
-                                 (closed)="this.roleSelector = false"
-                                 (saved)="this.loadData();this.roleSelector = false"
-  />
+  @if (roleSelector) {
+    <authenticated-user-role-popup
+      [user]="table.selectedRows[0]"
+      (closed)="this.roleSelector = false"
+      (saved)="this.loadData();this.roleSelector = false"
+      />
+  }
 
-  <biit-popup id="confirmation-delete-popup" *ngIf="confirm"
-              no-header
-  >
-    <div class="vertical">
-      <span
+  @if (confirm) {
+    <biit-popup id="confirmation-delete-popup"
+      no-header
+      >
+      <div class="vertical">
+        <span
         [innerHTML]="'authenticatedUserDeleteQuestion' | transloco : {username: getUserNames(table.selectedRows)}"></span>
-      <div class="flex-grow horizontal buttons-row">
-        <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}</button>
-        <button id="confirm-delete-button" biit-button primary
-                (click)="deleteElement(table.selectedRows, true)">
-          {{ t('delete') }}
-        </button>
+        <div class="flex-grow horizontal buttons-row">
+          <button id="confirm-cancel-button" biit-button secondary (click)="confirm = false">{{ t('cancel') }}</button>
+          <button id="confirm-delete-button" biit-button primary
+            (click)="deleteElement(table.selectedRows, true)">
+            {{ t('delete') }}
+          </button>
+        </div>
       </div>
-    </div>
-  </biit-popup>
+    </biit-popup>
+  }
 </ng-container>

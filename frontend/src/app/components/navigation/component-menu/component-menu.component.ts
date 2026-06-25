@@ -2,6 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {TemplateService} from "../../../services/template.service";
 
 @Component({
+  standalone: false,
   selector: 'component-menu',
   templateUrl: './component-menu.component.html',
   styleUrls: ['./component-menu.component.scss']

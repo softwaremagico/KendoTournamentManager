@@ -1,34 +1,38 @@
 <user-score (cdkDropListDropped)="drop($event, true)" [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, true)"
-            [duelIndex]="duelIndex"
-            [fight]="fight"
-            [duel]="duel"
-            [left]="true"
-            [showAvatar]="showAvatars"
-            [locked]="locked"
-            [highlightedParticipantId]="highlightedParticipantId"
-            [isSelected]="duelSelected?.id == duel.id && !locked"
-            [swapTeams]="swapTeams"
-            [projectMode]="projectMode"
-            [substitute]="substitute"
-            [over]="over && !locked"
-            cdkDropList
-            class="user-score"></user-score>
-<draw *ngIf="!duel.substitute" [duel]="duel" class="draw-score"></draw>
-<div *ngIf="duel.substitute" class="substitute-separation"></div>
+  [duelIndex]="duelIndex"
+  [fight]="fight"
+  [duel]="duel"
+  [left]="true"
+  [showAvatar]="showAvatars"
+  [locked]="locked"
+  [highlightedParticipantId]="highlightedParticipantId"
+  [isSelected]="duelSelected?.id == duel.id && !locked"
+  [swapTeams]="swapTeams"
+  [projectMode]="projectMode"
+  [substitute]="substitute"
+  [over]="over && !locked"
+  cdkDropList
+class="user-score"></user-score>
+@if (!duel.substitute) {
+  <draw [duel]="duel" class="draw-score"></draw>
+}
+@if (duel.substitute) {
+  <div class="substitute-separation"></div>
+}
 <user-score (cdkDropListDropped)="drop($event, false)"
-            [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)"
-            [duelIndex]="duelIndex"
-            [fight]="fight"
-            [duel]="duel"
-            [left]="false"
-            [showAvatar]="showAvatars"
-            [locked]="locked"
-            [highlightedParticipantId]="highlightedParticipantId"
-            [isSelected]="duelSelected?.id == duel.id && !locked"
-            [swapTeams]="swapTeams"
-            [projectMode]="projectMode"
-            [substitute]="substitute"
-            [over]="over && !locked"
-            cdkDropList
-            class="user-score"></user-score>
+  [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)"
+  [duelIndex]="duelIndex"
+  [fight]="fight"
+  [duel]="duel"
+  [left]="false"
+  [showAvatar]="showAvatars"
+  [locked]="locked"
+  [highlightedParticipantId]="highlightedParticipantId"
+  [isSelected]="duelSelected?.id == duel.id && !locked"
+  [swapTeams]="swapTeams"
+  [projectMode]="projectMode"
+  [substitute]="substitute"
+  [over]="over && !locked"
+  cdkDropList
+class="user-score"></user-score>
 

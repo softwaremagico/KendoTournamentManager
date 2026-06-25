@@ -16,6 +16,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {ActivityService} from "../../services/rbac/activity.service";
 
 @Component({
+  standalone: false,
   selector: 'authenticated-user-form',
   templateUrl: './authenticated-user-form.component.html',
   styleUrls: ['./authenticated-user-form.component.scss'],

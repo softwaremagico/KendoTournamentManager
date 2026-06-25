@@ -7,7 +7,7 @@ import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
 import {HasPermissionPipe} from "../../../../pipes/has-permission.pipe";
 import {MatIconModule} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
-import {MatLegacySliderModule} from "@angular/material/legacy-slider";
+import {MatSliderModule} from "@angular/material/slider";
 import {BiitSliderOptionVerticalModule} from "@biit-solutions/wizardry-theme/inputs";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {FloatingDeleteButtonModule} from "../../../../components/floating-delete-button/floating-delete-button.module";
@@ -30,7 +30,7 @@ import {MatButtonModule} from "@angular/material/button";
     MatButtonModule,
     MatIconModule,
     FormsModule,
-    MatLegacySliderModule,
+    MatSliderModule,
     BiitSliderOptionVerticalModule,
     BiitButtonModule,
     BiitIconButtonModule,

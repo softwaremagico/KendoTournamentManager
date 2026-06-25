@@ -8,6 +8,7 @@ import {Tournament} from "../../../../models/tournament";
 import {BracketsMeasures} from "../brackets-measures";
 
 @Component({
+  standalone: false,
   selector: 'group-container',
   templateUrl: './group-container.component.html',
   styleUrls: ['./group-container.component.scss']

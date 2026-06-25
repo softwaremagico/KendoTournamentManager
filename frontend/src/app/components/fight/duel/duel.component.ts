@@ -9,6 +9,7 @@ import {takeUntil} from "rxjs";
 import {KendoComponent} from "../../kendo-component";
 
 @Component({
+  standalone: false,
   selector: 'duel',
   templateUrl: './duel.component.html',
   styleUrls: ['./duel.component.scss']

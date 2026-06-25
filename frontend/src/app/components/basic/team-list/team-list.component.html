@@ -1,7 +1,11 @@
 <filter class="team-filter" (filterChanged)="filter($event)" (reset)="filter('')"></filter>
-<div *ngIf="teamListData.filteredTeams" class="team-list" [ngClass]="{'list-horizontal' : horizontal, 'grid' : grid  }">
-  <div class="team-grid" [ngClass]="{'list-horizontal' : horizontal, 'grid' : grid  }">
-    <team-card *ngFor="let team of teamListData.filteredTeams" [team]="team" [minify]="minify"
-                   [disableDrag]="isDragDisabled(team)"></team-card>
+@if (teamListData.filteredTeams) {
+  <div class="team-list" [ngClass]="{'list-horizontal' : horizontal, 'grid' : grid  }">
+    <div class="team-grid" [ngClass]="{'list-horizontal' : horizontal, 'grid' : grid  }">
+      @for (team of teamListData.filteredTeams; track team) {
+        <team-card [team]="team" [minify]="minify"
+        [disableDrag]="isDragDisabled(team)"></team-card>
+      }
+    </div>
   </div>
-</div>
+}

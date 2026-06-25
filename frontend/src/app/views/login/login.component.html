@@ -1,9 +1,13 @@
-<biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
-<biit-login id="login" *ngIf="!waiting"
-            [allowResetPassword]="false"
-            (onLogin)="login($event)"
-            (onResetPassword)="onResetPassword($event)">
-</biit-login>
+@if (waiting) {
+  <biit-progress-bar [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+}
+@if (!waiting) {
+  <biit-login id="login"
+    [allowResetPassword]="false"
+    (onLogin)="login($event)"
+    (onResetPassword)="onResetPassword($event)">
+  </biit-login>
+}
 <div class="app-version">
   v{{appVersion}}
 </div>

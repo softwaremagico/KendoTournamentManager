@@ -1,195 +1,226 @@
-<biit-progress-bar *ngIf="loading" [type]="BiitProgressBarType.INDETERMINATE" class="loading-bar"></biit-progress-bar>
+@if (loading) {
+  <biit-progress-bar [type]="BiitProgressBarType.INDETERMINATE" class="loading-bar"></biit-progress-bar>
+}
 
 <div class="statistics-view" *transloco="let t">
   <div class="statistics-layout">
     <div class="upper-menu">
-      <button biit-icon *ngIf="(RbacActivity.READ_ALL_PARTICIPANTS | hasPermission)"
-              (click)="goBack()"
-              [title]="t('back')">
-        <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
-      </button>
-      <button biit-icon *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | hasPermission) && !this.srcTournamentId"
-              (click)="openParticipantFights()"
-              [title]="t('fights')">
-        <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
-      </button>
+      @if ((RbacActivity.READ_ALL_PARTICIPANTS | hasPermission)) {
+        <button biit-icon
+          (click)="goBack()"
+          [title]="t('back')">
+          <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
+        </button>
+      }
+      @if ((RbacActivity.READ_ALL_TOURNAMENTS | hasPermission) && !this.srcTournamentId) {
+        <button biit-icon
+          (click)="openParticipantFights()"
+          [title]="t('fights')">
+          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
+        </button>
+      }
     </div>
     <div class="player">
-      <h1 class="name" *ngIf="participant">{{ participant.name }} {{ participant.lastname }}</h1>
+      @if (participant) {
+        <h1 class="name">{{ participant.name }} {{ participant.lastname }}</h1>
+      }
       <div class="statistics-container">
         <div class="dashboard">
           <div class="box-statistics box">
             <div class="statistics-table-title">
               <h3>{{ 'tournaments' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'tournaments' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.tournaments }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'duels' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.duelsNumber }}</td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'tournaments' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.tournaments }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'duels' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.duelsNumber }}</td>
+                </tr>
+              </table>
+            }
             <div class="statistics-table-title">
               <h3>{{ 'roles' | transloco }}</h3>
             </div>
             <!-- aria-hidden="true" to avoid complains from sonarcloud -->
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr *ngFor="let roleType of roleTypes">
-                <td *ngIf="participantStatistics" class="left-column">{{ roleType.toLowerCase() | transloco }}:</td>
-                <td *ngIf="participantStatistics" class="right-column">{{ numberOfPerformedRoles(roleType) }}</td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                @for (roleType of roleTypes; track roleType) {
+                  <tr>
+                    @if (participantStatistics) {
+                      <td class="left-column">{{ roleType.toLowerCase() | transloco }}:</td>
+                    }
+                    @if (participantStatistics) {
+                      <td class="right-column">{{ numberOfPerformedRoles(roleType) }}</td>
+                    }
+                  </tr>
+                }
+              </table>
+            }
           </div>
 
           <div class="box-statistics box ">
             <div class="statistics-table-title">
               <h3>{{ 'time' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'createdAt' | transloco }}:</td>
-                <td class="right-column">{{ convertDate(participantStatistics.participantCreatedAt) }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'duelsAverage' | transloco }}:</td>
-                <td
-                  class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.averageTime) }}
-                </td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'quickestHit' | transloco }}:</td>
-                <td
-                  class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.quickestHit) }}
-                </td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'quickestReceivedHit' | transloco }}:</td>
-                <td
-                  class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.quickestReceivedHit) }}
-                </td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'createdAt' | transloco }}:</td>
+                  <td class="right-column">{{ convertDate(participantStatistics.participantCreatedAt) }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'duelsAverage' | transloco }}:</td>
+                  <td
+                    class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.averageTime) }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'quickestHit' | transloco }}:</td>
+                  <td
+                    class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.quickestHit) }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'quickestReceivedHit' | transloco }}:</td>
+                  <td
+                    class="right-column">{{ convertSeconds(participantStatistics.participantFightStatistics.quickestReceivedHit) }}
+                  </td>
+                </tr>
+              </table>
+            }
             <div class="statistics-table-title">
               <h3>{{ 'duels' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'duelsWon' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.wonDuels }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'duelsDraw' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.drawDuels }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'duelsLost' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.lostDuels }}</td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'duelsWon' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.wonDuels }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'duelsDraw' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.drawDuels }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'duelsLost' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.lostDuels }}</td>
+                </tr>
+              </table>
+            }
           </div>
 
           <div class="box-statistics box ">
             <div class="statistics-table-title">
               <h3>{{ 'hits' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'men' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.menNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'kote' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.koteNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'do' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.doNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'tsuki' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.tsukiNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'hansoku' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.hansokuNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column"> {{ 'ippon' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.ipponNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'fusenGachi' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.fusenGachiNumber }}</td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'men' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.menNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'kote' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.koteNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'do' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.doNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'tsuki' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.tsukiNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'hansoku' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.hansokuNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column"> {{ 'ippon' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.ipponNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'fusenGachi' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.fusenGachiNumber }}</td>
+                </tr>
+              </table>
+            }
             <div class="statistics-table-title">
               <h3>{{ 'faults' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'faults' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.faults }}</td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'faults' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.faults }}</td>
+                </tr>
+              </table>
+            }
           </div>
 
           <div class="box-statistics box ">
             <div class="statistics-table-title">
               <h3>{{ 'receivedHits' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'men' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedMenNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'kote' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedKoteNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'do' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedDoNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'tsuki' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedTsukiNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'hansoku' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedHansokuNumber }}
-                </td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'ippon' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedIpponNumber }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">{{ 'fusenGachi' | transloco }}:</td>
-                <td
-                  class="right-column">{{ participantStatistics.participantFightStatistics.receivedFusenGachiNumber }}
-                </td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'men' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedMenNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'kote' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedKoteNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'do' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedDoNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'tsuki' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedTsukiNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'hansoku' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedHansokuNumber }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'ippon' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedIpponNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="left-column">{{ 'fusenGachi' | transloco }}:</td>
+                  <td
+                    class="right-column">{{ participantStatistics.participantFightStatistics.receivedFusenGachiNumber }}
+                  </td>
+                </tr>
+              </table>
+            }
             <div class="statistics-table-title">
               <h3>{{ 'receivedFaults' | transloco }}</h3>
             </div>
-            <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
-              <tr>
-                <td class="left-column">{{ 'faults' | transloco }}:</td>
-                <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedFaults }}</td>
-              </tr>
-            </table>
+            @if (participantStatistics) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
+                  <td class="left-column">{{ 'faults' | transloco }}:</td>
+                  <td class="right-column">{{ participantStatistics.participantFightStatistics.receivedFaults }}</td>
+                </tr>
+              </table>
+            }
           </div>
 
           <div class="box-statistics box  scrollable">
             <div class="statistics-table-title">
               <h3>{{ 'competitorsRanking' | transloco }}</h3>
             </div>
-            <table *ngIf="competitorRanking" aria-hidden="true" class="statistics-table">
-              <tr>
+            @if (competitorRanking) {
+              <table aria-hidden="true" class="statistics-table">
+                <tr>
                 <td [ngClass]="{
                     'ranking-very-good': competitorRanking.ranking / competitorRanking.total < 0.1,
                     'ranking-good': competitorRanking.ranking / competitorRanking.total >= 0.1 && competitorRanking.ranking / competitorRanking.total <= 0.3,
@@ -198,16 +229,17 @@
                     'ranking-very-bad': competitorRanking.ranking / competitorRanking.total > 0.9}
                   "
                     class="ranking your-ranking">
-                  {{ competitorRanking.ranking + 1 }}
-                </td>
-              </tr>
-              <tr>
-                <td class="ranking">of</td>
-              </tr>
-              <tr>
-                <td class="ranking total-ranking">{{ competitorRanking.total }}</td>
-              </tr>
-            </table>
+                    {{ competitorRanking.ranking + 1 }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking">of</td>
+                </tr>
+                <tr>
+                  <td class="ranking total-ranking">{{ competitorRanking.total }}</td>
+                </tr>
+              </table>
+            }
           </div>
 
           <div class="box-statistics box  scrollable">
@@ -215,27 +247,35 @@
               <h3>{{ 'yourWorstNightmare' | transloco }}</h3>
             </div>
             <table aria-hidden="true" class="statistics-table">
-              <tr *ngFor="let nightmare of yourWorstNightmare">
-                <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}</td>
-              </tr>
+              @for (nightmare of yourWorstNightmare; track nightmare) {
+                <tr>
+                  <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}</td>
+                </tr>
+              }
             </table>
-            <table *ngIf="!yourWorstNightmare || !yourWorstNightmare.length" aria-hidden="true"
-                   class="statistics-table">
-              <tr>
-                <td class="single">--</td>
-              </tr>
-            </table>
+            @if (!yourWorstNightmare || !yourWorstNightmare.length) {
+              <table aria-hidden="true"
+                class="statistics-table">
+                <tr>
+                  <td class="single">--</td>
+                </tr>
+              </table>
+            }
             <div class="statistics-table-title">
               <h3>{{ 'worstNightmareOf' | transloco }}</h3>
             </div>
             <table aria-hidden="true" class="statistics-table">
-              <tr *ngFor="let nightmare of youAreTheWorstNightmareOf">
-                <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}
-                </td>
-              </tr>
-              <tr *ngIf="!youAreTheWorstNightmareOf || !youAreTheWorstNightmareOf.length">
-                <td class="single">--</td>
-              </tr>
+              @for (nightmare of youAreTheWorstNightmareOf; track nightmare) {
+                <tr>
+                  <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}
+                  </td>
+                </tr>
+              }
+              @if (!youAreTheWorstNightmareOf || !youAreTheWorstNightmareOf.length) {
+                <tr>
+                  <td class="single">--</td>
+                </tr>
+              }
             </table>
           </div>
 
@@ -243,32 +283,40 @@
             <div class="statistics-table-title">
               <h3>{{ 'performance' | transloco }}</h3>
             </div>
-            <progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
-                              [ngClass]="'bar-'+i"
-                              [percentage]="value[1]?value[1]:0"
-                              [text]="value[0] | transloco"
-                              [hint]="value[0] + 'Hint' | transloco"
-            ></progress-bar>
+            @for (value of performance; track value; let i = $index) {
+              <progress-bar [barIcon]="value[0].toLowerCase()"
+                [ngClass]="'bar-'+i"
+                [percentage]="value[1]?value[1]:0"
+                [text]="value[0] | transloco"
+                [hint]="value[0] + 'Hint' | transloco"
+              ></progress-bar>
+            }
           </div>
 
           <div class="box-statistics box chart">
-            <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
-                           [title]="'participantHitsStatistics' | transloco"
-                           [width]="360"></app-pie-chart>
+            @if (!!hitsTypeChartData) {
+              <app-pie-chart [data]="hitsTypeChartData"
+                [title]="'participantHitsStatistics' | transloco"
+              [width]="360"></app-pie-chart>
+            }
           </div>
           <div class="box-statistics box chart">
-            <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
-                           [title]="'participantReceivedHitsStatistics' | transloco"
-                           [width]="360"></app-pie-chart>
+            @if (!!receivedHitsTypeChartData) {
+              <app-pie-chart [data]="receivedHitsTypeChartData"
+                [title]="'participantReceivedHitsStatistics' | transloco"
+              [width]="360"></app-pie-chart>
+            }
           </div>
 
-          <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
-            <div class="statistics-table-title">
-              <h3>{{ 'achievements' | transloco }}</h3>
+          @if (achievementsEnabled) {
+            <div class="box-statistics box  achievements-box">
+              <div class="statistics-table-title">
+                <h3>{{ 'achievements' | transloco }}</h3>
+              </div>
+              <achievements-wall [achievements]="achievements"
+              [view]="'participant'"></achievements-wall>
             </div>
-            <achievements-wall [achievements]="achievements"
-                               [view]="'participant'"></achievements-wall>
-          </div>
+          }
         </div>
       </div>
     </div>

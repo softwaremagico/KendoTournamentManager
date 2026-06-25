@@ -12,6 +12,7 @@ import {AuthenticatedUser} from "./models/authenticated-user";
 import {ActivityService} from "./services/rbac/activity.service";
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

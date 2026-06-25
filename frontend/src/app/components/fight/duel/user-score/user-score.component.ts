@@ -5,6 +5,7 @@ import {Participant} from "../../../../models/participant";
 import {Fight} from "../../../../models/fight";
 
 @Component({
+  standalone: false,
   selector: 'user-score',
   templateUrl: './user-score.component.html',
   styleUrls: ['./user-score.component.scss']

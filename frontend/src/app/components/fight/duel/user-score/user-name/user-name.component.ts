@@ -9,6 +9,7 @@ import {Router} from "@angular/router";
 import {Fight} from "../../../../../models/fight";
 
 @Component({
+  standalone: false,
   selector: 'user-name',
   templateUrl: './user-name.component.html',
   styleUrls: ['./user-name.component.scss']

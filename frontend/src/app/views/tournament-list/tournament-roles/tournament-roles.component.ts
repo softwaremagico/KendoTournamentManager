@@ -18,6 +18,7 @@ import {Team} from "../../../models/team";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  standalone: false,
   selector: 'tournament-roles',
   templateUrl: './tournament-roles.component.html',
   styleUrls: ['./tournament-roles.component.scss']

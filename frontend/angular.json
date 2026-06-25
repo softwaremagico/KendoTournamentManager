@@ -25,10 +25,16 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/config"
+              "src/config",
+              {
+                "glob": "**/*.json",
+                "input": "./node_modules/@biit-solutions/wizardry-theme/assets/i18n",
+                "output": "/assets/i18n/wizardry-theme"
+              }
             ],
             "styles": [
               "./node_modules/@biit-solutions/wizardry-theme/styles.scss",
+              "./node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
@@ -36,6 +42,16 @@
                 "./node_modules"
               ]
             },
+            "allowedCommonJsDependencies": [
+              "flat",
+              "@stomp/stompjs",
+              "core-js",
+              "canvg",
+              "raf",
+              "rgbcolor",
+              "apexcharts",
+              "dom-to-image"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -114,13 +130,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "frontend:build:production"
+              "buildTarget": "frontend:build:production"
             },
             "docker": {
-              "browserTarget": "frontend:build:docker"
+              "buildTarget": "frontend:build:docker"
             },
             "development": {
-              "browserTarget": "frontend:build:development"
+              "buildTarget": "frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -128,7 +144,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "frontend:build"
+            "buildTarget": "frontend:build"
           }
         },
         "test": {
@@ -141,10 +157,16 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/config"
+              "src/config",
+              {
+                "glob": "**/*.json",
+                "input": "./node_modules/@biit-solutions/wizardry-theme/assets/i18n",
+                "output": "/assets/i18n/wizardry-theme"
+              }
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
@@ -160,7 +182,29 @@
   },
   "schematics": {
     "@schematics/angular:component": {
-      "style": "scss"
+      "style": "scss",
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   },
   "cli": {

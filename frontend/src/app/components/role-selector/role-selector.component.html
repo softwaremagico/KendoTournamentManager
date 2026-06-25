@@ -1,8 +1,10 @@
 <div class="canvas" slot="{{'empty' | transloco}}">
   <span class="example-list-section">
-      <biit-checkbox *ngFor="let roleType of roleTypes" (onValueChange)="select($event, roleType)">
-      {{ roleType.toLowerCase() | transloco }}
+    @for (roleType of roleTypes; track roleType) {
+      <biit-checkbox (onValueChange)="select($event, roleType)">
+        {{ roleType.toLowerCase() | transloco }}
       </biit-checkbox>
+    }
   </span>
   <div class="button-container">
     <button biit-button (click)="setRoles(false)" primary>

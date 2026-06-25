@@ -16,6 +16,7 @@ import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
 
 @Component({
+  standalone: false,
   selector: 'tournament-form',
   templateUrl: './tournament-form.component.html',
   styleUrls: ['./tournament-form.component.scss'],

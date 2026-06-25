@@ -8,6 +8,7 @@ import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
 @Component({
+  standalone: false,
   selector: 'fault',
   templateUrl: './fault.component.html',
   styleUrls: ['./fault.component.scss'],

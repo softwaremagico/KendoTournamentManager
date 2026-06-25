@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
-import {Message} from "@stomp/stompjs/esm6";
+import {Message} from "@stomp/stompjs";
 import {RxStompService} from "../websockets/rx-stomp.service";
 import {EnvironmentService} from "../environment.service";
 import {MessageContent} from "../websockets/message-content.model";

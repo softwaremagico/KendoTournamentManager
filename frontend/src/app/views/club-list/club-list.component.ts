@@ -15,6 +15,7 @@ import {Constants} from "../../constants";
 
 
 @Component({
+  standalone: false,
   selector: 'app-club-list',
   templateUrl: './club-list.component.html',
   styleUrls: ['./club-list.component.scss'],

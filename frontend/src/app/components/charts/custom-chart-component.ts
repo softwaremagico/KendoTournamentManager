@@ -15,7 +15,7 @@ import {
   ApexXAxis,
   ApexYAxis
 } from "ng-apexcharts";
-import {ApexTheme, ChartType} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme, ChartType} from "./apex-types";
 
 interface ApexToolBar {
   show?: boolean;
@@ -65,6 +65,7 @@ interface ApexDropShadow {
 }
 
 @Component({
+  standalone: false,
   template: ''
 })
 export abstract class CustomChartComponent implements OnInit {

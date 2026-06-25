@@ -3,6 +3,7 @@ import {RbacBasedComponent} from "../../RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
+  standalone: false,
   selector: 'picture-dialog-box',
   templateUrl: './picture-dialog-box.component.html',
   styleUrls: ['./picture-dialog-box.component.scss']
