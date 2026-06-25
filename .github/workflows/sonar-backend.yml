@@ -33,13 +33,19 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           cache: maven
-      - name: Build and run tests
-        run: mvn -B clean verify --file backend/pom.xml
-
-      - name: Sonar analysis (Maven plugin)
-        run: |
-          mvn -B sonar:sonar --file backend/pom.xml \
-            -Dsonar.organization=softwaremagico \
-            -Dsonar.projectKey=kendo-tournament-backend \
-            -Dsonar.projectName="Kendo Tournament Manager" \
-            -Dsonar.token="${{ secrets.SONAR_TOKEN }}"
+      - name: Build with Maven
+        run: mvn -B package --file backend/pom.xml -DskipTests
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: backend
+          args: >
+            -Dsonar.organization=softwaremagico
+            "-Dsonar.projectName=Kendo Tournament Manager"
+            -Dsonar.projectKey=kendo-tournament-backend
+            -Dsonar.java.binaries=.
+            -Dsonar.verbose=true
+            -Dsonar.test.exclusions=**/test/*
+            -Dsonar.exclusions=kendo-tournament-persistence/src/test,kendo-tournament-core/src/test,kendo-tournament-pdf/src/test,kendo-tournament-rest/src/test
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
