@@ -11,6 +11,7 @@ import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {ClubService} from "../../services/club.service";
 
 @Component({
+  standalone: false,
   selector: 'club-form',
   templateUrl: './club-form.component.html',
   styleUrls: ['./club-form.component.scss'],

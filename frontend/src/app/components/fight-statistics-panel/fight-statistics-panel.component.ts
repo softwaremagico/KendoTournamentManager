@@ -7,6 +7,7 @@ import {takeUntil} from "rxjs";
 import {KendoComponent} from "../kendo-component";
 
 @Component({
+  standalone: false,
   selector: 'fight-statistics-panel',
   templateUrl: './fight-statistics-panel.component.html',
   styleUrls: ['./fight-statistics-panel.component.scss']

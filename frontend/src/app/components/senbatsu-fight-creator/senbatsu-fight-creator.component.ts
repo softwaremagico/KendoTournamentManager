@@ -13,6 +13,7 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 
 @Component({
+  standalone: false,
   selector: 'senbatsu-fight-creator',
   templateUrl: './senbatsu-fight-creator.component.html',
   styleUrls: ['./senbatsu-fight-creator.component.scss']

@@ -7,6 +7,7 @@ import {TournamentFormValidationFields} from "../../../forms/tournament-form/tou
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
+  standalone: false,
   selector: 'tournament-form-popup',
   templateUrl: './tournament-form-popup.component.html',
   styleUrls: ['./tournament-form-popup.component.scss'],

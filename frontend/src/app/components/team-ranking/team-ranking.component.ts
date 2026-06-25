@@ -19,6 +19,7 @@ import {ScoreType} from "../../models/score-type";
 import {Duel} from "../../models/duel";
 
 @Component({
+  standalone: false,
   selector: 'team-ranking',
   templateUrl: './team-ranking.component.html',
   styleUrls: ['./team-ranking.component.scss']

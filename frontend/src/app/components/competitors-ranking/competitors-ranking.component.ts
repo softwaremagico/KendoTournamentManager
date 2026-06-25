@@ -11,6 +11,7 @@ import {ScoreType} from "../../models/score-type";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
+  standalone: false,
   selector: 'competitors-ranking',
   templateUrl: './competitors-ranking.component.html',
   styleUrls: ['./competitors-ranking.component.scss']

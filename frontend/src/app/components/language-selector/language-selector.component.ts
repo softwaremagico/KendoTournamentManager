@@ -3,6 +3,7 @@ import {TranslocoService} from "@ngneat/transloco";
 import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
+  standalone: false,
   selector: 'language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss']

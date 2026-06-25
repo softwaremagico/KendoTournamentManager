@@ -16,6 +16,7 @@ import {FileService} from "../../services/file.service";
 import {MessageService} from "../../services/message.service";
 
 @Component({
+  standalone: false,
   selector: 'participant-form',
   templateUrl: './participant-form.component.html',
   styleUrls: ['./participant-form.component.scss']

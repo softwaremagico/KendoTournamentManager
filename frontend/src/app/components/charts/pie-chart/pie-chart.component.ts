@@ -15,7 +15,7 @@ import {Colors} from "../colors";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
 import {CustomChartComponent} from "../custom-chart-component";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 
 type PieChartOptions = {
@@ -32,6 +32,7 @@ type PieChartOptions = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-pie-chart',
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss']

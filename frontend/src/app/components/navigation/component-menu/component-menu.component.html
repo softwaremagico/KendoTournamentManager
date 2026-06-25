@@ -1,3 +1,5 @@
 <div class="component-menu">
-  <ng-container *ngIf="template" [ngTemplateOutlet]="template"/>
+  @if (template) {
+    <ng-container [ngTemplateOutlet]="template"/>
+  }
 </div>

@@ -32,6 +32,7 @@ import {TournamentService} from "../../services/tournament.service";
 import {EnvironmentService} from "../../environment.service";
 
 @Component({
+  standalone: false,
   selector: 'app-tournament-statistics',
   templateUrl: './tournament-statistics.component.html',
   styleUrls: ['./tournament-statistics.component.scss']

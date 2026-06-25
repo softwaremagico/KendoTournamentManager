@@ -19,7 +19,7 @@ import {LineChartData} from "./line-chart-data";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
 import {CustomChartComponent} from "../custom-chart-component";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 
 export type LineChartOptions = {
@@ -44,6 +44,7 @@ type UpdateLineChartOptions = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']

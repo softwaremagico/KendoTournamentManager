@@ -6,6 +6,7 @@ import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {ShiaijoComponent} from "../shiaijo/shiaijo.component";
 
 @Component({
+  standalone: false,
   selector: 'arrows',
   templateUrl: './arrows.component.html',
   styleUrls: ['./arrows.component.scss']

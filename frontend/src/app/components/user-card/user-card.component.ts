@@ -5,6 +5,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 
 @Component({
+  standalone: false,
   selector: 'user-card',
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.scss']

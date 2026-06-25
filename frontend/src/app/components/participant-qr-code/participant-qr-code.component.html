@@ -1,16 +1,22 @@
 <div class="content">
-  <div *ngIf="!qrCode" class="qr-container">
-    <spinner-overlay></spinner-overlay>
-  </div>
-  <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | hasPermission)" class="qr-container">
-    <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" target=”_blank” *ngIf="link && (RbacActivity.LINK_QR_CODE | hasPermission)"
-       href="{{link}}">{{ 'orClickHere' | transloco }}</a>
-  </div>
+  @if (!qrCode) {
+    <div class="qr-container">
+      <spinner-overlay></spinner-overlay>
+    </div>
+  }
+  @if (qrCode && (RbacActivity.SEE_QR_CODE | hasPermission)) {
+    <div class="qr-container">
+      <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
+      @if (link && (RbacActivity.LINK_QR_CODE | hasPermission)) {
+        <a class="link" target=”_blank”
+        href="{{link}}">{{ 'orClickHere' | transloco }}</a>
+      }
+    </div>
+  }
 </div>
 <div class="button-container">
   <button biit-button id="participant-qr-close"
-          (click)="close()">
+    (click)="close()">
     {{ 'close' | transloco }}
   </button>
 </div>

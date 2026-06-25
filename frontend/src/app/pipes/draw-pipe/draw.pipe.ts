@@ -3,6 +3,7 @@ import {Duel} from "../../models/duel";
 import {Score} from "../../models/score";
 
 @Pipe({
+  standalone: false,
   name: 'draw'
 })
 export class DrawPipe implements PipeTransform {

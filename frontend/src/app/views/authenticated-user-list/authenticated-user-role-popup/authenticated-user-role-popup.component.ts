@@ -8,6 +8,7 @@ import {UserService} from "../../../services/user.service";
 import {MessageService} from "../../../services/message.service";
 
 @Component({
+  standalone: false,
   selector: 'authenticated-user-role-popup',
   templateUrl: './authenticated-user-role-popup.component.html',
   styleUrls: ['./authenticated-user-role-popup.component.scss'],

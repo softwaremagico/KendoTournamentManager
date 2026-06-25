@@ -8,6 +8,7 @@ import {NameUtilsService} from "../../services/name-utils.service";
 import {AchievementsService} from "../../services/achievements.service";
 
 @Component({
+  standalone: false,
   selector: 'achievement-tile',
   templateUrl: './achievement-tile.component.html',
   styleUrls: ['./achievement-tile.component.scss'],

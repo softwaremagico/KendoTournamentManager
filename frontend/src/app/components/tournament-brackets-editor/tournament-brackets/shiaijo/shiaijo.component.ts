@@ -4,6 +4,7 @@ import {BracketsMeasures} from "../brackets-measures";
 import {Tournament} from "../../../../models/tournament";
 
 @Component({
+  standalone: false,
   selector: 'shiaijo-separator',
   templateUrl: './shiaijo.component.html'
 })

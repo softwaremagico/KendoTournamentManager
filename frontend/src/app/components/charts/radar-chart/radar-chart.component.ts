@@ -19,7 +19,7 @@ import {RadarChartData} from "./radar-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 type RadarChartOptions = {
   series: ApexAxisChartSeries;
@@ -37,6 +37,7 @@ type RadarChartOptions = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-radar-chart',
   templateUrl: './radar-chart.component.html',
   styleUrls: ['./radar-chart.component.scss']

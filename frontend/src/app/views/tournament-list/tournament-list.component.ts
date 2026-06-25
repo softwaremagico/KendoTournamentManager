@@ -11,7 +11,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {BiitDatatableComponent, DatatableColumn} from "@biit-solutions/wizardry-theme/table";
 import {combineLatest} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
@@ -19,10 +19,10 @@ import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-
 import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {Constants} from "../../constants";
-import {BiitDatatableComponent} from "@biit-solutions/wizardry-theme/table/biit-datatable/biit-datatable.component";
 import {RoleType} from "../../models/role-type";
 
 @Component({
+  standalone: false,
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
   styleUrls: ['./tournament-list.component.scss'],

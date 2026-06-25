@@ -38,7 +38,7 @@ export class LoginService {
 
   private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
   static readonly JWT_RENEW_MARGIN: number = 20000;
-  private interval: NodeJS.Timeout | null;
+  private interval: ReturnType<typeof setInterval> | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private activityService: ActivityService, private router: Router, private userSessionService: UserSessionService) {

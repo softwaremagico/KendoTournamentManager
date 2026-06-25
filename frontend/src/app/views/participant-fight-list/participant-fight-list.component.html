@@ -3,37 +3,50 @@
   <div class="fight-view">
     <div class="fights-layout">
       <div class="upper-menu">
-        <button biit-icon *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)"
-                (click)="goBackToStatistics()"
-                [title]="t('back')">
-          <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
-        </button>
+        @if ((RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)) {
+          <button biit-icon
+            (click)="goBackToStatistics()"
+            [title]="t('back')">
+            <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
+          </button>
+        }
       </div>
     </div>
     <filter class="filter-fights" (filterChanged)="filter($event)" (reset)="filter('')"
-            [resetValue]="resetFilterValue"></filter>
+    [resetValue]="resetFilterValue"></filter>
     <div class="fights-container">
-      <div *ngIf="tournaments" class="fight-container">
-        <div *ngFor="let tournament of tournaments" class="fight-list">
-          <h2 *ngIf="filteredFights.get(tournament)?.length! > 0"
-              class="tournament-name">{{ tournament.name }}</h2>
-          <div *ngIf="filteredFights.get(tournament)?.length! > 0">
-            <fight *ngFor="let fight of filteredFights.get(tournament!)"
-                   [fight]="fight" [over]="false" [selected]="false"
-                   [showAvatars]="false" [swapColors]="false"
-                   [swapTeams]="false"
-                   [highlightedParticipantId]="participantId"
-                   [onlyShow]="true"
-                   [locked]="true"></fight>
-
-            <div class="unties-list">
-              <untie-fight *ngFor="let duel of filteredUnties.get(tournament!)" [duel]="duel"
-                           [duelSelected]="undefined" [swapColors]="false"
-                           [swapTeams]="false"></untie-fight>
+      @if (tournaments) {
+        <div class="fight-container">
+          @for (tournament of tournaments; track tournament) {
+            <div class="fight-list">
+              @if (filteredFights.get(tournament)?.length! > 0) {
+                <h2
+                class="tournament-name">{{ tournament.name }}</h2>
+              }
+              @if (filteredFights.get(tournament)?.length! > 0) {
+                <div>
+                  @for (fight of filteredFights.get(tournament!); track fight) {
+                    <fight
+                      [fight]="fight" [over]="false" [selected]="false"
+                      [showAvatars]="false" [swapColors]="false"
+                      [swapTeams]="false"
+                      [highlightedParticipantId]="participantId"
+                      [onlyShow]="true"
+                    [locked]="true"></fight>
+                  }
+                  <div class="unties-list">
+                    @for (duel of filteredUnties.get(tournament!); track duel) {
+                      <untie-fight [duel]="duel"
+                        [duelSelected]="undefined" [swapColors]="false"
+                      [swapTeams]="false"></untie-fight>
+                    }
+                  </div>
+                </div>
+              }
             </div>
-          </div>
+          }
         </div>
-      </div>
+      }
     </div>
   </div>
 </ng-container>
