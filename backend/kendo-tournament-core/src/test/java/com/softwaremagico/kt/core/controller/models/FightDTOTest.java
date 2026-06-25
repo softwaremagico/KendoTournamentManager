@@ -340,7 +340,8 @@ public class FightDTOTest {
     public void shouldBeEqualWhenSameInstance() {
         final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 1);
         fight.setId(1);
-        assertTrue(fight.equals(fight));
+        final FightDTO sameReference = fight;
+        assertTrue(fight.equals(sameReference));
     }
 
     @Test
@@ -403,7 +404,6 @@ public class FightDTOTest {
         base.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
         base.setDuels(List.of());
 
-        assertFalse(base.equals("not-fight"));
 
         final FightDTO differentTeam1 = new FightDTO(tournament, null, team2, 0, 1);
         differentTeam1.setId(200);

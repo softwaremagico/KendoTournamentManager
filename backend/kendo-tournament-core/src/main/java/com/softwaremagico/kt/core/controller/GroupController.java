@@ -56,6 +56,8 @@ import java.util.Set;
 
 @Controller
 public class GroupController extends BasicInsertableController<Group, GroupDTO, GroupRepository, GroupProvider, GroupConverterRequest, GroupConverter> {
+    private static final String TOURNAMENT_NOT_FOUND_WITH_ID = "No tournament found with id '";
+
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final FightProvider fightProvider;
@@ -107,14 +109,14 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     public List<GroupDTO> getFromTournament(Integer tournamentId) {
         return this.get(this.tournamentConverter.convert(new TournamentConverterRequest(this.tournamentProvider
                 .get(tournamentId).orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-                        "No tournament found with id '" + tournamentId + "',", ExceptionType.INFO)))));
+                        TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',", ExceptionType.INFO)))));
     }
 
     public GroupDTO getFromTournament(Integer tournamentId, Integer level, Integer index) {
         return this.convert(this.getProvider().getGroupByLevelAndIndex(
                 this.tournamentProvider.get(tournamentId)
                         .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-                                "No tournament found with id '" + tournamentId + "',", ExceptionType.INFO)),
+                                TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',", ExceptionType.INFO)),
                 level, index));
     }
 
@@ -254,7 +256,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                 final TournamentDTO tournamentDTO = this.tournamentConverter
                         .convert(new TournamentConverterRequest(this.tournamentProvider.get(tournamentId)
                                 .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-                                        "No tournament found with id '" + tournamentId + "',", ExceptionType.INFO))));
+                                        TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',", ExceptionType.INFO))));
                 this.groupsUpdatedListeners.forEach(
                         groupsUpdatedListener -> groupsUpdatedListener.updated(tournamentDTO, username, session));
             }).start();
@@ -274,7 +276,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                 final TournamentDTO tournamentDTO = this.tournamentConverter
                         .convert(new TournamentConverterRequest(this.tournamentProvider.get(tournamentId)
                                 .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-                                        "No tournament found with id '" + tournamentId + "',", ExceptionType.INFO))));
+                                        TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',", ExceptionType.INFO))));
                 this.groupsUpdatedListeners.forEach(
                         groupsUpdatedListener -> groupsUpdatedListener.updated(tournamentDTO, username, session));
             }).start();
@@ -347,7 +349,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         final List<Group> tournamentGroups = this.getProvider()
                 .getGroups(this.tournamentProvider.get(tournamentId)
                         .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-                                "No tournament found with id '" + tournamentId + "'.")));
+                                TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'.")));
 
         // Remove teams assignation.
         for (final Group group : tournamentGroups) {

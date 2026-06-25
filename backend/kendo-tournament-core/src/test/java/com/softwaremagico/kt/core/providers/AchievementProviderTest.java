@@ -460,13 +460,13 @@ public class AchievementProviderTest {
 
     private Tournament tournament(String name) {
         final Tournament tournament = new Tournament(name, 2, 3, TournamentType.LEAGUE, "user");
-        tournament.setId(Math.abs(name.hashCode()));
+        tournament.setId(Math.floorMod(name.hashCode(), Integer.MAX_VALUE));
         return tournament;
     }
 
     private Participant participant(String name) {
         final Participant participant = new Participant();
-        participant.setId(Math.abs(name.hashCode()));
+        participant.setId(Math.floorMod(name.hashCode(), Integer.MAX_VALUE));
         participant.setName(name);
         participant.setLastname("Lastname");
         participant.setCreatedBy("user");

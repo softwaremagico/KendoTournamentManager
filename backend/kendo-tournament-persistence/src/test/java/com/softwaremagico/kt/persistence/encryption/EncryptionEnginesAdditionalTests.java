@@ -51,22 +51,22 @@ public class EncryptionEnginesAdditionalTests {
     }
 
     @Test
-    public void shouldEncryptAndDecryptWithGcmUsingCustomPassword() {
-        final String rawText = "custom-password-data";
-        final String password = "P@ssw0rd";
+    public void shouldEncryptAndDecryptWithGcmUsingCustomKey() {
+        final String rawText = "custom-key-data";
+        final String customKey = "sample-key-01";
 
-        final String encrypted = gcmCipherEngine.encrypt(rawText, password);
-        final String decrypted = gcmCipherEngine.decrypt(encrypted, password);
+        final String encrypted = gcmCipherEngine.encrypt(rawText, customKey);
+        final String decrypted = gcmCipherEngine.decrypt(encrypted, customKey);
 
         Assert.assertNotNull(encrypted);
         Assert.assertEquals(decrypted, rawText);
     }
 
     @Test(expectedExceptions = InvalidEncryptionException.class)
-    public void shouldFailDecryptWithWrongPassword() {
-        final String encrypted = gcmCipherEngine.encrypt("x", "right-password");
+    public void shouldFailDecryptWithWrongKey() {
+        final String encrypted = gcmCipherEngine.encrypt("x", "valid-key");
 
-        gcmCipherEngine.decrypt(encrypted, "wrong-password");
+        gcmCipherEngine.decrypt(encrypted, "invalid-key");
     }
 
     @Test

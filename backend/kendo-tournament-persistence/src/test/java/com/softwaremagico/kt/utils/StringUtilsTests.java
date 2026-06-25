@@ -38,7 +38,7 @@ public class StringUtilsTests {
         final String result = StringUtils.setCase("john");
         Assert.assertNotNull(result);
         Assert.assertEquals(result, "John");
-        Assert.assertFalse(result.equals("john"));
+        Assert.assertNotEquals(result, "john");
     }
 
     @Test

@@ -1026,7 +1026,7 @@ public class TournamentProviderTest {
 
     private Tournament tournamentWithDate(String name, LocalDateTime createdAt) {
         final Tournament tournament = new Tournament(name, 1, 3, TournamentType.LEAGUE, "user");
-        tournament.setId(Math.abs(name.hashCode()));
+        tournament.setId(Math.floorMod(name.hashCode(), Integer.MAX_VALUE));
         tournament.setCreatedAt(createdAt);
         return tournament;
     }

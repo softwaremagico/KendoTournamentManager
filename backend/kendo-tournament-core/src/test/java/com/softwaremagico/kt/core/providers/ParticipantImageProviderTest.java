@@ -185,7 +185,7 @@ public class ParticipantImageProviderTest {
 
     private Participant participant(String name) {
         final Participant participant = new Participant();
-        participant.setId(Math.abs(name.hashCode()));
+        participant.setId(Math.floorMod(name.hashCode(), Integer.MAX_VALUE));
         participant.setName(name);
         participant.setLastname("Lastname");
         participant.setCreatedBy("user");

@@ -262,13 +262,13 @@ public class TeamProviderTest {
 
     private Tournament tournament(String name, int teamSize) {
         final Tournament tournament = new Tournament(name, 3, teamSize, TournamentType.LEAGUE, "user");
-        tournament.setId(Math.abs(name.hashCode()));
+        tournament.setId(Math.floorMod(name.hashCode(), Integer.MAX_VALUE));
         return tournament;
     }
 
     private Participant participant(String name) {
         final Participant participant = new Participant();
-        participant.setId(Math.abs(name.hashCode()));
+        participant.setId(Math.floorMod(name.hashCode(), Integer.MAX_VALUE));
         participant.setName(name);
         participant.setLastname("Lastname");
         participant.setCreatedBy("user");
@@ -277,7 +277,7 @@ public class TeamProviderTest {
 
     private Team team(String name, Tournament tournament) {
         final Team team = new Team(name, tournament);
-        team.setId(Math.abs((name + tournament.getName()).hashCode()));
+        team.setId(Math.floorMod((name + tournament.getName()).hashCode(), Integer.MAX_VALUE));
         team.setCreatedBy("user");
         return team;
     }
