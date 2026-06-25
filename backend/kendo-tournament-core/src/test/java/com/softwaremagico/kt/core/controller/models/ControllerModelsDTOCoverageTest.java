@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.core.exceptions.DataInputException;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.ImageCompression;
@@ -674,5 +675,55 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(base).isNotEqualTo(differentUnties);
 
         assertThat(base).isNotEqualTo(null);
+    }
+
+    @Test
+    public void testSimpleControllerDtosAndTokenCoverage() {
+        final ParticipantDTO participant = createParticipantDTO(940, "Mina", "Kobayashi");
+        final TournamentDTO tournament = createTournamentDTO(940, "Autumn Cup");
+
+        final ParticipantInTournamentDTO participantInTournamentDTO = new ParticipantInTournamentDTO();
+        participantInTournamentDTO.setParticipant(participant);
+        participantInTournamentDTO.setTournament(tournament);
+
+        assertThat(participantInTournamentDTO.getParticipant()).isEqualTo(participant);
+        assertThat(participantInTournamentDTO.getTournament()).isEqualTo(tournament);
+
+        final ParticipantsInTournamentDTO participantsInTournamentDTO = new ParticipantsInTournamentDTO();
+        participantsInTournamentDTO.setParticipant(java.util.List.of(participant));
+        participantsInTournamentDTO.setTournament(tournament);
+
+        assertThat(participantsInTournamentDTO.getParticipant()).containsExactly(participant);
+        assertThat(participantsInTournamentDTO.getTournament()).isEqualTo(tournament);
+
+        final LogDTO logDTO = new LogDTO();
+        logDTO.setMessage("frontend event");
+
+        assertThat(logDTO.getMessage()).isEqualTo("frontend event");
+        assertThat(logDTO.toString()).isEqualTo("frontend event");
+
+        final ParticipantImageDTO participantImageDTO = new ParticipantImageDTO();
+        participantImageDTO.setParticipant(participant);
+
+        assertThat(participantImageDTO.getParticipant()).isEqualTo(participant);
+
+        final LocalDateTime expiration = LocalDateTime.of(2026, 2, 3, 4, 5);
+        final Participant entity = new Participant();
+        entity.setToken("token-123");
+        entity.setAccountExpiration(expiration);
+
+        final Token tokenFromParticipant = new Token(entity);
+        assertThat(tokenFromParticipant.getContent()).isEqualTo("token-123");
+        assertThat(tokenFromParticipant.getExpiration()).isEqualTo(expiration);
+        assertThat(tokenFromParticipant.getParticipant()).isNull();
+
+        final Token token = new Token();
+        token.setContent("manual-token");
+        token.setExpiration(expiration.plusDays(1));
+        token.setParticipant(participant);
+
+        assertThat(token.getContent()).isEqualTo("manual-token");
+        assertThat(token.getExpiration()).isEqualTo(expiration.plusDays(1));
+        assertThat(token.getParticipant()).isEqualTo(participant);
     }
 }

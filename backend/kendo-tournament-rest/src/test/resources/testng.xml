@@ -43,7 +43,11 @@
             <class name="com.softwaremagico.kt.rest.DataValidationTest"/>
             <class name="com.softwaremagico.kt.rest.CsvServicesTest"/>
             <class name="com.softwaremagico.kt.rest.exceptions.ErrorResponseTest"/>
+            <class name="com.softwaremagico.kt.rest.exceptions.RestExceptionsCoverageTest"/>
             <class name="com.softwaremagico.kt.rest.security.dto.CreateUserRequestTest"/>
+            <class name="com.softwaremagico.kt.rest.security.dto.AuthParticipantRequestTest"/>
+            <class name="com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequestTest"/>
+            <class name="com.softwaremagico.kt.rest.security.dto.AuthRequestsCoverageTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenUtilTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenFilterTest"/>
             <class name="com.softwaremagico.kt.logger.FrontendLoggerTest"/>

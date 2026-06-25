@@ -24,6 +24,8 @@
                 <include name="cryptoConverters"/>
                 <include name="entityBeans"/>
                 <include name="persistenceValues"/>
+                <include name="entityEquals"/>
+                <include name="duelEntity"/>
             </run>
         </groups>
         <classes>
@@ -44,8 +46,11 @@
             <class name="com.softwaremagico.kt.logger.EncryptorLoggerTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersAdditionalTests"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverterTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.EnumCryptoConvertersCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.EntityBeansCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.EntityEqualsCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.DuelEntityCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.values.PersistenceValuesCoverageTest"/>
         </classes>
     </test>

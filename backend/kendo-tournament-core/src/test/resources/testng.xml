@@ -40,6 +40,8 @@
                 <include name="csvReader"/>
                 <include name="imageUtils"/>
                 <include name="converterUtils"/>
+                <include name="converterRequest"/>
+                <include name="csvReaderUnit"/>
                 <include name="coreExceptions"/>
                 <include name="poolTests"/>
                 <include name="participantImageProviderTests"/>
@@ -90,6 +92,7 @@
             <class name="com.softwaremagico.kt.core.statistics.StatisticsModelsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeOddTeamsAsapTest"/>
+            <class name="com.softwaremagico.kt.utils.GroupLinkUtilsTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
             <class name="com.softwaremagico.kt.core.providers.AuthenticatedUserProviderTest"/>
@@ -124,6 +127,8 @@
             <class name="com.softwaremagico.kt.core.tests.csv.CsvReaderTest"/>
             <class name="com.softwaremagico.kt.core.tests.ImageUtilsTests"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterUtilsTests"/>
+            <class name="com.softwaremagico.kt.core.converters.models.ConverterRequestCoverageTest"/>
+            <class name="com.softwaremagico.kt.core.csv.CsvReaderUnitTest"/>
             <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsTests"/>
             <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsConstructorsCoverageTest"/>
             <class name="com.softwaremagico.kt.core.pool.BasePoolTest"/>

@@ -300,6 +300,93 @@ public class StatisticsModelsTest {
         stats.setDuelsNumber(-1L);
         assertThat(stats.getDuelsNumber()).isNull();
     }
+
+    // ---------- TournamentStatistics getters/setters ----------
+
+    @Test
+    public void testTournamentStatisticsAllGettersSetters() {
+        final TournamentStatistics stats = new TournamentStatistics();
+        final TournamentFightStatistics fightStats = new TournamentFightStatistics();
+        final java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+        stats.setFightStatistics(fightStats);
+        assertThat(stats.getFightStatistics()).isEqualTo(fightStats);
+
+        stats.setTournamentId(99);
+        assertThat(stats.getTournamentId()).isEqualTo(99);
+
+        stats.setTournamentName("MyTournament");
+        assertThat(stats.getTournamentName()).isEqualTo("MyTournament");
+
+        stats.setTournamentCreatedAt(now);
+        assertThat(stats.getTournamentCreatedAt()).isEqualTo(now);
+
+        stats.setTournamentLockedAt(now.plusHours(1));
+        assertThat(stats.getTournamentLockedAt()).isEqualTo(now.plusHours(1));
+
+        stats.setTournamentFinishedAt(now.plusHours(2));
+        assertThat(stats.getTournamentFinishedAt()).isEqualTo(now.plusHours(2));
+
+        stats.setNumberOfTeams(5L);
+        assertThat(stats.getNumberOfTeams()).isEqualTo(5L);
+
+        stats.setTeamSize(3);
+        assertThat(stats.getTeamSize()).isEqualTo(3);
+
+        stats.setFightSize(10);
+        assertThat(stats.getFightSize()).isEqualTo(10);
+    }
+
+    // ---------- ParticipantStatistics getters/setters ----------
+
+    @Test
+    public void testParticipantStatisticsAllGettersSetters() {
+        final ParticipantStatistics stats = new ParticipantStatistics();
+        final ParticipantFightStatistics fightStats = new ParticipantFightStatistics();
+        final java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+        stats.setFightStatistics(fightStats);
+        assertThat(stats.getFightStatistics()).isEqualTo(fightStats);
+
+        stats.setParticipantId(42);
+        assertThat(stats.getParticipantId()).isEqualTo(42);
+
+        stats.setParticipantName("JohnDoe");
+        assertThat(stats.getParticipantName()).isEqualTo("JohnDoe");
+
+        stats.setTournaments(5);
+        assertThat(stats.getTournaments()).isEqualTo(5);
+
+        stats.setTotalTournaments(100L);
+        assertThat(stats.getTotalTournaments()).isEqualTo(100L);
+
+        stats.setParticipantCreatedAt(now);
+        assertThat(stats.getParticipantCreatedAt()).isEqualTo(now);
+    }
+
+    @Test
+    public void testParticipantStatisticsSetRolesPerformedMap() {
+        final ParticipantStatistics stats = new ParticipantStatistics();
+        final java.util.Map<RoleType, Long> map = new java.util.EnumMap<>(RoleType.class);
+        map.put(RoleType.COMPETITOR, 3L);
+
+        stats.setRolesPerformed(map);
+
+        assertThat(stats.getRolesPerformed()).containsEntry(RoleType.COMPETITOR, 3L);
+    }
+
+    // ---------- TournamentStatistics setNumberOfParticipants map ----------
+
+    @Test
+    public void testTournamentStatisticsSetNumberOfParticipantsMap() {
+        final TournamentStatistics stats = new TournamentStatistics();
+        final java.util.Map<RoleType, Long> map = new java.util.EnumMap<>(RoleType.class);
+        map.put(RoleType.REFEREE, 2L);
+
+        stats.setNumberOfParticipants(map);
+
+        assertThat(stats.getNumberOfParticipants()).containsEntry(RoleType.REFEREE, 2L);
+    }
 }
 
 
