@@ -122,7 +122,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   }
 
   getMinutes(time: number): number {
-    return ~~(time / 60);
+    return Math.trunc(time / 60);
   }
 
   getSeconds(time: number): number {

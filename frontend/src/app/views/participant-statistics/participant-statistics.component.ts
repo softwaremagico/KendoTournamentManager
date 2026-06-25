@@ -65,7 +65,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
-      if (state['participantId'] && !isNaN(Number(state['participantId']))) {
+      if (state['participantId'] && !Number.isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);
       } else {
         this.goBack();
@@ -77,7 +77,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       if (this.temporalToken) {
         this.loginService.logout()
       }
-      if (!this.participantId || isNaN(this.participantId)) {
+      if (!this.participantId || Number.isNaN(Number(this.participantId))) {
         this.goBack();
       }
     }

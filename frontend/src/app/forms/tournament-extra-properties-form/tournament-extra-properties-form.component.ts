@@ -87,7 +87,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
             this.resolveOddFightsAsap = (_tournamentProperty.propertyValue.toLowerCase() == "true");
           }
           if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
-            this.challengeDistance = isNaN(+_tournamentProperty.propertyValue) ? TournamentExtraPropertyKey.senbatsuChallengeDistance() : Number(_tournamentProperty.propertyValue);
+            this.challengeDistance = Number.isNaN(+_tournamentProperty.propertyValue) ? TournamentExtraPropertyKey.senbatsuChallengeDistance() : Number(_tournamentProperty.propertyValue);
           }
         }
       }

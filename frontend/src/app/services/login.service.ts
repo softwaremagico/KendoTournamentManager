@@ -189,7 +189,7 @@ export class LoginService {
             });
             throw new Error('Server returned invalid response');
           }
-          if (isNaN(expiration)) {
+          if (Number.isNaN(expiration)) {
             throw new Error('Server returned invalid expiration time');
           }
           const renewValue: number = (expiration - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN;

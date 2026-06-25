@@ -112,7 +112,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       //Send by previous view.
-      if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
+      if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
       } else {
         this.goBackToTournament();
@@ -123,7 +123,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (!this.tournamentId) {
         this.tournamentId = Number(localStorage.getItem('tournamentId'));
       }
-      if (!this.tournamentId || isNaN(this.tournamentId)) {
+      if (!this.tournamentId || Number.isNaN(Number(this.tournamentId))) {
         this.goBackToTournament();
       }
     }

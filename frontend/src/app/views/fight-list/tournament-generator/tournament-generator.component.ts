@@ -55,7 +55,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     super(rbacService);
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
-      if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
+      if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
       } else {
         this.goBackToFights();

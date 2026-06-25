@@ -64,10 +64,11 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   }
 
   toDoubleDigit(num: number): string {
-    if (isNaN(num)) {
+    const safeNum = Number(num);
+    if (Number.isNaN(safeNum)) {
       return '00';
     }
-    return num < 10 ? '0' + num : num + '';
+    return safeNum < 10 ? '0' + safeNum : safeNum + '';
   };
 
 }

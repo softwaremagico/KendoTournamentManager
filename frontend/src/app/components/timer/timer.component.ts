@@ -217,10 +217,11 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   toDoubleDigit(num: number): string {
-    if (isNaN(num)) {
+    const safeNum = Number(num);
+    if (Number.isNaN(safeNum)) {
       return '00';
     }
-    return num < 10 ? '0' + num : num + '';
+    return safeNum < 10 ? '0' + safeNum : safeNum + '';
   };
 
   addTime(time: number): void {
@@ -284,7 +285,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   validateMinutesElement(element: HTMLElement): void {
     let inputValue: number = Number((element as HTMLInputElement).value);
-    if (isNaN(inputValue)) {
+    if (Number.isNaN(inputValue)) {
       inputValue = this.minutes;
     } else if (inputValue < 0) {
       inputValue = 0;
@@ -301,7 +302,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   validateSecondsElement(element: HTMLElement): void {
     let inputValue: number = Number((element as HTMLInputElement).value);
-    if (isNaN(inputValue)) {
+    if (Number.isNaN(inputValue)) {
       inputValue = this.seconds;
     } else if (inputValue < 0) {
       inputValue = 0;

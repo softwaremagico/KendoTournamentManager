@@ -28,7 +28,7 @@ export class UserSessionService {
       }
     }
     this.user = user;
-    if (!expires || isNaN(expires) || expires < new Date().getTime()) {
+    if (!expires || Number.isNaN(Number(expires)) || expires < new Date().getTime()) {
       localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
       localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
       localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
@@ -37,7 +37,7 @@ export class UserSessionService {
       sessionStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`, authToken);
       this.setSessionUser(user);
       this.store = true;
-      if (expires && !isNaN(expires)) {
+      if (expires && !Number.isNaN(Number(expires))) {
         sessionStorage.setItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`, expires.toString());
       }
       this.loggedIn = true;
@@ -186,7 +186,7 @@ export class UserSessionService {
 
   getExpirationDate(): Date | null {
     const sessionExpiration: string | null = sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
-    if (!isNaN(+(sessionExpiration || NaN))) {
+    if (!Number.isNaN(+(sessionExpiration || NaN))) {
       return new Date(+(this.getSessionAuthExpiration() || 0));
     }
     return null;

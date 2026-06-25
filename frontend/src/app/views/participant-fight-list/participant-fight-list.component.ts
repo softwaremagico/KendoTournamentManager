@@ -41,7 +41,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       //Send by previous view.
-      if (state['participantId'] && !isNaN(Number(state['participantId']))) {
+      if (state['participantId'] && !Number.isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);
       } else {
         this.goBackToStatistics();

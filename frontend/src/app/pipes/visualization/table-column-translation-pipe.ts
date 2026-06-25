@@ -35,7 +35,7 @@ export class TableColumnTranslationPipe implements PipeTransform {
     } else if (typeof column === 'boolean') {
       return column ? this.transloco.translate('yes') : this.transloco.translate('no');
       //Is it a date?
-    } else if (isNaN(column) && !isNaN(Date.parse(column)) && (column instanceof Date)) {
+    } else if (Number.isNaN(Number(column)) && !Number.isNaN(Date.parse(column)) && (column instanceof Date)) {
       return this.pipe.transform(column, 'short');
     } else if (column instanceof Object) {
       return this.transloco.translate(column.toString());

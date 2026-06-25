@@ -82,7 +82,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
-      if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
+      if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
       } else {
         this.goBackToTournament();
@@ -321,7 +321,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   initializeFightsOverStatistics(tournamentStatistics: TournamentStatistics): void {
     const progress: number = (tournamentStatistics.tournamentFightStatistics?.fightsFinished / tournamentStatistics.tournamentFightStatistics?.fightsNumber) * 100;
     this.fightsOverData = GaugeChartData.fromArray([[this.translateService.translate('fightsFinished'),
-      isNaN(progress) ? 0 : progress]]);
+      Number.isNaN(progress) ? 0 : progress]]);
   }
 
   convertSeconds(seconds: number | undefined): string {
