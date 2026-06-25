@@ -86,7 +86,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
 
     private byte[] getDefaultBanner() {
         if (this.defaultBanner == null) {
-            try (final InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_BANNER_IMAGE)) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_BANNER_IMAGE)) {
                 if (inputStream != null) {
                     this.defaultBanner = inputStream.readAllBytes();
                 }
@@ -99,7 +99,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
 
     private byte[] getDefaultAccreditation() {
         if (this.defaultAccreditation == null) {
-            try (final InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_ACCREDITATION_IMAGE)) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_ACCREDITATION_IMAGE)) {
                 if (inputStream != null) {
                     this.defaultAccreditation = inputStream.readAllBytes();
                 }
@@ -113,7 +113,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
 
     private byte[] getDefaultDiploma() {
         if (this.defaultDiploma == null) {
-            try (final InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_DIPLOMA_IMAGE)) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_DIPLOMA_IMAGE)) {
                 if (inputStream != null) {
                     this.defaultDiploma = inputStream.readAllBytes();
                 }
@@ -126,7 +126,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
 
     private byte[] getDefaultPhoto() {
         if (this.defaultPhoto == null) {
-            try (final InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_PHOTO_IMAGE)) {
+            try (InputStream inputStream = this.resourceLoader.getResourceAsStream(DEFAULT_PHOTO_IMAGE)) {
                 if (inputStream != null) {
                     this.defaultPhoto = inputStream.readAllBytes();
                 }
