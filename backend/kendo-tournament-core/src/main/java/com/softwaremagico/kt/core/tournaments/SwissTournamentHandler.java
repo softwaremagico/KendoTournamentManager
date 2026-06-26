@@ -38,7 +38,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,12 +53,50 @@ public class SwissTournamentHandler extends LeagueHandler {
     public static final int SWISS_WIN_POINTS = 3;
     public static final int SWISS_DRAW_POINTS = 1;
     public static final boolean DEFAULT_AVOID_REPEATED_PAIRINGS = true;
+    private final GroupProvider groupProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
     public SwissTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider,
                                   RankingProvider rankingProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
+        this.groupProvider = groupProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+    }
+
+    @Override
+    public List<Group> getGroups(Tournament tournament) {
+        final List<Group> groups = this.groupProvider.getGroups(tournament);
+        if (groups.isEmpty()) {
+            return List.of(this.getFirstGroup(tournament));
+        }
+        return groups;
+    }
+
+    @Override
+    public List<Group> getGroups(Tournament tournament, Integer level) {
+        if (level == null) {
+            return this.getGroups(tournament);
+        }
+        final List<Group> groups = this.groupProvider.getGroups(tournament, level);
+        if (groups.isEmpty() && level == 0) {
+            return List.of(this.getFirstGroup(tournament));
+        }
+        return groups;
+    }
+
+    @Override
+    public Group addGroup(Tournament tournament, Group group) {
+        return this.groupProvider.addGroup(tournament, group);
+    }
+
+    @Override
+    public Group getGroup(Tournament tournament, Fight fight) {
+        return this.groupProvider.getGroup(fight);
+    }
+
+    @Override
+    public void removeGroup(Tournament tournament, Integer level, Integer groupIndex) {
+        this.groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupIndex);
     }
 
     public int getConfiguredRounds(Tournament tournament) {
@@ -95,36 +134,122 @@ public class SwissTournamentHandler extends LeagueHandler {
             throw new CustomTournamentFightsException(this.getClass(), "Swiss round level must be greater than or equal to 0.");
         }
 
-        final Group group = this.getFirstGroup(tournament);
-        if (group.getTeams() == null || group.getTeams().size() < 2) {
+        final Group initialGroup = this.getFirstGroup(tournament);
+        if (initialGroup.getTeams() == null || initialGroup.getTeams().size() < 2) {
             return new ArrayList<>();
-        }
-        if (group.getFights() == null) {
-            group.setFights(new ArrayList<>());
         }
 
         if (level >= this.getConfiguredRounds(tournament)) {
             return new ArrayList<>();
         }
 
-        final boolean roundAlreadyGenerated = group.getFights().stream().anyMatch(fight -> Objects.equals(fight.getLevel(), level));
+        final List<Group> tournamentGroups = this.getGroups(tournament);
+        final List<Fight> previousFights = this.getAllFights(tournamentGroups);
+
+        final boolean roundAlreadyGenerated = previousFights.stream().anyMatch(fight -> Objects.equals(fight.getLevel(), level));
         if (roundAlreadyGenerated) {
             return new ArrayList<>();
         }
 
-        final List<Team> orderedTeams = this.getTeamsOrderedBySwissScore(group);
+        final Map<Team, Integer> pointsByTeam = this.getSwissPointsByTeam(initialGroup.getTeams(), previousFights);
+        final List<Team> orderedTeams = this.getTeamsOrderedBySwissScore(initialGroup.getTeams(), pointsByTeam);
+
+        Team byeTeam = null;
         if (orderedTeams.size() % 2 != 0) {
             // Assign bye to the lowest-ranked team that has not received a bye yet (if possible).
-            final Team byeTeam = this.selectByeTeam(orderedTeams, group);
-            orderedTeams.remove(byeTeam);
+            final int byeIndex = this.selectByeTeamIndex(orderedTeams, initialGroup.getTeams(), previousFights);
+            byeTeam = orderedTeams.remove(byeIndex);
         }
 
-        final List<Fight> generatedFights = this.createSwissPairings(tournament, orderedTeams, level, createdBy, group.getFights(),
+        final List<Fight> generatedFights = this.createSwissPairings(tournament, orderedTeams, level, createdBy, previousFights,
                 this.avoidRepeatedPairings(tournament));
 
-        group.getFights().addAll(generatedFights);
-        this.addGroup(tournament, group);
+        final List<List<Team>> teamsByScoreGroup = this.groupTeamsByScore(initialGroup.getTeams(), pointsByTeam);
+        this.persistRoundGroups(tournament, level, teamsByScoreGroup, generatedFights, pointsByTeam, byeTeam, createdBy);
+
         return generatedFights;
+    }
+
+    private List<Fight> getAllFights(List<Group> groups) {
+        return groups.stream()
+                .flatMap(group -> group.getFights() == null ? java.util.stream.Stream.<Fight>empty() : group.getFights().stream())
+                .toList();
+    }
+
+    private void persistRoundGroups(Tournament tournament, Integer level, List<List<Team>> teamsByScoreGroup,
+                                    List<Fight> generatedFights, Map<Team, Integer> pointsByTeam,
+                                    Team byeTeam, String createdBy) {
+        final Map<Integer, Integer> scoreToGroupIndex = new HashMap<>();
+        final Map<Integer, Group> groupsByIndex = new HashMap<>();
+        for (int groupIndex = 0; groupIndex < teamsByScoreGroup.size(); groupIndex++) {
+            final List<Team> teams = teamsByScoreGroup.get(groupIndex);
+            final Group roundGroup = this.getOrCreateRoundGroup(tournament, level, groupIndex, createdBy);
+            roundGroup.setTeams(new ArrayList<>(teams));
+            roundGroup.setFights(new ArrayList<>());
+            groupsByIndex.put(groupIndex, roundGroup);
+            if (!teams.isEmpty()) {
+                scoreToGroupIndex.put(pointsByTeam.getOrDefault(teams.getFirst(), 0), groupIndex);
+            }
+        }
+
+        for (final Fight fight : generatedFights) {
+            final int fightScore = Math.max(pointsByTeam.getOrDefault(fight.getTeam1(), 0),
+                    pointsByTeam.getOrDefault(fight.getTeam2(), 0));
+            final int groupIndex = scoreToGroupIndex.getOrDefault(fightScore, 0);
+            final Group roundGroup = groupsByIndex.get(groupIndex);
+            roundGroup.getFights().add(fight);
+        }
+
+        if (byeTeam != null) {
+            final int byeScore = pointsByTeam.getOrDefault(byeTeam, 0);
+            final int groupIndex = scoreToGroupIndex.getOrDefault(byeScore, 0);
+            final Group roundGroup = groupsByIndex.get(groupIndex);
+            if (!roundGroup.getTeams().contains(byeTeam)) {
+                roundGroup.getTeams().add(byeTeam);
+            }
+        }
+
+        groupsByIndex.values().forEach(group -> this.groupProvider.addGroup(tournament, group));
+
+        this.removeObsoleteGroupsInRound(tournament, level, teamsByScoreGroup.size());
+    }
+
+    private Group getOrCreateRoundGroup(Tournament tournament, Integer level, Integer index, String createdBy) {
+        Group group = this.groupProvider.getGroupByLevelAndIndex(tournament, level, index);
+        if (group == null) {
+            group = new Group();
+            group.setTournament(tournament);
+            group.setLevel(level);
+            group.setIndex(index);
+            group.setTeams(new ArrayList<>());
+            group.setFights(new ArrayList<>());
+            group.setCreatedBy(createdBy);
+        } else {
+            if (group.getTeams() == null) {
+                group.setTeams(new ArrayList<>());
+            }
+            if (group.getFights() == null) {
+                group.setFights(new ArrayList<>());
+            }
+        }
+        return group;
+    }
+
+    private void removeObsoleteGroupsInRound(Tournament tournament, Integer level, int expectedGroups) {
+        final List<Group> roundGroups = this.groupProvider.getGroups(tournament, level);
+        roundGroups.stream()
+                .filter(group -> group.getIndex() >= expectedGroups)
+                .forEach(group -> this.groupProvider.deleteGroupByLevelAndIndex(tournament, level, group.getIndex()));
+    }
+
+    private List<List<Team>> groupTeamsByScore(List<Team> teams, Map<Team, Integer> pointsByTeam) {
+        final Map<Integer, List<Team>> teamsByScore = new LinkedHashMap<>();
+        teams.stream()
+                .sorted(Comparator.comparing((Team team) -> pointsByTeam.getOrDefault(team, 0)).reversed()
+                        .thenComparing(Team::getName))
+                .forEach(team -> teamsByScore.computeIfAbsent(pointsByTeam.getOrDefault(team, 0),
+                        ignoredScore -> new ArrayList<>()).add(team));
+        return new ArrayList<>(teamsByScore.values());
     }
 
     public boolean avoidRepeatedPairings(Tournament tournament) {
@@ -181,33 +306,24 @@ public class SwissTournamentHandler extends LeagueHandler {
 
     private boolean havePlayed(Team firstTeam, Team secondTeam, List<Fight> previousFights) {
         return previousFights.stream().anyMatch(fight ->
-                (this.sameTeam(fight.getTeam1(), firstTeam) && this.sameTeam(fight.getTeam2(), secondTeam))
-                        || (this.sameTeam(fight.getTeam1(), secondTeam) && this.sameTeam(fight.getTeam2(), firstTeam)));
+                (Objects.equals(fight.getTeam1(), firstTeam) && Objects.equals(fight.getTeam2(), secondTeam))
+                        || (Objects.equals(fight.getTeam1(), secondTeam) && Objects.equals(fight.getTeam2(), firstTeam)));
     }
 
-    private boolean sameTeam(Team firstTeam, Team secondTeam) {
-        if (firstTeam == secondTeam) {
-            return true;
-        }
-        if (firstTeam == null || secondTeam == null) {
-            return false;
-        }
-        if (firstTeam.getId() != null && secondTeam.getId() != null) {
-            return Objects.equals(firstTeam.getId(), secondTeam.getId());
-        }
-        return Objects.equals(firstTeam.getName(), secondTeam.getName())
-                && (Objects.equals(firstTeam.getTournament(), secondTeam.getTournament())
-                || firstTeam.getTournament() == secondTeam.getTournament());
+    private List<Team> getTeamsOrderedBySwissScore(List<Team> teams, Map<Team, Integer> pointsByTeam) {
+        final List<Team> orderedTeams = new ArrayList<>(teams);
+        orderedTeams.sort(Comparator
+                .comparing((Team team) -> pointsByTeam.getOrDefault(team, 0)).reversed()
+                .thenComparing(Team::getName));
+        return orderedTeams;
     }
 
-    private List<Team> getTeamsOrderedBySwissScore(Group group) {
-        final List<Team> orderedTeams = new ArrayList<>(group.getTeams());
-        // Team.equals/hashCode are id-based; transient teams share null ids and collide in HashMap.
-        final Map<Team, Integer> pointsByTeam = new IdentityHashMap<>();
-        orderedTeams.forEach(team -> pointsByTeam.put(team, 0));
-        final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(group);
+    private Map<Team, Integer> getSwissPointsByTeam(List<Team> teams, List<Fight> fights) {
+        final Map<Team, Integer> pointsByTeam = new HashMap<>();
+        teams.forEach(team -> pointsByTeam.put(team, 0));
+        final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(teams, fights);
 
-        for (final Fight fight : group.getFights()) {
+        for (final Fight fight : fights) {
             final Team winner = fight.getWinner();
             if (winner != null) {
                 pointsByTeam.computeIfPresent(winner, (ignoredTeam, points) -> points + SWISS_WIN_POINTS);
@@ -217,40 +333,37 @@ public class SwissTournamentHandler extends LeagueHandler {
             }
         }
 
-        byesByTeam.forEach((team, byeCount) ->
-                pointsByTeam.computeIfPresent(team, (ignoredTeam, points) -> points + (byeCount * SWISS_WIN_POINTS)));
-
-        orderedTeams.sort(Comparator
-                .comparing((Team team) -> pointsByTeam.getOrDefault(team, 0)).reversed()
-                .thenComparing(Team::getName));
-        return orderedTeams;
+        byesByTeam.forEach((team, byeCount) -> pointsByTeam.computeIfPresent(team,
+                (ignoredTeam, points) -> points + (byeCount * SWISS_WIN_POINTS)));
+        return pointsByTeam;
     }
 
-    private Team selectByeTeam(List<Team> orderedTeams, Group group) {
-        final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(group);
+    private int selectByeTeamIndex(List<Team> orderedTeams, List<Team> teams, List<Fight> fights) {
+        final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(teams, fights);
         for (int i = orderedTeams.size() - 1; i >= 0; i--) {
             final Team candidate = orderedTeams.get(i);
             if (byesByTeam.getOrDefault(candidate, 0) == 0) {
-                return candidate;
+                return i;
             }
         }
-        return orderedTeams.getLast();
+        return orderedTeams.size() - 1;
     }
 
-    private Map<Team, Integer> getByeCountByTeam(Group group) {
-        final Map<Team, Integer> byesByTeam = new IdentityHashMap<>();
-        group.getTeams().forEach(team -> byesByTeam.put(team, 0));
+    private Map<Team, Integer> getByeCountByTeam(List<Team> teams, List<Fight> fights) {
+        final Map<Team, Integer> byesByTeam = new HashMap<>();
+        teams.forEach(team -> byesByTeam.put(team, 0));
 
-        final Map<Integer, Set<Team>> teamsByRound = group.getFights().stream()
+        final Map<Integer, Set<Team>> teamsByRound = fights.stream()
                 .collect(Collectors.groupingBy(Fight::getLevel,
                         Collectors.flatMapping(fight -> java.util.stream.Stream.of(fight.getTeam1(), fight.getTeam2()),
                                 Collectors.toSet())));
 
         for (final Set<Team> teamsInRound : teamsByRound.values()) {
-            if (teamsInRound.size() != group.getTeams().size() - 1) {
+            final long teamsPresent = teamsInRound.stream().filter(teams::contains).count();
+            if (teamsPresent != teams.size() - 1L) {
                 continue;
             }
-            for (final Team team : group.getTeams()) {
+            for (final Team team : teams) {
                 if (!teamsInRound.contains(team)) {
                     byesByTeam.computeIfPresent(team, (ignoredTeam, value) -> value + 1);
                 }

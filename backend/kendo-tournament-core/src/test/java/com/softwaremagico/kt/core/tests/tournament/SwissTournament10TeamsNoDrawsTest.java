@@ -54,9 +54,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -198,17 +200,16 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 		// 0W-4L: Team10.
 		for (int level = 0; level < ROUNDS; level++) {
 			final int roundLevel = level;
-			final Group groupBeforeRound = groupController.getGroups(tournamentDTO, 0).getFirst();
-			Assert.assertEquals(groupBeforeRound.getFights().stream().filter(Fight::isOver).count(),
+			Assert.assertEquals(getAllFights().stream().filter(Fight::isOver).count(),
 					(long) roundLevel * FIGHTS_PER_ROUND);
 
 			final List<FightDTO> createdFights = fightController.createFights(tournamentDTO.getId(), TeamsOrder.NONE,
 					level, null, null);
 			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
-			final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
-			final List<Fight> fightsInRound = group.getFights().stream().filter(fight -> fight.getLevel() == roundLevel)
-					.toList();
+			final List<Group> roundGroups = groupController.getGroups(tournamentDTO, roundLevel);
+			Assert.assertTrue(!roundGroups.isEmpty());
+			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 
 			for (Fight fight : fightsInRound) {
@@ -218,35 +219,47 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 				fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
 			}
 
-			final Group updatedGroup = groupController.getGroups(tournamentDTO, 0).getFirst();
-			final List<Fight> updatedFightsInRound = updatedGroup.getFights().stream()
-					.filter(fight -> fight.getLevel() == roundLevel).toList();
+			final List<Fight> updatedFightsInRound = groupController.getGroups(tournamentDTO, roundLevel).stream()
+					.flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertTrue(updatedFightsInRound.stream().allMatch(Fight::isOver));
 			Assert.assertTrue(updatedFightsInRound.stream().noneMatch(Fight::isDrawFight));
 
 			// Next round is generated only after finishing all fights from current round.
 			if (roundLevel < ROUNDS - 1) {
 				Assert.assertEquals(
-						updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel + 1).count(),
+						groupController.getGroups(tournamentDTO, roundLevel + 1).stream()
+								.flatMap(group -> group.getFights().stream()).count(),
 						0);
 			}
 		}
 	}
 
 	@Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithoutDrawFights")
+	public void checkGroupsPerSwissRound() {
+		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
+		for (int level = 0; level < ROUNDS; level++) {
+			final List<Group> roundGroups = groupController.getGroups(tournamentDTO, level);
+			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(level));
+			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
+					IntStream.range(0, expectedGroupsByLevel.get(level)).boxed().toList());
+			Assert.assertEquals(roundGroups.stream().flatMap(group -> group.getFights().stream()).count(), FIGHTS_PER_ROUND);
+		}
+	}
+
+	@Test(dependsOnMethods = "checkGroupsPerSwissRound")
 	public void checkFinalRanking() {
 		final List<ScoreOfTeam> ranking = rankingProvider
 				.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
 		Assert.assertEquals(ranking.size(), TEAMS);
 		Assert.assertNotNull(ranking.getFirst().getTeam());
 
-		final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
-		Assert.assertEquals(group.getFights().size(), ROUNDS * FIGHTS_PER_ROUND);
-		Assert.assertTrue(group.getFights().stream().allMatch(Fight::isOver));
-		Assert.assertTrue(group.getFights().stream().noneMatch(Fight::isDrawFight));
+		final List<Fight> allFights = getAllFights();
+		Assert.assertEquals(allFights.size(), ROUNDS * FIGHTS_PER_ROUND);
+		Assert.assertTrue(allFights.stream().allMatch(Fight::isOver));
+		Assert.assertTrue(allFights.stream().noneMatch(Fight::isDrawFight));
 
 		final Map<String, Integer> fightsByTeamName = new HashMap<>();
-		group.getFights().forEach(fight -> {
+		allFights.forEach(fight -> {
 			fightsByTeamName.merge(fight.getTeam1().getName(), 1, Integer::sum);
 			fightsByTeamName.merge(fight.getTeam2().getName(), 1, Integer::sum);
 		});
@@ -267,7 +280,15 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 		final List<String> actualTeamNames = ranking.stream().filter(score -> score.getWonFights() == wins)
 				.map(score -> score.getTeam().getName()).sorted().toList();
 		final List<String> expectedSorted = expectedTeamNames.stream().sorted().collect(Collectors.toList());
-		Assert.assertEquals(actualTeamNames, expectedSorted);
+		Assert.assertEquals(actualTeamNames, expectedSorted, "Actual teams for wins=" + wins + ": " + actualTeamNames);
+	}
+
+	private List<Fight> getAllFights() {
+		final List<Fight> fights = new ArrayList<>();
+		for (int level = 0; level < ROUNDS; level++) {
+			fights.addAll(groupController.getGroups(tournamentDTO, level).stream().flatMap(group -> group.getFights().stream()).toList());
+		}
+		return fights;
 	}
 
 	@AfterClass(alwaysRun = true)

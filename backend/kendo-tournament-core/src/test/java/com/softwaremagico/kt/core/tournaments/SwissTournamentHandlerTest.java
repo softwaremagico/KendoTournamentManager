@@ -138,7 +138,7 @@ public class SwissTournamentHandlerTest {
         assertEquals(fights.get(0).getTeam2().getName(), "Team1");
         assertEquals(fights.get(1).getTeam1().getName(), "Team2");
         assertEquals(fights.get(1).getTeam2().getName(), "Team3");
-        verify(groupProvider).addGroup(tournament, group);
+        verify(groupProvider).addGroup(eq(tournament), any(Group.class));
     }
 
     @Test

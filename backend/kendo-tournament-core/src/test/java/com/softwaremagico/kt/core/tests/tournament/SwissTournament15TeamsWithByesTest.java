@@ -61,6 +61,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -193,17 +194,16 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 
 		for (int level = 0; level < ROUNDS; level++) {
 			final int roundLevel = level;
-			final Group groupBeforeRound = this.groupController.getGroups(this.tournamentDTO, 0).getFirst();
-			Assert.assertEquals(groupBeforeRound.getFights().stream().filter(Fight::isOver).count(),
+			Assert.assertEquals(this.getAllFights().stream().filter(Fight::isOver).count(),
 					(long) roundLevel * FIGHTS_PER_ROUND);
 
 			final List<FightDTO> createdFights = this.fightController.createFights(this.tournamentDTO.getId(),
 					TeamsOrder.NONE, level, null, null);
 			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
-			final Group group = this.groupController.getGroups(this.tournamentDTO, 0).getFirst();
-			final List<Fight> fightsInRound = group.getFights().stream().filter(fight -> fight.getLevel() == roundLevel)
-					.toList();
+			final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, roundLevel);
+			Assert.assertTrue(!roundGroups.isEmpty());
+			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 
 			final String byeTeamName = this.getByeTeamName(allTeamNames, fightsInRound);
@@ -218,40 +218,52 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 				this.fightController.update(this.fightConverter.convert(new FightConverterRequest(fight)), null, null);
 			}
 
-			final Group updatedGroup = this.groupController.getGroups(this.tournamentDTO, 0).getFirst();
 			Assert.assertEquals(
-					updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel).count(),
+					this.groupController.getGroups(this.tournamentDTO, roundLevel).stream().flatMap(group -> group.getFights().stream()).count(),
 					FIGHTS_PER_ROUND);
 
 			// Next round is generated only after finishing all fights from current round.
 			if (roundLevel < ROUNDS - 1) {
 				Assert.assertEquals(
-						updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel + 1).count(),
+						this.groupController.getGroups(this.tournamentDTO, roundLevel + 1).stream()
+								.flatMap(group -> group.getFights().stream()).count(),
 						0);
 			}
 		}
 
 		Assert.assertEquals(new HashSet<>(byeTeamsByRound).size(), ROUNDS);
-		Assert.assertEquals(byeTeamsByRound, EXPECTED_BYES_PER_ROUND);
+		Assert.assertEquals(byeTeamsByRound, EXPECTED_BYES_PER_ROUND, "Actual byes per round: " + byeTeamsByRound);
 	}
 
 	@Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithByes")
+	public void checkGroupsPerSwissRound() {
+		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
+		for (int level = 0; level < ROUNDS; level++) {
+			final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, level);
+			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(level));
+			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
+					IntStream.range(0, expectedGroupsByLevel.get(level)).boxed().toList());
+			Assert.assertEquals(roundGroups.stream().flatMap(group -> group.getFights().stream()).count(), FIGHTS_PER_ROUND);
+		}
+	}
+
+	@Test(dependsOnMethods = "checkGroupsPerSwissRound")
 	public void checkFinalRanking() {
 		final List<ScoreOfTeam> ranking = this.rankingProvider
 				.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
 		Assert.assertEquals(ranking.size(), TEAMS);
 
-		final Group group = this.groupController.getGroups(this.tournamentDTO, 0).getFirst();
-		Assert.assertEquals(group.getFights().size(), ROUNDS * FIGHTS_PER_ROUND);
+		final List<Fight> allFights = this.getAllFights();
+		Assert.assertEquals(allFights.size(), ROUNDS * FIGHTS_PER_ROUND);
 
 		final Map<String, Integer> fightsByTeamName = new HashMap<>();
 		ranking.forEach(score -> fightsByTeamName.put(score.getTeam().getName(), 0));
-		group.getFights().forEach(fight -> {
+		allFights.forEach(fight -> {
 			fightsByTeamName.merge(fight.getTeam1().getName(), 1, Integer::sum);
 			fightsByTeamName.merge(fight.getTeam2().getName(), 1, Integer::sum);
 		});
 
-		final Map<String, Integer> byeCountByTeam = this.getByeCountByTeam(group);
+		final Map<String, Integer> byeCountByTeam = this.getByeCountByTeam(allFights);
 		ranking.forEach(score -> Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName())
 				+ byeCountByTeam.getOrDefault(score.getTeam().getName(), 0), ROUNDS));
 
@@ -282,12 +294,13 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 		return byeTeams.getFirst();
 	}
 
-	private Map<String, Integer> getByeCountByTeam(Group group) {
-		final Map<Integer, Set<String>> teamsByRound = group.getFights().stream()
+	private Map<String, Integer> getByeCountByTeam(List<Fight> allFights) {
+		final Map<Integer, Set<String>> teamsByRound = allFights.stream()
 				.collect(Collectors.groupingBy(Fight::getLevel, Collectors.flatMapping(
 						fight -> java.util.stream.Stream.of(fight.getTeam1().getName(), fight.getTeam2().getName()),
 						Collectors.toSet())));
-		final Set<String> allTeams = group.getTeams().stream().map(Team::getName).collect(Collectors.toSet());
+		final Set<String> allTeams = this.groupController.getGroups(this.tournamentDTO, 0).stream()
+				.flatMap(group -> group.getTeams().stream()).map(Team::getName).collect(Collectors.toSet());
 		final Map<String, Integer> byeCountByTeam = new HashMap<>();
 		allTeams.forEach(team -> byeCountByTeam.put(team, 0));
 
@@ -306,6 +319,14 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 				.map(score -> score.getTeam().getName()).sorted().toList();
 		final List<String> expectedSorted = expectedTeamNames.stream().sorted().toList();
 		Assert.assertEquals(actualTeamNames, expectedSorted);
+	}
+
+	private List<Fight> getAllFights() {
+		final List<Fight> fights = new ArrayList<>();
+		for (int level = 0; level < ROUNDS; level++) {
+			fights.addAll(this.groupController.getGroups(this.tournamentDTO, level).stream().flatMap(group -> group.getFights().stream()).toList());
+		}
+		return fights;
 	}
 
 	@AfterClass(alwaysRun = true)

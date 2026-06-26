@@ -382,10 +382,12 @@ public class RankingProvider {
 
         final Map<Integer, Set<Team>> teamsByRound = fights.stream()
                 .collect(Collectors.groupingBy(Fight::getLevel,
-                        Collectors.flatMapping(fight -> Stream.of(fight.getTeam1(), fight.getTeam2()), Collectors.toSet())));
+                        Collectors.flatMapping(fight -> Stream.of(fight.getTeam1(), fight.getTeam2()),
+                                Collectors.toSet())));
 
         for (final Set<Team> teamsInRound : teamsByRound.values()) {
-            if (teamsInRound.size() != teams.size() - 1) {
+            final long teamsPresent = teamsInRound.stream().filter(teams::contains).count();
+            if (teamsPresent != teams.size() - 1L) {
                 continue;
             }
             for (final Team team : teams) {
@@ -396,6 +398,7 @@ public class RankingProvider {
         }
         return byesByTeam;
     }
+
 
     public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<Team> teams, List<Fight> fights, List<Duel> unties,
                                                   boolean checkLevel) {
