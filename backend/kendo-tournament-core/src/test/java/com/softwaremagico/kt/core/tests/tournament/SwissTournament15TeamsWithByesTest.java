@@ -54,12 +54,14 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"swissTournament15ByesTest"})
@@ -72,7 +74,7 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 	private static final int ROUNDS = 4;
 	private static final int FIGHTS_PER_ROUND = 7;
 	private static final String TOURNAMENT_NAME = "SwissTournament15TeamsWithByesTest";
-	private static final String EXPECTED_BYE_TEAM = "Team15";
+	private static final List<String> EXPECTED_BYES_PER_ROUND = List.of("Team15", "Team14", "Team12", "Team08");
 
 	@Autowired
 	private TournamentController tournamentController;
@@ -174,39 +176,20 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 
 	@Test(dependsOnMethods = "addTeams")
 	public void createAndAdvanceSwissRoundsWithByes() {
-		// Swiss flow by round with odd number of teams:
-		// each round has one bye (1 team without fight), and pairings are generated
-		// with the rest.
-		// In this deterministic scenario (team1 always wins), Team15 is always the
-		// lowest-ranked team
-		// at pairing time and receives the bye in every round.
-		// For 15 teams and 4 rounds, score groups evolve like this (W=win, L=loss):
-		// - End of R0: 7 teams at 1W-0L, 7 teams at 0W-1L, 1 team with bye.
-		// 1W-0L: Team01, Team03, Team05, Team07, Team09, Team11, Team13.
-		// 0W-1L: Team02, Team04, Team06, Team08, Team10, Team12, Team14.
-		// Bye in R0: Team15 (remains at 0W-0L).
-		// - End of R1: 4 teams at 2W-0L, 6 teams at 1W-1L, 4 teams at 0W-2L, 1 team
-		// with bye.
-		// 2W-0L: Team01, Team05, Team09, Team13.
-		// 1W-1L: Team03, Team04, Team07, Team08, Team11, Team12.
-		// 0W-2L: Team02, Team06, Team10, Team14.
-		// Bye in R1: Team15 (still 0W-0L).
-		// - End of R2: 2 teams at 3W-0L, 5 teams at 2W-1L, 3 teams at 1W-2L, 4 teams at
-		// 0W-3L, 1 team with bye.
-		// 3W-0L: Team01, Team09.
-		// 2W-1L: Team03, Team04, Team05, Team11, Team12.
-		// 1W-2L: Team07, Team08, Team10.
-		// 0W-3L: Team02, Team06, Team13, Team14.
-		// Bye in R2: Team15 (still 0W-0L).
-		// - End of R3: final distribution with byes considered.
-		// 4W-0L: Team01.
-		// 3W-1L: Team03, Team04, Team09, Team12.
-		// 2W-2L: Team05, Team07, Team08, Team11, Team13.
-		// 1W-3L: Team06, Team10.
-		// 0W-4L: Team02, Team14.
-		// Bye in R3: Team15 (finishes 0W-0L with 4 byes).
+		// Swiss flow with odd number of teams and rotating byes (no repeated bye until
+		// needed).
+		// In this deterministic scenario (team1 always wins), the bye goes to:
+		// R0 -> Team15, R1 -> Team14, R2 -> Team12, R3 -> Team08.
+		// That means each of those teams receives exactly one bye, and byes count as
+		// Swiss wins.
+		// Final points groups are therefore influenced by byes and end as:
+		// 4W: Team01.
+		// 3W: Team02, Team06, Team09, Team13, Team14.
+		// 2W: Team05, Team07, Team10, Team12.
+		// 1W: Team03, Team04, Team08, Team11, Team15.
 		final List<String> allTeamNames = this.groupController.getGroups(this.tournamentDTO, 0).getFirst().getTeams()
 				.stream().map(Team::getName).sorted().toList();
+		final List<String> byeTeamsByRound = new ArrayList<>();
 
 		for (int level = 0; level < ROUNDS; level++) {
 			final int roundLevel = level;
@@ -224,7 +207,7 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 
 			final String byeTeamName = this.getByeTeamName(allTeamNames, fightsInRound);
-			Assert.assertEquals(byeTeamName, EXPECTED_BYE_TEAM);
+			byeTeamsByRound.add(byeTeamName);
 
 			for (final Fight fight : fightsInRound) {
 				Assert.assertNotNull(fight.getTeam1());
@@ -247,6 +230,9 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 						0);
 			}
 		}
+
+		Assert.assertEquals(new HashSet<>(byeTeamsByRound).size(), ROUNDS);
+		Assert.assertEquals(byeTeamsByRound, EXPECTED_BYES_PER_ROUND);
 	}
 
 	@Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithByes")
@@ -254,13 +240,9 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 		final List<ScoreOfTeam> ranking = this.rankingProvider
 				.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
 		Assert.assertEquals(ranking.size(), TEAMS);
-		Assert.assertNotNull(ranking.getFirst().getTeam());
-		Assert.assertNotNull(ranking.getFirst().getTeam().getName());
 
 		final Group group = this.groupController.getGroups(this.tournamentDTO, 0).getFirst();
 		Assert.assertEquals(group.getFights().size(), ROUNDS * FIGHTS_PER_ROUND);
-		Assert.assertTrue(
-				group.getFights().stream().allMatch(fight -> fight.getTeam1() != null && fight.getTeam2() != null));
 
 		final Map<String, Integer> fightsByTeamName = new HashMap<>();
 		ranking.forEach(score -> fightsByTeamName.put(score.getTeam().getName(), 0));
@@ -269,23 +251,22 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 			fightsByTeamName.merge(fight.getTeam2().getName(), 1, Integer::sum);
 		});
 
-		Assert.assertEquals(fightsByTeamName.size(), TEAMS);
-		ranking.forEach(score -> {
-			final int expectedFights = EXPECTED_BYE_TEAM.equals(score.getTeam().getName()) ? 0 : ROUNDS;
-			Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName()), expectedFights);
-		});
+		final Map<String, Integer> byeCountByTeam = this.getByeCountByTeam(group);
+		ranking.forEach(score -> Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName())
+				+ byeCountByTeam.getOrDefault(score.getTeam().getName(), 0), ROUNDS));
 
-		// Ranking groups must match the exact team distribution documented in R3
-		// comments.
+		// Ranking groups must match the exact final distribution for this deterministic
+		// setup.
 		this.assertTeamsWithWins(ranking, 4, List.of("Team01"));
-		this.assertTeamsWithWins(ranking, 3, List.of("Team03", "Team04", "Team09", "Team12"));
-		this.assertTeamsWithWins(ranking, 2, List.of("Team05", "Team07", "Team08", "Team11", "Team13"));
-		this.assertTeamsWithWins(ranking, 1, List.of("Team06", "Team10"));
-		this.assertTeamsWithWins(ranking, 0, List.of("Team02", "Team14", "Team15"));
+		this.assertTeamsWithWins(ranking, 3, List.of("Team02", "Team06", "Team09", "Team13", "Team14"));
+		this.assertTeamsWithWins(ranking, 2, List.of("Team05", "Team07", "Team10", "Team12"));
+		this.assertTeamsWithWins(ranking, 1, List.of("Team03", "Team04", "Team08", "Team11", "Team15"));
+		this.assertTeamsWithWins(ranking, 0, List.of());
 
-		final ScoreOfTeam byeTeamScore = ranking.stream()
-				.filter(score -> EXPECTED_BYE_TEAM.equals(score.getTeam().getName())).findFirst().orElseThrow();
-		Assert.assertEquals((int) byeTeamScore.getFightsDone(), 0);
+		final Map<String, Integer> teamsWithBye = byeCountByTeam.entrySet().stream()
+				.filter(entry -> entry.getValue() > 0)
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		Assert.assertEquals(teamsWithBye, Map.of("Team08", 1, "Team12", 1, "Team14", 1, "Team15", 1));
 	}
 
 	private String getByeTeamName(List<String> allTeamNames, List<Fight> fightsInRound) {
@@ -299,6 +280,25 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 				.toList();
 		Assert.assertEquals(byeTeams.size(), 1);
 		return byeTeams.getFirst();
+	}
+
+	private Map<String, Integer> getByeCountByTeam(Group group) {
+		final Map<Integer, Set<String>> teamsByRound = group.getFights().stream()
+				.collect(Collectors.groupingBy(Fight::getLevel, Collectors.flatMapping(
+						fight -> java.util.stream.Stream.of(fight.getTeam1().getName(), fight.getTeam2().getName()),
+						Collectors.toSet())));
+		final Set<String> allTeams = group.getTeams().stream().map(Team::getName).collect(Collectors.toSet());
+		final Map<String, Integer> byeCountByTeam = new HashMap<>();
+		allTeams.forEach(team -> byeCountByTeam.put(team, 0));
+
+		for (final Set<String> teamsInRound : teamsByRound.values()) {
+			final Set<String> byeTeams = new HashSet<>(allTeams);
+			byeTeams.removeAll(teamsInRound);
+			Assert.assertEquals(byeTeams.size(), 1);
+			final String byeTeam = byeTeams.iterator().next();
+			byeCountByTeam.computeIfPresent(byeTeam, (ignoredTeam, value) -> value + 1);
+		}
+		return byeCountByTeam;
 	}
 
 	private void assertTeamsWithWins(List<ScoreOfTeam> ranking, int wins, List<String> expectedTeamNames) {

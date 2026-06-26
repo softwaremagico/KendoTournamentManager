@@ -162,6 +162,34 @@ public class SwissTournamentHandlerTest {
     }
 
     @Test
+    public void shouldNotRepeatByeWhenThereAreTeamsWithoutBye() {
+        final Tournament tournament = tournament();
+        final Group group = groupWithTeams(tournament, 5);
+        group.setId(111);
+        group.setFights(new ArrayList<>());
+
+        // R0 finished fights imply Team4 received the initial bye (it does not appear in level 0 fights).
+        group.getFights().add(finishedFight(tournament, group.getTeams().get(0), group.getTeams().get(1), 0, true));
+        group.getFights().add(finishedFight(tournament, group.getTeams().get(2), group.getTeams().get(3), 0, true));
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament), eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+                .thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "4"));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament), eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
+                .thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
+        when(groupProvider.addGroup(eq(tournament), eq(group))).thenReturn(group);
+
+        final List<com.softwaremagico.kt.persistence.entities.Fight> fights = swissTournamentHandler.createFights(tournament, null, 1, "tester");
+
+        assertEquals(fights.size(), 2);
+        final List<String> pairedTeams = fights.stream()
+                .flatMap(fight -> List.of(fight.getTeam1().getName(), fight.getTeam2().getName()).stream())
+                .toList();
+        assertTrue(pairedTeams.contains("Team4"));
+        assertTrue(!pairedTeams.contains("Team3"));
+    }
+
+    @Test
     public void shouldNotGenerateSameRoundTwice() {
         final Tournament tournament = tournament();
         final Group group = groupWithTeams(tournament, 4);
@@ -322,4 +350,3 @@ public class SwissTournamentHandlerTest {
         return fight;
     }
 }
-

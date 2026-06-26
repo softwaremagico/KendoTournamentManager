@@ -65,6 +65,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Service
 public class RankingProvider {
@@ -348,9 +349,16 @@ public class RankingProvider {
     }
 
     private List<ScoreOfTeam> getSwissTeamsScoreRanking(Tournament tournament, List<Team> teams, List<Fight> fights, List<Duel> unties) {
+        final Map<Team, Integer> byeCounts = getByeCountByTeam(teams, fights);
         final List<ScoreOfTeam> scores = new ArrayList<>();
         for (final Team team : teams) {
-            scores.add(new ScoreOfTeam(team, fights, unties));
+            final ScoreOfTeam score = new ScoreOfTeam(team, fights, unties);
+            final int byeCount = byeCounts.getOrDefault(team, 0);
+            if (byeCount > 0) {
+                score.setWonFights(score.getWonFights() + byeCount);
+                score.setFightsDone(score.getFightsDone() + byeCount);
+            }
+            scores.add(score);
         }
         final SwissRankingContext context = new SwissRankingContext(scores, fights, getSwissTieBreakRule(tournament));
         scores.sort(context::compare);
@@ -366,6 +374,27 @@ public class RankingProvider {
             scores.get(i).setSortingIndex(sortingIndex);
         }
         return scores;
+    }
+
+    private static Map<Team, Integer> getByeCountByTeam(List<Team> teams, List<Fight> fights) {
+        final Map<Team, Integer> byesByTeam = new HashMap<>();
+        teams.forEach(team -> byesByTeam.put(team, 0));
+
+        final Map<Integer, Set<Team>> teamsByRound = fights.stream()
+                .collect(Collectors.groupingBy(Fight::getLevel,
+                        Collectors.flatMapping(fight -> Stream.of(fight.getTeam1(), fight.getTeam2()), Collectors.toSet())));
+
+        for (final Set<Team> teamsInRound : teamsByRound.values()) {
+            if (teamsInRound.size() != teams.size() - 1) {
+                continue;
+            }
+            for (final Team team : teams) {
+                if (!teamsInRound.contains(team)) {
+                    byesByTeam.computeIfPresent(team, (ignoredTeam, value) -> value + 1);
+                }
+            }
+        }
+        return byesByTeam;
     }
 
     public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<Team> teams, List<Fight> fights, List<Duel> unties,

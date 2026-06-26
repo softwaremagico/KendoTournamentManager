@@ -42,6 +42,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SwissTournamentHandler extends LeagueHandler {
@@ -112,8 +114,9 @@ public class SwissTournamentHandler extends LeagueHandler {
 
         final List<Team> orderedTeams = this.getTeamsOrderedBySwissScore(group);
         if (orderedTeams.size() % 2 != 0) {
-            // Lowest-ranked team gets a bye in this simple initial implementation.
-            orderedTeams.removeLast();
+            // Assign bye to the lowest-ranked team that has not received a bye yet (if possible).
+            final Team byeTeam = this.selectByeTeam(orderedTeams, group);
+            orderedTeams.remove(byeTeam);
         }
 
         final List<Fight> generatedFights = this.createSwissPairings(tournament, orderedTeams, level, createdBy, group.getFights(),
@@ -202,6 +205,7 @@ public class SwissTournamentHandler extends LeagueHandler {
         // Team.equals/hashCode are id-based; transient teams share null ids and collide in HashMap.
         final Map<Team, Integer> pointsByTeam = new IdentityHashMap<>();
         orderedTeams.forEach(team -> pointsByTeam.put(team, 0));
+        final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(group);
 
         for (final Fight fight : group.getFights()) {
             final Team winner = fight.getWinner();
@@ -213,10 +217,45 @@ public class SwissTournamentHandler extends LeagueHandler {
             }
         }
 
+        byesByTeam.forEach((team, byeCount) ->
+                pointsByTeam.computeIfPresent(team, (ignoredTeam, points) -> points + (byeCount * SWISS_WIN_POINTS)));
+
         orderedTeams.sort(Comparator
                 .comparing((Team team) -> pointsByTeam.getOrDefault(team, 0)).reversed()
                 .thenComparing(Team::getName));
         return orderedTeams;
     }
-}
 
+    private Team selectByeTeam(List<Team> orderedTeams, Group group) {
+        final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(group);
+        for (int i = orderedTeams.size() - 1; i >= 0; i--) {
+            final Team candidate = orderedTeams.get(i);
+            if (byesByTeam.getOrDefault(candidate, 0) == 0) {
+                return candidate;
+            }
+        }
+        return orderedTeams.getLast();
+    }
+
+    private Map<Team, Integer> getByeCountByTeam(Group group) {
+        final Map<Team, Integer> byesByTeam = new IdentityHashMap<>();
+        group.getTeams().forEach(team -> byesByTeam.put(team, 0));
+
+        final Map<Integer, Set<Team>> teamsByRound = group.getFights().stream()
+                .collect(Collectors.groupingBy(Fight::getLevel,
+                        Collectors.flatMapping(fight -> java.util.stream.Stream.of(fight.getTeam1(), fight.getTeam2()),
+                                Collectors.toSet())));
+
+        for (final Set<Team> teamsInRound : teamsByRound.values()) {
+            if (teamsInRound.size() != group.getTeams().size() - 1) {
+                continue;
+            }
+            for (final Team team : group.getTeams()) {
+                if (!teamsInRound.contains(team)) {
+                    byesByTeam.computeIfPresent(team, (ignoredTeam, value) -> value + 1);
+                }
+            }
+        }
+        return byesByTeam;
+    }
+}
