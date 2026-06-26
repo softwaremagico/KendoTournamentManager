@@ -233,6 +233,10 @@ public class RankingController {
         if (groupDTO == null) {
             return new ArrayList<>();
         }
+        if (groupDTO.getTournament() != null && groupDTO.getTournament().getType() == TournamentType.SWISS) {
+            return scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRanking(groupConverter.reverse(groupDTO))
+                    .stream().map(ScoreOfTeamConverterRequest::new).toList());
+        }
         return getTeamsScoreRanking(groupDTO.getTournament().getTournamentScore().getScoreType(),
                 groupDTO.getTeams(), groupDTO.getFights(), groupDTO.getUnties(), checkLevel(groupDTO.getTournament()));
     }
