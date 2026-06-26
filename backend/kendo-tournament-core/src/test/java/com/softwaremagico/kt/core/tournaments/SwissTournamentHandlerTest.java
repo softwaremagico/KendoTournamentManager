@@ -395,6 +395,46 @@ public class SwissTournamentHandlerTest {
     }
 
     @Test
+    public void shouldAvoidRepeatedPairingsWhenPropertyUsesDefaultValue() {
+        final Tournament tournament = tournament();
+        final Group group = repeatedPairingsScenario(tournament);
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament), eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+                .thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "4"));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament), eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
+                .thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
+        when(groupProvider.addGroup(eq(tournament), eq(group))).thenReturn(group);
+
+        final List<com.softwaremagico.kt.persistence.entities.Fight> fights = swissTournamentHandler.createFights(tournament, null, 2, "tester");
+
+        final List<String> pairings = fights.stream()
+                .map(fight -> fight.getTeam1().getName() + "-" + fight.getTeam2().getName())
+                .toList();
+        assertEquals(pairings, List.of("Team0-Team3", "Team1-Team2"));
+    }
+
+    @Test
+    public void shouldAllowRepeatedPairingsWhenPropertyValueIsInvalid() {
+        final Tournament tournament = tournament();
+        final Group group = repeatedPairingsScenario(tournament);
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament), eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+                .thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "4"));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament), eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
+                .thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "not-a-boolean"));
+        when(groupProvider.addGroup(eq(tournament), eq(group))).thenReturn(group);
+
+        final List<com.softwaremagico.kt.persistence.entities.Fight> fights = swissTournamentHandler.createFights(tournament, null, 2, "tester");
+
+        final List<String> pairings = fights.stream()
+                .map(fight -> fight.getTeam1().getName() + "-" + fight.getTeam2().getName())
+                .toList();
+        assertEquals(pairings, List.of("Team0-Team1", "Team2-Team3"));
+    }
+
+    @Test
     public void shouldFallbackToRepeatedPairingsWhenNoAlternativeExists() {
         final Tournament tournament = tournament();
         final Group group = repeatedPairingsScenario(tournament);
