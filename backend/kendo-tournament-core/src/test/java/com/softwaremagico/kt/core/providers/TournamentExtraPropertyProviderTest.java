@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
@@ -202,6 +203,37 @@ public class TournamentExtraPropertyProviderTest {
         assertEquals(roundsResult.getPropertyKey(), TournamentExtraPropertyKey.SWISS_ROUNDS);
         assertEquals(tieBreakResult.getPropertyKey(), TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
         assertEquals(avoidRepeatedResult.getPropertyKey(), TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS);
+    }
+
+    @Test
+    public void shouldAllowAllSwissTieBreakRuleEnumValues() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        for (final SwissTieBreakRule rule : SwissTieBreakRule.values()) {
+            when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE)).thenReturn(null);
+
+            final TournamentExtraProperty result = provider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, rule.name()));
+
+            assertEquals(result.getPropertyValue(), rule.name());
+        }
+    }
+
+    @Test
+    public void shouldThrowWhenSwissTieBreakRuleValueIsInvalid() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        final TournamentExtraProperty property = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, "NOT_A_VALID_RULE");
+
+        try {
+            provider.save(property);
+            fail("Expected InvalidExtraPropertyException");
+        } catch (InvalidExtraPropertyException expected) {
+            assertTrue(expected.getMessage().contains("invalid Swiss tie-break rule"));
+        }
+
+        verify(repository, never()).save(any(TournamentExtraProperty.class));
     }
 
     @Test
