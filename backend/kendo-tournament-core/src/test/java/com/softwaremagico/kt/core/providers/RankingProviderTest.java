@@ -930,6 +930,62 @@ public class RankingProviderTest {
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Alpha", "Beta");
 	}
 
+	@Test
+	public void testSwissFinalRankingFromTournamentRespectsSelectedTieBreakRule() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		tournament.setId(501);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(5010, "Team 0", tournament);
+		final Team team1 = this.team(5011, "Team 1", tournament);
+		final Team team2 = this.team(5012, "Team 2", tournament);
+		final Team team3 = this.team(5013, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		final List<Fight> fights = List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0));
+		group.setFights(fights);
+
+		when(this.tournamentRepository.findById(501)).thenReturn(Optional.of(tournament));
+		when(this.teamProvider.getAll(tournament)).thenReturn(group.getTeams());
+		when(this.fightProvider.getFights(tournament)).thenReturn(fights);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.POINT_DIFFERENTIAL.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRankingFromTournament(501);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 1", "Team 0",
+				"Team 3");
+	}
+
+	@Test
+	public void testLeagueFinalRankingFromTournamentKeepsExistingOrderLogic() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		tournament.setId(502);
+		final Group group = this.group(tournament);
+		final Team alpha = this.team(5021, "Alpha", tournament);
+		final Team beta = this.team(5022, "Beta", tournament);
+		final Team gamma = this.team(5023, "Gamma", tournament);
+		group.setTeams(List.of(alpha, beta, gamma));
+		final List<Fight> fights = List.of(this.fightWithScores(tournament, alpha, beta, 2, 0),
+				this.fightWithScores(tournament, alpha, gamma, 2, 0),
+				this.fightWithScores(tournament, beta, gamma, 2, 0));
+		group.setFights(fights);
+
+		when(this.tournamentRepository.findById(502)).thenReturn(Optional.of(tournament));
+		when(this.teamProvider.getAll(tournament)).thenReturn(group.getTeams());
+		when(this.fightProvider.getFights(tournament)).thenReturn(fights);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRankingFromTournament(502);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Alpha", "Beta", "Gamma");
+		Mockito.verifyNoInteractions(this.tournamentExtraPropertyProvider);
+	}
+
 	// ========== Helper Methods ==========
 
 	private Tournament tournament(TournamentType type) {
