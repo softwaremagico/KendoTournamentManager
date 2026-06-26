@@ -418,7 +418,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   generateElements(): void {
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
       this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.BUBBLE_SORT
-      || this.tournament.type === TournamentType.SENBATSU) {
+      || this.tournament.type === TournamentType.SENBATSU || this.tournament.type === TournamentType.SWISS) {
       this.openLeagueGeneratorPopup = true;
     } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
       this.openBracketsManager();

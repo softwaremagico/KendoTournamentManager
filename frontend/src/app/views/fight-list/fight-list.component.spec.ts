@@ -457,6 +457,50 @@ describe('FightListComponent', () => {
     expect(tournamentServiceSpy.update).toHaveBeenCalledTimes(2);
   });
 
+  it('should open league generator popup for SWISS tournaments', () => {
+    component.tournament.type = TournamentType.SWISS;
+    (component as any).openLeagueGeneratorPopup = false;
+
+    component.generateElements();
+
+    expect((component as any).openLeagueGeneratorPopup).toBeTrue();
+  });
+
+  it('should use the same generator flow for SWISS and LEAGUE tournaments', () => {
+    const tournamentTypes = [TournamentType.SWISS, TournamentType.LEAGUE];
+    const openBracketsManagerSpy = spyOn(component, 'openBracketsManager');
+
+    for (const tournamentType of tournamentTypes) {
+      component.tournament.type = tournamentType;
+      (component as any).openLeagueGeneratorPopup = false;
+
+      component.generateElements();
+
+      expect((component as any).openLeagueGeneratorPopup).withContext(`${tournamentType} should open the league generator popup`).toBeTrue();
+      expect(openBracketsManagerSpy).withContext(`${tournamentType} should not open the brackets manager`).not.toHaveBeenCalled();
+
+      openBracketsManagerSpy.calls.reset();
+    }
+  });
+
+  it('should open brackets manager for CHAMPIONSHIP tournaments', () => {
+    component.tournament.type = TournamentType.CHAMPIONSHIP;
+    spyOn(component, 'openBracketsManager');
+
+    component.generateElements();
+
+    expect(component.openBracketsManager).toHaveBeenCalled();
+  });
+
+  it('should open league generator popup for LEAGUE tournaments', () => {
+    component.tournament.type = TournamentType.LEAGUE;
+    (component as any).openLeagueGeneratorPopup = false;
+
+    component.generateElements();
+
+    expect((component as any).openLeagueGeneratorPopup).toBeTrue();
+  });
+
   it('should choose teams or competitors classification according to tournament setup', () => {
     spyOn(component, 'showTeamsClassification');
     spyOn(component, 'showCompetitorsClassification');
