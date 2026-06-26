@@ -914,6 +914,93 @@ public class RankingProviderTest {
 	}
 
 	@Test
+	public void testSwissRankingSeparatesBuchholzMedianAndSonnebornBergerWithDifferentOrders() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final List<Team> teams = new ArrayList<>();
+		for (int i = 1; i <= 16; i++) {
+			teams.add(this.team(6000 + i, String.format("Team%02d", i), tournament));
+		}
+		group.setTeams(teams);
+
+		final java.util.function.Function<String, Team> teamByName = name -> teams.stream()
+				.filter(team -> team.getName().equals(name))
+				.findFirst()
+				.orElseThrow();
+
+		// Deterministic 4-round/16-team scenario where the 2-win group is tied and
+		// primary metrics differ across tie-break rules.
+		final List<Fight> fights = List.of(
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team02"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team03"), teamByName.apply("Team04"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team05"), teamByName.apply("Team06"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team07"), teamByName.apply("Team08"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team09"), teamByName.apply("Team10"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team11"), teamByName.apply("Team12"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team13"), teamByName.apply("Team14"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team15"), teamByName.apply("Team16"), 2, 0),
+
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team03"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team05"), teamByName.apply("Team07"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team09"), teamByName.apply("Team11"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team13"), teamByName.apply("Team15"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team02"), teamByName.apply("Team04"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team06"), teamByName.apply("Team08"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team10"), teamByName.apply("Team12"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team14"), teamByName.apply("Team16"), 2, 0),
+
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team05"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team09"), teamByName.apply("Team15"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team02"), teamByName.apply("Team03"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team06"), teamByName.apply("Team07"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team10"), teamByName.apply("Team11"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team13"), teamByName.apply("Team14"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team04"), teamByName.apply("Team08"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team12"), teamByName.apply("Team16"), 2, 0),
+
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team15"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team02"), teamByName.apply("Team05"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team07"), teamByName.apply("Team09"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team10"), teamByName.apply("Team14"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team03"), teamByName.apply("Team04"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team06"), teamByName.apply("Team11"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team12"), teamByName.apply("Team13"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team08"), teamByName.apply("Team16"), 0, 2));
+		group.setFights(fights);
+
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+		final List<String> buchholzOrder = this.provider.getTeamsScoreRanking(group).stream()
+				.filter(score -> score.getWonFights() == 2)
+				.map(score -> score.getTeam().getName())
+				.toList();
+
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.MEDIAN_BUCHHOLZ.name()));
+		final List<String> medianBuchholzOrder = this.provider.getTeamsScoreRanking(group).stream()
+				.filter(score -> score.getWonFights() == 2)
+				.map(score -> score.getTeam().getName())
+				.toList();
+
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.SONNEBORN_BERGER.name()));
+		final List<String> sonnebornBergerOrder = this.provider.getTeamsScoreRanking(group).stream()
+				.filter(score -> score.getWonFights() == 2)
+				.map(score -> score.getTeam().getName())
+				.toList();
+
+		assertThat(buchholzOrder).containsExactly("Team13", "Team05", "Team04", "Team10", "Team14", "Team03");
+		assertThat(medianBuchholzOrder).containsExactly("Team05", "Team13", "Team04", "Team14", "Team03", "Team10");
+		assertThat(sonnebornBergerOrder).containsExactly("Team13", "Team04", "Team05", "Team10", "Team14", "Team03");
+	}
+
+	@Test
 	public void testSwissRankingFallsBackToStableNameOrderingWhenTieBreakersMatch() {
 		final Tournament tournament = this.tournament(TournamentType.SWISS);
 		final Group group = this.group(tournament);

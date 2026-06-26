@@ -352,6 +352,49 @@ public class SwissTournamentHandlerTest {
     }
 
     @Test
+    public void shouldGenerateDifferentPairingsWhenAvoidRepeatedPairingsIsToggled() {
+        final Tournament tournamentWithAvoidedRepeats = tournament();
+        tournamentWithAvoidedRepeats.setId(101);
+        final Group groupWithAvoidedRepeats = repeatedPairingsScenario(tournamentWithAvoidedRepeats);
+
+        final Tournament tournamentWithAllowedRepeats = tournament();
+        tournamentWithAllowedRepeats.setId(102);
+        final Group groupWithAllowedRepeats = repeatedPairingsScenario(tournamentWithAllowedRepeats);
+
+        when(groupProvider.getGroups(tournamentWithAvoidedRepeats)).thenReturn(List.of(groupWithAvoidedRepeats));
+        when(groupProvider.getGroups(tournamentWithAllowedRepeats)).thenReturn(List.of(groupWithAllowedRepeats));
+
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournamentWithAvoidedRepeats), eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+                .thenReturn(new TournamentExtraProperty(tournamentWithAvoidedRepeats, TournamentExtraPropertyKey.SWISS_ROUNDS, "4"));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournamentWithAllowedRepeats), eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+                .thenReturn(new TournamentExtraProperty(tournamentWithAllowedRepeats, TournamentExtraPropertyKey.SWISS_ROUNDS, "4"));
+
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournamentWithAvoidedRepeats), eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
+                .thenReturn(new TournamentExtraProperty(tournamentWithAvoidedRepeats, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
+        when(tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournamentWithAllowedRepeats), eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
+                .thenReturn(new TournamentExtraProperty(tournamentWithAllowedRepeats, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "false"));
+
+        when(groupProvider.addGroup(eq(tournamentWithAvoidedRepeats), eq(groupWithAvoidedRepeats))).thenReturn(groupWithAvoidedRepeats);
+        when(groupProvider.addGroup(eq(tournamentWithAllowedRepeats), eq(groupWithAllowedRepeats))).thenReturn(groupWithAllowedRepeats);
+
+        final List<com.softwaremagico.kt.persistence.entities.Fight> fightsWithAvoidedRepeats = swissTournamentHandler
+                .createFights(tournamentWithAvoidedRepeats, null, 2, "tester");
+        final List<com.softwaremagico.kt.persistence.entities.Fight> fightsWithAllowedRepeats = swissTournamentHandler
+                .createFights(tournamentWithAllowedRepeats, null, 2, "tester");
+
+        final List<String> pairingsWithAvoidedRepeats = fightsWithAvoidedRepeats.stream()
+                .map(fight -> fight.getTeam1().getName() + "-" + fight.getTeam2().getName())
+                .toList();
+        final List<String> pairingsWithAllowedRepeats = fightsWithAllowedRepeats.stream()
+                .map(fight -> fight.getTeam1().getName() + "-" + fight.getTeam2().getName())
+                .toList();
+
+        assertEquals(pairingsWithAvoidedRepeats, List.of("Team0-Team3", "Team1-Team2"));
+        assertEquals(pairingsWithAllowedRepeats, List.of("Team0-Team1", "Team2-Team3"));
+        assertTrue(!pairingsWithAvoidedRepeats.equals(pairingsWithAllowedRepeats));
+    }
+
+    @Test
     public void shouldFallbackToRepeatedPairingsWhenNoAlternativeExists() {
         final Tournament tournament = tournament();
         final Group group = repeatedPairingsScenario(tournament);
