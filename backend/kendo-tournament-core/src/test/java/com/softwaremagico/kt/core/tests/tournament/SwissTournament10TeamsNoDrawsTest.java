@@ -53,173 +53,238 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import java.util.HashMap;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"swissTournament10NoDrawsTest"})
 public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringContextTests {
 
-    private static final String CLUB_NAME = "Swiss10Club";
-    private static final String CLUB_CITY = "Swiss10City";
-    private static final int MEMBERS = 3;
-    private static final int TEAMS = 10;
-    private static final int ROUNDS = 4;
-    private static final int FIGHTS_PER_ROUND = 5;
-    private static final String TOURNAMENT_NAME = "SwissTournament10TeamsNoDrawsTest";
+	private static final String CLUB_NAME = "Swiss10Club";
+	private static final String CLUB_CITY = "Swiss10City";
+	private static final int MEMBERS = 3;
+	private static final int TEAMS = 10;
+	private static final int ROUNDS = 4;
+	private static final int FIGHTS_PER_ROUND = 5;
+	private static final String TOURNAMENT_NAME = "SwissTournament10TeamsNoDrawsTest";
 
-    @Autowired
-    private TournamentController tournamentController;
+	@Autowired
+	private TournamentController tournamentController;
 
-    @Autowired
-    private TournamentConverter tournamentConverter;
+	@Autowired
+	private TournamentConverter tournamentConverter;
 
-    @Autowired
-    private ParticipantController participantController;
+	@Autowired
+	private ParticipantController participantController;
 
-    @Autowired
-    private RoleController roleController;
+	@Autowired
+	private RoleController roleController;
 
-    @Autowired
-    private TeamController teamController;
+	@Autowired
+	private TeamController teamController;
 
-    @Autowired
-    private ClubController clubController;
+	@Autowired
+	private ClubController clubController;
 
-    @Autowired
-    private RankingProvider rankingProvider;
+	@Autowired
+	private RankingProvider rankingProvider;
 
-    @Autowired
-    private GroupController groupController;
+	@Autowired
+	private GroupController groupController;
 
-    @Autowired
-    private FightController fightController;
+	@Autowired
+	private FightController fightController;
 
-    @Autowired
-    private DuelController duelController;
+	@Autowired
+	private DuelController duelController;
 
-    @Autowired
-    private FightConverter fightConverter;
+	@Autowired
+	private FightConverter fightConverter;
 
-    private ClubDTO clubDTO;
-    private TournamentDTO tournamentDTO;
+	private ClubDTO clubDTO;
+	private TournamentDTO tournamentDTO;
 
-    @Test
-    public void addClub() {
-        clubDTO = clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null, null);
-    }
+	@Test
+	public void addClub() {
+		clubDTO = clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null, null);
+	}
 
-    @Test(dependsOnMethods = "addClub")
-    public void addParticipants() {
-        for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            participantController.create(new ParticipantDTO(String.format("S10-%04d", i),
-                    String.format("name%s", i), String.format("lastname%s", i), clubDTO), null, null);
-        }
-    }
+	@Test(dependsOnMethods = "addClub")
+	public void addParticipants() {
+		for (int i = 0; i < MEMBERS * TEAMS; i++) {
+			participantController.create(new ParticipantDTO(String.format("S10-%04d", i), String.format("name%s", i),
+					String.format("lastname%s", i), clubDTO), null, null);
+		}
+	}
 
-    @Test(dependsOnMethods = "addParticipants")
-    public void addTournament() {
-        Assert.assertEquals(tournamentController.count(), 0);
-        final TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.SWISS);
-        tournamentDTO = tournamentController.create(newTournament, null, null);
-        Assert.assertEquals(tournamentController.count(), 1);
-    }
+	@Test(dependsOnMethods = "addParticipants")
+	public void addTournament() {
+		Assert.assertEquals(tournamentController.count(), 0);
+		final TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.SWISS);
+		tournamentDTO = tournamentController.create(newTournament, null, null);
+		Assert.assertEquals(tournamentController.count(), 1);
+	}
 
-    @Test(dependsOnMethods = "addTournament")
-    public void addRoles() {
-        for (ParticipantDTO competitor : participantController.get()) {
-            roleController.create(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR), null, null);
-        }
-        Assert.assertEquals(roleController.count(tournamentDTO), participantController.count());
-    }
+	@Test(dependsOnMethods = "addTournament")
+	public void addRoles() {
+		for (ParticipantDTO competitor : participantController.get()) {
+			roleController.create(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR), null, null);
+		}
+		Assert.assertEquals(roleController.count(tournamentDTO), participantController.count());
+	}
 
-    @Test(dependsOnMethods = "addRoles")
-    public void addTeams() {
-        int teamIndex = 0;
-        TeamDTO team = null;
-        int teamMember = 0;
+	@Test(dependsOnMethods = "addRoles")
+	public void addTeams() {
+		int teamIndex = 0;
+		TeamDTO team = null;
+		int teamMember = 0;
 
-        final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
-        Assert.assertEquals(groups.size(), 1);
+		final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
+		Assert.assertEquals(groups.size(), 1);
 
-        for (ParticipantDTO competitor : participantController.get()) {
-            if (team == null) {
-                teamIndex++;
-                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
-                teamMember = 0;
-            }
+		for (ParticipantDTO competitor : participantController.get()) {
+			if (team == null) {
+				teamIndex++;
+				team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+				teamMember = 0;
+			}
 
-            team.addMember(competitor);
-            team = teamController.create(team, null, null);
+			team.addMember(competitor);
+			team = teamController.create(team, null, null);
 
-            if (teamMember == 0) {
-                groupController.addTeams(groups.getFirst().getId(), Collections.singletonList(team), null, null);
-            }
+			if (teamMember == 0) {
+				groupController.addTeams(groups.getFirst().getId(), Collections.singletonList(team), null, null);
+			}
 
-            teamMember++;
-            if (teamMember >= MEMBERS) {
-                team = null;
-            }
-        }
+			teamMember++;
+			if (teamMember >= MEMBERS) {
+				team = null;
+			}
+		}
 
-        Assert.assertEquals(teamController.count(tournamentDTO), TEAMS);
-        Assert.assertEquals(groupController.getGroups(tournamentDTO, 0).getFirst().getTeams().size(), TEAMS);
-    }
+		Assert.assertEquals(teamController.count(tournamentDTO), TEAMS);
+		Assert.assertEquals(groupController.getGroups(tournamentDTO, 0).getFirst().getTeams().size(), TEAMS);
+	}
 
-    @Test(dependsOnMethods = "addTeams")
-    public void createAndSolveSwissRoundsWithoutDrawFights() {
-        for (int level = 0; level < ROUNDS; level++) {
-            final int roundLevel = level;
-            final List<FightDTO> createdFights = fightController.createFights(tournamentDTO.getId(), TeamsOrder.NONE, level, null, null);
-            Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
+	@Test(dependsOnMethods = "addTeams")
+	public void createAndAdvanceSwissRoundsWithoutDrawFights() {
+		// Swiss flow by round (no draws in this scenario):
+		// R0 starts with all teams tied; after finishing all fights in a round,
+		// winners are promoted to higher score groups and losers remain/lower,
+		// and the next round pairings are generated from those new score groups.
+		// For 10 teams and 4 rounds (all decisive fights), groups evolve as:
+		// - End of R0: 5 teams at 1W-0L, 5 teams at 0W-1L.
+		// 1W-0L: Team01, Team03, Team05, Team07, Team09.
+		// 0W-1L: Team02, Team04, Team06, Team08, Team10.
+		// - End of R1: 3 teams at 2W-0L, 4 teams at 1W-1L, 3 teams at 0W-2L.
+		// 2W-0L: Team01, Team05, Team09.
+		// 1W-1L: Team03, Team04, Team07, Team08.
+		// 0W-2L: Team02, Team06, Team10.
+		// - End of R2: 2 teams at 3W-0L, 3 teams at 2W-1L, 3 teams at 1W-2L, 2 teams at
+		// 0W-3L.
+		// 3W-0L: Team01, Team09.
+		// 2W-1L: Team04, Team05, Team08.
+		// 1W-2L: Team03, Team06, Team07.
+		// 0W-3L: Team02, Team10.
+		// - End of R3: final ranking is resolved from 4W-0L down to 0W-4L (sin
+		// empates).
+		// 4W-0L: Team01.
+		// 3W-1L: Team04, Team08, Team09.
+		// 2W-2L: Team05, Team06.
+		// 1W-3L: Team02, Team03, Team07.
+		// 0W-4L: Team10.
+		for (int level = 0; level < ROUNDS; level++) {
+			final int roundLevel = level;
+			final Group groupBeforeRound = groupController.getGroups(tournamentDTO, 0).getFirst();
+			Assert.assertEquals(groupBeforeRound.getFights().stream().filter(Fight::isOver).count(),
+					(long) roundLevel * FIGHTS_PER_ROUND);
 
-            final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
-            final List<Fight> fightsInRound = group.getFights().stream().filter(fight -> fight.getLevel() == roundLevel).toList();
-            Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
+			final List<FightDTO> createdFights = fightController.createFights(tournamentDTO.getId(), TeamsOrder.NONE,
+					level, null, null);
+			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
-            for (Fight fight : fightsInRound) {
-                fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
-                fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
-                fight.getDuels().forEach(duel -> duel.setFinished(true));
-                fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
-            }
+			final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
+			final List<Fight> fightsInRound = group.getFights().stream().filter(fight -> fight.getLevel() == roundLevel)
+					.toList();
+			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 
-            final Group updatedGroup = groupController.getGroups(tournamentDTO, 0).getFirst();
-            final List<Fight> updatedFightsInRound = updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel).toList();
-            Assert.assertTrue(updatedFightsInRound.stream().allMatch(Fight::isOver));
-            Assert.assertTrue(updatedFightsInRound.stream().noneMatch(Fight::isDrawFight));
-        }
-    }
+			for (Fight fight : fightsInRound) {
+				fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+				fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+				fight.getDuels().forEach(duel -> duel.setFinished(true));
+				fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
+			}
 
-    @Test(dependsOnMethods = "createAndSolveSwissRoundsWithoutDrawFights")
-    public void checkFinalRanking() {
-        final List<ScoreOfTeam> ranking = rankingProvider.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
-        Assert.assertEquals(ranking.size(), TEAMS);
-        Assert.assertNotNull(ranking.getFirst().getTeam());
+			final Group updatedGroup = groupController.getGroups(tournamentDTO, 0).getFirst();
+			final List<Fight> updatedFightsInRound = updatedGroup.getFights().stream()
+					.filter(fight -> fight.getLevel() == roundLevel).toList();
+			Assert.assertTrue(updatedFightsInRound.stream().allMatch(Fight::isOver));
+			Assert.assertTrue(updatedFightsInRound.stream().noneMatch(Fight::isDrawFight));
 
-        final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
-        Assert.assertEquals(group.getFights().size(), ROUNDS * FIGHTS_PER_ROUND);
-        Assert.assertTrue(group.getFights().stream().allMatch(Fight::isOver));
-        Assert.assertTrue(group.getFights().stream().noneMatch(Fight::isDrawFight));
-    }
+			// Next round is generated only after finishing all fights from current round.
+			if (roundLevel < ROUNDS - 1) {
+				Assert.assertEquals(
+						updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel + 1).count(),
+						0);
+			}
+		}
+	}
 
-    @AfterClass(alwaysRun = true)
-    public void deleteTournament() {
-        if (tournamentDTO != null) {
-            groupController.delete(tournamentDTO);
-            fightController.delete(tournamentDTO);
-            duelController.delete(tournamentDTO);
-            teamController.delete(tournamentDTO);
-            roleController.delete(tournamentDTO);
-            tournamentController.delete(tournamentDTO, null, null);
-        }
-        participantController.deleteAll();
-        if (clubDTO != null) {
-            clubController.delete(clubDTO, null, null);
-        }
-        Assert.assertEquals(fightController.count(), 0);
-        Assert.assertEquals(duelController.count(), 0);
-    }
+	@Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithoutDrawFights")
+	public void checkFinalRanking() {
+		final List<ScoreOfTeam> ranking = rankingProvider
+				.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
+		Assert.assertEquals(ranking.size(), TEAMS);
+		Assert.assertNotNull(ranking.getFirst().getTeam());
+
+		final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
+		Assert.assertEquals(group.getFights().size(), ROUNDS * FIGHTS_PER_ROUND);
+		Assert.assertTrue(group.getFights().stream().allMatch(Fight::isOver));
+		Assert.assertTrue(group.getFights().stream().noneMatch(Fight::isDrawFight));
+
+		final Map<String, Integer> fightsByTeamName = new HashMap<>();
+		group.getFights().forEach(fight -> {
+			fightsByTeamName.merge(fight.getTeam1().getName(), 1, Integer::sum);
+			fightsByTeamName.merge(fight.getTeam2().getName(), 1, Integer::sum);
+		});
+
+		Assert.assertEquals(fightsByTeamName.size(), TEAMS);
+		ranking.forEach(score -> Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName()), ROUNDS));
+
+		// Ranking groups must match the exact team distribution documented in R3
+		// comments.
+		assertTeamsWithWins(ranking, 4, List.of("Team01"));
+		assertTeamsWithWins(ranking, 3, List.of("Team04", "Team08", "Team09"));
+		assertTeamsWithWins(ranking, 2, List.of("Team05", "Team06"));
+		assertTeamsWithWins(ranking, 1, List.of("Team02", "Team03", "Team07"));
+		assertTeamsWithWins(ranking, 0, List.of("Team10"));
+	}
+
+	private void assertTeamsWithWins(List<ScoreOfTeam> ranking, int wins, List<String> expectedTeamNames) {
+		final List<String> actualTeamNames = ranking.stream().filter(score -> score.getWonFights() == wins)
+				.map(score -> score.getTeam().getName()).sorted().toList();
+		final List<String> expectedSorted = expectedTeamNames.stream().sorted().collect(Collectors.toList());
+		Assert.assertEquals(actualTeamNames, expectedSorted);
+	}
+
+	@AfterClass(alwaysRun = true)
+	public void deleteTournament() {
+		if (tournamentDTO != null) {
+			groupController.delete(tournamentDTO);
+			fightController.delete(tournamentDTO);
+			duelController.delete(tournamentDTO);
+			teamController.delete(tournamentDTO);
+			roleController.delete(tournamentDTO);
+			tournamentController.delete(tournamentDTO, null, null);
+		}
+		participantController.deleteAll();
+		if (clubDTO != null) {
+			clubController.delete(clubDTO, null, null);
+		}
+		Assert.assertEquals(fightController.count(), 0);
+		Assert.assertEquals(duelController.count(), 0);
+	}
 }
-
-

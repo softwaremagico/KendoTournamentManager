@@ -53,8 +53,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import java.util.HashMap;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"swissTournament16Test"})
@@ -167,9 +170,37 @@ public class SwissTournament16TeamsTest extends AbstractTestNGSpringContextTests
     }
 
     @Test(dependsOnMethods = "addTeams")
-    public void createAndSolveSwissRoundsWithoutByes() {
+    public void createAndAdvanceSwissRoundsWithoutByes() {
+        // Swiss flow by round:
+        // R0 starts with all teams at 0 points and pairs are generated from initial order.
+        // After each round is fully solved, teams are re-grouped by accumulated points
+        // (winners move to higher score brackets, losers to lower brackets) and only then
+        // the next round pairings are created inside those updated brackets.
+        // For 16 teams and 4 rounds, score groups evolve like this (W=win, L=loss):
+        // - End of R0: 8 teams at 1W-0L, 8 teams at 0W-1L.
+        //   1W-0L: Team01, Team03, Team05, Team07, Team09, Team11, Team13, Team15.
+        //   0W-1L: Team02, Team04, Team06, Team08, Team10, Team12, Team14, Team16.
+        // - End of R1: 4 teams at 2W-0L, 8 teams at 1W-1L, 4 teams at 0W-2L.
+        //   2W-0L: Team01, Team05, Team09, Team13.
+        //   1W-1L: Team02, Team03, Team06, Team07, Team10, Team11, Team14, Team15.
+        //   0W-2L: Team04, Team08, Team12, Team16.
+        // - End of R2: 2 teams at 3W-0L, 6 teams at 2W-1L, 6 teams at 1W-2L, 2 teams at 0W-3L.
+        //   3W-0L: Team01, Team09.
+        //   2W-1L: Team02, Team05, Team06, Team10, Team13, Team14.
+        //   1W-2L: Team03, Team04, Team07, Team11, Team12, Team15.
+        //   0W-3L: Team08, Team16.
+        // - End of R3: final distribution around 4W-0L ... 0W-4L (no byes, 4 fights per team).
+        //   4W-0L: Team01.
+        //   3W-1L: Team02, Team06, Team09, Team13, Team14.
+        //   2W-2L: Team05, Team07, Team10, Team12.
+        //   1W-3L: Team03, Team04, Team08, Team11, Team15.
+        //   0W-4L: Team16.
         for (int level = 0; level < ROUNDS; level++) {
             final int roundLevel = level;
+            final Group groupBeforeRound = groupController.getGroups(tournamentDTO, 0).getFirst();
+            Assert.assertEquals(groupBeforeRound.getFights().stream().filter(Fight::isOver).count(),
+                    (long) roundLevel * FIGHTS_PER_ROUND);
+
             final List<FightDTO> createdFights = fightController.createFights(tournamentDTO.getId(), TeamsOrder.NONE, level, null, null);
             Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
@@ -189,10 +220,15 @@ public class SwissTournament16TeamsTest extends AbstractTestNGSpringContextTests
             final Group updatedGroup = groupController.getGroups(tournamentDTO, 0).getFirst();
             Assert.assertEquals(updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel).count(),
                     FIGHTS_PER_ROUND);
+
+            // Next round is generated only after finishing all fights from current round.
+            if (roundLevel < ROUNDS - 1) {
+                Assert.assertEquals(updatedGroup.getFights().stream().filter(fight -> fight.getLevel() == roundLevel + 1).count(), 0);
+            }
         }
     }
 
-    @Test(dependsOnMethods = "createAndSolveSwissRoundsWithoutByes")
+    @Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithoutByes")
     public void checkFinalRanking() {
         final List<ScoreOfTeam> ranking = rankingProvider.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
         Assert.assertEquals(ranking.size(), TEAMS);
@@ -202,6 +238,31 @@ public class SwissTournament16TeamsTest extends AbstractTestNGSpringContextTests
         final Group group = groupController.getGroups(tournamentDTO, 0).getFirst();
         Assert.assertEquals(group.getFights().size(), ROUNDS * FIGHTS_PER_ROUND);
         Assert.assertTrue(group.getFights().stream().allMatch(fight -> fight.getTeam1() != null && fight.getTeam2() != null));
+
+        final Map<String, Integer> fightsByTeamName = new HashMap<>();
+        group.getFights().forEach(fight -> {
+            fightsByTeamName.merge(fight.getTeam1().getName(), 1, Integer::sum);
+            fightsByTeamName.merge(fight.getTeam2().getName(), 1, Integer::sum);
+        });
+
+        Assert.assertEquals(fightsByTeamName.size(), TEAMS);
+        ranking.forEach(score -> Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName()), ROUNDS));
+
+        // Ranking groups must match the exact team distribution documented in R3 comments.
+        assertTeamsWithWins(ranking, 4, List.of("Team01"));
+        assertTeamsWithWins(ranking, 3, List.of("Team02", "Team06", "Team09", "Team13", "Team14"));
+        assertTeamsWithWins(ranking, 2, List.of("Team05", "Team07", "Team10", "Team12"));
+        assertTeamsWithWins(ranking, 1, List.of("Team03", "Team04", "Team08", "Team11", "Team15"));
+        assertTeamsWithWins(ranking, 0, List.of("Team16"));
+    }
+
+    private void assertTeamsWithWins(List<ScoreOfTeam> ranking, int wins, List<String> expectedTeamNames) {
+        final List<String> actualTeamNames = ranking.stream()
+                .filter(score -> score.getWonFights() == wins)
+                .map(score -> score.getTeam().getName())
+                .sorted().toList();
+        final List<String> expectedSorted = expectedTeamNames.stream().sorted().collect(Collectors.toList());
+        Assert.assertEquals(actualTeamNames, expectedSorted);
     }
 
     @AfterClass(alwaysRun = true)
@@ -222,5 +283,3 @@ public class SwissTournament16TeamsTest extends AbstractTestNGSpringContextTests
         Assert.assertEquals(duelController.count(), 0);
     }
 }
-
-
