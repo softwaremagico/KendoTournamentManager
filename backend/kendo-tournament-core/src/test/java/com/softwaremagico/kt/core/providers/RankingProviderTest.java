@@ -842,6 +842,54 @@ public class RankingProviderTest {
 	}
 
 	@Test
+	public void testSwissRankingFallsBackToBuchholzWhenTieBreakRuleValueIsInvalid() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(205, "Team 0", tournament);
+		final Team team1 = this.team(206, "Team 1", tournament);
+		final Team team2 = this.team(207, "Team 2", tournament);
+		final Team team3 = this.team(208, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						"NOT_VALID"));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingCountsByeAsOneWin() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(901, "Team 0", tournament);
+		final Team team1 = this.team(902, "Team 1", tournament);
+		final Team team2 = this.team(903, "Team 2", tournament);
+		final Team team3 = this.team(904, "Team 3", tournament);
+		final Team team4 = this.team(905, "Team 4", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3, team4));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 0),
+				this.fightWithScores(tournament, team2, team3, 2, 0)));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		final ScoreOfTeam byeTeamScore = ranking.stream().filter(score -> score.getTeam().equals(team4)).findFirst().orElseThrow();
+
+		assertThat(byeTeamScore.getWonFights()).isEqualTo(1);
+		assertThat(byeTeamScore.getFightsDone()).isEqualTo(1);
+	}
+
+	@Test
 	public void testSwissRankingCanUseDirectEncounterRule() {
 		final Tournament tournament = this.tournament(TournamentType.SWISS);
 		final Group group = this.group(tournament);

@@ -35,6 +35,7 @@ import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
@@ -171,6 +172,31 @@ public class SwissTournamentHandlerTest {
 	}
 
 	@Test
+	public void shouldGenerateInitialRoundWhenGenerateNextFightsIsCalledWithoutExistingFights() {
+		final Tournament tournament = this.tournament();
+		final Group group = this.groupWithTeams(tournament, 4);
+		group.setId(400);
+		group.setFights(new ArrayList<>());
+
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
+				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "3"));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
+				eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
+				.thenReturn(new TournamentExtraProperty(tournament,
+						TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
+		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
+
+		final List<com.softwaremagico.kt.persistence.entities.Fight> fights = this.swissTournamentHandler
+				.generateNextFights(tournament, "tester");
+
+		assertEquals(fights.size(), 2);
+		assertTrue(fights.stream().allMatch(fight -> fight.getLevel() == 0));
+		verify(this.groupProvider, atLeastOnce()).addGroup(eq(tournament), any(Group.class));
+	}
+
+	@Test
 	public void shouldGenerateNextRoundWhenCurrentRoundIsOver() {
 		final Tournament tournament = this.tournament();
 		final Group group = this.groupWithTeams(tournament, 4);
@@ -194,6 +220,40 @@ public class SwissTournamentHandlerTest {
 
 		assertEquals(fights.size(), 2);
 		assertTrue(fights.stream().allMatch(fight -> fight.getLevel() == 1));
+
+		final ArgumentCaptor<Group> groupsCaptor = ArgumentCaptor.forClass(Group.class);
+		verify(this.groupProvider, times(2)).addGroup(eq(tournament), groupsCaptor.capture());
+		final List<Group> generatedGroups = groupsCaptor.getAllValues().stream()
+				.filter(createdGroup -> createdGroup.getLevel() == 1)
+				.sorted(java.util.Comparator.comparing(Group::getIndex))
+				.toList();
+
+		assertEquals(generatedGroups.size(), 2);
+		assertEquals(this.sortedTeamNames(generatedGroups.get(0)), List.of("Team0", "Team3"));
+		assertEquals(this.sortedTeamNames(generatedGroups.get(1)), List.of("Team1", "Team2"));
+	}
+
+	@Test
+	public void shouldNotGenerateNextRoundWhenConfiguredRoundsAreAlreadyCompleted() {
+		final Tournament tournament = this.tournament();
+		final Group group = this.groupWithTeams(tournament, 4);
+		group.setId(403);
+		group.setFights(new ArrayList<>());
+		group.getFights().add(this.finishedFight(tournament, group.getTeams().get(0), group.getTeams().get(1), 0, true));
+		group.getFights().add(this.finishedFight(tournament, group.getTeams().get(2), group.getTeams().get(3), 0, true));
+		group.getFights().add(this.finishedFight(tournament, group.getTeams().get(0), group.getTeams().get(2), 1, true));
+		group.getFights().add(this.finishedFight(tournament, group.getTeams().get(1), group.getTeams().get(3), 1, true));
+
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
+				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "2"));
+
+		final List<com.softwaremagico.kt.persistence.entities.Fight> fights = this.swissTournamentHandler
+				.generateNextFights(tournament, "tester");
+
+		assertTrue(fights.isEmpty());
+		verify(this.groupProvider, never()).addGroup(eq(tournament), any(Group.class));
 	}
 
 	@Test
@@ -593,6 +653,10 @@ public class SwissTournamentHandlerTest {
 		group.getFights().add(this.finishedFight(tournament, group.getTeams().get(0), group.getTeams().get(2), 1, true));
 		group.getFights().add(this.finishedFight(tournament, group.getTeams().get(1), group.getTeams().get(3), 1, true));
 		return group;
+	}
+
+	private List<String> sortedTeamNames(Group group) {
+		return group.getTeams().stream().map(Team::getName).sorted().toList();
 	}
 
 	private com.softwaremagico.kt.persistence.entities.Fight finishedFight(Tournament tournament, Team team1,

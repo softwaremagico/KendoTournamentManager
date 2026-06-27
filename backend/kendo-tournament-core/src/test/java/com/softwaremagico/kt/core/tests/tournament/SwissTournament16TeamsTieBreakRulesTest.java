@@ -40,7 +40,6 @@ import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
-import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -62,6 +61,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @SpringBootTest
 @Test(groups = {"swissTournament16TieBreakRulesTest"})
@@ -218,18 +218,23 @@ public class SwissTournament16TeamsTieBreakRulesTest extends AbstractTestNGSprin
 
 	@Test(dependsOnMethods = "addTeams")
 	public void createAndAdvanceSwissRoundsWithTieScenarios() {
+		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
 		// expectedPairingsByRound ensures we ALWAYS test the same pairing topology.
 		// scoresByFight defines concrete results that create Swiss-point ties.
 		final Map<Integer, List<String>> expectedPairingsByRound = this.getExpectedPairingsByRound();
 		final Map<String, int[]> scoresByFight = this.getScoresByFight();
 
 		for (int level = 0; level < ROUNDS; level++) {
-			final List<FightDTO> createdFights = this.fightController.createFights(this.tournamentDTO.getId(),
-					TeamsOrder.NONE, level, null, null);
+			final List<FightDTO> createdFights = this.fightController.createNextFights(this.tournamentDTO.getId(), null,
+					null);
 			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
-			final List<Fight> fightsInRound = this.groupController.getGroups(this.tournamentDTO, level).stream()
-					.flatMap(group -> group.getFights().stream()).toList();
+			final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, level);
+			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(level));
+			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
+					IntStream.range(0, expectedGroupsByLevel.get(level)).boxed().toList());
+
+			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 			Assert.assertEquals(fightsInRound.stream().map(this::fightKey).toList(),
 					expectedPairingsByRound.get(level));

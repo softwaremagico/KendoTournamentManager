@@ -38,7 +38,6 @@ import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
-import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -173,6 +172,7 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 
 	@Test(dependsOnMethods = "addTeams")
 	public void createAndAdvanceSwissRoundsWithoutDrawFights() {
+		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
 		// Swiss flow by round (no draws in this scenario):
 		// R0 starts with all teams tied; after finishing all fights in a round,
 		// winners are promoted to higher score groups and losers remain/lower,
@@ -203,12 +203,14 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 			Assert.assertEquals(getAllFights().stream().filter(Fight::isOver).count(),
 					(long) roundLevel * FIGHTS_PER_ROUND);
 
-			final List<FightDTO> createdFights = fightController.createFights(tournamentDTO.getId(), TeamsOrder.NONE,
-					level, null, null);
+			final List<FightDTO> createdFights = fightController.createNextFights(tournamentDTO.getId(), null, null);
 			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
 			final List<Group> roundGroups = groupController.getGroups(tournamentDTO, roundLevel);
 			Assert.assertTrue(!roundGroups.isEmpty());
+			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(roundLevel));
+			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
+					IntStream.range(0, expectedGroupsByLevel.get(roundLevel)).boxed().toList());
 			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 

@@ -38,7 +38,6 @@ import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
-import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -172,6 +171,7 @@ public class SwissTournament64TeamsTest extends AbstractTestNGSpringContextTests
 
     @Test(dependsOnMethods = "addTeams")
     public void createAndAdvanceSwissRoundsWithoutByes() {
+        final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4, 5, 6);
         // Swiss 64 teams / 6 rounds theoretical score-bracket sizes by losses:
         // R1: 0L=32, 1L=32
         // R2: 0L=16, 1L=32, 2L=16
@@ -184,12 +184,15 @@ public class SwissTournament64TeamsTest extends AbstractTestNGSpringContextTests
             Assert.assertEquals(this.getAllFights().stream().filter(Fight::isOver).count(),
                     (long) roundLevel * FIGHTS_PER_ROUND);
 
-            final List<FightDTO> createdFights = this.fightController.createFights(this.tournamentDTO.getId(), TeamsOrder.NONE,
-                    level, null, null);
+            final List<FightDTO> createdFights = this.fightController.createNextFights(this.tournamentDTO.getId(), null,
+                    null);
             Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
             final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, roundLevel);
             Assert.assertFalse(roundGroups.isEmpty());
+            Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(roundLevel));
+            Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
+                    IntStream.range(0, expectedGroupsByLevel.get(roundLevel)).boxed().toList());
             final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
             Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 
