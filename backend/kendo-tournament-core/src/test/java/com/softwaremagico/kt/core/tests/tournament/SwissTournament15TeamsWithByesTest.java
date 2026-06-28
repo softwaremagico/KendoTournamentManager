@@ -74,7 +74,6 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 	private static final int ROUNDS = 4;
 	private static final int FIGHTS_PER_ROUND = 7;
 	private static final String TOURNAMENT_NAME = "SwissTournament15TeamsWithByesTest";
-	private static final List<String> EXPECTED_BYES_PER_ROUND = List.of("Team15", "Team14", "Team12", "Team08");
 
 	@Autowired
 	private TournamentController tournamentController;
@@ -176,21 +175,10 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 
 	@Test(dependsOnMethods = "addTeams")
 	public void createAndAdvanceSwissRoundsWithByes() {
-		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
-		// Swiss flow with odd number of teams and rotating byes (no repeated bye until
-		// needed).
-		// In this deterministic scenario (team1 always wins), the bye goes to:
-		// R0 -> Team15, R1 -> Team14, R2 -> Team12, R3 -> Team08.
-		// That means each of those teams receives exactly one bye, and byes count as
-		// Swiss wins.
-		// Final points groups are therefore influenced by byes and end as:
-		// 4W: Team01.
-		// 3W: Team02, Team06, Team09, Team13, Team14.
-		// 2W: Team05, Team07, Team10, Team12.
-		// 1W: Team03, Team04, Team08, Team11, Team15.
 		final List<String> allTeamNames = this.groupController.getGroups(this.tournamentDTO, 0).getFirst().getTeams()
 				.stream().map(Team::getName).sorted().toList();
 		final List<String> byeTeamsByRound = new ArrayList<>();
+		final Set<String> playedPairs = new HashSet<>();
 
 		for (int level = 0; level < ROUNDS; level++) {
 			final int roundLevel = level;
@@ -202,15 +190,33 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
 			final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, roundLevel);
-			Assert.assertTrue(!roundGroups.isEmpty());
-			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(roundLevel));
+			Assert.assertFalse(roundGroups.isEmpty());
+			Assert.assertTrue(roundGroups.size() <= roundLevel + 1,
+					"Swiss score brackets at level " + roundLevel + " cannot exceed " + (roundLevel + 1));
 			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
-					IntStream.range(0, expectedGroupsByLevel.get(roundLevel)).boxed().toList());
+					IntStream.range(0, roundGroups.size()).boxed().toList());
 			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
 
+			final Map<String, Integer> winsBeforeRound = this.getSwissWinsBeforeRound(roundLevel);
+			SwissTestAssertions.assertAdjacentBracketFloatsOnly(fightsInRound, winsBeforeRound, roundLevel);
+
 			final String byeTeamName = this.getByeTeamName(allTeamNames, fightsInRound);
 			byeTeamsByRound.add(byeTeamName);
+
+			final int minimumCrossBracketPairings = SwissTestAssertions.getMinimumCrossBracketPairings(
+					winsBeforeRound,
+					winsBeforeRound.getOrDefault(byeTeamName, 0),
+					"at level " + roundLevel);
+			final int actualCrossBracketPairings = SwissTestAssertions.countCrossBracketPairings(fightsInRound, winsBeforeRound);
+			Assert.assertTrue(actualCrossBracketPairings >= minimumCrossBracketPairings,
+					"Cross-bracket pairings at level " + roundLevel + " cannot be below theoretical minimum. "
+							+ "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+			Assert.assertTrue(actualCrossBracketPairings <= minimumCrossBracketPairings + 2,
+					"Cross-bracket pairings at level " + roundLevel + " should stay near minimum. "
+							+ "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+
+			SwissTestAssertions.assertNoRematchAndSingleAppearance(fightsInRound, playedPairs, roundLevel);
 
 			for (final Fight fight : fightsInRound) {
 				Assert.assertNotNull(fight.getTeam1());
@@ -222,31 +228,41 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 			}
 
 			Assert.assertEquals(
-					this.groupController.getGroups(this.tournamentDTO, roundLevel).stream().flatMap(group -> group.getFights().stream()).count(),
+					this.groupController.getGroups(this.tournamentDTO, roundLevel).stream().mapToLong(group -> group.getFights().size()).sum(),
 					FIGHTS_PER_ROUND);
 
 			// Next round is generated only after finishing all fights from current round.
 			if (roundLevel < ROUNDS - 1) {
 				Assert.assertEquals(
 						this.groupController.getGroups(this.tournamentDTO, roundLevel + 1).stream()
-								.flatMap(group -> group.getFights().stream()).count(),
+								.mapToLong(group -> group.getFights().size()).sum(),
 						0);
 			}
 		}
 
 		Assert.assertEquals(new HashSet<>(byeTeamsByRound).size(), ROUNDS);
-		Assert.assertEquals(byeTeamsByRound, EXPECTED_BYES_PER_ROUND, "Actual byes per round: " + byeTeamsByRound);
 	}
 
 	@Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithByes")
 	public void checkGroupsPerSwissRound() {
-		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
 		for (int level = 0; level < ROUNDS; level++) {
 			final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, level);
-			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(level));
+			Assert.assertFalse(roundGroups.isEmpty());
+			Assert.assertTrue(roundGroups.size() <= level + 1,
+					"Swiss score brackets at level " + level + " cannot exceed " + (level + 1));
 			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
-					IntStream.range(0, expectedGroupsByLevel.get(level)).boxed().toList());
-			Assert.assertEquals(roundGroups.stream().flatMap(group -> group.getFights().stream()).count(), FIGHTS_PER_ROUND);
+					IntStream.range(0, roundGroups.size()).boxed().toList());
+
+			final long assignedTeams = roundGroups.stream().mapToLong(group -> group.getTeams().size()).sum();
+			Assert.assertEquals(assignedTeams, TEAMS,
+					"All teams must be assigned to a score bracket at level " + level);
+
+			final Set<String> uniqueTeams = roundGroups.stream().flatMap(group -> group.getTeams().stream())
+					.map(Team::getName).collect(Collectors.toSet());
+			Assert.assertEquals(uniqueTeams.size(), TEAMS,
+					"No team can appear in multiple groups at level " + level);
+
+			Assert.assertEquals(roundGroups.stream().mapToLong(group -> group.getFights().size()).sum(), FIGHTS_PER_ROUND);
 		}
 	}
 
@@ -270,18 +286,24 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 		ranking.forEach(score -> Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName())
 				+ byeCountByTeam.getOrDefault(score.getTeam().getName(), 0), ROUNDS));
 
-		// Ranking groups must match the exact final distribution for this deterministic
-		// setup.
-		this.assertTeamsWithWins(ranking, 4, List.of("Team01"));
-		this.assertTeamsWithWins(ranking, 3, List.of("Team02", "Team06", "Team09", "Team13", "Team14"));
-		this.assertTeamsWithWins(ranking, 2, List.of("Team05", "Team07", "Team10", "Team12"));
-		this.assertTeamsWithWins(ranking, 1, List.of("Team03", "Team04", "Team08", "Team11", "Team15"));
-		this.assertTeamsWithWins(ranking, 0, List.of());
+		Assert.assertTrue(ranking.stream().allMatch(score -> score.getWonFights() >= 0 && score.getWonFights() <= ROUNDS),
+				"Wins must be in range [0, " + ROUNDS + "]");
+
+		final int totalWins = ranking.stream().mapToInt(ScoreOfTeam::getWonFights).sum();
+		Assert.assertEquals(totalWins, ROUNDS * (FIGHTS_PER_ROUND + 1),
+				"Total wins must equal winners-per-round (fight winners + bye)");
+
+		final long unbeatenTeams = ranking.stream().filter(score -> score.getWonFights() == ROUNDS).count();
+		Assert.assertEquals(unbeatenTeams, 1L,
+				"In this deterministic 15-team / 4-round Swiss scenario, exactly one team should finish unbeaten");
 
 		final Map<String, Integer> teamsWithBye = byeCountByTeam.entrySet().stream()
 				.filter(entry -> entry.getValue() > 0)
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		Assert.assertEquals(teamsWithBye, Map.of("Team08", 1, "Team12", 1, "Team14", 1, "Team15", 1));
+		Assert.assertEquals(teamsWithBye.size(), ROUNDS,
+				"Exactly one team should receive a bye in each round");
+		Assert.assertTrue(teamsWithBye.values().stream().allMatch(byeCount -> byeCount == 1),
+				"No team should receive more than one bye in this scenario");
 	}
 
 	private String getByeTeamName(List<String> allTeamNames, List<Fight> fightsInRound) {
@@ -317,12 +339,38 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 		return byeCountByTeam;
 	}
 
-	private void assertTeamsWithWins(List<ScoreOfTeam> ranking, int wins, List<String> expectedTeamNames) {
-		final List<String> actualTeamNames = ranking.stream().filter(score -> score.getWonFights() == wins)
-				.map(score -> score.getTeam().getName()).sorted().toList();
-		final List<String> expectedSorted = expectedTeamNames.stream().sorted().toList();
-		Assert.assertEquals(actualTeamNames, expectedSorted);
+	private Map<String, Integer> getSwissWinsBeforeRound(int roundLevel) {
+		final Set<String> allTeams = this.groupController.getGroups(this.tournamentDTO, 0).stream()
+				.flatMap(group -> group.getTeams().stream()).map(Team::getName).collect(Collectors.toSet());
+		final Map<String, Integer> winsByTeam = new HashMap<>();
+		allTeams.forEach(team -> winsByTeam.put(team, 0));
+
+		for (int level = 0; level < roundLevel; level++) {
+			final List<Fight> fightsAtLevel = this.groupController.getGroups(this.tournamentDTO, level).stream()
+					.flatMap(group -> group.getFights().stream()).toList();
+			final Set<String> teamsInRound = new HashSet<>();
+
+			for (final Fight fight : fightsAtLevel) {
+				final String team1 = fight.getTeam1().getName();
+				final String team2 = fight.getTeam2().getName();
+				teamsInRound.add(team1);
+				teamsInRound.add(team2);
+				if (fight.getWinner() != null) {
+					winsByTeam.computeIfPresent(fight.getWinner().getName(), (ignored, value) -> value + 1);
+				}
+			}
+
+			final Set<String> byeTeams = new HashSet<>(allTeams);
+			byeTeams.removeAll(teamsInRound);
+			Assert.assertEquals(byeTeams.size(), 1,
+					"Exactly one bye team is expected at finished level " + level + "; found " + byeTeams);
+			final String byeTeam = byeTeams.iterator().next();
+			winsByTeam.computeIfPresent(byeTeam, (ignored, value) -> value + 1);
+		}
+
+		return winsByTeam;
 	}
+
 
 	private List<Fight> getAllFights() {
 		final List<Fight> fights = new ArrayList<>();

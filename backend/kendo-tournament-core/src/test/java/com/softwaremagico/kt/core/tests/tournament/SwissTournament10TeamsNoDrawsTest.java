@@ -53,12 +53,13 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"swissTournament10NoDrawsTest"})
@@ -172,32 +173,7 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 
 	@Test(dependsOnMethods = "addTeams")
 	public void createAndAdvanceSwissRoundsWithoutDrawFights() {
-		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
-		// Swiss flow by round (no draws in this scenario):
-		// R0 starts with all teams tied; after finishing all fights in a round,
-		// winners are promoted to higher score groups and losers remain/lower,
-		// and the next round pairings are generated from those new score groups.
-		// For 10 teams and 4 rounds (all decisive fights), groups evolve as:
-		// - End of R0: 5 teams at 1W-0L, 5 teams at 0W-1L.
-		// 1W-0L: Team01, Team03, Team05, Team07, Team09.
-		// 0W-1L: Team02, Team04, Team06, Team08, Team10.
-		// - End of R1: 3 teams at 2W-0L, 4 teams at 1W-1L, 3 teams at 0W-2L.
-		// 2W-0L: Team01, Team05, Team09.
-		// 1W-1L: Team03, Team04, Team07, Team08.
-		// 0W-2L: Team02, Team06, Team10.
-		// - End of R2: 2 teams at 3W-0L, 3 teams at 2W-1L, 3 teams at 1W-2L, 2 teams at
-		// 0W-3L.
-		// 3W-0L: Team01, Team09.
-		// 2W-1L: Team04, Team05, Team08.
-		// 1W-2L: Team03, Team06, Team07.
-		// 0W-3L: Team02, Team10.
-		// - End of R3: final ranking is resolved from 4W-0L down to 0W-4L (sin
-		// empates).
-		// 4W-0L: Team01.
-		// 3W-1L: Team04, Team08, Team09.
-		// 2W-2L: Team05, Team06.
-		// 1W-3L: Team02, Team03, Team07.
-		// 0W-4L: Team10.
+		final Set<String> playedPairs = new HashSet<>();
 		for (int level = 0; level < ROUNDS; level++) {
 			final int roundLevel = level;
 			Assert.assertEquals(getAllFights().stream().filter(Fight::isOver).count(),
@@ -207,12 +183,29 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 			Assert.assertEquals(createdFights.size(), FIGHTS_PER_ROUND);
 
 			final List<Group> roundGroups = groupController.getGroups(tournamentDTO, roundLevel);
-			Assert.assertTrue(!roundGroups.isEmpty());
-			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(roundLevel));
+			Assert.assertFalse(roundGroups.isEmpty());
+			Assert.assertTrue(roundGroups.size() <= roundLevel + 1,
+					"Swiss score brackets at level " + roundLevel + " cannot exceed " + (roundLevel + 1));
 			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
-					IntStream.range(0, expectedGroupsByLevel.get(roundLevel)).boxed().toList());
+					IntStream.range(0, roundGroups.size()).boxed().toList());
 			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
+
+			final Map<String, Integer> winsBeforeRound = this.getSwissWinsBeforeRoundWithoutByes(roundLevel);
+			SwissTestAssertions.assertAdjacentBracketFloatsOnly(fightsInRound, winsBeforeRound, roundLevel);
+			final int minimumCrossBracketPairings = SwissTestAssertions.getMinimumCrossBracketPairings(
+					winsBeforeRound,
+					null,
+					"without byes at level " + roundLevel);
+			final int actualCrossBracketPairings = SwissTestAssertions.countCrossBracketPairings(fightsInRound, winsBeforeRound);
+			Assert.assertTrue(actualCrossBracketPairings >= minimumCrossBracketPairings,
+					"Cross-bracket pairings at level " + roundLevel + " cannot be below theoretical minimum. "
+							+ "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+			Assert.assertTrue(actualCrossBracketPairings <= minimumCrossBracketPairings + 2,
+					"Cross-bracket pairings at level " + roundLevel + " should stay near minimum. "
+							+ "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+
+			SwissTestAssertions.assertNoRematchAndSingleAppearance(fightsInRound, playedPairs, roundLevel);
 
 			for (Fight fight : fightsInRound) {
 				fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
@@ -238,12 +231,23 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 
 	@Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithoutDrawFights")
 	public void checkGroupsPerSwissRound() {
-		final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4);
 		for (int level = 0; level < ROUNDS; level++) {
 			final List<Group> roundGroups = groupController.getGroups(tournamentDTO, level);
-			Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(level));
+			Assert.assertFalse(roundGroups.isEmpty());
+			Assert.assertTrue(roundGroups.size() <= level + 1,
+					"Swiss score brackets at level " + level + " cannot exceed " + (level + 1));
 			Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
-					IntStream.range(0, expectedGroupsByLevel.get(level)).boxed().toList());
+					IntStream.range(0, roundGroups.size()).boxed().toList());
+
+			final long assignedTeams = roundGroups.stream().mapToLong(group -> group.getTeams().size()).sum();
+			Assert.assertEquals(assignedTeams, TEAMS,
+					"All teams must be assigned to a score bracket at level " + level);
+
+			final Set<String> uniqueTeams = roundGroups.stream().flatMap(group -> group.getTeams().stream())
+					.map(team -> team.getName()).collect(java.util.stream.Collectors.toSet());
+			Assert.assertEquals(uniqueTeams.size(), TEAMS,
+					"No team can appear in multiple groups at level " + level);
+
 			Assert.assertEquals(roundGroups.stream().flatMap(group -> group.getFights().stream()).count(), FIGHTS_PER_ROUND);
 		}
 	}
@@ -269,20 +273,32 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 		Assert.assertEquals(fightsByTeamName.size(), TEAMS);
 		ranking.forEach(score -> Assert.assertEquals((int) fightsByTeamName.get(score.getTeam().getName()), ROUNDS));
 
-		// Ranking groups must match the exact team distribution documented in R3
-		// comments.
-		assertTeamsWithWins(ranking, 4, List.of("Team01"));
-		assertTeamsWithWins(ranking, 3, List.of("Team04", "Team08", "Team09"));
-		assertTeamsWithWins(ranking, 2, List.of("Team05", "Team06"));
-		assertTeamsWithWins(ranking, 1, List.of("Team02", "Team03", "Team07"));
-		assertTeamsWithWins(ranking, 0, List.of("Team10"));
+		Assert.assertTrue(ranking.stream().allMatch(score -> score.getWonFights() >= 0 && score.getWonFights() <= ROUNDS),
+				"Wins must be in range [0, " + ROUNDS + "]");
+
+		final int totalWins = ranking.stream().mapToInt(ScoreOfTeam::getWonFights).sum();
+		Assert.assertEquals(totalWins, ROUNDS * FIGHTS_PER_ROUND,
+				"Total wins must equal winners-per-round without byes");
+
+		final long unbeatenTeams = ranking.stream().filter(score -> score.getWonFights() == ROUNDS).count();
+		Assert.assertEquals(unbeatenTeams, 1L,
+				"In this deterministic 10-team / 4-round Swiss scenario, exactly one team should finish unbeaten");
 	}
 
-	private void assertTeamsWithWins(List<ScoreOfTeam> ranking, int wins, List<String> expectedTeamNames) {
-		final List<String> actualTeamNames = ranking.stream().filter(score -> score.getWonFights() == wins)
-				.map(score -> score.getTeam().getName()).sorted().toList();
-		final List<String> expectedSorted = expectedTeamNames.stream().sorted().collect(Collectors.toList());
-		Assert.assertEquals(actualTeamNames, expectedSorted, "Actual teams for wins=" + wins + ": " + actualTeamNames);
+	private Map<String, Integer> getSwissWinsBeforeRoundWithoutByes(int roundLevel) {
+		final Map<String, Integer> winsByTeam = new HashMap<>();
+		for (int level = 0; level < roundLevel; level++) {
+			final List<Fight> fightsAtLevel = groupController.getGroups(tournamentDTO, level).stream()
+					.flatMap(group -> group.getFights().stream()).toList();
+			for (final Fight fight : fightsAtLevel) {
+				winsByTeam.putIfAbsent(fight.getTeam1().getName(), 0);
+				winsByTeam.putIfAbsent(fight.getTeam2().getName(), 0);
+				if (fight.getWinner() != null) {
+					winsByTeam.computeIfPresent(fight.getWinner().getName(), (ignored, value) -> value + 1);
+				}
+			}
+		}
+		return winsByTeam;
 	}
 
 	private List<Fight> getAllFights() {

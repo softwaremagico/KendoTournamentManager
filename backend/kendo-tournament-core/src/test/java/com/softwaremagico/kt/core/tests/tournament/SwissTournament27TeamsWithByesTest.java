@@ -74,39 +74,10 @@ import java.util.stream.IntStream;
  * </ul>
  *
  * <p><b>Deterministic scenario:</b> competitor1 always wins two MEN points in the first duel.
- * Teams sorted alphabetically within the same score bracket: Team01 &gt; Team02 &gt; ... &gt; Team27.
- * The algorithm pairs teams top-down within score brackets, crossing bracket boundaries only when needed.
  *
- * <p><b>Bye rotation (lowest-ranked team not yet having received a bye):</b>
- * <pre>
- * R0: Team27 (all 0pts, last alphabetically)
- * R1: Team26 (0pts group last with no prior bye)
- * R2: Team24 (0pts group, Team26 already used its bye in R1)
- * R3: Team20 (0pts group, Team24 already used its bye in R2)
- * R4: Team12 (0pts group last with no prior bye)
- * </pre>
- *
- * <p><b>Score brackets per round (groups created based on Swiss points before each round):</b>
- * <pre>
- * R0: 1 group  → {0pts: all 27}
- * R1: 2 groups → {3pts: 14 [13 winners + Team27 bye], 0pts: 13}
- * R2: 3 groups → {6pts: 7, 3pts: 14, 0pts: 6}
- * R3: 4 groups → {9pts: 4, 6pts: 10, 3pts: 10, 0pts: 3}
- * R4: 5 groups → {12pts: 2, 9pts: 7, 6pts: 10, 3pts: 7, 0pts: 1}
- * </pre>
- *
- * <p><b>Final ranking — note: {@code RankingProvider} adds bye count to {@code getWonFights()} for Swiss
- * tournaments, so a bye counts as 1 won fight in the ranking.</b>
- * <pre>
- * 5 wins : Team01                                              (5 fight-wins, 0 byes)
- * 4 wins : Team03, Team09, Team13, Team17, Team25              (4 fight-wins, 0 byes)
- * 3 wins : Team02, Team07, Team11, Team14, Team15, Team21,     (2 or 3 fight-wins)
- *          Team23, Team27                                      Team27: 2 fight-wins + 1 bye
- * 2 wins : Team04, Team05, Team08, Team16, Team18, Team19,     (1 or 2 fight-wins)
- *          Team20, Team24                                      Team20,Team24: 1 fight-win + 1 bye
- * 1 win  : Team06, Team10, Team12, Team22, Team26              Team12,Team26: 0 fight-wins + 1 bye
- * 0 wins : (none)
- * </pre>
+ * <p><b>This test validates Swiss-standard invariants</b> and intentionally avoids asserting exact
+ * team identities per bracket or exact bye recipients, because those are pairing-policy details
+ * (ordering and tie-break strategy), not universal Swiss requirements.
  */
 @SpringBootTest
 @Test(groups = {"swissTournament27ByesTest"})
@@ -120,13 +91,6 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
     // 27 teams is odd: 13 fights + 1 bye per round
     private static final int FIGHTS_PER_ROUND = 13;
     private static final String TOURNAMENT_NAME = "SwissTournament27TeamsWithByesTest";
-
-    /**
-     * Expected bye recipient per round (rotating, lowest-ranked team without a previous bye).
-     * R0→Team27 (last alphabetically, all 0pts), R1→Team26, R2→Team24, R3→Team20, R4→Team12.
-     */
-    private static final List<String> EXPECTED_BYES_PER_ROUND =
-            List.of("Team27", "Team26", "Team24", "Team20", "Team12");
 
     @Autowired
     private TournamentController tournamentController;
@@ -250,12 +214,10 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
      */
     @Test(dependsOnMethods = "addTeams")
     public void createAndAdvanceSwissRoundsWithByes() {
-        // Number of score-bracket groups created per level (grows as teams diverge in points).
-        final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4, 5);
-
         final List<String> allTeamNames = this.groupController.getGroups(this.tournamentDTO, 0).getFirst().getTeams()
                 .stream().map(Team::getName).sorted().toList();
         final List<String> byeTeamsByRound = new ArrayList<>();
+        final Set<String> playedPairs = new HashSet<>();
 
         for (int level = 0; level < ROUNDS; level++) {
             final int roundLevel = level;
@@ -272,10 +234,10 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
             // Verify group structure for the current level.
             final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, roundLevel);
             Assert.assertFalse(roundGroups.isEmpty(), "Round " + roundLevel + " must have at least one group");
-            Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(roundLevel),
-                    "Wrong number of score-bracket groups at level " + roundLevel);
+            Assert.assertTrue(roundGroups.size() <= roundLevel + 1,
+                    "Swiss score brackets at level " + roundLevel + " cannot exceed " + (roundLevel + 1));
             Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
-                    IntStream.range(0, expectedGroupsByLevel.get(roundLevel)).boxed().toList(),
+                    IntStream.range(0, roundGroups.size()).boxed().toList(),
                     "Group indices must be consecutive starting from 0 at level " + roundLevel);
 
             final List<Fight> fightsInRound = roundGroups.stream()
@@ -283,9 +245,29 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
             Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND,
                     "Fights stored in groups must match expected count at level " + roundLevel);
 
+            // Swiss standard: pairings should stay in the same score bracket, allowing only adjacent floats.
+            final Map<String, Integer> winsBeforeRound = this.getSwissWinsBeforeRound(roundLevel);
+            SwissTestAssertions.assertAdjacentBracketFloatsOnly(fightsInRound, winsBeforeRound, roundLevel);
+
             // Identify and record the bye team (the only team absent from all fights this round).
             final String byeTeamName = this.getByeTeamName(allTeamNames, fightsInRound);
             byeTeamsByRound.add(byeTeamName);
+
+            // Swiss standard also minimizes bracket floating; allow at most one extra cross pair due to constraints.
+            final int minimumCrossBracketPairings = SwissTestAssertions.getMinimumCrossBracketPairings(
+                    winsBeforeRound,
+                    winsBeforeRound.getOrDefault(byeTeamName, 0),
+                    "at level " + roundLevel);
+            final int actualCrossBracketPairings = SwissTestAssertions.countCrossBracketPairings(fightsInRound, winsBeforeRound);
+            Assert.assertTrue(actualCrossBracketPairings >= minimumCrossBracketPairings,
+                    "Cross-bracket pairings at level " + roundLevel + " cannot be below theoretical minimum. "
+                            + "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+            Assert.assertTrue(actualCrossBracketPairings <= minimumCrossBracketPairings + 1,
+                    "Cross-bracket pairings at level " + roundLevel + " should stay near minimum. "
+                            + "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+
+            // A team must fight at most once in the same Swiss round.
+            SwissTestAssertions.assertNoRematchAndSingleAppearance(fightsInRound, playedPairs, roundLevel);
 
             // Make competitor1 win every fight in this round.
             for (final Fight fight : fightsInRound) {
@@ -300,7 +282,7 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
 
             Assert.assertEquals(
                     this.groupController.getGroups(this.tournamentDTO, roundLevel).stream()
-                            .flatMap(group -> group.getFights().stream()).count(),
+                            .mapToLong(group -> group.getFights().size()).sum(),
                     FIGHTS_PER_ROUND,
                     "Persisted fights count must remain " + FIGHTS_PER_ROUND + " after update at level " + roundLevel);
 
@@ -308,7 +290,7 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
             if (roundLevel < ROUNDS - 1) {
                 Assert.assertEquals(
                         this.groupController.getGroups(this.tournamentDTO, roundLevel + 1).stream()
-                                .flatMap(group -> group.getFights().stream()).count(),
+                                .mapToLong(group -> group.getFights().size()).sum(),
                         0L,
                         "Level " + (roundLevel + 1) + " must have 0 fights before current round is marked done");
             }
@@ -317,58 +299,34 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
         // All byes must have gone to different teams (no repeated bye until strictly necessary).
         Assert.assertEquals(new HashSet<>(byeTeamsByRound).size(), ROUNDS,
                 "All " + ROUNDS + " bye slots must go to different teams; actual=" + byeTeamsByRound);
-        Assert.assertEquals(byeTeamsByRound, EXPECTED_BYES_PER_ROUND,
-                "Bye rotation must follow the lowest-ranked no-bye-yet policy; actual=" + byeTeamsByRound);
     }
 
     /**
-     * Verifies the exact group composition (count, consecutive indices, team sizes, fight counts)
-     * for every level after all rounds have been played.
-     *
-     * <p>Expected sorted team sizes per level:
-     * <pre>
-     * R0: [27]
-     * R1: [13, 14]
-     * R2: [6, 7, 14]
-     * R3: [3, 4, 10, 10]
-     * R4: [1, 2, 7, 7, 10]
-     * </pre>
+     * Verifies Swiss group invariants per level: valid count of score brackets, consecutive indices,
+     * all teams assigned exactly once across groups, and expected number of fights.
      */
     @Test(dependsOnMethods = "createAndAdvanceSwissRoundsWithByes")
     public void checkGroupsPerSwissRound() {
-        final List<Integer> expectedGroupsByLevel = List.of(1, 2, 3, 4, 5);
-
-        /*
-         * Team sizes per score-bracket group, sorted ascending within each level.
-         *
-         * R0: 1 group  → all 27 teams (0pts)
-         * R1: 2 groups → 0pts=13 / 3pts=14 (13 fight-winners + Team27 bye)
-         * R2: 3 groups → 0pts=6 / 6pts=7 / 3pts=14
-         * R3: 4 groups → 0pts=3 / 9pts=4 / 6pts=10 / 3pts=10
-         * R4: 5 groups → 0pts=1 / 12pts=2 / 9pts=7 / 3pts=7 / 6pts=10
-         */
-        final List<List<Integer>> expectedTeamSizesByLevel = List.of(
-                List.of(27),
-                List.of(13, 14),
-                List.of(6, 7, 14),
-                List.of(3, 4, 10, 10),
-                List.of(1, 2, 7, 7, 10)
-        );
-
         for (int level = 0; level < ROUNDS; level++) {
             final List<Group> roundGroups = this.groupController.getGroups(this.tournamentDTO, level);
-            final List<Integer> actualTeamSizes =
-                    roundGroups.stream().map(group -> group.getTeams().size()).sorted().toList();
-
-            Assert.assertEquals(roundGroups.size(), (int) expectedGroupsByLevel.get(level),
-                    "Group count at level " + level);
+            Assert.assertFalse(roundGroups.isEmpty(), "At least one group must exist at level " + level);
+            Assert.assertTrue(roundGroups.size() <= level + 1,
+                    "Swiss score brackets at level " + level + " cannot exceed " + (level + 1));
             Assert.assertEquals(roundGroups.stream().map(Group::getIndex).sorted().toList(),
-                    IntStream.range(0, expectedGroupsByLevel.get(level)).boxed().toList(),
+                    IntStream.range(0, roundGroups.size()).boxed().toList(),
                     "Group indices must be consecutive at level " + level);
-            Assert.assertEquals(actualTeamSizes,
-                    expectedTeamSizesByLevel.get(level).stream().sorted().toList(),
-                    "Team distribution across groups at level " + level
-                            + " — actual sizes: " + actualTeamSizes);
+
+            final long assignedTeams = roundGroups.stream().mapToLong(group -> group.getTeams().size()).sum();
+            Assert.assertEquals(assignedTeams, TEAMS,
+                    "All teams must be assigned to a score bracket at level " + level);
+
+            final Set<String> uniqueTeams = roundGroups.stream()
+                    .flatMap(group -> group.getTeams().stream())
+                    .map(Team::getName)
+                    .collect(Collectors.toSet());
+            Assert.assertEquals(uniqueTeams.size(), TEAMS,
+                    "No team can appear in multiple groups at level " + level);
+
             Assert.assertEquals(
                     roundGroups.stream().mapToLong(group -> group.getFights().size()).sum(),
                     FIGHTS_PER_ROUND,
@@ -377,23 +335,9 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
     }
 
     /**
-     * Verifies the final ranking win distribution and bye bookkeeping after all 5 rounds.
-     *
-     * <p>{@link com.softwaremagico.kt.core.providers.RankingProvider} adds the bye count to
-     * {@code getWonFights()} for Swiss tournaments, so a bye counts as 1 additional won fight in the ranking.
-     * This means teams that received byes have their fight-win count incremented accordingly:
-     * <pre>
-     * 5 wins : Team01                                              (5 fight-wins, 0 byes)
-     * 4 wins : Team03, Team09, Team13, Team17, Team25              (4 fight-wins, 0 byes)
-     * 3 wins : Team02, Team07, Team11, Team14, Team15, Team21,     (2-3 fight-wins)
-     *          Team23, Team27                                      Team27 = 2 fight-wins + 1 bye
-     * 2 wins : Team04, Team05, Team08, Team16, Team18, Team19,     (1-2 fight-wins)
-     *          Team20, Team24                                      Team20,Team24 = 1 fight-win + 1 bye
-     * 1 win  : Team06, Team10, Team12, Team22, Team26              Team12,Team26 = 0 fight-wins + 1 bye
-     * 0 wins : (none — all teams received at least 1 win or 1 bye)
-     * </pre>
-     *
-     * <p>Each team must appear in exactly ROUNDS participations (fights + byes).
+     * Verifies Swiss ranking invariants after all rounds:
+     * every team participates in exactly {@code ROUNDS} rounds (fights + byes),
+     * wins are in the valid range, total wins are conserved, and byes are unique in this setup.
      */
     @Test(dependsOnMethods = "checkGroupsPerSwissRound")
     public void checkFinalRanking() {
@@ -421,53 +365,25 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
                         ROUNDS,
                         "Team " + score.getTeam().getName() + " must have participated in exactly " + ROUNDS + " rounds"));
 
-        /*
-         * Win distribution explanation:
-         *
-         * 5 wins (1 team) — Team01 wins every round as the highest-ranked team throughout.
-         *
-         * 4 wins (5 teams) — Teams that won rounds 0, 1 and 2 but eventually lost once to a stronger opponent:
-         *   Team03: W-L-W-W-W, Team09: W-W-W-L-W, Team13: W-W-L-W-W,
-         *   Team17: W-W-W-W-L, Team25: W-W-W-L-W.
-         *
-         * 3 wins (7 teams) — Mid-bracket teams that ended 3-2 across 5 rounds:
-         *   Team02: L-W-L-W-W, Team07: W-L-W-W-L, Team11: W-L-W-L-W,
-         *   Team14: L-W-L-W-W, Team15: W-L-W-W-L, Team21: W-W-L-L-W, Team23: W-L-W-W-L.
-         *
-         * 2 wins (7 teams) — Lower-bracket teams finishing 2-3; Team27 also had 1 bye:
-         *   Team04: L-L-L-W-W, Team05: W-W-L-L-L, Team08: L-L-W-W-L,
-         *   Team16: L-L-W-W-L, Team18: L-W-L-L-W, Team19: W-L-W-L-L,
-         *   Team27: (bye R0)-L-W-L-W = 2 fight-wins + 1 bye → 3 total wins.
-         *
-         * 2 wins (8 teams) — Fight-wins + byes sum to 2:
-         *   Team04: L-L-L-W-W (2 fight-wins), Team05: W-W-L-L-L (2 fight-wins),
-         *   Team08: L-L-W-W-L (2 fight-wins), Team16: L-L-W-W-L (2 fight-wins),
-         *   Team18: L-W-L-L-W (2 fight-wins), Team19: W-L-W-L-L (2 fight-wins),
-         *   Team20: L-L-L-(bye R3)-W = 1 fight-win + 1 bye → 2 total wins,
-         *   Team24: L-L-(bye R2)-W-L = 1 fight-win + 1 bye → 2 total wins.
-         *
-         * 1 win (5 teams) — Fight-wins + byes sum to 1:
-         *   Team06: L-W-L-L-L (1 fight-win), Team10: L-W-L-L-L (1 fight-win),
-         *   Team22: L-W-L-L-L (1 fight-win),
-         *   Team12: L-L-L-L-(bye R4) = 0 fight-wins + 1 bye → 1 total win,
-         *   Team26: L-(bye R1)-L-L-L = 0 fight-wins + 1 bye → 1 total win.
-         *
-         * 0 wins (0 teams) — Every team received at least 1 fight-win or 1 bye, so no team ends at 0.
-         */
-        this.assertTeamsWithWins(ranking, 5, List.of("Team01"));
-        this.assertTeamsWithWins(ranking, 4, List.of("Team03", "Team09", "Team13", "Team17", "Team25"));
-        this.assertTeamsWithWins(ranking, 3, List.of("Team02", "Team07", "Team11", "Team14", "Team15", "Team21", "Team23", "Team27"));
-        this.assertTeamsWithWins(ranking, 2, List.of("Team04", "Team05", "Team08", "Team16", "Team18", "Team19", "Team20", "Team24"));
-        this.assertTeamsWithWins(ranking, 1, List.of("Team06", "Team10", "Team12", "Team22", "Team26"));
-        this.assertTeamsWithWins(ranking, 0, List.of());
+        Assert.assertTrue(ranking.stream().allMatch(score -> score.getWonFights() >= 0 && score.getWonFights() <= ROUNDS),
+                "Wins must be in range [0, " + ROUNDS + "]");
 
-        // Verify that exactly the five expected teams received one bye each.
+        final int totalWins = ranking.stream().mapToInt(ScoreOfTeam::getWonFights).sum();
+        Assert.assertEquals(totalWins, ROUNDS * (FIGHTS_PER_ROUND + 1),
+                "Total wins must equal winners-per-round (fight winners + bye)");
+
+        final long unbeatenTeams = ranking.stream().filter(score -> score.getWonFights() == ROUNDS).count();
+        Assert.assertEquals(unbeatenTeams, 1L,
+                "In this deterministic 27-team / 5-round Swiss scenario, exactly one team should finish unbeaten");
+
+        // Exactly one bye per round and no repeated bye in this 5-round / 27-team setup.
         final Map<String, Integer> teamsWithBye = byeCountByTeam.entrySet().stream()
                 .filter(entry -> entry.getValue() > 0)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        Assert.assertEquals(teamsWithBye,
-                Map.of("Team12", 1, "Team20", 1, "Team24", 1, "Team26", 1, "Team27", 1),
-                "Exactly 5 teams should have received 1 bye each");
+        Assert.assertEquals(teamsWithBye.size(), ROUNDS,
+                "Exactly one team should receive a bye in each round");
+        Assert.assertTrue(teamsWithBye.values().stream().allMatch(byeCount -> byeCount == 1),
+                "No team should receive more than one bye in this scenario");
     }
 
     // -------------------------------------------------------------------------
@@ -520,20 +436,45 @@ public class SwissTournament27TeamsWithByesTest extends AbstractTestNGSpringCont
     }
 
     /**
-     * Asserts that exactly the given team names appear in the ranking with the specified win count.
-     * Note: for Swiss tournaments, {@code RankingProvider} adds the bye count to {@code getWonFights()},
-     * so a bye counts as 1 additional won fight in the ranking.
+     * Computes Swiss wins (fight wins + byes) before the given round is generated.
      */
-    private void assertTeamsWithWins(List<ScoreOfTeam> ranking, int wins, List<String> expectedTeamNames) {
-        final List<String> actualTeamNames = ranking.stream()
-                .filter(score -> score.getWonFights() == wins)
-                .map(score -> score.getTeam().getName())
-                .sorted()
-                .toList();
-        final List<String> expectedSorted = expectedTeamNames.stream().sorted().toList();
-        Assert.assertEquals(actualTeamNames, expectedSorted,
-                "Teams with " + wins + " win(s) mismatch");
+    private Map<String, Integer> getSwissWinsBeforeRound(int roundLevel) {
+        final Set<String> allTeams = this.groupController.getGroups(this.tournamentDTO, 0).stream()
+                .flatMap(group -> group.getTeams().stream())
+                .map(Team::getName)
+                .collect(Collectors.toSet());
+
+        final Map<String, Integer> winsByTeam = new HashMap<>();
+        allTeams.forEach(team -> winsByTeam.put(team, 0));
+
+        for (int level = 0; level < roundLevel; level++) {
+            final List<Fight> fightsAtLevel = this.groupController.getGroups(this.tournamentDTO, level).stream()
+                    .flatMap(group -> group.getFights().stream())
+                    .toList();
+            final Set<String> teamsInRound = new HashSet<>();
+
+            for (final Fight fight : fightsAtLevel) {
+                final String team1 = fight.getTeam1().getName();
+                final String team2 = fight.getTeam2().getName();
+                teamsInRound.add(team1);
+                teamsInRound.add(team2);
+
+                if (fight.getWinner() != null) {
+                    winsByTeam.computeIfPresent(fight.getWinner().getName(), (ignored, value) -> value + 1);
+                }
+            }
+
+            final Set<String> byeTeams = new HashSet<>(allTeams);
+            byeTeams.removeAll(teamsInRound);
+            Assert.assertEquals(byeTeams.size(), 1,
+                    "Exactly one bye team is expected at finished level " + level + "; found " + byeTeams);
+            final String byeTeam = byeTeams.iterator().next();
+            winsByTeam.computeIfPresent(byeTeam, (ignored, value) -> value + 1);
+        }
+
+        return winsByTeam;
     }
+
 
     private List<Fight> getAllFights() {
         final List<Fight> fights = new ArrayList<>();

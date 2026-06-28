@@ -58,6 +58,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -236,6 +237,19 @@ public class SwissTournament16TeamsTieBreakRulesTest extends AbstractTestNGSprin
 
 			final List<Fight> fightsInRound = roundGroups.stream().flatMap(group -> group.getFights().stream()).toList();
 			Assert.assertEquals(fightsInRound.size(), FIGHTS_PER_ROUND);
+			final Map<String, Integer> winsBeforeRound = this.getSwissWinsBeforeRoundWithoutByes(level);
+			SwissTestAssertions.assertAdjacentBracketFloatsOnly(fightsInRound, winsBeforeRound, level);
+			final int minimumCrossBracketPairings = SwissTestAssertions.getMinimumCrossBracketPairings(
+					winsBeforeRound,
+					null,
+					"without byes at level " + level);
+			final int actualCrossBracketPairings = SwissTestAssertions.countCrossBracketPairings(fightsInRound, winsBeforeRound);
+			Assert.assertTrue(actualCrossBracketPairings >= minimumCrossBracketPairings,
+					"Cross-bracket pairings at level " + level + " cannot be below theoretical minimum. "
+							+ "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
+			Assert.assertTrue(actualCrossBracketPairings <= minimumCrossBracketPairings + 2,
+					"Cross-bracket pairings at level " + level + " should stay near minimum. "
+							+ "actual=" + actualCrossBracketPairings + ", min=" + minimumCrossBracketPairings);
 			Assert.assertEquals(fightsInRound.stream().map(this::fightKey).toList(),
 					expectedPairingsByRound.get(level));
 
@@ -392,6 +406,22 @@ public class SwissTournament16TeamsTieBreakRulesTest extends AbstractTestNGSprin
 
 	private List<String> getTeamsWithWinsSorted(List<ScoreOfTeam> ranking, int wins) {
 		return this.getTeamsWithWins(ranking, wins).stream().sorted().toList();
+	}
+
+	private Map<String, Integer> getSwissWinsBeforeRoundWithoutByes(int roundLevel) {
+		final Map<String, Integer> winsByTeam = new HashMap<>();
+		for (int level = 0; level < roundLevel; level++) {
+			final List<Fight> fightsAtLevel = this.groupController.getGroups(this.tournamentDTO, level).stream()
+					.flatMap(group -> group.getFights().stream()).toList();
+			for (final Fight fight : fightsAtLevel) {
+				winsByTeam.putIfAbsent(fight.getTeam1().getName(), 0);
+				winsByTeam.putIfAbsent(fight.getTeam2().getName(), 0);
+				if (fight.getWinner() != null) {
+					winsByTeam.computeIfPresent(fight.getWinner().getName(), (ignored, value) -> value + 1);
+				}
+			}
+		}
+		return winsByTeam;
 	}
 
 	@AfterClass(alwaysRun = true)
