@@ -812,6 +812,9 @@ public class RankingProviderTest {
 						SwissTieBreakRule.BUCHHOLZ.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakRuleUsed())
+				.isEqualTo(SwissTieBreakRule.BUCHHOLZ));
+		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakValue()).isNotNull());
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
 				"Team 3");
@@ -860,6 +863,9 @@ public class RankingProviderTest {
 						"NOT_VALID"));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakRuleUsed())
+				.isEqualTo(SwissTieBreakRule.BUCHHOLZ));
+		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakValue()).isNotNull());
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
 				"Team 3");

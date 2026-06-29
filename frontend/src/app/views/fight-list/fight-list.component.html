@@ -128,7 +128,8 @@
             class="order-divider"></mat-divider>
           }
           @if (((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
-            || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)) {
+            || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU)
+            || (tournament && tournament.type === TournamentType.SWISS)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)) {
             <button biit-icon
               [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
               (click)="showTeamsClassification(areAllDuelsOver())"

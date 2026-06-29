@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
@@ -50,6 +51,8 @@ public class ScoreOfTeamDTO extends ElementDTO {
     private Integer hitsLost = null;
     private Integer level = null;
     private Integer sortingIndex = null;
+    private SwissTieBreakRule swissTieBreakRuleUsed = null;
+    private Double swissTieBreakValue = null;
 
     public ScoreOfTeamDTO() {
 
@@ -236,6 +239,22 @@ public class ScoreOfTeamDTO extends ElementDTO {
 
     public void setSortingIndex(Integer sortingIndex) {
         this.sortingIndex = sortingIndex;
+    }
+
+    public SwissTieBreakRule getSwissTieBreakRuleUsed() {
+        return swissTieBreakRuleUsed;
+    }
+
+    public void setSwissTieBreakRuleUsed(SwissTieBreakRule swissTieBreakRuleUsed) {
+        this.swissTieBreakRuleUsed = swissTieBreakRuleUsed;
+    }
+
+    public Double getSwissTieBreakValue() {
+        return swissTieBreakValue;
+    }
+
+    public void setSwissTieBreakValue(Double swissTieBreakValue) {
+        this.swissTieBreakValue = swissTieBreakValue;
     }
 
     @Override

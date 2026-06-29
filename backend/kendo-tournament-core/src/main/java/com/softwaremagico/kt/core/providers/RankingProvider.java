@@ -361,6 +361,10 @@ public class RankingProvider {
             scores.add(score);
         }
         final SwissRankingContext context = new SwissRankingContext(scores, fights, getSwissTieBreakRule(tournament));
+        scores.forEach(score -> {
+            score.setSwissTieBreakRuleUsed(context.getSelectedRule());
+            score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));
+        });
         scores.sort(context::compare);
         if (scores.isEmpty()) {
             return scores;
@@ -554,6 +558,10 @@ public class RankingProvider {
 
         private int getPoints(Team team) {
             return this.swissPoints.getOrDefault(team, 0);
+        }
+
+        private SwissTieBreakRule getSelectedRule() {
+            return selectedRule;
         }
 
         private double getTieBreakValue(Team team, SwissTieBreakRule rule) {

@@ -320,6 +320,12 @@ public class SwissTournament16TeamsTieBreakRulesTest extends AbstractTestNGSprin
 
 		final List<ScoreOfTeam> ranking = this.rankingProvider
 				.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		ranking.forEach(score -> {
+			Assert.assertEquals(score.getSwissTieBreakRuleUsed(), rule,
+					"Ranking should expose selected tie-break rule on every team score.");
+			Assert.assertNotNull(score.getSwissTieBreakValue(),
+					"Ranking should expose tie-break value on every team score.");
+		});
 		Assert.assertEquals(ranking.getFirst().getTeam().getName(), "Team01");
 		Assert.assertEquals(this.getTeamsWithWins(ranking, 3), expectedThreeWinTeamsOrder,
 				"Unexpected 3-win teams order for tie-break rule " + rule);
