@@ -65,8 +65,8 @@ For uploading a stable version to Maven Central
 
 ```
  mvn deploy -DskipTests -DdeployCentral=true
+ mvn deploy -DskipTests -DdeployCentral=true
 ```
-
 # Automation with GitHub Actions
 
 Beginning with version `2.17.8`, the process of generating new releases has been automated.

@@ -34,18 +34,42 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg
+          set -euo pipefail
 
-          if printf '%s' "$GPG_PRIVATE_KEY" | grep -q 'BEGIN PGP PRIVATE KEY BLOCK'; then
-            printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --import
-          else
-            printf '%s' "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
+          if [ -z "${GPG_PRIVATE_KEY:-}" ]; then
+            echo "ERROR: secret GPG_PRIVATE_KEY is empty or not configured." >&2
+            exit 1
           fi
 
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          echo "no-tty" >> ~/.gnupg/gpg.conf
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          touch ~/.gnupg/gpg.conf ~/.gnupg/gpg-agent.conf
+          chmod 600 ~/.gnupg/gpg.conf ~/.gnupg/gpg-agent.conf
+
+          # Normalize secret content for the most common storage variants in GitHub Secrets:
+          # 1) raw ASCII armored block
+          # 2) one-line text with escaped \n
+          # 3) legacy base64 string
+          KEY_NORMALIZED="$(printf '%s' "$GPG_PRIVATE_KEY" | tr -d '\r')"
+          if printf '%s' "$KEY_NORMALIZED" | grep -q '\\n'; then
+            KEY_NORMALIZED="$(printf '%b' "$KEY_NORMALIZED")"
+          fi
+
+          if printf '%s' "$KEY_NORMALIZED" | grep -q 'BEGIN PGP PRIVATE KEY BLOCK'; then
+            printf '%s' "$KEY_NORMALIZED" | gpg --batch --yes --pinentry-mode loopback --import
+          else
+            if ! printf '%s' "$KEY_NORMALIZED" | base64 --decode > /tmp/private.key 2>/tmp/base64_error.log; then
+              echo "ERROR: GPG_PRIVATE_KEY is neither ASCII armored nor valid base64." >&2
+              echo "base64 decode output:" >&2
+              cat /tmp/base64_error.log >&2
+              exit 1
+            fi
+            gpg --batch --yes --pinentry-mode loopback --import /tmp/private.key
+          fi
+
+          grep -qxF "pinentry-mode loopback" ~/.gnupg/gpg.conf || echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          grep -qxF "no-tty" ~/.gnupg/gpg.conf || echo "no-tty" >> ~/.gnupg/gpg.conf
+          grep -qxF "allow-loopback-pinentry" ~/.gnupg/gpg-agent.conf || echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           gpgconf --kill gpg-agent
           gpg --batch --list-secret-keys --keyid-format LONG
 
