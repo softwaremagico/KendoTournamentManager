@@ -126,6 +126,22 @@
       "silver": "Be in a winner team in four tournaments during the same year.",
       "gold": "Be in a winner team in five tournaments during the same year."
     },
+    "swissWinner": {
+      "title": "Swiss champion",
+      "description": "Win a Swiss tournament.",
+      "normal": "Win a Swiss tournament.",
+      "bronze": "Win three Swiss tournaments during the same year.",
+      "silver": "Win four Swiss tournaments during the same year.",
+      "gold": "Win five Swiss tournaments during the same year."
+    },
+    "buchholzWhisperer": {
+      "title": "Buchholz Whisperer",
+      "description": "Win a Swiss tournament where tie-break decides the champion.",
+      "normal": "Win a Swiss tie resolved by Buchholz tie-break.",
+      "bronze": "Win three Buchholz tie-break Swiss tournaments during the same year.",
+      "silver": "Win four Buchholz tie-break Swiss tournaments during the same year.",
+      "gold": "Win five Buchholz tie-break Swiss tournaments during the same year."
+    },
     "woodcutter": {
       "title": "Woodcutter",
       "description": "Score only 'Do' points, and score at least one 'Do' on each fight.",

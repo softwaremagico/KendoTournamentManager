@@ -118,6 +118,22 @@
       "silver": "Gagner quatre tournois la même année.",
       "gold": "Gagner cinq tournois la même année."
     },
+    "swissWinner": {
+      "title": "Champion suisse",
+      "description": "Gagner un tournoi Swiss.",
+      "normal": "Gagner un tournoi Swiss.",
+      "bronze": "Gagner trois tournois Swiss pendant la meme annee.",
+      "silver": "Gagner quatre tournois Swiss pendant la meme annee.",
+      "gold": "Gagner cinq tournois Swiss pendant la meme annee."
+    },
+    "buchholzWhisperer": {
+      "title": "Murmureur du Buchholz",
+      "description": "Gagner un tournoi Swiss ou le départage décide du champion.",
+      "normal": "Gagner une égalité Swiss résolue par le départage Buchholz.",
+      "bronze": "Gagner trois tournois Swiss decides par departage Buchholz pendant la meme annee.",
+      "silver": "Gagner quatre tournois Swiss decides par departage Buchholz pendant la meme annee.",
+      "gold": "Gagner cinq tournois Swiss decides par departage Buchholz pendant la meme annee."
+    },
     "theWinnerTeam": {
       "title": "L’équipe gagnante",
       "description": "Être membre d’une équipe qui termine première dans un tournoi.",

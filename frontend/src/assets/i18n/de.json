@@ -122,6 +122,22 @@
       "silver": "Gewinne vier Turniere im selben Jahr.",
       "gold": "Gewinne fünf Turniere im selben Jahr."
     },
+    "swissWinner": {
+      "title": "Schweizer Champion",
+      "description": "Ein Swiss-Turnier gewinnen.",
+      "normal": "Ein Swiss-Turnier gewinnen.",
+      "bronze": "Drei Swiss-Turniere im selben Jahr gewinnen.",
+      "silver": "Vier Swiss-Turniere im selben Jahr gewinnen.",
+      "gold": "Fuenf Swiss-Turniere im selben Jahr gewinnen."
+    },
+    "buchholzWhisperer": {
+      "title": "Buchholz-Fluesterer",
+      "description": "Gewinne ein Swiss-Turnier, bei dem der Tiebreak den Sieger bestimmt.",
+      "normal": "Gewinne einen Swiss-Gleichstand durch Buchholz-Tiebreak.",
+      "bronze": "Gewinne drei Swiss-Turniere mit Buchholz-Tiebreak im selben Jahr.",
+      "silver": "Gewinne vier Swiss-Turniere mit Buchholz-Tiebreak im selben Jahr.",
+      "gold": "Gewinne fuenf Swiss-Turniere mit Buchholz-Tiebreak im selben Jahr."
+    },
     "theWinnerTeam": {
       "title": "Das Gewinnerteam",
       "description": "Seien Sie Mitglied eines Teams, das in einem Turnier den ersten Platz belegt.",

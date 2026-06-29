@@ -122,6 +122,22 @@
       "silver": "Guanya quatre tornejos durant el mateix any.",
       "gold": "Guanya cinc tornejos durant el mateix any."
     },
+    "swissWinner": {
+      "title": "Campió suís",
+      "description": "Guanyar un torneig Swiss.",
+      "normal": "Guanyar un torneig Swiss.",
+      "bronze": "Guanyar tres tornejos Swiss durant el mateix any.",
+      "silver": "Guanyar quatre tornejos Swiss durant el mateix any.",
+      "gold": "Guanyar cinc tornejos Swiss durant el mateix any."
+    },
+    "buchholzWhisperer": {
+      "title": "Susurrador del Buchholz",
+      "description": "Guanya un torneig Swiss on el desempat decideix el campio.",
+      "normal": "Guanya un empat Swiss resolt amb desempat Buchholz.",
+      "bronze": "Guanya tres tornejos Swiss per desempat Buchholz durant el mateix any.",
+      "silver": "Guanya quatre tornejos Swiss per desempat Buchholz durant el mateix any.",
+      "gold": "Guanya cinc tornejos Swiss per desempat Buchholz durant el mateix any."
+    },
     "theWinnerTeam": {
       "title": "L'equip guanyador",
       "description": "Ser membre d'un equip que queda el primer en un torneig.",

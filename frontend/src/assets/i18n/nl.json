@@ -122,6 +122,22 @@
       "silver": "Vier toernooien winnen in hetzelfde jaar.",
       "gold": "Win vijf toernooien in hetzelfde jaar."
     },
+    "swissWinner": {
+      "title": "Zwitserse kampioen",
+      "description": "Een Swiss-toernooi winnen.",
+      "normal": "Een Swiss-toernooi winnen.",
+      "bronze": "Win drie Swiss-toernooien in hetzelfde jaar.",
+      "silver": "Win vier Swiss-toernooien in hetzelfde jaar.",
+      "gold": "Win vijf Swiss-toernooien in hetzelfde jaar."
+    },
+    "buchholzWhisperer": {
+      "title": "Buchholz-fluisteraar",
+      "description": "Win een Swiss-toernooi waarbij de tiebreak de kampioen bepaalt.",
+      "normal": "Win een Swiss-gelijke stand via Buchholz-tiebreak.",
+      "bronze": "Win drie Swiss-toernooien via Buchholz-tiebreak in hetzelfde jaar.",
+      "silver": "Win vier Swiss-toernooien via Buchholz-tiebreak in hetzelfde jaar.",
+      "gold": "Win vijf Swiss-toernooien via Buchholz-tiebreak in hetzelfde jaar."
+    },
     "theWinnerTeam": {
       "title": "Het winnende team",
       "description": "Wees lid van een team dat als eerste eindigt in een toernooi.",

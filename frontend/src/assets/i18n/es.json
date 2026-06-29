@@ -118,6 +118,22 @@
       "silver": "Gana cuatro torneos durante el mismo año.",
       "gold": "Gana cinco torneos durante el mismo año."
     },
+    "swissWinner": {
+      "title": "Campeón suizo",
+      "description": "Ganar un torneo Swiss.",
+      "normal": "Ganar un torneo Swiss.",
+      "bronze": "Ganar tres torneos Swiss durante el mismo año.",
+      "silver": "Ganar cuatro torneos Swiss durante el mismo año.",
+      "gold": "Ganar cinco torneos Swiss durante el mismo año."
+    },
+    "buchholzWhisperer": {
+      "title": "Susurrador del Buchholz",
+      "description": "Gana un torneo Swiss donde el desempate decide al campeon.",
+      "normal": "Gana un empate Swiss resuelto por desempate Buchholz.",
+      "bronze": "Gana tres torneos Swiss por desempate Buchholz durante el mismo año.",
+      "silver": "Gana cuatro torneos Swiss por desempate Buchholz durante el mismo año.",
+      "gold": "Gana cinco torneos Swiss por desempate Buchholz durante el mismo año."
+    },
     "theWinnerTeam": {
       "title": "El equipo ganador",
       "description": "Ser miembro de un equipo que queda el primero en un torneo.",

@@ -122,6 +122,22 @@
       "silver": "Vinci quattro tornei nello stesso anno.",
       "gold": "Vinci cinque tornei nello stesso anno."
     },
+    "swissWinner": {
+      "title": "Campione svizzero",
+      "description": "Vincere un torneo Swiss.",
+      "normal": "Vincere un torneo Swiss.",
+      "bronze": "Vinci tre tornei Swiss nello stesso anno.",
+      "silver": "Vinci quattro tornei Swiss nello stesso anno.",
+      "gold": "Vinci cinque tornei Swiss nello stesso anno."
+    },
+    "buchholzWhisperer": {
+      "title": "Sussurratore Buchholz",
+      "description": "Vinci un torneo Swiss in cui lo spareggio decide il campione.",
+      "normal": "Vinci una parita Swiss risolta con spareggio Buchholz.",
+      "bronze": "Vinci tre tornei Swiss decisi dallo spareggio Buchholz nello stesso anno.",
+      "silver": "Vinci quattro tornei Swiss decisi dallo spareggio Buchholz nello stesso anno.",
+      "gold": "Vinci cinque tornei Swiss decisi dallo spareggio Buchholz nello stesso anno."
+    },
     "theWinnerTeam": {
       "title": "La squadra vincente",
       "description": "Fai parte di una squadra che arriva prima in un torneo.",
