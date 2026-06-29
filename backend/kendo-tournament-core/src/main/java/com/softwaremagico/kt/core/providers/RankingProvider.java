@@ -342,10 +342,28 @@ public class RankingProvider {
             return new ArrayList<>();
         }
         if (group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS) {
-            return getSwissTeamsScoreRanking(group.getTournament(), group.getTeams(), group.getFights(), group.getUnties());
+            // For Swiss tournaments in a group: ranking is group-specific,
+            // but tie-breaks use all fights from tournament start up to (and including) this group
+            final List<Fight> allFightsUpToGroup = getAllFightsUpToGroup(group);
+            return getSwissTeamsScoreRankingWithGlobalTieBreaks(group.getTournament(), group.getTeams(),
+                    group.getFights(), allFightsUpToGroup, group.getUnties());
         }
         return getTeamsScoreRanking(group.getTournament().getTournamentScore().getScoreType(),
                 group.getTeams(), group.getFights(), group.getUnties(), checkLevel(group.getTournament()));
+    }
+
+    /**
+     * Get all fights from the tournament start up to and including the given group.
+     * Excludes fights from groups at higher levels (later rounds).
+     */
+    private List<Fight> getAllFightsUpToGroup(Group group) {
+        final Integer groupLevel = group.getLevel();
+        final List<Group> allGroups = groupProvider.getGroups(group.getTournament());
+
+        return allGroups.stream()
+                .filter(g -> g.getLevel() != null && g.getLevel() <= groupLevel)
+                .flatMap(g -> g.getFights().stream())
+                .toList();
     }
 
     private List<ScoreOfTeam> getSwissTeamsScoreRanking(Tournament tournament, List<Team> teams, List<Fight> fights, List<Duel> unties) {
@@ -361,6 +379,53 @@ public class RankingProvider {
             scores.add(score);
         }
         final SwissRankingContext context = new SwissRankingContext(scores, fights, getSwissTieBreakRule(tournament));
+        scores.forEach(score -> {
+            score.setSwissTieBreakRuleUsed(context.getSelectedRule());
+            score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));
+        });
+        scores.sort(context::compare);
+        if (scores.isEmpty()) {
+            return scores;
+        }
+        int sortingIndex = 0;
+        scores.getFirst().setSortingIndex(sortingIndex);
+        for (int i = 1; i < scores.size(); i++) {
+            if (context.compare(scores.get(i - 1), scores.get(i)) != 0) {
+                sortingIndex++;
+            }
+            scores.get(i).setSortingIndex(sortingIndex);
+        }
+        return scores;
+    }
+
+    /**
+     * Swiss ranking where group scores are calculated from group fights only,
+     * but tie-breaks consider all fights up to this group (global context).
+     *
+     * @param tournament the tournament
+     * @param teams teams in the group
+     * @param groupFights fights in this group only (for points calculation)
+     * @param allFightsUpToGroup all fights from start up to this group (for tie-breaks)
+     * @param unties the unties
+     * @return ranked scores
+     */
+    private List<ScoreOfTeam> getSwissTeamsScoreRankingWithGlobalTieBreaks(Tournament tournament, List<Team> teams,
+                                                                           List<Fight> groupFights, List<Fight> allFightsUpToGroup,
+                                                                           List<Duel> unties) {
+        // Calculate scores based on group fights only
+        final Map<Team, Integer> byeCounts = getByeCountByTeam(teams, groupFights);
+        final List<ScoreOfTeam> scores = new ArrayList<>();
+        for (final Team team : teams) {
+            final ScoreOfTeam score = new ScoreOfTeam(team, groupFights, unties);
+            final int byeCount = byeCounts.getOrDefault(team, 0);
+            if (byeCount > 0) {
+                score.setWonFights(score.getWonFights() + byeCount);
+                score.setFightsDone(score.getFightsDone() + byeCount);
+            }
+            scores.add(score);
+        }
+        // Use all fights up to this group for tie-breaks
+        final SwissRankingContext context = new SwissRankingContext(scores, allFightsUpToGroup, getSwissTieBreakRule(tournament));
         scores.forEach(score -> {
             score.setSwissTieBreakRuleUsed(context.getSelectedRule());
             score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));

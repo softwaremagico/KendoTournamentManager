@@ -806,6 +806,7 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, team2, team3, 2, 0),
 				this.fightWithScores(tournament, team0, team2, 0, 2),
 				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
@@ -814,7 +815,7 @@ public class RankingProviderTest {
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
 		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakRuleUsed())
 				.isEqualTo(SwissTieBreakRule.BUCHHOLZ));
-		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakValue()).isNotNull());
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
 				"Team 3");
@@ -833,12 +834,14 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, team2, team3, 2, 0),
 				this.fightWithScores(tournament, team0, team2, 0, 2),
 				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.POINT_DIFFERENTIAL.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(4.0, 1.0, -1.0, -4.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 1", "Team 0",
 				"Team 3");
@@ -857,6 +860,7 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, team2, team3, 2, 0),
 				this.fightWithScores(tournament, team0, team2, 0, 2),
 				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
@@ -865,7 +869,7 @@ public class RankingProviderTest {
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
 		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakRuleUsed())
 				.isEqualTo(SwissTieBreakRule.BUCHHOLZ));
-		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakValue()).isNotNull());
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
 				"Team 3");
@@ -883,6 +887,7 @@ public class RankingProviderTest {
 		group.setTeams(List.of(team0, team1, team2, team3, team4));
 		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 0),
 				this.fightWithScores(tournament, team2, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
@@ -908,12 +913,14 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, team2, team3, 2, 0),
 				this.fightWithScores(tournament, team0, team3, 2, 0),
 				this.fightWithScores(tournament, team2, team1, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.DIRECT_ENCOUNTER.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(0.0, 3.0, 0.0, 0.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 1", "Team 0",
 				"Team 3");
@@ -932,12 +939,14 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, team2, team3, 2, 0),
 				this.fightWithScores(tournament, team0, team2, 0, 2),
 				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.MEDIAN_BUCHHOLZ.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
 				"Team 3");
@@ -956,12 +965,14 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, team2, team3, 2, 0),
 				this.fightWithScores(tournament, team0, team2, 0, 2),
 				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.SONNEBORN_BERGER.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 3.0, 0.0, 0.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
 				"Team 3");
@@ -1021,6 +1032,7 @@ public class RankingProviderTest {
 				this.fightWithScores(tournament, teamByName.apply("Team12"), teamByName.apply("Team13"), 2, 0),
 				this.fightWithScores(tournament, teamByName.apply("Team08"), teamByName.apply("Team16"), 0, 2));
 		group.setFights(fights);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
