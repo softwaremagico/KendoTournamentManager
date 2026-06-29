@@ -292,6 +292,25 @@ describe('FightListComponent', () => {
     expect(component.getGroup(undefined)).toBeNull();
   });
 
+  it('should return group-pending when group has unfinished duels and is not selected', () => {
+    const pendingGroup = buildGroup(1, 0, [buildFight(1, [buildDuel(1, false)])]);
+
+    expect(component.getGroupCardClass(pendingGroup)).toBe('group-pending');
+  });
+
+  it('should return group-finished when group has all duels finished and is not selected', () => {
+    const finishedGroup = buildGroup(1, 0, [buildFight(1, [buildDuel(1, true)])]);
+
+    expect(component.getGroupCardClass(finishedGroup)).toBe('group-finished');
+  });
+
+  it('should return group-selected with priority over finished state', () => {
+    const finishedSelectedGroup = buildGroup(1, 0, [buildFight(1, [buildDuel(1, true)])]);
+    component.selectedGroup = finishedSelectedGroup;
+
+    expect(component.getGroupCardClass(finishedSelectedGroup)).toBe('group-selected');
+  });
+
   it('should report all duels over only when all fights and unties are finished', () => {
     component.groups = [
       buildGroup(1, 0, [buildFight(1, [buildDuel(1, true)])], [buildDuel(2, true)])
@@ -464,6 +483,28 @@ describe('FightListComponent', () => {
     component.generateElements();
 
     expect((component as any).openLeagueGeneratorPopup).toBeTrue();
+  });
+
+  it('should set openLeagueGeneratorPopup for all league-like tournament types', () => {
+    const leagueLikeTypes: TournamentType[] = [
+      TournamentType.LEAGUE,
+      TournamentType.LOOP,
+      TournamentType.KING_OF_THE_MOUNTAIN,
+      TournamentType.BUBBLE_SORT,
+      TournamentType.SENBATSU,
+      TournamentType.SWISS
+    ];
+
+    for (const tournamentType of leagueLikeTypes) {
+      component.tournament.type = tournamentType;
+      (component as any).openLeagueGeneratorPopup = false;
+
+      component.generateElements();
+
+      expect((component as any).openLeagueGeneratorPopup)
+        .withContext(`${tournamentType} should enable openLeagueGeneratorPopup`)
+        .toBeTrue();
+    }
   });
 
   it('should use the same generator flow for SWISS and LEAGUE tournaments', () => {

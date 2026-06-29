@@ -202,7 +202,9 @@
             }
             @if (filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0) {
               <div
-                [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
+                [ngClass]="groups.length > 1 && (((filteredFights.get(group.id!)?.length ?? 0) > 0) || ((filteredUnties.get(group.id!)?.length ?? 0) > 0))
+                  ? ['fights-of-group', getGroupCardClass(group)]
+                  : []">
                 @for (fight of filteredFights.get(group.id!); track fight) {
                   <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (selectedFightDuel)="selectDuel($event)"
                     [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectorMode"

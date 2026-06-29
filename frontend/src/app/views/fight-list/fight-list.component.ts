@@ -425,6 +425,33 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
+  isGroupSelected(group: Group): boolean {
+    if (!group) {
+      return false;
+    }
+    if (this.selectedGroup?.id === group.id) {
+      return true;
+    }
+    if (this.selectedFight && group.fights?.some((fight: Fight): boolean => fight.id === this.selectedFight?.id)) {
+      return true;
+    }
+    return !!this.selectedDuel && this.getGroup(this.selectedDuel)?.id === group.id;
+  }
+
+  isGroupCompleted(group: Group): boolean {
+    return !!group && Group.isFinished(group);
+  }
+
+  getGroupCardClass(group: Group): string {
+    if (this.isGroupSelected(group)) {
+      return 'group-selected';
+    }
+    if (this.isGroupCompleted(group)) {
+      return 'group-finished';
+    }
+    return 'group-pending';
+  }
+
   protected elementsGenerated(): void {
     this.refreshFights();
     this.selectFirstUnfinishedDuel();
