@@ -28,7 +28,32 @@ User the file generated on `kendo-tournament-rest/target/kendo-tournament-backen
 
 Update the `.env` file with the new version and release names.
 
-# Deploy library to GitHub and Mvn Repository
+# Deploy library to GitHub and Maven Repository
+
+## Automatic Maven Central Deployment
+
+**New Workflow (Recommended)**
+
+As of version 2.17.8+, deployments to Maven Central are now **automatic** via GitHub Actions:
+
+1. **Create a release** (via GitHub UI or git tag)
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+   Or use GitHub UI: **Releases → Draft a new release → Publish**
+
+2. **The workflow triggers automatically**:
+   - The `maven-central-publish.yml` workflow detects the release
+   - Builds the backend with Maven
+   - Signs artifacts with GPG
+   - Deploys to Maven Central
+
+3. **Verify deployment** in workflow logs: **Actions → Publish to Maven Central**
+
+See [`MAVEN_CENTRAL_SETUP.md`](MAVEN_CENTRAL_SETUP.md) for configuration details.
+
+## Manual Deployment (Legacy)
 
 For uploading a SNAPSHOT version on GitHub
 
@@ -36,10 +61,10 @@ For uploading a SNAPSHOT version on GitHub
  mvn deploy -DskipTests -DdeploySnapshot=true
 ```
 
-For uploading a stable version on Mvn Repository
+For uploading a stable version to Maven Central
 
 ```
- mvn release:prepare release:perform
+ mvn deploy -DskipTests -DdeployCentral=true
 ```
 
 # Automation with GitHub Actions

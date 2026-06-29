@@ -1,0 +1,59 @@
+name: Publish to Maven Central
+
+# Trigger when a release is published
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    name: Deploy to Maven Central
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Get version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Release version: ${VERSION}"
+
+      - name: Build and deploy to Maven Central
+        run: |
+          mvn clean deploy -B \
+            -DskipTests \
+            -DdeployCentral=true \
+            --file backend/pom.xml
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Upload deployment logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-central-logs
+          path: backend/target/
+          retention-days: 5
+
+
