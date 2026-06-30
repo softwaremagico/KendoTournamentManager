@@ -91,32 +91,48 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (accessor != null
-                        && (StompCommand.CONNECT.equals(accessor.getCommand())
-                        || StompCommand.SEND.equals(accessor.getCommand()))) {
-                    final LinkedMultiValueMap<String, String> nativeHeaders = (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
-                    if (nativeHeaders != null) {
-                        final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
-                        try {
-                            if (jwtToken != null) {
-                                jwtTokenUtil.getUsername(jwtToken.get(0));
-                                final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
-                                if (username != null && !username.isEmpty()) {
-                                    accessor.setUser(new UserPrincipal(username));
-                                    WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
-                                } else {
-                                    throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
-                                }
-                            }
-                        } catch (Exception e) {
-                            //Unauthorized.
-                            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
-                        }
-                    }
+                if (shouldAuthenticate(accessor)) {
+                    authenticateWebsocketUser(accessor);
                 }
                 return message;
             }
         });
+    }
+
+    private boolean shouldAuthenticate(StompHeaderAccessor accessor) {
+        return accessor != null
+                && (StompCommand.CONNECT.equals(accessor.getCommand())
+                || StompCommand.SEND.equals(accessor.getCommand()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void authenticateWebsocketUser(StompHeaderAccessor accessor) {
+        final LinkedMultiValueMap<String, String> nativeHeaders =
+                (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
+        if (nativeHeaders == null) {
+            return;
+        }
+
+        final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            return;
+        }
+
+        try {
+            final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
+            validateUsername(username);
+            accessor.setUser(new UserPrincipal(username));
+            WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
+        } catch (Exception ignored) {
+            // Unauthorized websocket token.
+            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
+        }
+    }
+
+    private void validateUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
+        }
     }
 
     static class UserPrincipal implements Principal {

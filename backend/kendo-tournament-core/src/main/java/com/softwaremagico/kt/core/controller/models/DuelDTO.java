@@ -139,39 +139,47 @@ public class DuelDTO extends ElementDTO {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        if (competitor1 != null) {
-            text.append(NameUtils.getShortLastnameName(competitor1, CHARACTERS_TO_SHOW)).append(" ");
-            if (competitor1Fault != null && competitor1Fault) {
-                text.append("^");
-            }
-            text.append("[");
-            for (final Score hitsFromCompetitorA1 : competitor1Score) {
-                if (hitsFromCompetitorA1 != null) {
-                    text.append(hitsFromCompetitorA1.getAbbreviation());
-                }
-            }
-            text.append("] ");
-        } else {
+        appendCompetitor1Text(text);
+        appendCompetitor2Text(text);
+        return text.toString();
+    }
+
+    private void appendCompetitor1Text(StringBuilder text) {
+        if (competitor1 == null) {
             text.append("  <<Empty>>  []  ");
-        }
-        if (competitor2 != null) {
-            text.append("[");
-            for (final Score hitsFromCompetitorB1 : competitor2Score) {
-                if (hitsFromCompetitorB1 != null) {
-                    text.append(hitsFromCompetitorB1.getAbbreviation());
-                }
-            }
-            text.append("]");
-            if (competitor2Fault != null && competitor2Fault) {
-                text.append("^");
-            }
-            text.append(" ");
-            text.append(NameUtils.getShortLastnameName(competitor2, CHARACTERS_TO_SHOW));
-        } else {
-            text.append("[]  <<Empty>>  ");
+            return;
         }
 
-        return text.toString();
+        text.append(NameUtils.getShortLastnameName(competitor1, CHARACTERS_TO_SHOW)).append(" ");
+        if (Boolean.TRUE.equals(competitor1Fault)) {
+            text.append("^");
+        }
+        text.append("[");
+        appendScores(text, competitor1Score);
+        text.append("] ");
+    }
+
+    private void appendCompetitor2Text(StringBuilder text) {
+        if (competitor2 == null) {
+            text.append("[]  <<Empty>>  ");
+            return;
+        }
+
+        text.append("[");
+        appendScores(text, competitor2Score);
+        text.append("]");
+        if (Boolean.TRUE.equals(competitor2Fault)) {
+            text.append("^");
+        }
+        text.append(" ").append(NameUtils.getShortLastnameName(competitor2, CHARACTERS_TO_SHOW));
+    }
+
+    private void appendScores(StringBuilder text, List<Score> scores) {
+        for (final Score score : scores) {
+            if (score != null) {
+                text.append(score.getAbbreviation());
+            }
+        }
     }
 
     /**

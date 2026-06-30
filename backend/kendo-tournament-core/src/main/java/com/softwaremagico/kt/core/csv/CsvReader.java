@@ -51,7 +51,7 @@ public abstract class CsvReader<E extends Element> {
 
 
     public String[] getContent(String content) {
-        final String[] lines = content.split("\\r?\\n");
+        final String[] lines = content.split(LINE_SEPARATOR);
         if (lines.length > 1) {
             return Arrays.copyOfRange(lines, 1, lines.length);
         }

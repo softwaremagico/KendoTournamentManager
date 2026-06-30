@@ -43,6 +43,8 @@ import java.util.List;
 @Controller
 public class ParticipantImageController extends BasicInsertableController<ParticipantImage, ParticipantImageDTO, ParticipantImageRepository,
         ParticipantImageProvider, ParticipantImageConverterRequest, ParticipantImageConverter> {
+    private static final String PARTICIPANT_NOT_FOUND_PREFIX = "No participant found with id '";
+
     private final ParticipantConverter participantConverter;
     private final ParticipantProvider participantProvider;
 
@@ -62,7 +64,7 @@ public class ParticipantImageController extends BasicInsertableController<Partic
 
     public int deleteByParticipantId(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
-                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
+                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), PARTICIPANT_NOT_FOUND_PREFIX + participantId + "'."));
         try {
             return getProvider().delete(participant);
         } finally {
@@ -77,13 +79,13 @@ public class ParticipantImageController extends BasicInsertableController<Partic
 
     public ParticipantImageDTO getByParticipantId(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
-                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
+                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), PARTICIPANT_NOT_FOUND_PREFIX + participantId + "'."));
         return convert(getProvider().get(participant).orElse(null));
     }
 
     public ParticipantImageDTO add(MultipartFile file, Integer participantId, String username) {
         final ParticipantDTO participantDTO = participantConverter.convert(new ParticipantConverterRequest(participantProvider.get(participantId)
-                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."))));
+                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), PARTICIPANT_NOT_FOUND_PREFIX + participantId + "'."))));
         return add(file, participantDTO, username);
     }
 

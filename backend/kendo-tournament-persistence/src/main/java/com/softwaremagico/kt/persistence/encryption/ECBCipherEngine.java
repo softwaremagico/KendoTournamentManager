@@ -22,7 +22,6 @@ package com.softwaremagico.kt.persistence.encryption;
  */
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
-
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -55,39 +54,38 @@ public class ECBCipherEngine implements ICipherEngine {
 
     @Override
     public String encrypt(String input) throws InvalidEncryptionException {
-        return encrypt(input, getDatabasePublicKey());
+        return this.encrypt(input, getDatabasePublicKey());
     }
 
     @Override
     public String encrypt(String input, String publickey) throws InvalidEncryptionException {
         try {
             final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-            cipher.init(Cipher.ENCRYPT_MODE, loadPublicKey(publickey));
+            cipher.init(Cipher.ENCRYPT_MODE, this.loadPublicKey(publickey));
             return Base64.getEncoder().encodeToString(cipher.doFinal(input.getBytes(StandardCharsets.UTF_8)));
-        } catch (InvalidEncryptionException | GeneralSecurityException e) {
+        } catch (final InvalidEncryptionException | GeneralSecurityException e) {
             throw new InvalidEncryptionException(e);
         }
     }
 
     @Override
     public String decrypt(String encrypted) throws InvalidEncryptionException {
-        return decrypt(encrypted, getDatabasePrivateKey());
+        return this.decrypt(encrypted, getDatabasePrivateKey());
     }
 
     @Override
     public String decrypt(String encrypted, String privatekey) throws InvalidEncryptionException {
         try {
             final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-            cipher.init(Cipher.DECRYPT_MODE, loadPrivateKey(privatekey));
+            cipher.init(Cipher.DECRYPT_MODE, this.loadPrivateKey(privatekey));
             return new String(cipher.doFinal(Base64.getDecoder().decode(encrypted)), StandardCharsets.UTF_8);
-        } catch (InvalidEncryptionException | GeneralSecurityException e) {
+        } catch (final InvalidEncryptionException | GeneralSecurityException e) {
             throw new InvalidEncryptionException(e);
         }
     }
 
     // convert String publickey to Key object
-    public Key loadPublicKey(String stored)
-            throws GeneralSecurityException {
+    public Key loadPublicKey(String stored) throws GeneralSecurityException {
         final byte[] data = Base64.getDecoder().decode(stored);
         final X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
         final KeyFactory fact = KeyFactory.getInstance(SECRET_KEY_ALGORITHM);
@@ -95,8 +93,7 @@ public class ECBCipherEngine implements ICipherEngine {
     }
 
     // Convert String private key to privateKey object
-    public PrivateKey loadPrivateKey(String stored)
-            throws GeneralSecurityException {
+    public PrivateKey loadPrivateKey(String stored) throws GeneralSecurityException {
         final byte[] clear = Base64.getDecoder().decode(stored);
         final PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(clear);
         final KeyFactory fact = KeyFactory.getInstance(SECRET_KEY_ALGORITHM);
@@ -114,20 +111,20 @@ public class ECBCipherEngine implements ICipherEngine {
     }
 
     public String getPrivateKey() {
-        if (privateKey == null) {
+        if (this.privateKey == null) {
             throw new InvalidEncryptionException("No private key loaded!");
         }
-        final String encodedPrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+        final String encodedPrivateKey = Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
         EncryptorLogger.debug(this.getClass().getName(), "Private key: " + encodedPrivateKey);
         return encodedPrivateKey;
     }
 
     public String getPublicKey() {
-        if (publicKey == null) {
+        if (this.publicKey == null) {
             throw new InvalidEncryptionException("No public key loaded!");
         }
 
-        final String encodedPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+        final String encodedPublicKey = Base64.getEncoder().encodeToString(this.publicKey.getEncoded());
         EncryptorLogger.debug(this.getClass().getName(), "Public key: " + encodedPublicKey);
         return encodedPublicKey;
     }

@@ -60,51 +60,34 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         long drawDuels = 0L;
         for (final Duel duel : duels) {
             final int winner = duel.getWinner();
+
+            final DuelAccumulator acc;
             if (Objects.equals(duel.getCompetitor1(), participant)) {
-                populateScores(participantFightStatistics, duel.getCompetitor1Score());
-                populateReceivedScores(participantFightStatistics, duel.getCompetitor2Score());
-                participantFightStatistics.setFaults(participantFightStatistics.getFaults()
-                        + (duel.getCompetitor1Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
-                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                        + (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
-                for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestHit) {
-                        quickestHit = scoreTime;
-                    }
-                }
-                for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestReceivedHit) {
-                        quickestReceivedHit = scoreTime;
-                    }
-                }
-                if (winner < 0) {
-                    wonDuels++;
-                } else if (winner == 0) {
-                    drawDuels++;
-                } else {
-                    lostDuels++;
-                }
-                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                    totalDuelsDuration += duel.getDuration();
-                }
+                acc = new DuelAccumulator(
+                    duel.getCompetitor1Score(), duel.getCompetitor2Score(),
+                    duel.getCompetitor1Fault(), duel.getCompetitor2Fault(),
+                    duel.getCompetitor1ScoreTime(), duel.getCompetitor2ScoreTime(),
+                    winner < 0, winner > 0);
             } else if (Objects.equals(duel.getCompetitor2(), participant)) {
-                populateScores(participantFightStatistics, duel.getCompetitor2Score());
-                populateReceivedScores(participantFightStatistics, duel.getCompetitor1Score());
+                acc = new DuelAccumulator(
+                    duel.getCompetitor2Score(), duel.getCompetitor1Score(),
+                    duel.getCompetitor2Fault(), duel.getCompetitor1Fault(),
+                    duel.getCompetitor2ScoreTime(), duel.getCompetitor1ScoreTime(),
+                    winner > 0, winner < 0);
+            } else {
+                acc = null;
+            }
+
+            if (acc != null) {
+                populateScores(participantFightStatistics, acc.myScores());
+                populateReceivedScores(participantFightStatistics, acc.opponentScores());
                 participantFightStatistics.setFaults(participantFightStatistics.getFaults()
-                        + (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
+                        + (Boolean.TRUE.equals(acc.myFault()) ? 1 : 0));
                 participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                        + (duel.getCompetitor2Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
-                for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestHit) {
-                        quickestHit = scoreTime;
-                    }
-                }
-                for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestReceivedHit) {
-                        quickestReceivedHit = scoreTime;
-                    }
-                }
-                if (winner > 0) {
+                        + (Boolean.TRUE.equals(acc.opponentFault()) ? 1 : 0));
+                quickestHit = updateQuickest(acc.myScoreTimes(), quickestHit);
+                quickestReceivedHit = updateQuickest(acc.opponentScoreTimes(), quickestReceivedHit);
+                if (acc.won()) {
                     wonDuels++;
                 } else if (winner == 0) {
                     drawDuels++;
@@ -115,7 +98,6 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                     totalDuelsDuration += duel.getDuration();
                 }
             }
-
             if (Objects.equals(duel.getCompetitorWinner(), participant)) {
                 if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
                     totalDuelWonsWithDuration += duel.getDuration();
@@ -155,6 +137,27 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         participantFightStatistics.setDrawDuels(drawDuels);
         participantFightStatistics.setLostDuels(lostDuels);
         return participantFightStatistics;
+    }
+
+    private record DuelAccumulator(
+        List<Score> myScores,
+        List<Score> opponentScores,
+        Boolean myFault,
+        Boolean opponentFault,
+        List<Integer> myScoreTimes,
+        List<Integer> opponentScoreTimes,
+        boolean won,
+        boolean lost) {
+    }
+
+    private long updateQuickest(List<Integer> scoreTimes, long current) {
+        long best = current;
+        for (final Integer scoreTime : scoreTimes) {
+            if (scoreTime != null && scoreTime < best) {
+                best = scoreTime;
+            }
+        }
+        return best;
     }
 
     private void populateScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {

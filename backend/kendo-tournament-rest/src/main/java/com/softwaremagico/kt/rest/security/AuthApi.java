@@ -28,7 +28,6 @@ import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
-import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -82,6 +81,7 @@ import java.util.Set;
 public class AuthApi {
     private static final int MAX_WAITING_SECONDS = 10;
     private static final long MILLIS = 1000L;
+    private static final String USER_NOT_FOUND_TEMPLATE = "User '%s' not found!";
     public static final String SESSION_HEADER = "X-Session";
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
@@ -104,10 +104,9 @@ public class AuthApi {
 
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
-                   AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
-                   AuthenticatedUserProvider authenticatedUserProvider,
-                   ParticipantController participantController, TournamentProvider tournamentProvider,
-                   @Value("${enable.guest.user:false}") String guestUsersEnabled) {
+            AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
+            AuthenticatedUserProvider authenticatedUserProvider, ParticipantController participantController,
+            TournamentProvider tournamentProvider, @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserController = authenticatedUserController;
@@ -119,113 +118,123 @@ public class AuthApi {
     }
 
     public void addUserAdminGeneratedListeners(UserAdminGeneratedListener listener) {
-        userAdminGeneratedListeners.add(listener);
+        this.userAdminGeneratedListeners.add(listener);
     }
-
 
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
-        final String ip = getClientIP(httpRequest);
+    public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request,
+            HttpServletRequest httpRequest) {
+        final String ip = this.getClientIP(httpRequest);
         try {
-            //Check if the IP is blocked.
-            if (bruteForceService.isBlocked(ip)) {
+            // Check if the IP is blocked.
+            if (this.bruteForceService.isBlocked(ip)) {
                 try {
-                    Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    Thread.sleep(this.random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+                    JwtFilterLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
                     final HttpHeaders headers = new HttpHeaders();
-                    headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
-                            + bruteForceService.getExpirationTime()));
+                    headers.add(HttpHeaders.RETRY_AFTER, String
+                            .valueOf(this.bruteForceService.getElementsTime(ip) + this.bruteForceService.getExpirationTime()));
                     return new ResponseEntity<>(headers, HttpStatus.LOCKED);
-                } catch (InterruptedException e) {
-                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                } catch (final InterruptedException e) {
+                    JwtFilterLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
                     try {
                         final HttpHeaders headers = new HttpHeaders();
-                        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
-                                + bruteForceService.getExpirationTime()));
+                        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(
+                                this.bruteForceService.getElementsTime(ip) + this.bruteForceService.getExpirationTime()));
                         return new ResponseEntity<>(headers, HttpStatus.LOCKED);
                     } finally {
                         Thread.currentThread().interrupt();
                     }
                 }
             }
-            //We verify the provided credentials using the authentication manager
-            RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
-            final Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
+            // We verify the provided credentials using the authentication manager
+            JwtFilterLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
+            final Authentication authenticate = this.authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            JwtFilterLogger.debug(this.getClass().getName(),
+                    "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             try {
-                final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
-                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
-                bruteForceService.loginSucceeded(ip);
+                final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(authenticate.getName())
+                        .orElseThrow(() -> new UsernameNotFoundException(
+                                String.format(USER_NOT_FOUND_TEMPLATE, authenticate.getName())));
+                final long jwtExpiration = this.jwtTokenUtil.getJwtExpirationTime();
+                final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip);
+                this.bruteForceService.loginSucceeded(ip);
 
-                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+                // We generate the JWT token and return it as a response header along with the
+                // user identity information in the response body.
                 return ResponseEntity.ok()
-                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                        .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
-            } catch (UsernameNotFoundException e) {
-                RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
+            } catch (final UsernameNotFoundException e) {
+                JwtFilterLogger.warning(this.getClass().getName(), "Bad credentials!.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-        } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
-            //Create a default user if no user exists. Needed when database is encrypted.
-            if (authenticatedUserController.countUsers() == 0) {
-                RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
-                final AuthenticatedUser user = authenticatedUserController.createUser(
-                        null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ADMIN);
-                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
+        } catch (final BadCredentialsException ex) {
+            JwtFilterLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+            // Create a default user if no user exists. Needed when database is encrypted.
+            if (this.authenticatedUserController.countUsers() == 0) {
+                JwtFilterLogger.info(this.getClass().getName(),
+                        "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
+                final AuthenticatedUser user = this.authenticatedUserController.createUser(null, request.getUsername(),
+                        "Default", "Admin", request.getPassword(), AvailableRole.ADMIN);
+                final long jwtExpiration = this.jwtTokenUtil.getJwtExpirationTime();
+                final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
-                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+                // We generate the JWT token and return it as a response header along with the
+                // user identity information in the response body.
                 final HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
                 headers.add(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration));
-                userAdminGeneratedListeners.forEach(userAdminGeneratedListener
-                        -> userAdminGeneratedListener.generated(user.getUsername()));
+                this.userAdminGeneratedListeners.forEach(
+                        userAdminGeneratedListener -> userAdminGeneratedListener.generated(user.getUsername()));
                 return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
             }
-            bruteForceService.loginFailed(ip);
+            this.bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     @Operation(summary = "Gets a JWT Token for guest users.")
     @PostMapping(path = "/public/login/guest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<IAuthenticatedUser> loginAsGuest(@RequestBody AuthGuestRequest request, HttpServletRequest httpRequest) {
-        final String ip = getClientIP(httpRequest);
-        if (!guestEnabled) {
+    public ResponseEntity<IAuthenticatedUser> loginAsGuest(@RequestBody AuthGuestRequest request,
+            HttpServletRequest httpRequest) {
+        final String ip = this.getClientIP(httpRequest);
+        if (!this.guestEnabled) {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
             try {
-                final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
+                final IAuthenticatedUser user = this.authenticatedUserProvider
+                        .findByUsername(AuthenticatedUserProvider.GUEST_USER)
                         .orElseThrow(() -> new GuestDisabledException(this.getClass(),
-                                String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
-                final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
+                                String.format(USER_NOT_FOUND_TEMPLATE, AuthenticatedUserProvider.GUEST_USER)));
+                final long jwtExpiration = this.jwtTokenUtil.getJwtGuestExpirationTime();
+                final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
 
-                //Guest user can only access to non-locked tournaments.
-                final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
-                        new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+                // Guest user can only access to non-locked tournaments.
+                final Tournament tournament = this.tournamentProvider.get(request.getTournamentId())
+                        .orElseThrow(() -> new GuestDisabledException(this.getClass(),
+                                String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
 
                 if (tournament.isLocked()) {
-                    throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
+                    throw new GuestDisabledException(this.getClass(),
+                            "Tournament is finished and guest users are not allowed any more.");
                 }
 
-                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+                // We generate the JWT token and return it as a response header along with the
+                // user identity information in the response body.
                 return ResponseEntity.ok()
-                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                        .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
-            } catch (UsernameNotFoundException e) {
-                RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
+            } catch (final UsernameNotFoundException e) {
+                JwtFilterLogger.warning(this.getClass().getName(), "Bad credentials!.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-        } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+        } catch (final BadCredentialsException ex) {
+            JwtFilterLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -233,18 +242,17 @@ public class AuthApi {
     @Operation(summary = "Creates a jwt token for a participant.")
     @PostMapping(value = "/public/participant/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<IAuthenticatedUser> getToken(@RequestBody TemporalToken temporalToken,
-                                                       HttpServletRequest httpRequest) {
-        final String ip = getClientIP(httpRequest);
-        final Token token = participantController.generateFromToken(temporalToken.getContent());
+            HttpServletRequest httpRequest) {
+        final String ip = this.getClientIP(httpRequest);
+        final Token token = this.participantController.generateFromToken(temporalToken.getContent());
 
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();
 
-        final long jwtExpiration = jwtTokenUtil.getJwtParticipantExpirationTime();
-        final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
+        final long jwtExpiration = this.jwtTokenUtil.getJwtParticipantExpirationTime();
+        final String jwtToken = this.jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
 
-        return ResponseEntity.ok()
-                .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
+        return ResponseEntity.ok().headers(this.getLoginHeaders(jwtToken, milliseconds, this.jwtTokenUtil.getSession(jwtToken)))
                 .body(token.getParticipant());
     }
 
@@ -252,33 +260,35 @@ public class AuthApi {
     @Operation(summary = "Gets all users.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<AuthenticatedUser> getAll(HttpServletRequest httpRequest) {
-        return authenticatedUserController.findAll();
+        return this.authenticatedUserController.findAll();
     }
-
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
-        return authenticatedUserController.createUser(authentication.getName(), request);
+    public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication,
+            HttpServletRequest httpRequest) {
+        return this.authenticatedUserController.createUser(authentication.getName(), request);
     }
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
-        return authenticatedUserController.updateUser(authentication.getName(), request);
+    public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication,
+            HttpServletRequest httpRequest) {
+        return this.authenticatedUserController.updateUser(authentication.getName(), request);
     }
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Deletes a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(path = "/register/{username}")
-    public void delete(@Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
-                       Authentication authentication, HttpServletRequest httpRequest) {
+    public void delete(
+            @Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
+            Authentication authentication, HttpServletRequest httpRequest) {
         if (Objects.equals(authentication.getName(), username)) {
             throw new InvalidRequestException(this.getClass(), "You cannot delete the current user!");
         }
-        authenticatedUserController.deleteUser(authentication.getName(), username);
+        this.authenticatedUserController.deleteUser(authentication.getName(), username);
     }
 
     private String getClientIP(HttpServletRequest httpRequest) {
@@ -293,10 +303,11 @@ public class AuthApi {
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
-            throws InterruptedException {
-        Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-        authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword(), authentication.getName());
+    public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication,
+            HttpServletRequest httpRequest) throws InterruptedException {
+        Thread.sleep(this.random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+        this.authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(),
+                request.getNewPassword(), authentication.getName());
     }
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
@@ -304,14 +315,15 @@ public class AuthApi {
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public void updateUserPassword(@Parameter(description = "username", required = true)
-                                   @PathVariable("username") String username,
-                                   @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
+    public void updateUserPassword(
+            @Parameter(description = "username", required = true) @PathVariable("username") String username,
+            @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
-        Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+        Thread.sleep(this.random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
-            authenticatedUserController.updatePassword(authentication.getName(), username, request.getNewPassword(), request.getNewPassword());
-        } catch (Exception e) {
+            this.authenticatedUserController.updatePassword(authentication.getName(), username, request.getNewPassword(),
+                    request.getNewPassword());
+        } catch (final Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
     }
@@ -322,7 +334,7 @@ public class AuthApi {
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public Set<String> getRoles(Authentication authentication, HttpServletRequest httpRequest) {
-        return authenticatedUserController.getRoles(authentication.getName());
+        return this.authenticatedUserController.getRoles(authentication.getName());
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
@@ -331,20 +343,17 @@ public class AuthApi {
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest,
-                                          @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token) {
-        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
-                new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
-        final String ip = getClientIP(httpRequest);
-        final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
+            @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token) {
+        final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(
+                () -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_TEMPLATE, authentication.getName())));
+        final String ip = this.getClientIP(httpRequest);
+        final long jwtExpiration = this.jwtTokenUtil.getJwtExpirationTime();
         JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),
                 new Date(jwtExpiration));
-        final String accessToken = jwtTokenUtil.generateAccessToken(user, ip);
-        final String session = jwtTokenUtil.getSession(accessToken);
-        return ResponseEntity.ok()
-                .headers(getLoginHeaders(accessToken, jwtExpiration, session))
-                .build();
+        final String accessToken = this.jwtTokenUtil.generateAccessToken(user, ip);
+        final String session = this.jwtTokenUtil.getSession(accessToken);
+        return ResponseEntity.ok().headers(this.getLoginHeaders(accessToken, jwtExpiration, session)).build();
     }
-
 
     private HttpHeaders getLoginHeaders(String jwtToken, long expirationTime, String session) {
         final HttpHeaders headers = new HttpHeaders();

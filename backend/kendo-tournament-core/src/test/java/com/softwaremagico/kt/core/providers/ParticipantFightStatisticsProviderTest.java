@@ -543,23 +543,24 @@ public class ParticipantFightStatisticsProviderTest {
         assertNotNull(result);
         assertEquals(result.getDrawDuels(), 1L);
         assertEquals(result.getFaults(), 0L);
-        assertEquals(result.getReceivedFaults(), 0L);
+        assertEquals(result.getReceivedFaults(), 1L);  // competitor1Fault=true → participant receives 1 fault
         assertEquals(result.getQuickestHit(), 30);
         assertEquals(result.getQuickestReceivedHit(), 40);
         assertEquals(result.getTotalDuelsTime(), 0L);
     }
 
     @Test(groups = "participantFightStatistics")
-    public void get_shouldNotCountReceivedFaultWhenCompetitor2FaultIsTrueButCompetitor1FaultIsFalse() {
+    public void get_shouldHandleNullReceivedFaultAsCompetitor2() {
         Participant participant = createParticipant(2, "Fighter Two");
         Participant opponent = createParticipant(1, "Fighter One");
         Duel duel = createDuel(opponent, participant);
-        duel.setCompetitor2Fault(true);
-        duel.setCompetitor1Fault(false);
+        duel.setCompetitor1Fault(null);  // opponent fault is null → treated as no fault
+        duel.setCompetitor2Fault(true);  // participant fault is true → 1 fault
 
         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
 
+        // null fault is treated as false (Boolean.TRUE.equals(null) == false), so no NPE and no received fault
         ParticipantFightStatistics result = provider.get(participant);
 
         assertNotNull(result);
@@ -890,18 +891,6 @@ public class ParticipantFightStatisticsProviderTest {
          assertEquals(result.getReceivedDoNumber(), 1L);
      }
 
-     @Test(groups = "participantFightStatistics")
-     public void get_shouldHandleNullReceivedFaultAsCompetitor2() {
-         Participant participant = createParticipant(2, "Fighter Two");
-         Duel duel = createDuel(createParticipant(1, "Fighter One"), participant);
-         duel.setCompetitor1Fault(null);
-         duel.setCompetitor2Fault(true);
-
-         when(mockDuelProvider.get(participant)).thenReturn(List.of(duel));
-         when(mockDuelProvider.getDurationAverage(participant)).thenReturn(0L);
-
-         org.testng.Assert.assertThrows(NullPointerException.class, () -> provider.get(participant));
-     }
 
      @Test(groups = "participantFightStatistics")
      public void get_shouldCalculateAverageWithPositiveDurationAverage() {

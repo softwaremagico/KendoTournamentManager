@@ -90,6 +90,8 @@ import java.util.Locale;
 @RequestMapping("/tournaments")
 public class TournamentServices extends BasicServices<Tournament, TournamentDTO, TournamentRepository,
         TournamentProvider, TournamentConverterRequest, TournamentConverter, TournamentController> {
+    private static final String CONTENT_DISPOSITION_TYPE = "attachment";
+
     private final PdfController pdfController;
 
     private final KendoSecurityService kendoSecurityService;
@@ -158,7 +160,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
             final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null && onlyNew,
                     authentication.getName(), session,
                     roles).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(CONTENT_DISPOSITION_TYPE)
                     .filename(tournament.getName() + " - accreditations.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -185,7 +187,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         try {
             final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType, authentication.getName(), session)
                     .generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(CONTENT_DISPOSITION_TYPE)
                     .filename(tournament.getName() + " - accreditations.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -211,7 +213,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         try {
             final byte[] bytes = pdfController.generateTournamentDiplomas(tournament, onlyNew != null && onlyNew,
                     authentication.getName(), session, roles).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(CONTENT_DISPOSITION_TYPE)
                     .filename(tournament.getName() + " - diplomas.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -234,7 +236,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         final TournamentDTO tournament = getController().get(tournamentId);
         try {
             final byte[] bytes = pdfController.generateTournamentDiploma(tournament, participant).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(CONTENT_DISPOSITION_TYPE)
                     .filename(participant.getName() + " " + participant.getLastname() + " - diplomas.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;

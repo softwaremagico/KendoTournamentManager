@@ -703,28 +703,26 @@ public class AchievementController extends BasicInsertableController<Achievement
         int minTime = tournament.getDuelsDuration();
         Participant participant = null;
         for (final Duel duel : getDuelsFromTournament()) {
+            // competitor1
             for (final Integer time : duel.getCompetitor1ScoreTime()) {
-                if (time == null) {
-                    continue;
-                }
-                //Billy cannot be a draw time.
-                if (time == minTime && !Objects.equals(participant, duel.getCompetitor1())) {
-                    participant = null;
-                } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
-                    participant = duel.getCompetitor1();
-                    minTime = time;
+                if (time != null) {
+                    if (time == minTime && !Objects.equals(participant, duel.getCompetitor1())) {
+                        participant = null;
+                    } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
+                        participant = duel.getCompetitor1();
+                        minTime = time;
+                    }
                 }
             }
+            // competitor2
             for (final Integer time : duel.getCompetitor2ScoreTime()) {
-                if (time == null) {
-                    continue;
-                }
-                //Billy cannot be a draw time.
-                if (time == minTime && !Objects.equals(participant, duel.getCompetitor2())) {
-                    participant = null;
-                } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
-                    participant = duel.getCompetitor2();
-                    minTime = time;
+                if (time != null) {
+                    if (time == minTime && !Objects.equals(participant, duel.getCompetitor2())) {
+                        participant = null;
+                    } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
+                        participant = duel.getCompetitor2();
+                        minTime = time;
+                    }
                 }
             }
         }
@@ -2224,32 +2222,36 @@ public class AchievementController extends BasicInsertableController<Achievement
                 for (Duel previousDuel : previousDuels) {
                     if (previousDuel.getCreatedAt().isBefore(tournament.getCreatedAt())) {
                         numberOfPreviousDuels++;
-                        //Check if he has already won vs the master
-                        if (Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner()) || previousDuel.getWinner() == 0) {
+                        if (Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner())
+                                || previousDuel.getWinner() == 0) {
                             isApprentice = false;
                             break;
                         }
                     }
                 }
                 if (isApprentice && duel.getCompetitorWinner() != null) {
-                    //Generate achievement depending on the number of fights.
-                    if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_NORMAL && numberOfPreviousDuels < MINIMUM_LOST_SITH_BRONZE) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.NORMAL));
-                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_BRONZE && numberOfPreviousDuels < MINIMUM_LOST_SITH_SILVER) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.BRONZE));
-                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_SILVER && numberOfPreviousDuels < MINIMUM_LOST_SITH_GOLD) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.SILVER));
-                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_GOLD) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.GOLD));
+                    final AchievementGrade sithGrade = getSithAchievementGrade(numberOfPreviousDuels);
+                    if (sithGrade != null) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament,
+                                AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER, sithGrade));
                     }
                 }
             }
         });
         return achievementProvider.saveAll(achievements);
+    }
+
+    private AchievementGrade getSithAchievementGrade(int numberOfPreviousDuels) {
+        if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_GOLD) {
+            return AchievementGrade.GOLD;
+        } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_SILVER) {
+            return AchievementGrade.SILVER;
+        } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_BRONZE) {
+            return AchievementGrade.BRONZE;
+        } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_NORMAL) {
+            return AchievementGrade.NORMAL;
+        }
+        return null;
     }
 
     /**
@@ -2334,73 +2336,81 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateLongPathAchievement(Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();
         final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament);
-        //Also the current tournament!
         previousTournaments.addFirst(tournament);
-        final Map<Participant, Long> tournamentDuration = new HashMap<>();
-        for (Tournament oldTournament : previousTournaments) {
+        final Map<Participant, Long> cumulativeDuration = accumulateTournamentDurations(previousTournaments, tournament);
+        classifyLongPathAchievements(cumulativeDuration, achievements, tournament);
+        return achievements;
+    }
+
+    private Map<Participant, Long> accumulateTournamentDurations(List<Tournament> tournaments, Tournament currentTournament) {
+        final Map<Participant, Long> durationByParticipant = new HashMap<>();
+        for (final Tournament oldTournament : tournaments) {
             final List<Duel> duels = duelProvider.get(oldTournament);
             if (duels.isEmpty()) {
                 continue;
             }
-            //Obtain tournament duration. From first score to latest one.
-            LocalDateTime startingTime = LocalDateTime.MAX;
-            LocalDateTime endingTime = LocalDateTime.MIN;
-            for (Duel duel : duels) {
-                if (duel.getStartedAt() != null && duel.getStartedAt().isBefore(startingTime)) {
-                    startingTime = duel.getStartedAt();
-                }
-                if (duel.getFinishedAt() != null && duel.getFinishedAt().isAfter(endingTime)) {
-                    endingTime = duel.getFinishedAt();
-                }
-            }
             try {
-                final long durationOfTournament = endingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                        - startingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                final List<Participant> participants = participantProvider.get(tournament);
-                //Increase tournament duration by participant.
-                participants.forEach(participant -> tournamentDuration.merge(participant, durationOfTournament, Long::sum));
-            } catch (ArithmeticException e) {
-                //Ignore invalid dates.
+                final long durationMs = calculateTournamentDurationMs(duels);
+                participantProvider.get(currentTournament)
+                        .forEach(p -> durationByParticipant.merge(p, durationMs, Long::sum));
+            } catch (ArithmeticException ignored) {
+                // Ignore tournaments with invalid date arithmetic.
             }
         }
+        return durationByParticipant;
+    }
 
-        final Set<Participant> alreadyWithNormalAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.NORMAL)
-                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
-        final Set<Participant> alreadyWithBronzeAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.BRONZE)
-                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
-        final Set<Participant> alreadyWithSilverAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.SILVER)
-                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
-        final Set<Participant> alreadyWithGoldAchievements = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.GOLD)
-                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
-
-
-        final Set<Participant> normalAchievements = new HashSet<>();
-        final Set<Participant> bronzeAchievements = new HashSet<>();
-        final Set<Participant> silverAchievements = new HashSet<>();
-        final Set<Participant> goldAchievements = new HashSet<>();
-
-        //Count achievements.
-        for (Map.Entry<Participant, Long> duration : tournamentDuration.entrySet()) {
-            if (duration.getValue() > LONG_PATH_NORMAL_DURATION && !alreadyWithNormalAchievements.contains(duration.getKey())) {
-                normalAchievements.add(duration.getKey());
+    private long calculateTournamentDurationMs(List<Duel> duels) {
+        LocalDateTime startingTime = LocalDateTime.MAX;
+        LocalDateTime endingTime = LocalDateTime.MIN;
+        for (final Duel duel : duels) {
+            if (duel.getStartedAt() != null && duel.getStartedAt().isBefore(startingTime)) {
+                startingTime = duel.getStartedAt();
             }
-            if (duration.getValue() > LONG_PATH_BRONZE_DURATION && !alreadyWithBronzeAchievements.contains(duration.getKey())) {
-                bronzeAchievements.add(duration.getKey());
-            }
-            if (duration.getValue() > LONG_PATH_SILVER_DURATION && !alreadyWithSilverAchievements.contains(duration.getKey())) {
-                silverAchievements.add(duration.getKey());
-            }
-            if (duration.getValue() > LONG_PATH_GOLD_DURATION && !alreadyWithGoldAchievements.contains(duration.getKey())) {
-                goldAchievements.add(duration.getKey());
+            if (duel.getFinishedAt() != null && duel.getFinishedAt().isAfter(endingTime)) {
+                endingTime = duel.getFinishedAt();
             }
         }
+        return endingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                - startingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
 
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.NORMAL, normalAchievements, tournament));
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.BRONZE, bronzeAchievements, tournament));
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.SILVER, silverAchievements, tournament));
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.GOLD, goldAchievements, tournament));
+    private void classifyLongPathAchievements(Map<Participant, Long> durationByParticipant,
+                                              List<Achievement> achievements, Tournament tournament) {
+        final Set<Participant> alreadyNormal = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.NORMAL)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+        final Set<Participant> alreadyBronze = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.BRONZE)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+        final Set<Participant> alreadySilver = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.SILVER)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+        final Set<Participant> alreadyGold = achievementProvider.get(AchievementType.LONG_PATH, AchievementGrade.GOLD)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
 
-        return achievements;
+        final Set<Participant> normalSet = new HashSet<>();
+        final Set<Participant> bronzeSet = new HashSet<>();
+        final Set<Participant> silverSet = new HashSet<>();
+        final Set<Participant> goldSet = new HashSet<>();
+
+        for (final Map.Entry<Participant, Long> entry : durationByParticipant.entrySet()) {
+            final Participant p = entry.getKey();
+            final long value = entry.getValue();
+            if (value > LONG_PATH_NORMAL_DURATION && !alreadyNormal.contains(p)) {
+                normalSet.add(p);
+            }
+            if (value > LONG_PATH_BRONZE_DURATION && !alreadyBronze.contains(p)) {
+                bronzeSet.add(p);
+            }
+            if (value > LONG_PATH_SILVER_DURATION && !alreadySilver.contains(p)) {
+                silverSet.add(p);
+            }
+            if (value > LONG_PATH_GOLD_DURATION && !alreadyGold.contains(p)) {
+                goldSet.add(p);
+            }
+        }
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.NORMAL, normalSet, tournament));
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.BRONZE, bronzeSet, tournament));
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.SILVER, silverSet, tournament));
+        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.GOLD, goldSet, tournament));
     }
 
 

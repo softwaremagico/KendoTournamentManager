@@ -48,6 +48,7 @@ import java.util.Objects;
 
 @Service
 public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository> {
+    private static final String NOT_FOUND_SUFFIX = "' not found.";
 
     private final FightRepository fightRepository;
     private final DuelRepository duelRepository;
@@ -165,32 +166,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         groupLinkRepository.deleteByTournament(tournament);
         if (!groups.isEmpty()) {
             if (!groupsByLevel.get(0).isEmpty()) {
-                for (int i = level; i <= groups.get(groups.size() - 1).getLevel(); i++) {
-                    if (i > 1 || groupsByLevel.get(0).get(0).getNumberOfWinners() == 1) {
-                        if (!groupsByLevel.get(i).isEmpty()) {
-                            while ((groupsByLevel.get(i - 1).size() + 1) / 2 < groupsByLevel.get(i).size()) {
-                                //Delete last group.
-                                getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
-                                deleted++;
-                                groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
-                            }
-                            //Remove last single groups if the previous level has only one group.
-                            if (groupsByLevel.get(i - 1).size() == 1) {
-                                getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
-                                deleted++;
-                                groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
-                            }
-                        }
-                    } else if (i == 1 && groupsByLevel.get(0).get(0).getNumberOfWinners() == 2 && !groupsByLevel.get(i).isEmpty()) {
-                        // Decrease level one if needed.
-                        while ((groupsByLevel.get(0).size() + 1) < groupsByLevel.get(1).size()) {
-                            //Delete last group.
-                            getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
-                            deleted++;
-                            groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
-                        }
-                    }
-                }
+                deleted += deleteGroupsFromLevel(groups, groupsByLevel, level);
             } else {
                 deleted += getRepository().deleteByTournamentAndLevel(tournament, 0);
             }
@@ -199,8 +175,56 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return deleted;
     }
 
+    private long deleteGroupsFromLevel(List<Group> groups, Map<Integer, List<Group>> groupsByLevel, int fromLevel) {
+        long deleted = 0;
+        final int maxLevel = groups.get(groups.size() - 1).getLevel();
+        final int numberOfWinnersAtLevelZero = groupsByLevel.get(0).get(0).getNumberOfWinners();
+
+        for (int i = fromLevel; i <= maxLevel; i++) {
+            if (i > 1 || numberOfWinnersAtLevelZero == 1) {
+                deleted += deleteExcessRegularGroups(groupsByLevel, i);
+            } else if (i == 1 && numberOfWinnersAtLevelZero == 2 && !groupsByLevel.get(i).isEmpty()) {
+                deleted += deleteExcessTwoWinnersGroups(groupsByLevel);
+            }
+        }
+        return deleted;
+    }
+
+    private long deleteExcessRegularGroups(Map<Integer, List<Group>> groupsByLevel, int level) {
+        long deleted = 0;
+        final List<Group> levelGroups = groupsByLevel.get(level);
+        if (levelGroups == null || levelGroups.isEmpty()) {
+            return 0;
+        }
+        final List<Group> prevLevelGroups = groupsByLevel.get(level - 1);
+
+        while ((prevLevelGroups.size() + 1) / 2 < levelGroups.size()) {
+            deleted += removeLastGroupFromLevel(levelGroups);
+        }
+        if (prevLevelGroups.size() == 1 && !levelGroups.isEmpty()) {
+            deleted += removeLastGroupFromLevel(levelGroups);
+        }
+        return deleted;
+    }
+
+    private long deleteExcessTwoWinnersGroups(Map<Integer, List<Group>> groupsByLevel) {
+        long deleted = 0;
+        final List<Group> level1Groups = groupsByLevel.get(1);
+        final List<Group> level0Groups = groupsByLevel.get(0);
+
+        while ((level0Groups.size() + 1) < level1Groups.size()) {
+            deleted += removeLastGroupFromLevel(level1Groups);
+        }
+        return deleted;
+    }
+
+    private long removeLastGroupFromLevel(List<Group> levelGroups) {
+        getRepository().delete(levelGroups.get(levelGroups.size() - 1));
+        levelGroups.remove(levelGroups.size() - 1);
+        return 1;
+    }
     public Group addTeams(Integer groupId, List<Team> teams, String username) {
-        final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + "' not found.",
+        final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + NOT_FOUND_SUFFIX,
                 ExceptionType.INFO));
         group.getTeams().addAll(teams.stream().filter(team -> !group.getTeams().contains(team)).toList());
         group.setUpdatedBy(username);
@@ -208,7 +232,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public Group deleteTeams(Integer groupId, List<Team> teams, String username) {
-        final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + "' not found.",
+        final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + NOT_FOUND_SUFFIX,
                 ExceptionType.INFO));
         group.getTeams().removeAll(teams);
         group.setUpdatedBy(username);
@@ -249,7 +273,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
             throw new TeamNotFoundException(this.getClass(), "No teams found!");
         }
 
-        Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Group with id '" + groupId + "' not found.",
+        Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Group with id '" + groupId + NOT_FOUND_SUFFIX,
                 ExceptionType.INFO));
 
         final List<Fight> fights = new ArrayList<>(group.getFights());

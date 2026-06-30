@@ -53,31 +53,76 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
 
     @Override
     protected LocalDateTime stringToEntityAttribute(String dbData) {
+        if (dbData == null || dbData.isEmpty()) {
+            return null;
+        }
+
+        LocalDateTime result = parseAsLongTimestamp(dbData);
+        if (result != null) {
+            return result;
+        }
+
+        result = parseAsLocalDateTime(dbData);
+        if (result != null) {
+            return result;
+        }
+
+        result = parseWithMilliseconds(dbData);
+        if (result != null) {
+            return result;
+        }
+
+        result = parseWithoutMilliseconds(dbData);
+        if (result != null) {
+            return result;
+        }
+
+        result = parseWithOffset(dbData);
+        if (result != null) {
+            return result;
+        }
+
+        EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
+        return null;
+    }
+
+    private LocalDateTime parseAsLongTimestamp(String dbData) {
         try {
-            return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
+            return new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
         } catch (NumberFormatException nfe) {
-            try {
-                //Old versions store it as LocalDateTime
-                return LocalDateTime.parse(dbData);
-            } catch (DateTimeParseException dtpe) {
-                try {
-                    // From SQL Script with milliseconds
-                    return LocalDateTime.parse(dbData, formatterWithMilliseconds);
-                } catch (DateTimeParseException dte) {
-                    try {
-                        // try without milliseconds
-                        return LocalDateTime.parse(dbData, formatter);
-                    } catch (DateTimeParseException dteo) {
-                        try {
-                            //Try with offset.
-                            return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
-                        } catch (DateTimeParseException e) {
-                            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
-                            return null;
-                        }
-                    }
-                }
-            }
+            return null;
+        }
+    }
+
+    private LocalDateTime parseAsLocalDateTime(String dbData) {
+        try {
+            return LocalDateTime.parse(dbData);
+        } catch (DateTimeParseException dtpe) {
+            return null;
+        }
+    }
+
+    private LocalDateTime parseWithMilliseconds(String dbData) {
+        try {
+            return LocalDateTime.parse(dbData, formatterWithMilliseconds);
+        } catch (DateTimeParseException dte) {
+            return null;
+        }
+    }
+
+    private LocalDateTime parseWithoutMilliseconds(String dbData) {
+        try {
+            return LocalDateTime.parse(dbData, formatter);
+        } catch (DateTimeParseException dteo) {
+            return null;
+        }
+    }
+
+    private LocalDateTime parseWithOffset(String dbData) {
+        try {
+            return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
+        } catch (DateTimeParseException e) {
+            return null;
         }
     }
 

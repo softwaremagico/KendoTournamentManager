@@ -66,6 +66,9 @@ import java.util.Set;
 @Controller
 public class FightController extends BasicInsertableController<Fight, FightDTO, FightRepository,
         FightProvider, FightConverterRequest, FightConverter> {
+    private static final String TOURNAMENT_NOT_FOUND_PREFIX = "No tournament found with id '";
+    private static final String TOURNAMENT_NOT_FOUND_SUFFIX = "',";
+
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final TournamentHandlerSelector tournamentHandlerSelector;
@@ -118,7 +121,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public List<FightDTO> getByTournamentId(Integer tournamentId) {
         return get(tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + TOURNAMENT_NOT_FOUND_SUFFIX,
                         ExceptionType.INFO)))));
     }
 
@@ -211,13 +214,13 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public FightDTO getCurrent(Integer tournamentId) {
         return convert(getProvider().getCurrent((tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + TOURNAMENT_NOT_FOUND_SUFFIX,
                         ExceptionType.INFO)))));
     }
 
     public List<FightDTO> createFights(Integer tournamentId, TeamsOrder teamsOrder, Integer level, String createdBy, String session) {
         final Tournament tournament = (tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + TOURNAMENT_NOT_FOUND_SUFFIX,
                         ExceptionType.INFO)));
         //Delete any deeper level. If a group changes, the inner levels are invalid.
         getProvider().delete(tournament, level + 1);
@@ -243,7 +246,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public List<FightDTO> createNextFights(Integer tournamentId, String createdBy, String session) {
         final Tournament tournament = (tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + TOURNAMENT_NOT_FOUND_SUFFIX,
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
@@ -276,7 +279,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public boolean scoresGoesFromCompetitorsNameToCenter(int tournamentId) {
         return getProvider().scoresGoesFromCompetitorsNameToCenter(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + TOURNAMENT_NOT_FOUND_SUFFIX,
                         ExceptionType.INFO)));
     }
 
