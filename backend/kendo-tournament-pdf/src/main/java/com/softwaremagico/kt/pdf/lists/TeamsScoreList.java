@@ -42,6 +42,7 @@ import org.springframework.context.MessageSource;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Creates a sheet with the teams ranking depending on the performance on the tournament.
@@ -117,7 +118,7 @@ public class TeamsScoreList extends ParentList {
     private SwissTieBreakRule getSwissTieBreakRule() {
         return this.teamTopTen.stream()
                 .map(ScoreOfTeamDTO::getSwissTieBreakRuleUsed)
-                .filter(rule -> rule != null)
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
     }

@@ -81,7 +81,7 @@ public class IdCardTests {
     public void testNifFromDniContainsLetter() {
         final String nif = IdCard.nifFromDni(999);
         Assert.assertNotNull(nif);
-        Assert.assertTrue(nif.length() > 0);
+        Assert.assertFalse(nif.isEmpty());
         Assert.assertTrue(Character.isLetter(nif.charAt(nif.length() - 1)));
         Assert.assertFalse(Character.isDigit(nif.charAt(nif.length() - 1)));
     }

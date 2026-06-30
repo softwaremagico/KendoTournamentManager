@@ -46,6 +46,7 @@ import org.hibernate.annotations.FetchMode;
         @Index(name = "ind_tournament", columnList = "tournament"),
         @Index(name = "ind_type", columnList = "role_type"),
 })
+@SuppressWarnings("java:S2160")
 public class Role extends Element {
 
     @ManyToOne(fetch = FetchType.LAZY)

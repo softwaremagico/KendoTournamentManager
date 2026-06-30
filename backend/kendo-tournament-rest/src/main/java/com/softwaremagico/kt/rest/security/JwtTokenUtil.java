@@ -69,6 +69,7 @@ import java.util.UUID;
  * </p>
  */
 @Component
+@SuppressWarnings("java:S2143")
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
     /** Default token validity period in milliseconds (20 minutes). */

@@ -48,6 +48,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "tournament_image", indexes = {
         @Index(name = "ind_tournament", columnList = "tournament"),
 })
+@SuppressWarnings("java:S2160")
 public class TournamentImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;

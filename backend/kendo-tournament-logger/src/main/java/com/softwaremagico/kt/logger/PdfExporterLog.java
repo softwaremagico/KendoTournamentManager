@@ -27,9 +27,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines basic log behavior. Uses log4j.properties.
  */
-public class PdfExporterLog extends BasicLogger {
+public final class PdfExporterLog {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfExporterLog.class);
+
+    private PdfExporterLog() {
+    }
 
     /**
      * Events that have business meaning (i.e. creating category, deleting form,
@@ -40,7 +43,7 @@ public class PdfExporterLog extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(String className, String messageTemplate, Object... arguments) {
-        info(LOGGER, className, messageTemplate, arguments);
+        BasicLogger.info(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -56,7 +59,7 @@ public class PdfExporterLog extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(String className, String messageTemplate, Object... arguments) {
-        warning(LOGGER, className, messageTemplate, arguments);
+        BasicLogger.warning(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -72,7 +75,7 @@ public class PdfExporterLog extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void debug(String className, String messageTemplate, Object... arguments) {
-        debug(LOGGER, className, messageTemplate, arguments);
+        BasicLogger.debug(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -87,11 +90,11 @@ public class PdfExporterLog extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void severe(String className, String messageTemplate, Object... arguments) {
-        severe(LOGGER, className, messageTemplate, arguments);
+        BasicLogger.severe(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        errorMessageNotification(LOGGER, clazz.getName(), throwable);
+        BasicLogger.errorMessageNotification(LOGGER, clazz.getName(), throwable);
     }
 
     /**
@@ -103,11 +106,11 @@ public class PdfExporterLog extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void errorMessage(String className, String messageTemplate, Object... arguments) {
-        errorMessageNotification(LOGGER, className, messageTemplate, arguments);
+        BasicLogger.errorMessageNotification(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void errorMessage(Object object, Throwable throwable) {
-        errorMessageNotification(LOGGER, object.getClass().getName(), throwable);
+        BasicLogger.errorMessageNotification(LOGGER, object.getClass().getName(), throwable);
     }
 
     public static boolean isDebugEnabled() {

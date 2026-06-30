@@ -78,6 +78,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/auth")
+@SuppressWarnings("java:S2143")
 public class AuthApi {
     private static final int MAX_WAITING_SECONDS = 10;
     private static final long MILLIS = 1000L;

@@ -61,6 +61,7 @@ public class TournamentAccreditationCards extends PdfDocument {
     private Image defaultPhoto;
 
 
+    @SuppressWarnings("java:S107")
     public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
                                         Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner, byte[] background, byte[] defaultPhoto) {
         this.messageSource = messageSource;

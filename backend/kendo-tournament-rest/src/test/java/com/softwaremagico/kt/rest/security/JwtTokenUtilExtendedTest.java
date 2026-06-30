@@ -72,7 +72,7 @@ class JwtTokenUtilExtendedTest {
         String token = jwtTokenUtil.generateAccessToken(authenticatedUser, TEST_IP);
 
         assertNotNull(token);
-        assertTrue(token.length() > 0);
+        assertFalse(token.isEmpty());
         assertTrue(token.split("\\.").length == 3); // JWT has 3 parts separated by dots
     }
 

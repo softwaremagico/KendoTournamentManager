@@ -80,6 +80,7 @@ import java.util.Set;
                 @Index(name = "ind_club", columnList = "club"),
                 @Index(name = "ind_token", columnList = "temporal_token"),
         })
+@SuppressWarnings("java:S2160")
 public class Participant extends Element implements Comparable<Participant>, IParticipantName, UserDetails, IAuthenticatedUser {
 
     public static final String PARTICIPANT_ROLE = "participant";

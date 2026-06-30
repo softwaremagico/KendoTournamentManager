@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
 import java.io.Serial;
 import java.time.LocalDateTime;
 
+@SuppressWarnings("java:S2160")
 public class TournamentFightStatisticsDTO extends ElementDTO {
 
     @Serial

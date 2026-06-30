@@ -504,25 +504,38 @@ public class RankingProvider {
         final HashMap<Integer, List<Team>> teamsByPosition = new HashMap<>();
         final List<ScoreOfTeam> scores = getTeamsScoreRanking(group);
 
-        if (group != null && group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS) {
-            scores.forEach(score -> teamsByPosition.computeIfAbsent(score.getSortingIndex(), k -> new ArrayList<>()).add(score.getTeam()));
+        if (isSwissGroup(group)) {
+            addTeamsBySortingIndex(scores, teamsByPosition);
             return teamsByPosition;
         }
 
-        Integer position = 0;
+        addTeamsByOrderedScorePosition(group, scores, teamsByPosition);
+        return teamsByPosition;
+    }
+
+    private boolean isSwissGroup(Group group) {
+        return group != null && group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS;
+    }
+
+    private void addTeamsBySortingIndex(List<ScoreOfTeam> scores, Map<Integer, List<Team>> teamsByPosition) {
+        scores.forEach(score -> teamsByPosition.computeIfAbsent(score.getSortingIndex(), key -> new ArrayList<>())
+                .add(score.getTeam()));
+    }
+
+    private void addTeamsByOrderedScorePosition(Group group, List<ScoreOfTeam> scores, Map<Integer, List<Team>> teamsByPosition) {
+        int position = 0;
+        final Comparator<ScoreOfTeam> sorter = getTeamsSorter(group.getTournament().getTournamentScore().getScoreType(),
+                checkLevel(group.getTournament()));
         for (int i = 0; i < scores.size(); i++) {
-            teamsByPosition.computeIfAbsent(position, k -> new ArrayList<>());
-            // Put team in position.
-            teamsByPosition.get(position).add(scores.get(i).getTeam());
-            // Different score with next team.
-            if ((i < scores.size() - 1) && getTeamsSorter(group.getTournament().getTournamentScore().getScoreType(),
-                    checkLevel(group.getTournament()))
-                    .compare(scores.get(i), scores.get(i + 1)) != 0) {
+            teamsByPosition.computeIfAbsent(position, key -> new ArrayList<>()).add(scores.get(i).getTeam());
+            if (hasDifferentScoreWithNext(sorter, scores, i)) {
                 position++;
             }
         }
+    }
 
-        return teamsByPosition;
+    private boolean hasDifferentScoreWithNext(Comparator<ScoreOfTeam> sorter, List<ScoreOfTeam> scores, int index) {
+        return index < scores.size() - 1 && sorter.compare(scores.get(index), scores.get(index + 1)) != 0;
     }
 
     public List<ScoreOfTeam> getTeamsScoreRanking(Tournament tournament) {
@@ -592,6 +605,36 @@ public class RankingProvider {
                 return matchPoints;
             }
 
+            final int tieBreakComparison = compareTieBreakRules(firstScore, secondScore);
+            if (tieBreakComparison != 0) {
+                return tieBreakComparison;
+            }
+
+            final int hitsComparison = compareHits(firstScore, secondScore);
+            if (hitsComparison != 0) {
+                return hitsComparison;
+            }
+
+            final int hitsLostComparison = compareHitsLost(firstScore, secondScore);
+            if (hitsLostComparison != 0) {
+                return hitsLostComparison;
+            }
+
+            return compareByTeamName(firstScore, secondScore);
+        }
+
+        private int compareTieBreakRules(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            for (final SwissTieBreakRule rule : getOrderedRules()) {
+                final int tieBreakComparison = Double.compare(getTieBreakValue(secondScore.getTeam(), rule),
+                        getTieBreakValue(firstScore.getTeam(), rule));
+                if (tieBreakComparison != 0) {
+                    return tieBreakComparison;
+                }
+            }
+            return 0;
+        }
+
+        private List<SwissTieBreakRule> getOrderedRules() {
             final List<SwissTieBreakRule> orderedRules = new ArrayList<>();
             orderedRules.add(this.selectedRule);
             for (final SwissTieBreakRule rule : SwissTieBreakRule.values()) {
@@ -599,25 +642,18 @@ public class RankingProvider {
                     orderedRules.add(rule);
                 }
             }
+            return orderedRules;
+        }
 
-            for (final SwissTieBreakRule rule : orderedRules) {
-                final int tieBreakComparison = Double.compare(getTieBreakValue(secondScore.getTeam(), rule),
-                        getTieBreakValue(firstScore.getTeam(), rule));
-                if (tieBreakComparison != 0) {
-                    return tieBreakComparison;
-                }
-            }
+        private int compareHits(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            return secondScore.getHits().compareTo(firstScore.getHits());
+        }
 
-            final int hitsComparison = secondScore.getHits().compareTo(firstScore.getHits());
-            if (hitsComparison != 0) {
-                return hitsComparison;
-            }
+        private int compareHitsLost(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            return firstScore.getHitsLost().compareTo(secondScore.getHitsLost());
+        }
 
-            final int hitsLostComparison = firstScore.getHitsLost().compareTo(secondScore.getHitsLost());
-            if (hitsLostComparison != 0) {
-                return hitsLostComparison;
-            }
-
+        private int compareByTeamName(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
             return firstScore.getTeam().getName().compareTo(secondScore.getTeam().getName());
         }
 

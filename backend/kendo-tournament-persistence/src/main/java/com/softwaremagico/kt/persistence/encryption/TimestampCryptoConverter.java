@@ -29,6 +29,7 @@ import jakarta.persistence.Converter;
 import java.sql.Timestamp;
 
 @Converter
+@SuppressWarnings("java:S2143")
 public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp> implements AttributeConverter<Timestamp, String> {
 
     public TimestampCryptoConverter() {
