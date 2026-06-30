@@ -71,688 +71,688 @@ import java.util.stream.Stream;
 @Service
 public class RankingProvider {
 
-	private static final SwissTieBreakRule DEFAULT_SWISS_TIE_BREAK_RULE = SwissTieBreakRule.BUCHHOLZ;
-	private static final int SWISS_WIN_POINTS = 3;
-	private static final int SWISS_DRAW_POINTS = 1;
-
-	private final FightProvider fightProvider;
-	private final DuelProvider duelProvider;
-
-	private final ParticipantProvider participantProvider;
-
-	private final TournamentRepository tournamentRepository;
-
-	private final GroupProvider groupProvider;
-
-	private final RoleProvider roleProvider;
-
-	private final TeamProvider teamProvider;
-
-	private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
-
-	public RankingProvider(FightProvider fightProvider, DuelProvider duelProvider,
-			ParticipantProvider participantProvider, TournamentRepository tournamentRepository,
-			GroupProvider groupProvider, RoleProvider roleProvider, TeamProvider teamProvider,
-			TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-		this.fightProvider = fightProvider;
-		this.duelProvider = duelProvider;
-		this.participantProvider = participantProvider;
-		this.tournamentRepository = tournamentRepository;
-		this.groupProvider = groupProvider;
-		this.roleProvider = roleProvider;
-		this.teamProvider = teamProvider;
-		this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
-	}
-
-	private static Set<Participant> getParticipants(List<Team> teams) {
-		final Set<Participant> allCompetitors = new HashSet<>();
-		for (final Team team : teams) {
-			allCompetitors.addAll(team.getMembers());
-		}
-		return allCompetitors;
-	}
-
-	private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores, boolean checkLevel) {
-		if (scores == null) {
-			return;
-		}
-		scores.sort(getTeamsSorter(type, checkLevel));
-	}
-
-	private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type, boolean checkLevel) {
-		switch (type) {
-			case CUSTOM :
-				return new ScoreOfTeamCustom(checkLevel);
-			case EUROPEAN :
-				return new ScoreOfTeamEuropean(checkLevel);
-			case INTERNATIONAL :
-				return new ScoreOfTeamInternational(checkLevel);
-			case WIN_OVER_DRAWS :
-				return new ScoreOfTeamWinOverDraws(checkLevel);
-			case CLASSIC :
-			default :
-				return new ScoreOfTeamClassic(checkLevel);
-		}
-	}
-
-	private static void sortCompetitorsScores(ScoreType type, List<ScoreOfCompetitor> scores) {
-		if (scores == null) {
-			return;
-		}
-		scores.sort(getCompetitorsSorter(type));
-	}
-
-	private static Comparator<ScoreOfCompetitor> getCompetitorsSorter(ScoreType type) {
-		switch (type) {
-			case CUSTOM :
-				return new ScoreOfCompetitorCustom();
-			case EUROPEAN :
-				return new ScoreOfCompetitorEuropean();
-			case INTERNATIONAL :
-				return new ScoreOfCompetitorInternational();
-			case WIN_OVER_DRAWS :
-				return new ScoreOfCompetitorWinOverDraws();
-			case CLASSIC :
-			default :
-				return new ScoreOfCompetitorClassic();
-		}
-	}
-
-	public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
-		final Tournament tournament = this.tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-						"Tournament with id" + tournamentId + " not found!"));
-		return this.getCompetitorsScoreRanking(tournament);
-	}
-
-	public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Tournament tournament) {
-		final List<Group> groups = this.groupProvider.getGroups(tournament);
-
-		return this.getCompetitorsScoreRanking(
-				getParticipants(groups.stream().flatMap(group -> group.getTeams().stream()).toList()),
-				groups.stream().flatMap(group -> group.getFights().stream()).toList(),
-				groups.stream().flatMap(group -> group.getUnties().stream()).toList(), tournament);
-	}
-
-	public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Group group) {
-		return this.getCompetitorsScoreRanking(getParticipants(group.getTeams()), group.getFights(), group.getUnties(),
-				group.getTournament());
-	}
-
-	public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Collection<Participant> competitors, List<Fight> fights,
-			List<Duel> unties, Tournament tournamentDTO) {
-		final List<ScoreOfCompetitor> scores = new ArrayList<>();
-		for (final Participant competitor : competitors) {
-			scores.add(new ScoreOfCompetitor(competitor, fights, unties, this.countNotOver(tournamentDTO)));
-		}
-		sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
-		return scores;
-	}
-
-	public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(Integer tournamentId) {
-		final Tournament tournament = this.tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
-						"Tournament with id" + tournamentId + " not found!"));
-		return this.getTeamsScoreRanking(tournament);
-	}
-
-	/**
-	 * On some leagues, we need to count the fights not finished for the score.
-	 *
-	 * @param tournament
-	 * @return if it must be counted.
-	 */
-	private boolean countNotOver(Tournament tournament) {
-		return tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
-	}
-
-	public List<ScoreOfCompetitor> getCompetitorGlobalRanking(ScoreType scoreType) {
-		final List<ScoreOfCompetitor> scores = new ArrayList<>();
-		final List<Fight> fights = this.fightProvider.getAll();
-		final List<Duel> unties = this.duelProvider.getUnties();
-		final Set<Participant> competitors = this.roleProvider.getAll().stream()
-				.filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant)
-				.collect(Collectors.toSet());
-		for (final Participant competitor : competitors) {
-			scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
-		}
-		sortCompetitorsScores(scoreType, scores);
-		return scores;
-	}
-
-	public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors,
-			ScoreType scoreType, Integer fromNumberOfDays) {
-		// Show all competitors, or only the ones that have fights.
-		final boolean showAll;
-		if (competitors == null || competitors.isEmpty()) {
-			competitors = this.participantProvider.getAll();
-			showAll = false;
-		} else {
-			// If received a list of competitors, we will show all.
-			showAll = true;
-		}
-		// Get number since when is read the data.
-		final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0
-				? LocalDate.now(ZoneId.systemDefault()).minusDays(fromNumberOfDays).atStartOfDay()
-				: null;
-		final List<ScoreOfCompetitor> scores = new ArrayList<>();
-		final List<Fight> fights = this.fightProvider.getBy(competitors).stream()
-				.filter(fight -> from == null || fight.getCreatedAt().isAfter(from)).toList();
-		final List<Duel> unties = this.duelProvider.getUnties(competitors).stream()
-				.filter(duel -> from == null || duel.getCreatedAt().isAfter(from)).toList();
-
-		final Set<Participant> participantsInFights = fights.stream()
-				.flatMap(fight -> fight.getTeam1().getMembers().stream())
-				.collect(Collectors.toCollection(HashSet::new));
-		participantsInFights.addAll(fights.stream().flatMap(fight -> fight.getTeam2().getMembers().stream())
-				.collect(Collectors.toCollection(HashSet::new)));
-		if (!showAll) {
-			competitors.retainAll(participantsInFights);
-		}
-		for (final Participant competitor : competitors) {
-			scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
-		}
-		sortCompetitorsScores(scoreType, scores);
-		return scores;
-	}
-
-	public CompetitorRanking getCompetitorRanking(Participant participant) {
-		final List<ScoreOfCompetitor> ranking = this.getCompetitorGlobalRanking(ScoreType.DEFAULT);
-		return new CompetitorRanking(IntStream.range(0, ranking.size())
-				.filter(i -> Objects.equals(participant, ranking.get(i).getCompetitor())).findFirst()
-				.orElse(ranking.size() - 1), ranking.size());
-	}
-
-	public ScoreOfCompetitor getScoreRanking(Group group, Participant competitor) {
-		final List<ScoreOfCompetitor> scoreRanking = this.getCompetitorsScoreRanking(group);
-		for (final ScoreOfCompetitor score : scoreRanking) {
-			if (score.getCompetitor().equals(competitor)) {
-				return score;
-			}
-		}
-		return null;
-	}
-
-	public Participant getCompetitor(Group group, Integer order) {
-		final List<Participant> competitorOrder = this.getParticipants(group);
-		if (order >= 0 && order < competitorOrder.size()) {
-			return competitorOrder.get(order);
-		}
-		return null;
-	}
-
-	public List<Participant> getParticipants(Group group) {
-		final Set<Participant> competitors = getParticipants(group.getTeams());
-		final List<ScoreOfCompetitor> scores = new ArrayList<>();
-		for (final Participant competitor : competitors) {
-			scores.add(new ScoreOfCompetitor(competitor, group.getFights(), group.getUnties(),
-					this.countNotOver(group.getTournament())));
-		}
-		sortCompetitorsScores(group.getTournament().getTournamentScore().getScoreType(), scores);
-		final List<Participant> competitorsRanking = new ArrayList<>();
-		for (final ScoreOfCompetitor score : scores) {
-			competitorsRanking.add(score.getCompetitor());
-		}
-		return competitorsRanking;
-	}
-
-	public ScoreOfCompetitor getScoreOfCompetitor(Group group, Integer order) {
-		final List<ScoreOfCompetitor> teamsOrder = this.getCompetitorsScoreRanking(group);
-		if (order >= 0 && order < teamsOrder.size()) {
-			return teamsOrder.get(order);
-		}
-		return null;
-	}
-
-	public Integer getOrder(Group group, Team team) {
-		final List<Team> ranking = this.getTeamsRanking(group);
-
-		for (int i = 0; i < ranking.size(); i++) {
-			if (ranking.get(i).equals(team)) {
-				return i;
-			}
-		}
-		return null;
-	}
-
-	public Integer getOrderFromRanking(List<ScoreOfTeam> ranking, Team team) {
-		for (int i = 0; i < ranking.size(); i++) {
-			if (ranking.get(i).getTeam().equals(team)) {
-				return i;
-			}
-		}
-		return null;
-	}
-
-	public List<Team> getTeamsRanking(Integer groupId) {
-		final Group group = this.groupProvider.getGroup(groupId);
-		if (group == null) {
-			throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
-		}
-		return this.getTeamsRanking(group);
-	}
-
-	public List<Team> getTeamsRanking(Group group) {
-		final List<ScoreOfTeam> scores = this.getTeamsScoreRanking(group);
-		final List<Team> teamRanking = new ArrayList<>();
-		for (final ScoreOfTeam score : scores) {
-			teamRanking.add(score.getTeam());
-		}
-		return teamRanking;
-	}
-
-	public List<ScoreOfTeam> getTeamsScoreRanking(Group group) {
-		if (group == null) {
-			return new ArrayList<>();
-		}
-		if (group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS) {
-			// For Swiss tournaments in a group: ranking is group-specific,
-			// but tie-breaks use all fights from tournament start up to (and including)
-			// this group
-			final List<Fight> allFightsUpToGroup = this.getAllFightsUpToGroup(group);
-			return this.getSwissTeamsScoreRankingWithGlobalTieBreaks(group.getTournament(), group.getTeams(),
-					group.getFights(), allFightsUpToGroup, group.getUnties());
-		}
-		return this.getTeamsScoreRanking(group.getTournament().getTournamentScore().getScoreType(), group.getTeams(),
-				group.getFights(), group.getUnties(), this.checkLevel(group.getTournament()));
-	}
-
-	/**
-	 * Get all fights from the tournament start up to and including the given group.
-	 * Excludes fights from groups at higher levels (later rounds).
-	 */
-	private List<Fight> getAllFightsUpToGroup(Group group) {
-		final Integer groupLevel = group.getLevel();
-		final List<Group> allGroups = this.groupProvider.getGroups(group.getTournament());
-
-		return allGroups.stream().filter(g -> g.getLevel() != null && g.getLevel() <= groupLevel)
-				.flatMap(g -> g.getFights().stream()).toList();
-	}
-
-	private List<ScoreOfTeam> getSwissTeamsScoreRanking(Tournament tournament, List<Team> teams, List<Fight> fights,
-			List<Duel> unties) {
-		final Map<Team, Integer> byeCounts = getByeCountByTeam(teams, fights);
-		final List<ScoreOfTeam> scores = new ArrayList<>();
-		for (final Team team : teams) {
-			final ScoreOfTeam score = new ScoreOfTeam(team, fights, unties);
-			final int byeCount = byeCounts.getOrDefault(team, 0);
-			if (byeCount > 0) {
-				score.setWonFights(score.getWonFights() + byeCount);
-				score.setFightsDone(score.getFightsDone() + byeCount);
-			}
-			scores.add(score);
-		}
-		final SwissRankingContext context = new SwissRankingContext(scores, fights,
-				this.getSwissTieBreakRule(tournament));
-		scores.forEach(score -> {
-			score.setSwissTieBreakRuleUsed(context.getSelectedRule());
-			score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));
-		});
-		scores.sort(context::compare);
-		if (scores.isEmpty()) {
-			return scores;
-		}
-		int sortingIndex = 0;
-		scores.getFirst().setSortingIndex(sortingIndex);
-		for (int i = 1; i < scores.size(); i++) {
-			if (context.compare(scores.get(i - 1), scores.get(i)) != 0) {
-				sortingIndex++;
-			}
-			scores.get(i).setSortingIndex(sortingIndex);
-		}
-		return scores;
-	}
-
-	/**
-	 * Swiss ranking where group scores are calculated from group fights only, but
-	 * tie-breaks consider all fights up to this group (global context).
-	 *
-	 * @param tournament
-	 *            the tournament
-	 * @param teams
-	 *            teams in the group
-	 * @param groupFights
-	 *            fights in this group only (for points calculation)
-	 * @param allFightsUpToGroup
-	 *            all fights from start up to this group (for tie-breaks)
-	 * @param unties
-	 *            the unties
-	 * @return ranked scores
-	 */
-	private List<ScoreOfTeam> getSwissTeamsScoreRankingWithGlobalTieBreaks(Tournament tournament, List<Team> teams,
-			List<Fight> groupFights, List<Fight> allFightsUpToGroup, List<Duel> unties) {
-		// Calculate scores based on group fights only
-		final Map<Team, Integer> byeCounts = getByeCountByTeam(teams, groupFights);
-		final List<ScoreOfTeam> scores = new ArrayList<>();
-		for (final Team team : teams) {
-			final ScoreOfTeam score = new ScoreOfTeam(team, groupFights, unties);
-			final int byeCount = byeCounts.getOrDefault(team, 0);
-			if (byeCount > 0) {
-				score.setWonFights(score.getWonFights() + byeCount);
-				score.setFightsDone(score.getFightsDone() + byeCount);
-			}
-			scores.add(score);
-		}
-		// Use all fights up to this group for tie-breaks
-		final SwissRankingContext context = new SwissRankingContext(scores, allFightsUpToGroup,
-				this.getSwissTieBreakRule(tournament));
-		scores.forEach(score -> {
-			score.setSwissTieBreakRuleUsed(context.getSelectedRule());
-			score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));
-		});
-		scores.sort(context::compare);
-		if (scores.isEmpty()) {
-			return scores;
-		}
-		int sortingIndex = 0;
-		scores.getFirst().setSortingIndex(sortingIndex);
-		for (int i = 1; i < scores.size(); i++) {
-			if (context.compare(scores.get(i - 1), scores.get(i)) != 0) {
-				sortingIndex++;
-			}
-			scores.get(i).setSortingIndex(sortingIndex);
-		}
-		return scores;
-	}
-
-	private static Map<Team, Integer> getByeCountByTeam(List<Team> teams, List<Fight> fights) {
-		final Map<Team, Integer> byesByTeam = new HashMap<>();
-		teams.forEach(team -> byesByTeam.put(team, 0));
-
-		final Map<Integer, Set<Team>> teamsByRound = fights.stream().collect(Collectors.groupingBy(Fight::getLevel,
-				Collectors.flatMapping(fight -> Stream.of(fight.getTeam1(), fight.getTeam2()), Collectors.toSet())));
-
-		for (final Set<Team> teamsInRound : teamsByRound.values()) {
-			final long teamsPresent = teamsInRound.stream().filter(teams::contains).count();
-			if (teamsPresent != teams.size() - 1L) {
-				continue;
-			}
-			for (final Team team : teams) {
-				if (!teamsInRound.contains(team)) {
-					byesByTeam.computeIfPresent(team, (ignoredTeam, value) -> value + 1);
-				}
-			}
-		}
-		return byesByTeam;
-	}
-
-	public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<Team> teams, List<Fight> fights,
-			List<Duel> unties, boolean checkLevel) {
-		final List<ScoreOfTeam> scores = new ArrayList<>();
-		for (final Team team : teams) {
-			scores.add(new ScoreOfTeam(team, fights, unties));
-		}
-		sortTeamsScores(type, scores, checkLevel);
-		if (scores.isEmpty()) {
-			return scores;
-		}
-		// check draw values.
-		int sortingIndex = 0;
-		scores.get(0).setSortingIndex(sortingIndex);
-		for (int i = 1; i < scores.size(); i++) {
-			if (getTeamsSorter(type, checkLevel).compare(scores.get(i - 1), scores.get(i)) != 0) {
-				sortingIndex++;
-			}
-			scores.get(i).setSortingIndex(sortingIndex);
-		}
-		return scores;
-	}
-
-	private boolean checkLevel(Tournament tournament) {
-		return tournament == null || tournament.getType() != TournamentType.KING_OF_THE_MOUNTAIN;
-	}
-
-	/**
-	 * Return a Hashmap that classify the teams by position (1st, 2nd, 3rd,...)
-	 *
-	 * @return classification of the teams
-	 */
-	public Map<Integer, List<Team>> getTeamsByPosition(Group group) {
-		final HashMap<Integer, List<Team>> teamsByPosition = new HashMap<>();
-		final List<ScoreOfTeam> scores = this.getTeamsScoreRanking(group);
-
-		if (this.isSwissGroup(group)) {
-			this.addTeamsBySortingIndex(scores, teamsByPosition);
-			return teamsByPosition;
-		}
-
-		this.addTeamsByOrderedScorePosition(group, scores, teamsByPosition);
-		return teamsByPosition;
-	}
-
-	private boolean isSwissGroup(Group group) {
-		return group != null && group.getTournament() != null
-				&& group.getTournament().getType() == TournamentType.SWISS;
-	}
-
-	private void addTeamsBySortingIndex(List<ScoreOfTeam> scores, Map<Integer, List<Team>> teamsByPosition) {
-		scores.forEach(score -> teamsByPosition.computeIfAbsent(score.getSortingIndex(), key -> new ArrayList<>())
-				.add(score.getTeam()));
-	}
-
-	private void addTeamsByOrderedScorePosition(Group group, List<ScoreOfTeam> scores,
-			Map<Integer, List<Team>> teamsByPosition) {
-		int position = 0;
-		final Comparator<ScoreOfTeam> sorter = getTeamsSorter(group.getTournament().getTournamentScore().getScoreType(),
-				this.checkLevel(group.getTournament()));
-		for (int i = 0; i < scores.size(); i++) {
-			teamsByPosition.computeIfAbsent(position, key -> new ArrayList<>()).add(scores.get(i).getTeam());
-			if (this.hasDifferentScoreWithNext(sorter, scores, i)) {
-				position++;
-			}
-		}
-	}
-
-	private boolean hasDifferentScoreWithNext(Comparator<ScoreOfTeam> sorter, List<ScoreOfTeam> scores, int index) {
-		return index < scores.size() - 1 && sorter.compare(scores.get(index), scores.get(index + 1)) != 0;
-	}
-
-	public List<ScoreOfTeam> getTeamsScoreRanking(Tournament tournament) {
-		if (tournament.getType() == TournamentType.SWISS) {
-			return this.getSwissTeamsScoreRanking(tournament, this.teamProvider.getAll(tournament),
-					this.fightProvider.getFights(tournament), this.groupProvider.getGroups(tournament).stream()
-							.flatMap(group -> group.getUnties().stream()).toList());
-		}
-		return this.getTeamsScoreRanking(tournament.getTournamentScore().getScoreType(),
-				this.teamProvider.getAll(tournament), this.fightProvider.getFights(tournament),
-				this.groupProvider.getGroups(tournament).stream().flatMap(group -> group.getUnties().stream()).toList(),
-				this.checkLevel(tournament));
-	}
-
-	public List<Team> getFirstTeamsWithDrawScore(Group group, Integer maxWinners) {
-		final Map<Integer, List<Team>> teamsByPosition = this.getTeamsByPosition(group);
-		for (int i = 0; i < maxWinners; i++) {
-			final List<Team> teamsInDraw = teamsByPosition.get(i);
-			if (teamsInDraw.size() > 1) {
-				return teamsInDraw;
-			}
-		}
-		return new ArrayList<>();
-	}
-
-	private SwissTieBreakRule getSwissTieBreakRule(Tournament tournament) {
-		final TournamentExtraProperty extraProperty = this.tournamentExtraPropertyProvider.getByTournamentAndProperty(
-				tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, DEFAULT_SWISS_TIE_BREAK_RULE.name());
-		final SwissTieBreakRule selectedType = SwissTieBreakRule.getType(extraProperty.getPropertyValue());
-		return selectedType != null ? selectedType : DEFAULT_SWISS_TIE_BREAK_RULE;
-	}
-
-	private static final class SwissRankingContext {
-		private final List<Fight> playedFights;
-		private final SwissTieBreakRule selectedRule;
-		private final Map<Team, ScoreOfTeam> scoreByTeam;
-		private final Map<Team, Integer> swissPoints;
-		private final Map<Integer, List<Team>> teamsByPoints;
-
-		private SwissRankingContext(List<ScoreOfTeam> scores, List<Fight> fights, SwissTieBreakRule selectedRule) {
-			this.playedFights = fights.stream().filter(Fight::isOver).toList();
-			this.selectedRule = selectedRule;
-			this.scoreByTeam = new HashMap<>();
-			this.swissPoints = new HashMap<>();
-			this.teamsByPoints = new HashMap<>();
-			scores.forEach(score -> {
-				this.scoreByTeam.put(score.getTeam(), score);
-				final int points = getSwissMatchPoints(score);
-				this.swissPoints.put(score.getTeam(), points);
-				this.teamsByPoints.computeIfAbsent(points, ignored -> new ArrayList<>()).add(score.getTeam());
-			});
-		}
-
-		private int compare(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
-			final int matchPoints = Integer.compare(this.getPoints(secondScore.getTeam()),
-					this.getPoints(firstScore.getTeam()));
-			if (matchPoints != 0) {
-				return matchPoints;
-			}
-
-			final int tieBreakComparison = this.compareTieBreakRules(firstScore, secondScore);
-			if (tieBreakComparison != 0) {
-				return tieBreakComparison;
-			}
-
-			final int hitsComparison = this.compareHits(firstScore, secondScore);
-			if (hitsComparison != 0) {
-				return hitsComparison;
-			}
-
-			final int hitsLostComparison = this.compareHitsLost(firstScore, secondScore);
-			if (hitsLostComparison != 0) {
-				return hitsLostComparison;
-			}
-
-			return this.compareByTeamName(firstScore, secondScore);
-		}
-
-		private int compareTieBreakRules(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
-			for (final SwissTieBreakRule rule : this.getOrderedRules()) {
-				final int tieBreakComparison = Double.compare(this.getTieBreakValue(secondScore.getTeam(), rule),
-						this.getTieBreakValue(firstScore.getTeam(), rule));
-				if (tieBreakComparison != 0) {
-					return tieBreakComparison;
-				}
-			}
-			return 0;
-		}
-
-		private List<SwissTieBreakRule> getOrderedRules() {
-			final List<SwissTieBreakRule> orderedRules = new ArrayList<>();
-			orderedRules.add(this.selectedRule);
-			for (final SwissTieBreakRule rule : SwissTieBreakRule.values()) {
-				if (rule != this.selectedRule) {
-					orderedRules.add(rule);
-				}
-			}
-			return orderedRules;
-		}
-
-		private int compareHits(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
-			return secondScore.getHits().compareTo(firstScore.getHits());
-		}
-
-		private int compareHitsLost(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
-			return firstScore.getHitsLost().compareTo(secondScore.getHitsLost());
-		}
-
-		private int compareByTeamName(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
-			return firstScore.getTeam().getName().compareTo(secondScore.getTeam().getName());
-		}
-
-		private int getPoints(Team team) {
-			return this.swissPoints.getOrDefault(team, 0);
-		}
-
-		private SwissTieBreakRule getSelectedRule() {
-			return this.selectedRule;
-		}
-
-		private double getTieBreakValue(Team team, SwissTieBreakRule rule) {
-			return switch (rule) {
-				case BUCHHOLZ -> this.getBuchholz(team);
-				case MEDIAN_BUCHHOLZ -> this.getMedianBuchholz(team);
-				case SONNEBORN_BERGER -> this.getSonnebornBerger(team);
-				case DIRECT_ENCOUNTER -> this.getDirectEncounter(team);
-				case POINT_DIFFERENTIAL -> this.getPointDifferential(team);
-			};
-		}
-
-		private double getBuchholz(Team team) {
-			return this.getOpponents(team).stream().mapToInt(this::getPoints).sum();
-		}
-
-		private double getMedianBuchholz(Team team) {
-			final List<Integer> opponentsPoints = this.getOpponents(team).stream().map(this::getPoints).sorted()
-					.toList();
-			if (opponentsPoints.size() <= 2) {
-				return opponentsPoints.stream().mapToInt(Integer::intValue).sum();
-			}
-			return opponentsPoints.subList(1, opponentsPoints.size() - 1).stream().mapToInt(Integer::intValue).sum();
-		}
-
-		private double getSonnebornBerger(Team team) {
-			double score = 0;
-			for (final Fight fight : this.getPlayedFights(team)) {
-				final Team opponent = this.getOpponent(team, fight);
-				if (opponent == null) {
-					continue;
-				}
-				if (Objects.equals(fight.getWinner(), team)) {
-					score += this.getPoints(opponent);
-				} else if (fight.isDrawFight()) {
-					score += this.getPoints(opponent) / 2.0;
-				}
-			}
-			return score;
-		}
-
-		private double getDirectEncounter(Team team) {
-			final List<Team> tiedTeams = this.teamsByPoints.getOrDefault(this.getPoints(team), List.of());
-			if (tiedTeams.size() <= 1) {
-				return 0;
-			}
-			int score = 0;
-			for (final Fight fight : this.getPlayedFights(team)) {
-				final Team opponent = this.getOpponent(team, fight);
-				if (opponent == null || !tiedTeams.contains(opponent)) {
-					continue;
-				}
-				if (Objects.equals(fight.getWinner(), team)) {
-					score += SWISS_WIN_POINTS;
-				} else if (fight.isDrawFight()) {
-					score += SWISS_DRAW_POINTS;
-				}
-			}
-			return score;
-		}
-
-		private double getPointDifferential(Team team) {
-			return this.getPlayedFights(team).stream()
-					.mapToInt(fight -> fight.getScore(team) - fight.getScoreAgainst(team)).sum();
-		}
-
-		private List<Fight> getPlayedFights(Team team) {
-			return this.playedFights.stream()
-					.filter(fight -> Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))
-					.toList();
-		}
-
-		private List<Team> getOpponents(Team team) {
-			return this.getPlayedFights(team).stream().map(fight -> this.getOpponent(team, fight))
-					.filter(Objects::nonNull).toList();
-		}
-
-		private Team getOpponent(Team team, Fight fight) {
-			if (Objects.equals(fight.getTeam1(), team)) {
-				return fight.getTeam2();
-			}
-			if (Objects.equals(fight.getTeam2(), team)) {
-				return fight.getTeam1();
-			}
-			return null;
-		}
-
-		private static int getSwissMatchPoints(ScoreOfTeam score) {
-			return score.getWonFights() * SWISS_WIN_POINTS + score.getDrawFights() * SWISS_DRAW_POINTS;
-		}
-	}
+    private static final SwissTieBreakRule DEFAULT_SWISS_TIE_BREAK_RULE = SwissTieBreakRule.BUCHHOLZ;
+    private static final int SWISS_WIN_POINTS = 3;
+    private static final int SWISS_DRAW_POINTS = 1;
+
+    private final FightProvider fightProvider;
+    private final DuelProvider duelProvider;
+
+    private final ParticipantProvider participantProvider;
+
+    private final TournamentRepository tournamentRepository;
+
+    private final GroupProvider groupProvider;
+
+    private final RoleProvider roleProvider;
+
+    private final TeamProvider teamProvider;
+
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
+    public RankingProvider(FightProvider fightProvider, DuelProvider duelProvider,
+            ParticipantProvider participantProvider, TournamentRepository tournamentRepository,
+            GroupProvider groupProvider, RoleProvider roleProvider, TeamProvider teamProvider,
+            TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+        this.fightProvider = fightProvider;
+        this.duelProvider = duelProvider;
+        this.participantProvider = participantProvider;
+        this.tournamentRepository = tournamentRepository;
+        this.groupProvider = groupProvider;
+        this.roleProvider = roleProvider;
+        this.teamProvider = teamProvider;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+    }
+
+    private static Set<Participant> getParticipants(List<Team> teams) {
+        final Set<Participant> allCompetitors = new HashSet<>();
+        for (final Team team : teams) {
+            allCompetitors.addAll(team.getMembers());
+        }
+        return allCompetitors;
+    }
+
+    private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores, boolean checkLevel) {
+        if (scores == null) {
+            return;
+        }
+        scores.sort(getTeamsSorter(type, checkLevel));
+    }
+
+    private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type, boolean checkLevel) {
+        switch (type) {
+            case CUSTOM :
+                return new ScoreOfTeamCustom(checkLevel);
+            case EUROPEAN :
+                return new ScoreOfTeamEuropean(checkLevel);
+            case INTERNATIONAL :
+                return new ScoreOfTeamInternational(checkLevel);
+            case WIN_OVER_DRAWS :
+                return new ScoreOfTeamWinOverDraws(checkLevel);
+            case CLASSIC :
+            default :
+                return new ScoreOfTeamClassic(checkLevel);
+        }
+    }
+
+    private static void sortCompetitorsScores(ScoreType type, List<ScoreOfCompetitor> scores) {
+        if (scores == null) {
+            return;
+        }
+        scores.sort(getCompetitorsSorter(type));
+    }
+
+    private static Comparator<ScoreOfCompetitor> getCompetitorsSorter(ScoreType type) {
+        switch (type) {
+            case CUSTOM :
+                return new ScoreOfCompetitorCustom();
+            case EUROPEAN :
+                return new ScoreOfCompetitorEuropean();
+            case INTERNATIONAL :
+                return new ScoreOfCompetitorInternational();
+            case WIN_OVER_DRAWS :
+                return new ScoreOfCompetitorWinOverDraws();
+            case CLASSIC :
+            default :
+                return new ScoreOfCompetitorClassic();
+        }
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
+        final Tournament tournament = this.tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
+                        "Tournament with id" + tournamentId + " not found!"));
+        return this.getCompetitorsScoreRanking(tournament);
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Tournament tournament) {
+        final List<Group> groups = this.groupProvider.getGroups(tournament);
+
+        return this.getCompetitorsScoreRanking(
+                getParticipants(groups.stream().flatMap(group -> group.getTeams().stream()).toList()),
+                groups.stream().flatMap(group -> group.getFights().stream()).toList(),
+                groups.stream().flatMap(group -> group.getUnties().stream()).toList(), tournament);
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Group group) {
+        return this.getCompetitorsScoreRanking(getParticipants(group.getTeams()), group.getFights(), group.getUnties(),
+                group.getTournament());
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Collection<Participant> competitors, List<Fight> fights,
+            List<Duel> unties, Tournament tournamentDTO) {
+        final List<ScoreOfCompetitor> scores = new ArrayList<>();
+        for (final Participant competitor : competitors) {
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties, this.countNotOver(tournamentDTO)));
+        }
+        sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
+        return scores;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(Integer tournamentId) {
+        final Tournament tournament = this.tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
+                        "Tournament with id" + tournamentId + " not found!"));
+        return this.getTeamsScoreRanking(tournament);
+    }
+
+    /**
+     * On some leagues, we need to count the fights not finished for the score.
+     *
+     * @param tournament
+     * @return if it must be counted.
+     */
+    private boolean countNotOver(Tournament tournament) {
+        return tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorGlobalRanking(ScoreType scoreType) {
+        final List<ScoreOfCompetitor> scores = new ArrayList<>();
+        final List<Fight> fights = this.fightProvider.getAll();
+        final List<Duel> unties = this.duelProvider.getUnties();
+        final Set<Participant> competitors = this.roleProvider.getAll().stream()
+                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant)
+                .collect(Collectors.toSet());
+        for (final Participant competitor : competitors) {
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
+        }
+        sortCompetitorsScores(scoreType, scores);
+        return scores;
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors,
+            ScoreType scoreType, Integer fromNumberOfDays) {
+        // Show all competitors, or only the ones that have fights.
+        final boolean showAll;
+        if (competitors == null || competitors.isEmpty()) {
+            competitors = this.participantProvider.getAll();
+            showAll = false;
+        } else {
+            // If received a list of competitors, we will show all.
+            showAll = true;
+        }
+        // Get number since when is read the data.
+        final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0
+                ? LocalDate.now(ZoneId.systemDefault()).minusDays(fromNumberOfDays).atStartOfDay()
+                : null;
+        final List<ScoreOfCompetitor> scores = new ArrayList<>();
+        final List<Fight> fights = this.fightProvider.getBy(competitors).stream()
+                .filter(fight -> from == null || fight.getCreatedAt().isAfter(from)).toList();
+        final List<Duel> unties = this.duelProvider.getUnties(competitors).stream()
+                .filter(duel -> from == null || duel.getCreatedAt().isAfter(from)).toList();
+
+        final Set<Participant> participantsInFights = fights.stream()
+                .flatMap(fight -> fight.getTeam1().getMembers().stream())
+                .collect(Collectors.toCollection(HashSet::new));
+        participantsInFights.addAll(fights.stream().flatMap(fight -> fight.getTeam2().getMembers().stream())
+                .collect(Collectors.toCollection(HashSet::new)));
+        if (!showAll) {
+            competitors.retainAll(participantsInFights);
+        }
+        for (final Participant competitor : competitors) {
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
+        }
+        sortCompetitorsScores(scoreType, scores);
+        return scores;
+    }
+
+    public CompetitorRanking getCompetitorRanking(Participant participant) {
+        final List<ScoreOfCompetitor> ranking = this.getCompetitorGlobalRanking(ScoreType.DEFAULT);
+        return new CompetitorRanking(IntStream.range(0, ranking.size())
+                .filter(i -> Objects.equals(participant, ranking.get(i).getCompetitor())).findFirst()
+                .orElse(ranking.size() - 1), ranking.size());
+    }
+
+    public ScoreOfCompetitor getScoreRanking(Group group, Participant competitor) {
+        final List<ScoreOfCompetitor> scoreRanking = this.getCompetitorsScoreRanking(group);
+        for (final ScoreOfCompetitor score : scoreRanking) {
+            if (score.getCompetitor().equals(competitor)) {
+                return score;
+            }
+        }
+        return null;
+    }
+
+    public Participant getCompetitor(Group group, Integer order) {
+        final List<Participant> competitorOrder = this.getParticipants(group);
+        if (order >= 0 && order < competitorOrder.size()) {
+            return competitorOrder.get(order);
+        }
+        return null;
+    }
+
+    public List<Participant> getParticipants(Group group) {
+        final Set<Participant> competitors = getParticipants(group.getTeams());
+        final List<ScoreOfCompetitor> scores = new ArrayList<>();
+        for (final Participant competitor : competitors) {
+            scores.add(new ScoreOfCompetitor(competitor, group.getFights(), group.getUnties(),
+                    this.countNotOver(group.getTournament())));
+        }
+        sortCompetitorsScores(group.getTournament().getTournamentScore().getScoreType(), scores);
+        final List<Participant> competitorsRanking = new ArrayList<>();
+        for (final ScoreOfCompetitor score : scores) {
+            competitorsRanking.add(score.getCompetitor());
+        }
+        return competitorsRanking;
+    }
+
+    public ScoreOfCompetitor getScoreOfCompetitor(Group group, Integer order) {
+        final List<ScoreOfCompetitor> teamsOrder = this.getCompetitorsScoreRanking(group);
+        if (order >= 0 && order < teamsOrder.size()) {
+            return teamsOrder.get(order);
+        }
+        return null;
+    }
+
+    public Integer getOrder(Group group, Team team) {
+        final List<Team> ranking = this.getTeamsRanking(group);
+
+        for (int i = 0; i < ranking.size(); i++) {
+            if (ranking.get(i).equals(team)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public Integer getOrderFromRanking(List<ScoreOfTeam> ranking, Team team) {
+        for (int i = 0; i < ranking.size(); i++) {
+            if (ranking.get(i).getTeam().equals(team)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public List<Team> getTeamsRanking(Integer groupId) {
+        final Group group = this.groupProvider.getGroup(groupId);
+        if (group == null) {
+            throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
+        }
+        return this.getTeamsRanking(group);
+    }
+
+    public List<Team> getTeamsRanking(Group group) {
+        final List<ScoreOfTeam> scores = this.getTeamsScoreRanking(group);
+        final List<Team> teamRanking = new ArrayList<>();
+        for (final ScoreOfTeam score : scores) {
+            teamRanking.add(score.getTeam());
+        }
+        return teamRanking;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRanking(Group group) {
+        if (group == null) {
+            return new ArrayList<>();
+        }
+        if (group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS) {
+            // For Swiss tournaments in a group: ranking is group-specific,
+            // but tie-breaks use all fights from tournament start up to (and including)
+            // this group
+            final List<Fight> allFightsUpToGroup = this.getAllFightsUpToGroup(group);
+            return this.getSwissTeamsScoreRankingWithGlobalTieBreaks(group.getTournament(), group.getTeams(),
+                    group.getFights(), allFightsUpToGroup, group.getUnties());
+        }
+        return this.getTeamsScoreRanking(group.getTournament().getTournamentScore().getScoreType(), group.getTeams(),
+                group.getFights(), group.getUnties(), this.checkLevel(group.getTournament()));
+    }
+
+    /**
+     * Get all fights from the tournament start up to and including the given group.
+     * Excludes fights from groups at higher levels (later rounds).
+     */
+    private List<Fight> getAllFightsUpToGroup(Group group) {
+        final Integer groupLevel = group.getLevel();
+        final List<Group> allGroups = this.groupProvider.getGroups(group.getTournament());
+
+        return allGroups.stream().filter(g -> g.getLevel() != null && g.getLevel() <= groupLevel)
+                .flatMap(g -> g.getFights().stream()).toList();
+    }
+
+    private List<ScoreOfTeam> getSwissTeamsScoreRanking(Tournament tournament, List<Team> teams, List<Fight> fights,
+            List<Duel> unties) {
+        final Map<Team, Integer> byeCounts = getByeCountByTeam(teams, fights);
+        final List<ScoreOfTeam> scores = new ArrayList<>();
+        for (final Team team : teams) {
+            final ScoreOfTeam score = new ScoreOfTeam(team, fights, unties);
+            final int byeCount = byeCounts.getOrDefault(team, 0);
+            if (byeCount > 0) {
+                score.setWonFights(score.getWonFights() + byeCount);
+                score.setFightsDone(score.getFightsDone() + byeCount);
+            }
+            scores.add(score);
+        }
+        final SwissRankingContext context = new SwissRankingContext(scores, fights,
+                this.getSwissTieBreakRule(tournament));
+        scores.forEach(score -> {
+            score.setSwissTieBreakRuleUsed(context.getSelectedRule());
+            score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));
+        });
+        scores.sort(context::compare);
+        if (scores.isEmpty()) {
+            return scores;
+        }
+        int sortingIndex = 0;
+        scores.getFirst().setSortingIndex(sortingIndex);
+        for (int i = 1; i < scores.size(); i++) {
+            if (context.compare(scores.get(i - 1), scores.get(i)) != 0) {
+                sortingIndex++;
+            }
+            scores.get(i).setSortingIndex(sortingIndex);
+        }
+        return scores;
+    }
+
+    /**
+     * Swiss ranking where group scores are calculated from group fights only, but
+     * tie-breaks consider all fights up to this group (global context).
+     *
+     * @param tournament
+     *            the tournament
+     * @param teams
+     *            teams in the group
+     * @param groupFights
+     *            fights in this group only (for points calculation)
+     * @param allFightsUpToGroup
+     *            all fights from start up to this group (for tie-breaks)
+     * @param unties
+     *            the unties
+     * @return ranked scores
+     */
+    private List<ScoreOfTeam> getSwissTeamsScoreRankingWithGlobalTieBreaks(Tournament tournament, List<Team> teams,
+            List<Fight> groupFights, List<Fight> allFightsUpToGroup, List<Duel> unties) {
+        // Calculate scores based on group fights only
+        final Map<Team, Integer> byeCounts = getByeCountByTeam(teams, groupFights);
+        final List<ScoreOfTeam> scores = new ArrayList<>();
+        for (final Team team : teams) {
+            final ScoreOfTeam score = new ScoreOfTeam(team, groupFights, unties);
+            final int byeCount = byeCounts.getOrDefault(team, 0);
+            if (byeCount > 0) {
+                score.setWonFights(score.getWonFights() + byeCount);
+                score.setFightsDone(score.getFightsDone() + byeCount);
+            }
+            scores.add(score);
+        }
+        // Use all fights up to this group for tie-breaks
+        final SwissRankingContext context = new SwissRankingContext(scores, allFightsUpToGroup,
+                this.getSwissTieBreakRule(tournament));
+        scores.forEach(score -> {
+            score.setSwissTieBreakRuleUsed(context.getSelectedRule());
+            score.setSwissTieBreakValue(context.getTieBreakValue(score.getTeam(), context.getSelectedRule()));
+        });
+        scores.sort(context::compare);
+        if (scores.isEmpty()) {
+            return scores;
+        }
+        int sortingIndex = 0;
+        scores.getFirst().setSortingIndex(sortingIndex);
+        for (int i = 1; i < scores.size(); i++) {
+            if (context.compare(scores.get(i - 1), scores.get(i)) != 0) {
+                sortingIndex++;
+            }
+            scores.get(i).setSortingIndex(sortingIndex);
+        }
+        return scores;
+    }
+
+    private static Map<Team, Integer> getByeCountByTeam(List<Team> teams, List<Fight> fights) {
+        final Map<Team, Integer> byesByTeam = new HashMap<>();
+        teams.forEach(team -> byesByTeam.put(team, 0));
+
+        final Map<Integer, Set<Team>> teamsByRound = fights.stream().collect(Collectors.groupingBy(Fight::getLevel,
+                Collectors.flatMapping(fight -> Stream.of(fight.getTeam1(), fight.getTeam2()), Collectors.toSet())));
+
+        for (final Set<Team> teamsInRound : teamsByRound.values()) {
+            final long teamsPresent = teamsInRound.stream().filter(teams::contains).count();
+            if (teamsPresent != teams.size() - 1L) {
+                continue;
+            }
+            for (final Team team : teams) {
+                if (!teamsInRound.contains(team)) {
+                    byesByTeam.computeIfPresent(team, (ignoredTeam, value) -> value + 1);
+                }
+            }
+        }
+        return byesByTeam;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<Team> teams, List<Fight> fights,
+            List<Duel> unties, boolean checkLevel) {
+        final List<ScoreOfTeam> scores = new ArrayList<>();
+        for (final Team team : teams) {
+            scores.add(new ScoreOfTeam(team, fights, unties));
+        }
+        sortTeamsScores(type, scores, checkLevel);
+        if (scores.isEmpty()) {
+            return scores;
+        }
+        // check draw values.
+        int sortingIndex = 0;
+        scores.get(0).setSortingIndex(sortingIndex);
+        for (int i = 1; i < scores.size(); i++) {
+            if (getTeamsSorter(type, checkLevel).compare(scores.get(i - 1), scores.get(i)) != 0) {
+                sortingIndex++;
+            }
+            scores.get(i).setSortingIndex(sortingIndex);
+        }
+        return scores;
+    }
+
+    private boolean checkLevel(Tournament tournament) {
+        return tournament == null || tournament.getType() != TournamentType.KING_OF_THE_MOUNTAIN;
+    }
+
+    /**
+     * Return a Hashmap that classify the teams by position (1st, 2nd, 3rd,...)
+     *
+     * @return classification of the teams
+     */
+    public Map<Integer, List<Team>> getTeamsByPosition(Group group) {
+        final HashMap<Integer, List<Team>> teamsByPosition = new HashMap<>();
+        final List<ScoreOfTeam> scores = this.getTeamsScoreRanking(group);
+
+        if (this.isSwissGroup(group)) {
+            this.addTeamsBySortingIndex(scores, teamsByPosition);
+            return teamsByPosition;
+        }
+
+        this.addTeamsByOrderedScorePosition(group, scores, teamsByPosition);
+        return teamsByPosition;
+    }
+
+    private boolean isSwissGroup(Group group) {
+        return group != null && group.getTournament() != null
+                && group.getTournament().getType() == TournamentType.SWISS;
+    }
+
+    private void addTeamsBySortingIndex(List<ScoreOfTeam> scores, Map<Integer, List<Team>> teamsByPosition) {
+        scores.forEach(score -> teamsByPosition.computeIfAbsent(score.getSortingIndex(), key -> new ArrayList<>())
+                .add(score.getTeam()));
+    }
+
+    private void addTeamsByOrderedScorePosition(Group group, List<ScoreOfTeam> scores,
+            Map<Integer, List<Team>> teamsByPosition) {
+        int position = 0;
+        final Comparator<ScoreOfTeam> sorter = getTeamsSorter(group.getTournament().getTournamentScore().getScoreType(),
+                this.checkLevel(group.getTournament()));
+        for (int i = 0; i < scores.size(); i++) {
+            teamsByPosition.computeIfAbsent(position, key -> new ArrayList<>()).add(scores.get(i).getTeam());
+            if (this.hasDifferentScoreWithNext(sorter, scores, i)) {
+                position++;
+            }
+        }
+    }
+
+    private boolean hasDifferentScoreWithNext(Comparator<ScoreOfTeam> sorter, List<ScoreOfTeam> scores, int index) {
+        return index < scores.size() - 1 && sorter.compare(scores.get(index), scores.get(index + 1)) != 0;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRanking(Tournament tournament) {
+        if (tournament.getType() == TournamentType.SWISS) {
+            return this.getSwissTeamsScoreRanking(tournament, this.teamProvider.getAll(tournament),
+                    this.fightProvider.getFights(tournament), this.groupProvider.getGroups(tournament).stream()
+                            .flatMap(group -> group.getUnties().stream()).toList());
+        }
+        return this.getTeamsScoreRanking(tournament.getTournamentScore().getScoreType(),
+                this.teamProvider.getAll(tournament), this.fightProvider.getFights(tournament),
+                this.groupProvider.getGroups(tournament).stream().flatMap(group -> group.getUnties().stream()).toList(),
+                this.checkLevel(tournament));
+    }
+
+    public List<Team> getFirstTeamsWithDrawScore(Group group, Integer maxWinners) {
+        final Map<Integer, List<Team>> teamsByPosition = this.getTeamsByPosition(group);
+        for (int i = 0; i < maxWinners; i++) {
+            final List<Team> teamsInDraw = teamsByPosition.get(i);
+            if (teamsInDraw.size() > 1) {
+                return teamsInDraw;
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private SwissTieBreakRule getSwissTieBreakRule(Tournament tournament) {
+        final TournamentExtraProperty extraProperty = this.tournamentExtraPropertyProvider.getByTournamentAndProperty(
+                tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, DEFAULT_SWISS_TIE_BREAK_RULE.name());
+        final SwissTieBreakRule selectedType = SwissTieBreakRule.getType(extraProperty.getPropertyValue());
+        return selectedType != null ? selectedType : DEFAULT_SWISS_TIE_BREAK_RULE;
+    }
+
+    private static final class SwissRankingContext {
+        private final List<Fight> playedFights;
+        private final SwissTieBreakRule selectedRule;
+        private final Map<Team, ScoreOfTeam> scoreByTeam;
+        private final Map<Team, Integer> swissPoints;
+        private final Map<Integer, List<Team>> teamsByPoints;
+
+        private SwissRankingContext(List<ScoreOfTeam> scores, List<Fight> fights, SwissTieBreakRule selectedRule) {
+            this.playedFights = fights.stream().filter(Fight::isOver).toList();
+            this.selectedRule = selectedRule;
+            this.scoreByTeam = new HashMap<>();
+            this.swissPoints = new HashMap<>();
+            this.teamsByPoints = new HashMap<>();
+            scores.forEach(score -> {
+                this.scoreByTeam.put(score.getTeam(), score);
+                final int points = getSwissMatchPoints(score);
+                this.swissPoints.put(score.getTeam(), points);
+                this.teamsByPoints.computeIfAbsent(points, ignored -> new ArrayList<>()).add(score.getTeam());
+            });
+        }
+
+        private int compare(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            final int matchPoints = Integer.compare(this.getPoints(secondScore.getTeam()),
+                    this.getPoints(firstScore.getTeam()));
+            if (matchPoints != 0) {
+                return matchPoints;
+            }
+
+            final int tieBreakComparison = this.compareTieBreakRules(firstScore, secondScore);
+            if (tieBreakComparison != 0) {
+                return tieBreakComparison;
+            }
+
+            final int hitsComparison = this.compareHits(firstScore, secondScore);
+            if (hitsComparison != 0) {
+                return hitsComparison;
+            }
+
+            final int hitsLostComparison = this.compareHitsLost(firstScore, secondScore);
+            if (hitsLostComparison != 0) {
+                return hitsLostComparison;
+            }
+
+            return this.compareByTeamName(firstScore, secondScore);
+        }
+
+        private int compareTieBreakRules(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            for (final SwissTieBreakRule rule : this.getOrderedRules()) {
+                final int tieBreakComparison = Double.compare(this.getTieBreakValue(secondScore.getTeam(), rule),
+                        this.getTieBreakValue(firstScore.getTeam(), rule));
+                if (tieBreakComparison != 0) {
+                    return tieBreakComparison;
+                }
+            }
+            return 0;
+        }
+
+        private List<SwissTieBreakRule> getOrderedRules() {
+            final List<SwissTieBreakRule> orderedRules = new ArrayList<>();
+            orderedRules.add(this.selectedRule);
+            for (final SwissTieBreakRule rule : SwissTieBreakRule.values()) {
+                if (rule != this.selectedRule) {
+                    orderedRules.add(rule);
+                }
+            }
+            return orderedRules;
+        }
+
+        private int compareHits(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            return secondScore.getHits().compareTo(firstScore.getHits());
+        }
+
+        private int compareHitsLost(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            return firstScore.getHitsLost().compareTo(secondScore.getHitsLost());
+        }
+
+        private int compareByTeamName(ScoreOfTeam firstScore, ScoreOfTeam secondScore) {
+            return firstScore.getTeam().getName().compareTo(secondScore.getTeam().getName());
+        }
+
+        private int getPoints(Team team) {
+            return this.swissPoints.getOrDefault(team, 0);
+        }
+
+        private SwissTieBreakRule getSelectedRule() {
+            return this.selectedRule;
+        }
+
+        private double getTieBreakValue(Team team, SwissTieBreakRule rule) {
+            return switch (rule) {
+                case BUCHHOLZ -> this.getBuchholz(team);
+                case MEDIAN_BUCHHOLZ -> this.getMedianBuchholz(team);
+                case SONNEBORN_BERGER -> this.getSonnebornBerger(team);
+                case DIRECT_ENCOUNTER -> this.getDirectEncounter(team);
+                case POINT_DIFFERENTIAL -> this.getPointDifferential(team);
+            };
+        }
+
+        private double getBuchholz(Team team) {
+            return this.getOpponents(team).stream().mapToInt(this::getPoints).sum();
+        }
+
+        private double getMedianBuchholz(Team team) {
+            final List<Integer> opponentsPoints = this.getOpponents(team).stream().map(this::getPoints).sorted()
+                    .toList();
+            if (opponentsPoints.size() <= 2) {
+                return opponentsPoints.stream().mapToInt(Integer::intValue).sum();
+            }
+            return opponentsPoints.subList(1, opponentsPoints.size() - 1).stream().mapToInt(Integer::intValue).sum();
+        }
+
+        private double getSonnebornBerger(Team team) {
+            double score = 0;
+            for (final Fight fight : this.getPlayedFights(team)) {
+                final Team opponent = this.getOpponent(team, fight);
+                if (opponent == null) {
+                    continue;
+                }
+                if (Objects.equals(fight.getWinner(), team)) {
+                    score += this.getPoints(opponent);
+                } else if (fight.isDrawFight()) {
+                    score += this.getPoints(opponent) / 2.0;
+                }
+            }
+            return score;
+        }
+
+        private double getDirectEncounter(Team team) {
+            final List<Team> tiedTeams = this.teamsByPoints.getOrDefault(this.getPoints(team), List.of());
+            if (tiedTeams.size() <= 1) {
+                return 0;
+            }
+            int score = 0;
+            for (final Fight fight : this.getPlayedFights(team)) {
+                final Team opponent = this.getOpponent(team, fight);
+                if (opponent == null || !tiedTeams.contains(opponent)) {
+                    continue;
+                }
+                if (Objects.equals(fight.getWinner(), team)) {
+                    score += SWISS_WIN_POINTS;
+                } else if (fight.isDrawFight()) {
+                    score += SWISS_DRAW_POINTS;
+                }
+            }
+            return score;
+        }
+
+        private double getPointDifferential(Team team) {
+            return this.getPlayedFights(team).stream()
+                    .mapToInt(fight -> fight.getScore(team) - fight.getScoreAgainst(team)).sum();
+        }
+
+        private List<Fight> getPlayedFights(Team team) {
+            return this.playedFights.stream()
+                    .filter(fight -> Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))
+                    .toList();
+        }
+
+        private List<Team> getOpponents(Team team) {
+            return this.getPlayedFights(team).stream().map(fight -> this.getOpponent(team, fight))
+                    .filter(Objects::nonNull).toList();
+        }
+
+        private Team getOpponent(Team team, Fight fight) {
+            if (Objects.equals(fight.getTeam1(), team)) {
+                return fight.getTeam2();
+            }
+            if (Objects.equals(fight.getTeam2(), team)) {
+                return fight.getTeam1();
+            }
+            return null;
+        }
+
+        private static int getSwissMatchPoints(ScoreOfTeam score) {
+            return score.getWonFights() * SWISS_WIN_POINTS + score.getDrawFights() * SWISS_DRAW_POINTS;
+        }
+    }
 
 }
