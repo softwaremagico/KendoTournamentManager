@@ -73,6 +73,27 @@ $fight-border-color: var(--fight-border-color);
   padding: 5px;
   margin: 5px 5px 20px;
   background-color: var(--popup-background);
+  transition: border-color 160ms ease-in-out, box-shadow 160ms ease-in-out, background-color 160ms ease-in-out;
+}
+
+.fights-of-group.group-pending {
+  border-color: var(--active-fight-color);
+  background-color: var(--fight-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.fights-of-group.group-finished {
+  border-color: var(--active-fight-color);
+  background-color: var(--fight-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.fights-of-group.group-selected {
+  border-color: var(--component-color);
+  border-style: solid;
+  border-width: 3px;
+  background-color: var(--floating-background);
+  box-shadow: none;
 }
 
 .group-name {

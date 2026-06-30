@@ -80,6 +80,40 @@
         ></biit-dropdown>
       </div>
     }
+    @if (canConfigureSwiss) {
+      <div class="row">
+        <biit-toggle
+          [(ngModel)]="swissAvoidRepeatedPairings"
+          (click)="onSave(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, !swissAvoidRepeatedPairings+'')"
+          (keydown)="onSave(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, !swissAvoidRepeatedPairings+'')"
+          [description]="t('swissAvoidRepeatedPairingsHint')">
+          {{ t('swissAvoidRepeatedPairings') }}
+        </biit-toggle>
+      </div>
+      <div class="row">
+        <biit-dropdown id="tournament-swiss-tie-break"
+          [ngModel]="(swissTieBreakRule+'') | dropdownInterface: swissTieBreakRuleValues"
+          (ngModelChange)="onSave(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, $event.value)"
+          [data]="swissTieBreakRuleValues"
+          [label]="'label'"
+          [value]="'value'"
+          [descriptionLabel]="'description'"
+          [title]="t('swissTieBreakRule')"
+          [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+        ></biit-dropdown>
+      </div>
+      <div class="row">
+        <label for="swiss-rounds" class="visually-hidden">{{ t('swissRounds') }}</label>
+        <biit-input-text id="swiss-rounds"
+          [(ngModel)]="swissRounds"
+          [type]="Type.NUMBER"
+          [min]="1"
+          [placeholder]="t('swissRounds')"
+          (ngModelChange)="onSave(TournamentExtraPropertyKey.SWISS_ROUNDS, $event != null ? $event+'' : '')"
+          [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
+        ></biit-input-text>
+      </div>
+    }
     <div class="buttons-row">
       <button biit-button id="tournament-button-close" (click)="closed.emit()" primary>
         {{ t('close') }}

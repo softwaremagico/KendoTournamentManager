@@ -47,6 +47,8 @@ public class TournamentHandlerSelectorTest {
     private BubbleSortTournamentHandler bubbleSortTournamentHandler;
     @Mock
     private SenbatsuTournamentHandler senbatsuTournamentHandler;
+    @Mock
+    private SwissTournamentHandler swissTournamentHandler;
 
     private TournamentHandlerSelector selector;
 
@@ -56,7 +58,7 @@ public class TournamentHandlerSelectorTest {
         selector = new TournamentHandlerSelector(
                 simpleLeagueHandler, customLeagueHandler, loopLeagueHandler,
                 treeTournamentHandler, kingOfTheMountainHandler,
-                bubbleSortTournamentHandler, senbatsuTournamentHandler);
+                bubbleSortTournamentHandler, senbatsuTournamentHandler, swissTournamentHandler);
     }
 
     @Test
@@ -102,6 +104,11 @@ public class TournamentHandlerSelectorTest {
     @Test
     public void shouldReturnSenbatsuHandlerForSenbatsuType() {
         assertSame(selector.selectManager(TournamentType.SENBATSU), senbatsuTournamentHandler);
+    }
+
+    @Test
+    public void shouldReturnSwissHandlerForSwissType() {
+        assertSame(selector.selectManager(TournamentType.SWISS), swissTournamentHandler);
     }
 }
 

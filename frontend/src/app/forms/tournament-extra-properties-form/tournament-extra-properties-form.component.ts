@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DrawResolution} from "../../models/draw-resolution";
+import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
+import {Type} from "@biit-solutions/wizardry-theme/inputs";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {TranslocoService} from "@ngneat/transloco";
@@ -47,7 +49,17 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
   protected senbatsuChallengeDistance: { value: string, label: string }[] = [];
   protected SENBATSU_ALLOWED_DISTANCE: number[] = [2, 3, 4, 5];
 
+  // Swiss
+  canConfigureSwiss: boolean;
+  swissRounds: number | null;
+  swissTieBreakRule: SwissTieBreakRule;
+  swissAvoidRepeatedPairings: boolean;
+  protected swissTieBreakRules = SwissTieBreakRule.toArray();
+  protected swissTieBreakRuleValues: { value: string, label: string, description: string }[] = [];
+  protected readonly SwissTieBreakRule = SwissTieBreakRule;
+
   protected readonly TournamentExtraPropertyKey = TournamentExtraPropertyKey;
+  protected readonly Type = Type;
 
   constructor(rbacService: RbacService, public transloco: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
@@ -58,6 +70,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
     this.defaultPropertiesValue();
     this.translateSenbatsuChallengeDistance();
     this.translateDrawResolution();
+    this.translateSwissTieBreakRules();
   }
 
   ngOnInit(): void {
@@ -67,6 +80,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
     this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
     this.canAvoidDuplicatedFights = TournamentType.avoidsDuplicatedFights(this.tournament.type);
     this.canResolveOddFightsAsap = TournamentType.resolveOddFightsAsap(this.tournament.type)
+    this.canConfigureSwiss = TournamentType.isSwiss(this.tournament.type);
 
     this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
       if (_tournamentSelection) {
@@ -89,6 +103,17 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
           if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
             this.challengeDistance = Number.isNaN(+_tournamentProperty.propertyValue) ? TournamentExtraPropertyKey.senbatsuChallengeDistance() : Number(_tournamentProperty.propertyValue);
           }
+          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SWISS_ROUNDS) {
+            const parsed = Number(_tournamentProperty.propertyValue);
+            this.swissRounds = Number.isNaN(parsed) ? null : parsed;
+          }
+          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE) {
+            this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tournamentProperty.propertyValue)
+              ?? TournamentExtraPropertyKey.swissDefaultTieBreakRule();
+          }
+          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS) {
+            this.swissAvoidRepeatedPairings = (_tournamentProperty.propertyValue.toLowerCase() === 'true');
+          }
         }
       }
     });
@@ -101,6 +126,9 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
     this.avoidDuplicatedFights = TournamentExtraPropertyKey.avoidDuplicateFightsGeneration();
     this.resolveOddFightsAsap = TournamentExtraPropertyKey.oddFightsResolvedAsap();
     this.challengeDistance = TournamentExtraPropertyKey.senbatsuChallengeDistance();
+    this.swissRounds = TournamentExtraPropertyKey.swissDefaultRounds();
+    this.swissTieBreakRule = TournamentExtraPropertyKey.swissDefaultTieBreakRule();
+    this.swissAvoidRepeatedPairings = TournamentExtraPropertyKey.swissDefaultAvoidRepeatedPairings();
   }
 
   private translateDrawResolution() {
@@ -120,6 +148,19 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
         value: number + "", label: number + ""
       });
     }
+  }
+
+  private translateSwissTieBreakRules(): void {
+    const translations = this.swissTieBreakRules.map(rule =>
+      this.transloco.selectTranslate(SwissTieBreakRule.toCamel(rule))
+    );
+    combineLatest(translations).subscribe((labels) => {
+      labels.forEach((label, index) => this.swissTieBreakRuleValues.push({
+        value: this.swissTieBreakRules[index],
+        label: label,
+        description: this.transloco.translate(SwissTieBreakRule.toCamel(this.swissTieBreakRules[index]) + 'Hint')
+      }));
+    });
   }
 
   onSave(tournamentExtraProperty: TournamentExtraPropertyKey, propertyValue: string) {

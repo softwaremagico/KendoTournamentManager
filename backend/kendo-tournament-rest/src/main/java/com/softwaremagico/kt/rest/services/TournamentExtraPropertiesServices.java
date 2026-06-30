@@ -78,7 +78,7 @@ public class TournamentExtraPropertiesServices {
     @Operation(summary = "Creates a tournament property with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentExtraPropertyDTO add(TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
+    public TournamentExtraPropertyDTO add(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
                                           Authentication authentication,
                                           @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                           HttpServletRequest request) {
