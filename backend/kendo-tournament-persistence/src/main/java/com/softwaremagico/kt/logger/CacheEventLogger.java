@@ -45,7 +45,7 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
      *            parameters to fill up the template
      */
     public static void info(String className, String messageTemplate, Object... arguments) {
-        BasicLogger.info(LOGGER, className, messageTemplate, arguments);
+        AbstractLoggerWrapper.delegateInfo(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -64,7 +64,7 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
      *            parameters to fill up the template
      */
     public static void warning(String className, String messageTemplate, Object... arguments) {
-        BasicLogger.warning(LOGGER, className, messageTemplate, arguments);
+        AbstractLoggerWrapper.delegateWarning(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -83,7 +83,7 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
      *            parameters to fill up the template
      */
     public static void debug(String className, String messageTemplate, Object... arguments) {
-        BasicLogger.debug(LOGGER, className, messageTemplate, arguments);
+        AbstractLoggerWrapper.delegateDebug(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -101,11 +101,11 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
      *            parameters to fill up the template
      */
     public static void severe(String className, String messageTemplate, Object... arguments) {
-        BasicLogger.severe(LOGGER, className, messageTemplate, arguments);
+        AbstractLoggerWrapper.delegateSevere(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        BasicLogger.errorMessageNotification(LOGGER, clazz.getName(), throwable);
+        AbstractLoggerWrapper.delegateErrorMessage(LOGGER, clazz, throwable);
     }
 
     /**
@@ -120,15 +120,15 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
      *            parameters to fill up the template
      */
     public static void errorMessage(String className, String messageTemplate, Object... arguments) {
-        BasicLogger.errorMessageNotification(LOGGER, className, messageTemplate, arguments);
+        AbstractLoggerWrapper.delegateErrorMessage(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void errorMessage(Object object, Throwable throwable) {
-        BasicLogger.errorMessageNotification(LOGGER, object.getClass().getName(), throwable);
+        AbstractLoggerWrapper.delegateErrorMessage(LOGGER, object, throwable);
     }
 
     public static boolean isDebugEnabled() {
-        return LOGGER.isDebugEnabled();
+        return AbstractLoggerWrapper.isDebugEnabled(LOGGER);
     }
 
     @Override

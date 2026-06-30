@@ -74,13 +74,13 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> unknownException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse("INTERNAL_SERVER_ERROR", ex), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Object> badRequestException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse("BAD_REQUEST", ex), HttpStatus.BAD_REQUEST);
     }
 
@@ -102,13 +102,13 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> accessDeniedException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse("INVALID CREDENTIALS", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         //Generated on this way, as endpoints that produces multiples formats (i.e. produces = {MediaType.APPLICATION_PDF_VALUE,
         // MediaType.APPLICATION_JSON_VALUE}) must specify that the exception is JSON.
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON)
@@ -123,88 +123,88 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<Object> userBlockedException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "user_blocked", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LevelNotFinishedException.class)
     public ResponseEntity<Object> levelNotFinishedException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "level_not_finished", ex), HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(InvalidMacException.class)
     public ResponseEntity<Object> invalidMacException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_mac", ex), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidIpException.class)
     public ResponseEntity<Object> invalidIpException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_ip", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidJwtException.class)
     public ResponseEntity<Object> invalidJwtException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_jwt", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(GuestDisabledException.class)
     public ResponseEntity<Object> guestDisabledException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "guest_disabled", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<Object> tokenExpiredException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "token_expired", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<Object> invalidRequestException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_request", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidGroupException.class)
     public ResponseEntity<Object> invalidGroupException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_group", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidChallengeDistanceException.class)
     public ResponseEntity<Object> invalidChallengeDistanceException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_challenge_distance", ex), HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(InvalidFightException.class)
     public ResponseEntity<Object> invalidFightException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_fight", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidCsvFieldException.class)
     public ResponseEntity<Object> invalidCsvFieldException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "Invalid field: " + ((InvalidCsvFieldException) ex).getHeader(), ex),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidCsvRowException.class)
     public ResponseEntity<Object> invalidCsvRowException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "Elements failed: " + ((InvalidCsvRowException) ex).getNumberOfFailedRows(), ex),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<Object> invalidPasswordException(Exception ex) {
-        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_password", ex), HttpStatus.BAD_REQUEST);
     }
 
