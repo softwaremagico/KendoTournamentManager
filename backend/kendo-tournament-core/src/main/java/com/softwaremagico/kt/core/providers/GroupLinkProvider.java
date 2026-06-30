@@ -182,31 +182,28 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
             return nextLevelGroups.get(templateDestination);
         }
 
-        if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
-            final int position = spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
-                    currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder);
-            return nextLevelGroups.get(position);
-        } else {
-            final int position;
-            if (currentLevelGroups.size() % 2 == 0) {
-                position = spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
-                        currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder);
-            } else {
-                position = obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroup.getIndex(),
-                        currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder);
-            }
-            return nextLevelGroups.get(position);
+        final int position = getFederationFallbackPosition(sourceGroup.getIndex(), currentLevelGroups.size(),
+                nextLevelGroups.size(), numberOfWinners, winnerOrder);
+        return nextLevelGroups.get(position);
+    }
+
+    private int getFederationFallbackPosition(int sourceGroupIndex, int currentLevelSize, int nextLevelSize,
+                                              int numberOfWinners, int winnerOrder) {
+        final boolean shouldSpreadByAsapRule = currentLevelSize < nextLevelSize
+                && numberOfWinners > 1
+                && currentLevelSize % 2 == 1;
+        if (shouldSpreadByAsapRule || currentLevelSize % 2 == 0) {
+            return spreadWinnersOnTreeAsMuchAsPossible(sourceGroupIndex, currentLevelSize, nextLevelSize, winnerOrder);
         }
+        return obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroupIndex, currentLevelSize, nextLevelSize, winnerOrder);
     }
 
 
     private int obtainPositionOfWinnerAsBinaryTree(List<Group> groups, int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners,
                                                    int winnerOrder, int sourceLevel) {
-        final List<Group> previousLevelGroups = sourceLevel > 0
-                ? groups.stream().filter(group -> Objects.equals(group.getLevel(), 0)).toList()
-                : new ArrayList<>();
+        final int previousLevelSize = getPreviousLevelSize(groups, sourceLevel);
 
-        if (isOddConsecutiveSingleWinnerCase(previousLevelGroups.size(), sourceGroupLevelSize, numberOfWinners)) {
+        if (isOddConsecutiveSingleWinnerCase(previousLevelSize, sourceGroupLevelSize, numberOfWinners)) {
             return (sourceGroupLevelIndex + 1) / 2;
         }
 
@@ -216,6 +213,13 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         }
 
         return getStandardWinnerPosition(sourceGroupLevelIndex, sourceGroupLevelSize, numberOfWinners, winnerOrder, sourceLevel);
+    }
+
+    private int getPreviousLevelSize(List<Group> groups, int sourceLevel) {
+        if (sourceLevel <= 0) {
+            return 0;
+        }
+        return (int) groups.stream().filter(group -> Objects.equals(group.getLevel(), 0)).count();
     }
 
     private boolean isOddConsecutiveSingleWinnerCase(int previousLevelSize, int sourceGroupLevelSize, int numberOfWinners) {

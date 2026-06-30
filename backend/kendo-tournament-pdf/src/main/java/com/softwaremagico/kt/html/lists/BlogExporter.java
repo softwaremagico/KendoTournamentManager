@@ -145,21 +145,30 @@ public class BlogExporter {
     }
 
     private void addGroupScoreTables(StringBuilder stringBuilder, TournamentDTO tournament, GroupDTO group, int groupIndex, int[] widths) {
-        if (groups.size() > 1) {
-            stringBuilder.append("<h4>").append(messageSource.getMessage("tournament.group", null, locale))
-                    .append(" ").append(groupIndex + 1).append(" (").append(messageSource.getMessage("tournament.shiaijo", null, locale))
-                    .append(" ").append(ShiaijoName.getShiaijoName(group.getShiaijo())).append(")").append(HEADER_4_CLOSE_NEW_LINE);
-        }
-
-        for (final FightDTO fight : fights) {
-            if (!group.getFights().contains(fight)) {
-                continue;
-            }
-            if (tournament.getTeamSize() > 1) {
-                stringBuilder.append(NEW_LINE).append("<h5>").append(fight.getTeam1().getName()).append(" - ")
-                        .append(fight.getTeam2().getName()).append("</h5>\n");
-            }
+        addGroupHeader(stringBuilder, group, groupIndex);
+        for (final FightDTO fight : getFightsOfGroup(group)) {
+            addFightTitle(stringBuilder, tournament, fight);
             createTable(stringBuilder, getFightRows(fight), widths);
+        }
+    }
+
+    private void addGroupHeader(StringBuilder stringBuilder, GroupDTO group, int groupIndex) {
+        if (groups.size() <= 1) {
+            return;
+        }
+        stringBuilder.append("<h4>").append(messageSource.getMessage("tournament.group", null, locale))
+                .append(" ").append(groupIndex + 1).append(" (").append(messageSource.getMessage("tournament.shiaijo", null, locale))
+                .append(" ").append(ShiaijoName.getShiaijoName(group.getShiaijo())).append(")").append(HEADER_4_CLOSE_NEW_LINE);
+    }
+
+    private List<FightDTO> getFightsOfGroup(GroupDTO group) {
+        return fights.stream().filter(fight -> group.getFights().contains(fight)).toList();
+    }
+
+    private void addFightTitle(StringBuilder stringBuilder, TournamentDTO tournament, FightDTO fight) {
+        if (tournament.getTeamSize() > 1) {
+            stringBuilder.append(NEW_LINE).append("<h5>").append(fight.getTeam1().getName()).append(" - ")
+                    .append(fight.getTeam2().getName()).append("</h5>\n");
         }
     }
 
@@ -250,14 +259,10 @@ public class BlogExporter {
     }
 
     private String getDrawFight(DuelDTO duelDTO) {
-        // Draw Fights
-        if (duelDTO.getWinner() == 0 && duelDTO.isOver()) {
-            return "<div style=\"text-align: center;\">"
-                    + Score.DRAW.getPdfAbbreviation()
-                    + DIV_CLOSE;
-        } else {
+        if (duelDTO.getWinner() != 0 || !duelDTO.isOver()) {
             return String.valueOf(Score.EMPTY.getPdfAbbreviation());
         }
+        return "<div style=\"text-align: center;\">" + Score.DRAW.getPdfAbbreviation() + DIV_CLOSE;
     }
 
     private String getFaultsDiv(DuelDTO duelDTO, boolean leftTeam) {
@@ -270,11 +275,7 @@ public class BlogExporter {
     }
 
     private boolean getFaults(DuelDTO duelDTO, boolean leftTeam) {
-        if (leftTeam) {
-            return duelDTO.getCompetitor1Fault();
-        } else {
-            return duelDTO.getCompetitor2Fault();
-        }
+        return leftTeam ? duelDTO.getCompetitor1Fault() : duelDTO.getCompetitor2Fault();
     }
 
     private String getScoreDiv(DuelDTO duelDTO, int score, boolean leftTeam) {
@@ -290,29 +291,26 @@ public class BlogExporter {
     }
 
     private int getScoreTime(DuelDTO duelDTO, int score, boolean leftTeam) {
-        final int time;
-        try {
-            if (leftTeam) {
-                time = duelDTO.getCompetitor1ScoreTime().get(score);
-            } else {
-                time = duelDTO.getCompetitor2ScoreTime().get(score);
-            }
-            return time;
-        } catch (Exception ignored) {
-            //Ignored.
-        }
-        return -1;
+        final Integer scoreTime = getListValue(getScoresTimeBySide(duelDTO, leftTeam), score);
+        return scoreTime != null ? scoreTime : -1;
     }
 
     private Score getScore(DuelDTO duelDTO, int score, boolean leftTeam) {
-        try {
-            if (leftTeam) {
-                return duelDTO.getCompetitor1Score().get(score);
-            } else {
-                return duelDTO.getCompetitor2Score().get(score);
-            }
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        return getListValue(getScoresBySide(duelDTO, leftTeam), score);
+    }
+
+    private List<Integer> getScoresTimeBySide(DuelDTO duelDTO, boolean leftTeam) {
+        return leftTeam ? duelDTO.getCompetitor1ScoreTime() : duelDTO.getCompetitor2ScoreTime();
+    }
+
+    private List<Score> getScoresBySide(DuelDTO duelDTO, boolean leftTeam) {
+        return leftTeam ? duelDTO.getCompetitor1Score() : duelDTO.getCompetitor2Score();
+    }
+
+    private <T> T getListValue(List<T> values, int index) {
+        if (values == null || index < 0 || index >= values.size()) {
             return null;
         }
+        return values.get(index);
     }
 }

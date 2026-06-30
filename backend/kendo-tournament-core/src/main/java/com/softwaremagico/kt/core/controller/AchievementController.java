@@ -358,7 +358,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         return roles;
     }
 
-
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
@@ -700,37 +699,37 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
             return new ArrayList<>();
         }
-        int minTime = tournament.getDuelsDuration();
-        Participant participant = null;
+        QuickestScoreCandidate quickestScore = new QuickestScoreCandidate(tournament.getDuelsDuration(), null);
         for (final Duel duel : getDuelsFromTournament()) {
-            // competitor1
-            for (final Integer time : duel.getCompetitor1ScoreTime()) {
-                if (time != null) {
-                    if (time == minTime && !Objects.equals(participant, duel.getCompetitor1())) {
-                        participant = null;
-                    } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
-                        participant = duel.getCompetitor1();
-                        minTime = time;
-                    }
-                }
-            }
-            // competitor2
-            for (final Integer time : duel.getCompetitor2ScoreTime()) {
-                if (time != null) {
-                    if (time == minTime && !Objects.equals(participant, duel.getCompetitor2())) {
-                        participant = null;
-                    } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
-                        participant = duel.getCompetitor2();
-                        minTime = time;
-                    }
-                }
-            }
+            quickestScore = evaluateCompetitorTimes(quickestScore, duel.getCompetitor1(), duel.getCompetitor1ScoreTime());
+            quickestScore = evaluateCompetitorTimes(quickestScore, duel.getCompetitor2(), duel.getCompetitor2ScoreTime());
         }
-        //Create new achievement for the participants.
-        if (participant != null) {
-            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, Collections.singleton(participant), tournament);
+        if (quickestScore.participant() != null) {
+            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL,
+                    Collections.singleton(quickestScore.participant()), tournament);
         }
         return new ArrayList<>();
+    }
+    private QuickestScoreCandidate evaluateCompetitorTimes(QuickestScoreCandidate quickestScore, Participant competitor, List<Integer> scoreTimes) {
+        QuickestScoreCandidate currentQuickest = quickestScore;
+        for (final Integer time : scoreTimes) {
+            currentQuickest = updateQuickestScoreCandidate(currentQuickest, competitor, time);
+        }
+        return currentQuickest;
+    }
+    private QuickestScoreCandidate updateQuickestScoreCandidate(QuickestScoreCandidate quickestScore, Participant competitor, Integer time) {
+        if (time == null) {
+            return quickestScore;
+        }
+        if (Objects.equals(time, quickestScore.minTime()) && !Objects.equals(quickestScore.participant(), competitor)) {
+            return new QuickestScoreCandidate(quickestScore.minTime(), null);
+        }
+        if (time < quickestScore.minTime() && time > Duel.DEFAULT_DURATION) {
+            return new QuickestScoreCandidate(time, competitor);
+        }
+        return quickestScore;
+    }
+    private record QuickestScoreCandidate(Integer minTime, Participant participant) {
     }
 
     /**
@@ -1250,7 +1249,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LOVE_SHARING, AchievementGrade.GOLD);
     }
 
-
     /**
      * When somebody has participated on a tournament and nobody has scored a hit against him/her.
      *
@@ -1382,7 +1380,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         });
         return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.BRONZE, participants, tournament);
     }
-
 
     /**
      * When all points are scored: Men, Kote, Do and Tsuki.
@@ -1629,7 +1626,6 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateYouAreUnderArrestAchievementGold(Tournament tournament) {
         return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.YOU_ARE_UNDER_ARREST, AchievementGrade.GOLD);
     }
-
 
     /**
      * When somebody has performed two different roles.
@@ -2118,7 +2114,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         return generateAchievement(AchievementType.DARUMA, AchievementGrade.SILVER, participantsDaruma, tournament);
     }
 
-
     /***
      * Assist at least to 50 tournaments.
      * @param tournament The tournament to check.
@@ -2147,7 +2142,6 @@ public class AchievementController extends BasicInsertableController<Achievement
 
         return generateAchievement(AchievementType.DARUMA, AchievementGrade.GOLD, participantsDaruma, tournament);
     }
-
 
     /***
      * Be in a team, and all members of the teams does no score in the entire tournament.
@@ -2214,31 +2208,49 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateSithApprenticesAlwaysKillTheirMasterAchievement(Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();
-        getFightsFromTournament().forEach(fight -> {
-            for (Duel duel : fight.getDuels()) {
-                final List<Duel> previousDuels = duelProvider.getWhenBothAreInvolved(duel.getCompetitor1(), duel.getCompetitor2());
-                boolean isApprentice = true;
-                int numberOfPreviousDuels = 0;
-                for (Duel previousDuel : previousDuels) {
-                    if (previousDuel.getCreatedAt().isBefore(tournament.getCreatedAt())) {
-                        numberOfPreviousDuels++;
-                        if (Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner())
-                                || previousDuel.getWinner() == 0) {
-                            isApprentice = false;
-                            break;
-                        }
-                    }
-                }
-                if (isApprentice && duel.getCompetitorWinner() != null) {
-                    final AchievementGrade sithGrade = getSithAchievementGrade(numberOfPreviousDuels);
-                    if (sithGrade != null) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament,
-                                AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER, sithGrade));
-                    }
-                }
+        for (final Fight fight : getFightsFromTournament()) {
+            for (final Duel duel : fight.getDuels()) {
+                addSithAchievementForDuel(tournament, duel, achievements);
             }
-        });
+        }
         return achievementProvider.saveAll(achievements);
+    }
+
+    private void addSithAchievementForDuel(Tournament tournament, Duel duel, List<Achievement> achievements) {
+        if (duel.getCompetitorWinner() == null) {
+            return;
+        }
+
+        final int numberOfPreviousDuels = countValidPreviousDuelsAsApprentice(duel, tournament);
+        if (numberOfPreviousDuels < 0) {
+            return;
+        }
+
+        final AchievementGrade sithGrade = getSithAchievementGrade(numberOfPreviousDuels);
+        if (sithGrade != null) {
+            achievements.add(new Achievement(duel.getCompetitorWinner(), tournament,
+                    AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER, sithGrade));
+        }
+    }
+
+    private int countValidPreviousDuelsAsApprentice(Duel duel, Tournament tournament) {
+        int numberOfPreviousDuels = 0;
+        final List<Duel> previousDuels = duelProvider.getWhenBothAreInvolved(duel.getCompetitor1(), duel.getCompetitor2());
+        for (final Duel previousDuel : previousDuels) {
+            if (!previousDuel.getCreatedAt().isBefore(tournament.getCreatedAt())) {
+                continue;
+            }
+            numberOfPreviousDuels++;
+            if (breaksSithApprenticeCondition(duel, previousDuel)) {
+                return -1;
+            }
+        }
+        return numberOfPreviousDuels;
+    }
+
+    private boolean breaksSithApprenticeCondition(Duel duel, Duel previousDuel) {
+        return Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner())
+                || previousDuel.getWinner() == 0;
     }
 
     private AchievementGrade getSithAchievementGrade(int numberOfPreviousDuels) {
@@ -2260,36 +2272,42 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament
      */
     private List<Achievement> generateDethroneTheKingAchievement(Tournament tournament) {
-        if (tournament.getType() == TournamentType.BUBBLE_SORT) {
-            final List<Group> groups = groupProvider.getGroups(tournament);
-            if (groups.size() > 1) {
-                final List<Team> startingRanking = groups.getFirst().getTeams();
-                final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.getLast(),
-                        bubbleSortTournamentHandler.getDrawResolution(tournament));
-
-                //The King is the last one.
-                final Team kingTeam = endingRanking.getLast();
-
-                //How much have fought to be the king:
-                final int startingPosition = startingRanking.indexOf(kingTeam);
-                final int kingPosition = endingRanking.size() - 1;
-
-                if (kingPosition - startingPosition >= DETHRONE_THE_KING_GOLD) {
-                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.GOLD,
-                            kingTeam.getMembers(), tournament);
-                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_SILVER) {
-                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.SILVER,
-                            kingTeam.getMembers(), tournament);
-                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_BRONZE) {
-                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.BRONZE,
-                            kingTeam.getMembers(), tournament);
-                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_NORMAL) {
-                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.NORMAL,
-                            kingTeam.getMembers(), tournament);
-                }
-            }
+        if (tournament.getType() != TournamentType.BUBBLE_SORT) {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
+
+        final List<Group> groups = groupProvider.getGroups(tournament);
+        if (groups.size() <= 1) {
+            return new ArrayList<>();
+        }
+
+        final List<Team> startingRanking = groups.getFirst().getTeams();
+        final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(
+                tournament, groups.getLast(), bubbleSortTournamentHandler.getDrawResolution(tournament));
+
+        final Team kingTeam = endingRanking.getLast();
+        final int rankingDelta = (endingRanking.size() - 1) - startingRanking.indexOf(kingTeam);
+        final AchievementGrade dethroneGrade = getDethroneTheKingGrade(rankingDelta);
+        if (dethroneGrade == null) {
+            return new ArrayList<>();
+        }
+        return generateAchievement(AchievementType.DETHRONE_THE_KING, dethroneGrade, kingTeam.getMembers(), tournament);
+    }
+
+    private AchievementGrade getDethroneTheKingGrade(int rankingDelta) {
+        if (rankingDelta >= DETHRONE_THE_KING_GOLD) {
+            return AchievementGrade.GOLD;
+        }
+        if (rankingDelta >= DETHRONE_THE_KING_SILVER) {
+            return AchievementGrade.SILVER;
+        }
+        if (rankingDelta >= DETHRONE_THE_KING_BRONZE) {
+            return AchievementGrade.BRONZE;
+        }
+        if (rankingDelta >= DETHRONE_THE_KING_NORMAL) {
+            return AchievementGrade.NORMAL;
+        }
+        return null;
     }
 
     /**
@@ -2299,33 +2317,39 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateClimbTheLadderAchievement(Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();
-        if (tournament.getType() == TournamentType.SENBATSU) {
+        if (tournament.getType() != TournamentType.SENBATSU) {
+            return achievements;
+        }
 
-            final List<Group> groups = groupProvider.getGroups(tournament);
-            final List<Team> startingRanking = groups.getFirst().getTeams();
-            final List<Team> endingRanking = senbatsuTournamentHandler.getFinalRanking(tournament);
+        final List<Group> groups = groupProvider.getGroups(tournament);
+        final List<Team> startingRanking = groups.getFirst().getTeams();
+        final List<Team> endingRanking = senbatsuTournamentHandler.getFinalRanking(tournament);
 
-            //Hay many rungs have you climbed?
-            startingRanking.forEach(team -> {
-                final int startingPosition = startingRanking.indexOf(team);
-                final int endingPosition = endingRanking.indexOf(team);
-                if (endingPosition - startingPosition >= SENBATSU_RUNGS_GOLD) {
-                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.GOLD,
-                            team.getMembers(), tournament));
-                } else if (endingPosition - startingPosition >= SENBATSU_RUNGS_SILVER) {
-                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.SILVER,
-                            team.getMembers(), tournament));
-                } else if (endingPosition - startingPosition >= SENBATSU_RUNGS_BRONZE) {
-                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.BRONZE,
-                            team.getMembers(), tournament));
-                } else if (endingPosition - startingPosition >= SENBATSU_RUNGS_NORMAL) {
-                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.NORMAL,
-                            team.getMembers(), tournament));
-
-                }
-            });
+        for (final Team team : startingRanking) {
+            final int rankingDelta = endingRanking.indexOf(team) - startingRanking.indexOf(team);
+            final AchievementGrade climbGrade = getClimbTheLadderGrade(rankingDelta);
+            if (climbGrade != null) {
+                achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, climbGrade,
+                        team.getMembers(), tournament));
+            }
         }
         return achievements;
+    }
+
+    private AchievementGrade getClimbTheLadderGrade(int rankingDelta) {
+        if (rankingDelta >= SENBATSU_RUNGS_GOLD) {
+            return AchievementGrade.GOLD;
+        }
+        if (rankingDelta >= SENBATSU_RUNGS_SILVER) {
+            return AchievementGrade.SILVER;
+        }
+        if (rankingDelta >= SENBATSU_RUNGS_BRONZE) {
+            return AchievementGrade.BRONZE;
+        }
+        if (rankingDelta >= SENBATSU_RUNGS_NORMAL) {
+            return AchievementGrade.NORMAL;
+        }
+        return null;
     }
 
     /**
@@ -2413,12 +2437,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.GOLD, goldSet, tournament));
     }
 
-
     /**
      * Achievement for the stormtrooper syndrome in two tournaments.
-     *
-     * @param tournament The tournament to check.
-     * @return a list of new achievements.
+      }
+
      */
     private List<Achievement> generateStormtrooperSyndromeAchievementBronze(Tournament tournament) {
         return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE,

@@ -36,6 +36,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,7 +46,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +77,18 @@ import java.util.Objects;
  */
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
+
+    private static final String BEARER_PREFIX = "Bearer ";
+
+    private static final String JWT_OBTAINED_TEMPLATE = """
+            JWT Obtained:
+            Expiration date: '{}'
+            User id: '{}'
+            Username: '{}'
+            Session: '{}'
+            Ip: '{}'
+            MAC: '{}'
+            """;
 
     private record ResolvedUser(UserDetails details, boolean participantUser) {
     }
@@ -112,39 +124,34 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.participantProvider = participantProvider;
-        checkClientIp = Boolean.parseBoolean(ipCheck);
+        this.checkClientIp = Boolean.parseBoolean(ipCheck);
         this.participantAccess = Boolean.parseBoolean(participantAccess);
         this.networkController = networkController;
     }
 
     @Override
-    public void doFilterInternal(HttpServletRequest request,
-                                 HttpServletResponse response,
-                                 FilterChain chain)
+    public void doFilterInternal(@NonNull HttpServletRequest request,
+                                 @NonNull HttpServletResponse response,
+                                 @NonNull FilterChain chain)
             throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (isMissingBearerToken(header)) {
+        if (this.isMissingBearerToken(header)) {
             chain.doFilter(request, response);
-            logMissingBearerToken(request);
+            this.logMissingBearerToken(request);
             return;
         }
 
-        final String token = header.split(" ")[1].trim();
-        if (!jwtTokenUtil.validate(token)) {
-            handleInvalidToken(request, response, chain);
+        final String token = getTokenFromHeader(header);
+        if (token.isEmpty() || !this.jwtTokenUtil.validate(token)) {
+            this.handleInvalidToken(request, response, chain);
             return;
         }
 
-        logTokenDetails(token);
-        final ResolvedUser resolvedUser = resolveUser(token);
+        this.logTokenDetails(token);
+        final ResolvedUser resolvedUser = this.resolveUser(token);
+        final UsernamePasswordAuthenticationToken authentication = createAuthentication(resolvedUser.details());
 
-        final UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(
-                resolvedUser.details(), null,
-                resolvedUser.details() == null ? new ArrayList<>() : resolvedUser.details().getAuthorities()
-        );
-
-        validateTokenNetworkBinding(request, token, resolvedUser.participantUser());
+        this.validateTokenNetworkBinding(request, token, resolvedUser.participantUser());
 
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
@@ -154,8 +161,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
+    private UsernamePasswordAuthenticationToken createAuthentication(UserDetails userDetails) {
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails == null ? Collections.emptyList() : userDetails.getAuthorities()
+        );
+    }
+
     private boolean isMissingBearerToken(String header) {
-        return ObjectUtils.isEmpty(header) || !header.startsWith("Bearer ");
+        return ObjectUtils.isEmpty(header) || !header.startsWith(BEARER_PREFIX);
+    }
+
+    private String getTokenFromHeader(String header) {
+        return header.substring(BEARER_PREFIX.length()).trim();
     }
 
     private void logMissingBearerToken(HttpServletRequest request) {
@@ -164,22 +183,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleInvalidToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    private void handleInvalidToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
         try {
             chain.doFilter(request, response);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
         }
     }
 
     private void logTokenDetails(String token) {
         if (JwtFilterLogger.isDebugEnabled()) {
-            JwtFilterLogger.debug(this.getClass().getName(), "\nJWT Obtained:\n"
-                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tSession: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
-                    jwtTokenUtil.getExpirationDate(token), jwtTokenUtil.getUserId(token), jwtTokenUtil.getUsername(token),
-                    jwtTokenUtil.getSession(token), jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
+            JwtFilterLogger.debug(this.getClass().getName(), JWT_OBTAINED_TEMPLATE,
+                    this.jwtTokenUtil.getExpirationDate(token), this.jwtTokenUtil.getUserId(token), this.jwtTokenUtil.getUsername(token),
+                    this.jwtTokenUtil.getSession(token), this.jwtTokenUtil.getUserIp(token), this.jwtTokenUtil.getHostMac(token));
         }
     }
 
@@ -212,10 +229,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         for (final String header : HEADERS_TO_TRY) {
             final String ip = request.getHeader(header);
             if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                return ip.contains(",") ? Arrays.asList(ip.split(",")) : Collections.singletonList(ip);
+                return parseHeaderIp(ip);
             }
         }
 
         return Collections.singletonList(request.getRemoteAddr());
+    }
+
+    private List<String> parseHeaderIp(String ip) {
+        if (!ip.contains(",")) {
+            return Collections.singletonList(ip.trim());
+        }
+        return Arrays.stream(ip.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .toList();
     }
 }

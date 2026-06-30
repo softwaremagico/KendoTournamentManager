@@ -289,17 +289,23 @@ public class TreeTournamentHandler extends LeagueHandler {
         //Check if inner levels must be decreased on size.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
+        final boolean oddTeamsResolvedAsap = Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue());
         int previousLevelSize = Integer.MAX_VALUE - 1;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
             removeGroupsWhenPreviousLevelIsEmpty(tournament, groupsByLevel, level);
-            if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue())) {
-                adjustOddTeamsResolvedAsapLevels(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners);
-            } else {
-                adjustStandardLevels(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners);
-            }
+            adjustLevelAfterRemoval(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners, oddTeamsResolvedAsap);
             previousLevelSize = groupsByLevel.get(level).size();
         }
         adjustGroupsShiaijos(tournament);
+    }
+
+    private void adjustLevelAfterRemoval(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level,
+                                         int previousLevelSize, int numberOfWinners, boolean oddTeamsResolvedAsap) {
+        if (oddTeamsResolvedAsap) {
+            adjustOddTeamsResolvedAsapLevels(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners);
+        } else {
+            adjustStandardLevels(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners);
+        }
     }
 
     private void removeGroupsWhenPreviousLevelIsEmpty(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
@@ -353,23 +359,28 @@ public class TreeTournamentHandler extends LeagueHandler {
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
         final List<Fight> createdFights = new ArrayList<>();
-        tournamentGroups.forEach(group -> {
-            if (Objects.equals(group.getLevel(), level)) {
-                final List<Fight> fights;
-                if (getMaxGroupFights(tournament)) {
-                    final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
-                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(), TeamsOrder.NONE,
-                            level, group.getShiaijo(), LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
-                } else {
-                    fights = fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
-                }
-                group.setFights(fights);
-                groupProvider.save(group);
-                createdFights.addAll(fights);
-            }
-        });
+        tournamentGroups.stream()
+                .filter(group -> Objects.equals(group.getLevel(), level))
+                .forEach(group -> createdFights.addAll(createAndPersistGroupFights(tournament, level, createdBy, group)));
         return createdFights;
+    }
+
+    private List<Fight> createAndPersistGroupFights(Tournament tournament, Integer level, String createdBy, Group group) {
+        final List<Fight> fights = createGroupFights(tournament, level, createdBy, group);
+        group.setFights(fights);
+        groupProvider.save(group);
+        return fights;
+    }
+
+    private List<Fight> createGroupFights(Tournament tournament, Integer level, String createdBy, Group group) {
+        if (getMaxGroupFights(tournament)) {
+            final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
+            final boolean fifoOrder = LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO;
+            return fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(), TeamsOrder.NONE,
+                    level, group.getShiaijo(), fifoOrder, createdBy));
+        }
+        return fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
+                TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
     }
 
 
@@ -390,31 +401,45 @@ public class TreeTournamentHandler extends LeagueHandler {
         final List<GroupLink> links = groupLinkProvider.getGroupLinks(tournament);
         final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level).toList();
         final Set<Group> groupsOfLevel = new HashSet<>();
-        for (GroupLink link : levelLinks) {
+        for (final GroupLink link : levelLinks) {
             final List<ScoreOfTeam> teamsRanking = rankingProvider.getTeamsScoreRanking(link.getSource());
             checkDrawScore(link.getSource(), teamsRanking, link.getWinner());
-            if (link.getWinner() != null && teamsRanking.get(link.getWinner()) != null && teamsRanking.get(link.getWinner()).getTeam() != null
-                    && !link.getDestination().getTeams().contains(teamsRanking.get(link.getWinner()).getTeam())) {
-                link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
-            } else {
-                KendoTournamentLogger.warning(this.getClass(), "Missing data for level '{}' population with winner '{}' using ranking:\n\t{}",
-                        level, link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
-            }
+            addWinnerToDestinationOrWarn(level, link, teamsRanking);
             groupsOfLevel.add(link.getDestination());
         }
         groupProvider.saveAll(groupsOfLevel);
     }
 
+    private void addWinnerToDestinationOrWarn(int level, GroupLink link, List<ScoreOfTeam> teamsRanking) {
+        if (isWinnerAvailable(link, teamsRanking) && !link.getDestination().getTeams().contains(teamsRanking.get(link.getWinner()).getTeam())) {
+            link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
+            return;
+        }
+        KendoTournamentLogger.warning(this.getClass(), "Missing data for level '{}' population with winner '{}' using ranking:\n\t{}",
+                level, link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
+    }
+
+    private boolean isWinnerAvailable(GroupLink link, List<ScoreOfTeam> teamsRanking) {
+        return link.getWinner() != null
+                && link.getWinner() >= 0
+                && link.getWinner() < teamsRanking.size()
+                && teamsRanking.get(link.getWinner()) != null
+                && teamsRanking.get(link.getWinner()).getTeam() != null;
+    }
+
 
     private void checkDrawScore(Group group, List<ScoreOfTeam> scoresOfTeamsDTO, int numberOfWinners) {
-        for (int i = 0; i <= numberOfWinners; i++) {
-            final int winner = i;
-            final List<ScoreOfTeam> sameLevelScore = scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == winner).toList();
+        for (int winner = 0; winner <= numberOfWinners; winner++) {
+            final List<ScoreOfTeam> sameLevelScore = getSameRankedTeams(scoresOfTeamsDTO, winner);
             if (sameLevelScore.size() > 1) {
                 KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.", sameLevelScore.stream().map(ScoreOfTeam::getTeam).toList());
                 throw new LevelNotFinishedException(this.getClass(), "There is a draw value on winner '" + winner + "' on group '" + group + "'");
             }
         }
+    }
+
+    private List<ScoreOfTeam> getSameRankedTeams(List<ScoreOfTeam> scoresOfTeamsDTO, int rankingIndex) {
+        return scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == rankingIndex).toList();
     }
 
 

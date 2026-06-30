@@ -25,9 +25,7 @@ package com.softwaremagico.kt.core.pool;
 import com.softwaremagico.kt.logger.PoolLogger;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,60 +62,73 @@ public abstract class BasePool<ID, E> {
      * @return the element that has the selected key.
      */
     public synchronized E getElement(ID id) {
-        if (id == null || getExpirationTime() <= 0 || elementsTime.isEmpty()) {
-            PoolLogger.debug(this.getClass(), "Object with Id '" + id + "' - Cache Miss.");
+        if (isInvalidCacheRequest(id)) {
+            logCacheMissById(id);
             return null;
         }
 
         final long now = System.currentTimeMillis();
-        PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsTime.size() + ".");
-        final Map<ID, Long> elementsByTimeChecked = new ConcurrentHashMap<>(elementsTime);
-        final Map<ID, E> elementsByIdChecked = new ConcurrentHashMap<>(elementsById);
-        final Iterator<ID> elementByTime = elementsByTimeChecked.keySet().iterator();
+        final Map<ID, Long> elementsByTimeChecked = getElementsTimeSnapshot();
+        PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsByTimeChecked.size() + ".");
 
-        for (final Entry<ID, Long> elementsByTimeEntry : elementsByTimeChecked.entrySet()) {
-            final ID storedObjectId = elementByTime.next();
-            if (removeIfExpired(storedObjectId, elementsByTimeEntry.getValue(), now)) {
-                continue;
-            }
-            final E cachedElement = elementsByIdChecked.get(storedObjectId);
-            if (removeIfDirty(storedObjectId, cachedElement)) {
-                continue;
-            }
+        for (final ID storedObjectId : elementsByTimeChecked.keySet()) {
+            final E cachedElement = getValidCachedElement(storedObjectId, elementsByTimeChecked.get(storedObjectId), now);
             if (cachedElement != null && Objects.equals(storedObjectId, id)) {
                 logStoreHit(cachedElement, id);
                 return cachedElement;
             }
         }
 
-        PoolLogger.debug(this.getClass(), "Object with Id '" + id + "' - Cache Miss.");
+        logCacheMissById(id);
         return null;
     }
 
     public synchronized ID getKey(E element) {
-        if (element == null || getExpirationTime() <= 0 || elementsTime.isEmpty()) {
-            PoolLogger.debug(this.getClass(), "Object '" + element + "' - Cache Miss.");
+        if (isInvalidCacheRequest(element)) {
+            logCacheMissByValue(element);
             return null;
         }
 
         final long now = System.currentTimeMillis();
-        PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsTime.size() + ".");
-        for (final ID id : new ConcurrentHashMap<>(elementsTime).keySet()) {
-            if (removeIfExpired(id, elementsTime.get(id), now)) {
-                continue;
-            }
-            final E cachedElement = elementsById.get(id);
-            if (removeIfDirty(id, cachedElement)) {
-                continue;
-            }
+        final Map<ID, Long> elementsByTimeChecked = getElementsTimeSnapshot();
+        PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsByTimeChecked.size() + ".");
+        for (final ID id : elementsByTimeChecked.keySet()) {
+            final E cachedElement = getValidCachedElement(id, elementsByTimeChecked.get(id), now);
             if (Objects.equals(cachedElement, element)) {
                 logStoreHit(cachedElement, element);
                 return id;
             }
         }
 
-        PoolLogger.debug(this.getClass(), "Object '" + element + "' - Cache Miss.");
+        logCacheMissByValue(element);
         return null;
+    }
+
+    private boolean isInvalidCacheRequest(Object value) {
+        return value == null || getExpirationTime() <= 0 || elementsTime.isEmpty();
+    }
+
+    private Map<ID, Long> getElementsTimeSnapshot() {
+        return new ConcurrentHashMap<>(elementsTime);
+    }
+
+    private E getValidCachedElement(ID storedObjectId, Long timestamp, long now) {
+        if (removeIfExpired(storedObjectId, timestamp, now)) {
+            return null;
+        }
+        final E cachedElement = elementsById.get(storedObjectId);
+        if (removeIfDirty(storedObjectId, cachedElement)) {
+            return null;
+        }
+        return cachedElement;
+    }
+
+    private void logCacheMissById(ID id) {
+        PoolLogger.debug(this.getClass(), "Object with Id '" + id + "' - Cache Miss.");
+    }
+
+    private void logCacheMissByValue(Object element) {
+        PoolLogger.debug(this.getClass(), "Object '" + element + "' - Cache Miss.");
     }
 
     private boolean removeIfExpired(ID storedObjectId, Long timestamp, long now) {

@@ -104,6 +104,19 @@ public class JwtTokenFilterTest {
     }
 
     @Test(groups = {"jwtTokenUtil"})
+    public void shouldContinueChainWhenBearerTokenIsBlank() throws Exception {
+        final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer   ");
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(jwtTokenUtil, never()).validate(any());
+        verify(authenticatedUserProvider, never()).findByUsername(any());
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
     public void shouldAuthenticateStandardUserWhenTokenIsValid() throws Exception {
         final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
