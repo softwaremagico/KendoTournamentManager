@@ -241,8 +241,8 @@ public class ScoreOfCompetitor {
     public void setTotalFights() {
         totalFights = 0;
         for (final Fight fight : fights) {
-            if ((fight != null && fight.isOver() && fight.getTeam1().isMember(competitor))
-                    || (fight != null && fight.getTeam2().isMember(competitor))) {
+            if (((fight != null && fight.isOver()) || (fight != null && countNotOver))
+                    && (fight.getTeam1().isMember(competitor) || fight.getTeam2().isMember(competitor))) {
                 totalFights++;
             }
         }

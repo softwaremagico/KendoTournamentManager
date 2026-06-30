@@ -17,6 +17,7 @@ import {Router} from "@angular/router";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {ScoreType} from "../../models/score-type";
 import {Duel} from "../../models/duel";
+import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
 
 @Component({
   standalone: false,
@@ -42,6 +43,8 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   protected untieTeamsPopup: boolean = false;
   protected drawTeams: Team[] = [];
   protected readonly ScoreType = ScoreType;
+  protected swissTieBreakRule: SwissTieBreakRule = SwissTieBreakRule.BUCHHOLZ;
+  protected readonly SwissTieBreakRule = SwissTieBreakRule;
 
   constructor(private rankingService: RankingService, public translateService: TranslocoService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
@@ -52,7 +55,31 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.tournament) {
-      if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
+      if (this.tournament.type == TournamentType.SWISS) {
+        if (this.group) {
+          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group.id!);
+          const tieBreakRuleRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService
+            .getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
+
+          forkJoin([rankingRequest, tieBreakRuleRequest]).subscribe(([_scoresOfTeams, _tieBreakRule]): void => {
+            this.teamScores = _scoresOfTeams;
+            this.numberOfWinners = 1;
+            this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tieBreakRule?.propertyValue)
+              ?? SwissTieBreakRule.BUCHHOLZ;
+          });
+        } else if (this.tournament.id) {
+          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id);
+          const tieBreakRuleRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService
+            .getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
+
+          forkJoin([rankingRequest, tieBreakRuleRequest]).subscribe(([_scoresOfTeams, _tieBreakRule]): void => {
+            this.teamScores = _scoresOfTeams;
+            this.numberOfWinners = 1;
+            this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tieBreakRule?.propertyValue)
+              ?? SwissTieBreakRule.BUCHHOLZ;
+          });
+        }
+      } else if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
         if (this.group) {
           const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group.id!);
           const winnersRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
@@ -168,6 +195,27 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       teamMembers += this.nameUtils.getNameLastname(member) + "\n";
     }
     return teamMembers;
+  }
+
+  protected showSwissTieBreakScore(): boolean {
+    return this.tournament?.type === TournamentType.SWISS && [SwissTieBreakRule.BUCHHOLZ,
+      SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER].includes(this.swissTieBreakRule);
+  }
+
+  protected getSwissTieBreakHeaderTranslationKey(): string {
+    return SwissTieBreakRule.toCamel(this.swissTieBreakRule);
+  }
+
+  protected getSwissTieBreakValue(score: ScoreOfTeam): string {
+    if (score.swissTieBreakValue === null || score.swissTieBreakValue === undefined) {
+      return '-';
+    }
+    const ruleUsed = SwissTieBreakRule.getByKey(score.swissTieBreakRuleUsed || '')
+      ?? this.swissTieBreakRule;
+    if (ruleUsed === SwissTieBreakRule.SONNEBORN_BERGER) {
+      return score.swissTieBreakValue.toFixed(1);
+    }
+    return score.swissTieBreakValue.toFixed(0);
   }
 
 }

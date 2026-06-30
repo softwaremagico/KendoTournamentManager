@@ -10,6 +10,9 @@
           <th class="team-ranking-header">{{ 'team' | transloco }}</th>
           <th class="team-ranking-header">{{ 'fightsWon' | transloco }}</th>
           <th class="team-ranking-header">{{ 'fightsDraw' | transloco }}</th>
+          @if (showSwissTieBreakScore()) {
+            <th class="team-ranking-header">{{ getSwissTieBreakHeaderTranslationKey() | transloco }}</th>
+          }
           <th class="team-ranking-header">{{ 'duelsWon' | transloco }}</th>
           <th class="team-ranking-header">{{ 'duelsDraw' | transloco }}</th>
           <th class="team-ranking-header">{{ 'hitsWon' | transloco }}</th>
@@ -39,6 +42,9 @@
           </td>
           <td class="team-ranking-value">{{ teamScore.wonFights }}</td>
           <td class="team-ranking-value">{{ teamScore.drawFights }}</td>
+          @if (showSwissTieBreakScore()) {
+            <td class="team-ranking-value">{{ getSwissTieBreakValue(teamScore) }}</td>
+          }
           <td class="team-ranking-value">{{ teamScore.wonDuels }}</td>
           <td class="team-ranking-value">{{ teamScore.drawDuels }}</td>
           <td class="team-ranking-value">{{ teamScore.hits }}{{ (teamScore.untieDuels ? "*" : "") }}</td>

@@ -55,6 +55,10 @@ public enum AchievementType {
 
     THE_WINNER_TEAM,
 
+    SWISS_WINNER,
+
+    BUCHHOLZ_WHISPERER,
+
     WOODCUTTER,
 
     HEAD_SHOT,

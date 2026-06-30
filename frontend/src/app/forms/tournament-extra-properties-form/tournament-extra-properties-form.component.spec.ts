@@ -10,6 +10,7 @@ import {TournamentType} from '../../models/tournament-type';
 import {TournamentExtraPropertyKey} from '../../models/tournament-extra-property-key';
 import {DrawResolution} from '../../models/draw-resolution';
 import {LeagueFightsOrder} from '../../models/league-fights-order';
+import {SwissTieBreakRule} from '../../models/swiss-tie-break-rule';
 
 describe('TournamentExtraPropertiesFormComponent', () => {
   let component: TournamentExtraPropertiesFormComponent;
@@ -141,6 +142,135 @@ describe('TournamentExtraPropertiesFormComponent', () => {
     const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
     expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
     expect(updateArg.propertyValue).toBe('true');
+  });
+
+  // ─── Swiss ───────────────────────────────────────────────────────────────────
+
+  describe('Swiss tournament', () => {
+
+    it('should set canConfigureSwiss to true only for SWISS type', () => {
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.ngOnInit();
+      expect(component.canConfigureSwiss).toBeTrue();
+    });
+
+    it('should set canConfigureSwiss to false for non-Swiss types', () => {
+      for (const type of [TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.SENBATSU, TournamentType.LOOP]) {
+        component.tournament = buildTournament(type);
+        component.ngOnInit();
+        expect(component.canConfigureSwiss).withContext(`type ${type}`).toBeFalse();
+      }
+    });
+
+    it('should set Swiss default properties in constructor', () => {
+      expect(component.swissRounds).toBeNull();
+      expect(component.swissTieBreakRule).toBe(SwissTieBreakRule.BUCHHOLZ);
+      expect(component.swissAvoidRepeatedPairings).toBeTrue();
+    });
+
+    it('should initialize swissTieBreakRuleValues with all 5 rules in constructor', () => {
+      expect((component as any).swissTieBreakRuleValues.length).toBe(5);
+      const values: string[] = (component as any).swissTieBreakRuleValues.map((v: any) => v.value);
+      expect(values).toContain(SwissTieBreakRule.BUCHHOLZ);
+      expect(values).toContain(SwissTieBreakRule.MEDIAN_BUCHHOLZ);
+      expect(values).toContain(SwissTieBreakRule.SONNEBORN_BERGER);
+      expect(values).toContain(SwissTieBreakRule.DIRECT_ENCOUNTER);
+      expect(values).toContain(SwissTieBreakRule.POINT_DIFFERENTIAL);
+    });
+
+    it('should load persisted Swiss properties in ngOnInit', () => {
+      tournamentExtendedPropertiesServiceSpy.getByTournament.and.returnValue(of([
+        { propertyKey: TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, propertyValue: SwissTieBreakRule.SONNEBORN_BERGER } as any,
+        { propertyKey: TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, propertyValue: 'false' } as any,
+        { propertyKey: TournamentExtraPropertyKey.SWISS_ROUNDS, propertyValue: '5' } as any
+      ]));
+
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.ngOnInit();
+
+      expect(component.swissTieBreakRule).toBe(SwissTieBreakRule.SONNEBORN_BERGER);
+      expect(component.swissAvoidRepeatedPairings).toBeFalse();
+      expect(component.swissRounds).toBe(5);
+    });
+
+    it('should use default tieBreakRule when persisted value is unknown', () => {
+      tournamentExtendedPropertiesServiceSpy.getByTournament.and.returnValue(of([
+        { propertyKey: TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, propertyValue: 'UNKNOWN_RULE' } as any
+      ]));
+
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.ngOnInit();
+
+      expect(component.swissTieBreakRule).toBe(SwissTieBreakRule.BUCHHOLZ);
+    });
+
+    it('should set swissRounds to null when persisted value is not a number', () => {
+      tournamentExtendedPropertiesServiceSpy.getByTournament.and.returnValue(of([
+        { propertyKey: TournamentExtraPropertyKey.SWISS_ROUNDS, propertyValue: 'NaN' } as any
+      ]));
+
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.ngOnInit();
+
+      expect(component.swissRounds).toBeNull();
+    });
+
+    it('should persist SWISS_TIE_BREAK_RULE on save', () => {
+      component.onSave(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.MEDIAN_BUCHHOLZ);
+
+      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
+      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
+      expect(updateArg.propertyValue).toBe(SwissTieBreakRule.MEDIAN_BUCHHOLZ);
+    });
+
+    it('should persist SWISS_AVOID_REPEATED_PAIRINGS on save', () => {
+      component.onSave(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, 'false');
+
+      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
+      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS);
+      expect(updateArg.propertyValue).toBe('false');
+    });
+
+    it('should persist SWISS_ROUNDS on save', () => {
+      component.onSave(TournamentExtraPropertyKey.SWISS_ROUNDS, '7');
+
+      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
+      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_ROUNDS);
+      expect(updateArg.propertyValue).toBe('7');
+    });
+
+    it('should persist SWISS_ROUNDS as undefined when empty string is passed (model ignores falsy values)', () => {
+      component.onSave(TournamentExtraPropertyKey.SWISS_ROUNDS, '');
+
+      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
+      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_ROUNDS);
+      // TournamentExtendedProperty constructor skips falsy values, so propertyValue stays undefined
+      expect(updateArg.propertyValue).toBeUndefined();
+    });
+
+    it('should not set other tournament type flags when SWISS', () => {
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.ngOnInit();
+
+      expect(component.canMaximizeFights).toBeFalse();
+      expect(component.needsDrawResolution).toBeFalse();
+      expect(component.canSelectChallengeDistance).toBeFalse();
+      expect(component.needsFifoWinner).toBeFalse();
+      expect(component.canAvoidDuplicatedFights).toBeFalse();
+      expect(component.canResolveOddFightsAsap).toBeFalse();
+    });
+
+    it('should load each Swiss tieBreakRule value correctly', () => {
+      for (const rule of SwissTieBreakRule.toArray()) {
+        tournamentExtendedPropertiesServiceSpy.getByTournament.and.returnValue(of([
+          { propertyKey: TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, propertyValue: rule } as any
+        ]));
+        component.tournament = buildTournament(TournamentType.SWISS);
+        component.ngOnInit();
+        expect(component.swissTieBreakRule).withContext(`rule ${rule}`).toBe(rule);
+      }
+    });
+
   });
 });
 

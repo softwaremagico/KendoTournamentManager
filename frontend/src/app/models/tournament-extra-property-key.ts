@@ -1,4 +1,5 @@
 import {DrawResolution} from "./draw-resolution";
+import {SwissTieBreakRule} from "./swiss-tie-break-rule";
 
 export enum TournamentExtraPropertyKey {
   MAXIMIZE_FIGHTS = 'MAXIMIZE_FIGHTS',
@@ -8,7 +9,10 @@ export enum TournamentExtraPropertyKey {
   NUMBER_OF_WINNERS = 'NUMBER_OF_WINNERS',
   LEAGUE_FIGHTS_ORDER_GENERATION = 'LEAGUE_FIGHTS_ORDER_GENERATION',
   ODD_FIGHTS_RESOLVED_ASAP = 'ODD_FIGHTS_RESOLVED_ASAP',
-  SENBATSU_CHALLENGE_DISTANCE = 'SENBATSU_CHALLENGE_DISTANCE'
+  SENBATSU_CHALLENGE_DISTANCE = 'SENBATSU_CHALLENGE_DISTANCE',
+  SWISS_ROUNDS = 'SWISS_ROUNDS',
+  SWISS_TIE_BREAK_RULE = 'SWISS_TIE_BREAK_RULE',
+  SWISS_AVOID_REPEATED_PAIRINGS = 'SWISS_AVOID_REPEATED_PAIRINGS'
 }
 
 export namespace TournamentExtraPropertyKey {
@@ -35,6 +39,19 @@ export namespace TournamentExtraPropertyKey {
 
   export function senbatsuChallengeDistance(): number {
     return 3;
+  }
+
+  export function swissDefaultRounds(): number | null {
+    // null = calculado automáticamente por el backend según nº participantes
+    return null;
+  }
+
+  export function swissDefaultTieBreakRule(): SwissTieBreakRule {
+    return SwissTieBreakRule.BUCHHOLZ;
+  }
+
+  export function swissDefaultAvoidRepeatedPairings(): boolean {
+    return true;
   }
 
   export function getByKey(key: string) {

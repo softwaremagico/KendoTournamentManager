@@ -11,6 +11,7 @@ import {NameUtilsService} from '../../services/name-utils.service';
 import {RbacService} from '../../services/rbac/rbac.service';
 import {TournamentExtendedPropertiesService} from '../../services/tournament-extended-properties.service';
 import {TeamRankingComponent} from './team-ranking.component';
+import {SwissTieBreakRule} from '../../models/swiss-tie-break-rule';
 
 describe('TeamRankingComponent', () => {
   let component: TeamRankingComponent;
@@ -91,6 +92,33 @@ describe('TeamRankingComponent', () => {
     expect(rankingServiceSpy.getTeamsScoreRankingByTournament).toHaveBeenCalledOnceWith(5);
     expect(component.teamScores).toBe(scores);
     expect(component.numberOfWinners).toBe(1);
+  });
+
+  it('should load swiss group ranking and selected tie-break rule on init', () => {
+    const tournament = { id: 9, type: TournamentType.SWISS, name: 'S1' } as Tournament;
+    const group = { id: 11, index: 0 } as Group;
+    const scores = [{ sortingIndex: 0, team: createTeam('A') }] as unknown as ScoreOfTeam[];
+
+    component.tournament = tournament;
+    component.group = group;
+    rankingServiceSpy.getTeamsScoreRankingByGroup.and.returnValue(of(scores));
+    tournamentExtendedPropertiesServiceSpy.getByTournamentAndKey.and.returnValue(of({ propertyValue: SwissTieBreakRule.BUCHHOLZ } as any));
+
+    component.ngOnInit();
+
+    expect(rankingServiceSpy.getTeamsScoreRankingByGroup).toHaveBeenCalledOnceWith(11);
+    expect(component.teamScores).toBe(scores);
+    expect((component as any).swissTieBreakRule).toBe(SwissTieBreakRule.BUCHHOLZ);
+    expect((component as any).showSwissTieBreakScore()).toBeTrue();
+  });
+
+  it('should format swiss tie-break value based on selected rule', () => {
+    component.tournament = { type: TournamentType.SWISS } as Tournament;
+    (component as any).swissTieBreakRule = SwissTieBreakRule.BUCHHOLZ;
+    expect((component as any).getSwissTieBreakValue({ swissTieBreakValue: 12.6 } as ScoreOfTeam)).toBe('13');
+
+    (component as any).swissTieBreakRule = SwissTieBreakRule.SONNEBORN_BERGER;
+    expect((component as any).getSwissTieBreakValue({ swissTieBreakValue: 12.64 } as ScoreOfTeam)).toBe('12.6');
   });
 
   it('should detect draw winner based on sortingIndex and fightsFinished', () => {
