@@ -43,6 +43,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @Entity
 @Cacheable
@@ -111,6 +112,45 @@ public class Team extends Element implements Comparable<Team>, IName {
 
     public boolean isMember(Participant member) {
         return members.contains(member);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Team team = (Team) o;
+        if (this.getId() != null && team.getId() != null) {
+            return Objects.equals(this.getId(), team.getId());
+        }
+        if (!Objects.equals(this.name, team.name)) {
+            return false;
+        }
+        if (this.tournament == team.tournament) {
+            return true;
+        }
+        if (this.tournament == null || team.tournament == null) {
+            return false;
+        }
+        if (this.tournament.getId() != null && team.tournament.getId() != null) {
+            return Objects.equals(this.tournament.getId(), team.tournament.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.getId() != null) {
+            return Objects.hash(this.getId());
+        }
+        final Integer tournamentId = this.tournament != null ? this.tournament.getId() : null;
+        if (tournamentId != null) {
+            return Objects.hash(this.name, tournamentId);
+        }
+        return Objects.hash(this.name, System.identityHashCode(this.tournament));
     }
 
     @Override

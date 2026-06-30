@@ -6,7 +6,8 @@ export enum TournamentType {
   KING_OF_THE_MOUNTAIN = 'KING_OF_THE_MOUNTAIN',
   BUBBLE_SORT = 'BUBBLE_SORT',
   CUSTOMIZED = 'CUSTOMIZED',
-  SENBATSU = 'SENBATSU'
+  SENBATSU = 'SENBATSU',
+  SWISS = 'SWISS'
 }
 
 export namespace TournamentType {
@@ -59,6 +60,10 @@ export namespace TournamentType {
 
   export function resolveOddFightsAsap(type: TournamentType | undefined): boolean {
     return type === TournamentType.CHAMPIONSHIP;
+  }
+
+  export function isSwiss(type: TournamentType | undefined): boolean {
+    return type === TournamentType.SWISS;
   }
 
   /**

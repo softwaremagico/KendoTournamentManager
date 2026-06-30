@@ -39,7 +39,9 @@ public enum TournamentType {
 
     CUSTOMIZED,
 
-    SENBATSU;
+    SENBATSU,
+
+    SWISS;
 
     public static TournamentType getType(String name) {
         for (final TournamentType type : TournamentType.values()) {

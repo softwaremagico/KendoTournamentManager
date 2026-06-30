@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
@@ -83,6 +84,48 @@ public class TournamentExtraPropertyProviderTest {
     }
 
     @Test
+    public void shouldCreateDefaultSwissRoundsPropertyWhenMissing() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS)).thenReturn(null);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final TournamentExtraProperty result = provider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_ROUNDS, 4);
+
+        assertEquals(result.getPropertyKey(), TournamentExtraPropertyKey.SWISS_ROUNDS);
+        assertEquals(result.getPropertyValue(), "4");
+        verify(repository).save(any(TournamentExtraProperty.class));
+    }
+
+    @Test
+    public void shouldCreateDefaultSwissTieBreakRuleWhenMissing() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE)).thenReturn(null);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final TournamentExtraProperty result = provider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, "BUCHHOLZ");
+
+        assertEquals(result.getPropertyKey(), TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
+        assertEquals(result.getPropertyValue(), "BUCHHOLZ");
+        verify(repository).save(any(TournamentExtraProperty.class));
+    }
+
+    @Test
+    public void shouldCreateDefaultSwissAvoidRepeatedPairingsWhenMissing() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS)).thenReturn(null);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final TournamentExtraProperty result = provider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, true);
+
+        assertEquals(result.getPropertyKey(), TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS);
+        assertEquals(result.getPropertyValue(), "true");
+        verify(repository).save(any(TournamentExtraProperty.class));
+    }
+
+    @Test
     public void shouldUpdateExistingPropertyInPlace() {
         final Tournament tournament = tournament();
         final TournamentExtraProperty existing = new TournamentExtraProperty(tournament,
@@ -117,6 +160,77 @@ public class TournamentExtraPropertyProviderTest {
             fail("Expected InvalidExtraPropertyException");
         } catch (InvalidExtraPropertyException expected) {
             assertTrue(expected.getMessage().contains("cannot have property"));
+        }
+
+        verify(repository, never()).save(any(TournamentExtraProperty.class));
+    }
+
+    @Test
+    public void shouldThrowWhenSwissPropertyIsUsedInNonSwissTournament() {
+        final Tournament tournament = tournament(TournamentType.LEAGUE);
+        final TournamentExtraProperty property = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_ROUNDS, "5");
+
+        try {
+            provider.save(property);
+            fail("Expected InvalidExtraPropertyException");
+        } catch (InvalidExtraPropertyException expected) {
+            assertTrue(expected.getMessage().contains("cannot have property"));
+        }
+
+        verify(repository, never()).save(any(TournamentExtraProperty.class));
+    }
+
+    @Test
+    public void shouldAllowSwissPropertiesInSwissTournament() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        final TournamentExtraProperty rounds = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_ROUNDS, "5");
+        final TournamentExtraProperty tieBreak = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, "BUCHHOLZ");
+        final TournamentExtraProperty avoidRepeated = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true");
+
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS)).thenReturn(null);
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE)).thenReturn(null);
+        when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS)).thenReturn(null);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final TournamentExtraProperty roundsResult = provider.save(rounds);
+        final TournamentExtraProperty tieBreakResult = provider.save(tieBreak);
+        final TournamentExtraProperty avoidRepeatedResult = provider.save(avoidRepeated);
+
+        assertEquals(roundsResult.getPropertyKey(), TournamentExtraPropertyKey.SWISS_ROUNDS);
+        assertEquals(tieBreakResult.getPropertyKey(), TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
+        assertEquals(avoidRepeatedResult.getPropertyKey(), TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS);
+    }
+
+    @Test
+    public void shouldAllowAllSwissTieBreakRuleEnumValues() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        when(repository.save(any(TournamentExtraProperty.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        for (final SwissTieBreakRule rule : SwissTieBreakRule.values()) {
+            when(repository.findByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE)).thenReturn(null);
+
+            final TournamentExtraProperty result = provider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, rule.name()));
+
+            assertEquals(result.getPropertyValue(), rule.name());
+        }
+    }
+
+    @Test
+    public void shouldThrowWhenSwissTieBreakRuleValueIsInvalid() {
+        final Tournament tournament = tournament(TournamentType.SWISS);
+        final TournamentExtraProperty property = new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, "NOT_A_VALID_RULE");
+
+        try {
+            provider.save(property);
+            fail("Expected InvalidExtraPropertyException");
+        } catch (InvalidExtraPropertyException expected) {
+            assertTrue(expected.getMessage().contains("invalid Swiss tie-break rule"));
         }
 
         verify(repository, never()).save(any(TournamentExtraProperty.class));
@@ -197,7 +311,11 @@ public class TournamentExtraPropertyProviderTest {
     }
 
     private Tournament tournament() {
-        final Tournament tournament = new Tournament("Tournament", 1, 3, TournamentType.LEAGUE, "tester");
+        return tournament(TournamentType.LEAGUE);
+    }
+
+    private Tournament tournament(TournamentType type) {
+        final Tournament tournament = new Tournament("Tournament", 1, 3, type, "tester");
         tournament.setId(101);
         return tournament;
     }

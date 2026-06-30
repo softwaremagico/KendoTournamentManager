@@ -418,11 +418,38 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   generateElements(): void {
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
       this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.BUBBLE_SORT
-      || this.tournament.type === TournamentType.SENBATSU) {
+      || this.tournament.type === TournamentType.SENBATSU || this.tournament.type === TournamentType.SWISS) {
       this.openLeagueGeneratorPopup = true;
     } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
       this.openBracketsManager();
     }
+  }
+
+  isGroupSelected(group: Group): boolean {
+    if (!group) {
+      return false;
+    }
+    if (this.selectedGroup?.id === group.id) {
+      return true;
+    }
+    if (this.selectedFight && group.fights?.some((fight: Fight): boolean => fight.id === this.selectedFight?.id)) {
+      return true;
+    }
+    return !!this.selectedDuel && this.getGroup(this.selectedDuel)?.id === group.id;
+  }
+
+  isGroupCompleted(group: Group): boolean {
+    return !!group && Group.isFinished(group);
+  }
+
+  getGroupCardClass(group: Group): string {
+    if (this.isGroupSelected(group)) {
+      return 'group-selected';
+    }
+    if (this.isGroupCompleted(group)) {
+      return 'group-finished';
+    }
+    return 'group-pending';
   }
 
   protected elementsGenerated(): void {

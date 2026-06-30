@@ -107,7 +107,7 @@ public class ScoreOfCompetitorTest {
         assertEquals(score.getUntieHits().intValue(), 3);
         assertEquals(score.getHits().intValue(), 7);
         assertEquals(score.getHitsLost().intValue(), 3);
-        assertEquals(score.getTotalFights().intValue(), 2);
+        assertEquals(score.getTotalFights().intValue(), 1);
         assertTrue(score.toString().contains("HL:"));
     }
 
@@ -372,5 +372,27 @@ public class ScoreOfCompetitorTest {
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(overFight, notOverFight), List.of(), false);
 
         assertThat(score.getTotalFights()).isEqualTo(1);
+    }
+
+    @Test
+    public void testTotalFightsDoesNotCountNotOverFightWhenCompetitorIsInTeam2() {
+        final Participant competitor = competitor();
+        final Team team1 = Mockito.mock(Team.class);
+        final Team team2 = Mockito.mock(Team.class);
+
+        final Fight notOverFight = Mockito.mock(Fight.class);
+        Mockito.when(notOverFight.isOver()).thenReturn(false);
+        Mockito.when(notOverFight.getDuels(competitor)).thenReturn(List.of());
+        Mockito.when(notOverFight.getDuelsWon(competitor)).thenReturn(0);
+        Mockito.when(notOverFight.getTeam1()).thenReturn(team1);
+        Mockito.when(notOverFight.getTeam2()).thenReturn(team2);
+        Mockito.when(team1.isMember(competitor)).thenReturn(false);
+        Mockito.when(team2.isMember(competitor)).thenReturn(true);
+        Mockito.when(notOverFight.getScore(competitor)).thenReturn(0);
+        Mockito.when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
+
+        final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(notOverFight), List.of(), false);
+
+        assertThat(score.getTotalFights()).isZero();
     }
 }

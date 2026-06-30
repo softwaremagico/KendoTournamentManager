@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,6 +87,11 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         if (!entity.getPropertyKey().getAllowedTournaments().contains(entity.getTournament().getType())) {
             throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
                     + "' cannot have property '" + entity.getPropertyKey() + "'");
+        }
+        if (entity.getPropertyKey() == TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE
+                && SwissTieBreakRule.getType(entity.getPropertyValue()) == null) {
+            throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
+                    + "' has invalid Swiss tie-break rule '" + entity.getPropertyValue() + "'");
         }
         final TournamentExtraProperty entityToSave;
         final TournamentExtraProperty existing = getByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());

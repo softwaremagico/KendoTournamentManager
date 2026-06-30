@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.controller;
 
 import com.softwaremagico.kt.core.controller.models.AchievementDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.achievements.SwissAchievementGenerator;
 import com.softwaremagico.kt.core.converters.AchievementConverter;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
@@ -39,11 +40,14 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.BubbleSortTournamentHandler;
 import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
+import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -68,6 +72,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 @Test(groups = "roleAchievementTests")
 public class AchievementControllerTest {
@@ -89,6 +94,7 @@ public class AchievementControllerTest {
     @Mock private SenbatsuTournamentHandler senbatsuTournamentHandler;
 
     private AchievementController controller;
+    private SwissAchievementGenerator swissAchievementGenerator;
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
@@ -96,6 +102,7 @@ public class AchievementControllerTest {
         controller = new AchievementController(provider, converter, tournamentConverter, tournamentProvider, participantProvider,
                 participantConverter, roleProvider, teamProvider, achievementProvider, fightProvider, duelProvider,
                 rankingProvider, groupProvider, bubbleSortTournamentHandler, senbatsuTournamentHandler);
+        swissAchievementGenerator = new SwissAchievementGenerator(achievementProvider, rankingProvider);
     }
 
     @Test
@@ -220,6 +227,99 @@ public class AchievementControllerTest {
         assertSame(achievements.get(0), dto);
         assertFalse(controller.getAchievementsCount().isEmpty());
         assertEquals(controller.countAchievements(AchievementType.BILLY_THE_KID), 2);
+    }
+
+    @Test
+    public void shouldGenerateSwissWinnerAchievementForWinningTeamMembers() throws Exception {
+        final Tournament tournament = new Tournament("Tournament", 1, 2, TournamentType.SWISS, "tester", ScoreType.INTERNATIONAL);
+        tournament.setId(77);
+        tournament.setCreatedAt(LocalDateTime.now().minusDays(1));
+
+        final Participant winnerParticipant = new Participant();
+        winnerParticipant.setId(701);
+        final Team winnerTeam = new Team("Winner Team", tournament);
+        winnerTeam.setMembers(List.of(winnerParticipant));
+
+        final ScoreOfTeam winnerScore = new ScoreOfTeam();
+        winnerScore.setTeam(winnerTeam);
+
+        when(rankingProvider.getTeamsScoreRanking(tournament)).thenReturn(List.of(winnerScore));
+        when(achievementProvider.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final List<Achievement> achievements = swissAchievementGenerator.generateSwissWinnerAchievement(tournament);
+
+        assertEquals(achievements.size(), 1);
+        assertEquals(achievements.get(0).getAchievementType(), AchievementType.SWISS_WINNER);
+        assertEquals(achievements.get(0).getParticipant(), winnerParticipant);
+    }
+
+    @Test
+    public void shouldGenerateBuchholzWhispererWhenSwissWinnerIsDecidedByTieBreak() throws Exception {
+        final Tournament tournament = new Tournament("Tournament", 1, 2, TournamentType.SWISS, "tester", ScoreType.INTERNATIONAL);
+        tournament.setId(78);
+        tournament.setCreatedAt(LocalDateTime.now().minusDays(1));
+
+        final Participant winnerParticipant = new Participant();
+        winnerParticipant.setId(702);
+        final Team winnerTeam = new Team("Winner Team", tournament);
+        winnerTeam.setMembers(List.of(winnerParticipant));
+
+        final Participant runnerUpParticipant = new Participant();
+        runnerUpParticipant.setId(703);
+        final Team runnerUpTeam = new Team("Runner Up Team", tournament);
+        runnerUpTeam.setMembers(List.of(runnerUpParticipant));
+
+        final ScoreOfTeam winnerScore = new ScoreOfTeam();
+        winnerScore.setTeam(winnerTeam);
+        winnerScore.setWonFights(2);
+        winnerScore.setDrawFights(0);
+        winnerScore.setSwissTieBreakValue(12.0);
+
+        final ScoreOfTeam runnerUpScore = new ScoreOfTeam();
+        runnerUpScore.setTeam(runnerUpTeam);
+        runnerUpScore.setWonFights(2);
+        runnerUpScore.setDrawFights(0);
+        runnerUpScore.setSwissTieBreakValue(9.0);
+
+        when(rankingProvider.getTeamsScoreRanking(tournament)).thenReturn(List.of(winnerScore, runnerUpScore));
+        when(achievementProvider.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final List<Achievement> achievements = swissAchievementGenerator.generateBuchholzWhispererAchievement(tournament);
+
+        assertEquals(achievements.size(), 1);
+        assertEquals(achievements.get(0).getAchievementType(), AchievementType.BUCHHOLZ_WHISPERER);
+        assertEquals(achievements.get(0).getParticipant(), winnerParticipant);
+    }
+
+    @Test
+    public void shouldNotGenerateBuchholzWhispererWithoutPointsTie() throws Exception {
+        final Tournament tournament = new Tournament("Tournament", 1, 2, TournamentType.SWISS, "tester", ScoreType.INTERNATIONAL);
+        tournament.setId(79);
+        tournament.setCreatedAt(LocalDateTime.now().minusDays(1));
+
+        final Team winnerTeam = new Team("Winner Team", tournament);
+        winnerTeam.setMembers(List.of(new Participant()));
+
+        final Team runnerUpTeam = new Team("Runner Up Team", tournament);
+        runnerUpTeam.setMembers(List.of(new Participant()));
+
+        final ScoreOfTeam winnerScore = new ScoreOfTeam();
+        winnerScore.setTeam(winnerTeam);
+        winnerScore.setWonFights(3);
+        winnerScore.setDrawFights(0);
+        winnerScore.setSwissTieBreakValue(12.0);
+
+        final ScoreOfTeam runnerUpScore = new ScoreOfTeam();
+        runnerUpScore.setTeam(runnerUpTeam);
+        runnerUpScore.setWonFights(2);
+        runnerUpScore.setDrawFights(0);
+        runnerUpScore.setSwissTieBreakValue(11.0);
+
+        when(rankingProvider.getTeamsScoreRanking(tournament)).thenReturn(List.of(winnerScore, runnerUpScore));
+
+        final List<Achievement> achievements = swissAchievementGenerator.generateBuchholzWhispererAchievement(tournament);
+
+        assertTrue(achievements.isEmpty());
     }
 
     @Test(expectedExceptions = TournamentNotFoundException.class)

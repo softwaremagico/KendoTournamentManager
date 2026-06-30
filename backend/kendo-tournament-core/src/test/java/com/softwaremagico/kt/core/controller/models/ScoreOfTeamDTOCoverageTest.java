@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.testng.annotations.Test;
 
@@ -80,6 +81,8 @@ public class ScoreOfTeamDTOCoverageTest {
 		dto.setHitsLost(7);
 		dto.setLevel(2);
 		dto.setSortingIndex(1);
+		dto.setSwissTieBreakRuleUsed(SwissTieBreakRule.BUCHHOLZ);
+		dto.setSwissTieBreakValue(12.0);
 		dto.setId(99);
 		dto.setCreatedAt(LocalDateTime.now().withNano(0));
 		dto.setCreatedBy("creator");
@@ -94,6 +97,8 @@ public class ScoreOfTeamDTOCoverageTest {
 
 		assertEquals(dto.getTeam(), team);
 		assertEquals(dto.getSortingIndex(), Integer.valueOf(1));
+		assertEquals(dto.getSwissTieBreakRuleUsed(), SwissTieBreakRule.BUCHHOLZ);
+		assertEquals(dto.getSwissTieBreakValue(), Double.valueOf(12.0));
 		assertEquals(dto.getHitsLost(), Integer.valueOf(7));
 		assertEquals(copy.getTeam(), team);
 		assertEquals(copy.getId(), dto.getId());
