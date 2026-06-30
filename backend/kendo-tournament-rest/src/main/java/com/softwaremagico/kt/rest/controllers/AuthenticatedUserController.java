@@ -42,6 +42,9 @@ import java.util.Set;
 
 @Controller
 public class AuthenticatedUserController {
+    private static final String USER_WITH_USERNAME_PREFIX = "User with username '";
+    private static final String USER_NOT_EXISTS_SUFFIX = "' does not exists";
+
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -78,10 +81,10 @@ public class AuthenticatedUserController {
 
     public void updatePassword(String username, String oldPassword, String newPassword, String updater) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + USER_NOT_EXISTS_SUFFIX));
 
         if (user instanceof Participant) {
-            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+            throw new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + "' is not a registered user");
         }
 
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
@@ -100,7 +103,7 @@ public class AuthenticatedUserController {
 
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
         final AuthenticatedUser user = (AuthenticatedUser) authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + createUserRequest.getUsername() + USER_NOT_EXISTS_SUFFIX));
         user.setName(createUserRequest.getName() != null ? createUserRequest.getName().replaceAll("[\n\r\t]", "_") : "");
         user.setLastname(createUserRequest.getLastname() != null ? createUserRequest.getLastname().replaceAll("[\n\r\t]", "_") : "");
         if (!Objects.equals(user.getUsername(), updater)) {
@@ -120,9 +123,9 @@ public class AuthenticatedUserController {
     public void deleteUser(String actioner, String username) {
         //Can only be AuthenticatedUsers and not Participants
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + USER_NOT_EXISTS_SUFFIX));
         if (user instanceof Participant) {
-            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+            throw new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + "' is not a registered user");
         }
         //Ensure that at least, one user remain.
         if (authenticatedUserProvider.count() > 1 && user instanceof AuthenticatedUser authenticatedUser) {
@@ -133,7 +136,7 @@ public class AuthenticatedUserController {
 
     public Set<String> getRoles(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + USER_NOT_EXISTS_SUFFIX));
         return user.getRoles();
     }
 

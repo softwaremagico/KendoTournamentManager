@@ -99,7 +99,9 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        // This override is intentionally empty. The single-card layout does not require any writer events,
+        // such as page numbering or header/footer content, which are typically managed by the base class.
+        // This method is defined here to comply with the parent class contract.
     }
 
     private PdfPTable createNameTable() throws BadElementException {

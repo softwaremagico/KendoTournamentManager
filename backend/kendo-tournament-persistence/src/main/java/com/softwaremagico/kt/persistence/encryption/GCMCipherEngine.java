@@ -22,6 +22,7 @@ package com.softwaremagico.kt.persistence.encryption;
  */
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -44,8 +45,8 @@ import java.util.Base64;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
- * AES/GCM/NoPadding implementation for encrypt and decrypt.
- * Must be slow to avoid attacks. Not useful for database encryption.
+ * AES/GCM/NoPadding implementation for encrypt and decrypt. Must be slow to
+ * avoid attacks. Not useful for database encryption.
  */
 public class GCMCipherEngine implements ICipherEngine {
 
@@ -69,10 +70,10 @@ public class GCMCipherEngine implements ICipherEngine {
         return getAESKey(getDatabaseEncryptionKey(), salt);
     }
 
-    public static SecretKeySpec getAESKey(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static SecretKeySpec getAESKey(String password, byte[] salt)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-        final KeySpec spec = new PBEKeySpec(password != null ? password.toCharArray() : null, salt,
-                512, 256);
+        final KeySpec spec = new PBEKeySpec(password != null ? password.toCharArray() : null, salt, 512, 256);
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), SECRET_KEY_ALGORITHM);
     }
 
@@ -92,21 +93,14 @@ public class GCMCipherEngine implements ICipherEngine {
             final byte[] iv = getRandomNonce(GCM_IV_LENGTH);
             getCipher().init(Cipher.ENCRYPT_MODE, getAESKey(password, salt), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
             final byte[] encryptedText = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
-            final byte[] encryptedBytes = ByteBuffer.allocate(iv.length + salt.length + encryptedText.length)
-                    .put(iv)
-                    .put(salt)
-                    .put(encryptedText)
-                    .array();
+            final byte[] encryptedBytes = ByteBuffer.allocate(iv.length + salt.length + encryptedText.length).put(iv)
+                    .put(salt).put(encryptedText).array();
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
             EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
             return encodedValue;
-        } catch (BadPaddingException
-                 | IllegalBlockSizeException
-                 | InvalidAlgorithmParameterException
-                 | InvalidKeyException
-                 | NoSuchPaddingException
-                 | NoSuchAlgorithmException
-                 | InvalidKeySpecException e) {
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
+                | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            KendoTournamentLogger.warning(this.getClass().getName(), "Error encrypting value '{}': {}", input, e);
             throw new InvalidEncryptionException(e);
         }
     }

@@ -36,7 +36,7 @@ import java.io.InputStream;
 public class TableBackgroundEvent implements PdfPTableEvent {
 
     private final String imageResource;
-    private static Image defaultBackgroundImage;
+    private Image defaultBackgroundImage;
     private Image backgroundImage;
     private Document document;
 
@@ -51,19 +51,25 @@ public class TableBackgroundEvent implements PdfPTableEvent {
         this.document = document;
     }
 
+    private void initializeDefaultBackgroundImage() {
+        if (defaultBackgroundImage == null) {
+            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream(imageResource)) {
+                if (inputStream != null) {
+                    defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
+                    defaultBackgroundImage.setAlignment(Image.UNDERLYING);
+                    defaultBackgroundImage.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
+                    defaultBackgroundImage.setAbsolutePosition(0, 0);
+                }
+            } catch (NullPointerException | BadElementException | IOException ex) {
+                PdfExporterLog.severe(TableBackgroundEvent.class.getName(), "No background image found!");
+            }
+        }
+    }
+
     private Image getBackgroundImage() {
         if (backgroundImage == null) {
-            if (defaultBackgroundImage == null) {
-                try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream(imageResource)) {
-                    if (inputStream != null) {
-                        defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
-                        defaultBackgroundImage.setAlignment(Image.UNDERLYING);
-                        defaultBackgroundImage.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
-                        defaultBackgroundImage.setAbsolutePosition(0, 0);
-                    }
-                } catch (NullPointerException | BadElementException | IOException ex) {
-                    PdfExporterLog.severe(TableBackgroundEvent.class.getName(), "No background image found!");
-                }
+            if (imageResource != null) {
+                initializeDefaultBackgroundImage();
             }
             backgroundImage = defaultBackgroundImage;
         }

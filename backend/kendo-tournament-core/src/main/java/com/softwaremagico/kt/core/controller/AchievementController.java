@@ -84,7 +84,7 @@ import java.util.stream.Collectors;
 @Controller
 public class AchievementController
         extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository, AchievementProvider,
-                AchievementConverterRequest, AchievementConverter> {
+        AchievementConverterRequest, AchievementConverter> {
 
     private static final int MILLIS = 1000;
 
@@ -387,9 +387,9 @@ public class AchievementController
         for (final TournamentDTO tournamentDTO : tournaments) {
             achievementsGenerated.addAll(this.generateAchievements(tournamentDTO));
         }
-        for (final AchievementsGeneratedAllTournamentsListener achievementsGeneratedAllTournamentsListener
+            for (final AchievementsGeneratedAllTournamentsListener listener
                 : this.achievementsGeneratedAllTournamentsListeners) {
-            achievementsGeneratedAllTournamentsListener.generated(achievementsGenerated, tournaments);
+            listener.generated(achievementsGenerated, tournaments);
         }
         try {
             return achievementsGenerated;
@@ -491,8 +491,7 @@ public class AchievementController
                 this.getTotalScoreAgainstParticipant()));
         achievementsGenerated.addAll(this.defenseAchievementGenerator.generateFirstBloodAchievement(this.tournament,
                 this.getTotalScoreFromParticipant()));
-        achievementsGenerated
-                .addAll(this.participationAchievementGenerator.generateDarumaAchievement(this.tournament));
+        achievementsGenerated.addAll(this.participationAchievementGenerator.generateDarumaAchievement(this.tournament));
         achievementsGenerated.addAll(this.participationAchievementGenerator.generateStormtrooperSyndromeAchievement(
                 this.tournament, this.getFightsFromTournament(), this.getTeamsFromTournament()));
         achievementsGenerated.addAll(this.rivalryAchievementGenerator.generateVendettaAchievement(this.tournament,

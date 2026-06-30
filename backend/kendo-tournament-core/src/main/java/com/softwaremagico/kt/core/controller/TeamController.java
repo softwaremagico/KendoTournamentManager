@@ -49,6 +49,8 @@ import java.util.List;
 @Controller
 public class TeamController extends BasicInsertableController<Team, TeamDTO, TeamRepository,
         TeamProvider, TeamConverterRequest, TeamConverter> {
+    private static final String TOURNAMENT_NOT_FOUND_PREFIX = "No tournament found with id '";
+
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
@@ -83,7 +85,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     public List<TeamDTO> getAllByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + "'."));
         final List<TeamDTO> teams = convertAll(getProvider().getAll(tournament));
         if (teams.isEmpty()) {
             return convertAllNotSorted(getProvider().createDefaultTeams(tournament, createdBy));
@@ -93,7 +95,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     public List<TeamDTO> getAllRemainingByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + "'."));
         if (tournament.getType() != TournamentType.SENBATSU) {
             return getAllByTournament(tournamentId, createdBy);
         }
@@ -102,7 +104,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     public long countByTournament(Integer tournamentId) {
         return getProvider().count(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + "'.")));
     }
 
     @Override

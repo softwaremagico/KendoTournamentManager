@@ -38,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.w3c.dom.Document;
 
 import javax.imageio.ImageIO;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -125,7 +126,11 @@ public class QrController {
             final Document qrCode = qrProvider.getQrAsSvg(content, QR_SIZE, QR_BORDER,
                     nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
                     nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE, LOGO_RESOURCE);
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            final Transformer transformer = transformerFactory.newTransformer();
             final StringWriter stringWriter = new StringWriter();
             transformer.transform(new DOMSource(qrCode), new StreamResult(stringWriter));
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
