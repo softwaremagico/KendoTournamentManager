@@ -303,6 +303,14 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
+                    <!-- Genera un único reporte agregado para SonarCloud en multi-módulo -->
+                    <execution>
+                        <id>jacoco-report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
