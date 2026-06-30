@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines basic log behavior. Uses log4j.properties.
  */
+@SuppressWarnings("squid:S2629")
 public final class KendoTournamentLogger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KendoTournamentLogger.class);
