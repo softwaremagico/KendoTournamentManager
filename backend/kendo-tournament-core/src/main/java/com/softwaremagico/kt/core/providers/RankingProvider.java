@@ -54,6 +54,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -231,7 +232,8 @@ public class RankingProvider {
             showAll = true;
         }
         //Get number since when is read the data.
-        final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0 ? LocalDate.now().minusDays(fromNumberOfDays).atStartOfDay() : null;
+        final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0 
+                ? LocalDate.now(ZoneId.systemDefault()).minusDays(fromNumberOfDays).atStartOfDay() : null;
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<Fight> fights = fightProvider.getBy(competitors).stream().filter(fight ->
                 from == null || fight.getCreatedAt().isAfter(from)).toList();
@@ -574,9 +576,6 @@ public class RankingProvider {
         return selectedType != null ? selectedType : DEFAULT_SWISS_TIE_BREAK_RULE;
     }
 
-    private static int getSwissMatchPoints(ScoreOfTeam score) {
-        return score.getWonFights() * SWISS_WIN_POINTS + score.getDrawFights() * SWISS_DRAW_POINTS;
-    }
 
     private static final class SwissRankingContext {
         private final List<Fight> playedFights;
@@ -743,6 +742,10 @@ public class RankingProvider {
                 return fight.getTeam1();
             }
             return null;
+        }
+
+        private static int getSwissMatchPoints(ScoreOfTeam score) {
+            return score.getWonFights() * SWISS_WIN_POINTS + score.getDrawFights() * SWISS_DRAW_POINTS;
         }
     }
 

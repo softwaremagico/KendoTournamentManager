@@ -67,6 +67,10 @@ public class QrProvider {
     private static final double BORDER_RADIUS = 0.03d;
     private static Map<Color, BufferedImage> qrLogoByBackground = new HashMap<>();
 
+    private record QrRenderOptions(Color borderColor, Color ink, Color background, String resourceLogo,
+                                   QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
+    }
+
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
                                                        Color center, Color innerSquare, Color outerSquare, Color outerBorder) {
         final QrPositionalSquaresConfig.Builder builder = new QrPositionalSquaresConfig.Builder();
@@ -99,9 +103,8 @@ public class QrProvider {
     }
 
     public BufferedImage getQr(String content, Integer size, Color color, Color background) {
-        return getQr(content, size, color, color, null, null,
-                crateSquareConfig(false, null, color, color, color, background),
-                null);
+        return getQr(content, size, createRenderOptions(color, color, null, null,
+                crateSquareConfig(false, null, color, color, color, background), null));
     }
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo, Color background) {
@@ -109,22 +112,25 @@ public class QrProvider {
     }
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo, boolean circleShaped, Color background) {
-        return getQr(content, size, color, color, background, resourceLogo,
-                crateSquareConfig(circleShaped, null, color, background, color, background),
-                null);
+        return getQr(content, size, createRenderOptions(color, color, background, resourceLogo,
+                crateSquareConfig(circleShaped, null, color, background, color, background), null));
     }
 
     public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
-        return getQr(content, size, borderColor, ink, background, resourceLogo,
-                crateSquareConfig(false, null, ink, ink, borderColor, background),
-                null);
+        return getQr(content, size, createRenderOptions(borderColor, ink, background, resourceLogo,
+                crateSquareConfig(false, null, ink, ink, borderColor, background), null));
     }
 
 
+    @SuppressWarnings("java:S107")
     public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
                                QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
-        return QrCodeFactory.createQrCodeApi().createQrCodeImage(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
+        return getQr(content, size, createRenderOptions(borderColor, ink, background, resourceLogo,
                 qrPositionalSquaresConfig, qrCodeDotStyler));
+    }
+
+    private BufferedImage getQr(String content, Integer size, QrRenderOptions options) {
+        return QrCodeFactory.createQrCodeApi().createQrCodeImage(generateQrCode(content, size, options));
     }
 
     public Document getQrAsSvg(String content, Integer size, Color color, String resourceLogo) {
@@ -132,24 +138,37 @@ public class QrProvider {
     }
 
     public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
-        return getQrAsSvg(content, size, borderColor, ink, background, resourceLogo, crateSquareConfig(false, SQUARES_BORDER_RADIUS,
-                        ink, background, ink, background),
-                null);
+        return getQrAsSvg(content, size, createRenderOptions(borderColor, ink, background, resourceLogo,
+                crateSquareConfig(false, SQUARES_BORDER_RADIUS, ink, background, ink, background), null));
     }
 
     public Document getQrAsSvg(String content, Integer size, Color color, String resourceLogo, boolean circleShaped) {
-        return getQrAsSvg(content, size, color, color, null, resourceLogo,
-                crateSquareConfig(circleShaped, null, color, null, color, null),
-                null);
+        return getQrAsSvg(content, size, createRenderOptions(color, color, null, resourceLogo,
+                crateSquareConfig(circleShaped, null, color, null, color, null), null));
     }
 
 
+    @SuppressWarnings("java:S107")
     public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
                                QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
-        return QrCodeSvgFactory.createQrCodeApi().createQrCodeSvg(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
+        return getQrAsSvg(content, size, createRenderOptions(borderColor, ink, background, resourceLogo,
                 qrPositionalSquaresConfig, qrCodeDotStyler));
     }
 
+    private Document getQrAsSvg(String content, Integer size, QrRenderOptions options) {
+        return QrCodeSvgFactory.createQrCodeApi().createQrCodeSvg(generateQrCode(content, size, options));
+    }
+
+
+    private QrRenderOptions createRenderOptions(Color borderColor, Color ink, Color background, String resourceLogo,
+                                                QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
+        return new QrRenderOptions(borderColor, ink, background, resourceLogo, qrPositionalSquaresConfig, qrCodeDotStyler);
+    }
+
+    private QrCodeConfig generateQrCode(String content, Integer size, QrRenderOptions options) {
+        return generateQrCode(content, size, options.borderColor(), options.ink(), options.background(), options.resourceLogo(),
+                options.qrPositionalSquaresConfig(), options.qrCodeDotStyler());
+    }
 
     private QrCodeConfig generateQrCode(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
                                         QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
