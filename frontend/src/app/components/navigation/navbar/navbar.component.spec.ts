@@ -2,7 +2,7 @@ import {of, Subject} from 'rxjs';
 import {ElementRef, Renderer2} from '@angular/core';
 import {ContextMenuService} from '@perfectmemory/ngx-contextmenu';
 import {Router} from '@angular/router';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {ActivityService} from '../../../services/rbac/activity.service';
 import {UserSessionService} from '../../../services/user-session.service';

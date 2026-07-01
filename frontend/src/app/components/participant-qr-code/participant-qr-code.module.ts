@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ParticipantQrCodeComponent} from './participant-qr-code.component';
 import {MatIconModule} from "@angular/material/icon";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";

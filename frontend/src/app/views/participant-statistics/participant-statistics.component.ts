@@ -11,7 +11,7 @@ import {convertDate, convertSeconds} from "../../utils/dates/date-conversor";
 import {StatisticsService} from "../../services/statistics.service";
 import {PieChartData} from "../../components/charts/pie-chart/pie-chart-data";
 import {Score} from "../../models/score";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {truncate} from "../../utils/maths/truncate";
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
 import {RankingService} from "../../services/ranking.service";

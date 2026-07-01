@@ -6,7 +6,7 @@ import {UserService} from '../../services/user.service';
 import {RbacService} from '../../services/rbac/rbac.service';
 import {SystemOverloadService} from '../../services/notifications/system-overload.service';
 import {UserSessionService} from '../../services/user-session.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {AuthenticatedUser} from '../../models/authenticated-user';
 import {UserRoles} from '../../services/rbac/user-roles';
 

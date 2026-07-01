@@ -6,7 +6,7 @@ import {LoginService} from '../../services/login.service';
 import {MessageService} from '../../services/message.service';
 import {LoggerService} from '../../services/logger.service';
 import {InfoService} from '../../services/info.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {EnvironmentService} from '../../environment.service';
 import {UserSessionService} from '../../services/user-session.service';
 import {ActivityService} from '../../services/rbac/activity.service';

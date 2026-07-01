@@ -4,7 +4,7 @@ import {InputLimits} from "../../utils/input-limits";
 import {PasswordFormValidationFields} from "./password-form-validation-fields";
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {UserService} from "../../services/user.service";
-import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
+import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
 import {UserSessionService} from "../../services/user-session.service";
 import {PasswordGenerator} from "../../utils/random/password-generator";
 import {RbacActivity} from "../../services/rbac/rbac.activity";

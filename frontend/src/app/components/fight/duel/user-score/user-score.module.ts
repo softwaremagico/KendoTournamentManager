@@ -4,7 +4,7 @@ import {UserScoreComponent} from "./user-score.component";
 import {ScoreModule} from "./score/score.module";
 import {FaultModule} from "./fault/fault.module";
 import {UserNameModule} from "./user-name/user-name.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {ParticipantPictureModule} from "../../../participant-picture/participant-picture.module";
 
 

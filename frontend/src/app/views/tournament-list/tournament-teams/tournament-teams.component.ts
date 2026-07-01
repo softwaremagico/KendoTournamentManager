@@ -29,7 +29,7 @@ import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {TournamentType} from "../../../models/tournament-type";
 import {getBalancedMember} from "../../../utils/teams/members";
 import {CsvService} from "../../../services/csv-service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({

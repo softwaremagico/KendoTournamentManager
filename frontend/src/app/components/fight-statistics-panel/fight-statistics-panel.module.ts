@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FightStatisticsPanelComponent} from "./fight-statistics-panel.component";
 import {MatIconModule} from "@angular/material/icon";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {MatTooltipModule} from "@angular/material/tooltip";
 
 

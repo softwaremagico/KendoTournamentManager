@@ -2,7 +2,6 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {RoleSelectorComponent} from './role-selector.component';
 import {Tournament} from '../../models/tournament';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {TranslocoModule} from '@ngneat/transloco';
 
 describe('RoleSelectorComponent', () => {
   let component: RoleSelectorComponent;
@@ -10,9 +9,12 @@ describe('RoleSelectorComponent', () => {
   let tournament: Tournament;
 
   beforeEach(async () => {
+    TestBed.overrideComponent(RoleSelectorComponent, {
+      set: {template: ''}
+    });
+
     await TestBed.configureTestingModule({
       declarations: [ RoleSelectorComponent ],
-      imports: [ TranslocoModule ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {UserListComponent} from "./user-list.component";
 import {FilterModule} from "../filter/filter.module";
 import {UserCardModule} from "../../user-card/user-card.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 
 
 @NgModule({

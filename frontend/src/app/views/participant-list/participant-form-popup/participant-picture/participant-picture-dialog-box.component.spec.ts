@@ -4,7 +4,7 @@ import {ParticipantPictureDialogBoxComponent} from './participant-picture-dialog
 import {RbacService} from '../../../../services/rbac/rbac.service';
 import {MessageService} from '../../../../services/message.service';
 import {FileService} from '../../../../services/file.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {PictureUpdatedService} from '../../../../services/notifications/picture-updated.service';
 import {Participant} from '../../../../models/participant';
 import {ParticipantImage} from '../../../../models/participant-image.model';

@@ -5,7 +5,7 @@ import {DuelModule} from "./duel/duel.module";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 

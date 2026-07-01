@@ -4,7 +4,7 @@ import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from "@jsverse/transloco";
 import {TournamentExtendedPropertiesService} from "../../services/tournament-extended-properties.service";
 import {MessageService} from "../../services/message.service";
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";

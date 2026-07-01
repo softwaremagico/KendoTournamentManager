@@ -7,7 +7,7 @@ import {TeamCardModule} from "../team-card/team-card.module";
 import {TeamListModule} from "../basic/team-list/team-list.module";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
