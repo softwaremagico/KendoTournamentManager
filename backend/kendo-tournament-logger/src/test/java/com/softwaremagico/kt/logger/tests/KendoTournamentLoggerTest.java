@@ -82,19 +82,11 @@ public class KendoTournamentLoggerTest {
 
     @Test(groups = "kendoTournamentLoggerTests")
     public void shouldLogErrorMessage() {
-        KendoTournamentLogger.errorMessage("Clazz", "error {}", "now");
+        KendoTournamentLogger.errorMessage(getClass(), new RuntimeException("error now"));
 
         ILoggingEvent event = appender.list.get(appender.list.size() - 1);
         assertEquals(event.getLevel(), Level.ERROR);
-        assertTrue(event.getFormattedMessage().contains("Clazz: error now"));
-    }
-
-    @Test(groups = "kendoTournamentLoggerTests")
-    public void shouldReturnDebugEnabledFlag() {
-        boolean debugEnabled = KendoTournamentLogger.isDebugEnabled();
-
-        assertTrue(debugEnabled || !debugEnabled);
-        assertTrue(appender.list.isEmpty());
+        assertTrue(event.getFormattedMessage().contains(getClass().getSimpleName()));
     }
 }
 

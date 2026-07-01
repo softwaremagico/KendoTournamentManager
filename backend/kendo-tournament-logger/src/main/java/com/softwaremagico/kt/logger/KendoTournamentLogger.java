@@ -70,19 +70,8 @@ public final class KendoTournamentLogger extends AbstractLoggerWrapper {
         delegateErrorMessage(LOGGER, clazz, throwable);
     }
 
-    public static void errorMessage(String className, String messageTemplate, Object... arguments) {
-        delegateErrorMessage(LOGGER, className, messageTemplate, arguments);
-    }
-
     public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        errorMessage(clazz.getName(), messageTemplate, arguments);
+        delegateErrorMessage(LOGGER, clazz.getName(), messageTemplate, arguments);
     }
 
-    public static void errorMessage(Object object, Throwable throwable) {
-        delegateErrorMessage(LOGGER, object, throwable);
-    }
-
-    public static boolean isDebugEnabled() {
-        return isDebugEnabled(LOGGER);
-    }
 }

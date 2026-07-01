@@ -34,55 +34,16 @@ public final class WebsocketsLogger extends AbstractLoggerWrapper {
     private WebsocketsLogger() {
     }
 
-    public static void info(String className, String messageTemplate, Object... arguments) {
-        delegateInfo(LOGGER, className, messageTemplate, arguments);
-    }
-
-    public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateInfo(LOGGER, clazz, messageTemplate, arguments);
-    }
-
-    public static void warning(String className, String messageTemplate, Object... arguments) {
-        delegateWarning(LOGGER, className, messageTemplate, arguments);
-    }
-
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
         delegateWarning(LOGGER, clazz, messageTemplate, arguments);
-    }
-
-    public static void debug(String className, String messageTemplate, Object... arguments) {
-        delegateDebug(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
         delegateDebug(LOGGER, clazz, messageTemplate, arguments);
     }
 
-    public static void severe(String className, String messageTemplate, Object... arguments) {
-        delegateSevere(LOGGER, className, messageTemplate, arguments);
-    }
-
-    public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
-    }
-
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
         delegateErrorMessage(LOGGER, clazz, throwable);
     }
 
-    public static void errorMessage(String className, String messageTemplate, Object... arguments) {
-        delegateErrorMessage(LOGGER, className, messageTemplate, arguments);
-    }
-
-    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        errorMessage(clazz.getName(), messageTemplate, arguments);
-    }
-
-    public static void errorMessage(Object object, Throwable throwable) {
-        delegateErrorMessage(LOGGER, object, throwable);
-    }
-
-    public static boolean isDebugEnabled() {
-        return isDebugEnabled(LOGGER);
-    }
 }
