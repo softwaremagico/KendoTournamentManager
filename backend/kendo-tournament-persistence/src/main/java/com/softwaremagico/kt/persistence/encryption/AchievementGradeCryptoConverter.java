@@ -26,10 +26,10 @@ import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-
 @Converter
 public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<AchievementGrade>
-        implements AttributeConverter<AchievementGrade, String> {
+        implements
+            AttributeConverter<AchievementGrade, String> {
 
     public AchievementGradeCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -48,8 +48,8 @@ public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<Ach
     protected AchievementGrade stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : AchievementGrade.getType(dbData);
-        } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid grade value '{}' in database.", dbData);
+        } catch (final NumberFormatException nfe) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid grade value '{}' in database.", dbData);
             return null;
         }
     }

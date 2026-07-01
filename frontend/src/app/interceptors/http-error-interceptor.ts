@@ -7,7 +7,7 @@ import {LoginService} from "../services/login.service";
 import {MessageService} from "../services/message.service";
 import {EnvironmentService} from "../environment.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from "@jsverse/transloco";
 import {BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
 
 @Injectable()

@@ -44,6 +44,7 @@ public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepo
 
     public abstract DTO get(Integer id);
 
+    @SuppressWarnings("java:S1172")
     public void deleteById(Integer id, String username, String session) {
         getProvider().deleteById(id);
     }

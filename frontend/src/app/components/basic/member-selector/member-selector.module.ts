@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {MemberSelectorComponent} from "./member-selector.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {UserCardModule} from "../../user-card/user-card.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 
 
 @NgModule({

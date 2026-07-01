@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RankingService} from "../../services/ranking.service";
 import {ScoreOfCompetitor} from "../../models/score-of-competitor";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";

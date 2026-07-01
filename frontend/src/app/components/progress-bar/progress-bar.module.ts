@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ProgressBarComponent} from './progress-bar.component';
 import {MatIconModule} from "@angular/material/icon";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {MatTooltipModule} from "@angular/material/tooltip";
 
 

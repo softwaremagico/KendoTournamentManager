@@ -31,6 +31,7 @@ import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@SuppressWarnings("java:S2160")
 public class ImageDTO extends ElementDTO {
 
     @Serial

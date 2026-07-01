@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -125,7 +126,7 @@ public class StatisticsServices {
                                                                HttpServletRequest request) {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentController.get(tournamentId));
         tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return tournamentStatisticsDTO;
     }
 
@@ -147,7 +148,7 @@ public class StatisticsServices {
         tournamentsDTO.forEach(tournamentDTO -> {
             final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentDTO);
             tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
             statisticsDTOS.add(tournamentStatisticsDTO);
         });
         return statisticsDTOS;
@@ -171,7 +172,7 @@ public class StatisticsServices {
         }
         final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(participantController.get(participantId));
         participantStatisticsDTO.setCreatedBy(authentication != null ? authentication.getName() : null);
-        participantStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        participantStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return participantStatisticsDTO;
     }
 

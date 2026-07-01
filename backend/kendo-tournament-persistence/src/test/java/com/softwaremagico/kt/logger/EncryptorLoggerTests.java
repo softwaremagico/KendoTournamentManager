@@ -30,63 +30,63 @@ public class EncryptorLoggerTests {
     @Test
     public void testInfoWithClassName() {
         // Should not throw any exception
-        EncryptorLogger.info("TestClass", "Test message");
+        EncryptorLogger.info(EncryptorLoggerTests.class, "Test message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testInfoWithArguments() {
         // Should not throw any exception
-        EncryptorLogger.info("TestClass", "Test message with {}", "arg1");
+        EncryptorLogger.info(EncryptorLoggerTests.class, "Test message with {}", "arg1");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testWarningWithClassName() {
         // Should not throw any exception
-        EncryptorLogger.warning("TestClass", "Warning message");
+        EncryptorLogger.warning(EncryptorLoggerTests.class, "Warning message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testWarningWithArguments() {
         // Should not throw any exception
-        EncryptorLogger.warning("TestClass", "Warning message with {}", "arg1");
+        EncryptorLogger.warning(EncryptorLoggerTests.class, "Warning message with {}", "arg1");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testDebugWithClassName() {
         // Should not throw any exception
-        EncryptorLogger.debug("TestClass", "Debug message");
+        EncryptorLogger.debug(EncryptorLoggerTests.class, "Debug message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testDebugWithArguments() {
         // Should not throw any exception
-        EncryptorLogger.debug("TestClass", "Debug message with {}", "arg1");
+        EncryptorLogger.debug(EncryptorLoggerTests.class, "Debug message with {}", "arg1");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testSevereWithClassName() {
         // Should not throw any exception
-        EncryptorLogger.severe("TestClass", "Severe message");
+        EncryptorLogger.severe(EncryptorLoggerTests.class, "Severe message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testSevereWithArguments() {
         // Should not throw any exception
-        EncryptorLogger.severe("TestClass", "Severe message with {}", "arg1");
+        EncryptorLogger.severe(EncryptorLoggerTests.class, "Severe message with {}", "arg1");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testErrorMessageWithClassName() {
         // Should not throw any exception
-        EncryptorLogger.errorMessage("TestClass", "Error message");
+        EncryptorLogger.errorMessage(EncryptorLoggerTests.class, "Error message");
         Assert.assertTrue(true);
     }
 
@@ -116,14 +116,14 @@ public class EncryptorLoggerTests {
     @Test
     public void testMultipleArguments() {
         // Should not throw any exception with multiple arguments
-        EncryptorLogger.info("TestClass", "Message with {} and {}", "arg1", "arg2");
+        EncryptorLogger.info(EncryptorLoggerTests.class, "Message with {} and {}", "arg1", "arg2");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testErrorMessageWithMultipleArguments() {
         // Should not throw any exception with multiple arguments
-        EncryptorLogger.errorMessage("TestClass", "Error with {}", "detailedInfo");
+        EncryptorLogger.errorMessage(EncryptorLoggerTests.class, "Error with {}", "detailedInfo");
         Assert.assertTrue(true);
     }
 }

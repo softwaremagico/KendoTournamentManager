@@ -272,7 +272,7 @@ public class NameUtilsAdditionalTests {
         String result = NameUtils.getShortName(nameItem, 10);
         Assert.assertNotNull(result);
         // Verify it's using the IName interface version that returns formatted names
-        Assert.assertTrue(result.length() > 0);
+        Assert.assertFalse(result.isEmpty());
     }
 
     @Test

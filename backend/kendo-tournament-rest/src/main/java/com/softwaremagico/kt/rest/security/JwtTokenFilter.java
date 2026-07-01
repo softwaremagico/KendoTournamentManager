@@ -21,7 +21,6 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
@@ -52,27 +51,29 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Servlet filter that validates the JWT Bearer token on every incoming HTTP request.
+ * Servlet filter that validates the JWT Bearer token on every incoming HTTP
+ * request.
  * <p>
  * The filter runs once per request ({@link OncePerRequestFilter}). It:
  * </p>
  * <ol>
- *   <li>Extracts the {@code Authorization: Bearer &lt;token&gt;} header.</li>
- *   <li>Validates the token signature and expiration via {@link JwtTokenUtil}.</li>
- *   <li>Optionally verifies that the client IP stored in the token matches the
- *       request source IP (enabled via {@code jwt.ip.check=true}).</li>
- *   <li>Optionally verifies the MAC address for additional network-level binding
- *       when available.</li>
- *   <li>If all checks pass, sets a {@link UsernamePasswordAuthenticationToken} in
- *       the {@link SecurityContextHolder} to authenticate the request.</li>
+ * <li>Extracts the {@code Authorization: Bearer &lt;token&gt;} header.</li>
+ * <li>Validates the token signature and expiration via
+ * {@link JwtTokenUtil}.</li>
+ * <li>Optionally verifies that the client IP stored in the token matches the
+ * request source IP (enabled via {@code jwt.ip.check=true}).</li>
+ * <li>Optionally verifies the MAC address for additional network-level binding
+ * when available.</li>
+ * <li>If all checks pass, sets a {@link UsernamePasswordAuthenticationToken} in
+ * the {@link SecurityContextHolder} to authenticate the request.</li>
  * </ol>
  * <p>
  * When {@code enable.participant.access=true}, participant accounts can also
  * obtain and use JWT tokens with reduced privileges (VIEWER role).
  * </p>
  * <p>
- * The filter inspects a list of proxy headers ({@link #HEADERS_TO_TRY}) to obtain
- * the real client IP when the server is behind a reverse proxy.
+ * The filter inspects a list of proxy headers ({@link #HEADERS_TO_TRY}) to
+ * obtain the real client IP when the server is behind a reverse proxy.
  * </p>
  */
 @Component
@@ -93,18 +94,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private record ResolvedUser(UserDetails details, boolean participantUser) {
     }
 
-    private static final String[] HEADERS_TO_TRY = {
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR"};
+    private static final String[] HEADERS_TO_TRY = {"X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP",
+            "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR"};
 
     private final boolean checkClientIp;
     private final boolean participantAccess;
@@ -117,10 +109,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final NetworkController networkController;
 
     @Autowired
-    public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, @Value("${enable.participant.access:false}") String participantAccess,
-                          JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
-                          ParticipantProvider participantProvider,
-                          NetworkController networkController) {
+    public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck,
+            @Value("${enable.participant.access:false}") String participantAccess, JwtTokenUtil jwtTokenUtil,
+            AuthenticatedUserProvider authenticatedUserProvider, ParticipantProvider participantProvider,
+            NetworkController networkController) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.participantProvider = participantProvider;
@@ -130,10 +122,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    public void doFilterInternal(@NonNull HttpServletRequest request,
-                                 @NonNull HttpServletResponse response,
-                                 @NonNull FilterChain chain)
-            throws ServletException, IOException {
+    public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain chain) throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (this.isMissingBearerToken(header)) {
             chain.doFilter(request, response);
@@ -141,7 +131,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String token = getTokenFromHeader(header);
+        final String token = this.getTokenFromHeader(header);
         if (token.isEmpty() || !this.jwtTokenUtil.validate(token)) {
             this.handleInvalidToken(request, response, chain);
             return;
@@ -149,24 +139,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         this.logTokenDetails(token);
         final ResolvedUser resolvedUser = this.resolveUser(token);
-        final UsernamePasswordAuthenticationToken authentication = createAuthentication(resolvedUser.details());
+        final UsernamePasswordAuthenticationToken authentication = this.createAuthentication(resolvedUser.details());
 
         this.validateTokenNetworkBinding(request, token, resolvedUser.participantUser());
 
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-        );
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }
 
     private UsernamePasswordAuthenticationToken createAuthentication(UserDetails userDetails) {
-        return new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails == null ? Collections.emptyList() : userDetails.getAuthorities()
-        );
+        return new UsernamePasswordAuthenticationToken(userDetails, null,
+                userDetails == null ? Collections.emptyList() : userDetails.getAuthorities());
     }
 
     private boolean isMissingBearerToken(String header) {
@@ -184,43 +169,46 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private void handleInvalidToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
-        JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
+        JwtFilterLogger.errorMessage(this.getClass(), "JWT token invalid!");
         try {
             chain.doFilter(request, response);
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
         }
     }
 
     private void logTokenDetails(String token) {
         if (JwtFilterLogger.isDebugEnabled()) {
-            JwtFilterLogger.debug(this.getClass().getName(), JWT_OBTAINED_TEMPLATE,
-                    this.jwtTokenUtil.getExpirationDate(token), this.jwtTokenUtil.getUserId(token), this.jwtTokenUtil.getUsername(token),
-                    this.jwtTokenUtil.getSession(token), this.jwtTokenUtil.getUserIp(token), this.jwtTokenUtil.getHostMac(token));
+            JwtFilterLogger.debug(this.getClass(), JWT_OBTAINED_TEMPLATE,
+                    this.jwtTokenUtil.getExpirationDate(token), this.jwtTokenUtil.getUserId(token),
+                    this.jwtTokenUtil.getUsername(token), this.jwtTokenUtil.getSession(token),
+                    this.jwtTokenUtil.getUserIp(token), this.jwtTokenUtil.getHostMac(token));
         }
     }
 
     private ResolvedUser resolveUser(String token) {
-        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(jwtTokenUtil.getUsername(token)).orElse(null);
-        if (user == null && participantAccess) {
-            final UserDetails participant = participantProvider.findByTokenUsername(jwtTokenUtil.getUsername(token)).orElse(null);
+        final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(this.jwtTokenUtil.getUsername(token))
+                .orElse(null);
+        if (user == null && this.participantAccess) {
+            final UserDetails participant = this.participantProvider.findByTokenUsername(this.jwtTokenUtil.getUsername(token))
+                    .orElse(null);
             return new ResolvedUser(participant, true);
         }
         return new ResolvedUser((UserDetails) user, false);
     }
 
     private void validateTokenNetworkBinding(HttpServletRequest request, String token, boolean participantUser) {
-        if (!checkClientIp || participantUser) {
+        if (!this.checkClientIp || participantUser) {
             return;
         }
 
-        final String userTokenIp = jwtTokenUtil.getUserIp(token);
-        if (userTokenIp == null || userTokenIp.isEmpty() || !getClientIpAddress(request).contains(userTokenIp)) {
+        final String userTokenIp = this.jwtTokenUtil.getUserIp(token);
+        if (userTokenIp == null || userTokenIp.isEmpty() || !this.getClientIpAddress(request).contains(userTokenIp)) {
             throw new InvalidIpException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
 
-        final String hostMac = networkController.getHostMac();
-        if (hostMac != null && !hostMac.isEmpty() && !Objects.equals(jwtTokenUtil.getHostMac(token), hostMac)) {
+        final String hostMac = this.networkController.getHostMac();
+        if (hostMac != null && !hostMac.isEmpty() && !Objects.equals(this.jwtTokenUtil.getHostMac(token), hostMac)) {
             throw new InvalidMacException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
     }
@@ -229,7 +217,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         for (final String header : HEADERS_TO_TRY) {
             final String ip = request.getHeader(header);
             if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                return parseHeaderIp(ip);
+                return this.parseHeaderIp(ip);
             }
         }
 
@@ -240,9 +228,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (!ip.contains(",")) {
             return Collections.singletonList(ip.trim());
         }
-        return Arrays.stream(ip.split(","))
-                .map(String::trim)
-                .filter(value -> !value.isEmpty())
-                .toList();
+        return Arrays.stream(ip.split(",")).map(String::trim).filter(value -> !value.isEmpty()).toList();
     }
 }

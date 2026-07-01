@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuthenticatedUserFormComponent} from './authenticated-user-form.component';
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {BiitDropdownModule, BiitInputTextModule} from "@biit-solutions/wizardry-theme/inputs";
 import {MapGetPipeModule} from "@biit-solutions/wizardry-theme/utils";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";

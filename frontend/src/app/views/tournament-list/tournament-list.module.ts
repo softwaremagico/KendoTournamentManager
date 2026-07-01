@@ -3,7 +3,7 @@ import {TournamentListComponent} from "./tournament-list.component";
 import {CommonModule, DatePipe} from "@angular/common";
 import {TournamentRoutingModule} from "./tournament-routing.module";
 import {MatIconModule} from "@angular/material/icon";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";

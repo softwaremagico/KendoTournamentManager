@@ -1,7 +1,7 @@
 import {of} from 'rxjs';
 import {TournamentCustomScoresFormComponent} from './tournament-custom-scores-form.component';
 import {RbacService} from '../../services/rbac/rbac.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {Tournament} from '../../models/tournament';
 import {TournamentScore} from '../../models/tournament-score.model';
 

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component} from '@angular/core';
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {UserService} from "../../services/user.service";
 import {UserRoles} from "../../services/rbac/user-roles";

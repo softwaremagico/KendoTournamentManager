@@ -4,7 +4,7 @@ import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 

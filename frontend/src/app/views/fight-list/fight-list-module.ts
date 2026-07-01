@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {FightListComponent} from "./fight-list.component";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatIconModule} from "@angular/material/icon";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {FightModule} from "../../components/fight/fight.module";
 import {UntieFightModule} from "../../components/untie-fight/untie-fight.module";

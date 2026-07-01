@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.Map;
 
+@SuppressWarnings("java:S2160")
 public class TournamentStatisticsDTO extends ElementDTO {
 
     @Serial

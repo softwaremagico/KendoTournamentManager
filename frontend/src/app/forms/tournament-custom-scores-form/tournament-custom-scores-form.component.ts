@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {TournamentFormValidationFields} from "../tournament-form/tournament-form-validation-fields";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 

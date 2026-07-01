@@ -21,6 +21,7 @@
         <module>kendo-tournament-core</module>
         <module>kendo-tournament-pdf</module>
         <module>kendo-tournament-rest</module>
+        <module>kendo-tournament-coverage</module>
     </modules>
 
     <scm>
@@ -310,14 +311,6 @@
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <!-- Genera un único reporte agregado para SonarCloud en multi-módulo -->
-                    <execution>
-                        <id>jacoco-report-aggregate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-aggregate</goal>
                         </goals>
                     </execution>
                 </executions>

@@ -91,7 +91,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultBanner = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException _) {
-                KendoTournamentLogger.severe(TournamentImageProvider.class.getName(), "No default banner found!");
+                KendoTournamentLogger.severe(TournamentImageProvider.class, "No default banner found!");
             }
         }
         return this.defaultBanner;
@@ -104,7 +104,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultAccreditation = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException _) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(),
+                KendoTournamentLogger.severe(TournamentImageController.class,
                         "No default accreditation found!");
             }
         }
@@ -118,7 +118,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultDiploma = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException _) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
+                KendoTournamentLogger.severe(TournamentImageController.class, "No default diploma found!");
             }
         }
         return this.defaultDiploma;
@@ -131,7 +131,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultPhoto = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException _) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
+                KendoTournamentLogger.severe(TournamentImageController.class, "No default diploma found!");
             }
         }
         return this.defaultPhoto;

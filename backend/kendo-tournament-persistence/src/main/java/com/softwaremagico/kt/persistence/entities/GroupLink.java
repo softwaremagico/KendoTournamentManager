@@ -40,6 +40,7 @@ import java.io.Serial;
 @Table(name = "groups_links", indexes = {
         @Index(name = "ind_tournament", columnList = "tournament"),
 })
+@SuppressWarnings("java:S2160")
 public class GroupLink extends Element {
 
     @Serial

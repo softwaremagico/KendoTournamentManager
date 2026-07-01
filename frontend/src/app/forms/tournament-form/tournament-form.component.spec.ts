@@ -2,7 +2,7 @@ import {of} from 'rxjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {TournamentFormComponent} from './tournament-form.component';
 import {RbacService} from '../../services/rbac/rbac.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {TournamentService} from '../../services/tournament.service';
 import {FightService} from '../../services/fight.service';
 import {Tournament} from '../../models/tournament';

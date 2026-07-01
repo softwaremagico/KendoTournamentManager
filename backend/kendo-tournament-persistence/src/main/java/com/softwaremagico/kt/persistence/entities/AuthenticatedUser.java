@@ -50,6 +50,7 @@ import java.util.Set;
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
+@SuppressWarnings("java:S2160")
 public class AuthenticatedUser extends Element implements UserDetails, IAuthenticatedUser {
 
     @Column(name = "password")

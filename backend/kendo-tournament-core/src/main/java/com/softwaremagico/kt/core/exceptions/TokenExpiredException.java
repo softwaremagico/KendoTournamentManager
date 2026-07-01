@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
+@SuppressWarnings("java:S110")
 public class TokenExpiredException extends NotFoundException {
     private static final long serialVersionUID = 3191553855985296861L;
 

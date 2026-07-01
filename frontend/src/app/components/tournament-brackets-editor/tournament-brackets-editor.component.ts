@@ -27,7 +27,7 @@ import {TournamentChangedService} from "./tournament-brackets/tournament-changed
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 import {CsvService} from "../../services/csv-service";
 import {MessageService} from "../../services/message.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 
 @Component({
   standalone: false,

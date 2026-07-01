@@ -28,7 +28,8 @@ import jakarta.persistence.Converter;
 
 @Converter
 public class TournamentExtraPropertyKeyTypeCryptoConverter extends AbstractCryptoConverter<TournamentExtraPropertyKey>
-        implements AttributeConverter<TournamentExtraPropertyKey, String> {
+        implements
+            AttributeConverter<TournamentExtraPropertyKey, String> {
 
     public TournamentExtraPropertyKeyTypeCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -47,8 +48,9 @@ public class TournamentExtraPropertyKeyTypeCryptoConverter extends AbstractCrypt
     protected TournamentExtraPropertyKey stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : TournamentExtraPropertyKey.getType(dbData);
-        } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid role value '{}' in database.", dbData);
+        } catch (final NumberFormatException nfe) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid role value '{}' in database. Obtained: ", dbData,
+                    nfe);
             return null;
         }
     }

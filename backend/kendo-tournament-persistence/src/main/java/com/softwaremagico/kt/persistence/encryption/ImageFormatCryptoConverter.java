@@ -27,7 +27,9 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFormat> implements AttributeConverter<ImageFormat, String> {
+public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFormat>
+        implements
+            AttributeConverter<ImageFormat, String> {
 
     public ImageFormatCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -46,8 +48,8 @@ public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFor
     protected ImageFormat stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : ImageFormat.getFormat(dbData);
-        } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database.", dbData);
+        } catch (final NumberFormatException nfe) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid type value '{}' in database.", dbData);
             return null;
         }
     }

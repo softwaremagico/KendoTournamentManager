@@ -152,6 +152,7 @@ public abstract class ParentList extends PdfDocument {
         return Color.LIGHT_GRAY;
     }
 
+    @SuppressWarnings("java:S107")
     public PdfPCell getCell(String text, int border, int colspan, int align, Color color,
                             BaseFont font, int fontSize, int fontType) {
         final Paragraph p = new Paragraph(text, new Font(font, fontSize, fontType));

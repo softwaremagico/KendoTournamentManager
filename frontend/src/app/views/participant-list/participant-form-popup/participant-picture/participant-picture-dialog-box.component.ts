@@ -8,7 +8,7 @@ import {FileService} from "../../../../services/file.service";
 import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from "@jsverse/transloco";
 import {ImageFormat} from "../../../../models/image-format";
 
 @Component({

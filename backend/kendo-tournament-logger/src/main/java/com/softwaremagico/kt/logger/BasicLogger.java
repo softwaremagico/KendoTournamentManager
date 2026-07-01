@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+@SuppressWarnings("squid:S2629")
 public abstract class BasicLogger {
 
     private static final String NEW_LINE_REGEX = "[\n\r\t]";

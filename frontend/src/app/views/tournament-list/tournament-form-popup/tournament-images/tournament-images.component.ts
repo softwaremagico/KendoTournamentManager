@@ -10,7 +10,7 @@ import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {ImageCompression} from "../../../../models/image-compression";
 import {TournamentImageType} from "../../../../models/tournament-image-type";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {Participant} from "../../../../models/participant";
 import {TournamentService} from "../../../../services/tournament.service";
 

@@ -26,7 +26,9 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> implements AttributeConverter<Double, String> {
+public class DoubleCryptoConverter extends AbstractCryptoConverter<Double>
+        implements
+            AttributeConverter<Double, String> {
 
     public DoubleCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -45,8 +47,8 @@ public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> imple
     protected Double stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Double.parseDouble(dbData);
-        } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid double value '{}' in database.", dbData);
+        } catch (final NumberFormatException nfe) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid double value '{}' in database.", dbData);
             return null;
         }
     }

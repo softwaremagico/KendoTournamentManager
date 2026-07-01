@@ -76,6 +76,7 @@ import java.util.Set;
         @Index(name = "ind_competitor1", columnList = "competitor1"),
         @Index(name = "ind_competitor2", columnList = "competitor2")
 })
+@SuppressWarnings("java:S2160")
 public class Duel extends Element {
     /**
      * Default duel duration indicator when set individually (typically 1 minute for untie duels).

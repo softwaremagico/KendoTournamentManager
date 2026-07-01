@@ -51,14 +51,16 @@ public abstract class PdfDocument {
         return document;
     }
 
-    private void generatePDF(Document document, PdfWriter writer) throws EmptyPdfBodyException, InvalidXmlElementException, DocumentException {
-        addMetaData(document);
+    private void generatePDF(Document document, PdfWriter writer)
+            throws EmptyPdfBodyException, InvalidXmlElementException, DocumentException {
+        this.addMetaData(document);
         document.open();
-        createContent(document, writer);
+        this.createContent(document, writer);
         document.close();
     }
 
-    protected abstract void createContent(Document document, PdfWriter writer) throws InvalidXmlElementException, DocumentException, EmptyPdfBodyException;
+    protected abstract void createContent(Document document, PdfWriter writer)
+            throws InvalidXmlElementException, DocumentException, EmptyPdfBodyException;
 
     protected void addEvent(PdfWriter writer) {
         writer.setPageEvent(new FooterEvent());
@@ -73,11 +75,11 @@ public abstract class PdfDocument {
      * @throws InvalidXmlElementException
      */
     public final byte[] generate() throws EmptyPdfBodyException, DocumentException, InvalidXmlElementException {
-        final Document document = new Document(getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN);
+        final Document document = new Document(this.getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN);
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
-        addEvent(writer);
-        generatePDF(document, writer);
+        this.addEvent(writer);
+        this.generatePDF(document, writer);
         return byteArrayOutputStream.toByteArray();
 
     }
@@ -89,15 +91,15 @@ public abstract class PdfDocument {
             path += ".pdf";
         }
 
-        try (Document document = new Document(getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN)) {
+        try (Document document = new Document(this.getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN)) {
 
             try {
                 final PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));
-                addEvent(writer);
-                generatePDF(document, writer);
+                this.addEvent(writer);
+                this.generatePDF(document, writer);
                 return writer.getPageNumber();
-            } catch (Exception e) {
-                PdfExporterLog.errorMessage(this.getClass().getName(), e);
+            } catch (final Exception e) {
+                PdfExporterLog.errorMessage(this.getClass(), e);
                 return 0;
             }
         }
@@ -106,7 +108,7 @@ public abstract class PdfDocument {
     protected abstract Rectangle getPageSize();
 
     public PdfPCell getEmptyCell() {
-        return getEmptyCell(1);
+        return this.getEmptyCell(1);
     }
 
     protected PdfPCell getEmptyCell(int colspan) {

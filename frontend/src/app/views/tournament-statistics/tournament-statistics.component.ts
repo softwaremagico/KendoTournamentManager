@@ -20,7 +20,7 @@ import {ScoreOfCompetitor} from "../../models/score-of-competitor";
 import {RankingService} from "../../services/ranking.service";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {ScoreOfTeam} from "../../models/score-of-team";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {LineChartComponent} from "../../components/charts/line-chart/line-chart.component";
 import {StackedBarsChartComponent} from "../../components/charts/stacked-bars-chart/stacked-bars-chart.component";
 import {truncate} from "../../utils/maths/truncate";

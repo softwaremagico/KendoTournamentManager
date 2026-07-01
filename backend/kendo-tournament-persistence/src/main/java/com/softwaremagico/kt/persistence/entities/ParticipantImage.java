@@ -44,6 +44,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participant_image")
+@SuppressWarnings("java:S2160")
 public class ParticipantImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;

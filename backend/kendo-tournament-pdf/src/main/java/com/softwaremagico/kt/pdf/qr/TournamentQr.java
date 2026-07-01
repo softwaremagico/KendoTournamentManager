@@ -64,14 +64,14 @@ public class TournamentQr extends PdfDocument {
         try {
             this.qrCode = Image.getInstance(qrCode);
         } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "No qrCode image found");
+            KendoTournamentLogger.severe(this.getClass(), "No qrCode image found");
             this.qrCode = null;
         }
         if (backgroundImage != null) {
             try {
                 this.backgroundImage = Image.getInstance(backgroundImage);
             } catch (IOException e) {
-                KendoTournamentLogger.severe(this.getClass().getName(), "No background image found");
+                KendoTournamentLogger.severe(this.getClass(), "No background image found");
                 this.backgroundImage = null;
             }
         }

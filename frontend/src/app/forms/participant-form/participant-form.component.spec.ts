@@ -2,7 +2,7 @@ import {BehaviorSubject, of} from 'rxjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {ParticipantFormComponent} from './participant-form.component';
 import {RbacService} from '../../services/rbac/rbac.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {ParticipantService} from '../../services/participant.service';
 import {ClubService} from '../../services/club.service';
 import {PictureUpdatedService} from '../../services/notifications/picture-updated.service';

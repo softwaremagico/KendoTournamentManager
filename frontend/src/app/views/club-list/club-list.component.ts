@@ -1,7 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {combineLatest} from "rxjs";

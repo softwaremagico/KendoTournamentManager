@@ -30,19 +30,18 @@ public abstract class LoggedHttpException extends RuntimeException {
     protected LoggedHttpException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
         super(message);
         this.status = status;
-        final String className = clazz.getName();
         switch (type) {
             case INFO:
-                RestServerExceptionLogger.info(className, message);
+                RestServerExceptionLogger.info(clazz, message);
                 break;
             case WARNING:
-                RestServerExceptionLogger.warning(className, message);
+                RestServerExceptionLogger.warning(clazz, message);
                 break;
             case SEVERE:
-                RestServerExceptionLogger.severe(className, message);
+                RestServerExceptionLogger.severe(clazz, message);
                 break;
             default:
-                RestServerExceptionLogger.debug(className, message);
+                RestServerExceptionLogger.debug(clazz, message);
                 break;
         }
     }

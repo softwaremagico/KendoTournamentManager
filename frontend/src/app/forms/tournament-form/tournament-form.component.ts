@@ -5,7 +5,7 @@ import {ScoreType} from "../../models/score-type";
 import {TournamentType} from "../../models/tournament-type";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
-import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
+import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
 import {combineLatest} from "rxjs";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {InputLimits} from "../../utils/input-limits";

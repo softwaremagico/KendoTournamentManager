@@ -68,7 +68,7 @@ public class ParticipantCsv extends CsvReader<Participant> {
                 try {
                     participant.setClub(clubProvider.findBy(clubName, clubCity).orElse(null));
                 } catch (Exception e) {
-                    KendoTournamentLogger.severe(this.getClass().getName(), "Error when inserting CSV from '" + participantLine + "'.");
+                    KendoTournamentLogger.severe(this.getClass(), "Error when inserting CSV from '" + participantLine + "'.");
                     KendoTournamentLogger.errorMessage(this.getClass(), e);
                 }
             }

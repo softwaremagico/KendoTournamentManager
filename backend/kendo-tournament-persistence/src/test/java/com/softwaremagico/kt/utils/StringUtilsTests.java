@@ -98,7 +98,7 @@ public class StringUtilsTests {
         Assert.assertNotNull(result);
         Assert.assertTrue(result.contains(","));
         Assert.assertFalse(result.contains(";"));
-        Assert.assertTrue(result.length() > 0);
+        Assert.assertFalse(result.isEmpty());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class StringUtilsTests {
     public void testGenerateRandomTokenNotNull() {
         final String token = StringUtils.generateRandomToken(5);
         Assert.assertNotNull(token);
-        Assert.assertTrue(token.length() > 0);
+        Assert.assertFalse(token.isEmpty());
     }
 
     @Test

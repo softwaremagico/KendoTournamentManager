@@ -3,7 +3,7 @@ import {TournamentImagesComponent} from './tournament-images.component';
 import {RbacService} from '../../../../services/rbac/rbac.service';
 import {MessageService} from '../../../../services/message.service';
 import {FileService} from '../../../../services/file.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {TournamentExtendedPropertiesService} from '../../../../services/tournament-extended-properties.service';
 import {TournamentService} from '../../../../services/tournament.service';
 import {Tournament} from '../../../../models/tournament';
