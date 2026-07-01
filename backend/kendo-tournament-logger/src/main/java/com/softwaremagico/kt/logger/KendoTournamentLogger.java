@@ -34,25 +34,14 @@ public final class KendoTournamentLogger extends AbstractLoggerWrapper {
     private KendoTournamentLogger() {
     }
 
-    public static void info(String className, String messageTemplate, Object... arguments) {
-        delegateInfo(LOGGER, className, messageTemplate, arguments);
-    }
-
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
         delegateInfo(LOGGER, clazz, messageTemplate, arguments);
-    }
-
-    public static void warning(String className, String messageTemplate, Object... arguments) {
-        delegateWarning(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
         delegateWarning(LOGGER, clazz, messageTemplate, arguments);
     }
 
-    public static void debug(String className, String messageTemplate, Object... arguments) {
-        delegateDebug(LOGGER, className, messageTemplate, arguments);
-    }
 
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
         delegateDebug(LOGGER, clazz, messageTemplate, arguments);

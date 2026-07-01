@@ -55,29 +55,29 @@ public class KendoTournamentLoggerTest {
 
     @Test(groups = "kendoTournamentLoggerTests")
     public void shouldLogInfo() {
-        KendoTournamentLogger.info("Clazz", "created {}", 7);
+        KendoTournamentLogger.info(getClass(), "created {}", 7);
 
         ILoggingEvent event = appender.list.get(appender.list.size() - 1);
         assertEquals(event.getLevel(), Level.INFO);
-        assertTrue(event.getFormattedMessage().contains("Clazz: created 7"));
+        assertTrue(event.getFormattedMessage().contains(getClass().getName() + ": created 7"));
     }
 
     @Test(groups = "kendoTournamentLoggerTests")
     public void shouldLogWarning() {
-        KendoTournamentLogger.warning("Clazz", "warn {}", "x");
+        KendoTournamentLogger.warning(getClass(), "warn {}", "x");
 
         ILoggingEvent event = appender.list.get(appender.list.size() - 1);
         assertEquals(event.getLevel(), Level.WARN);
-        assertTrue(event.getFormattedMessage().contains("Clazz: warn x"));
+        assertTrue(event.getFormattedMessage().contains(getClass().getName() + ": warn x"));
     }
 
     @Test(groups = "kendoTournamentLoggerTests")
     public void shouldLogDebug() {
-        KendoTournamentLogger.debug("Clazz", "dbg {}", 1);
+        KendoTournamentLogger.debug(getClass(), "dbg {}", 1);
 
         ILoggingEvent event = appender.list.get(appender.list.size() - 1);
         assertEquals(event.getLevel(), Level.DEBUG);
-        assertTrue(event.getFormattedMessage().contains("Clazz: dbg 1"));
+        assertTrue(event.getFormattedMessage().contains(getClass().getName() + ": dbg 1"));
     }
 
     @Test(groups = "kendoTournamentLoggerTests")
