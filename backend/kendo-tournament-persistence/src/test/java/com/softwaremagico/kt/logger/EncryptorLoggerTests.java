@@ -72,14 +72,14 @@ public class EncryptorLoggerTests {
     @Test
     public void testSevereWithClassName() {
         // Should not throw any exception
-        EncryptorLogger.severe("TestClass", "Severe message");
+        EncryptorLogger.severe(EncryptorLoggerTests.class, "Severe message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testSevereWithArguments() {
         // Should not throw any exception
-        EncryptorLogger.severe("TestClass", "Severe message with {}", "arg1");
+        EncryptorLogger.severe(EncryptorLoggerTests.class, "Severe message with {}", "arg1");
         Assert.assertTrue(true);
     }
 

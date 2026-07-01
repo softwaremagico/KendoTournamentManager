@@ -79,7 +79,7 @@ public class CacheEventLoggerTests {
     @Test
     public void testSevereWithClassName() {
         // Should not throw any exception
-        CacheEventLogger.severe("TestClass", "Severe message");
+        CacheEventLogger.severe(CacheEventLoggerTests.class, "Severe message");
         Assert.assertTrue(true);
     }
 

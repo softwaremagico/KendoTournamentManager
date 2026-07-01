@@ -231,7 +231,7 @@ public class QrProvider {
                 return ImageIO.read(inputStream);
             }
         } catch (NullPointerException | IOException ex) {
-            KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No image '" + resourceLogo + "' found!");
+            KendoTournamentLogger.severe(TournamentImageController.class, "No image '" + resourceLogo + "' found!");
         }
         return null;
     }

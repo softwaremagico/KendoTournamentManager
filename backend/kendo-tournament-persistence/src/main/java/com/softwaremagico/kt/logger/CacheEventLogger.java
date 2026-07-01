@@ -90,18 +90,8 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
         debug(clazz.getName(), messageTemplate, arguments);
     }
 
-    /**
-     * To log any not expected error that can cause application malfunction.
-     *
-     * @param className
-     *            the name of the class to log.
-     * @param messageTemplate
-     *            string with static text as template.
-     * @param arguments
-     *            parameters to fill up the template
-     */
-    public static void severe(String className, String messageTemplate, Object... arguments) {
-        AbstractLoggerWrapper.delegateSevere(LOGGER, className, messageTemplate, arguments);
+    public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
+        AbstractLoggerWrapper.delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
     }
 
     public static void errorMessage(Class<?> clazz, Throwable throwable) {

@@ -39,7 +39,7 @@ public abstract class LoggedHttpException extends RuntimeException {
                 RestServerExceptionLogger.warning(className, message);
                 break;
             case SEVERE:
-                RestServerExceptionLogger.severe(className, message);
+                RestServerExceptionLogger.severe(clazz, message);
                 break;
             default:
                 RestServerExceptionLogger.debug(className, message);

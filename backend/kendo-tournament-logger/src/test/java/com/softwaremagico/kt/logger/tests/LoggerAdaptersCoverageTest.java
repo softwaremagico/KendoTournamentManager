@@ -42,7 +42,7 @@ public class LoggerAdaptersCoverageTest {
         JwtFilterLogger.errorMessage(getClass(), "error {}", 5);
         JwtFilterLogger.isDebugEnabled();
 
-        PdfExporterLog.severe(getClass().getName(), "severe {}", 4);
+        PdfExporterLog.severe(getClass(), "severe {}", 4);
         PdfExporterLog.errorMessage(getClass(), new RuntimeException("pdf"));
 
         WebsocketsLogger.warning(getClass(), "warn {}", 2);

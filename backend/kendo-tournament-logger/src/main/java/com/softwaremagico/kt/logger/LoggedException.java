@@ -39,7 +39,7 @@ public abstract class LoggedException extends RuntimeException {
                 KendoTournamentLogger.warning(className, message);
                 break;
             case SEVERE:
-                KendoTournamentLogger.severe(className, message);
+                KendoTournamentLogger.severe(clazz, message);
                 break;
             default:
                 KendoTournamentLogger.debug(className, message);

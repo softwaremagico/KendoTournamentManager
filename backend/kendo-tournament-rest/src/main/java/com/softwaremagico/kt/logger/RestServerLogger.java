@@ -58,9 +58,6 @@ public final class RestServerLogger extends AbstractLoggerWrapper {
         delegateDebug(LOGGER, clazz, messageTemplate, arguments);
     }
 
-    public static void severe(String className, String messageTemplate, Object... arguments) {
-        delegateSevere(LOGGER, className, messageTemplate, arguments);
-    }
 
     public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
         delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
