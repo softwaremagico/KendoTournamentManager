@@ -37,7 +37,7 @@ public class LoggerAdaptersCoverageTest {
         CacheControllerLogger.debug(getClass(), "debug {}", 3);
         CacheControllerLogger.severe(getClass().getName(), "severe {}", 4);
         CacheControllerLogger.errorMessage(getClass(), new RuntimeException("cache"));
-        CacheControllerLogger.errorMessage(getClass().getName(), "error {}", 5);
+        CacheControllerLogger.errorMessage(getClass(), "error {}", 5);
         CacheControllerLogger.errorMessage(this, new RuntimeException("cache-obj"));
         CacheControllerLogger.isDebugEnabled();
 
@@ -46,7 +46,7 @@ public class LoggerAdaptersCoverageTest {
         JwtFilterLogger.debug(getClass(), "debug {}", 3);
         JwtFilterLogger.severe(getClass().getName(), "severe {}", 4);
         JwtFilterLogger.errorMessage(getClass(), new RuntimeException("jwt"));
-        JwtFilterLogger.errorMessage(getClass().getName(), "error {}", 5);
+        JwtFilterLogger.errorMessage(getClass(), "error {}", 5);
         JwtFilterLogger.errorMessage(getClass(), "error2 {}", 6);
         JwtFilterLogger.errorMessage(this, new RuntimeException("jwt-obj"));
         JwtFilterLogger.isDebugEnabled();
@@ -56,7 +56,7 @@ public class LoggerAdaptersCoverageTest {
         PdfExporterLog.debug(getClass(), "debug {}", 3);
         PdfExporterLog.severe(getClass().getName(), "severe {}", 4);
         PdfExporterLog.errorMessage(getClass(), new RuntimeException("pdf"));
-        PdfExporterLog.errorMessage(getClass().getName(), "error {}", 5);
+        PdfExporterLog.errorMessage(getClass(), "error {}", 5);
         PdfExporterLog.errorMessage(this, new RuntimeException("pdf-obj"));
         PdfExporterLog.isDebugEnabled();
 
@@ -65,7 +65,7 @@ public class LoggerAdaptersCoverageTest {
         WebsocketsLogger.debug(getClass(), "debug {}", 3);
         WebsocketsLogger.severe(getClass().getName(), "severe {}", 4);
         WebsocketsLogger.errorMessage(getClass(), new RuntimeException("ws"));
-        WebsocketsLogger.errorMessage(getClass().getName(), "error {}", 5);
+        WebsocketsLogger.errorMessage(getClass(), "error {}", 5);
         WebsocketsLogger.errorMessage(getClass(), "error2 {}", 6);
         WebsocketsLogger.errorMessage(this, new RuntimeException("ws-obj"));
         WebsocketsLogger.isDebugEnabled();

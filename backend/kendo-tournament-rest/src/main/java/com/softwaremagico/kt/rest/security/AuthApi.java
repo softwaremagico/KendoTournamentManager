@@ -132,13 +132,13 @@ public class AuthApi {
             if (this.bruteForceService.isBlocked(ip)) {
                 try {
                     Thread.sleep(this.random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-                    JwtFilterLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    JwtFilterLogger.warning(this.getClass(), "Too many attempts from IP '" + ip + "'.");
                     final HttpHeaders headers = new HttpHeaders();
                     headers.add(HttpHeaders.RETRY_AFTER, String
                             .valueOf(this.bruteForceService.getElementsTime(ip) + this.bruteForceService.getExpirationTime()));
                     return new ResponseEntity<>(headers, HttpStatus.LOCKED);
                 } catch (final InterruptedException e) {
-                    JwtFilterLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    JwtFilterLogger.warning(this.getClass(), "Too many attempts from IP '" + ip + "'.");
                     try {
                         final HttpHeaders headers = new HttpHeaders();
                         headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(
@@ -170,14 +170,14 @@ public class AuthApi {
                         .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
             } catch (final UsernameNotFoundException e) {
-                JwtFilterLogger.warning(this.getClass().getName(), "Bad credentials!.");
+                JwtFilterLogger.warning(this.getClass(), "Bad credentials!.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (final BadCredentialsException ex) {
-            JwtFilterLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+            JwtFilterLogger.warning(this.getClass(), "Invalid credentials set from IP '" + ip + "'!");
             // Create a default user if no user exists. Needed when database is encrypted.
             if (this.authenticatedUserController.countUsers() == 0) {
-                JwtFilterLogger.info(this.getClass().getName(),
+                JwtFilterLogger.info(this.getClass(),
                         "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
                 final AuthenticatedUser user = this.authenticatedUserController.createUser(null, request.getUsername(),
                         "Default", "Admin", request.getPassword(), AvailableRole.ADMIN);
@@ -231,11 +231,11 @@ public class AuthApi {
                         .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
             } catch (final UsernameNotFoundException e) {
-                JwtFilterLogger.warning(this.getClass().getName(), "Bad credentials!.");
+                JwtFilterLogger.warning(this.getClass(), "Bad credentials!.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (final BadCredentialsException ex) {
-            JwtFilterLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+            JwtFilterLogger.warning(this.getClass(), "Invalid credentials set from IP '" + ip + "'!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

@@ -53,6 +53,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -145,7 +146,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Override
     public Tournament update(Tournament tournament) {
         if (tournament.isLocked() && tournament.getLockedAt() == null) {
-            tournament.setLockedAt(LocalDateTime.now());
+            tournament.setLockedAt(LocalDateTime.now(ZoneId.systemDefault()));
         } else if (!tournament.isLocked()) {
             tournament.setLockedAt(null);
         }
@@ -174,7 +175,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     public long countTournamentsAfter(LocalDateTime createdAfter) {
         if (createdAfter == null) {
             return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt() != null
-                    && tournament.getCreatedAt().isAfter(LocalDateTime.now().minusYears(1)
+                    && tournament.getCreatedAt().isAfter(LocalDateTime.now(ZoneId.systemDefault()).minusYears(1)
                     .with(LocalTime.MIN))).count();
 
         }
@@ -186,7 +187,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     public void markAsFinished(Tournament tournament, boolean finish) {
         if (finish && tournament.getFinishedAt() == null) {
-            tournament.updateFinishedAt(LocalDateTime.now());
+            tournament.updateFinishedAt(LocalDateTime.now(ZoneId.systemDefault()));
             getRepository().save(tournament);
         } else if (!finish && tournament.getFinishedAt() != null) {
             tournament.updateFinishedAt(null);

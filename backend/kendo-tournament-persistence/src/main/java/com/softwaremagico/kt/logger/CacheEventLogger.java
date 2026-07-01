@@ -123,6 +123,10 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
         AbstractLoggerWrapper.delegateErrorMessage(LOGGER, className, messageTemplate, arguments);
     }
 
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        errorMessage(clazz.getName(), messageTemplate, arguments);
+    }
+
     public static void errorMessage(Object object, Throwable throwable) {
         AbstractLoggerWrapper.delegateErrorMessage(LOGGER, object, throwable);
     }

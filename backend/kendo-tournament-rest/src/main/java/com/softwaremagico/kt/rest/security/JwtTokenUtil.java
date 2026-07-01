@@ -69,7 +69,6 @@ import java.util.UUID;
  * </p>
  */
 @Component
-@SuppressWarnings("java:S2143")
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
     /** Default token validity period in milliseconds (20 minutes). */
@@ -100,8 +99,6 @@ public class JwtTokenUtil {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final NetworkController networkController;
-
-    private final String jwtSecret;
     private final SecretKey signingKey;
     private final long jwtExpiration;
     private final long jwtGuestExpiration;
@@ -122,18 +119,15 @@ public class JwtTokenUtil {
             try {
                 calculatedJwtExpiration = Long.parseLong(jwtExpiration);
             } catch (final NumberFormatException e) {
-                JwtFilterLogger.warning(this.getClass().getName(),
+                JwtFilterLogger.errorMessage(this.getClass(), e);
+                JwtFilterLogger.warning(this.getClass(),
                         "jwt.expiration value '{}' is invalid. Setting default to '{}'.", jwtExpiration,
                         JWT_EXPIRATION);
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
-        if (jwtSecret != null && !jwtSecret.isBlank()) {
-            this.jwtSecret = jwtSecret;
-        } else {
-            this.jwtSecret = this.generateRandomSecret();
-        }
-        this.signingKey = this.createSigningKey(this.jwtSecret);
+        final String secret = (jwtSecret != null && !jwtSecret.isBlank()) ? jwtSecret : this.generateRandomSecret();
+        this.signingKey = this.createSigningKey(secret);
         this.jwtExpiration = calculatedJwtExpiration;
 
         // If not set, guest expiration is the same that the standard one.
@@ -144,6 +138,7 @@ public class JwtTokenUtil {
             try {
                 calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
             } catch (final NumberFormatException e) {
+                JwtFilterLogger.errorMessage(this.getClass(), e);
                 calculatedGuestJwtExpiration = this.jwtExpiration;
             }
         }
@@ -157,6 +152,7 @@ public class JwtTokenUtil {
             try {
                 calculatedParticipantJwtExpiration = Long.parseLong(jwtParticipantExpiration);
             } catch (final NumberFormatException e) {
+                JwtFilterLogger.errorMessage(this.getClass(), e);
                 calculatedParticipantJwtExpiration = this.jwtExpiration;
             }
         }
@@ -310,7 +306,7 @@ public class JwtTokenUtil {
         final String userId = this.getTokenSubject(token).userId();
 
         if (userId == null) {
-            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
+            JwtFilterLogger.warning(this.getClass(), "No filed 'user id' on JWT token!");
         }
         return userId;
     }
@@ -327,7 +323,7 @@ public class JwtTokenUtil {
         final String username = this.getTokenSubject(token).username();
 
         if (username == null) {
-            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
+            JwtFilterLogger.warning(this.getClass(), "No filed 'user name' on JWT token!");
         }
         return username;
     }
@@ -381,14 +377,14 @@ public class JwtTokenUtil {
     }
 
     /**
-     * Returns the expiration date embedded in the given JWT token.
+     * Returns the expiration instant embedded in the given JWT token.
      *
      * @param token
      *            the JWT string to parse
-     * @return the expiration {@link Date}
+     * @return the expiration instant
      */
-    public Date getExpirationDate(String token) {
-        return this.getClaims(token).getExpiration();
+    public Instant getExpirationDate(String token) {
+        return this.getClaims(token).getExpiration().toInstant();
     }
 
     /**
@@ -405,11 +401,11 @@ public class JwtTokenUtil {
             this.getClaims(token);
             return true;
         } catch (final ExpiredJwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass(), "Expired JWT token '{}'", ex.getMessage());
         } catch (final JwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass(), "Invalid JWT token '{}'", ex.getMessage());
         } catch (final IllegalArgumentException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass(), "JWT claims string is empty '{}'", ex.getMessage());
         }
         return false;
     }

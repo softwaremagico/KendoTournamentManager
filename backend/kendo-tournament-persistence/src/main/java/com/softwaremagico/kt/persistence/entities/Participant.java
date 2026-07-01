@@ -45,6 +45,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.Collator;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -239,12 +240,12 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     public void generateTemporalToken() {
         setTemporalToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setTemporalTokenExpiration(LocalDateTime.now().plusSeconds(TEMPORARY_TOKEN_DURATION));
+        setTemporalTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(TEMPORARY_TOKEN_DURATION));
     }
 
     public void generateToken() {
         setToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setAccountExpiration(LocalDateTime.now().plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
+        setAccountExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
     }
 
     @Override
@@ -269,7 +270,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+        return accountExpiration != null && LocalDateTime.now(ZoneId.systemDefault()).isBefore(accountExpiration);
     }
 
     @Override
@@ -279,7 +280,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+        return accountExpiration != null && LocalDateTime.now(ZoneId.systemDefault()).isBefore(accountExpiration);
     }
 
     @Override

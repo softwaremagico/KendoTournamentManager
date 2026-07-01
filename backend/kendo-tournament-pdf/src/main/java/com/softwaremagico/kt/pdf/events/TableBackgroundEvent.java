@@ -52,42 +52,43 @@ public class TableBackgroundEvent implements PdfPTableEvent {
     }
 
     private void initializeDefaultBackgroundImage() {
-        if (defaultBackgroundImage == null) {
-            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream(imageResource)) {
+        if (this.defaultBackgroundImage == null) {
+            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream(this.imageResource)) {
                 if (inputStream != null) {
-                    defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
-                    defaultBackgroundImage.setAlignment(Image.UNDERLYING);
-                    defaultBackgroundImage.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
-                    defaultBackgroundImage.setAbsolutePosition(0, 0);
+                    this.defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
+                    this.defaultBackgroundImage.setAlignment(Image.UNDERLYING);
+                    this.defaultBackgroundImage.scaleToFit(this.document.getPageSize().getWidth(),
+                            this.document.getPageSize().getHeight());
+                    this.defaultBackgroundImage.setAbsolutePosition(0, 0);
                 }
-            } catch (NullPointerException | BadElementException | IOException ex) {
+            } catch (final NullPointerException | BadElementException | IOException ex) {
                 PdfExporterLog.severe(TableBackgroundEvent.class.getName(), "No background image found!");
             }
         }
     }
 
     private Image getBackgroundImage() {
-        if (backgroundImage == null) {
-            if (imageResource != null) {
-                initializeDefaultBackgroundImage();
+        if (this.backgroundImage == null) {
+            if (this.imageResource != null) {
+                this.initializeDefaultBackgroundImage();
             }
-            backgroundImage = defaultBackgroundImage;
+            this.backgroundImage = this.defaultBackgroundImage;
         }
-        return backgroundImage;
+        return this.backgroundImage;
     }
 
     @Override
     public void tableLayout(PdfPTable ppt, float[][] widths, float[] heights, int headerRows, int rowStart,
-                            PdfContentByte[] pcbs) {
+            PdfContentByte[] pcbs) {
         try {
-            if (getBackgroundImage() != null) {
+            if (this.getBackgroundImage() != null) {
                 final int columns = widths[0].length - 1;
                 final Rectangle rect = new Rectangle(widths[0][0], heights[0], widths[0][columns], heights[1]);
-                pcbs[PdfPTable.BASECANVAS].addImage(getBackgroundImage(), rect.getWidth(), 0, 0, -rect.getHeight(),
+                pcbs[PdfPTable.BASECANVAS].addImage(this.getBackgroundImage(), rect.getWidth(), 0, 0, -rect.getHeight(),
                         rect.getLeft(), rect.getTop());
             }
-        } catch (Exception e) {
-            PdfExporterLog.errorMessage(this.getClass().getName(), e);
+        } catch (final Exception e) {
+            PdfExporterLog.errorMessage(this.getClass(), e);
         }
     }
 }

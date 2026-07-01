@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Date;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -91,9 +91,9 @@ class JwtTokenUtilExtendedTest {
         String token = jwtTokenUtil.generateAccessToken(authenticatedUser, TEST_IP, expirationTime);
 
         assertNotNull(token);
-        Date expirationDate = jwtTokenUtil.getExpirationDate(token);
+        Instant expirationDate = jwtTokenUtil.getExpirationDate(token);
         assertNotNull(expirationDate);
-        assertTrue(expirationDate.getTime() > System.currentTimeMillis());
+        assertTrue(expirationDate.toEpochMilli() > System.currentTimeMillis());
     }
 
     @Test
@@ -174,10 +174,10 @@ class JwtTokenUtilExtendedTest {
     @Test
     void testGetExpirationDateFromToken() {
         String token = jwtTokenUtil.generateAccessToken(authenticatedUser, TEST_IP);
-        Date expirationDate = jwtTokenUtil.getExpirationDate(token);
+        Instant expirationDate = jwtTokenUtil.getExpirationDate(token);
 
         assertNotNull(expirationDate);
-        assertTrue(expirationDate.getTime() > System.currentTimeMillis());
+        assertTrue(expirationDate.toEpochMilli() > System.currentTimeMillis());
     }
 
     @Test

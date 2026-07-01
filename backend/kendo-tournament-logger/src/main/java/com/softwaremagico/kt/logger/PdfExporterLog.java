@@ -70,6 +70,10 @@ public final class PdfExporterLog extends AbstractLoggerWrapper {
         delegateErrorMessage(LOGGER, className, messageTemplate, arguments);
     }
 
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        delegateErrorMessage(LOGGER, clazz.getName(), messageTemplate, arguments);
+    }
+
     public static void errorMessage(Object object, Throwable throwable) {
         delegateErrorMessage(LOGGER, object, throwable);
     }

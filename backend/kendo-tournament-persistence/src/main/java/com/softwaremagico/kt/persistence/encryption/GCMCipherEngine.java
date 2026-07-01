@@ -100,7 +100,7 @@ public class GCMCipherEngine implements ICipherEngine {
             return encodedValue;
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                 | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            KendoTournamentLogger.warning(this.getClass().getName(), "Error encrypting value '{}': {}", input, e);
+            KendoTournamentLogger.warning(this.getClass(), "Error encrypting value '{}': {}", input, e);
             throw new InvalidEncryptionException(e);
         }
     }
