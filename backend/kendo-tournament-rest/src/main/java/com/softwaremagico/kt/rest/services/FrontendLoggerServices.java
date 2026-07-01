@@ -66,6 +66,6 @@ public class FrontendLoggerServices {
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)
     public void error(@RequestBody LogDTO log, HttpServletRequest request) {
-        FrontendLogger.severe(this.getClass().getName(), sanitize(log.getMessage()));
+        FrontendLogger.severe(this.getClass(), sanitize(log.getMessage()));
     }
 }

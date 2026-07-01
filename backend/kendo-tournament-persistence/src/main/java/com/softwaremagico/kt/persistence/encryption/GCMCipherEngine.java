@@ -96,7 +96,7 @@ public class GCMCipherEngine implements ICipherEngine {
             final byte[] encryptedBytes = ByteBuffer.allocate(iv.length + salt.length + encryptedText.length).put(iv)
                     .put(salt).put(encryptedText).array();
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
-            EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
+            EncryptorLogger.debug(this.getClass(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
             return encodedValue;
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                 | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -129,7 +129,7 @@ public class GCMCipherEngine implements ICipherEngine {
             getCipher().init(Cipher.DECRYPT_MODE, getAESKey(password, salt), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
             final byte[] decryptedBytes = cipher.doFinal(cipherText);
             final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-            EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
+            EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
             return decrypted;
         } catch (BadPaddingException
                  | IllegalBlockSizeException

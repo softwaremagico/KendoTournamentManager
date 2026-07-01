@@ -62,6 +62,10 @@ public final class WebsocketsLogger extends AbstractLoggerWrapper {
         delegateSevere(LOGGER, className, messageTemplate, arguments);
     }
 
+    public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
+        delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
+    }
+
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
         delegateErrorMessage(LOGGER, clazz, throwable);
     }

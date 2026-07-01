@@ -339,7 +339,7 @@ public class JwtTokenUtil {
     public String getSession(String token) {
         final String session = this.getTokenSubject(token).session();
         if (session == null) {
-            JwtFilterLogger.debug(this.getClass().getName(), "No session information on JWT token!");
+            JwtFilterLogger.debug(this.getClass(), "No session information on JWT token!");
         }
         return session;
     }
@@ -355,7 +355,7 @@ public class JwtTokenUtil {
     public String getUserIp(String token) {
         final String userIp = this.getTokenSubject(token).userIp();
         if (userIp == null) {
-            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'user IP' on JWT token!");
+            JwtFilterLogger.debug(this.getClass(), "No filed 'user IP' on JWT token!");
         }
         return userIp;
     }
@@ -371,7 +371,7 @@ public class JwtTokenUtil {
     public String getHostMac(String token) {
         final String hostMac = this.getTokenSubject(token).hostMac();
         if (hostMac == null) {
-            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
+            JwtFilterLogger.debug(this.getClass(), "No filed 'host MAC' on JWT token!");
         }
         return hostMac;
     }

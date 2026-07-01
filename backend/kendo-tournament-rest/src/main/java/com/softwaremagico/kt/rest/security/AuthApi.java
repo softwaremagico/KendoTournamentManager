@@ -150,10 +150,10 @@ public class AuthApi {
                 }
             }
             // We verify the provided credentials using the authentication manager
-            JwtFilterLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
+            JwtFilterLogger.debug(this.getClass(), "Trying to log in with '" + request.getUsername() + "'.");
             final Authentication authenticate = this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            JwtFilterLogger.debug(this.getClass().getName(),
+            JwtFilterLogger.debug(this.getClass(),
                     "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             try {

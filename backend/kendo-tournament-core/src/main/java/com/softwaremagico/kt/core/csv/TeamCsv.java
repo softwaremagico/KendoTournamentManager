@@ -113,7 +113,7 @@ public class TeamCsv extends CsvReader<Team> {
                 if (participant != null) {
                     team.addMember(participant);
                 } else {
-                    KendoTournamentLogger.severe(this.getClass().getName(), "Error when inserting CSV from '" + teamLine + "'.");
+                    KendoTournamentLogger.severe(this.getClass(), "Error when inserting CSV from '" + teamLine + "'.");
                     KendoTournamentLogger.errorMessage(this.getClass(), "No member with id '" + getField(teamLine, memberIndex) + "' on team '"
                             + team.getName() + "'.");
                 }

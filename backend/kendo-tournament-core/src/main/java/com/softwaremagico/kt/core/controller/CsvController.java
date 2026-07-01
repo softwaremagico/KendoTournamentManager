@@ -142,7 +142,7 @@ public class CsvController {
         for (final Participant participant : participants) {
             try {
                 if (this.participantProvider.findByIdCard(participant.getIdCard()).isPresent()) {
-                    KendoTournamentLogger.severe(this.getClass().getName(),
+                    KendoTournamentLogger.severe(this.getClass(),
                             "Participant '" + participant.getIdCard() + "' with name '" + participant.getName() + " "
                                     + participant.getLastname() + "' already exists.");
                     participant.setUpdatedBy(uploadedBy);
@@ -153,7 +153,7 @@ public class CsvController {
                     this.participantProvider.save(participant);
                 }
             } catch (final Exception e) {
-                KendoTournamentLogger.severe(this.getClass().getName(),
+                KendoTournamentLogger.severe(this.getClass(),
                         "Error when inserting '" + participant + "': " + e.getMessage());
                 failedParticipants.add(this.participantConverter.convert(new ParticipantConverterRequest(participant)));
             }
@@ -170,7 +170,7 @@ public class CsvController {
                 if (tournamentId != null && selectedTournament.isPresent()) {
                     team.setTournament(selectedTournament.get());
                 } else {
-                    KendoTournamentLogger.severe(this.getClass().getName(),
+                    KendoTournamentLogger.severe(this.getClass(),
                             "Team '" + team.getName() + "' has assigned a tournament that does not exists.");
                     failedTeams.add(this.teamConverter.convert(new TeamConverterRequest(team)));
                     continue;

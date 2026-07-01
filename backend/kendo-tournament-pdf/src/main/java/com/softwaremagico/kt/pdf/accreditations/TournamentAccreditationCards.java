@@ -71,19 +71,19 @@ public class TournamentAccreditationCards extends PdfDocument {
         try {
             this.banner = Image.getInstance(banner);
         } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid banner found!");
+            KendoTournamentLogger.severe(this.getClass(), "Invalid banner found!");
             this.banner = null;
         }
         try {
             this.background = Image.getInstance(background);
         } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid background image found!");
+            KendoTournamentLogger.severe(this.getClass(), "Invalid background image found!");
             this.background = null;
         }
         try {
             this.defaultPhoto = Image.getInstance(defaultPhoto);
         } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid default photo found!");
+            KendoTournamentLogger.severe(this.getClass(), "Invalid default photo found!");
             this.defaultPhoto = null;
         }
         this.participantImages = participantImages;

@@ -179,7 +179,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private void logTokenDetails(String token) {
         if (JwtFilterLogger.isDebugEnabled()) {
-            JwtFilterLogger.debug(this.getClass().getName(), JWT_OBTAINED_TEMPLATE,
+            JwtFilterLogger.debug(this.getClass(), JWT_OBTAINED_TEMPLATE,
                     this.jwtTokenUtil.getExpirationDate(token), this.jwtTokenUtil.getUserId(token),
                     this.jwtTokenUtil.getUsername(token), this.jwtTokenUtil.getSession(token),
                     this.jwtTokenUtil.getUserIp(token), this.jwtTokenUtil.getHostMac(token));

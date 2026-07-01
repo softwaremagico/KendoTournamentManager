@@ -35,7 +35,7 @@ public class LoggerAdaptersCoverageTest {
         CacheControllerLogger.info(getClass(), "info {}", 1);
         CacheControllerLogger.warning(getClass(), "warn {}", 2);
         CacheControllerLogger.debug(getClass(), "debug {}", 3);
-        CacheControllerLogger.severe(getClass().getName(), "severe {}", 4);
+        CacheControllerLogger.severe(getClass(), "severe {}", 4);
         CacheControllerLogger.errorMessage(getClass(), new RuntimeException("cache"));
         CacheControllerLogger.errorMessage(getClass(), "error {}", 5);
         CacheControllerLogger.errorMessage(this, new RuntimeException("cache-obj"));
@@ -44,7 +44,7 @@ public class LoggerAdaptersCoverageTest {
         JwtFilterLogger.info(getClass(), "info {}", 1);
         JwtFilterLogger.warning(getClass(), "warn {}", 2);
         JwtFilterLogger.debug(getClass(), "debug {}", 3);
-        JwtFilterLogger.severe(getClass().getName(), "severe {}", 4);
+        JwtFilterLogger.severe(getClass(), "severe {}", 4);
         JwtFilterLogger.errorMessage(getClass(), new RuntimeException("jwt"));
         JwtFilterLogger.errorMessage(getClass(), "error {}", 5);
         JwtFilterLogger.errorMessage(getClass(), "error2 {}", 6);
@@ -54,7 +54,7 @@ public class LoggerAdaptersCoverageTest {
         PdfExporterLog.info(getClass(), "info {}", 1);
         PdfExporterLog.warning(getClass(), "warn {}", 2);
         PdfExporterLog.debug(getClass(), "debug {}", 3);
-        PdfExporterLog.severe(getClass().getName(), "severe {}", 4);
+        PdfExporterLog.severe(getClass(), "severe {}", 4);
         PdfExporterLog.errorMessage(getClass(), new RuntimeException("pdf"));
         PdfExporterLog.errorMessage(getClass(), "error {}", 5);
         PdfExporterLog.errorMessage(this, new RuntimeException("pdf-obj"));
@@ -63,7 +63,7 @@ public class LoggerAdaptersCoverageTest {
         WebsocketsLogger.info(getClass(), "info {}", 1);
         WebsocketsLogger.warning(getClass(), "warn {}", 2);
         WebsocketsLogger.debug(getClass(), "debug {}", 3);
-        WebsocketsLogger.severe(getClass().getName(), "severe {}", 4);
+        WebsocketsLogger.severe(getClass(), "severe {}", 4);
         WebsocketsLogger.errorMessage(getClass(), new RuntimeException("ws"));
         WebsocketsLogger.errorMessage(getClass(), "error {}", 5);
         WebsocketsLogger.errorMessage(getClass(), "error2 {}", 6);

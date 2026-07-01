@@ -71,7 +71,7 @@ public class CBCCipherEngine implements ICipherEngine {
             this.getCipher(password).init(Cipher.ENCRYPT_MODE, this.keySpec, this.generateIvSpec(iv));
             final byte[] encryptedBytes = this.getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
-            EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
+            EncryptorLogger.debug(this.getClass(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
             // Add the iv on the message.
             return Base64.getEncoder().encodeToString(iv) + encodedValue;
         } catch (final BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
@@ -96,7 +96,7 @@ public class CBCCipherEngine implements ICipherEngine {
                         .decode(encrypted.substring(STORED_KEY_SIZE).getBytes(StandardCharsets.UTF_8));
                 final byte[] decryptedBytes = deecryptCipher.doFinal(encryptedBytes);
                 final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-                EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted,
+                EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", encrypted,
                         decrypted);
                 return decrypted;
             }
@@ -120,7 +120,7 @@ public class CBCCipherEngine implements ICipherEngine {
                 System.arraycopy(digest.digest(), 0, key, 0, key.length);
                 this.keySpec = new SecretKeySpec(key, SECRET_KEY_ALGORITHM);
             } catch (final Exception e) {
-                EncryptorLogger.severe(this.getClass().getName(), "invalid cipher algorithm selected");
+                EncryptorLogger.severe(this.getClass(), "invalid cipher algorithm selected");
                 EncryptorLogger.errorMessage(this.getClass(), e);
                 System.exit(0);
             }
