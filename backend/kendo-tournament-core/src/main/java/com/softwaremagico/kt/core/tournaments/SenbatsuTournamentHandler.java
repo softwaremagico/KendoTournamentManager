@@ -120,7 +120,7 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
                 TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE, DEFAULT_CHALLENGE_DISTANCE);
         try {
             return Integer.parseInt(extraProperty.getPropertyValue());
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
         return DEFAULT_CHALLENGE_DISTANCE;

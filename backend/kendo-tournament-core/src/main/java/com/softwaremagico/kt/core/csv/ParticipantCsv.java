@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.csv;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ParticipantCsv extends CsvReader<Participant> {
             if (clubName != null && clubCity != null) {
                 try {
                     participant.setClub(clubProvider.findBy(clubName, clubCity).orElse(null));
-                } catch (Exception e) {
+                } catch (DataAccessException e) {
                     KendoTournamentLogger.severe(this.getClass(), "Error when inserting CSV from '" + participantLine + "'.");
                     KendoTournamentLogger.errorMessage(this.getClass(), e);
                 }

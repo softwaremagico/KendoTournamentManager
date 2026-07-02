@@ -24,6 +24,7 @@ package com.softwaremagico.kt.websockets;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
+import io.jsonwebtoken.JwtException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -123,7 +124,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
             validateUsername(username);
             accessor.setUser(new UserPrincipal(username));
             WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
-        } catch (Exception ignored) {
+        } catch (InvalidJwtException | JwtException | IllegalArgumentException ignored) {
             // Unauthorized websocket token.
             WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
         }
