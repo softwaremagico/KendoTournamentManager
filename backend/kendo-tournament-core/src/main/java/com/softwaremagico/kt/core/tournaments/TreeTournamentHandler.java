@@ -90,7 +90,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (numberOfWinnersProperty != null) {
             try {
                 return Integer.parseInt(numberOfWinnersProperty.getPropertyValue());
-            } catch (Exception ignore) {
+            } catch (NumberFormatException ignore) {
                 //Ignored.
             }
         }
@@ -103,11 +103,7 @@ public class TreeTournamentHandler extends LeagueHandler {
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
 
         if (maximizeFightsProperty != null) {
-            try {
-                return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
-            } catch (Exception ignore) {
-                //Ignored.
-            }
+            return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
         }
         return true;
     }
@@ -135,7 +131,7 @@ public class TreeTournamentHandler extends LeagueHandler {
                 if (group.getLevel() == 0 && winners != group.getNumberOfWinners()) {
                     group.setNumberOfWinners(winners);
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
         }

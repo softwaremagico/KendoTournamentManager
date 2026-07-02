@@ -23,11 +23,10 @@ package com.softwaremagico.kt.rest.security;
 
 import org.springframework.stereotype.Controller;
 
-import java.net.SocketException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
-
 
 @Controller
 public class NetworkController {
@@ -56,8 +55,8 @@ public class NetworkController {
                 hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
             }
             return String.join("-", hexadecimal);
-        } catch (Exception _) {
-            //Ignored.
+        } catch (final Exception ex) {
+            // Ignored.
         }
         return "";
     }

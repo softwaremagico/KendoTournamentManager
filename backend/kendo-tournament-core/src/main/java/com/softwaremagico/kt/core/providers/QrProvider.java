@@ -207,7 +207,7 @@ public class QrProvider {
                 if (logoImage != null) {
                     builder = builder.qrLogoConfig(logoImage);
                 }
-            } catch (Exception e) {
+            } catch (IOException | TranscoderException e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
         }

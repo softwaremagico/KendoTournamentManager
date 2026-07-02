@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -69,7 +71,7 @@ public class Info {
             latestVersion = versionController.getLatestVersionFromGithub();
             checkedVersionAt = LocalDateTime.now(ZoneId.systemDefault());
             return ResponseEntity.ok().body(latestVersion);
-        } catch (Exception ex) {
+        } catch (IOException | XPathExpressionException | RuntimeException ex) {
             return ResponseEntity.ok().body("");
         }
     }
