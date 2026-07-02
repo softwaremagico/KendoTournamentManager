@@ -28,14 +28,17 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.Score;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class CombatAchievementGenerator extends ConsecutiveAchievementGenerationSupport {
@@ -67,36 +70,39 @@ public class CombatAchievementGenerator extends ConsecutiveAchievementGeneration
         if (this.fightProvider.getFights(tournament).size() < this.minimumTournamentFights) {
             return new ArrayList<>();
         }
-        int minTime = tournament.getDuelsDuration();
-        com.softwaremagico.kt.persistence.entities.Participant participant = null;
+        FastestScoreResult fastestScoreResult = new FastestScoreResult(null, tournament.getDuelsDuration());
         for (final Duel duel : this.duelProvider.get(tournament)) {
-            for (final Integer time : duel.getCompetitor1ScoreTime()) {
-                if (time == null) {
-                    continue;
-                }
-                if (time == minTime && !java.util.Objects.equals(participant, duel.getCompetitor1())) {
-                    participant = null;
-                } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
-                    participant = duel.getCompetitor1();
-                    minTime = time;
-                }
-            }
-            for (final Integer time : duel.getCompetitor2ScoreTime()) {
-                if (time == null) {
-                    continue;
-                }
-                if (time == minTime && !java.util.Objects.equals(participant, duel.getCompetitor2())) {
-                    participant = null;
-                } else if (time < minTime && time > Duel.DEFAULT_DURATION) {
-                    participant = duel.getCompetitor2();
-                    minTime = time;
-                }
-            }
+            fastestScoreResult = updateFastestScoreResult(fastestScoreResult, duel.getCompetitor1(), duel.getCompetitor1ScoreTime());
+            fastestScoreResult = updateFastestScoreResult(fastestScoreResult, duel.getCompetitor2(), duel.getCompetitor2ScoreTime());
         }
-        if (participant != null) {
-            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, java.util.Collections.singleton(participant), tournament);
+        if (fastestScoreResult.participant() != null) {
+            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL,
+                    Collections.singleton(fastestScoreResult.participant()), tournament);
         }
         return new ArrayList<>();
+    }
+
+    private FastestScoreResult updateFastestScoreResult(FastestScoreResult currentResult, Participant competitor,
+                                                        List<Integer> scoreTimes) {
+        Participant bestParticipant = currentResult.participant();
+        int bestTime = currentResult.time();
+        for (final Integer time : scoreTimes) {
+            if (time == null) {
+                continue;
+            }
+            if (time == bestTime && !Objects.equals(bestParticipant, competitor)) {
+                bestParticipant = null;
+                continue;
+            }
+            if (time < bestTime && time > Duel.DEFAULT_DURATION) {
+                bestParticipant = competitor;
+                bestTime = time;
+            }
+        }
+        return new FastestScoreResult(bestParticipant, bestTime);
+    }
+
+    private record FastestScoreResult(Participant participant, int time) {
     }
 
     public List<Achievement> generateLethalWeaponAchievement(Tournament tournament) {

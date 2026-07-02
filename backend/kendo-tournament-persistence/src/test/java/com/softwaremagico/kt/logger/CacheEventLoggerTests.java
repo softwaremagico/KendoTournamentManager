@@ -37,7 +37,7 @@ public class CacheEventLoggerTests {
     @Test
     public void testInfoWithClass() {
         // Should not throw any exception
-        CacheEventLogger.info(CacheEventLoggerTests.class, "Test message");
+        CacheEventLogger.info(CacheEventLoggerTests.class, "Test message {}", "info");
         Assert.assertTrue(true);
     }
 
@@ -58,7 +58,7 @@ public class CacheEventLoggerTests {
     @Test
     public void testWarningWithClass() {
         // Should not throw any exception
-        CacheEventLogger.warning(CacheEventLoggerTests.class, "Warning message");
+        CacheEventLogger.warning(CacheEventLoggerTests.class, "Warning {}", "message");
         Assert.assertTrue(true);
     }
 
@@ -72,7 +72,7 @@ public class CacheEventLoggerTests {
     @Test
     public void testDebugWithClass() {
         // Should not throw any exception
-        CacheEventLogger.debug(CacheEventLoggerTests.class, "Debug message");
+        CacheEventLogger.debug(CacheEventLoggerTests.class, "Debug {}", "message");
         Assert.assertTrue(true);
     }
 

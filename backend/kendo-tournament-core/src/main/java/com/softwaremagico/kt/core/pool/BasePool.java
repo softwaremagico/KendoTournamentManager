@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class BasePool<ID, E> {
     private static final String CACHE_PREFIX = "Cache: ";
 
-    //Elements by id;
+    // Elements by id.
     private Map<ID, Long> elementsTime; // id -> time.
     private Map<ID, E> elementsById;
 

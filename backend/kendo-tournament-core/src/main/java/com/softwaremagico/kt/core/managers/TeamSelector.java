@@ -49,6 +49,7 @@ public class TeamSelector {
             case SORTED -> Collections.sort(sortedTeams);
             case RANDOM -> Collections.shuffle(sortedTeams);
             default -> {
+                // Keep original insertion order.
             }
         }
         return sortedTeams;

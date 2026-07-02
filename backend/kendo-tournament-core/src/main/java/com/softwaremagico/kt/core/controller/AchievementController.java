@@ -145,7 +145,6 @@ public class AchievementController
     private List<Team> teamsFromTournament;
     private List<Fight> fightsFromTournament;
     private Map<Participant, List<Score>> scoresByParticipant = null;
-    private Map<Participant, List<Score>> scoresReceivedByParticipant = null;
     private Map<Participant, Long> totalScoreFromParticipant = null;
     private Map<Participant, Long> totalScoreAgainstParticipant = null;
     private Map<Participant, List<Role>> rolesByParticipant = null;
@@ -260,21 +259,6 @@ public class AchievementController
         return this.scoresByParticipant;
     }
 
-    private Map<Participant, List<Score>> getScoresReceivedByParticipant() {
-        if (this.scoresReceivedByParticipant == null) {
-            this.scoresReceivedByParticipant = new HashMap<>();
-            this.getDuelsFromTournament().forEach(duel -> {
-                this.scoresReceivedByParticipant.computeIfAbsent(duel.getCompetitor1(), k -> new ArrayList<>());
-                this.scoresReceivedByParticipant.computeIfAbsent(duel.getCompetitor2(), k -> new ArrayList<>());
-                duel.getCompetitor1Score()
-                        .forEach(score -> this.scoresReceivedByParticipant.get(duel.getCompetitor2()).add(score));
-                duel.getCompetitor2Score()
-                        .forEach(score -> this.scoresReceivedByParticipant.get(duel.getCompetitor1()).add(score));
-            });
-        }
-        return this.scoresReceivedByParticipant;
-    }
-
     private Map<Participant, Long> getTotalScoreFromParticipant() {
         if (this.totalScoreFromParticipant == null) {
             this.totalScoreFromParticipant = new HashMap<>();
@@ -311,18 +295,6 @@ public class AchievementController
             this.rolesByParticipant = roles.stream().collect(Collectors.groupingBy(Role::getParticipant));
         }
         return this.rolesByParticipant;
-    }
-
-    private Map<Participant, List<Role>> getRolesByParticipantUntil(Tournament tournament) {
-        final Map<Participant, List<Role>> roles = new HashMap<>();
-        for (final Map.Entry<Participant, List<Role>> entry : this.getRolesByParticipant().entrySet()) {
-            roles.put(entry.getKey(),
-                    entry.getValue().stream()
-                            .filter(role -> role.getTournament().getCreatedAt() != null
-                                    && role.getTournament().getCreatedAt().isBefore(tournament.getCreatedAt()))
-                            .toList());
-        }
-        return roles;
     }
 
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
@@ -428,7 +400,6 @@ public class AchievementController
         this.duelsFromTournament = null;
         this.participantsFromTournament = null;
         this.scoresByParticipant = null;
-        this.scoresReceivedByParticipant = null;
         this.totalScoreFromParticipant = null;
         this.totalScoreAgainstParticipant = null;
         this.rolesByParticipant = null;

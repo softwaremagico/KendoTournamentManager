@@ -130,24 +130,7 @@ public class AuthApi {
         try {
             // Check if the IP is blocked.
             if (this.bruteForceService.isBlocked(ip)) {
-                try {
-                    Thread.sleep(this.random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-                    JwtFilterLogger.warning(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-                    final HttpHeaders headers = new HttpHeaders();
-                    headers.add(HttpHeaders.RETRY_AFTER, String
-                            .valueOf(this.bruteForceService.getElementsTime(ip) + this.bruteForceService.getExpirationTime()));
-                    return new ResponseEntity<>(headers, HttpStatus.LOCKED);
-                } catch (final InterruptedException e) {
-                    JwtFilterLogger.warning(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-                    try {
-                        final HttpHeaders headers = new HttpHeaders();
-                        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(
-                                this.bruteForceService.getElementsTime(ip) + this.bruteForceService.getExpirationTime()));
-                        return new ResponseEntity<>(headers, HttpStatus.LOCKED);
-                    } finally {
-                        Thread.currentThread().interrupt();
-                    }
-                }
+                return this.buildLockedResponse(ip);
             }
             // We verify the provided credentials using the authentication manager
             JwtFilterLogger.debug(this.getClass(), "Trying to log in with '" + request.getUsername() + "'.");
@@ -156,23 +139,10 @@ public class AuthApi {
             JwtFilterLogger.debug(this.getClass(),
                     "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
-            try {
-                final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(authenticate.getName())
-                        .orElseThrow(() -> new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_TEMPLATE, authenticate.getName())));
-                final long jwtExpiration = this.jwtTokenUtil.getJwtExpirationTime();
-                final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip);
-                this.bruteForceService.loginSucceeded(ip);
-
-                // We generate the JWT token and return it as a response header along with the
-                // user identity information in the response body.
-                return ResponseEntity.ok()
-                        .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
-                        .body(user);
-            } catch (final UsernameNotFoundException e) {
-                JwtFilterLogger.warning(this.getClass(), "Bad credentials!.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
+            return this.buildLoginResponse(authenticate, ip);
+        } catch (final UsernameNotFoundException e) {
+            JwtFilterLogger.warning(this.getClass(), "Bad credentials!.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (final BadCredentialsException ex) {
             JwtFilterLogger.warning(this.getClass(), "Invalid credentials set from IP '" + ip + "'!");
             // Create a default user if no user exists. Needed when database is encrypted.
@@ -207,37 +177,63 @@ public class AuthApi {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
-            try {
-                final IAuthenticatedUser user = this.authenticatedUserProvider
-                        .findByUsername(AuthenticatedUserProvider.GUEST_USER)
-                        .orElseThrow(() -> new GuestDisabledException(this.getClass(),
-                                String.format(USER_NOT_FOUND_TEMPLATE, AuthenticatedUserProvider.GUEST_USER)));
-                final long jwtExpiration = this.jwtTokenUtil.getJwtGuestExpirationTime();
-                final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
-
-                // Guest user can only access to non-locked tournaments.
-                final Tournament tournament = this.tournamentProvider.get(request.getTournamentId())
-                        .orElseThrow(() -> new GuestDisabledException(this.getClass(),
-                                String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
-
-                if (tournament.isLocked()) {
-                    throw new GuestDisabledException(this.getClass(),
-                            "Tournament is finished and guest users are not allowed any more.");
-                }
-
-                // We generate the JWT token and return it as a response header along with the
-                // user identity information in the response body.
-                return ResponseEntity.ok()
-                        .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
-                        .body(user);
-            } catch (final UsernameNotFoundException e) {
-                JwtFilterLogger.warning(this.getClass(), "Bad credentials!.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
+            return this.buildGuestLoginResponse(request, ip);
+        } catch (final UsernameNotFoundException e) {
+            JwtFilterLogger.warning(this.getClass(), "Bad credentials!.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (final BadCredentialsException ex) {
             JwtFilterLogger.warning(this.getClass(), "Invalid credentials set from IP '" + ip + "'!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    private ResponseEntity<IAuthenticatedUser> buildLockedResponse(String ip) {
+        try {
+            Thread.sleep(this.random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        JwtFilterLogger.warning(this.getClass(), "Too many attempts from IP '" + ip + "'.");
+        return new ResponseEntity<>(this.getRetryAfterHeaders(ip), HttpStatus.LOCKED);
+    }
+
+    private HttpHeaders getRetryAfterHeaders(String ip) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.RETRY_AFTER,
+                String.valueOf(this.bruteForceService.getElementsTime(ip) + this.bruteForceService.getExpirationTime()));
+        return headers;
+    }
+
+    private ResponseEntity<IAuthenticatedUser> buildLoginResponse(Authentication authenticate, String ip) {
+        final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(authenticate.getName())
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_TEMPLATE, authenticate.getName())));
+        final long jwtExpiration = this.jwtTokenUtil.getJwtExpirationTime();
+        final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip);
+        this.bruteForceService.loginSucceeded(ip);
+        return ResponseEntity.ok()
+                .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
+                .body(user);
+    }
+
+    private ResponseEntity<IAuthenticatedUser> buildGuestLoginResponse(AuthGuestRequest request, String ip) {
+        final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
+                .orElseThrow(() -> new GuestDisabledException(this.getClass(),
+                        String.format(USER_NOT_FOUND_TEMPLATE, AuthenticatedUserProvider.GUEST_USER)));
+        final long jwtExpiration = this.jwtTokenUtil.getJwtGuestExpirationTime();
+        final String jwtToken = this.jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
+
+        // Guest user can only access to non-locked tournaments.
+        final Tournament tournament = this.tournamentProvider.get(request.getTournamentId())
+                .orElseThrow(() -> new GuestDisabledException(this.getClass(),
+                        String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+        if (tournament.isLocked()) {
+            throw new GuestDisabledException(this.getClass(),
+                    "Tournament is finished and guest users are not allowed any more.");
+        }
+
+        return ResponseEntity.ok()
+                .headers(this.getLoginHeaders(jwtToken, jwtExpiration, this.jwtTokenUtil.getSession(jwtToken)))
+                .body(user);
     }
 
     @Operation(summary = "Creates a jwt token for a participant.")

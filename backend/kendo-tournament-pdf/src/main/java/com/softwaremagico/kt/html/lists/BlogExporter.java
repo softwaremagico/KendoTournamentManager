@@ -63,9 +63,11 @@ public class BlogExporter {
 
     private final List<ScoreOfCompetitorDTO> scoreOfCompetitors;
 
+    public record ScoreData(List<ScoreOfTeamDTO> scoreOfTeams, List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
+    }
+
     public BlogExporter(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<RoleDTO> roles,
-                        List<GroupDTO> groups, List<ParticipantDTO> competitors, List<ScoreOfTeamDTO> scoreOfTeams,
-                        List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
+                        List<GroupDTO> groups, List<ParticipantDTO> competitors, ScoreData scoreData) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
@@ -74,8 +76,8 @@ public class BlogExporter {
         this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
         this.competitors = new ArrayList<>(competitors);
         this.competitors.sort(Comparator.comparing(NameUtils::getLastnameName));
-        this.scoreOfTeams = scoreOfTeams;
-        this.scoreOfCompetitors = scoreOfCompetitors;
+        this.scoreOfTeams = scoreData.scoreOfTeams();
+        this.scoreOfCompetitors = scoreData.scoreOfCompetitors();
     }
 
     /**

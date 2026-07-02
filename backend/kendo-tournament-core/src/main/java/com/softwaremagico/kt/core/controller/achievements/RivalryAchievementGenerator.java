@@ -79,38 +79,54 @@ public class RivalryAchievementGenerator extends ConsecutiveAchievementGeneratio
     public List<Achievement> generateSithApprenticesAlwaysKillTheirMasterAchievement(Tournament tournament,
                                                                                        List<Fight> fightsFromTournament) {
         final List<Achievement> achievements = new ArrayList<>();
-        fightsFromTournament.forEach(fight -> {
-            for (Duel duel : fight.getDuels()) {
-                final List<Duel> previousDuels = duelProvider.getWhenBothAreInvolved(duel.getCompetitor1(), duel.getCompetitor2());
-                boolean isApprentice = true;
-                int numberOfPreviousDuels = 0;
-                for (Duel previousDuel : previousDuels) {
-                    if (previousDuel.getCreatedAt().isBefore(tournament.getCreatedAt())) {
-                        numberOfPreviousDuels++;
-                        if (Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner()) || previousDuel.getWinner() == 0) {
-                            isApprentice = false;
-                            break;
-                        }
-                    }
-                }
-                if (isApprentice && duel.getCompetitorWinner() != null) {
-                    if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_NORMAL && numberOfPreviousDuels < MINIMUM_LOST_SITH_BRONZE) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.NORMAL));
-                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_BRONZE && numberOfPreviousDuels < MINIMUM_LOST_SITH_SILVER) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.BRONZE));
-                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_SILVER && numberOfPreviousDuels < MINIMUM_LOST_SITH_GOLD) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.SILVER));
-                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_GOLD) {
-                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                AchievementGrade.GOLD));
-                    }
-                }
-            }
-        });
+        fightsFromTournament.forEach(fight -> fight.getDuels().forEach(duel -> addSithAchievementIfApplicable(tournament, achievements, duel)));
         return getAchievementProvider().saveAll(achievements);
+    }
+
+    private void addSithAchievementIfApplicable(Tournament tournament, List<Achievement> achievements, Duel duel) {
+        final ApprenticeResult apprenticeResult = getApprenticeResult(tournament, duel);
+        final AchievementGrade achievementGrade = getSithAchievementGrade(apprenticeResult);
+        if (achievementGrade != null && duel.getCompetitorWinner() != null) {
+            achievements.add(new Achievement(duel.getCompetitorWinner(), tournament,
+                    AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER, achievementGrade));
+        }
+    }
+
+    private ApprenticeResult getApprenticeResult(Tournament tournament, Duel duel) {
+        final List<Duel> previousDuels = duelProvider.getWhenBothAreInvolved(duel.getCompetitor1(), duel.getCompetitor2());
+        int numberOfPreviousDuels = 0;
+        for (Duel previousDuel : previousDuels) {
+            if (!previousDuel.getCreatedAt().isBefore(tournament.getCreatedAt())) {
+                continue;
+            }
+            numberOfPreviousDuels++;
+            if (Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner()) || previousDuel.getWinner() == 0) {
+                return new ApprenticeResult(false, numberOfPreviousDuels);
+            }
+        }
+        return new ApprenticeResult(true, numberOfPreviousDuels);
+    }
+
+    private AchievementGrade getSithAchievementGrade(ApprenticeResult apprenticeResult) {
+        if (!apprenticeResult.isApprentice()) {
+            return null;
+        }
+        if (apprenticeResult.numberOfPreviousDuels() >= MINIMUM_LOST_SITH_GOLD) {
+            return AchievementGrade.GOLD;
+        }
+        if (apprenticeResult.numberOfPreviousDuels() >= MINIMUM_LOST_SITH_SILVER) {
+            return AchievementGrade.SILVER;
+        }
+        if (apprenticeResult.numberOfPreviousDuels() >= MINIMUM_LOST_SITH_BRONZE) {
+            return AchievementGrade.BRONZE;
+        }
+        if (apprenticeResult.numberOfPreviousDuels() >= MINIMUM_LOST_SITH_NORMAL) {
+            return AchievementGrade.NORMAL;
+        }
+        return null;
+    }
+
+    private record ApprenticeResult(boolean isApprentice, int numberOfPreviousDuels) {
     }
 
     public List<Achievement> generateVendettaAchievementBronze(Tournament tournament) {

@@ -57,7 +57,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -139,9 +138,8 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         });
 
         session.send(WebSocketConfiguration.SOCKET_RECEIVE_PREFIX + EchoWebSocketController.ECHO_INBOUND_MAPPING, TESTING_MESSAGE);
-
-        await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(TESTING_MESSAGE));
+        final String receivedMessage = blockingQueue.poll(1, TimeUnit.SECONDS);
+        assertThat(receivedMessage).isEqualTo(TESTING_MESSAGE);
     }
 
 
