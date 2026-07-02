@@ -4,7 +4,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Participant} from "../../models/participant";
 import {ParticipantFormValidationFields} from "./participant-form-validation-fields";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {ParticipantService} from "../../services/participant.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";

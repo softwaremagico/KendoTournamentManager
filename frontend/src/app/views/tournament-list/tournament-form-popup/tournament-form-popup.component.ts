@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {Tournament} from "../../../models/tournament";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";

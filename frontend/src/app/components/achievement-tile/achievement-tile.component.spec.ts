@@ -1,6 +1,6 @@
 import {SimpleChange} from '@angular/core';
 import {of} from 'rxjs';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {registerLocaleData} from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import {AchievementTileComponent} from './achievement-tile.component';

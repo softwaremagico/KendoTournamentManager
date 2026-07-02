@@ -48,6 +48,7 @@ import java.io.Serial;
         indexes = {
                 @Index(name = "ind_tournament", columnList = "tournament"),
         })
+@SuppressWarnings("java:S2160")
 public class TournamentExtraProperty extends Element {
 
     @Serial

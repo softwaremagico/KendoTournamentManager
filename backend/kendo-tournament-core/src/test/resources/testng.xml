@@ -113,6 +113,8 @@
             <class name="com.softwaremagico.kt.core.controller.DuelControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.QrControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.RankingControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.ParticipantImageControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.TournamentExtraPropertyControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTOCoverageTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTOTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.DuelDTOTest"/>
@@ -132,6 +134,7 @@
             <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsTests"/>
             <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsConstructorsCoverageTest"/>
             <class name="com.softwaremagico.kt.core.pool.BasePoolTest"/>
+            <class name="com.softwaremagico.kt.logger.PoolLoggerTest"/>
         </classes>
     </test>
 </suite>

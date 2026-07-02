@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Controller
@@ -53,7 +54,7 @@ public class ParticipantController extends BasicInsertableController<Participant
     }
 
     public TemporalToken generateTemporalToken(ParticipantDTO participant) {
-        return getProvider().generateTemporalToken(reverse(participant));
+        return this.getProvider().generateTemporalToken(this.reverse(participant));
     }
 
     /**
@@ -63,9 +64,9 @@ public class ParticipantController extends BasicInsertableController<Participant
         if (userName.contains(ParticipantProvider.TOKEN_NAME_SEPARATOR)) {
             final String[] fields = userName.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
             try {
-                return convert(getProvider().get(Integer.parseInt(fields[0])).orElseThrow(() ->
+                return this.convert(this.getProvider().get(Integer.parseInt(fields[0])).orElseThrow(() ->
                         new UserNotFoundException(this.getClass(), "No user found for the provided token!")));
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException exception) {
                 throw new UserNotFoundException(this.getClass(), "No user found with username '" + userName + "'!");
             }
         }
@@ -73,31 +74,31 @@ public class ParticipantController extends BasicInsertableController<Participant
     }
 
     public Token generateFromToken(String temporalToken) {
-        final Participant participant = getProvider().findByTemporalToken(temporalToken).orElseThrow(() ->
+        final Participant participant = this.getProvider().findByTemporalToken(temporalToken).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found for the provided token!"));
         try {
-            if (participant.getTemporalTokenExpiration().isBefore(LocalDateTime.now())) {
+            if (participant.getTemporalTokenExpiration().isBefore(LocalDateTime.now(ZoneId.systemDefault()))) {
                 throw new TokenExpiredException(this.getClass(), "Token has expired!");
             }
-            final Token token = new Token(getProvider().generateToken(participant));
-            token.setParticipant(convert(participant));
+            final Token token = new Token(this.getProvider().generateToken(participant));
+            token.setParticipant(this.convert(participant));
             return token;
         } finally {
             //Remove token to avoid reuse.
             participant.setTemporalToken(null);
             participant.setTemporalTokenExpiration(null);
-            getProvider().save(participant);
+            this.getProvider().save(participant);
         }
     }
 
 
     public List<ParticipantDTO> getYourWorstNightmare(ParticipantDTO participant) {
-        return convertAll(getProvider().getYourWorstNightmare(reverse(participant)));
+        return this.convertAll(this.getProvider().getYourWorstNightmare(this.reverse(participant)));
     }
 
 
     public List<ParticipantDTO> getYouAreTheWorstNightmareOf(ParticipantDTO participant) {
-        return convertAll(getProvider().getYouAreTheWorstNightmareOf(reverse(participant)));
+        return this.convertAll(this.getProvider().getYouAreTheWorstNightmareOf(this.reverse(participant)));
     }
 
 }

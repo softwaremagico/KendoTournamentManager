@@ -12,7 +12,7 @@ import {EnvironmentService} from '../../environment.service';
 import {TournamentChangedService} from './tournament-brackets/tournament-changed.service';
 import {CsvService} from '../../services/csv-service';
 import {MessageService} from '../../services/message.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {Group} from '../../models/group';
 import {Team} from '../../models/team';
 import {GroupLink} from '../../models/group-link.model';

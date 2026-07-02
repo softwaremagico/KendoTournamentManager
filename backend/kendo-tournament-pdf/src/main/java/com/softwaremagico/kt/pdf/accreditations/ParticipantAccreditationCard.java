@@ -48,6 +48,7 @@ import java.sql.Time;
 import java.util.Date;
 import java.util.Locale;
 
+@SuppressWarnings("java:S2143")
 public class ParticipantAccreditationCard extends PdfDocument {
     private static final int BORDER = 0;
     private static final int NAME_LENGTH = 18;

@@ -5,7 +5,7 @@ import {UserSessionService} from "./services/user-session.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
 import {ProjectModeChangedService} from "./services/notifications/project-mode-changed.service";
-import {AvailableLangs, TranslocoService} from "@ngneat/transloco";
+import {AvailableLangs, TranslocoService} from "@jsverse/transloco";
 import {BiitIconService} from "@biit-solutions/wizardry-theme/icon";
 import {completeIconSet} from "@biit-solutions/biit-icons-collection";
 import {AuthenticatedUser} from "./models/authenticated-user";

@@ -5,7 +5,7 @@ import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {CdkDropList, CdkDropListGroup} from "@angular/cdk/drag-drop";
 import {TeamCardModule} from "../team-card/team-card.module";
 import {TeamListModule} from "../basic/team-list/team-list.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 
 
 @NgModule({

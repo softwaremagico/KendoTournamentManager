@@ -43,6 +43,10 @@ public class TestLogging extends BasicLogger {
         info(logger, className, message);
     }
 
+    public static void info(Class<?> clazz, String message) {
+        info(clazz.getName(), message);
+    }
+
     public static void info(String message) {
         info(logger, message);
     }
@@ -57,6 +61,10 @@ public class TestLogging extends BasicLogger {
      */
     public static void warning(String className, String message) {
         warning(logger, className, message);
+    }
+
+    public static void warning(Class<?> clazz, String message) {
+        warning(clazz.getName(), message);
     }
 
     public static void warning(String message) {
@@ -88,6 +96,10 @@ public class TestLogging extends BasicLogger {
         severe(logger, className, message);
     }
 
+    public static void severe(Class<?> clazz, String message) {
+        severe(clazz.getName(), message);
+    }
+
     /**
      * To log java exceptions and log also the stack trace. If enabled, also can
      * send an email to the administrator to alert of the error.
@@ -112,6 +124,10 @@ public class TestLogging extends BasicLogger {
      */
     public static void errorMessage(String className, String error) {
         errorMessageNotification(logger, className, error);
+    }
+
+    public static void errorMessage(Class<?> clazz, String error) {
+        errorMessage(clazz.getName(), error);
     }
 
     public static void errorMessage(String error) {

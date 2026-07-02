@@ -4,7 +4,7 @@ import {ParticipantFightListComponent} from './participant-fight-list.component'
 import {MatIconModule} from "@angular/material/icon";
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {FightModule} from "../../components/fight/fight.module";
 import {UntieFightModule} from "../../components/untie-fight/untie-fight.module";
 import {FilterModule} from "../../components/basic/filter/filter.module";

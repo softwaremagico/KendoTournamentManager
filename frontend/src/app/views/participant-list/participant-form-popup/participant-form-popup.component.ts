@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from "@jsverse/transloco";
 import {Participant} from "../../../models/participant";
 import {ParticipantFormValidationFields} from "../../../forms/participant-form/participant-form-validation-fields";
 import {CsvService} from "../../../services/csv-service";

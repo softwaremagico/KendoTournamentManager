@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {CompetitorsRankingComponent} from "./competitors-ranking.component";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";

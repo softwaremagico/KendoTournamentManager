@@ -6,7 +6,7 @@ import {MessageService} from "../../services/message.service";
 import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
 import {RankingService} from "../../services/ranking.service";
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";

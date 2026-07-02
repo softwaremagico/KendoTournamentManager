@@ -5,7 +5,7 @@ import {StatisticsService} from '../../services/statistics.service';
 import {UserSessionService} from '../../services/user-session.service';
 import {RankingService} from '../../services/ranking.service';
 import {NameUtilsService} from '../../services/name-utils.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {AchievementsService} from '../../services/achievements.service';
 import {TournamentService} from '../../services/tournament.service';
 import {EnvironmentService} from '../../environment.service';

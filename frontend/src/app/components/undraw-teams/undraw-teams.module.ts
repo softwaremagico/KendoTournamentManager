@@ -4,7 +4,7 @@ import {UntieTeamsComponent} from "./untie-teams.component";
 import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MemberSelectorModule} from "../basic/member-selector/member-selector.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";

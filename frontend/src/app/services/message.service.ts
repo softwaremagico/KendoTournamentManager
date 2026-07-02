@@ -6,7 +6,7 @@ import {Message} from "@stomp/stompjs";
 import {RxStompService} from "../websockets/rx-stomp.service";
 import {EnvironmentService} from "../environment.service";
 import {MessageContent} from "../websockets/message-content.model";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 
 @Injectable({

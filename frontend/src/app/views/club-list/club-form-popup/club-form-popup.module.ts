@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ClubFormPopupComponent} from './club-form-popup.component';
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TournamentFormModule} from "../../../forms/tournament-form/tournament-form.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {ClubFormModule} from "../../../forms/club-form/club-form.module";
 import {BiitActionButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";

@@ -4,7 +4,7 @@ import {DuelComponent} from "./duel.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {UserScoreModule} from "./user-score/user-score.module";
 import {DrawModule} from "./draw/draw.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 
 
 @NgModule({

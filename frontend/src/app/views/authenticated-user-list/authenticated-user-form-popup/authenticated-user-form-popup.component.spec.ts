@@ -1,6 +1,6 @@
 import {EventEmitter} from '@angular/core';
 import {AuthenticatedUserFormPopupComponent} from './authenticated-user-form-popup.component';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {AuthenticatedUser} from '../../../models/authenticated-user';
 
 describe('AuthenticatedUserFormPopupComponent', () => {

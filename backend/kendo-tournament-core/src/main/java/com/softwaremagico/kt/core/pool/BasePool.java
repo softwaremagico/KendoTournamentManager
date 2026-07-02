@@ -71,8 +71,9 @@ public abstract class BasePool<ID, E> {
         final Map<ID, Long> elementsByTimeChecked = getElementsTimeSnapshot();
         PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsByTimeChecked.size() + ".");
 
-        for (final ID storedObjectId : elementsByTimeChecked.keySet()) {
-            final E cachedElement = getValidCachedElement(storedObjectId, elementsByTimeChecked.get(storedObjectId), now);
+        for (final Map.Entry<ID, Long> entry : elementsByTimeChecked.entrySet()) {
+            final ID storedObjectId = entry.getKey();
+            final E cachedElement = getValidCachedElement(storedObjectId, entry.getValue(), now);
             if (cachedElement != null && Objects.equals(storedObjectId, id)) {
                 logStoreHit(cachedElement, id);
                 return cachedElement;
@@ -92,8 +93,9 @@ public abstract class BasePool<ID, E> {
         final long now = System.currentTimeMillis();
         final Map<ID, Long> elementsByTimeChecked = getElementsTimeSnapshot();
         PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsByTimeChecked.size() + ".");
-        for (final ID id : elementsByTimeChecked.keySet()) {
-            final E cachedElement = getValidCachedElement(id, elementsByTimeChecked.get(id), now);
+        for (final Map.Entry<ID, Long> entry : elementsByTimeChecked.entrySet()) {
+            final ID id = entry.getKey();
+            final E cachedElement = getValidCachedElement(id, entry.getValue(), now);
             if (Objects.equals(cachedElement, element)) {
                 logStoreHit(cachedElement, element);
                 return id;

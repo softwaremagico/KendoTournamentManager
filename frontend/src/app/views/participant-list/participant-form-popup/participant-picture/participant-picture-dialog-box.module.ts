@@ -4,7 +4,7 @@ import {ParticipantPictureDialogBoxComponent} from "./participant-picture-dialog
 import {WebcamModule} from "ngx-webcam";
 import {RbacModule} from "../../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from "@jsverse/transloco";
 import {HasPermissionPipe} from "../../../../pipes/has-permission.pipe";
 import {BiitActionButtonModule, BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {FloatingDeleteButtonModule} from "../../../../components/floating-delete-button/floating-delete-button.module";

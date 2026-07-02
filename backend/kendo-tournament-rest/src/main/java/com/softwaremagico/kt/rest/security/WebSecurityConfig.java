@@ -128,11 +128,11 @@ public class WebSecurityConfig {
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
                         httpSecurityExceptionHandlingConfigurer
                                 .authenticationEntryPoint((request, response, ex) -> {
-                                    RestServerLogger.severe(this.getClass().getName(), ex.getMessage());
+                                    RestServerLogger.severe(this.getClass(), ex.getMessage());
                                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
                                 })
                                 .accessDeniedHandler((request, response, ex) -> {
-                                    RestServerLogger.severe(this.getClass().getName(), ex.getMessage());
+                                    RestServerLogger.severe(this.getClass(), ex.getMessage());
                                     response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
                                 })
                 )

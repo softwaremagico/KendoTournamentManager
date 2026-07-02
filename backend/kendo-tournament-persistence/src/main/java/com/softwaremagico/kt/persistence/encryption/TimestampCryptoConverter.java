@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.encryption;
  * #L%
  */
 
-
 import com.softwaremagico.kt.logger.EncryptorLogger;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -29,7 +28,10 @@ import jakarta.persistence.Converter;
 import java.sql.Timestamp;
 
 @Converter
-public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp> implements AttributeConverter<Timestamp, String> {
+@SuppressWarnings("java:S2143")
+public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp>
+        implements
+            AttributeConverter<Timestamp, String> {
 
     public TimestampCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -48,8 +50,8 @@ public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp>
     protected Timestamp stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData));
-        } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid timestamp value '{}' in database.", dbData);
+        } catch (final NumberFormatException nfe) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid timestamp value '{}' in database.", dbData);
             return null;
         }
     }

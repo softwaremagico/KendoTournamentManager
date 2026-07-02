@@ -10,7 +10,7 @@ import {MessageService} from '../../services/message.service';
 import {RbacService} from '../../services/rbac/rbac.service';
 import {SystemOverloadService} from '../../services/notifications/system-overload.service';
 import {AchievementsService} from '../../services/achievements.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {TableColumnTranslationPipe} from '../../pipes/visualization/table-column-translation-pipe';
 import {Tournament} from '../../models/tournament';
 import {TournamentScore} from '../../models/tournament-score.model';

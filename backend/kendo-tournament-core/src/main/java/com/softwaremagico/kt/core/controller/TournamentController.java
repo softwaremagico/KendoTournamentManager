@@ -37,6 +37,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -92,7 +93,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username, session);
         final Group group = new Group();
         group.setCreatedBy(username);
-        groupProvider.addGroup(reverse(createdTournamentDTO), group);
+        this.groupProvider.addGroup(this.reverse(createdTournamentDTO), group);
         return createdTournamentDTO;
     }
 
@@ -122,12 +123,12 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     public TournamentDTO update(TournamentDTO tournamentDTO, String username, String session) {
         //If a tournament is locked we can define it as finished (maybe fights are not finished by time).
         if (tournamentDTO.isLocked() && tournamentDTO.getFinishedAt() == null) {
-            tournamentDTO.setFinishedAt(LocalDateTime.now());
+            tournamentDTO.setFinishedAt(LocalDateTime.now(ZoneId.systemDefault()));
         }
         if (tournamentDTO.isLocked() && tournamentDTO.getLockedAt() == null) {
-            tournamentDTO.setLockedAt(LocalDateTime.now());
+            tournamentDTO.setLockedAt(LocalDateTime.now(ZoneId.systemDefault()));
         }
-        final Optional<Tournament> previousData = getProvider().get(tournamentDTO.getId());
+        final Optional<Tournament> previousData = this.getProvider().get(tournamentDTO.getId());
         try {
             return super.update(tournamentDTO, username, session);
         } finally {
@@ -135,14 +136,14 @@ public class TournamentController extends BasicInsertableController<Tournament, 
             if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null
                     && !Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
                 //Update all duels
-                final List<Duel> duels = duelProvider.get(previousData.get());
+                final List<Duel> duels = this.duelProvider.get(previousData.get());
                 duels.forEach(duel -> {
                     if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
                         duel.setTotalDuration(tournamentDTO.getDuelsDuration());
                     }
                 });
                 if (!duels.isEmpty()) {
-                    duelProvider.saveAll(duels);
+                    this.duelProvider.saveAll(duels);
                 }
             }
         }
@@ -159,7 +160,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      * @return the persisted tournament as a DTO
      */
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
-        return convert(getProvider().create(name, shiaijos, teamSize, type, username));
+        return this.convert(this.getProvider().create(name, shiaijos, teamSize, type, username));
     }
 
     /**
@@ -170,7 +171,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      * @return the cloned tournament as a DTO
      */
     public TournamentDTO clone(Integer tournamentId, String username) {
-        return clone(get(tournamentId), username);
+        return this.clone(this.get(tournamentId), username);
     }
 
     /**
@@ -181,7 +182,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      * @return the cloned tournament as a DTO
      */
     public TournamentDTO clone(TournamentDTO tournamentDTO, String username) {
-        return convert(getProvider().clone(reverse(tournamentDTO), username));
+        return this.convert(this.getProvider().clone(this.reverse(tournamentDTO), username));
     }
 
     /**
@@ -192,12 +193,12 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      * @param updatedBy       the username of the user performing the update
      */
     public void setNumberOfWinners(Integer tournamentId, Integer numberOfWinners, String updatedBy) {
-        getProvider().setNumberOfWinners(tournamentId, numberOfWinners, updatedBy);
+        this.getProvider().setNumberOfWinners(tournamentId, numberOfWinners, updatedBy);
     }
 
     @Override
     public void deleteById(Integer id, String username, String session) {
-        delete(get(id), username, session);
+        this.delete(this.get(id), username, session);
     }
 
     /**
@@ -209,7 +210,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      * @return list of previous tournaments ordered by finish date descending
      */
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
-        return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
+        return this.convertAll(this.getProvider().getPreviousTo(this.reverse(tournamentDTO), elementsToRetrieve));
     }
 
     /**
@@ -218,6 +219,6 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      * @return the latest unlocked tournament as a DTO, or {@code null} if none exists
      */
     public TournamentDTO getLatestUnlocked() {
-        return convert(getProvider().findLastByUnlocked());
+        return this.convert(this.getProvider().findLastByUnlocked());
     }
 }

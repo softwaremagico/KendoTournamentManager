@@ -3,7 +3,7 @@ import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-th
 import {ClubFormPopupComponent} from './club-form-popup.component';
 import {UserSessionService} from '../../../services/user-session.service';
 import {CsvService} from '../../../services/csv-service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 
 describe('ClubFormPopupComponent', () => {
   let component: ClubFormPopupComponent;

@@ -33,10 +33,15 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 @Converter
-public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalDateTime> implements AttributeConverter<LocalDateTime, String> {
+@SuppressWarnings("java:S2143")
+public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalDateTime>
+        implements
+            AttributeConverter<LocalDateTime, String> {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-    private final DateTimeFormatter formatterWithMilliseconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault());
-    private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx", Locale.getDefault());
+    private final DateTimeFormatter formatterWithMilliseconds = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault());
+    private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx",
+            Locale.getDefault());
 
     public LocalDateTimeCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -57,39 +62,39 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
             return null;
         }
 
-        LocalDateTime result = parseAsLongTimestamp(dbData);
+        LocalDateTime result = this.parseAsLongTimestamp(dbData);
         if (result != null) {
             return result;
         }
 
-        result = parseAsLocalDateTime(dbData);
+        result = this.parseAsLocalDateTime(dbData);
         if (result != null) {
             return result;
         }
 
-        result = parseWithMilliseconds(dbData);
+        result = this.parseWithMilliseconds(dbData);
         if (result != null) {
             return result;
         }
 
-        result = parseWithoutMilliseconds(dbData);
+        result = this.parseWithoutMilliseconds(dbData);
         if (result != null) {
             return result;
         }
 
-        result = parseWithOffset(dbData);
+        result = this.parseWithOffset(dbData);
         if (result != null) {
             return result;
         }
 
-        EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
+        EncryptorLogger.errorMessage(this.getClass(), "Invalid datetime value '{}' in database.", dbData);
         return null;
     }
 
     private LocalDateTime parseAsLongTimestamp(String dbData) {
         try {
             return new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             return null;
         }
     }
@@ -97,31 +102,31 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
     private LocalDateTime parseAsLocalDateTime(String dbData) {
         try {
             return LocalDateTime.parse(dbData);
-        } catch (DateTimeParseException dtpe) {
+        } catch (final DateTimeParseException dtpe) {
             return null;
         }
     }
 
     private LocalDateTime parseWithMilliseconds(String dbData) {
         try {
-            return LocalDateTime.parse(dbData, formatterWithMilliseconds);
-        } catch (DateTimeParseException dte) {
+            return LocalDateTime.parse(dbData, this.formatterWithMilliseconds);
+        } catch (final DateTimeParseException dte) {
             return null;
         }
     }
 
     private LocalDateTime parseWithoutMilliseconds(String dbData) {
         try {
-            return LocalDateTime.parse(dbData, formatter);
-        } catch (DateTimeParseException dteo) {
+            return LocalDateTime.parse(dbData, this.formatter);
+        } catch (final DateTimeParseException dteo) {
             return null;
         }
     }
 
     private LocalDateTime parseWithOffset(String dbData) {
         try {
-            return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
-        } catch (DateTimeParseException e) {
+            return OffsetDateTime.parse(dbData, this.formatterOffset).toLocalDateTime();
+        } catch (final DateTimeParseException e) {
             return null;
         }
     }

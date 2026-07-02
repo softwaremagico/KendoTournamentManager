@@ -39,6 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_scores")
+@SuppressWarnings("java:S2160")
 public class TournamentScore extends Element {
 
     @Column(name = "score_type", nullable = false)

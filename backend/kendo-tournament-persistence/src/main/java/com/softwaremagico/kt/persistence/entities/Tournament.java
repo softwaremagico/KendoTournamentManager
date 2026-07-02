@@ -62,6 +62,7 @@ import java.time.LocalDateTime;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
+@SuppressWarnings("java:S2160")
 public class Tournament extends Element implements IName {
     /** Default duel duration in seconds (3 minutes). */
     public static final int DEFAULT_DURATION = 180;

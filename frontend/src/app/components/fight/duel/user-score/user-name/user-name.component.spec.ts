@@ -32,7 +32,6 @@ describe('UserNameComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserNameHostComponent);
     userNameHostComponent = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create the host component', () => {
@@ -68,6 +67,7 @@ describe('UserNameComponent', () => {
   });
 
   @Component({
+    standalone: false,
     selector: 'user-name-host-component',
     template: `
       <user-name

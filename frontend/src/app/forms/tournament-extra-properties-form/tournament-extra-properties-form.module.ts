@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TournamentExtraPropertiesFormComponent} from './tournament-extra-properties-form.component';
 import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from "@jsverse/transloco";
 import {BiitDropdownModule, BiitInputTextModule, BiitToggleModule} from "@biit-solutions/wizardry-theme/inputs";
 import {FormsModule} from "@angular/forms";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";

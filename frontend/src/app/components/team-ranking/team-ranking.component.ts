@@ -3,7 +3,7 @@ import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
 import {Tournament} from "../../models/tournament";
 import {forkJoin, Observable} from "rxjs";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {Team} from "../../models/team";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";

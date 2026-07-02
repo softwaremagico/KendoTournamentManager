@@ -7,7 +7,7 @@ import {
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {MatDividerModule} from "@angular/material/divider";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";

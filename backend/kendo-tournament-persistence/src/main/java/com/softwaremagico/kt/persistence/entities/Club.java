@@ -44,6 +44,7 @@ import java.util.Locale;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "clubs", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "city"})})
+@SuppressWarnings("java:S2160")
 public class Club extends Element implements Comparable<Club> {
 
     @Column(name = "name", nullable = false)

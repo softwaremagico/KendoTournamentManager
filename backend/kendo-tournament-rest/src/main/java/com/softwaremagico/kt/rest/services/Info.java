@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 
 @RestController
@@ -61,12 +62,12 @@ public class Info {
     @GetMapping(value = "/latest-version", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLatestVersion(HttpServletRequest httpRequest) {
         //To no request too much to github.
-        if (checkedVersionAt != null && checkedVersionAt.isBefore(LocalDateTime.now().plusMinutes(CHECKING_VERSION_TIME_MINUTES))) {
+        if (checkedVersionAt != null && checkedVersionAt.isBefore(LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(CHECKING_VERSION_TIME_MINUTES))) {
             return ResponseEntity.ok().body(latestVersion);
         }
         try {
             latestVersion = versionController.getLatestVersionFromGithub();
-            checkedVersionAt = LocalDateTime.now();
+            checkedVersionAt = LocalDateTime.now(ZoneId.systemDefault());
             return ResponseEntity.ok().body(latestVersion);
         } catch (Exception ex) {
             return ResponseEntity.ok().body("");

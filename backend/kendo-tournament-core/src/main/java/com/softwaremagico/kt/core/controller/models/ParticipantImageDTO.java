@@ -25,6 +25,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 
+@SuppressWarnings("java:S2160")
 public class ParticipantImageDTO extends ImageDTO {
 
     @Serial

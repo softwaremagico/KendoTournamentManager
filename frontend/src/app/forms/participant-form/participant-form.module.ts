@@ -4,7 +4,7 @@ import {ParticipantFormComponent} from './participant-form.component';
 import {BiitDropdownModule, BiitInputTextModule} from "@biit-solutions/wizardry-theme/inputs";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {MapGetPipeModule} from "@biit-solutions/wizardry-theme/utils";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {FormsModule} from "@angular/forms";
 import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";

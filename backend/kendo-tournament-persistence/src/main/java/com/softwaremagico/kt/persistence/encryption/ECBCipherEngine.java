@@ -115,7 +115,7 @@ public class ECBCipherEngine implements ICipherEngine {
             throw new InvalidEncryptionException("No private key loaded!");
         }
         final String encodedPrivateKey = Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
-        EncryptorLogger.debug(this.getClass().getName(), "Private key: " + encodedPrivateKey);
+        EncryptorLogger.debug(this.getClass(), "Private key: " + encodedPrivateKey);
         return encodedPrivateKey;
     }
 
@@ -125,7 +125,7 @@ public class ECBCipherEngine implements ICipherEngine {
         }
 
         final String encodedPublicKey = Base64.getEncoder().encodeToString(this.publicKey.getEncoded());
-        EncryptorLogger.debug(this.getClass().getName(), "Public key: " + encodedPublicKey);
+        EncryptorLogger.debug(this.getClass(), "Public key: " + encodedPublicKey);
         return encodedPublicKey;
     }
 }

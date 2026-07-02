@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {RoleSelectorComponent} from "./role-selector.component";
 import {MatSelectModule} from "@angular/material/select";
 import {ReactiveFormsModule} from "@angular/forms";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
