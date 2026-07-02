@@ -282,7 +282,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
 		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
 
-		final List<Fight> result = this.swissTournamentHandler.createFights(tournament, null, 0, "tester");
+		this.swissTournamentHandler.createFights(tournament, null, 0, "tester");
 
 		verify(this.groupProvider).addGroup(eq(tournament), any(Group.class));
 	}

@@ -416,6 +416,7 @@ public class TournamentLinkTests extends TreeTournamentBasedTests {
     }
 
     @AfterMethod
+    @Override
     public void deleteTournament() {
         super.deleteTournament();
     }

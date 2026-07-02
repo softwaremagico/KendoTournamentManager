@@ -156,7 +156,7 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.getForAccreditations(tournamentDTO, onlyNews,
                 roleTypes != null ? Arrays.asList(roleTypes) : new ArrayList<>());
         if (roleDTOS.isEmpty()) {
-            throw new NoContentException(this.getClass(), "No roles matching this criteria are found");
+            throw new NoContentException("No roles matching this criteria are found");
         }
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
@@ -219,7 +219,7 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.getForDiplomas(tournamentDTO, onlyNews,
                 roleTypes != null ? Arrays.asList(roleTypes) : new ArrayList<>());
         if (roleDTOS.isEmpty()) {
-            throw new NoContentException(this.getClass(), "No roles matching this criteria are found");
+            throw new NoContentException("No roles matching this criteria are found");
         }
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).toList();

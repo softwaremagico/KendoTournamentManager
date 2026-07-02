@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NoContentException extends RuntimeException {
     private static final long serialVersionUID = 7032994133678894370L;
 
-    public NoContentException(Class<?> clazz, String message) {
+    public NoContentException(String message) {
         super(message);
     }
 }

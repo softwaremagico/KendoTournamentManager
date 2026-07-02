@@ -183,7 +183,7 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         if (scores.size() == 1) {
             return false;
         }
-        //Scores are set at index 1 before index 0;
+        // Scores are set at index 1 before index 0.
         return (scores.size() > 1
                 && scores.get(0) == null
                 && scores.get(1) != null && scores.get(1) != Score.EMPTY);

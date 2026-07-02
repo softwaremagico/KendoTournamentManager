@@ -40,7 +40,7 @@ public class CompleteGroupFightManager {
         return this.createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
+    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer level, Integer shiaijo, String createdBy) {
         return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
     }
 
@@ -82,16 +82,16 @@ public class CompleteGroupFightManager {
 
     private Fight determineFightOrder(Team team1, Team team2, Fight lastFight, int fightCount, FightContext fightContext) {
         if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-            return createFight(fightContext.tournament(), team2, team1, fightContext.shiaijo(), fightContext.level(),
+            return createFight(fightContext.tournament(), team2, team1, fightContext.level(), fightContext.shiaijo(),
                     fightContext.createdBy());
         } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-            return createFight(fightContext.tournament(), team1, team2, fightContext.shiaijo(), fightContext.level(),
+            return createFight(fightContext.tournament(), team1, team2, fightContext.level(), fightContext.shiaijo(),
                     fightContext.createdBy());
         } else if (fightCount % 2 == 0) {
-            return createFight(fightContext.tournament(), team1, team2, fightContext.shiaijo(), fightContext.level(),
+            return createFight(fightContext.tournament(), team1, team2, fightContext.level(), fightContext.shiaijo(),
                     fightContext.createdBy());
         } else {
-            return createFight(fightContext.tournament(), team2, team1, fightContext.shiaijo(), fightContext.level(),
+            return createFight(fightContext.tournament(), team2, team1, fightContext.level(), fightContext.shiaijo(),
                     fightContext.createdBy());
         }
     }

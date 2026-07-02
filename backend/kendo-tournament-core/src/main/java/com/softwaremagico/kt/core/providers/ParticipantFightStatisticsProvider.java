@@ -156,9 +156,7 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         if (Objects.equals(duel.getCompetitorWinner(), participant)) {
             state.totalDuelWonsWithDuration += duel.getDuration();
             state.wonDuelsWithDuration++;
-            return;
-        }
-        if (duel.getCompetitorWinner() != null) {
+        } else if (duel.getCompetitorWinner() != null) {
             state.totalDuelLostsWithDuration += duel.getDuration();
             state.lostDuelsWithDuration++;
         }
