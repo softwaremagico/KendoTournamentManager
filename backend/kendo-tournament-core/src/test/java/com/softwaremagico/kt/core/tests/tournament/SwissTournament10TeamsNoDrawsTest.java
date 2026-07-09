@@ -29,12 +29,14 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
@@ -44,6 +46,8 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -105,6 +109,9 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 
 	@Autowired
 	private FightConverter fightConverter;
+
+	@Autowired
+	private TournamentExtraPropertyController tournamentExtraPropertyController;
 
 	private ClubDTO clubDTO;
 	private TournamentDTO tournamentDTO;
@@ -244,12 +251,55 @@ public class SwissTournament10TeamsNoDrawsTest extends AbstractTestNGSpringConte
 					"All teams must be assigned to a score bracket at level " + level);
 
 			final Set<String> uniqueTeams = roundGroups.stream().flatMap(group -> group.getTeams().stream())
-					.map(team -> team.getName()).collect(java.util.stream.Collectors.toSet());
+					.map(com.softwaremagico.kt.persistence.entities.Team::getName).collect(java.util.stream.Collectors.toSet());
 			Assert.assertEquals(uniqueTeams.size(), TEAMS,
 					"No team can appear in multiple groups at level " + level);
 
 			Assert.assertEquals(roundGroups.stream().flatMap(group -> group.getFights().stream()).count(), FIGHTS_PER_ROUND);
 		}
+	}
+
+	@Test(dependsOnMethods = "checkGroupsPerSwissRound")
+	public void checkTieBreakFallbackChainDepth3WithMultipleSelections() {
+		final List<Fight> allFights = this.getAllFights();
+		final Map<String, Integer> pointsByTeam = SwissTestAssertions.getSwissPointsByTeam(allFights);
+		final List<String> teamNames = this.groupController.getGroups(this.tournamentDTO, 0).getFirst().getTeams().stream()
+				.map(com.softwaremagico.kt.persistence.entities.Team::getName).toList();
+
+		int validatedRules = 0;
+		for (final SwissTieBreakRule selectedRule : List.of(SwissTieBreakRule.BUCHHOLZ,
+				SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER,
+				SwissTieBreakRule.POINT_DIFFERENTIAL)) {
+			final SwissTestAssertions.TieBreakExpectation expectation = SwissTestAssertions
+					.findTieBreakExpectationAtDepth(teamNames, allFights, pointsByTeam, selectedRule, 3);
+			if (expectation == null) {
+				continue;
+			}
+			validatedRules++;
+			this.assertExpectationMatchesRanking(expectation);
+		}
+
+		Assert.assertTrue(validatedRules >= 2,
+				"At least two tie-break selections should expose depth-3 fallback in Swiss10 dataset.");
+	}
+
+
+	private void assertExpectationMatchesRanking(SwissTestAssertions.TieBreakExpectation expectation) {
+		this.tournamentExtraPropertyController.update(new TournamentExtraPropertyDTO(this.tournamentDTO,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, expectation.getSelectedRule().name()), null, null);
+
+		final List<ScoreOfTeam> ranking = this.rankingProvider
+				.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		final int higherPosition = SwissTestAssertions.getTeamPosition(ranking, expectation.getExpectedHigherTeam());
+		final int lowerPosition = SwissTestAssertions.getTeamPosition(ranking, expectation.getExpectedLowerTeam());
+		Assert.assertTrue(higherPosition < lowerPosition,
+				"Expected fallback depth " + expectation.getDecidingDepth()
+						+ " (rule=" + expectation.getDecidingRule() + ") to rank "
+						+ expectation.getExpectedHigherTeam() + " above " + expectation.getExpectedLowerTeam()
+						+ " for selection " + expectation.getSelectedRule()
+						+ ". Pair=" + expectation.describePair());
 	}
 
 	@Test(dependsOnMethods = "checkGroupsPerSwissRound")

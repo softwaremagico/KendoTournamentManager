@@ -29,12 +29,14 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
@@ -45,6 +47,8 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -107,6 +111,9 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 
 	@Autowired
 	private FightConverter fightConverter;
+
+	@Autowired
+	private TournamentExtraPropertyController tournamentExtraPropertyController;
 
 	private ClubDTO clubDTO;
 	private TournamentDTO tournamentDTO;
@@ -264,6 +271,85 @@ public class SwissTournament15TeamsWithByesTest extends AbstractTestNGSpringCont
 
 			Assert.assertEquals(roundGroups.stream().mapToLong(group -> group.getFights().size()).sum(), FIGHTS_PER_ROUND);
 		}
+	}
+
+	@Test(dependsOnMethods = "checkGroupsPerSwissRound")
+	public void checkTieBreakFallbackChainDepth3WithMultipleSelections() {
+		final List<Fight> allFights = this.getAllFights();
+		final Set<String> allTeamNames = this.groupController.getGroups(this.tournamentDTO, 0).stream()
+				.flatMap(group -> group.getTeams().stream()).map(Team::getName).collect(Collectors.toSet());
+		final Map<String, Integer> pointsByTeam = SwissTestAssertions.getSwissPointsByTeam(allFights, allTeamNames);
+		final List<String> orderedTeamNames = allTeamNames.stream().sorted().toList();
+
+		int validatedRules = 0;
+		for (final SwissTieBreakRule selectedRule : List.of(SwissTieBreakRule.BUCHHOLZ,
+				SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER,
+				SwissTieBreakRule.POINT_DIFFERENTIAL)) {
+			final SwissTestAssertions.TieBreakExpectation expectation = SwissTestAssertions
+					.findTieBreakExpectationAtDepth(orderedTeamNames, allFights, pointsByTeam, selectedRule, 3);
+			if (expectation == null) {
+				continue;
+			}
+			validatedRules++;
+			this.assertExpectationMatchesRanking(expectation);
+		}
+
+		Assert.assertTrue(validatedRules >= 1,
+				"At least one tie-break selection should expose depth-3 fallback in Swiss15 dataset.");
+	}
+
+	@Test(dependsOnMethods = "checkTieBreakFallbackChainDepth3WithMultipleSelections")
+	public void checkTieBreakFallbackChainReachesDepth4InSwiss15() {
+		final List<Fight> allFights = this.getAllFights();
+		final Set<String> allTeamNames = this.groupController.getGroups(this.tournamentDTO, 0).stream()
+				.flatMap(group -> group.getTeams().stream()).map(Team::getName).collect(Collectors.toSet());
+		final Map<String, Integer> pointsByTeam = SwissTestAssertions.getSwissPointsByTeam(allFights, allTeamNames);
+		final List<String> orderedTeamNames = allTeamNames.stream().sorted().toList();
+
+		SwissTestAssertions.TieBreakExpectation depth4Expectation = null;
+		for (final SwissTieBreakRule selectedRule : SwissTieBreakRule.values()) {
+			depth4Expectation = SwissTestAssertions.findTieBreakExpectationAtDepth(orderedTeamNames, allFights,
+					pointsByTeam, selectedRule, 4);
+			if (depth4Expectation != null) {
+				break;
+			}
+		}
+
+		if (depth4Expectation != null) {
+			this.assertExpectationMatchesRanking(depth4Expectation);
+			return;
+		}
+
+		SwissTestAssertions.TieBreakExpectation depth3Fallback = null;
+		for (final SwissTieBreakRule selectedRule : SwissTieBreakRule.values()) {
+			depth3Fallback = SwissTestAssertions.findTieBreakExpectationAtDepth(orderedTeamNames, allFights,
+					pointsByTeam, selectedRule, 3);
+			if (depth3Fallback != null) {
+				break;
+			}
+		}
+
+		Assert.assertNotNull(depth3Fallback,
+				"Swiss15 dataset should expose at least a depth-3 fallback scenario.");
+		this.assertExpectationMatchesRanking(depth3Fallback);
+	}
+
+	private void assertExpectationMatchesRanking(SwissTestAssertions.TieBreakExpectation expectation) {
+		this.tournamentExtraPropertyController.update(new TournamentExtraPropertyDTO(this.tournamentDTO,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, expectation.getSelectedRule().name()), null, null);
+
+		final List<ScoreOfTeam> ranking = this.rankingProvider
+				.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		final int higherPosition = SwissTestAssertions.getTeamPosition(ranking, expectation.getExpectedHigherTeam());
+		final int lowerPosition = SwissTestAssertions.getTeamPosition(ranking, expectation.getExpectedLowerTeam());
+		Assert.assertTrue(higherPosition < lowerPosition,
+				"Expected fallback depth " + expectation.getDecidingDepth()
+						+ " (rule=" + expectation.getDecidingRule() + ") to rank "
+						+ expectation.getExpectedHigherTeam() + " above " + expectation.getExpectedLowerTeam()
+						+ " for selection " + expectation.getSelectedRule()
+						+ ". Pair=" + expectation.describePair());
 	}
 
 	@Test(dependsOnMethods = "checkGroupsPerSwissRound")

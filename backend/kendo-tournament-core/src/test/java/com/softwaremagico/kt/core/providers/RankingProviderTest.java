@@ -50,6 +50,7 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,6 +61,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @Test(groups = {"rankingProviderTests"})
@@ -157,8 +159,8 @@ public class RankingProviderTest {
 		final Participant p2 = this.participant(5, "B", "Two");
 		final Participant p3 = this.participant(6, "C", "Three");
 
-		final Fight recentFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, 6, 20, 12, 0));
-		final Fight oldFight = this.fight(List.of(p2), List.of(p3), LocalDateTime.of(2026, 1, 1, 12, 0));
+		final Fight recentFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, Month.JUNE, 20, 12, 0));
+		final Fight oldFight = this.fight(List.of(p2), List.of(p3), LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
 
 		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
 		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(recentFight, oldFight));
@@ -177,11 +179,11 @@ public class RankingProviderTest {
 		final Participant p3 = this.participant(9, "C", "Three");
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
 
-		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, 6, 20, 12, 0));
+		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, Month.JUNE, 20, 12, 0));
 		final Duel recentUntie = new Duel(p1, p2, tournament, "tester");
-		recentUntie.setCreatedAt(LocalDateTime.of(2026, 6, 22, 12, 0));
+		recentUntie.setCreatedAt(LocalDateTime.of(2026, Month.JUNE, 22, 12, 0));
 		final Duel oldUntie = new Duel(p2, p3, tournament, "tester");
-		oldUntie.setCreatedAt(LocalDateTime.of(2026, 1, 1, 12, 0));
+		oldUntie.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
 
 		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
 		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
@@ -200,11 +202,11 @@ public class RankingProviderTest {
 		final Participant p3 = this.participant(12, "C", "Three");
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
 
-		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, 6, 20, 12, 0));
+		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, Month.JUNE, 20, 12, 0));
 		final Duel recentUntie = new Duel(p1, p2, tournament, "tester");
-		recentUntie.setCreatedAt(LocalDateTime.of(2026, 6, 22, 12, 0));
+		recentUntie.setCreatedAt(LocalDateTime.of(2026, Month.JUNE, 22, 12, 0));
 		final Duel oldUntie = new Duel(p2, p3, tournament, "tester");
-		oldUntie.setCreatedAt(LocalDateTime.of(2026, 1, 1, 12, 0));
+		oldUntie.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
 
 		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
 		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
@@ -285,7 +287,7 @@ public class RankingProviderTest {
 
 	@Test
 	public void testGetTeamsByPositionWithTiedTeams() {
-		final RankingProvider spyProvider = Mockito.spy(this.provider);
+		final RankingProvider spyProvider = spy(this.provider);
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
 		final Group group = this.group(tournament);
 
@@ -311,7 +313,7 @@ public class RankingProviderTest {
 
 	@Test
 	public void testGetFirstTeamsWithDrawScore() {
-		final RankingProvider spyProvider = Mockito.spy(this.provider);
+		final RankingProvider spyProvider = spy(this.provider);
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
 		final Group group = this.group(tournament);
 
@@ -332,7 +334,7 @@ public class RankingProviderTest {
 
 	@Test
 	public void testGetFirstTeamsWithDrawScoreWhenNoDraws() {
-		final RankingProvider spyProvider = Mockito.spy(this.provider);
+		final RankingProvider spyProvider = spy(this.provider);
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
 		final Group group = this.group(tournament);
 
@@ -427,7 +429,7 @@ public class RankingProviderTest {
 
 	@Test
 	public void testGetCompetitorRankingWithMissing() {
-		final RankingProvider spyProvider = Mockito.spy(this.provider);
+		final RankingProvider spyProvider = spy(this.provider);
 		final Participant p1 = this.participant(1, "Ken", "Do");
 		final Participant p2 = this.participant(2, "Ryu", "Gi");
 		final Participant missing = this.participant(3, "C", "Three");
@@ -447,7 +449,7 @@ public class RankingProviderTest {
 
 	@Test
 	public void testGetCompetitorRankingWhenFound() {
-		final RankingProvider spyProvider = Mockito.spy(this.provider);
+		final RankingProvider spyProvider = spy(this.provider);
 		final Participant p1 = this.participant(1, "Ken", "Do");
 		final Participant p2 = this.participant(2, "Ryu", "Gi");
 
@@ -789,8 +791,40 @@ public class RankingProviderTest {
 				List.of(fight), List.of(), true);
 
 		assertThat(ranking).hasSize(2);
-		assertThat(ranking.get(0).getSortingIndex()).isEqualTo(0);
+		assertThat(ranking.get(0).getSortingIndex()).isZero();
 		assertThat(ranking.get(1).getSortingIndex()).isEqualTo(1);
+	}
+
+	@Test
+	public void testGetSwissTieBreakOrderMatchesConfiguredFallbackChain() {
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.BUCHHOLZ))
+				.containsExactly(SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+						SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
+						SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.MEDIAN_BUCHHOLZ))
+				.containsExactly(SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.BUCHHOLZ,
+						SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
+						SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.SONNEBORN_BERGER))
+				.containsExactly(SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.BUCHHOLZ,
+						SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.DIRECT_ENCOUNTER,
+						SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.DIRECT_ENCOUNTER))
+				.containsExactly(SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.BUCHHOLZ,
+						SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+						SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.POINT_DIFFERENTIAL))
+				.containsExactly(SwissTieBreakRule.POINT_DIFFERENTIAL, SwissTieBreakRule.BUCHHOLZ,
+						SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+						SwissTieBreakRule.DIRECT_ENCOUNTER);
+	}
+
+	@Test
+	public void testGetSwissTieBreakOrderUsesBuchholzChainWhenSelectionIsNull() {
+		assertThat(RankingProvider.getSwissTieBreakOrder(null))
+				.containsExactly(SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+						SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
+						SwissTieBreakRule.POINT_DIFFERENTIAL);
 	}
 
 	@Test
