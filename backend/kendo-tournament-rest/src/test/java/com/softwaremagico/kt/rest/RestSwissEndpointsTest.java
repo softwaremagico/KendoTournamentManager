@@ -218,7 +218,7 @@ public class RestSwissEndpointsTest extends AbstractTestNGSpringContextTests {
     public void shouldGenerateSwissRoundViaApi() throws Exception {
         final TeamDTO teamA = teamController.update(new TeamDTO("Team A", tournamentDTO), USER_NAME, null);
         final TeamDTO teamB = teamController.update(new TeamDTO("Team B", tournamentDTO), USER_NAME, null);
-        final GroupDTO group = groupController.get(tournamentDTO).get(0);
+        final GroupDTO group = groupController.get(tournamentDTO).getFirst();
         groupController.addTeams(group.getId(), List.of(teamA, teamB), USER_NAME, null);
 
         final MvcResult createResult = this.mockMvc
@@ -231,8 +231,8 @@ public class RestSwissEndpointsTest extends AbstractTestNGSpringContextTests {
 
         final List<FightDTO> fights = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), FightDTO[].class));
         Assert.assertEquals(fights.size(), 1);
-        Assert.assertEquals(fights.get(0).getTeam1().getTournament(), tournamentDTO);
-        Assert.assertEquals(fights.get(0).getTeam2().getTournament(), tournamentDTO);
+        Assert.assertEquals(fights.getFirst().getTeam1().getTournament(), tournamentDTO);
+        Assert.assertEquals(fights.getFirst().getTeam2().getTournament(), tournamentDTO);
     }
 
     @AfterClass(alwaysRun = true)
@@ -248,5 +248,3 @@ public class RestSwissEndpointsTest extends AbstractTestNGSpringContextTests {
         authenticatedUserController.deleteAll();
     }
 }
-
-

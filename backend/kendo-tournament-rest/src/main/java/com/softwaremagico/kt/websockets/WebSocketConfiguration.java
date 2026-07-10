@@ -99,8 +99,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                         final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
                         try {
                             if (jwtToken != null) {
-                                jwtTokenUtil.getUsername(jwtToken.get(0));
-                                final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
+                                jwtTokenUtil.getUsername(jwtToken.getFirst());
+                                final String username = jwtTokenUtil.getUsername(jwtToken.getFirst());
                                 if (username != null && !username.isEmpty()) {
                                     accessor.setUser(new UserPrincipal(username));
                                     WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);

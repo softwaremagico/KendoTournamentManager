@@ -153,7 +153,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                     if (groupsFromTournament.size() == 1) {
                         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
                                 TournamentExtraPropertyKey.KING_INDEX,
-                                getMaxIndex(groupsFromTournament.get(0).getTeams(),
+                                getMaxIndex(groupsFromTournament.getFirst().getTeams(),
                                         Collections.singletonList(teamConverter.reverse(dto.getTeam2()))) + ""));
                     }
                 }

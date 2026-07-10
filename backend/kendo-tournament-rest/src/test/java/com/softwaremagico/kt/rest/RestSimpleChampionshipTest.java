@@ -159,7 +159,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     }
 
     private void resetGroup(TournamentDTO tournamentDTO) {
-        resetGroup(groupController.get(tournamentDTO).get(0));
+        resetGroup(groupController.get(tournamentDTO).getFirst());
     }
 
     private <T> String toJson(T object) throws JsonProcessingException {
@@ -359,7 +359,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             //First member of the team, add team to group
             if (teamMember == 0) {
                 this.mockMvc
-                        .perform(patch("/groups/" + groupsDTO.get(0).getId() + "/teams/add")
+                        .perform(patch("/groups/" + groupsDTO.getFirst().getId() + "/teams/add")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer " + jwtToken)
                                 .content(toJson(Collections.singleton(team)))
@@ -413,7 +413,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
         //Check group has been created.
         Assert.assertEquals(tournamentGroups.size(), 1);
-        Assert.assertEquals(tournamentGroups.get(0).getFights().size(), tournamentFights.size());
+        Assert.assertEquals(tournamentGroups.getFirst().getFights().size(), tournamentFights.size());
 
         Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
 
@@ -438,8 +438,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             FightDTO currentFight = fromJson(createResult.getResponse().getContentAsString(), FightDTO.class);
 
             // First duel won
-            currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
-            currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
+            currentFight.getDuels().getFirst().getCompetitor1Score().add(Score.MEN);
+            currentFight.getDuels().getFirst().getCompetitor1Score().add(Score.MEN);
             currentFight.getDuels().forEach(duel -> duel.setFinished(true));
 
             //Update the fight.

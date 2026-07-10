@@ -296,7 +296,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
     public GroupDTO setTeams(List<TeamDTO> teams, String username, String session) {
-        final GroupDTO groupDTO = this.get(teams.get(0).getTournament()).stream().findAny()
+        final GroupDTO groupDTO = this.get(teams.getFirst().getTournament()).stream().findAny()
                 .orElseThrow(() -> new GroupNotFoundException(this.getClass(), "No groups found!"));
         try {
             return this.convert(

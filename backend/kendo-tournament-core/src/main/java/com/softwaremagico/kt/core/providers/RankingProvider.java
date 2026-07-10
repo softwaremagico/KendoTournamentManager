@@ -481,7 +481,7 @@ public class RankingProvider {
         }
         //check draw values.
         int sortingIndex = 0;
-        scores.get(0).setSortingIndex(sortingIndex);
+        scores.getFirst().setSortingIndex(sortingIndex);
         for (int i = 1; i < scores.size(); i++) {
             if (getTeamsSorter(type, checkLevel).compare(scores.get(i - 1), scores.get(i)) != 0) {
                 sortingIndex++;

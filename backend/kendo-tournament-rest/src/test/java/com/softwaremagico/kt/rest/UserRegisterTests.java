@@ -129,7 +129,7 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "whenCreatedClubThenCreatedByIsPopulated")
     public void createdByIsStoredOnDatabase() {
-        Club club = clubRepository.findAll().get(0);
+        Club club = clubRepository.findAll().getFirst();
         Assert.assertNotNull(club);
         Assert.assertEquals(club.getCreatedBy(), USER_NAME);
     }

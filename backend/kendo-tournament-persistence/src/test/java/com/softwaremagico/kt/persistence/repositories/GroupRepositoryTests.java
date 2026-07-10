@@ -56,14 +56,14 @@ public class GroupRepositoryTests extends BasicDataTest {
 
     @Test
     public void findGroupByFights() {
-        Group groupOfFight = groupRepository.findByFightsId(fights.get(0).getId()).orElse(null);
+        Group groupOfFight = groupRepository.findByFightsId(fights.getFirst().getId()).orElse(null);
         Assert.assertNotNull(groupOfFight);
         Assert.assertEquals(groupOfFight, group);
     }
 
     @Test(dependsOnMethods = "findGroupByFights")
     public void deleteCorrectlyFights() {
-        Group group = groupRepository.findByFightsId(fights.get(0).getId()).orElse(null);
+        Group group = groupRepository.findByFightsId(fights.getFirst().getId()).orElse(null);
         Assert.assertNotNull(group);
         List<Group> groups = groupRepository.findDistinctByFightsIdIn(fights.stream()
                 .map(Fight::getId)

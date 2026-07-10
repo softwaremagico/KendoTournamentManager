@@ -373,7 +373,7 @@ public class RankingProviderTest {
 		final Participant p2 = this.participant(12, "Ryu", "Gi");
 
 		final Fight notFinishedFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now().minusDays(1));
-		notFinishedFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
+		notFinishedFight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
 
 		final Tournament leagueTournament = this.tournament(TournamentType.LEAGUE);
 		final Tournament kingTournament = this.tournament(TournamentType.KING_OF_THE_MOUNTAIN);
@@ -784,14 +784,14 @@ public class RankingProviderTest {
 
 		final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");
 		fight.setCreatedAt(LocalDateTime.now());
-		fight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-		fight.getDuels().get(0).addCompetitor1Score(Score.MEN);
+		fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+		fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.CLASSIC, List.of(team1, team2),
 				List.of(fight), List.of(), true);
 
 		assertThat(ranking).hasSize(2);
-		assertThat(ranking.get(0).getSortingIndex()).isZero();
+		assertThat(ranking.getFirst().getSortingIndex()).isZero();
 		assertThat(ranking.get(1).getSortingIndex()).isEqualTo(1);
 	}
 
@@ -1206,8 +1206,8 @@ public class RankingProviderTest {
 
 	private Fight fight(List<Participant> members1, List<Participant> members2, LocalDateTime createdAt) {
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
-		final Team team1 = this.team(200 + members1.get(0).getId(), "T1-" + members1.get(0).getId(), tournament);
-		final Team team2 = this.team(300 + members2.get(0).getId(), "T2-" + members2.get(0).getId(), tournament);
+		final Team team1 = this.team(200 + members1.getFirst().getId(), "T1-" + members1.getFirst().getId(), tournament);
+		final Team team2 = this.team(300 + members2.getFirst().getId(), "T2-" + members2.getFirst().getId(), tournament);
 		team1.setMembers(new ArrayList<>(members1));
 		team2.setMembers(new ArrayList<>(members2));
 		final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");

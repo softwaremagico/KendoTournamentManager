@@ -85,7 +85,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     @Override
     public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
-        final Group group = groupProvider.getGroups(tournament).get(0);
+        final Group group = groupProvider.getGroups(tournament).getFirst();
         final Fight lastFight = group.getFights().get(group.getFights().size() - 1);
 
         final Fight newFight = new Fight();

@@ -53,6 +53,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,9 +61,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -555,7 +556,7 @@ public class TournamentProviderTest {
          group.setTournament(tournament);
          group.setLevel(0);
 
-         final TreeTournamentHandler handler = org.mockito.Mockito.mock(TreeTournamentHandler.class);
+         final TreeTournamentHandler handler = mock(TreeTournamentHandler.class);
 
          when(provider.get(1)).thenReturn(Optional.of(tournament));
          when(tournamentHandlerSelector.selectManager(TournamentType.TREE)).thenReturn(handler);
@@ -580,7 +581,7 @@ public class TournamentProviderTest {
          final Tournament tournament = new Tournament("T", 1, 3, TournamentType.LEAGUE, "user");
          tournament.setId(1);
 
-         final ITournamentManager manager = org.mockito.Mockito.mock(ITournamentManager.class);
+         final ITournamentManager manager = mock(ITournamentManager.class);
 
          when(provider.get(1)).thenReturn(Optional.of(tournament));
          when(tournamentHandlerSelector.selectManager(TournamentType.LEAGUE)).thenReturn(manager);
@@ -691,7 +692,7 @@ public class TournamentProviderTest {
           assertThat(result).isNotNull();
           verify(tournamentExtraPropertyRepository).saveAll(propertiesCaptor.capture());
           assertThat(propertiesCaptor.getValue()).hasSize(1);
-          assertThat(propertiesCaptor.getValue().get(0))
+          assertThat(propertiesCaptor.getValue().getFirst())
                   .isNotSameAs(prop1)
                   .extracting(TournamentExtraProperty::getTournament,
                           TournamentExtraProperty::getPropertyKey,
@@ -841,7 +842,7 @@ public class TournamentProviderTest {
           final Tournament tournament = new Tournament("T", 1, 3, TournamentType.TREE, "user");
           tournament.setId(1);
 
-          final TreeTournamentHandler handler = org.mockito.Mockito.mock(TreeTournamentHandler.class);
+          final TreeTournamentHandler handler = mock(TreeTournamentHandler.class);
 
           doReturn(Optional.of(tournament)).when(provider).get(1);
           when(tournamentHandlerSelector.selectManager(TournamentType.TREE)).thenReturn(handler);
@@ -850,7 +851,7 @@ public class TournamentProviderTest {
           provider.setNumberOfWinners(1, 4, "admin");
 
           verify(groupRepository, never()).saveAll(any());
-          verify(handler).recreateGroupSize(eq(tournament), eq(4));
+          verify(handler).recreateGroupSize(tournament, 4);
           verify(tournamentExtraPropertyRepository).deleteByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
           verify(tournamentExtraPropertyRepository).save(any(TournamentExtraProperty.class));
       }
@@ -874,7 +875,7 @@ public class TournamentProviderTest {
           upperLevelGroup.setLevel(1);
           final int originalUpperLevelWinners = upperLevelGroup.getNumberOfWinners();
 
-          final TreeTournamentHandler handler = org.mockito.Mockito.mock(TreeTournamentHandler.class);
+          final TreeTournamentHandler handler = mock(TreeTournamentHandler.class);
           final ArgumentCaptor<List<Group>> groupsCaptor = ArgumentCaptor.forClass(List.class);
           final InOrder inOrder = inOrder(tournamentExtraPropertyRepository, groupRepository, handler);
 
@@ -894,7 +895,7 @@ public class TournamentProviderTest {
                   TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
           inOrder.verify(tournamentExtraPropertyRepository).save(any(TournamentExtraProperty.class));
           inOrder.verify(groupRepository).saveAll(any());
-          inOrder.verify(handler).recreateGroupSize(eq(tournament), eq(4));
+          inOrder.verify(handler).recreateGroupSize(tournament, 4);
       }
 
       @Test
@@ -933,10 +934,10 @@ public class TournamentProviderTest {
 
       @Test
       public void testCountTournamentsAfterUsesStartOfDayForCutoff() {
-          final LocalDateTime cutoff = LocalDateTime.of(2026, 6, 10, 13, 45);
-          final Tournament beforeCutoffDay = tournamentWithDate("BeforeCutoffDay", LocalDateTime.of(2026, 6, 9, 23, 59));
-          final Tournament atStartOfDay = tournamentWithDate("AtStartOfDay", LocalDateTime.of(2026, 6, 10, 0, 0));
-          final Tournament afterStartOfDay = tournamentWithDate("AfterStartOfDay", LocalDateTime.of(2026, 6, 10, 0, 1));
+          final LocalDateTime cutoff = LocalDateTime.of(2026, Month.JUNE, 10, 13, 45);
+          final Tournament beforeCutoffDay = tournamentWithDate("BeforeCutoffDay", LocalDateTime.of(2026, Month.JUNE, 9, 23, 59));
+          final Tournament atStartOfDay = tournamentWithDate("AtStartOfDay", LocalDateTime.of(2026, Month.JUNE, 10, 0, 0));
+          final Tournament afterStartOfDay = tournamentWithDate("AfterStartOfDay", LocalDateTime.of(2026, Month.JUNE, 10, 0, 1));
 
           when(tournamentRepository.findAll()).thenReturn(List.of(beforeCutoffDay, atStartOfDay, afterStartOfDay));
 

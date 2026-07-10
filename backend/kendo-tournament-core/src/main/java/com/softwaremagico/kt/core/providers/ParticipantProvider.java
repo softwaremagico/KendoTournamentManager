@@ -174,7 +174,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
         final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            final int maxScore = sortedLostBy.get(0).getValue();
+            final int maxScore = sortedLostBy.getFirst().getValue();
             int count = 0;
             while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
                 selected.add(sortedLostBy.get(count).getKey());
@@ -204,7 +204,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
         final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            final int maxScore = sortedLostBy.get(0).getValue();
+            final int maxScore = sortedLostBy.getFirst().getValue();
             int count = 0;
             while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
                 selected.add(sortedLostBy.get(count).getKey());

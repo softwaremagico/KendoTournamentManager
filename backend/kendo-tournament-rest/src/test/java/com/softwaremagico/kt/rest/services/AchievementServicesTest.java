@@ -31,7 +31,6 @@ import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.testng.annotations.BeforeMethod;
@@ -41,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
@@ -74,18 +74,18 @@ public class AchievementServicesTest {
 
     @Test
     public void shouldGetParticipantAchievementsWhenAuthenticationIsNull() {
-        final AchievementDTO dto = Mockito.mock(AchievementDTO.class);
+        final AchievementDTO dto = mock(AchievementDTO.class);
         when(achievementController.getParticipantAchievements(12)).thenReturn(List.of(dto));
 
         final List<AchievementDTO> result = achievementServices.getParticipantAchievements(12, null, request);
 
         assertEquals(result.size(), 1);
-        assertSame(result.get(0), dto);
+        assertSame(result.getFirst(), dto);
     }
 
     @Test
     public void shouldGetParticipantAchievementsWhenAuthenticatedUserIsNotParticipantToken() {
-        final AchievementDTO dto = Mockito.mock(AchievementDTO.class);
+        final AchievementDTO dto = mock(AchievementDTO.class);
         when(authentication.getName()).thenReturn("viewerUser");
         when(participantProvider.findByTokenUsername("viewerUser")).thenReturn(Optional.empty());
         when(achievementController.getParticipantAchievements(34)).thenReturn(List.of(dto));
@@ -93,13 +93,13 @@ public class AchievementServicesTest {
         final List<AchievementDTO> result = achievementServices.getParticipantAchievements(34, authentication, request);
 
         assertEquals(result.size(), 1);
-        assertSame(result.get(0), dto);
+        assertSame(result.getFirst(), dto);
     }
 
     @Test
     public void shouldGetParticipantAchievementsWhenParticipantMatchesAuthentication() {
-        final AchievementDTO dto = Mockito.mock(AchievementDTO.class);
-        final Participant participant = Mockito.mock(Participant.class);
+        final AchievementDTO dto = mock(AchievementDTO.class);
+        final Participant participant = mock(Participant.class);
 
         when(authentication.getName()).thenReturn("participantUser");
         when(participantProvider.findByTokenUsername("participantUser")).thenReturn(Optional.of(participant));
@@ -109,12 +109,12 @@ public class AchievementServicesTest {
         final List<AchievementDTO> result = achievementServices.getParticipantAchievements(55, authentication, request);
 
         assertEquals(result.size(), 1);
-        assertSame(result.get(0), dto);
+        assertSame(result.getFirst(), dto);
     }
 
     @Test
     public void shouldThrowInvalidRequestWhenParticipantTokenTriesToAccessOtherParticipant() {
-        final Participant participant = Mockito.mock(Participant.class);
+        final Participant participant = mock(Participant.class);
         when(authentication.getName()).thenReturn("participantUser");
         when(participantProvider.findByTokenUsername("participantUser")).thenReturn(Optional.of(participant));
         when(participant.getId()).thenReturn(77);
@@ -127,35 +127,35 @@ public class AchievementServicesTest {
 
     @Test
     public void shouldDelegateGetTournamentAchievements() {
-        final AchievementDTO dto = Mockito.mock(AchievementDTO.class);
+        final AchievementDTO dto = mock(AchievementDTO.class);
         when(achievementController.getTournamentAchievements(9)).thenReturn(List.of(dto));
 
         final List<AchievementDTO> result = achievementServices.getTournamentAchievements(9, request);
 
         assertEquals(result.size(), 1);
-        assertSame(result.get(0), dto);
+        assertSame(result.getFirst(), dto);
     }
 
     @Test
     public void shouldDelegateRegenerateTournamentAchievements() {
-        final AchievementDTO dto = Mockito.mock(AchievementDTO.class);
+        final AchievementDTO dto = mock(AchievementDTO.class);
         when(achievementController.regenerateAchievements(10)).thenReturn(List.of(dto));
 
         final List<AchievementDTO> result = achievementServices.regenerateTournamentAchievements(10, request);
 
         assertEquals(result.size(), 1);
-        assertSame(result.get(0), dto);
+        assertSame(result.getFirst(), dto);
     }
 
     @Test
     public void shouldDelegateRegenerateAllTournamentAchievements() {
-        final AchievementDTO dto = Mockito.mock(AchievementDTO.class);
+        final AchievementDTO dto = mock(AchievementDTO.class);
         when(achievementController.regenerateAllAchievements()).thenReturn(List.of(dto));
 
         final List<AchievementDTO> result = achievementServices.regenerateAllTournamentAchievements(request);
 
         assertEquals(result.size(), 1);
-        assertSame(result.get(0), dto);
+        assertSame(result.getFirst(), dto);
     }
 
     @Test
@@ -181,4 +181,3 @@ public class AchievementServicesTest {
         assertEquals(count, 42L);
     }
 }
-

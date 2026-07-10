@@ -37,14 +37,13 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,7 +78,7 @@ public class AchievementProviderTest {
         final Tournament tournament = tournament("Autumn Cup");
         final Achievement achievement = achievement(participant("P1"), tournament, AchievementType.THE_WINNER, AchievementGrade.GOLD);
         when(achievementRepository.findByTournamentAndAchievementTypeAndAchievementGradeIn(
-                org.mockito.ArgumentMatchers.eq(tournament), org.mockito.ArgumentMatchers.eq(AchievementType.THE_WINNER), anyCollection()))
+                eq(tournament), eq(AchievementType.THE_WINNER), anyCollection()))
                 .thenReturn(List.of(achievement));
 
         final List<Achievement> result = provider.get(tournament, AchievementType.THE_WINNER, AchievementGrade.GOLD);
@@ -125,12 +124,12 @@ public class AchievementProviderTest {
 
         final ArgumentCaptor<Collection<AchievementGrade>> captor = ArgumentCaptor.forClass(Collection.class);
         verify(achievementRepository, times(2)).findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(
-                org.mockito.ArgumentMatchers.eq(tournament),
-                org.mockito.ArgumentMatchers.eq(AchievementType.THE_WINNER),
+                eq(tournament),
+                eq(AchievementType.THE_WINNER),
                 captor.capture(),
-                org.mockito.ArgumentMatchers.eq(after));
+                eq(after));
 
-        assertThat(captor.getAllValues().get(0)).containsExactlyElementsOf(AchievementGrade.SILVER.getGreaterEqualsThan());
+        assertThat(captor.getAllValues().getFirst()).containsExactlyElementsOf(AchievementGrade.SILVER.getGreaterEqualsThan());
         assertThat(captor.getAllValues().get(1)).containsExactly(AchievementGrade.values());
     }
 
@@ -148,9 +147,9 @@ public class AchievementProviderTest {
 
         final Map<AchievementType, Map<AchievementGrade, Integer>> counter = provider.getAchievementsCount();
 
-        assertThat(counter).containsKey(AchievementType.THE_WINNER);
-        assertThat(counter.get(AchievementType.THE_WINNER).get(AchievementGrade.GOLD)).isEqualTo(1);
-        assertThat(counter.get(AchievementType.THE_WINNER).get(AchievementGrade.BRONZE)).isEqualTo(1);
+        assertThat(counter.get(AchievementType.THE_WINNER))
+                .containsEntry(AchievementGrade.GOLD, 1)
+                .containsEntry(AchievementGrade.BRONZE, 1);
     }
 
     // ===== add() tests =====
@@ -382,9 +381,10 @@ public class AchievementProviderTest {
 
         // Branch: New EnumMap creation for BILLY_THE_KID type
         assertThat(result).containsKeys(AchievementType.THE_WINNER, AchievementType.BILLY_THE_KID);
-        assertThat(result.get(AchievementType.THE_WINNER).get(AchievementGrade.GOLD)).isEqualTo(1);
-        assertThat(result.get(AchievementType.THE_WINNER).get(AchievementGrade.SILVER)).isEqualTo(1);
-        assertThat(result.get(AchievementType.BILLY_THE_KID).get(AchievementGrade.GOLD)).isEqualTo(1);
+        assertThat(result.get(AchievementType.THE_WINNER))
+                .containsEntry(AchievementGrade.GOLD, 1)
+                .containsEntry(AchievementGrade.SILVER, 1);
+        assertThat(result.get(AchievementType.BILLY_THE_KID)).containsEntry(AchievementGrade.GOLD, 1);
     }
 
     @Test
@@ -411,7 +411,7 @@ public class AchievementProviderTest {
         final Map<AchievementType, Map<AchievementGrade, Integer>> result = provider.getAchievementsCount();
 
         // Only one entry should remain after deduplication
-        assertThat(result.get(AchievementType.THE_WINNER).get(AchievementGrade.BRONZE)).isEqualTo(1);
+        assertThat(result.get(AchievementType.THE_WINNER)).containsEntry(AchievementGrade.BRONZE, 1);
     }
 
     @Test

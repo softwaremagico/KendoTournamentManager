@@ -289,7 +289,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         final List<Tournament> tournaments = getRepository().findByLocked(false);
         if (!tournaments.isEmpty()) {
             tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-            return tournaments.get(0);
+            return tournaments.getFirst();
         }
         return null;
     }
