@@ -27,10 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Abstract class to provide basic logging capabilities to logging advises.
@@ -39,6 +38,7 @@ import java.util.Calendar;
 @Aspect
 public abstract class AbstractLogging {
     // Logger specialized for each subclass.
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected Logger getLogger() {
@@ -60,9 +60,7 @@ public abstract class AbstractLogging {
         }
         logMessage.append(") at ");
 
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        final Calendar cal = Calendar.getInstance();
-        logMessage.append(dateFormat.format(cal.getTime()));
+        logMessage.append(LocalDateTime.now().format(DATE_TIME_FORMATTER));
         return logMessage.toString();
     }
 

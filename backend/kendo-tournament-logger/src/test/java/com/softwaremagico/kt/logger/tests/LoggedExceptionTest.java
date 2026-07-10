@@ -60,8 +60,8 @@ public class LoggedExceptionTest {
     public void shouldKeepStatusForEachExceptionType(ExceptionType type) {
         TestLoggedException exception = new TestLoggedException(getClass(), "msg", type, HttpStatus.BAD_REQUEST);
 
-        assertEquals(exception.getStatus(), HttpStatus.BAD_REQUEST);
-        assertEquals(exception.getMessage(), "msg");
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("msg", exception.getMessage());
         assertTrue(exception instanceof RuntimeException);
     }
 
@@ -71,8 +71,8 @@ public class LoggedExceptionTest {
 
         TestLoggedException exception = new TestLoggedException(getClass(), cause, HttpStatus.CONFLICT);
 
-        assertEquals(exception.getCause(), cause);
-        assertEquals(exception.getStatus(), HttpStatus.CONFLICT);
+        assertEquals(cause, exception.getCause());
+        assertEquals(HttpStatus.CONFLICT, exception.getStatus());
     }
 
     @Test(groups = "loggedExceptionTests")
@@ -81,8 +81,8 @@ public class LoggedExceptionTest {
 
         TestLoggedException exception = new TestLoggedException(getClass(), cause);
 
-        assertEquals(exception.getCause(), cause);
-        assertEquals(exception.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(cause, exception.getCause());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatus());
     }
 }
 

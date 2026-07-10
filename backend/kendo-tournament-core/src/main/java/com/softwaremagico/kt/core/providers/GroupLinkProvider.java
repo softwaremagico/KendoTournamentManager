@@ -88,7 +88,7 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         int tournamentWinners;
         try {
             tournamentWinners = Integer.parseInt(numberOfWinners.getPropertyValue());
-        } catch (Exception e) {
+        } catch (Exception _) {
             tournamentWinners = 1;
         }
         final List<Group> groups = groupProvider.getGroups(tournament).stream().sorted(Comparator.comparing(Group::getLevel)
@@ -161,7 +161,7 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
                 return nextLevelGroups.get(obtainPositionOfWinnerAsBinaryTree(groups, sourceGroup.getIndex(),
                         currentLevelGroups.size(), numberOfWinners, winnerOrder, sourceGroup.getLevel()));
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException _) {
             return null;
         }
     }
@@ -194,106 +194,110 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
             }
         }
 
-        //Standard case.
-        if (winnerOrder == 0) {
-            //Half-groups number on next level.
-            if (sourceLevel > 0 || numberOfWinners == 1) {
-                return sourceGroupLevelIndex / 2;
-            } else {
-                //Same number of groups on the next level (needed for two winners).
-                return sourceGroupLevelIndex;
-            }
-        } else if (winnerOrder == 1) {
-            //Second winner in standard case, goes to the opposite group.
-            if (sourceLevel > 0) {
-                //+1 for rounding, -1 as a list starts in 0.
-                return (sourceGroupLevelSize - sourceGroupLevelIndex + 1) / 2 - 1;
-            } else {
-                return (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
-            }
-        } else {
-            return -1;
+        return switch (winnerOrder) {
+            case 0 -> getFirstWinnerBinaryTreePosition(sourceGroupLevelIndex, sourceGroupLevelSize, numberOfWinners, sourceLevel);
+            case 1 -> getSecondWinnerBinaryTreePosition(sourceGroupLevelIndex, sourceGroupLevelSize, sourceLevel);
+            default -> -1;
+        };
+    }
+
+    private int getFirstWinnerBinaryTreePosition(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int sourceLevel) {
+        //Half-groups number on next level.
+        if (sourceLevel > 0 || numberOfWinners == 1) {
+            return sourceGroupLevelIndex / 2;
         }
+        //Same number of groups on the next level (needed for two winners).
+        return sourceGroupLevelIndex;
+    }
+
+    private int getSecondWinnerBinaryTreePosition(int sourceGroupLevelIndex, int sourceGroupLevelSize, int sourceLevel) {
+        //Second winner in standard case, goes to the opposite group.
+        if (sourceLevel > 0) {
+            //+1 for rounding, -1 as a list starts in 0.
+            return (sourceGroupLevelSize - sourceGroupLevelIndex + 1) / 2 - 1;
+        }
+        return sourceGroupLevelSize - sourceGroupLevelIndex - 1;
     }
 
     private int obtainPositionOfWinnerNonBinaryTreeOddSize(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize,
                                                            int winnerOrder) {
-        //Standard case.
-        if (winnerOrder == 0) {
-            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
-                return sourceGroupLevelIndex / 2;
-            } else {
-                return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex) / 2 - 1;
-            }
-        } else if (winnerOrder == 1) {
-            if (sourceGroupLevelIndex <= (sourceGroupLevelSize) / 2) {
-                //Last -1 is for list starts at 0.
-                return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex / 2);
-            } else {
-                return (destinationGroupLevelSize / 2) - ((sourceGroupLevelSize - (sourceGroupLevelIndex + 1)) / 2) - 1;
-            }
-        } else {
-            return -1;
+        return switch (winnerOrder) {
+            case 0 -> getFirstWinnerOddTreePosition(sourceGroupLevelIndex, sourceGroupLevelSize, destinationGroupLevelSize);
+            case 1 -> getSecondWinnerOddTreePosition(sourceGroupLevelIndex, sourceGroupLevelSize, destinationGroupLevelSize);
+            default -> -1;
+        };
+    }
+
+    private int getFirstWinnerOddTreePosition(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize) {
+        if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+            return sourceGroupLevelIndex / 2;
         }
+        return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex) / 2 - 1;
+    }
+
+    private int getSecondWinnerOddTreePosition(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize) {
+        if (sourceGroupLevelIndex <= sourceGroupLevelSize / 2) {
+            //Last -1 is for list starts at 0.
+            return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex / 2);
+        }
+        return (destinationGroupLevelSize / 2) - ((sourceGroupLevelSize - (sourceGroupLevelIndex + 1)) / 2) - 1;
     }
 
 
     private int spreadWinnersOnTreeAsMuchAsPossible(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize,
                                                     int winnerOrder) {
-        if (winnerOrder == 0) {
-            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
-                return sourceGroupLevelIndex;
-            } else {
-                return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex - 1) - 1;
-            }
-        } else if (winnerOrder == 1) {
-            final int groupsDifferenceBetweenSecondAndFirstLevel = destinationGroupLevelSize - sourceGroupLevelSize;
-            final int firstHalf = (sourceGroupLevelSize + 1) / 2;
-            if (groupsDifferenceBetweenSecondAndFirstLevel > firstHalf) {
-                if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
-                    return destinationGroupLevelSize - sourceGroupLevelSize + sourceGroupLevelIndex;
-                } else {
-                    return sourceGroupLevelIndex;
-                }
-            } else {
-                if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
-                    return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex) - (destinationGroupLevelSize - sourceGroupLevelSize) / 2;
-                } else {
-                    return (destinationGroupLevelSize / 2) - (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
-                }
-            }
-        } else {
-            return -1;
+        return switch (winnerOrder) {
+            case 0 -> spreadFirstWinner(sourceGroupLevelIndex, sourceGroupLevelSize, destinationGroupLevelSize);
+            case 1 -> spreadSecondWinner(sourceGroupLevelIndex, sourceGroupLevelSize, destinationGroupLevelSize);
+            default -> -1;
+        };
+    }
+
+    private int spreadFirstWinner(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize) {
+        if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+            return sourceGroupLevelIndex;
         }
+        return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex - 1) - 1;
+    }
+
+    private int spreadSecondWinner(int sourceGroupLevelIndex, int sourceGroupLevelSize, int destinationGroupLevelSize) {
+        final int groupsDifferenceBetweenSecondAndFirstLevel = destinationGroupLevelSize - sourceGroupLevelSize;
+        final int firstHalf = (sourceGroupLevelSize + 1) / 2;
+        final boolean firstHalfIndex = sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2;
+        if (groupsDifferenceBetweenSecondAndFirstLevel > firstHalf) {
+            return firstHalfIndex
+                    ? destinationGroupLevelSize - sourceGroupLevelSize + sourceGroupLevelIndex
+                    : sourceGroupLevelIndex;
+        }
+        return firstHalfIndex
+                ? (destinationGroupLevelSize / 2) + sourceGroupLevelIndex - (destinationGroupLevelSize - sourceGroupLevelSize) / 2
+                : (destinationGroupLevelSize / 2) - (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
     }
 
     private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder) {
-        if (sourceGroupLevelSize == SOURCE_13 && numberOfWinners == 2) {
-            return Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
-            return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 1) {
-            return Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 2) {
-            return Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        if (sourceGroupLevelSize == SOURCE_9 && numberOfWinners == 1) {
-            return Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        if (sourceGroupLevelSize == SOURCE_6) {
-            if (numberOfWinners == 1) {
-                return Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
-            } else {
-                return Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-            }
-        }
-        if (sourceGroupLevelSize == SOURCE_3 && numberOfWinners == 2) {
-            return Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        return -1;
+        return switch (sourceGroupLevelSize) {
+            case SOURCE_13 -> numberOfWinners == 2
+                    ? Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder)
+                    : -1;
+            case SOURCE_12 -> numberOfWinners == 2
+                    ? Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder)
+                    : -1;
+            case SOURCE_11 -> switch (numberOfWinners) {
+                case 1 -> Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+                case 2 -> Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+                default -> -1;
+            };
+            case SOURCE_9 -> numberOfWinners == 1
+                    ? Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder)
+                    : -1;
+            case SOURCE_6 -> numberOfWinners == 1
+                    ? Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder)
+                    : Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+            case SOURCE_3 -> numberOfWinners == 2
+                    ? Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder)
+                    : -1;
+            default -> -1;
+        };
     }
 
     public void deleteByTournament(Tournament tournament) {

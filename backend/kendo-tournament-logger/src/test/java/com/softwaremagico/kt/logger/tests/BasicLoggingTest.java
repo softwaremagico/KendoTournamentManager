@@ -53,7 +53,7 @@ public class BasicLoggingTest {
 
         Object result = basicLogging.logAround(joinPoint);
 
-        assertEquals(result, "ok");
+        assertEquals("ok", result);
         verify(joinPoint, times(1)).proceed();
     }
 

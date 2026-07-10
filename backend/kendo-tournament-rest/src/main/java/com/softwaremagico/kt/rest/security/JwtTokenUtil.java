@@ -108,7 +108,7 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedJwtExpiration = Long.parseLong(jwtExpiration);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 RestServerLogger.warning(this.getClass().getName(), "jwt.expiration value '{}' is invalid. Setting default to '{}'.",
                         jwtExpiration, JWT_EXPIRATION);
                 calculatedJwtExpiration = JWT_EXPIRATION;
@@ -129,7 +129,7 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 calculatedGuestJwtExpiration = this.jwtExpiration;
             }
         }
@@ -142,7 +142,7 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedParticipantJwtExpiration = Long.parseLong(jwtParticipantExpiration);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 calculatedParticipantJwtExpiration = this.jwtExpiration;
             }
         }
@@ -166,8 +166,8 @@ public class JwtTokenUtil {
         try {
             final byte[] keyBytes = MessageDigest.getInstance("SHA-512").digest(secret.getBytes(StandardCharsets.UTF_8));
             return Keys.hmacShaKeyFor(keyBytes);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-512 algorithm is not available.", e);
+        } catch (NoSuchAlgorithmException _) {
+            throw new IllegalStateException("SHA-512 algorithm is not available.");
         }
     }
 

@@ -161,7 +161,7 @@ public final class NameUtils {
      * @return
      */
     public static String getShortLastnameName(String lastname, String name, int maxLength) {
-        if (name.length() + lastname.length() == 0) {
+        if (name.isEmpty() && lastname.isEmpty()) {
             return "";
         }
 

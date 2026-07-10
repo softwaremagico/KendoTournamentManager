@@ -44,8 +44,8 @@ import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
 import java.awt.Color;
+import java.time.LocalDateTime;
 import java.sql.Time;
-import java.util.Date;
 import java.util.Locale;
 
 public class ParticipantAccreditationCard extends PdfDocument {
@@ -335,15 +335,14 @@ public class ParticipantAccreditationCard extends PdfDocument {
         Paragraph p;
         final PdfPCell cell;
 
-        final Date date = new java.util.Date();
-        final long lnMilliseconds = date.getTime();
-        final Date sqlDate = new java.sql.Date(lnMilliseconds);
-        final Time sqlTime = new java.sql.Time(lnMilliseconds);
+        final LocalDateTime now = LocalDateTime.now();
+        final java.sql.Date sqlDate = java.sql.Date.valueOf(now.toLocalDate());
+        final Time sqlTime = Time.valueOf(now.toLocalTime().withNano(0));
 
         try {
             p = new Paragraph(tournament.getName() + " (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
-        } catch (NullPointerException npen) {
+        } catch (NullPointerException _) {
             p = new Paragraph("Accreditation Card (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
         }

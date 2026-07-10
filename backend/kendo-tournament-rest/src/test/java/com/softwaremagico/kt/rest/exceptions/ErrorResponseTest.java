@@ -32,15 +32,15 @@ public class ErrorResponseTest {
     public void shouldKeepExplicitCode() {
         ErrorResponse response = new ErrorResponse("Message", "EXPLICIT_CODE");
 
-        assertEquals(response.getCode(), "EXPLICIT_CODE");
-        assertEquals(response.getMessage(), "Message");
+        assertEquals("EXPLICIT_CODE", response.getCode());
+        assertEquals("Message", response.getMessage());
     }
 
     @Test(groups = "restErrorResponse")
     public void shouldGenerateCodeFromMessageWhenCodeIsNull() {
         ErrorResponse response = new ErrorResponse("Invalid Credentials");
 
-        assertEquals(response.getCode(), "invalid_credentials");
+        assertEquals("invalid_credentials", response.getCode());
     }
 
     @Test(groups = "restErrorResponse")
@@ -55,8 +55,8 @@ public class ErrorResponseTest {
         RuntimeException cause = new RuntimeException("boom");
         ErrorResponse response = new ErrorResponse("Bad request", cause);
 
-        assertEquals(response.getCause(), cause);
-        assertEquals(response.toString(), "Bad request");
+        assertEquals(cause, response.getCause());
+        assertEquals("Bad request", response.toString());
     }
 }
 

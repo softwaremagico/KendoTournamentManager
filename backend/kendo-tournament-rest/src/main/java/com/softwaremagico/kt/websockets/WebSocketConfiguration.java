@@ -27,6 +27,7 @@ import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -91,32 +92,48 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (accessor != null
-                        && (StompCommand.CONNECT.equals(accessor.getCommand())
-                        || StompCommand.SEND.equals(accessor.getCommand()))) {
-                    final LinkedMultiValueMap<String, String> nativeHeaders = (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
-                    if (nativeHeaders != null) {
-                        final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
-                        try {
-                            if (jwtToken != null) {
-                                jwtTokenUtil.getUsername(jwtToken.getFirst());
-                                final String username = jwtTokenUtil.getUsername(jwtToken.getFirst());
-                                if (username != null && !username.isEmpty()) {
-                                    accessor.setUser(new UserPrincipal(username));
-                                    WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
-                                } else {
-                                    throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
-                                }
-                            }
-                        } catch (Exception e) {
-                            //Unauthorized.
-                            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
-                        }
-                    }
+                if (requiresAuthentication(accessor)) {
+                    authenticateIfPossible(accessor);
                 }
                 return message;
             }
         });
+    }
+
+    private boolean requiresAuthentication(@Nullable StompHeaderAccessor accessor) {
+        if (accessor == null) {
+            return false;
+        }
+        return StompCommand.CONNECT.equals(accessor.getCommand()) || StompCommand.SEND.equals(accessor.getCommand());
+    }
+
+    private void authenticateIfPossible(StompHeaderAccessor accessor) {
+        final List<String> jwtToken = getJwtToken(accessor);
+        if (jwtToken == null) {
+            return;
+        }
+        try {
+            final String username = jwtTokenUtil.getUsername(jwtToken.getFirst());
+            if (username != null && !username.isEmpty()) {
+                accessor.setUser(new UserPrincipal(username));
+                WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
+            } else {
+                throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
+            }
+        } catch (Exception _) {
+            //Unauthorized.
+            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private @Nullable List<String> getJwtToken(StompHeaderAccessor accessor) {
+        final LinkedMultiValueMap<String, String> nativeHeaders =
+                (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
+        if (nativeHeaders == null) {
+            return null;
+        }
+        return nativeHeaders.get(JWT_CUSTOM_HEADER);
     }
 
     static class UserPrincipal implements Principal {
