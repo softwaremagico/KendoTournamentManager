@@ -90,8 +90,8 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultBanner = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ignored) {
-                KendoTournamentLogger.severe(TournamentImageProvider.class.getName(), "No default banner found!");
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageProvider.class.getName(), "No default banner found: {}", ex.getMessage());
             }
         }
         return this.defaultBanner;
@@ -103,9 +103,9 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultAccreditation = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ignored) {
+            } catch (NullPointerException | IOException ex) {
                 KendoTournamentLogger.severe(TournamentImageController.class.getName(),
-                        "No default accreditation found!");
+                        "No default accreditation found: {}", ex.getMessage());
             }
         }
         return this.defaultAccreditation;
@@ -117,8 +117,8 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultDiploma = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ignored) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found: {}", ex.getMessage());
             }
         }
         return this.defaultDiploma;
@@ -130,8 +130,8 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultPhoto = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException ignored) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found: {}", ex.getMessage());
             }
         }
         return this.defaultPhoto;
@@ -169,7 +169,8 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
             tournamentImage.setImageCompression(imageCompression);
             this.tournamentRepository.save(tournament);
             return this.save(tournamentImage);
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
+            KendoTournamentLogger.warning(this.getClass(), "Image upload failed: {}", ex.getMessage());
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
     }

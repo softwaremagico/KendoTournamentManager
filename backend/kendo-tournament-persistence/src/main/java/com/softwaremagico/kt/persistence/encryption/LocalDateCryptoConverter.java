@@ -48,8 +48,9 @@ public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate>
     protected LocalDate stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : LocalDate.parse(dbData);
-        } catch (DateTimeParseException ignored) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid date value '{}' in database.", dbData);
+        } catch (DateTimeParseException ex) {
+            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid date value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

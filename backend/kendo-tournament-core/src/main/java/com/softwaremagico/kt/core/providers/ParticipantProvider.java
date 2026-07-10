@@ -137,8 +137,8 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
             try {
                 return getRepository().findById(Integer.parseInt(fields[0]));
-            } catch (NumberFormatException ignored) {
-                //Ignored exception.
+            } catch (NumberFormatException ex) {
+                KendoTournamentLogger.debug(this.getClass(), "Invalid token username id '{}': {}", fields[0], ex.getMessage());
             }
         }
         KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));

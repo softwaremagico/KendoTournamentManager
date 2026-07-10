@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.providers.links.Pool3to4winners2;
 import com.softwaremagico.kt.core.providers.links.Pool6to4winners1;
 import com.softwaremagico.kt.core.providers.links.Pool6to8winners2;
 import com.softwaremagico.kt.core.providers.links.Pool9to8winners1;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -88,7 +89,9 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         int tournamentWinners;
         try {
             tournamentWinners = Integer.parseInt(numberOfWinners.getPropertyValue());
-        } catch (Exception ignored) {
+        } catch (NumberFormatException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Invalid NUMBER_OF_WINNERS '{}': {}. Using default 1.",
+                    numberOfWinners.getPropertyValue(), ex.getMessage());
             tournamentWinners = 1;
         }
         final List<Group> groups = groupProvider.getGroups(tournament).stream().sorted(Comparator.comparing(Group::getLevel)
@@ -134,7 +137,8 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         final List<Group> nextLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel() + 1)).toList();
         try {
             return resolveDestination(sourceGroup, numberOfWinners, winnerOrder, groups, currentLevelGroups, nextLevelGroups);
-        } catch (IndexOutOfBoundsException ignored) {
+        } catch (IndexOutOfBoundsException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "No destination available for group '{}': {}", sourceGroup.getId(), ex.getMessage());
             return null;
         }
     }
@@ -203,13 +207,13 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         }
 
         return switch (winnerOrder) {
-            case 0 -> getFirstWinnerBinaryTreePosition(sourceGroupLevelIndex, sourceGroupLevelSize, numberOfWinners, sourceLevel);
+            case 0 -> getFirstWinnerBinaryTreePosition(sourceGroupLevelIndex, numberOfWinners, sourceLevel);
             case 1 -> getSecondWinnerBinaryTreePosition(sourceGroupLevelIndex, sourceGroupLevelSize, sourceLevel);
             default -> -1;
         };
     }
 
-    private int getFirstWinnerBinaryTreePosition(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int sourceLevel) {
+    private int getFirstWinnerBinaryTreePosition(int sourceGroupLevelIndex, int numberOfWinners, int sourceLevel) {
         //Half-groups number on next level.
         if (sourceLevel > 0 || numberOfWinners == 1) {
             return sourceGroupLevelIndex / 2;

@@ -86,7 +86,8 @@ public class ControllerModelsCoverageTest {
                 if (writeMethod != null && Modifier.isPublic(writeMethod.getModifiers())) {
                     try {
                         writeMethod.invoke(instance, sampleValue(writeMethod.getParameterTypes()[0]));
-                    } catch (Exception ignored) {
+                    } catch (Exception ex) {
+                        assertNotNull(ex);
                         // Some DTO setters validate values or require richer state.
                     }
                 }
@@ -94,7 +95,8 @@ public class ControllerModelsCoverageTest {
                 if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
                     try {
                         readMethod.invoke(instance);
-                    } catch (Exception ignored) {
+                    } catch (Exception ex) {
+                        assertNotNull(ex);
                         // Some DTO getters compute values from optional internals.
                     }
                 }
@@ -102,13 +104,15 @@ public class ControllerModelsCoverageTest {
 
             try {
                 instance.hashCode();
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                assertNotNull(ex);
                 // Some DTOs derive hashCode from optional nested content.
             }
             instance.equals(instance);
             try {
                 instance.toString();
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                assertNotNull(ex);
                 // Some DTOs derive toString from optional nested content.
             }
         }
@@ -120,7 +124,8 @@ public class ControllerModelsCoverageTest {
                 constructor.setAccessible(true);
                 try {
                     return constructor.newInstance();
-                } catch (InstantiationException ignored) {
+                } catch (InstantiationException ex) {
+                    assertNotNull(ex);
                     return null;
                 }
             }

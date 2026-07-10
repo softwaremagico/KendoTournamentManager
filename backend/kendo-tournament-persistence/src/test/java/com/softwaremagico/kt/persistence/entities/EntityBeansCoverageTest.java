@@ -74,7 +74,8 @@ public class EntityBeansCoverageTest {
                     final Class<?> parameterType = writeMethod.getParameterTypes()[0];
                     try {
                         writeMethod.invoke(instance, sampleValue(parameterType));
-                    } catch (Exception ignored) {
+                    } catch (Exception ex) {
+                        assertNotNull(ex);
                         // Some write methods validate domain rules and may reject synthetic values.
                     }
                 }
@@ -82,7 +83,8 @@ public class EntityBeansCoverageTest {
                 if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
                     try {
                         readMethod.invoke(instance);
-                    } catch (Exception ignored) {
+                    } catch (Exception ex) {
+                        assertNotNull(ex);
                         // Some read methods depend on richer object graphs.
                     }
                 }
@@ -90,13 +92,15 @@ public class EntityBeansCoverageTest {
 
             try {
                 instance.hashCode();
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                assertNotNull(ex);
                 // Some entities compute hash from nullable binary fields.
             }
             instance.equals(instance);
             try {
                 instance.toString();
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                assertNotNull(ex);
                 // Some entities compute toString from nullable binary fields.
             }
         }
@@ -108,7 +112,8 @@ public class EntityBeansCoverageTest {
                 constructor.setAccessible(true);
                 try {
                     return constructor.newInstance();
-                } catch (InstantiationException ignored) {
+                } catch (InstantiationException ex) {
+                    assertNotNull(ex);
                     return null;
                 }
             }

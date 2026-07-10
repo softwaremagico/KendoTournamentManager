@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.core.exceptions.InvalidExtraPropertyException;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
@@ -130,8 +131,9 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
                             groupRepository.save(group);
                         }
                     }
-                } catch (Exception ignored) {
-                    //Property ignored.
+                } catch (Exception ex) {
+                    KendoTournamentLogger.debug(this.getClass(), "Ignoring invalid NUMBER_OF_WINNERS '{}': {}",
+                            entity.getPropertyValue(), ex.getMessage());
                 }
             }).start();
         }

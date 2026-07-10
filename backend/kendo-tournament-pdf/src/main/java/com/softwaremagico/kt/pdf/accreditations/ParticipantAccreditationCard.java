@@ -343,7 +343,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
         try {
             p = new Paragraph(tournament.getName() + " (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Falling back to generic accreditation signature ({}).", ex.getMessage());
             p = new Paragraph("Accreditation Card (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
         }

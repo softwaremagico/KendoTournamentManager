@@ -48,8 +48,9 @@ public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<Ach
     protected AchievementGrade stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : AchievementGrade.getType(dbData);
-        } catch (NumberFormatException ignored) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid grade value '{}' in database.", dbData);
+        } catch (NumberFormatException ex) {
+            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid grade value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

@@ -120,9 +120,9 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
             } else {
                 throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
             }
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
             //Unauthorized.
-            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
+            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets ({})!", ex.getMessage());
         }
     }
 

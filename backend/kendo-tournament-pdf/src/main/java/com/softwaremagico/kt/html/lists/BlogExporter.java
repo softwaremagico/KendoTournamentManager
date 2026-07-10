@@ -295,29 +295,18 @@ public class BlogExporter {
     }
 
     private int getScoreTime(DuelDTO duelDTO, int score, boolean leftTeam) {
-        final int time;
-        try {
-            if (leftTeam) {
-                time = duelDTO.getCompetitor1ScoreTime().get(score);
-            } else {
-                time = duelDTO.getCompetitor2ScoreTime().get(score);
-            }
-            return time;
-        } catch (Exception ignored) {
-            //Ignored.
+        final List<Integer> scoreTimes = leftTeam ? duelDTO.getCompetitor1ScoreTime() : duelDTO.getCompetitor2ScoreTime();
+        if (scoreTimes == null || score < 0 || score >= scoreTimes.size()) {
+            return -1;
         }
-        return -1;
+        return scoreTimes.get(score);
     }
 
     private Score getScore(DuelDTO duelDTO, int score, boolean leftTeam) {
-        try {
-            if (leftTeam) {
-                return duelDTO.getCompetitor1Score().get(score);
-            } else {
-                return duelDTO.getCompetitor2Score().get(score);
-            }
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        final List<Score> scores = leftTeam ? duelDTO.getCompetitor1Score() : duelDTO.getCompetitor2Score();
+        if (scores == null || score < 0 || score >= scores.size()) {
             return null;
         }
+        return scores.get(score);
     }
 }

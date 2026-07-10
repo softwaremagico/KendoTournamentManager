@@ -137,21 +137,21 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     }
 
     public long countScoreFromCompetitor(Participant participant, Collection<Tournament> tournaments) {
-        try {
-            return getRepository().countLeftScoreFromCompetitor(participant, tournaments)
-                    + getRepository().countRightScoreFromCompetitor(participant, tournaments);
-        } catch (NullPointerException ignored) {
+        if (participant == null || tournaments == null || tournaments.isEmpty()) {
             return 0L;
         }
+        final Long leftScore = getRepository().countLeftScoreFromCompetitor(participant, tournaments);
+        final Long rightScore = getRepository().countRightScoreFromCompetitor(participant, tournaments);
+        return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
     }
 
     public long countScoreAgainstCompetitor(Participant participant, Collection<Tournament> tournaments) {
-        try {
-            return getRepository().countLeftScoreAgainstCompetitor(participant, tournaments)
-                    + getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
-        } catch (NullPointerException ignored) {
+        if (participant == null || tournaments == null || tournaments.isEmpty()) {
             return 0L;
         }
+        final Long leftScore = getRepository().countLeftScoreAgainstCompetitor(participant, tournaments);
+        final Long rightScore = getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
+        return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
     }
 
     @CacheEvict(allEntries = true, value = {"duels-duration-average"})

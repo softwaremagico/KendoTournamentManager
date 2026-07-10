@@ -48,8 +48,9 @@ public class AchievementTypeCryptoConverter extends AbstractCryptoConverter<Achi
     protected AchievementType stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : AchievementType.getType(dbData);
-        } catch (NumberFormatException ignored) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database.", dbData);
+        } catch (NumberFormatException ex) {
+            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }
