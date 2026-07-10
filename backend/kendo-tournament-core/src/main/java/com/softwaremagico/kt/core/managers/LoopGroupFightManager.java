@@ -48,8 +48,22 @@ public class LoopGroupFightManager {
         return createCompleteFightList(tournament, teams, teamsOrder, level, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
-        return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
+    private Fight createFight(Tournament tournament, Team firstTeam, Team secondTeam, Integer shiaijo, Integer level,
+                              String createdBy) {
+        return new Fight(tournament, firstTeam, secondTeam, shiaijo, level, createdBy);
+    }
+
+    private boolean shouldCreateFight(List<Fight> fights, Team team, Team adversary, boolean maximizeFights) {
+        return maximizeFights || !fightAlreadyExists(fights, team, adversary);
+    }
+
+    private boolean fightAlreadyExists(List<Fight> fights, Team team, Team adversary) {
+        return fights.stream().anyMatch(fight -> isSameFightPair(fight, team, adversary));
+    }
+
+    private boolean isSameFightPair(Fight fight, Team team, Team adversary) {
+        return (fight.getTeam1() == team && fight.getTeam2() == adversary)
+                || (fight.getTeam2() == team && fight.getTeam1() == adversary);
     }
 
     /**
@@ -71,10 +85,8 @@ public class LoopGroupFightManager {
 
         for (final Team team : remainingTeams) {
             for (final Team adversary : remainingFights.getAdversaries(team)) {
-                //Avoid repeat fights between the same teams.
-                if (maximizeFights || fights.stream().
-                        noneMatch(fight -> ((fight.getTeam1() == team && fight.getTeam2() == adversary)
-                                || (fight.getTeam2() == team && fight.getTeam1() == adversary)))) {
+                // Avoid repeat fights between the same teams.
+                if (shouldCreateFight(fights, team, adversary, maximizeFights)) {
                     fights.add(createFight(tournament, team, adversary, 0, level, createdBy));
                 }
             }

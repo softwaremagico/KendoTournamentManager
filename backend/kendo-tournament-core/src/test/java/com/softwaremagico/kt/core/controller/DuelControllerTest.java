@@ -41,6 +41,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -79,7 +81,7 @@ public class DuelControllerTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        controller = org.mockito.Mockito.spy(new DuelController(duelProvider, duelConverter, tournamentConverter,
+        controller = spy(new DuelController(duelProvider, duelConverter, tournamentConverter,
                 fightProvider, fightConverter, tournamentProvider, participantProvider));
     }
 
@@ -134,50 +136,27 @@ public class DuelControllerTest {
         controller.validate(dto);
     }
 
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor1HasEmptyScore() {
+    @DataProvider(name = "invalidScores")
+    private Object[][] invalidScores() {
+        return new Object[][]{
+                {Score.EMPTY},
+                {Score.DRAW},
+                {Score.FAULT}
+        };
+    }
+
+    @Test(dataProvider = "invalidScores")
+    public void shouldThrowValidationExceptionWhenCompetitor1HasInvalidScore(Score invalidScore) {
         final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor1Score(new ArrayList<>(List.of(Score.EMPTY)));
+        dto.setCompetitor1Score(new ArrayList<>(List.of(invalidScore)));
 
         assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
     }
 
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor1HasDrawScore() {
+    @Test(dataProvider = "invalidScores")
+    public void shouldThrowValidationExceptionWhenCompetitor2HasInvalidScore(Score invalidScore) {
         final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor1Score(new ArrayList<>(List.of(Score.DRAW)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor1HasFaultScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor1Score(new ArrayList<>(List.of(Score.FAULT)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor2HasEmptyScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor2Score(new ArrayList<>(List.of(Score.EMPTY)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor2HasDrawScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor2Score(new ArrayList<>(List.of(Score.DRAW)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor2HasFaultScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor2Score(new ArrayList<>(List.of(Score.FAULT)));
+        dto.setCompetitor2Score(new ArrayList<>(List.of(invalidScore)));
 
         assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
     }

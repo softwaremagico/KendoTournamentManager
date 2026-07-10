@@ -63,6 +63,7 @@ public class BlogExporter {
 
     private final List<ScoreOfCompetitorDTO> scoreOfCompetitors;
 
+    @SuppressWarnings("java:S107")
     public BlogExporter(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<RoleDTO> roles,
                         List<GroupDTO> groups, List<ParticipantDTO> competitors, List<ScoreOfTeamDTO> scoreOfTeams,
                         List<ScoreOfCompetitorDTO> scoreOfCompetitors) {

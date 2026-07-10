@@ -94,7 +94,7 @@ public class BasicLoggerTest {
 
         BasicLogger.severe(logger, "Clazz", "boom");
 
-        verify(logger).error(eq("Clazz: boom"), eq(new Object[]{}));
+        verify(logger).error("Clazz: boom", new Object[]{});
     }
 
     @Test(groups = "basicLoggerTests")
@@ -104,7 +104,7 @@ public class BasicLoggerTest {
 
         BasicLogger.errorMessageNotification(logger, "Clazz", throwable);
 
-        verify(logger).error(eq("Exception on class {}:\n"), eq("Clazz"), eq(throwable));
+        verify(logger).error("Exception on class {}:\n", "Clazz", throwable);
     }
 
     @Test(groups = "basicLoggerTests")

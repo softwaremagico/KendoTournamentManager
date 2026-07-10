@@ -74,29 +74,29 @@ import java.util.List;
  * endpoint (e.g. GUEST access in {@link TournamentServices}).
  * </p>
  *
- * @param <ENTITY>            the JPA entity type
- * @param <DTO>               the DTO type exposed via the REST API
- * @param <REPOSITORY>        the JPA repository for the entity
- * @param <PROVIDER>          the CRUD provider delegating to the repository
- * @param <CONVERTER_REQUEST> the converter request wrapper
- * @param <CONVERTER>         the entity↔DTO converter
- * @param <CONTROLLER>        the business-logic controller
+ * @param <E> the JPA entity type
+ * @param <D> the DTO type exposed via the REST API
+ * @param <R> the JPA repository for the entity
+ * @param <P> the CRUD provider delegating to the repository
+ * @param <Q> the converter request wrapper
+ * @param <C> the entity↔DTO converter
+ * @param <B> the business-logic controller
  */
 @Validated
-public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
-        PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,
-        CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>,
-        CONTROLLER extends BasicInsertableController<ENTITY, DTO, REPOSITORY, PROVIDER, CONVERTER_REQUEST, CONVERTER>> {
-    private final CONTROLLER controller;
+public abstract class BasicServices<E, D extends ElementDTO, R extends JpaRepository<E, Integer>,
+        P extends CrudProvider<E, Integer, R>, Q extends ConverterRequest<E>,
+        C extends ElementConverter<E, D, Q>,
+        B extends BasicInsertableController<E, D, R, P, Q, C>> {
+    private final B controller;
 
     private final KendoSecurityService kendoSecurityService;
 
-    protected BasicServices(CONTROLLER controller, KendoSecurityService kendoSecurityService) {
+    protected BasicServices(B controller, KendoSecurityService kendoSecurityService) {
         this.controller = controller;
         this.kendoSecurityService = kendoSecurityService;
     }
 
-    protected CONTROLLER getController() {
+    protected B getController() {
         return controller;
     }
 
@@ -119,7 +119,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request the HTTP request (used for audit logging)
      * @return list of all entities as DTOs
      */
-    public List<DTO> getAll(HttpServletRequest request) {
+    public List<D> getAll(HttpServletRequest request) {
         return controller.get();
     }
 
@@ -135,7 +135,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request the HTTP request (used for audit logging)
      * @return list of matching entities as DTOs
      */
-    public List<DTO> getAll(@RequestBody Collection<Integer> ids, HttpServletRequest request) {
+    public List<D> getAll(@RequestBody Collection<Integer> ids, HttpServletRequest request) {
         return controller.get(ids);
     }
 
@@ -167,8 +167,8 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request the HTTP request (used for audit logging)
      * @return the entity as a DTO
      */
-    public DTO get(@Parameter(description = "Id of an existing entity", required = true) @PathVariable("id") Integer id,
-                   HttpServletRequest request) {
+    public D get(@Parameter(description = "Id of an existing entity", required = true) @PathVariable("id") Integer id,
+                 HttpServletRequest request) {
         return controller.get(id);
     }
 
@@ -187,7 +187,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request        the HTTP request (used for audit logging)
      * @return the persisted entity as a DTO
      */
-    public DTO add(@Valid @RequestBody DTO dto, Authentication authentication,
+    public D add(@Valid @RequestBody D dto, Authentication authentication,
                    @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                    HttpServletRequest request) {
         return controller.create(dto, authentication.getName(), session);
@@ -208,7 +208,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request        the HTTP request (used for audit logging)
      * @return the persisted entities as a list of DTOs
      */
-    public List<DTO> add(@Valid @RequestBody Collection<DTO> dtos, Authentication authentication,
+    public List<D> add(@Valid @RequestBody Collection<D> dtos, Authentication authentication,
                          @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                          HttpServletRequest request) {
         if (dtos == null || dtos.isEmpty()) {
@@ -252,7 +252,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param authentication the Spring Security authentication context
      * @param request        the HTTP request (used for audit logging)
      */
-    public void delete(@RequestBody DTO dto,
+    public void delete(@RequestBody D dto,
                        @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                        Authentication authentication, HttpServletRequest request) {
         controller.delete(dto, authentication.getName(), session);
@@ -271,7 +271,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param session        the client session identifier for WebSocket notifications
      * @param request        the HTTP request (used for audit logging)
      */
-    public void delete(@RequestBody Collection<DTO> dtos, Authentication authentication,
+    public void delete(@RequestBody Collection<D> dtos, Authentication authentication,
                        @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                        HttpServletRequest request) {
         getController().delete(dtos, authentication.getName(), session);
@@ -290,7 +290,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request        the HTTP request (used for audit logging)
      * @return the updated entity as a DTO
      */
-    public DTO update(@Valid @RequestBody DTO dto, Authentication authentication,
+    public D update(@Valid @RequestBody D dto, Authentication authentication,
                       @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                       HttpServletRequest request) {
         return controller.update(dto, authentication.getName(), session);
@@ -310,7 +310,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @param request        the HTTP request (used for audit logging)
      * @return the updated entities as a list of DTOs
      */
-    public List<DTO> update(@Valid @RequestBody List<DTO> dtos, Authentication authentication,
+    public List<D> update(@Valid @RequestBody List<D> dtos, Authentication authentication,
                             @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                             HttpServletRequest request) {
         if (dtos == null) {

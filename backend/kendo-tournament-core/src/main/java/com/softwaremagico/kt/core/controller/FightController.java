@@ -101,6 +101,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         this.senbatsuTournamentHandler = senbatsuTournamentHandler;
     }
 
+    @SuppressWarnings("java:S2696")
     public void addFightsAddedListeners(FightsAddedListener listener) {
         fightsAddedListeners.add(listener);
     }

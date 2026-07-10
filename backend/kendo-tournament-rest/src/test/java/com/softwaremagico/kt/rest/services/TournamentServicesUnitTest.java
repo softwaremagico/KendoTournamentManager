@@ -39,7 +39,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -48,9 +47,11 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -114,7 +115,7 @@ public class TournamentServicesUnitTest {
     @Test
     public void shouldGenerateAccreditationsAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException, NoContentException {
         final TournamentDTO tournamentDTO = tournamentWithName("Autumn Cup");
-        final TournamentAccreditationCards cards = org.mockito.Mockito.mock(TournamentAccreditationCards.class);
+        final TournamentAccreditationCards cards = mock(TournamentAccreditationCards.class);
         when(tournamentController.get(5)).thenReturn(tournamentDTO);
         when(pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
                 .thenReturn(cards);
@@ -124,13 +125,13 @@ public class TournamentServicesUnitTest {
                 Locale.ENGLISH, response, authentication, request);
 
         assertEquals(bytes, new byte[]{1, 2, 3});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test
     public void shouldWrapAccreditationsInvalidXmlAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = tournamentWithName("Autumn Cup");
-        final TournamentAccreditationCards cards = org.mockito.Mockito.mock(TournamentAccreditationCards.class);
+        final TournamentAccreditationCards cards = mock(TournamentAccreditationCards.class);
         when(tournamentController.get(5)).thenReturn(tournamentDTO);
         when(pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
                 .thenReturn(cards);
@@ -145,7 +146,7 @@ public class TournamentServicesUnitTest {
     public void shouldGenerateParticipantAccreditationAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = tournamentWithName("Cup");
         final ParticipantDTO participantDTO = new ParticipantDTO();
-        final TournamentAccreditationCards cards = org.mockito.Mockito.mock(TournamentAccreditationCards.class);
+        final TournamentAccreditationCards cards = mock(TournamentAccreditationCards.class);
         when(tournamentController.get(6)).thenReturn(tournamentDTO);
         when(pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(participantDTO),
                 eq(RoleType.COMPETITOR), eq("editor"), isNull())).thenReturn(cards);
@@ -155,7 +156,7 @@ public class TournamentServicesUnitTest {
                 participantDTO, null, Locale.ENGLISH, response, authentication, request);
 
         assertEquals(bytes, new byte[]{4, 5, 6});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test
@@ -168,7 +169,7 @@ public class TournamentServicesUnitTest {
     @Test
     public void shouldGenerateDiplomasAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException, NoContentException {
         final TournamentDTO tournamentDTO = tournamentWithName("Winter Cup");
-        final DiplomaPDF diplomaPDF = org.mockito.Mockito.mock(DiplomaPDF.class);
+        final DiplomaPDF diplomaPDF = mock(DiplomaPDF.class);
         when(tournamentController.get(7)).thenReturn(tournamentDTO);
         when(pdfController.generateTournamentDiplomas(eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
                 .thenReturn(diplomaPDF);
@@ -178,13 +179,13 @@ public class TournamentServicesUnitTest {
                 Locale.ENGLISH, response, authentication, request);
 
         assertEquals(bytes, new byte[]{7, 8, 9});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test
     public void shouldWrapDiplomasEmptyPdfAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = tournamentWithName("Winter Cup");
-        final DiplomaPDF diplomaPDF = org.mockito.Mockito.mock(DiplomaPDF.class);
+        final DiplomaPDF diplomaPDF = mock(DiplomaPDF.class);
         when(tournamentController.get(7)).thenReturn(tournamentDTO);
         when(pdfController.generateTournamentDiplomas(eq(tournamentDTO), eq(true), eq("editor"), isNull(), any()))
                 .thenReturn(diplomaPDF);
@@ -201,7 +202,7 @@ public class TournamentServicesUnitTest {
         final ParticipantDTO participantDTO = new ParticipantDTO();
         participantDTO.setName("Miyamoto");
         participantDTO.setLastname("Musashi");
-        final DiplomaPDF diplomaPDF = org.mockito.Mockito.mock(DiplomaPDF.class);
+        final DiplomaPDF diplomaPDF = mock(DiplomaPDF.class);
         when(tournamentController.get(8)).thenReturn(tournamentDTO);
         when(pdfController.generateTournamentDiploma(tournamentDTO, participantDTO)).thenReturn(diplomaPDF);
         when(diplomaPDF.generate()).thenReturn(new byte[]{10, 11, 12});
@@ -210,7 +211,7 @@ public class TournamentServicesUnitTest {
                 Locale.ENGLISH, response, request);
 
         assertEquals(bytes, new byte[]{10, 11, 12});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test

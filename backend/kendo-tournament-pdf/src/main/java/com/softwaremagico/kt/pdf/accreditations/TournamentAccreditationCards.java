@@ -60,32 +60,43 @@ public class TournamentAccreditationCards extends PdfDocument {
     private Image background;
     private Image defaultPhoto;
 
+    public static final class ImageAssets {
+        private final byte[] banner;
+        private final byte[] background;
+        private final byte[] defaultPhoto;
 
-    public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
-                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner, byte[] background, byte[] defaultPhoto) {
+        public ImageAssets(byte[] banner, byte[] background, byte[] defaultPhoto) {
+            this.banner = banner;
+            this.background = background;
+            this.defaultPhoto = defaultPhoto;
+        }
+    }
+
+
+    public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament,
+                                        Map<ParticipantDTO, RoleDTO> competitorsRoles,
+                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages,
+                                        ImageAssets imageAssets) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
         this.competitorsRoles = competitorsRoles;
-        try {
-            this.banner = Image.getInstance(banner);
-        } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid banner found!");
-            this.banner = null;
-        }
-        try {
-            this.background = Image.getInstance(background);
-        } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid background image found!");
-            this.background = null;
-        }
-        try {
-            this.defaultPhoto = Image.getInstance(defaultPhoto);
-        } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid default photo found!");
-            this.defaultPhoto = null;
-        }
+        this.banner = toImage(imageAssets.banner, "Invalid banner found");
+        this.background = toImage(imageAssets.background, "Invalid background image found");
+        this.defaultPhoto = toImage(imageAssets.defaultPhoto, "Invalid default photo found");
         this.participantImages = participantImages;
+    }
+
+    private Image toImage(byte[] data, String errorMessage) {
+        if (data == null) {
+            return null;
+        }
+        try {
+            return Image.getInstance(data);
+        } catch (IOException ex) {
+            KendoTournamentLogger.severe(this.getClass().getName(), "{}: {}", errorMessage, ex.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -115,22 +126,13 @@ public class TournamentAccreditationCards extends PdfDocument {
         for (final Map.Entry<ParticipantDTO, RoleDTO> entry : competitorsRoles.entrySet()) {
             final ParticipantImageDTO participantImageDTO = participantImages.get(entry.getKey());
 
-            Image participantImage;
-            try {
-                participantImage = participantImageDTO != null ? Image.getInstance(participantImageDTO.getData()) : defaultPhoto;
-            } catch (IOException e) {
-                participantImage = defaultPhoto;
-            }
+            final Image participantImage = getParticipantImage(participantImageDTO);
 
             final ParticipantAccreditationCard competitorPDF = new ParticipantAccreditationCard(messageSource, locale, tournament,
                     entry.getKey(), entry.getValue(), participantImage, banner);
             final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2 - 40,
                     document.getPageSize().getHeight() / 2 + 150);
-            try {
-                competitorTable.setTableEvent(new TableBackgroundEvent(background, document));
-            } catch (NullPointerException e) {
-                competitorTable.setTableEvent(new TableBackgroundEvent(BACKGROUND_IMAGE));
-            }
+            setBackground(competitorTable, document);
             cell = new PdfPCell(competitorTable);
             cell.setBorderWidth(BORDER);
             cell.setColspan(1);
@@ -141,5 +143,25 @@ public class TournamentAccreditationCards extends PdfDocument {
         }
         mainTable.completeRow();
         return mainTable;
+    }
+
+    private Image getParticipantImage(ParticipantImageDTO participantImageDTO) {
+        if (participantImageDTO == null) {
+            return this.defaultPhoto;
+        }
+        try {
+            return Image.getInstance(participantImageDTO.getData());
+        } catch (IOException ex) {
+            KendoTournamentLogger.warning(this.getClass(), "Invalid participant image used in accreditation ({}).", ex.getMessage());
+            return this.defaultPhoto;
+        }
+    }
+
+    private void setBackground(PdfPTable competitorTable, Document document) {
+        if (this.background != null) {
+            competitorTable.setTableEvent(new TableBackgroundEvent(this.background, document));
+        } else {
+            competitorTable.setTableEvent(new TableBackgroundEvent(BACKGROUND_IMAGE));
+        }
     }
 }

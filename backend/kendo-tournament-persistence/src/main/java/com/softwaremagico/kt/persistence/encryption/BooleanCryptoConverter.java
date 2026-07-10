@@ -43,7 +43,7 @@ public class BooleanCryptoConverter implements AttributeConverter<Boolean, Strin
     @Override
     public Boolean convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isEmpty()) {
-            return null;
+            return Boolean.FALSE;
         }
         return Boolean.parseBoolean(dbData);
     }

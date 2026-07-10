@@ -119,6 +119,7 @@ public class AuthApi {
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
+    @SuppressWarnings("java:S2696")
     public void addUserAdminGeneratedListeners(UserAdminGeneratedListener listener) {
         userAdminGeneratedListeners.add(listener);
     }

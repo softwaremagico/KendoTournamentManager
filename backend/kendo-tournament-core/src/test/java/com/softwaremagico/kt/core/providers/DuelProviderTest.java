@@ -44,6 +44,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -191,7 +192,7 @@ public class DuelProviderTest {
      public void testReportCacheEvictIsCallable() {
          provider.reportCacheEvict();
 
-         verify(duelRepository, org.mockito.Mockito.never()).countByTournament(any(Tournament.class));
+         verify(duelRepository, never()).countByTournament(any(Tournament.class));
      }
 
      // ============= Additional comprehensive tests for 90%+ coverage =============

@@ -83,8 +83,8 @@ public class CoreExceptionsConstructorsCoverageTest {
         }
         try {
             return constructor.newInstance(args);
-        } catch (Exception e) {
-            throw new AssertionError("Cannot instantiate " + constructor, e);
+        } catch (Exception _) {
+            throw new AssertionError("Cannot instantiate " + constructor);
         }
     }
 

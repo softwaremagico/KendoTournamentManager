@@ -30,7 +30,6 @@ import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.testng.annotations.AfterMethod;
@@ -171,7 +170,7 @@ public class JwtTokenFilterTest {
     public void shouldAllowParticipantUserWhenParticipantAccessIsEnabled() throws Exception {
         final JwtTokenFilter filter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
-        final Participant participant = Mockito.mock(Participant.class);
+        final Participant participant = mock(Participant.class);
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer participant-token");
         when(jwtTokenUtil.validate("participant-token")).thenReturn(true);

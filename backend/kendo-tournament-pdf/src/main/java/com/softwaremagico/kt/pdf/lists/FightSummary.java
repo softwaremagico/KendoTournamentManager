@@ -38,6 +38,7 @@ import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
@@ -103,6 +104,7 @@ public class FightSummary extends ParentList {
                 return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score);
             }
         } catch (IndexOutOfBoundsException | NullPointerException e) {
+            KendoTournamentLogger.debug(this.getClass(), "Score data missing for duel {}-{}: {}", duel, score, e.getMessage());
             return null;
         }
     }
@@ -204,52 +206,80 @@ public class FightSummary extends ParentList {
                 new GroupNotFoundException(this.getClass(), "Group not found!")).getLevel();
 
         for (int level = 0; level <= levels; level++) {
-            final Integer currentLevel = level;
-            final List<GroupDTO> groupsOfLevel = groups.stream().filter(groupDTO -> Objects.equals(groupDTO.getLevel(), currentLevel))
-                    .toList();
-            if (groupsOfLevel.stream().anyMatch(groupDTO -> !groupDTO.getFights().isEmpty())) {
-                /*
-                 * Header of the phase
-                 */
-                mainTable.addCell(getEmptyRow());
-                mainTable.addCell(getEmptyRow());
-
-                if (level < levels - 2) {
-                    mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.round", null, locale) + " " + (level + 1), 0,
-                            Element.ALIGN_LEFT));
-                } else if (level == levels - 2) {
-                    mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.semifinal", null, locale), 0, Element.ALIGN_LEFT));
-                } else if (tournament.getType().equals(TournamentType.CHAMPIONSHIP)) {
-                    mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.final", null, locale), 0, Element.ALIGN_LEFT));
-                }
-
-                for (int i = 0; i < groups.size(); i++) {
-                    // Only groups of shiaijo X.
-                    if (useOnlyShiaijo == null || groups.get(i).getShiaijo().equals(useOnlyShiaijo)) {
-                        mainTable.addCell(getEmptyRow());
-                        if (groupsOfLevel.size() > 1) {
-                            final StringBuilder header = new StringBuilder(messageSource.getMessage("tournament.group", null, locale) + " " + (i + 1));
-                            if (useOnlyShiaijo != null) {
-                                header.append(" (").append(messageSource.getMessage("tournament.shiaijo", null, locale)).append(" ")
-                                        .append(ShiaijoName.getShiaijoName(groups.get(i).getShiaijo())).append(")");
-                            }
-                            mainTable.addCell(getHeader2(header.toString(), 0));
-                        }
-
-                        for (final FightDTO fight : fights) {
-                            if (i < groupsOfLevel.size() && groupsOfLevel.get(i).getFights() != null
-                                    && groupsOfLevel.get(i).getFights().contains(fight)) {
-                                final PdfPCell cell = new PdfPCell(fightTable(fight, true));
-                                cell.setBorderWidth(BORDER_WIDTH);
-                                cell.setColspan(getTableWidths().length);
-                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                mainTable.addCell(cell);
-                            }
-                        }
-                    }
-                }
+            final List<GroupDTO> groupsOfLevel = getGroupsOfLevel(level);
+            if (!hasFights(groupsOfLevel)) {
+                continue;
             }
+            addLevelHeader(mainTable, level, levels);
+            addGroupsForLevel(mainTable, groupsOfLevel);
         }
+    }
+
+    private List<GroupDTO> getGroupsOfLevel(int level) {
+        final Integer currentLevel = level;
+        return groups.stream().filter(groupDTO -> Objects.equals(groupDTO.getLevel(), currentLevel)).toList();
+    }
+
+    private boolean hasFights(List<GroupDTO> groupsOfLevel) {
+        return groupsOfLevel.stream().anyMatch(groupDTO -> !groupDTO.getFights().isEmpty());
+    }
+
+    private void addLevelHeader(PdfPTable mainTable, int level, int levels) {
+        mainTable.addCell(getEmptyRow());
+        mainTable.addCell(getEmptyRow());
+        if (level < levels - 2) {
+            mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.round", null, locale) + " " + (level + 1), 0,
+                    Element.ALIGN_LEFT));
+        } else if (level == levels - 2) {
+            mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.semifinal", null, locale), 0, Element.ALIGN_LEFT));
+        } else if (tournament.getType().equals(TournamentType.CHAMPIONSHIP)) {
+            mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.final", null, locale), 0, Element.ALIGN_LEFT));
+        }
+    }
+
+    private void addGroupsForLevel(PdfPTable mainTable, List<GroupDTO> groupsOfLevel) {
+        for (int i = 0; i < groups.size(); i++) {
+            if (!matchesSelectedShiaijo(i)) {
+                continue;
+            }
+            mainTable.addCell(getEmptyRow());
+            addGroupHeader(mainTable, groupsOfLevel, i);
+            addFightsForGroup(mainTable, groupsOfLevel, i);
+        }
+    }
+
+    private boolean matchesSelectedShiaijo(int groupIndex) {
+        return useOnlyShiaijo == null || groups.get(groupIndex).getShiaijo().equals(useOnlyShiaijo);
+    }
+
+    private void addGroupHeader(PdfPTable mainTable, List<GroupDTO> groupsOfLevel, int groupIndex) {
+        if (groupsOfLevel.size() <= 1) {
+            return;
+        }
+        final StringBuilder header = new StringBuilder(messageSource.getMessage("tournament.group", null, locale) + " " + (groupIndex + 1));
+        if (useOnlyShiaijo != null) {
+            header.append(" (").append(messageSource.getMessage("tournament.shiaijo", null, locale)).append(" ")
+                    .append(ShiaijoName.getShiaijoName(groups.get(groupIndex).getShiaijo())).append(")");
+        }
+        mainTable.addCell(getHeader2(header.toString(), 0));
+    }
+
+    private void addFightsForGroup(PdfPTable mainTable, List<GroupDTO> groupsOfLevel, int groupIndex) {
+        for (final FightDTO fight : fights) {
+            if (!isFightFromGroup(groupsOfLevel, groupIndex, fight)) {
+                continue;
+            }
+            final PdfPCell cell = new PdfPCell(fightTable(fight, true));
+            cell.setBorderWidth(BORDER_WIDTH);
+            cell.setColspan(getTableWidths().length);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            mainTable.addCell(cell);
+        }
+    }
+
+    private boolean isFightFromGroup(List<GroupDTO> groupsOfLevel, int groupIndex, FightDTO fight) {
+        return groupIndex < groupsOfLevel.size() && groupsOfLevel.get(groupIndex).getFights() != null
+                && groupsOfLevel.get(groupIndex).getFights().contains(fight);
     }
 
     @Override

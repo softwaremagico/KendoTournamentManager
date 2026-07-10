@@ -49,7 +49,8 @@ public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp>
         try {
             return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData));
         } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid timestamp value '{}' in database.", dbData);
+            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid timestamp value '{}' in database ({}).", dbData,
+                    nfe.getMessage());
             return null;
         }
     }

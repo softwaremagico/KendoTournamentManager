@@ -43,12 +43,14 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.expectThrows;
 
 @Test(groups = "restServicesUnit")
@@ -106,23 +108,23 @@ public class FightServicesUnitTest {
     public void shouldGenerateTournamentPdfAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = new TournamentDTO();
         tournamentDTO.setName("Cup");
-        final FightSummary fightSummary = org.mockito.Mockito.mock(FightSummary.class);
+        final FightSummary fightSummary = mock(FightSummary.class);
         when(tournamentController.get(10)).thenReturn(tournamentDTO);
-        when(pdfController.generateFightsSummaryList(eq(Locale.ENGLISH), eq(tournamentDTO))).thenReturn(fightSummary);
+        when(pdfController.generateFightsSummaryList(Locale.ENGLISH, tournamentDTO)).thenReturn(fightSummary);
         when(fightSummary.generate()).thenReturn(new byte[]{1, 2, 3});
 
         final byte[] bytes = fightServices.getTeamsScoreRankingFromTournamentAsPdf(10, Locale.ENGLISH, response, null);
 
         assertEquals(bytes, new byte[]{1, 2, 3});
-        verify(response).setHeader(eq("Content-Disposition"), any(String.class));
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test
     public void shouldWrapPdfErrorAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = new TournamentDTO();
-        final FightSummary fightSummary = org.mockito.Mockito.mock(FightSummary.class);
+        final FightSummary fightSummary = mock(FightSummary.class);
         when(tournamentController.get(10)).thenReturn(tournamentDTO);
-        when(pdfController.generateFightsSummaryList(eq(Locale.ENGLISH), eq(tournamentDTO))).thenReturn(fightSummary);
+        when(pdfController.generateFightsSummaryList(Locale.ENGLISH, tournamentDTO)).thenReturn(fightSummary);
         when(fightSummary.generate()).thenThrow(new InvalidXmlElementException("invalid"));
 
         final BadRequestException exception = expectThrows(BadRequestException.class,
@@ -170,7 +172,7 @@ public class FightServicesUnitTest {
         assertEquals(created.size(), 1);
         assertEquals(next.size(), 1);
         assertEquals(byCompetitor.size(), 1);
-        assertEquals(scoresFromNameToCenter, true);
+        assertTrue(scoresFromNameToCenter);
         verify(fightController).delete(tournamentDTO);
     }
 

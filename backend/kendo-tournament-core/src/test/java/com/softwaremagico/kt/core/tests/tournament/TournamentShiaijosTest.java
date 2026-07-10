@@ -49,7 +49,6 @@ import org.testng.annotations.Test;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"shiaijosTest"})
@@ -124,7 +123,7 @@ public class TournamentShiaijosTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"add6Groups"})
     public void checkShiaijos() {
         final List<GroupDTO> level0Groups = groupController.get(tournamentDTO).stream().filter(g -> g.getLevel() == 0)
-                .sorted(Comparator.comparing(GroupDTO::getIndex)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(GroupDTO::getIndex)).toList();
         Assert.assertEquals(level0Groups.get(0).getShiaijo(), 0);
         Assert.assertEquals(level0Groups.get(1).getShiaijo(), 0);
         Assert.assertEquals(level0Groups.get(2).getShiaijo(), 0);

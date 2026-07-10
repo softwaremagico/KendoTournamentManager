@@ -85,6 +85,7 @@ public class CsvController {
     private final TournamentProvider tournamentProvider;
     private final GroupProvider groupProvider;
 
+    @SuppressWarnings("java:S107")
     public CsvController(ClubCsv clubCsv, ClubProvider clubProvider, ClubConverter clubConverter,
             ParticipantCsv participantCsv, ParticipantProvider participantProvider,
             ParticipantConverter participantConverter, TeamCsv teamCsv, TeamProvider teamProvider,

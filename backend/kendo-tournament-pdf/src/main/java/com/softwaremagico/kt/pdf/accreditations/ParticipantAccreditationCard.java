@@ -100,7 +100,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        // No writer events are needed for this accreditation layout.
     }
 
     private PdfPTable createNameTable() throws BadElementException {
@@ -226,6 +226,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 }
             }
         } catch (NullPointerException npe) {
+            KendoTournamentLogger.debug(this.getClass(), "Using default accreditation color due to missing role information ({}).",
+                    npe.getMessage());
             cell.setBackgroundColor(DEFAULT_COLOR);
         }
         table2.addCell(cell);

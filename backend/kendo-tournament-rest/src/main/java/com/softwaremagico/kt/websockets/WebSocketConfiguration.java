@@ -27,7 +27,7 @@ import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -89,10 +89,10 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
             @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (requiresAuthentication(accessor)) {
+                if (accessor != null && requiresAuthentication(accessor)) {
                     authenticateIfPossible(accessor);
                 }
                 return message;
@@ -100,16 +100,13 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         });
     }
 
-    private boolean requiresAuthentication(@Nullable StompHeaderAccessor accessor) {
-        if (accessor == null) {
-            return false;
-        }
+    private boolean requiresAuthentication(StompHeaderAccessor accessor) {
         return StompCommand.CONNECT.equals(accessor.getCommand()) || StompCommand.SEND.equals(accessor.getCommand());
     }
 
     private void authenticateIfPossible(StompHeaderAccessor accessor) {
         final List<String> jwtToken = getJwtToken(accessor);
-        if (jwtToken == null) {
+        if (jwtToken.isEmpty()) {
             return;
         }
         try {
@@ -127,13 +124,14 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     }
 
     @SuppressWarnings("unchecked")
-    private @Nullable List<String> getJwtToken(StompHeaderAccessor accessor) {
+    private List<String> getJwtToken(StompHeaderAccessor accessor) {
         final LinkedMultiValueMap<String, String> nativeHeaders =
                 (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
         if (nativeHeaders == null) {
-            return null;
+            return List.of();
         }
-        return nativeHeaders.get(JWT_CUSTOM_HEADER);
+        final List<String> jwtHeader = nativeHeaders.get(JWT_CUSTOM_HEADER);
+        return jwtHeader == null ? List.of() : jwtHeader;
     }
 
     static class UserPrincipal implements Principal {

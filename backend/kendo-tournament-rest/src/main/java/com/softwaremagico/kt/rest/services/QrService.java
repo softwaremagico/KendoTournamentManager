@@ -56,6 +56,8 @@ import java.util.Optional;
 @RequestMapping("/qr")
 public class QrService {
 
+    private static final String ATTACHMENT = "attachment";
+
     private final QrController qrController;
 
     private final PdfController pdfController;
@@ -91,7 +93,7 @@ public class QrService {
                                                               HttpServletResponse response, HttpServletRequest request) {
 
         final byte[] bytes = qrController.generateGuestQrCodeForTournamentFights(tournamentId, null, nightMode.orElse(false)).getData();
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return bytes;
@@ -125,7 +127,7 @@ public class QrService {
                                                               HttpServletResponse response, HttpServletRequest request) {
 
         final byte[] bytes = qrController.generateGuestQrCodeForTournamentFights(tournamentId, port, nightMode.orElse(false)).getData();
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return bytes;
@@ -143,7 +145,7 @@ public class QrService {
 
         try {
             final byte[] bytes = pdfController.generateTournamentQr(locale, tournament, null).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(tournament.getName() + " - qr.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -167,7 +169,7 @@ public class QrService {
 
         try {
             final byte[] bytes = pdfController.generateTournamentQr(locale, tournament, null).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(tournament.getName() + " - qr.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -211,7 +213,7 @@ public class QrService {
                                                @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                HttpServletResponse response, HttpServletRequest request) {
 
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename("QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
@@ -228,7 +230,7 @@ public class QrService {
                                              @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                              HttpServletResponse response, HttpServletRequest request) {
 
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename("QR.svg").build();
         response.setHeader(HttpHeaders.CONTENT_TYPE, "image/svg+xml");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());

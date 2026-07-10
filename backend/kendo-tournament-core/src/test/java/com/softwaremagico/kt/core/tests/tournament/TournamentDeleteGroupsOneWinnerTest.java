@@ -44,9 +44,9 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"deleteGroupsOneWinnerTest"})
@@ -120,8 +120,10 @@ public class TournamentDeleteGroupsOneWinnerTest extends AbstractTestNGSpringCon
 
     @Test(dependsOnMethods = {"add8Groups"})
     public void deleteGroupsOneByOne() {
-        final List<GroupDTO> level0Groups = groupController.get(tournamentDTO).stream().filter(g -> g.getLevel() == 0)
-                .sorted(Comparator.comparing(GroupDTO::getIndex)).collect(Collectors.toList());
+        final List<GroupDTO> level0Groups = new ArrayList<>(groupController.get(tournamentDTO).stream()
+                .filter(g -> g.getLevel() == 0)
+                .sorted(Comparator.comparing(GroupDTO::getIndex))
+                .toList());
         groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
         level0Groups.remove(level0Groups.size() - 1);
         Assert.assertEquals(groupController.count(), 14);

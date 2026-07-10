@@ -48,10 +48,12 @@ public class ControllerModelsDTOCoverageTest {
         final AchievementDTO same = createAchievementDTO(10, "Ana", "Perez", "Cup", AchievementType.TERMINATOR, AchievementGrade.GOLD);
         final AchievementDTO differentGrade = createAchievementDTO(10, "Ana", "Perez", "Cup", AchievementType.TERMINATOR, AchievementGrade.SILVER);
 
-        assertThat(left).isEqualTo(same);
-        assertThat(left.hashCode()).isEqualTo(same.hashCode());
-        assertThat(left).isNotEqualTo(differentGrade);
-        assertThat(left).isNotEqualTo("other");
+        assertThat(left)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(differentGrade)
+                .isNotEqualTo("other")
+                .hasToString(left.toString());
         assertThat(left.toString()).contains("Achievement").contains("achievementType");
     }
 
@@ -130,10 +132,11 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(role.isDiplomaPrinted()).isTrue();
         assertThat(role.isAccreditationPrinted()).isTrue();
 
-        assertThat(role).isEqualTo(same);
-        assertThat(role.hashCode()).isEqualTo(same.hashCode());
-        assertThat(role).isNotEqualTo(different);
-        assertThat(role).isNotEqualTo("other");
+        assertThat(role)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(different)
+                .isNotEqualTo("other");
         assertThat(role.toString()).contains("ROLE");
 
         final RoleDTO withoutTournament = new RoleDTO();
@@ -228,7 +231,7 @@ public class ControllerModelsDTOCoverageTest {
                                                 AchievementType type, AchievementGrade grade) {
         final AchievementDTO dto = new AchievementDTO();
         dto.setId(id);
-        dto.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         dto.setParticipant(createParticipantDTO(id, name, lastname));
         dto.setTournament(createTournamentDTO(id, tournamentName));
         dto.setAchievementType(type);
@@ -239,14 +242,14 @@ public class ControllerModelsDTOCoverageTest {
     private RoleDTO createRoleDTO(int id, String name, String lastname, RoleType roleType) {
         final RoleDTO dto = new RoleDTO(createTournamentDTO(id, "Tournament" + id), createParticipantDTO(id, name, lastname), roleType);
         dto.setId(id);
-        dto.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         return dto;
     }
 
     private ParticipantDTO createParticipantDTO(int id, String name, String lastname) {
         final ParticipantDTO dto = new ParticipantDTO();
         dto.setId(id);
-        dto.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         dto.setName(name);
         dto.setLastname(lastname);
         return dto;
@@ -255,7 +258,7 @@ public class ControllerModelsDTOCoverageTest {
     private TournamentDTO createTournamentDTO(int id, String name) {
         final TournamentDTO dto = new TournamentDTO(name, 2, 3, TournamentType.LEAGUE);
         dto.setId(id);
-        dto.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         return dto;
     }
 
@@ -266,11 +269,12 @@ public class ControllerModelsDTOCoverageTest {
         final ClubDTO differentCity = createClubDTO("Dojo A", "ES", "Sevilla");
 
         assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
-        assertThat(base).isNotEqualTo(differentCity);
-        assertThat(base).isNotEqualTo("other");
-        assertThat(base.toString()).isEqualTo("Dojo A");
+        assertThat(base)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(differentCity)
+                .isNotEqualTo("other")
+                .hasToString("Dojo A");
 
         final ClubDTO nullName = createClubDTO("Dojo B", "ES", "Bilbao");
         nullName.setName(null);
@@ -339,12 +343,13 @@ public class ControllerModelsDTOCoverageTest {
         differentMembers.addMember(createParticipantDTO(62, "B", "Two"));
 
         assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
-        assertThat(base).isNotEqualTo(differentMembers);
-        assertThat(base).isNotEqualTo("other");
+        assertThat(base)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(differentMembers)
+                .isNotEqualTo("other");
         assertThat(base.isMember(createParticipantDTO(61, "A", "One"))).isTrue();
-        assertThat(base.toString()).isEqualTo("Team A");
+        assertThat(base).hasToString("Team A");
 
         final TeamDTO unnamed = createTeamDTO(60, "Fallback");
         unnamed.setName(null);
@@ -366,16 +371,17 @@ public class ControllerModelsDTOCoverageTest {
 
         base.setLocked(true);
         base.setFightSize(3);
-        base.setLockedAt(LocalDateTime.of(2026, 1, 2, 10, 0));
-        base.setStartedAt(LocalDateTime.of(2026, 1, 3, 10, 0));
-        base.setFinishedAt(LocalDateTime.of(2026, 1, 4, 10, 0));
+        base.setLockedAt(LocalDateTime.of(2026, Month.JANUARY, 2, 10, 0));
+        base.setStartedAt(LocalDateTime.of(2026, Month.JANUARY, 3, 10, 0));
+        base.setFinishedAt(LocalDateTime.of(2026, Month.JANUARY, 4, 10, 0));
 
         assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
-        assertThat(base).isNotEqualTo(differentType);
-        assertThat(base).isNotEqualTo("other");
-        assertThat(base.toString()).isEqualTo("Finals");
+        assertThat(base)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(differentType)
+                .isNotEqualTo("other")
+                .hasToString("Finals");
         assertThat(base.isLocked()).isTrue();
         assertThat(base.getFightSize()).isEqualTo(3);
         assertThat(base.getLockedAt()).isNotNull();
@@ -394,10 +400,11 @@ public class ControllerModelsDTOCoverageTest {
         final GroupDTO differentShiaijo = createGroupDTO(80, 2, 0, 1);
 
         assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
-        assertThat(base).isNotEqualTo(differentShiaijo);
-        assertThat(base).isNotEqualTo("other");
+        assertThat(base)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(differentShiaijo)
+                .isNotEqualTo("other");
         assertThat(base.toString()).contains("Group{").contains("level=0").contains("index=1");
     }
 
@@ -417,14 +424,14 @@ public class ControllerModelsDTOCoverageTest {
     private TeamDTO createTeamDTO(int id, String name) {
         final TeamDTO dto = new TeamDTO(name, createTournamentDTO(id, "Tournament" + id));
         dto.setId(id);
-        dto.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         return dto;
     }
 
     private GroupDTO createGroupDTO(int id, int shiaijo, int level, int index) {
         final GroupDTO dto = new GroupDTO();
         dto.setId(id);
-        dto.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         dto.setTournament(createTournamentDTO(id, "Tournament" + id));
         dto.setTeams(new java.util.ArrayList<>());
         dto.setFights(new java.util.ArrayList<>());
@@ -473,16 +480,13 @@ public class ControllerModelsDTOCoverageTest {
         same.setName("Nori");
         same.setLastname("Sato");
 
-        assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
+        assertThat(base).isEqualTo(same).hasSameHashCodeAs(same);
 
         final ParticipantReducedDTO differentName = new ParticipantReducedDTO();
         differentName.setId(300);
         differentName.setName("Other");
         differentName.setLastname("Sato");
         assertThat(base).isNotEqualTo(differentName);
-
         assertThat(base).isNotEqualTo("other");
         assertThat(base.toString()).contains("Nori");
 
@@ -496,38 +500,36 @@ public class ControllerModelsDTOCoverageTest {
     public void testTournamentScoreDTOEqualsBranches() {
         final TournamentScoreDTO base = new TournamentScoreDTO();
         base.setId(400);
-        base.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        base.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         base.setPointsByVictory(3);
         base.setPointsByDraw(1);
 
         final TournamentScoreDTO same = new TournamentScoreDTO();
         same.setId(400);
-        same.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        same.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         same.setPointsByVictory(3);
         same.setPointsByDraw(1);
 
-        assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
+        assertThat(base).isEqualTo(same).hasSameHashCodeAs(same);
         assertThat(base).isNotEqualTo("other");
 
         final TournamentScoreDTO differentSuper = new TournamentScoreDTO();
         differentSuper.setId(401);
-        differentSuper.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        differentSuper.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         differentSuper.setPointsByVictory(3);
         differentSuper.setPointsByDraw(1);
         assertThat(base).isNotEqualTo(differentSuper);
 
         final TournamentScoreDTO differentVictory = new TournamentScoreDTO();
         differentVictory.setId(400);
-        differentVictory.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        differentVictory.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         differentVictory.setPointsByVictory(9);
         differentVictory.setPointsByDraw(1);
         assertThat(base).isNotEqualTo(differentVictory);
 
         final TournamentScoreDTO differentDraw = new TournamentScoreDTO();
         differentDraw.setId(400);
-        differentDraw.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        differentDraw.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         differentDraw.setPointsByVictory(3);
         differentDraw.setPointsByDraw(2);
         assertThat(base).isNotEqualTo(differentDraw);
@@ -537,32 +539,30 @@ public class ControllerModelsDTOCoverageTest {
     public void testElementDTOEqualsBranches() {
         final ElementDTO base = new ElementDTO();
         base.setId(500);
-        base.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        base.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 
         final ElementDTO same = new ElementDTO();
         same.setId(500);
-        same.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        same.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 
-        assertThat(base.equals(base)).isTrue();
-        assertThat(base).isEqualTo(same);
-        assertThat(base.hashCode()).isEqualTo(same.hashCode());
+        assertThat(base).isEqualTo(same).hasSameHashCodeAs(same);
 
         final ElementDTO different = new ElementDTO();
         different.setId(501);
-        different.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        different.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         assertThat(base).isNotEqualTo(different);
-        assertThat(base).isNotEqualTo("other");
+        assertThat(base.equals("other")).isFalse();
     }
 
     @Test
     public void testElementDTOEqualsDifferentCreatedAtBranch() {
         final ElementDTO left = new ElementDTO();
         left.setId(700);
-        left.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        left.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 
         final ElementDTO right = new ElementDTO();
         right.setId(700);
-        right.setCreatedAt(LocalDateTime.of(2026, 1, 2, 10, 0));
+        right.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 2, 10, 0));
 
         assertThat(left).isNotEqualTo(right);
     }
@@ -575,10 +575,10 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(dto.getDuelsNumber()).isEqualTo(5L);
 
         dto.setDuelsNumber(-1L);
-        assertThat(dto.getDuelsNumber()).isEqualTo(0L);
+        assertThat(dto.getDuelsNumber()).isZero();
 
         dto.setDuelsNumber(null);
-        assertThat(dto.getDuelsNumber()).isEqualTo(0L);
+        assertThat(dto.getDuelsNumber()).isZero();
     }
 
     @Test
@@ -622,7 +622,7 @@ public class ControllerModelsDTOCoverageTest {
         nullClub.setClub(null);
         assertThat(base.hashCode()).isNotZero();
         assertThat(nullClub.hashCode()).isNotZero();
-        assertThat(base).isNotEqualTo("not-participant");
+        assertThat(base.equals("not-participant")).isFalse();
     }
 
     @Test
@@ -638,9 +638,9 @@ public class ControllerModelsDTOCoverageTest {
 
         final TournamentDTO differentTeamSize = createTournamentDTO(920, "Master");
         differentTeamSize.setTeamSize(9);
-        assertThat(base).isNotEqualTo(differentTeamSize);
-
-        assertThat(base).isNotEqualTo(null);
+        assertThat(base)
+                .isNotEqualTo(differentTeamSize)
+                .isNotEqualTo(null);
     }
 
     @Test
@@ -673,9 +673,9 @@ public class ControllerModelsDTOCoverageTest {
 
         final GroupDTO differentUnties = createGroupDTO(930, 1, 1, 1);
         differentUnties.setUnties(null);
-        assertThat(base).isNotEqualTo(differentUnties);
-
-        assertThat(base).isNotEqualTo(null);
+        assertThat(base)
+                .isNotEqualTo(differentUnties)
+                .isNotEqualTo(null);
     }
 
     @Test
@@ -701,14 +701,14 @@ public class ControllerModelsDTOCoverageTest {
         logDTO.setMessage("frontend event");
 
         assertThat(logDTO.getMessage()).isEqualTo("frontend event");
-        assertThat(logDTO.toString()).isEqualTo("frontend event");
+        assertThat(logDTO).hasToString("frontend event");
 
         final ParticipantImageDTO participantImageDTO = new ParticipantImageDTO();
         participantImageDTO.setParticipant(participant);
 
         assertThat(participantImageDTO.getParticipant()).isEqualTo(participant);
 
-        final LocalDateTime expiration = LocalDateTime.of(2026, 2, 3, 4, 5);
+        final LocalDateTime expiration = LocalDateTime.of(2026, Month.FEBRUARY, 3, 4, 5);
         final Participant entity = new Participant();
         entity.setToken("token-123");
         entity.setAccountExpiration(expiration);

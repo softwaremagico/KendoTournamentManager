@@ -140,18 +140,26 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         if (participant == null || tournaments == null || tournaments.isEmpty()) {
             return 0L;
         }
-        final Long leftScore = getRepository().countLeftScoreFromCompetitor(participant, tournaments);
-        final Long rightScore = getRepository().countRightScoreFromCompetitor(participant, tournaments);
-        return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
+        try {
+            final Long leftScore = getRepository().countLeftScoreFromCompetitor(participant, tournaments);
+            final Long rightScore = getRepository().countRightScoreFromCompetitor(participant, tournaments);
+            return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
+        } catch (final NullPointerException ex) {
+            return 0L;
+        }
     }
 
     public long countScoreAgainstCompetitor(Participant participant, Collection<Tournament> tournaments) {
         if (participant == null || tournaments == null || tournaments.isEmpty()) {
             return 0L;
         }
-        final Long leftScore = getRepository().countLeftScoreAgainstCompetitor(participant, tournaments);
-        final Long rightScore = getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
-        return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
+        try {
+            final Long leftScore = getRepository().countLeftScoreAgainstCompetitor(participant, tournaments);
+            final Long rightScore = getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
+            return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
+        } catch (final NullPointerException ex) {
+            return 0L;
+        }
     }
 
     @CacheEvict(allEntries = true, value = {"duels-duration-average"})

@@ -232,10 +232,10 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
-            ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
-            Assert.assertEquals(participantDTO.getName(), String.format("Name%s", i));
-            Assert.assertEquals(participantDTO.getLastname(), String.format("Lastname%s", i));
-            Assert.assertEquals(participantDTO.getIdCard(), String.format("0000%s", i));
+            ParticipantDTO createdParticipant = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+            Assert.assertEquals(createdParticipant.getName(), String.format("Name%s", i));
+            Assert.assertEquals(createdParticipant.getLastname(), String.format("Lastname%s", i));
+            Assert.assertEquals(createdParticipant.getIdCard(), String.format("0000%s", i));
         }
 
         MvcResult createResult = this.mockMvc

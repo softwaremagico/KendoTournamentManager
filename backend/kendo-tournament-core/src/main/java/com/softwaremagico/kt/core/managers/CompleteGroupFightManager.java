@@ -32,13 +32,29 @@ import java.util.List;
 @Service
 public class CompleteGroupFightManager {
 
+    private record FightContext(Tournament tournament, Integer shiaijo, Integer level, String createdBy) {
+    }
+
     public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
                                     Integer shiaijo, boolean fifo, String createdBy) {
         return createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
-        return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
+    private Fight createFight(Tournament tournament, Team firstTeam, Team secondTeam, Integer shiaijo, Integer level,
+                              String createdBy) {
+        return new Fight(tournament, firstTeam, secondTeam, shiaijo, level, createdBy);
+    }
+
+    private Fight createOrderedFight(FightContext context, Team team1, Team team2, Fight lastFight, int currentSize) {
+        if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
+            return createFight(context.tournament(), team2, team1, context.shiaijo(), context.level(), context.createdBy());
+        }
+        if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
+            return createFight(context.tournament(), team1, team2, context.shiaijo(), context.level(), context.createdBy());
+        }
+        return currentSize % 2 == 0
+                ? createFight(context.tournament(), team1, team2, context.shiaijo(), context.level(), context.createdBy())
+                : createFight(context.tournament(), team2, team1, context.shiaijo(), context.level(), context.createdBy());
     }
 
     /**
@@ -56,6 +72,7 @@ public class CompleteGroupFightManager {
         }
         final List<Fight> fights = new ArrayList<>();
         final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
+        final FightContext context = new FightContext(tournament, shiaijo, level, createdBy);
 
         Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
         Fight fight;
@@ -67,16 +84,7 @@ public class CompleteGroupFightManager {
                 team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
                 continue;
             }
-            // Remaining fights sometimes repeat team. Align them.
-            if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-                fight = createFight(tournament, team2, team1, shiaijo, level, createdBy);
-            } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-                fight = createFight(tournament, team1, team2, shiaijo, level, createdBy);
-            } else if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, shiaijo, level, createdBy);
-            } else {
-                fight = createFight(tournament, team2, team1, shiaijo, level, createdBy);
-            }
+            fight = createOrderedFight(context, team1, team2, lastFight, fights.size());
             fights.add(fight);
             lastFight = fight;
             teamSelector.removeAdversary(team1, team2);
