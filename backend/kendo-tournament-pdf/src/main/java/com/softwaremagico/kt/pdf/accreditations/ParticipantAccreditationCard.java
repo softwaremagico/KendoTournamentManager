@@ -45,6 +45,7 @@ import org.springframework.context.MessageSource;
 
 import java.awt.Color;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.sql.Time;
 import java.util.Locale;
 
@@ -335,7 +336,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         Paragraph p;
         final PdfPCell cell;
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
         final java.sql.Date sqlDate = java.sql.Date.valueOf(now.toLocalDate());
         final Time sqlTime = Time.valueOf(now.toLocalTime().withNano(0));
 

@@ -45,6 +45,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.Collator;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -268,7 +269,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+        return accountExpiration != null && LocalDateTime.now(ZoneId.systemDefault()).isBefore(accountExpiration);
     }
 
     @Override
@@ -278,7 +279,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+        return accountExpiration != null && LocalDateTime.now(ZoneId.systemDefault()).isBefore(accountExpiration);
     }
 
     @Override

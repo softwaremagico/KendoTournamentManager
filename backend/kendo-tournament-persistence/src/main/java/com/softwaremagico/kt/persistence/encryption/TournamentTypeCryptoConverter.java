@@ -46,7 +46,7 @@ public class TournamentTypeCryptoConverter extends AbstractCryptoConverter<Tourn
     protected TournamentType stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : TournamentType.getType(dbData);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException _) {
             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database.", dbData);
             return null;
         }

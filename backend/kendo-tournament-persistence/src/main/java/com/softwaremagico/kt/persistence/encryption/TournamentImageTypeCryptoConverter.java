@@ -47,7 +47,7 @@ public class TournamentImageTypeCryptoConverter extends AbstractCryptoConverter<
     protected TournamentImageType stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : TournamentImageType.getType(dbData);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException _) {
             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database.", dbData);
             return null;
         }

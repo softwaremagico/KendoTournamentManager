@@ -37,6 +37,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -119,14 +120,14 @@ public class TournamentController extends BasicInsertableController<Tournament, 
      */
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
-    public TournamentDTO update(TournamentDTO tournamentDTO, String username, String session) {
-        //If a tournament is locked we can define it as finished (maybe fights are not finished by time).
-        if (tournamentDTO.isLocked() && tournamentDTO.getFinishedAt() == null) {
-            tournamentDTO.setFinishedAt(LocalDateTime.now());
-        }
-        if (tournamentDTO.isLocked() && tournamentDTO.getLockedAt() == null) {
-            tournamentDTO.setLockedAt(LocalDateTime.now());
-        }
+     public TournamentDTO update(TournamentDTO tournamentDTO, String username, String session) {
+         //If a tournament is locked we can define it as finished (maybe fights are not finished by time).
+         if (tournamentDTO.isLocked() && tournamentDTO.getFinishedAt() == null) {
+             tournamentDTO.setFinishedAt(LocalDateTime.now(ZoneId.systemDefault()));
+         }
+         if (tournamentDTO.isLocked() && tournamentDTO.getLockedAt() == null) {
+             tournamentDTO.setLockedAt(LocalDateTime.now(ZoneId.systemDefault()));
+         }
         final Optional<Tournament> previousData = getProvider().get(tournamentDTO.getId());
         try {
             return super.update(tournamentDTO, username, session);

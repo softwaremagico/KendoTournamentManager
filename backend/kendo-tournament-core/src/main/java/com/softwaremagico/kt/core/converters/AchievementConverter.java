@@ -52,21 +52,21 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
     }
 
 
-    @Override
+     @Override
     protected AchievementDTO convertElement(AchievementConverterRequest from) {
         final AchievementDTO achievementDTO = new AchievementDTO();
         BeanUtils.copyProperties(from.getEntity(), achievementDTO);
         try {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | FatalBeanException e) {
+        } catch (LazyInitializationException | FatalBeanException _) {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
             achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
-        } catch (LazyInitializationException | FatalBeanException e) {
+        } catch (LazyInitializationException | FatalBeanException _) {
             achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }

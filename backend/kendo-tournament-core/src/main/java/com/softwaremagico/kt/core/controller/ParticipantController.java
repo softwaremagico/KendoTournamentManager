@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Controller
@@ -76,7 +77,7 @@ public class ParticipantController extends BasicInsertableController<Participant
         final Participant participant = getProvider().findByTemporalToken(temporalToken).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found for the provided token!"));
         try {
-            if (participant.getTemporalTokenExpiration().isBefore(LocalDateTime.now())) {
+            if (participant.getTemporalTokenExpiration().isBefore(LocalDateTime.now(ZoneId.systemDefault()))) {
                 throw new TokenExpiredException(this.getClass(), "Token has expired!");
             }
             final Token token = new Token(getProvider().generateToken(participant));

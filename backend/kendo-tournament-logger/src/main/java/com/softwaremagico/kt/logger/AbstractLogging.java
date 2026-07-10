@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -60,7 +61,7 @@ public abstract class AbstractLogging {
         }
         logMessage.append(") at ");
 
-        logMessage.append(LocalDateTime.now().format(DATE_TIME_FORMATTER));
+        logMessage.append(LocalDateTime.now(ZoneId.systemDefault()).format(DATE_TIME_FORMATTER));
         return logMessage.toString();
     }
 

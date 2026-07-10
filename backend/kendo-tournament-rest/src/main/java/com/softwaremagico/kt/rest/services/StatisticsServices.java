@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -171,7 +172,7 @@ public class StatisticsServices {
         }
         final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(participantController.get(participantId));
         participantStatisticsDTO.setCreatedBy(authentication != null ? authentication.getName() : null);
-        participantStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        participantStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return participantStatisticsDTO;
     }
 

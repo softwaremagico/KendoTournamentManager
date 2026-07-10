@@ -222,10 +222,7 @@ public class AchievementController
             this.participantsFromTournament = new HashMap<>();
         }
         this.participantsFromTournament.computeIfAbsent(tournament,
-                t -> this.participantsFromTournament.get(tournament));
-        if (this.participantsFromTournament.get(tournament) == null) {
-            this.participantsFromTournament.put(tournament, this.participantProvider.get(tournament));
-        }
+                t -> this.participantProvider.get(tournament));
         return this.participantsFromTournament.get(tournament);
     }
 

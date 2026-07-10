@@ -47,7 +47,7 @@ public class TournamentExtraPropertyKeyTypeCryptoConverter extends AbstractCrypt
     protected TournamentExtraPropertyKey stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : TournamentExtraPropertyKey.getType(dbData);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException _) {
             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid role value '{}' in database.", dbData);
             return null;
         }
