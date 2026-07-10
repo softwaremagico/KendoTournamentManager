@@ -55,23 +55,23 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
     protected LocalDateTime stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             try {
                 //Old versions store it as LocalDateTime
                 return LocalDateTime.parse(dbData);
-            } catch (DateTimeParseException _) {
+            } catch (DateTimeParseException ignored2) {
                 try {
                     // From SQL Script with milliseconds
                     return LocalDateTime.parse(dbData, formatterWithMilliseconds);
-                } catch (DateTimeParseException _) {
+                } catch (DateTimeParseException ignored3) {
                     try {
                         // try without milliseconds
                         return LocalDateTime.parse(dbData, formatter);
-                    } catch (DateTimeParseException _) {
+                    } catch (DateTimeParseException ignored4) {
                         try {
                             //Try with offset.
                             return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
-                        } catch (DateTimeParseException _) {
+                        } catch (DateTimeParseException ignored5) {
                             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
                             return null;
                         }

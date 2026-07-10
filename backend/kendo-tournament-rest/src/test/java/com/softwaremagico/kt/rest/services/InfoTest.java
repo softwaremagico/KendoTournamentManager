@@ -22,56 +22,55 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.VersionController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 
 @Test(groups = "restServicesUnit")
 public class InfoTest {
 
-    @Mock
-    private VersionController versionController;
+	@Mock
+	private VersionController versionController;
 
-    private Info info;
+	private Info info;
+	private HttpServletRequest httpServletRequest;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        info = new Info(versionController);
-    }
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+		this.info = new Info(this.versionController);
+		this.httpServletRequest = mock(HttpServletRequest.class);
+	}
 
-    @Test
-    public void shouldReturnLatestVersionAndUseCachedValue() throws Exception {
-        when(versionController.getLatestVersionFromGithub()).thenReturn("3.3.0");
+	@Test
+	public void shouldReturnLatestVersionAndUseCachedValue() throws Exception {
+		when(this.versionController.getLatestVersionFromGithub()).thenReturn("3.3.0");
 
-        final ResponseEntity<String> firstResponse = info.getLatestVersion(null);
-        final ResponseEntity<String> secondResponse = info.getLatestVersion(null);
+		final ResponseEntity<String> firstResponse = this.info.getLatestVersion(this.httpServletRequest);
+		final ResponseEntity<String> secondResponse = this.info.getLatestVersion(this.httpServletRequest);
 
-        assertEquals(firstResponse.getBody(), "3.3.0");
-        assertEquals(secondResponse.getBody(), "3.3.0");
-        verify(versionController, times(1)).getLatestVersionFromGithub();
-    }
+		assertEquals(firstResponse.getBody(), "3.3.0");
+		assertEquals(secondResponse.getBody(), "3.3.0");
+		verify(this.versionController, times(1)).getLatestVersionFromGithub();
+	}
 
-    @Test
-    public void shouldReturnEmptyOnVersionLookupError() throws Exception {
-        when(versionController.getLatestVersionFromGithub()).thenThrow(new IllegalStateException("boom"));
+	@Test
+	public void shouldReturnEmptyOnVersionLookupError() throws Exception {
+		when(this.versionController.getLatestVersionFromGithub()).thenThrow(new IllegalStateException("boom"));
 
-        final ResponseEntity<String> response = info.getLatestVersion(null);
+		final ResponseEntity<String> response = this.info.getLatestVersion(this.httpServletRequest);
 
-        assertEquals(response.getBody(), "");
-    }
+		assertEquals(response.getBody(), "");
+	}
 
-    @Test
-    public void shouldExecuteHealthCheck() throws Exception {
-        info.healthCheck(null);
-    }
+	@Test
+	public void shouldExecuteHealthCheck() throws Exception {
+		this.info.healthCheck(null);
+	}
 }
-
-

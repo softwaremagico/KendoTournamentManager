@@ -59,14 +59,14 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
         try {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | FatalBeanException _) {
+        } catch (LazyInitializationException | FatalBeanException ignored) {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
             achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
-        } catch (LazyInitializationException | FatalBeanException _) {
+        } catch (LazyInitializationException | FatalBeanException ignored) {
             achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }

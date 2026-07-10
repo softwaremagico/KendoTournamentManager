@@ -45,7 +45,7 @@ public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> imple
     protected Double stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Double.parseDouble(dbData);
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid double value '{}' in database.", dbData);
             return null;
         }

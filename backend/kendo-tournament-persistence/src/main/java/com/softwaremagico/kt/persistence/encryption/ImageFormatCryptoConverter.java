@@ -46,7 +46,7 @@ public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFor
     protected ImageFormat stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : ImageFormat.getFormat(dbData);
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database.", dbData);
             return null;
         }

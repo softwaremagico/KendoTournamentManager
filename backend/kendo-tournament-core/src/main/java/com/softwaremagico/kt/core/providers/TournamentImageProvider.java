@@ -90,7 +90,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultBanner = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException _) {
+            } catch (NullPointerException | IOException ignored) {
                 KendoTournamentLogger.severe(TournamentImageProvider.class.getName(), "No default banner found!");
             }
         }
@@ -103,7 +103,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultAccreditation = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException _) {
+            } catch (NullPointerException | IOException ignored) {
                 KendoTournamentLogger.severe(TournamentImageController.class.getName(),
                         "No default accreditation found!");
             }
@@ -117,7 +117,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultDiploma = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException _) {
+            } catch (NullPointerException | IOException ignored) {
                 KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
             }
         }
@@ -130,7 +130,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                 if (inputStream != null) {
                     this.defaultPhoto = inputStream.readAllBytes();
                 }
-            } catch (NullPointerException | IOException _) {
+            } catch (NullPointerException | IOException ignored) {
                 KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
             }
         }
@@ -169,7 +169,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
             tournamentImage.setImageCompression(imageCompression);
             this.tournamentRepository.save(tournament);
             return this.save(tournamentImage);
-        } catch (IOException _) {
+        } catch (IOException ignored) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
     }

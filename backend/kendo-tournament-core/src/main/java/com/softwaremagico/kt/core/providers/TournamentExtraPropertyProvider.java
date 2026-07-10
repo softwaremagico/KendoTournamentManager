@@ -130,7 +130,7 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
                             groupRepository.save(group);
                         }
                     }
-                } catch (Exception _) {
+                } catch (Exception ignored) {
                     //Property ignored.
                 }
             }).start();

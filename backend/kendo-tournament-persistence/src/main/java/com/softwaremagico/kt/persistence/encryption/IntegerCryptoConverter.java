@@ -45,7 +45,7 @@ public class IntegerCryptoConverter extends AbstractCryptoConverter<Integer> imp
     protected Integer stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Integer.parseInt(dbData);
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid integer value '{}' in database.", dbData);
             return null;
         }

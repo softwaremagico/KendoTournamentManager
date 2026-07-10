@@ -92,7 +92,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (numberOfWinnersProperty != null) {
             try {
                 return Integer.parseInt(numberOfWinnersProperty.getPropertyValue());
-            } catch (Exception _) {
+            } catch (Exception ignored) {
                 // Ignored.
             }
         }
@@ -106,7 +106,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (maximizeFightsProperty != null) {
             try {
                 return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
-            } catch (Exception _) {
+            } catch (Exception ignored) {
                 // Ignored.
             }
         }

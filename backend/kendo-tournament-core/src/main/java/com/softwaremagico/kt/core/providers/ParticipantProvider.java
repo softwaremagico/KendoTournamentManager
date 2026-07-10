@@ -137,7 +137,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
             try {
                 return getRepository().findById(Integer.parseInt(fields[0]));
-            } catch (NumberFormatException _) {
+            } catch (NumberFormatException ignored) {
                 //Ignored exception.
             }
         }

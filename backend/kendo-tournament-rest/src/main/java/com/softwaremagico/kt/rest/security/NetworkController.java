@@ -56,7 +56,7 @@ public class NetworkController {
                 hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
             }
             return String.join("-", hexadecimal);
-        } catch (Exception _) {
+        } catch (Exception ignored) {
             //Ignored.
         }
         return "";

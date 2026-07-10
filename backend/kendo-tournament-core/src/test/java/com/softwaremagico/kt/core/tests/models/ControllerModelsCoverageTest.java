@@ -86,7 +86,7 @@ public class ControllerModelsCoverageTest {
                 if (writeMethod != null && Modifier.isPublic(writeMethod.getModifiers())) {
                     try {
                         writeMethod.invoke(instance, sampleValue(writeMethod.getParameterTypes()[0]));
-                    } catch (Exception _) {
+                    } catch (Exception ignored) {
                         // Some DTO setters validate values or require richer state.
                     }
                 }
@@ -94,7 +94,7 @@ public class ControllerModelsCoverageTest {
                 if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
                     try {
                         readMethod.invoke(instance);
-                    } catch (Exception _) {
+                    } catch (Exception ignored) {
                         // Some DTO getters compute values from optional internals.
                     }
                 }
@@ -102,13 +102,13 @@ public class ControllerModelsCoverageTest {
 
             try {
                 instance.hashCode();
-            } catch (Exception _) {
+            } catch (Exception ignored) {
                 // Some DTOs derive hashCode from optional nested content.
             }
             instance.equals(instance);
             try {
                 instance.toString();
-            } catch (Exception _) {
+            } catch (Exception ignored) {
                 // Some DTOs derive toString from optional nested content.
             }
         }
@@ -120,7 +120,7 @@ public class ControllerModelsCoverageTest {
                 constructor.setAccessible(true);
                 try {
                     return constructor.newInstance();
-                } catch (InstantiationException _) {
+                } catch (InstantiationException ignored) {
                     return null;
                 }
             }

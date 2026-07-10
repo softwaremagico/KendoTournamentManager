@@ -70,11 +70,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.Instant;
+import java.security.SecureRandom;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 @RestController
@@ -92,7 +92,7 @@ public class AuthApi {
 
     private final TournamentProvider tournamentProvider;
 
-    private final Random random = new Random();
+    private final SecureRandom random = new SecureRandom();
 
     private final boolean guestEnabled;
 
@@ -127,51 +127,19 @@ public class AuthApi {
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
+        if (bruteForceService.isBlocked(ip)) {
+            return getLockedResponse(ip);
+        }
         try {
-            //Check if the IP is blocked.
-            if (bruteForceService.isBlocked(ip)) {
-                try {
-                    Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                    final HttpHeaders headers = new HttpHeaders();
-                    headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
-                            + bruteForceService.getExpirationTime()));
-                    return new ResponseEntity<>(headers, HttpStatus.LOCKED);
-                } catch (InterruptedException e) {
-                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                    try {
-                        final HttpHeaders headers = new HttpHeaders();
-                        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
-                                + bruteForceService.getExpirationTime()));
-                        return new ResponseEntity<>(headers, HttpStatus.LOCKED);
-                    } finally {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
             //We verify the provided credentials using the authentication manager
             RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
             final Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
-            try {
-                final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
-                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
-                bruteForceService.loginSucceeded(ip);
-
-                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
-                return ResponseEntity.ok()
-                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
-                        .body(user);
-            } catch (UsernameNotFoundException e) {
-                RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
+            return getAuthenticatedLoginResponse(authenticate, ip);
         } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
             //Create a default user if no user exists. Needed when database is encrypted.
             if (authenticatedUserController.countUsers() == 0) {
                 RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
@@ -201,31 +169,58 @@ public class AuthApi {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
-            try {
-                final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
-                        .orElseThrow(() -> new GuestDisabledException(this.getClass(),
-                                String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
-                final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
+            final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
+                    .orElseThrow(() -> new GuestDisabledException(this.getClass(),
+                            String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
+            final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
+            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
 
-                //Guest user can only access to non-locked tournaments.
-                final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
-                        new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+            //Guest user can only access to non-locked tournaments.
+            final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
+                    new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
 
-                if (tournament.isLocked()) {
-                    throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
-                }
-
-                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
-                return ResponseEntity.ok()
-                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
-                        .body(user);
-            } catch (UsernameNotFoundException e) {
-                RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            if (tournament.isLocked()) {
+                throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
             }
+
+            //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+            return ResponseEntity.ok()
+                    .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                    .body(user);
         } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    private ResponseEntity<IAuthenticatedUser> getLockedResponse(String ip) {
+        try {
+            Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+        } catch (InterruptedException ex) {
+            RestServerLogger.warning(this.getClass().getName(), "Interrupted wait while delaying locked response for '{}' ({}).", ip,
+                    ex.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '{}' .", ip);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip) + bruteForceService.getExpirationTime()));
+        return new ResponseEntity<>(headers, HttpStatus.LOCKED);
+    }
+
+    private ResponseEntity<IAuthenticatedUser> getAuthenticatedLoginResponse(Authentication authenticate, String ip) {
+        try {
+            final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
+                    new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
+            final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
+            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
+            bruteForceService.loginSucceeded(ip);
+
+            //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+            return ResponseEntity.ok()
+                    .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                    .body(user);
+        } catch (UsernameNotFoundException ex) {
+            RestServerLogger.warning(this.getClass().getName(), "Bad credentials ({}) .", ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -252,6 +247,9 @@ public class AuthApi {
     @Operation(summary = "Gets all users.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<AuthenticatedUser> getAll(HttpServletRequest httpRequest) {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "Listing users requested from '{}'.", getClientIP(httpRequest));
+        }
         return authenticatedUserController.findAll();
     }
 
@@ -260,6 +258,9 @@ public class AuthApi {
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "User register requested from '{}'.", getClientIP(httpRequest));
+        }
         return authenticatedUserController.createUser(authentication.getName(), request);
     }
 
@@ -267,6 +268,9 @@ public class AuthApi {
     @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "User update requested from '{}'.", getClientIP(httpRequest));
+        }
         return authenticatedUserController.updateUser(authentication.getName(), request);
     }
 
@@ -275,6 +279,9 @@ public class AuthApi {
     @DeleteMapping(path = "/register/{username}")
     public void delete(@Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
                        Authentication authentication, HttpServletRequest httpRequest) {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "User delete requested from '{}'.", getClientIP(httpRequest));
+        }
         if (Objects.equals(authentication.getName(), username)) {
             throw new InvalidRequestException(this.getClass(), "You cannot delete the current user!");
         }
@@ -295,6 +302,9 @@ public class AuthApi {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "Password update requested from '{}'.", getClientIP(httpRequest));
+        }
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword(), authentication.getName());
     }
@@ -308,6 +318,9 @@ public class AuthApi {
                                    @PathVariable("username") String username,
                                    @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "Admin password update requested from '{}'.", getClientIP(httpRequest));
+        }
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
             authenticatedUserController.updatePassword(authentication.getName(), username, request.getNewPassword(), request.getNewPassword());
@@ -322,6 +335,9 @@ public class AuthApi {
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public Set<String> getRoles(Authentication authentication, HttpServletRequest httpRequest) {
+        if (httpRequest != null) {
+            RestServerLogger.debug(this.getClass().getName(), "Roles requested from '{}'.", getClientIP(httpRequest));
+        }
         return authenticatedUserController.getRoles(authentication.getName());
     }
 
@@ -337,7 +353,7 @@ public class AuthApi {
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
         JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),
-                new Date(jwtExpiration));
+                Instant.ofEpochMilli(jwtExpiration));
         final String accessToken = jwtTokenUtil.generateAccessToken(user, ip);
         final String session = jwtTokenUtil.getSession(accessToken);
         return ResponseEntity.ok()

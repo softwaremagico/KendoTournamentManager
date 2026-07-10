@@ -88,7 +88,7 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         int tournamentWinners;
         try {
             tournamentWinners = Integer.parseInt(numberOfWinners.getPropertyValue());
-        } catch (Exception _) {
+        } catch (Exception ignored) {
             tournamentWinners = 1;
         }
         final List<Group> groups = groupProvider.getGroups(tournament).stream().sorted(Comparator.comparing(Group::getLevel)
@@ -133,37 +133,45 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         final List<Group> currentLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel())).toList();
         final List<Group> nextLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel() + 1)).toList();
         try {
-            final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
-                    .getByTournamentAndProperty(sourceGroup.getTournament(),
-                            TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
-            if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
-                    //If it has the same number of groups, can be use the standard way.
-                    && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size())) {
-                final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(),
-                        numberOfWinners, winnerOrder);
-                //Special case, use federation templates.
-                if (templateDestination >= 0) {
-                    return nextLevelGroups.get(templateDestination);
-                }
-                if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
-                    return nextLevelGroups.get(spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
-                            currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
-                } else {
-                    if (currentLevelGroups.size() % 2 == 0) {
-                        return nextLevelGroups.get(spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
-                                currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
-                    } else {
-                        return nextLevelGroups.get(obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroup.getIndex(),
-                                currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
-                    }
-                }
-            } else {
-                return nextLevelGroups.get(obtainPositionOfWinnerAsBinaryTree(groups, sourceGroup.getIndex(),
-                        currentLevelGroups.size(), numberOfWinners, winnerOrder, sourceGroup.getLevel()));
-            }
-        } catch (IndexOutOfBoundsException _) {
+            return resolveDestination(sourceGroup, numberOfWinners, winnerOrder, groups, currentLevelGroups, nextLevelGroups);
+        } catch (IndexOutOfBoundsException ignored) {
             return null;
         }
+    }
+
+    private Group resolveDestination(Group sourceGroup, int numberOfWinners, int winnerOrder, List<Group> groups,
+                                     List<Group> currentLevelGroups, List<Group> nextLevelGroups) {
+        if (useOddTreeResolution(sourceGroup, currentLevelGroups, nextLevelGroups)) {
+            return resolveOddTreeDestination(sourceGroup, numberOfWinners, winnerOrder, currentLevelGroups, nextLevelGroups);
+        }
+        return nextLevelGroups.get(obtainPositionOfWinnerAsBinaryTree(groups, sourceGroup.getIndex(), currentLevelGroups.size(),
+                numberOfWinners, winnerOrder, sourceGroup.getLevel()));
+    }
+
+    private boolean useOddTreeResolution(Group sourceGroup, List<Group> currentLevelGroups, List<Group> nextLevelGroups) {
+        final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
+                .getByTournamentAndProperty(sourceGroup.getTournament(), TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP,
+                        DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
+        return Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
+                //If it has the same number of groups, can be use the standard way.
+                && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size());
+    }
+
+    private Group resolveOddTreeDestination(Group sourceGroup, int numberOfWinners, int winnerOrder,
+                                            List<Group> currentLevelGroups, List<Group> nextLevelGroups) {
+        final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(), numberOfWinners,
+                winnerOrder);
+        if (templateDestination >= 0) {
+            return nextLevelGroups.get(templateDestination);
+        }
+        final int destinationIndex = currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1
+                && currentLevelGroups.size() % 2 == 1
+                ? spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(), currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder)
+                : currentLevelGroups.size() % 2 == 0
+                        ? spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(), currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder)
+                        : obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroup.getIndex(), currentLevelGroups.size(), nextLevelGroups.size(),
+                                winnerOrder);
+        return nextLevelGroups.get(destinationIndex);
     }
 
 

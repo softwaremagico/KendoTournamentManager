@@ -343,7 +343,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         try {
             p = new Paragraph(tournament.getName() + " (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
-        } catch (NullPointerException _) {
+        } catch (NullPointerException ignored) {
             p = new Paragraph("Accreditation Card (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
         }
