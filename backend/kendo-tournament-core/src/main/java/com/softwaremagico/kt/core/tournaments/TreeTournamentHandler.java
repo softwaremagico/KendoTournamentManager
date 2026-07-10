@@ -34,9 +34,13 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
@@ -385,10 +389,61 @@ public class TreeTournamentHandler extends LeagueHandler {
             final int winner = i;
             final List<ScoreOfTeam> sameLevelScore = scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == winner).toList();
             if (sameLevelScore.size() > 1) {
+                createCriticalUntieIfRequired(group, sameLevelScore);
                 KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.", sameLevelScore.stream().map(ScoreOfTeam::getTeam).toList());
                 throw new LevelNotFinishedException(this.getClass(), "There is a draw value on winner '" + winner + "' on group '" + group + "'");
             }
         }
+    }
+
+    private void createCriticalUntieIfRequired(Group group, List<ScoreOfTeam> tiedScores) {
+        if (tiedScores.size() != 2) {
+            return;
+        }
+        if (group.getUnties() == null) {
+            group.setUnties(new ArrayList<>());
+        }
+
+        final Team firstTeam = tiedScores.get(0).getTeam();
+        final Team secondTeam = tiedScores.get(1).getTeam();
+        if (firstTeam == null || secondTeam == null || hasPendingCriticalUntie(group, firstTeam, secondTeam)) {
+            return;
+        }
+
+        final Participant firstCompetitor = getRepresentativeCompetitor(firstTeam);
+        final Participant secondCompetitor = getRepresentativeCompetitor(secondTeam);
+        if (firstCompetitor == null || secondCompetitor == null) {
+            return;
+        }
+
+        final Duel untie = new Duel(firstCompetitor, secondCompetitor, group.getTournament(), "system");
+        untie.setType(DuelType.UNDRAW);
+        group.getUnties().add(untie);
+        groupProvider.save(group);
+    }
+
+    private boolean hasPendingCriticalUntie(Group group, Team firstTeam, Team secondTeam) {
+        return group.getUnties().stream()
+                .filter(duel -> duel.getType() == DuelType.UNDRAW)
+                .anyMatch(duel -> !duel.isFinished() && isDuelBetweenTeams(duel, firstTeam, secondTeam));
+    }
+
+    private boolean isDuelBetweenTeams(Duel duel, Team firstTeam, Team secondTeam) {
+        return isCompetitorFromTeam(duel.getCompetitor1(), firstTeam)
+                && isCompetitorFromTeam(duel.getCompetitor2(), secondTeam)
+                || isCompetitorFromTeam(duel.getCompetitor1(), secondTeam)
+                && isCompetitorFromTeam(duel.getCompetitor2(), firstTeam);
+    }
+
+    private boolean isCompetitorFromTeam(Participant competitor, Team team) {
+        return competitor != null && team.getMembers() != null && team.getMembers().contains(competitor);
+    }
+
+    private Participant getRepresentativeCompetitor(Team team) {
+        if (team.getMembers() == null || team.getMembers().isEmpty()) {
+            return null;
+        }
+        return team.getMembers().getFirst();
     }
 
 

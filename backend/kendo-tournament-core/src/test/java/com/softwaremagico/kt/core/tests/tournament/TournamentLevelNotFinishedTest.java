@@ -31,6 +31,7 @@ import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
@@ -46,6 +47,7 @@ import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -253,6 +255,29 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
     @Test(dependsOnMethods = {"solveFights"}, expectedExceptions = LevelNotFinishedException.class)
     public void populateLevel1() {
         treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
+    }
+
+    @Test(dependsOnMethods = {"populateLevel1"})
+    public void shouldCreateCriticalUntieFightWhenDrawBlocksNextLevel() {
+        final Group drawGroup = groupController.getGroups(tournamentDTO, 0).get(3);
+        Assert.assertEquals(drawGroup.getUnties().size(), 1);
+        Assert.assertEquals(drawGroup.getUnties().getFirst().getType(), DuelType.UNDRAW);
+    }
+
+    @Test(dependsOnMethods = {"shouldCreateCriticalUntieFightWhenDrawBlocksNextLevel"})
+    public void shouldResolveCriticalUntieAndRemoveDraw() {
+        final Group drawGroup = groupController.getGroups(tournamentDTO, 0).get(3);
+        final DuelDTO untie = duelController.getUntiesFromGroup(drawGroup.getId()).getFirst();
+        untie.addCompetitor1Score(Score.MEN);
+        untie.addCompetitor1Score(Score.MEN);
+        untie.setFinished(true);
+        duelController.update(untie, null, null);
+
+        final Group updatedGroup = groupController.getGroups(tournamentDTO, 0).get(3);
+        Assert.assertTrue(rankingProvider.getFirstTeamsWithDrawScore(updatedGroup, updatedGroup.getNumberOfWinners()).isEmpty());
+
+        final List<Fight> nextLevelFights = treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
+        Assert.assertFalse(nextLevelFights.isEmpty());
     }
 
     @AfterClass(alwaysRun = true)
