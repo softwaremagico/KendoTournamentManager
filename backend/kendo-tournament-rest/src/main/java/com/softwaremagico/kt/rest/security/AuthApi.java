@@ -82,6 +82,7 @@ import java.util.Set;
 public class AuthApi {
     private static final int MAX_WAITING_SECONDS = 10;
     private static final long MILLIS = 1000L;
+    private static final String USER_NOT_FOUND_MESSAGE = "User '%s' not found!";
     public static final String SESSION_HEADER = "X-Session";
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
@@ -171,7 +172,7 @@ public class AuthApi {
         try {
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                     .orElseThrow(() -> new GuestDisabledException(this.getClass(),
-                            String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
+                            String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));
             final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
             final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
 
@@ -210,7 +211,7 @@ public class AuthApi {
     private ResponseEntity<IAuthenticatedUser> getAuthenticatedLoginResponse(Authentication authenticate, String ip) {
         try {
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
-                    new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
+                    new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, authenticate.getName())));
             final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
             final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
             bruteForceService.loginSucceeded(ip);
@@ -349,7 +350,7 @@ public class AuthApi {
     public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest,
                                           @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
-                new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
+                new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
         JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),

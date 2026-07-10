@@ -126,7 +126,7 @@ public class StatisticsServices {
                                                                HttpServletRequest request) {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentController.get(tournamentId));
         tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return tournamentStatisticsDTO;
     }
 
@@ -148,7 +148,7 @@ public class StatisticsServices {
         tournamentsDTO.forEach(tournamentDTO -> {
             final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentDTO);
             tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
             statisticsDTOS.add(tournamentStatisticsDTO);
         });
         return statisticsDTOS;

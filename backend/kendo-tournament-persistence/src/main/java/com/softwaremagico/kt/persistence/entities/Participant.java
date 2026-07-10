@@ -202,7 +202,14 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-        return collator.compare(string1, string2);
+        final int comparison = collator.compare(string1, string2);
+        if (comparison != 0) {
+            return comparison;
+        }
+        if (this.getId() != null && otherParticipant.getId() != null) {
+            return this.getId().compareTo(otherParticipant.getId());
+        }
+        return Integer.compare(System.identityHashCode(this), System.identityHashCode(otherParticipant));
     }
 
     public String getToken() {
@@ -239,12 +246,12 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     public void generateTemporalToken() {
         setTemporalToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setTemporalTokenExpiration(LocalDateTime.now().plusSeconds(TEMPORARY_TOKEN_DURATION));
+        setTemporalTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(TEMPORARY_TOKEN_DURATION));
     }
 
     public void generateToken() {
         setToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setAccountExpiration(LocalDateTime.now().plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
+        setAccountExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
     }
 
     @Override

@@ -41,6 +41,9 @@ import java.util.Collection;
  */
 @Component
 public class KendoUserDetailsService implements UserDetailsService {
+    private static final String USER_NOT_FOUND_MESSAGE = "User '%s' not found!";
+    private static final String USER_WITH_USERNAME_PREFIX = "User with username '";
+    private static final String NOT_REGISTERED_USER_SUFFIX = "' is not a registered user";
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -51,10 +54,10 @@ public class KendoUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException(String.format("User '%s' not found!", username)));
+                new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, username)));
 
         if (user instanceof Participant) {
-            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+            throw new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + NOT_REGISTERED_USER_SUFFIX);
         }
 
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
