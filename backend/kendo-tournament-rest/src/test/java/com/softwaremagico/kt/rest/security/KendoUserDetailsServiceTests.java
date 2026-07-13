@@ -71,8 +71,10 @@ public class KendoUserDetailsServiceTests {
     @Test(expectedExceptions = UsernameNotFoundException.class)
     public void shouldThrowWhenUserDoesNotExist() {
         when(authenticatedUserProvider.findByUsername("missing")).thenReturn(Optional.empty());
-
-        kendoUserDetailsService.loadUserByUsername("missing");
+        try {
+            kendoUserDetailsService.loadUserByUsername("missing");
+        } finally {
+        }
     }
 
     @Test(expectedExceptions = UserNotFoundException.class)
@@ -82,8 +84,10 @@ public class KendoUserDetailsServiceTests {
         participant.setLastname("p-lastname");
 
         when(authenticatedUserProvider.findByUsername("participant")).thenReturn(Optional.of(participant));
-
-        kendoUserDetailsService.loadUserByUsername("participant");
+        try {
+            kendoUserDetailsService.loadUserByUsername("participant");
+        } finally {
+        }
     }
 
     @Test

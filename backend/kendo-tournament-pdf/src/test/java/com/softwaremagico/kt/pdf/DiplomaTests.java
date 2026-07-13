@@ -68,7 +68,10 @@ public class DiplomaTests extends BasicDataTest {
 
     @Test(dependsOnMethods = "generateDiplomas", expectedExceptions = NoContentException.class)
     public void generateNewDiplomas() {
-        pdfController.generateTournamentDiplomas(tournament, true, null, null);
+        try {
+            pdfController.generateTournamentDiplomas(tournament, true, null, null);
+        } finally {
+        }
     }
 
     @Test(dependsOnMethods = "generateNewDiplomas")

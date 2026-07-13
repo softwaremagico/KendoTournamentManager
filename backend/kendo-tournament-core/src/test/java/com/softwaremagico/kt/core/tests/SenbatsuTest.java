@@ -209,7 +209,10 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(4))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team05");
-        fightController.create(fight, null, null);
+        try {
+            fightController.create(fight, null, null);
+        } finally {
+        }
     }
 
     @Test(dependsOnMethods = {"addTeams"}, expectedExceptions = InvalidFightException.class)
@@ -222,7 +225,10 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(4))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team02");
         Assert.assertEquals(fight.getTeam2().getName(), "Team05");
-        fightController.create(fight, null, null);
+        try {
+            fightController.create(fight, null, null);
+        } finally {
+        }
     }
 
 

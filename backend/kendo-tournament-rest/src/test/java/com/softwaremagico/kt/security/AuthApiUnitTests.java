@@ -79,7 +79,10 @@ public class AuthApiUnitTests {
 		final AuthGuestRequest request = new AuthGuestRequest();
 		request.setTournamentId(1);
 
-		authApi.loginAsGuest(request, mock(HttpServletRequest.class));
+		try {
+			authApi.loginAsGuest(request, mock(HttpServletRequest.class));
+		} finally {
+		}
 	}
 
 	@Test
@@ -107,7 +110,10 @@ public class AuthApiUnitTests {
 		final Authentication authentication = mock(Authentication.class);
 		when(authentication.getName()).thenReturn("same-user");
 
-		authApi.delete("same-user", authentication, mock(HttpServletRequest.class));
+		try {
+			authApi.delete("same-user", authentication, mock(HttpServletRequest.class));
+		} finally {
+		}
 	}
 
 	@Test
@@ -151,6 +157,9 @@ public class AuthApiUnitTests {
 		when(request.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
-		authApi.getNewJWT(authentication, request, "old-token");
+		try {
+			authApi.getNewJWT(authentication, request, "old-token");
+		} finally {
+		}
 	}
 }

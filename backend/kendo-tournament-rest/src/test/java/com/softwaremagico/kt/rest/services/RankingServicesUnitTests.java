@@ -128,8 +128,13 @@ public class RankingServicesUnitTests {
         when(pdfController.generateCompetitorsScoreList(any(Locale.class), eq(null), any())).thenReturn(competitorsScoreList);
         when(competitorsScoreList.generate()).thenThrow(new InvalidXmlElementException("invalid"));
 
-        rankingServices.getCompetitorsGlobalScoreRankingAsPdf(Optional.empty(), Set.of(), Locale.ENGLISH,
-                mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        try {
+            rankingServices.getCompetitorsGlobalScoreRankingAsPdf(Optional.empty(), Set.of(), Locale.ENGLISH,
+                    mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test
@@ -186,8 +191,10 @@ public class RankingServicesUnitTests {
         when(pdfController.generateCompetitorsScoreList(any(Locale.class), eq(null), any())).thenReturn(competitorsScoreList);
         when(competitorsScoreList.generate()).thenThrow(new EmptyPdfBodyException("empty"));
 
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         expectThrows(BadRequestException.class, () -> rankingServices.getCompetitorsGlobalScoreRankingAsPdf(Optional.empty(), Set.of(), Locale.ENGLISH,
                 mock(HttpServletResponse.class), mock(HttpServletRequest.class)));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test

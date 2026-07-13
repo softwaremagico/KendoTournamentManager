@@ -102,16 +102,28 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     });
   }
 
-  private translateDuration() {
-    for (let number of this.TOURNAMENT_ALLOWED_DURATION) {
-      this.translatedDuration.push({
-        value: number, label: this.getMinutes(number) + " " + this.transloco.translate('minutes') + " "
-          + this.getSeconds(number) + " " + this.transloco.translate('seconds')
-      });
-    }
-  }
+   private translateDuration() {
+     for (let number of this.TOURNAMENT_ALLOWED_DURATION) {
+       this.translatedDuration.push({
+         value: number, label: this.getMinutes(number) + " " + this.transloco.translate('minutes') + " "
+           + this.getSeconds(number) + " " + this.transloco.translate('seconds')
+       });
+     }
+   }
 
-  private isTournamentStarted(): void {
+   /**
+    * Get available score types for the current tournament type.
+    * For Swiss tournaments, only CUSTOM score type is allowed.
+    * For other tournaments, all score types are available.
+    */
+   protected getAvailableScores(): { value: string, label: string, description: string }[] {
+     if (this.tournament?.type === TournamentType.SWISS) {
+       return this.translatedScores.filter(score => score.value === ScoreType.CUSTOM);
+     }
+     return this.translatedScores;
+   }
+
+   private isTournamentStarted(): void {
     if (this.tournament.id) {
       this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
         this.tournamentWithTeams = _fights.length > 0;
@@ -129,23 +141,27 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     return time % 60;
   }
 
-  protected validate(): boolean {
-    this.errors = new Map<TournamentFormValidationFields, string>();
-    let verdict: boolean = true;
-    if (!this.tournament.name || this.tournament.name.length == 0) {
-      verdict = false;
-      this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    } else {
-      if (this.tournament.name && this.tournament.name.length < this.TOURNAMENT_NAME_MIN_LENGTH) {
-        verdict = false;
-        this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
-      }
-      if (this.tournament.name && this.tournament.name.length > this.TOURNAMENT_NAME_MAX_LENGTH) {
-        verdict = false;
-        this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
-      }
-    }
-    if (this.tournament!.shiaijos! > this.TOURNAMENT_MAX_SHIAIJO) {
+   protected validate(): boolean {
+     this.errors = new Map<TournamentFormValidationFields, string>();
+     let verdict: boolean = true;
+     if (!this.tournament.name || this.tournament.name.length == 0) {
+       verdict = false;
+       this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
+     } else {
+       if (this.tournament.name && this.tournament.name.length < this.TOURNAMENT_NAME_MIN_LENGTH) {
+         verdict = false;
+         this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
+       }
+       if (this.tournament.name && this.tournament.name.length > this.TOURNAMENT_NAME_MAX_LENGTH) {
+         verdict = false;
+         this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
+       }
+     }
+     // Swiss tournaments must use CUSTOM score type
+     if (this.tournament.type === TournamentType.SWISS && this.tournament.tournamentScore?.scoreType !== ScoreType.CUSTOM) {
+       this.tournament.tournamentScore.scoreType = ScoreType.CUSTOM;
+     }
+     if (this.tournament!.shiaijos! > this.TOURNAMENT_MAX_SHIAIJO) {
       verdict = false;
       this.errors.set(TournamentFormValidationFields.SHIAIJO_ERRORS, this.transloco.translate(`v.maxLengthError`));
     }

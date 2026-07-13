@@ -69,7 +69,10 @@ public class AccreditationTests extends BasicDataTest {
 
     @Test(dependsOnMethods = "generateAccreditations", expectedExceptions = NoContentException.class)
     public void generateNewAccreditations() {
-        pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null, null);
+        try {
+            pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null, null);
+        } finally {
+        }
     }
 
     @Test(dependsOnMethods = "generateNewAccreditations")

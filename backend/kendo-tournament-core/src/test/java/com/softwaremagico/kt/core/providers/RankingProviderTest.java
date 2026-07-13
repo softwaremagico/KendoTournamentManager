@@ -60,9 +60,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Test(groups = {"rankingProviderTests"})
 public class RankingProviderTest {
@@ -797,34 +795,28 @@ public class RankingProviderTest {
 
 	@Test
 	public void testGetSwissTieBreakOrderMatchesConfiguredFallbackChain() {
-		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.BUCHHOLZ))
-				.containsExactly(SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
-						SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
-						SwissTieBreakRule.POINT_DIFFERENTIAL);
-		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.MEDIAN_BUCHHOLZ))
-				.containsExactly(SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.BUCHHOLZ,
-						SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
-						SwissTieBreakRule.POINT_DIFFERENTIAL);
-		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.SONNEBORN_BERGER))
-				.containsExactly(SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.BUCHHOLZ,
-						SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.DIRECT_ENCOUNTER,
-						SwissTieBreakRule.POINT_DIFFERENTIAL);
-		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.DIRECT_ENCOUNTER))
-				.containsExactly(SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.BUCHHOLZ,
-						SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
-						SwissTieBreakRule.POINT_DIFFERENTIAL);
-		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.POINT_DIFFERENTIAL))
-				.containsExactly(SwissTieBreakRule.POINT_DIFFERENTIAL, SwissTieBreakRule.BUCHHOLZ,
-						SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
-						SwissTieBreakRule.DIRECT_ENCOUNTER);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.BUCHHOLZ)).containsExactly(
+				SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.MEDIAN_BUCHHOLZ)).containsExactly(
+				SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.SONNEBORN_BERGER)).containsExactly(
+				SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.DIRECT_ENCOUNTER)).containsExactly(
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.POINT_DIFFERENTIAL)).containsExactly(
+				SwissTieBreakRule.POINT_DIFFERENTIAL, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER);
 	}
 
 	@Test
 	public void testGetSwissTieBreakOrderUsesBuchholzChainWhenSelectionIsNull() {
-		assertThat(RankingProvider.getSwissTieBreakOrder(null))
-				.containsExactly(SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
-						SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
-						SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(null)).containsExactly(SwissTieBreakRule.BUCHHOLZ,
+				SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
 	}
 
 	@Test
@@ -847,8 +839,8 @@ public class RankingProviderTest {
 						SwissTieBreakRule.BUCHHOLZ.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
-		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakRuleUsed())
-				.isEqualTo(SwissTieBreakRule.BUCHHOLZ));
+		assertThat(ranking).allSatisfy(
+				score -> assertThat(score.getSwissTieBreakRuleUsed()).isEqualTo(SwissTieBreakRule.BUCHHOLZ));
 		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
@@ -901,8 +893,8 @@ public class RankingProviderTest {
 						"NOT_VALID"));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
-		assertThat(ranking).allSatisfy(score -> assertThat(score.getSwissTieBreakRuleUsed())
-				.isEqualTo(SwissTieBreakRule.BUCHHOLZ));
+		assertThat(ranking).allSatisfy(
+				score -> assertThat(score.getSwissTieBreakRuleUsed()).isEqualTo(SwissTieBreakRule.BUCHHOLZ));
 		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
 
 		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
@@ -928,7 +920,8 @@ public class RankingProviderTest {
 						SwissTieBreakRule.BUCHHOLZ.name()));
 
 		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
-		final ScoreOfTeam byeTeamScore = ranking.stream().filter(score -> score.getTeam().equals(team4)).findFirst().orElseThrow();
+		final ScoreOfTeam byeTeamScore = ranking.stream().filter(score -> score.getTeam().equals(team4)).findFirst()
+				.orElseThrow();
 
 		assertThat(byeTeamScore.getWonFights()).isEqualTo(1);
 		assertThat(byeTeamScore.getFightsDone()).isEqualTo(1);
@@ -1023,9 +1016,7 @@ public class RankingProviderTest {
 		group.setTeams(teams);
 
 		final java.util.function.Function<String, Team> teamByName = name -> teams.stream()
-				.filter(team -> team.getName().equals(name))
-				.findFirst()
-				.orElseThrow();
+				.filter(team -> team.getName().equals(name)).findFirst().orElseThrow();
 
 		// Deterministic 4-round/16-team scenario where the 2-win group is tied and
 		// primary metrics differ across tie-break rules.
@@ -1073,27 +1064,21 @@ public class RankingProviderTest {
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.BUCHHOLZ.name()));
 		final List<String> buchholzOrder = this.provider.getTeamsScoreRanking(group).stream()
-				.filter(score -> score.getWonFights() == 2)
-				.map(score -> score.getTeam().getName())
-				.toList();
+				.filter(score -> score.getWonFights() == 2).map(score -> score.getTeam().getName()).toList();
 
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.MEDIAN_BUCHHOLZ.name()));
 		final List<String> medianBuchholzOrder = this.provider.getTeamsScoreRanking(group).stream()
-				.filter(score -> score.getWonFights() == 2)
-				.map(score -> score.getTeam().getName())
-				.toList();
+				.filter(score -> score.getWonFights() == 2).map(score -> score.getTeam().getName()).toList();
 
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
 				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
 						SwissTieBreakRule.SONNEBORN_BERGER.name()));
 		final List<String> sonnebornBergerOrder = this.provider.getTeamsScoreRanking(group).stream()
-				.filter(score -> score.getWonFights() == 2)
-				.map(score -> score.getTeam().getName())
-				.toList();
+				.filter(score -> score.getWonFights() == 2).map(score -> score.getTeam().getName()).toList();
 
 		assertThat(buchholzOrder).containsExactly("Team13", "Team05", "Team04", "Team10", "Team14", "Team03");
 		assertThat(medianBuchholzOrder).containsExactly("Team05", "Team13", "Team04", "Team14", "Team03", "Team10");
@@ -1173,11 +1158,160 @@ public class RankingProviderTest {
 		Mockito.verifyNoInteractions(this.tournamentExtraPropertyProvider);
 	}
 
+	// ========== Custom Swiss Scoring Tests ==========
+
+	/**
+	 * Verifies Swiss ranking when win and draw points are equal (win=1, draw=1).
+	 *
+	 * <p>Fight schedule (4 fights):
+	 * <ul>
+	 *   <li>Team 0 vs Team 1 → Draw</li>
+	 *   <li>Team 2 vs Team 3 → Draw</li>
+	 *   <li>Team 0 vs Team 2 → Draw</li>
+	 *   <li>Team 1 vs Team 3 → Team 1 wins (2-0)</li>
+	 * </ul>
+	 *
+	 * <p>With the <b>default</b> scoring (win=3, draw=1):
+	 * <ul>
+	 *   <li>Team 1: 1 draw + 1 win = 4 pts → <b>1st</b></li>
+	 *   <li>Team 0: 2 draws = 2 pts, Buchholz = Team1(4)+Team2(2) = 6 → <b>2nd</b></li>
+	 *   <li>Team 2: 2 draws = 2 pts, Buchholz = Team3(1)+Team0(2) = 3 → <b>3rd</b></li>
+	 *   <li>Team 3: 1 draw + 1 loss = 1 pt → <b>4th</b></li>
+	 * </ul>
+	 *
+	 * <p>With <b>win=draw=1</b>:
+	 * <ul>
+	 *   <li>Team 0, Team 1, Team 2: all 2 pts (wins equal draws in value)</li>
+	 *   <li>Team 3: 1 pt</li>
+	 *   <li>Buchholz (with win=1,draw=1 points): Team0=4 (Team1+Team2=2+2),
+	 *       Team1=3 (Team0+Team3=2+1), Team2=3 (Team3+Team0=1+2)</li>
+	 * </ul>
+	 *
+	 * <p><b>Critical difference vs default</b>: Team 0 rises from <b>2nd → 1st</b> and
+	 * Team 1 drops from <b>1st → 2nd</b>. When wins equal draws, Team 0's two draws
+	 * are worth the same as Team 1's win+draw, and Team 0's higher Buchholz (its
+	 * opponents Team 1 and Team 2 both have 2 pts, while Team 1's opponent Team 3
+	 * only has 1 pt) becomes the deciding factor.
+	 */
+	@Test
+	public void testSwissRankingWithEqualWinAndDrawPoints() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		// Override Swiss defaults: wins and draws are now worth the same (1 pt each)
+		tournament.getTournamentScore().setPointsByVictory(1);
+		tournament.getTournamentScore().setPointsByDraw(1);
+
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(9001, "Team 0", tournament);
+		final Team team1 = this.team(9002, "Team 1", tournament);
+		final Team team2 = this.team(9003, "Team 2", tournament);
+		final Team team3 = this.team(9004, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(
+				this.fightWithScores(tournament, team0, team1, 1, 1),  // draw
+				this.fightWithScores(tournament, team2, team3, 1, 1),  // draw
+				this.fightWithScores(tournament, team0, team2, 1, 1),  // draw
+				this.fightWithScores(tournament, team1, team3, 2, 0)   // team1 wins
+		));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		// Team 0 is now 1st (was 2nd with default win=3): its Buchholz=4.0 beats Team 1's
+		// Buchholz=3.0 because Team 0 faced stronger opponents (Team1+Team2=2+2=4 vs
+		// Team1's opponents Team0+Team3=2+1=3).
+		// Team 3 stays last (1 pt) but its Buchholz=4.0 reflects that both of its
+		// opponents (Team 2 and Team 1) have 2 pts each.
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue)
+				.containsExactly(4.0, 3.0, 3.0, 4.0);
+		assertThat(ranking).extracting(score -> score.getTeam().getName())
+				.containsExactly("Team 0", "Team 1", "Team 2", "Team 3");
+	}
+
+	/**
+	 * Verifies Swiss ranking when draws are worth zero points (win=1, draw=0).
+	 *
+	 * <p>Fight schedule (4 fights, same structure as
+	 * {@link #testSwissRankingWithEqualWinAndDrawPoints}):
+	 * <ul>
+	 *   <li>Team 0 vs Team 1 → Draw</li>
+	 *   <li>Team 2 vs Team 3 → Draw</li>
+	 *   <li>Team 0 vs Team 2 → Draw</li>
+	 *   <li>Team 1 vs Team 3 → Team 1 wins (2-0)</li>
+	 * </ul>
+	 *
+	 * <p>With the <b>default</b> scoring (win=3, draw=1):
+	 * <ul>
+	 *   <li>Team 1: 1 draw + 1 win = 4 pts → <b>1st</b></li>
+	 *   <li>Team 0: 2 draws = 2 pts, Buchholz = 6 → <b>2nd</b></li>
+	 *   <li>Team 2: 2 draws = 2 pts, Buchholz = 3 → <b>3rd</b></li>
+	 *   <li>Team 3: 1 draw + 1 loss = 1 pt → <b>4th</b></li>
+	 * </ul>
+	 *
+	 * <p>With <b>win=1, draw=0</b>:
+	 * <ul>
+	 *   <li>Team 1: 1 win = 1 pt → <b>1st</b></li>
+	 *   <li>Team 0: 2 draws = 0 pts, Buchholz = Team1(1)+Team2(0) = 1 → <b>2nd</b></li>
+	 *   <li>Team 3: 1 draw + 1 loss = 0 pts, Buchholz = Team2(0)+Team1(1) = 1,
+	 *       hits=1 → <b>3rd</b></li>
+	 *   <li>Team 2: 2 draws = 0 pts, Buchholz = Team3(0)+Team0(0) = 0 → <b>4th</b></li>
+	 * </ul>
+	 *
+	 * <p><b>Critical difference vs default</b>: Team 2 drops from <b>3rd → 4th</b> and
+	 * Team 3 rises from <b>4th → 3rd</b>. With draw=0, Team 2's two draws earn nothing.
+	 * Both Team 2 and Team 3 are at 0 pts, but Team 3's Buchholz (1.0) is higher than
+	 * Team 2's (0.0) because Team 3 played against Team 1 (the only team with points),
+	 * while Team 2's opponents Team 3 and Team 0 both have 0 pts.
+	 */
+	@Test
+	public void testSwissRankingWithZeroDrawPoints() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		// Override Swiss defaults: wins are worth 1 pt, draws earn nothing
+		tournament.getTournamentScore().setPointsByVictory(1);
+		tournament.getTournamentScore().setPointsByDraw(0);
+
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(9005, "Team 0", tournament);
+		final Team team1 = this.team(9006, "Team 1", tournament);
+		final Team team2 = this.team(9007, "Team 2", tournament);
+		final Team team3 = this.team(9008, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(
+				this.fightWithScores(tournament, team0, team1, 1, 1),  // draw
+				this.fightWithScores(tournament, team2, team3, 1, 1),  // draw
+				this.fightWithScores(tournament, team0, team2, 1, 1),  // draw
+				this.fightWithScores(tournament, team1, team3, 2, 0)   // team1 wins
+		));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		// Team 1 leads (only winner, 1 pt). The remaining three teams all have 0 pts.
+		// Buchholz (computed with draw=0 points): Team1=0.0, Team0=1.0, Team3=1.0, Team2=0.0.
+		// Team 2, which had 3rd place under default scoring due to 2 draws worth 2 pts,
+		// now drops to last because its Buchholz=0.0 (both its opponents—Team 3 and
+		// Team 0—also have 0 pts). Team 3 rises to 3rd because it played Team 1 (1 pt),
+		// giving it Buchholz=1.0.
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue)
+				.containsExactly(0.0, 1.0, 1.0, 0.0);
+		assertThat(ranking).extracting(score -> score.getTeam().getName())
+				.containsExactly("Team 1", "Team 0", "Team 3", "Team 2");
+	}
+
 	// ========== Helper Methods ==========
 
 	private Tournament tournament(TournamentType type) {
 		final Tournament tournament = new Tournament("T", 1, 1, type, "tester", ScoreType.INTERNATIONAL);
 		tournament.setId(100);
+		// Swiss default points (3 win / 1 draw) are now initialised automatically
+		// by the Tournament constructor, so no manual override is needed here.
 		return tournament;
 	}
 
@@ -1206,8 +1340,10 @@ public class RankingProviderTest {
 
 	private Fight fight(List<Participant> members1, List<Participant> members2, LocalDateTime createdAt) {
 		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
-		final Team team1 = this.team(200 + members1.getFirst().getId(), "T1-" + members1.getFirst().getId(), tournament);
-		final Team team2 = this.team(300 + members2.getFirst().getId(), "T2-" + members2.getFirst().getId(), tournament);
+		final Team team1 = this.team(200 + members1.getFirst().getId(), "T1-" + members1.getFirst().getId(),
+				tournament);
+		final Team team2 = this.team(300 + members2.getFirst().getId(), "T2-" + members2.getFirst().getId(),
+				tournament);
 		team1.setMembers(new ArrayList<>(members1));
 		team2.setMembers(new ArrayList<>(members2));
 		final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");

@@ -44,6 +44,7 @@ import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
@@ -71,8 +72,8 @@ import java.util.stream.Stream;
 public class RankingProvider {
 
     private static final SwissTieBreakRule DEFAULT_SWISS_TIE_BREAK_RULE = SwissTieBreakRule.BUCHHOLZ;
-    private static final int SWISS_WIN_POINTS = 3;
-    private static final int SWISS_DRAW_POINTS = 1;
+    private static final int SWISS_WIN_POINTS = TournamentScore.SWISS_DEFAULT_WIN_POINTS;
+    private static final int SWISS_DRAW_POINTS = TournamentScore.SWISS_DEFAULT_DRAW_POINTS;
 
     private final FightProvider fightProvider;
     private final DuelProvider duelProvider;
@@ -368,7 +369,7 @@ public class RankingProvider {
 
     private List<ScoreOfTeam> getSwissTeamsScoreRanking(Tournament tournament, List<Team> teams, List<Fight> fights, List<Duel> unties) {
         final List<ScoreOfTeam> scores = createSwissScores(teams, fights, unties);
-        final SwissRankingContext context = new SwissRankingContext(scores, fights, getSwissTieBreakRule(tournament));
+        final SwissRankingContext context = new SwissRankingContext(tournament, scores, fights, getSwissTieBreakRule(tournament));
         applySwissTieBreakAndSort(scores, context);
         return scores;
     }
@@ -388,7 +389,7 @@ public class RankingProvider {
                                                                            List<Fight> groupFights, List<Fight> allFightsUpToGroup,
                                                                            List<Duel> unties) {
         final List<ScoreOfTeam> scores = createSwissScores(teams, groupFights, unties);
-        final SwissRankingContext context = new SwissRankingContext(scores, allFightsUpToGroup, getSwissTieBreakRule(tournament));
+        final SwissRankingContext context = new SwissRankingContext(tournament, scores, allFightsUpToGroup, getSwissTieBreakRule(tournament));
         applySwissTieBreakAndSort(scores, context);
         return scores;
     }
@@ -541,41 +542,63 @@ public class RankingProvider {
                  TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, DEFAULT_SWISS_TIE_BREAK_RULE.name());
          final SwissTieBreakRule selectedType = SwissTieBreakRule.getType(extraProperty.getPropertyValue());
          return selectedType != null ? selectedType : DEFAULT_SWISS_TIE_BREAK_RULE;
-     }
+    }
 
-      static List<SwissTieBreakRule> getSwissTieBreakOrder(SwissTieBreakRule selectedRule) {
-          final SwissTieBreakRule resolvedRule = selectedRule != null ? selectedRule : DEFAULT_SWISS_TIE_BREAK_RULE;
-          return switch (resolvedRule) {
-              case BUCHHOLZ -> List.of(SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
-                      SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
-                      SwissTieBreakRule.POINT_DIFFERENTIAL);
-              case MEDIAN_BUCHHOLZ -> List.of(SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.BUCHHOLZ,
-                      SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
-                      SwissTieBreakRule.POINT_DIFFERENTIAL);
-              case SONNEBORN_BERGER -> List.of(SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.BUCHHOLZ,
-                      SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.DIRECT_ENCOUNTER,
-                      SwissTieBreakRule.POINT_DIFFERENTIAL);
-              case DIRECT_ENCOUNTER -> List.of(SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.BUCHHOLZ,
-                      SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
-                      SwissTieBreakRule.POINT_DIFFERENTIAL);
-              case POINT_DIFFERENTIAL -> List.of(SwissTieBreakRule.POINT_DIFFERENTIAL, SwissTieBreakRule.BUCHHOLZ,
-                      SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
-                      SwissTieBreakRule.DIRECT_ENCOUNTER);
-          };
-      }
+    static List<SwissTieBreakRule> getSwissTieBreakOrder(SwissTieBreakRule selectedRule) {
+        final SwissTieBreakRule resolvedRule = selectedRule != null ? selectedRule : DEFAULT_SWISS_TIE_BREAK_RULE;
+        return switch (resolvedRule) {
+            case BUCHHOLZ -> List.of(SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+                    SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
+                    SwissTieBreakRule.POINT_DIFFERENTIAL);
+            case MEDIAN_BUCHHOLZ -> List.of(SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.BUCHHOLZ,
+                    SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER,
+                    SwissTieBreakRule.POINT_DIFFERENTIAL);
+            case SONNEBORN_BERGER -> List.of(SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.BUCHHOLZ,
+                    SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.DIRECT_ENCOUNTER,
+                    SwissTieBreakRule.POINT_DIFFERENTIAL);
+            case DIRECT_ENCOUNTER -> List.of(SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.BUCHHOLZ,
+                    SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+                    SwissTieBreakRule.POINT_DIFFERENTIAL);
+            case POINT_DIFFERENTIAL -> List.of(SwissTieBreakRule.POINT_DIFFERENTIAL, SwissTieBreakRule.BUCHHOLZ,
+                    SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+                    SwissTieBreakRule.DIRECT_ENCOUNTER);
+        };
+    }
 
-      static int getSwissMatchPoints(ScoreOfTeam score) {
-          return score.getWonFights() * SWISS_WIN_POINTS + score.getDrawFights() * SWISS_DRAW_POINTS;
-      }
+    private static int[] getSwissPointsForTournament(Tournament tournament) {
+        final int winPoints;
+        final int drawPoints;
+
+        if (tournament.getTournamentScore() != null && tournament.getTournamentScore().getPointsByVictory() != null) {
+            winPoints = tournament.getTournamentScore().getPointsByVictory();
+        } else {
+            winPoints = SWISS_WIN_POINTS;
+        }
+
+        if (tournament.getTournamentScore() != null && tournament.getTournamentScore().getPointsByDraw() != null) {
+            drawPoints = tournament.getTournamentScore().getPointsByDraw();
+        } else {
+            drawPoints = SWISS_DRAW_POINTS;
+        }
+
+        return new int[]{winPoints, drawPoints};
+    }
+
+    static int getSwissMatchPoints(ScoreOfTeam score, Tournament tournament) {
+        final int[] points = getSwissPointsForTournament(tournament);
+        return score.getWonFights() * points[0] + score.getDrawFights() * points[1];
+    }
 
     private static final class SwissRankingContext {
+        private final Tournament tournament;
         private final List<Fight> playedFights;
         private final SwissTieBreakRule selectedRule;
         private final Map<Team, ScoreOfTeam> scoreByTeam;
         private final Map<Team, Integer> swissPoints;
         private final Map<Integer, List<Team>> teamsByPoints;
 
-        private SwissRankingContext(List<ScoreOfTeam> scores, List<Fight> fights, SwissTieBreakRule selectedRule) {
+        private SwissRankingContext(Tournament tournament, List<ScoreOfTeam> scores, List<Fight> fights, SwissTieBreakRule selectedRule) {
+            this.tournament = tournament;
             this.playedFights = fights.stream().filter(Fight::isOver).toList();
             this.selectedRule = selectedRule;
             this.scoreByTeam = new HashMap<>();
@@ -583,7 +606,7 @@ public class RankingProvider {
             this.teamsByPoints = new HashMap<>();
             scores.forEach(score -> {
                 this.scoreByTeam.put(score.getTeam(), score);
-                final int points = RankingProvider.getSwissMatchPoints(score);
+                final int points = RankingProvider.getSwissMatchPoints(score, tournament);
                 this.swissPoints.put(score.getTeam(), points);
                 this.teamsByPoints.computeIfAbsent(points, teamsWithSamePoints -> new ArrayList<>()).add(score.getTeam());
             });
@@ -667,6 +690,7 @@ public class RankingProvider {
             if (tiedTeams.size() <= 1) {
                 return 0;
             }
+            final int[] swissPoints = RankingProvider.getSwissPointsForTournament(this.tournament);
             int score = 0;
             for (final Fight fight : getPlayedFights(team)) {
                 final Team opponent = getOpponent(team, fight);
@@ -674,9 +698,9 @@ public class RankingProvider {
                     continue;
                 }
                 if (Objects.equals(fight.getWinner(), team)) {
-                    score += SWISS_WIN_POINTS;
+                    score += swissPoints[0];  // winPoints
                 } else if (fight.isDrawFight()) {
-                    score += SWISS_DRAW_POINTS;
+                    score += swissPoints[1];  // drawPoints
                 }
             }
             return score;

@@ -65,8 +65,10 @@ public class EncryptionEnginesAdditionalTests {
     @Test(expectedExceptions = InvalidEncryptionException.class)
     public void shouldFailDecryptWithWrongKey() {
         final String encrypted = gcmCipherEngine.encrypt("x", "valid-key");
-
-        gcmCipherEngine.decrypt(encrypted, "invalid-key");
+        try {
+            gcmCipherEngine.decrypt(encrypted, "invalid-key");
+        } finally {
+        }
     }
 
     @Test

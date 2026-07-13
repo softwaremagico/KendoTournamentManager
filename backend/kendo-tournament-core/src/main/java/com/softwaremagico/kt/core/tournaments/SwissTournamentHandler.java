@@ -33,6 +33,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
@@ -50,8 +51,8 @@ import java.util.stream.Collectors;
 public class SwissTournamentHandler extends LeagueHandler {
 
     public static final int DEFAULT_SWISS_MIN_ROUNDS = 1;
-    public static final int SWISS_WIN_POINTS = 3;
-    public static final int SWISS_DRAW_POINTS = 1;
+    public static final int SWISS_WIN_POINTS = TournamentScore.SWISS_DEFAULT_WIN_POINTS;
+    public static final int SWISS_DRAW_POINTS = TournamentScore.SWISS_DEFAULT_DRAW_POINTS;
     public static final boolean DEFAULT_AVOID_REPEATED_PAIRINGS = true;
     private final GroupProvider groupProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
@@ -154,7 +155,7 @@ public class SwissTournamentHandler extends LeagueHandler {
             return new ArrayList<>();
         }
 
-        final Map<Team, Integer> pointsByTeam = this.getSwissPointsByTeam(initialGroup.getTeams(), previousFights);
+        final Map<Team, Integer> pointsByTeam = this.getSwissPointsByTeam(tournament, initialGroup.getTeams(), previousFights);
         final List<Team> orderedTeams = this.getTeamsOrderedBySwissScore(initialGroup.getTeams(), pointsByTeam);
 
         Team byeTeam = null;
@@ -295,6 +296,32 @@ public class SwissTournamentHandler extends LeagueHandler {
         }
     }
 
+    /**
+     * Gets the points for a Swiss tournament win or draw.
+     * Uses configured values from tournament score if available, otherwise uses defaults.
+     *
+     * @param tournament the tournament (may have null tournamentScore)
+     * @return array of [winPoints, drawPoints]
+     */
+    private int[] getSwissPoints(Tournament tournament) {
+        final int winPoints;
+        final int drawPoints;
+
+        if (tournament.getTournamentScore() != null && tournament.getTournamentScore().getPointsByVictory() != null) {
+            winPoints = tournament.getTournamentScore().getPointsByVictory();
+        } else {
+            winPoints = SWISS_WIN_POINTS;
+        }
+
+        if (tournament.getTournamentScore() != null && tournament.getTournamentScore().getPointsByDraw() != null) {
+            drawPoints = tournament.getTournamentScore().getPointsByDraw();
+        } else {
+            drawPoints = SWISS_DRAW_POINTS;
+        }
+
+        return new int[]{winPoints, drawPoints};
+    }
+
     private List<Fight> createSwissPairings(Tournament tournament, List<Team> teams, Integer level, String createdBy,
             List<Fight> previousFights, boolean avoidRepeated) {
         final List<Fight> fights = this.tryCreateSwissPairings(tournament, teams, level, createdBy, previousFights,
@@ -351,7 +378,11 @@ public class SwissTournamentHandler extends LeagueHandler {
         return orderedTeams;
     }
 
-    private Map<Team, Integer> getSwissPointsByTeam(List<Team> teams, List<Fight> fights) {
+    private Map<Team, Integer> getSwissPointsByTeam(Tournament tournament, List<Team> teams, List<Fight> fights) {
+        final int[] swissPoints = getSwissPoints(tournament);
+        final int winPoints = swissPoints[0];
+        final int drawPoints = swissPoints[1];
+
         final Map<Team, Integer> pointsByTeam = new HashMap<>();
         teams.forEach(team -> pointsByTeam.put(team, 0));
         final Map<Team, Integer> byesByTeam = this.getByeCountByTeam(teams, fights);
@@ -359,15 +390,15 @@ public class SwissTournamentHandler extends LeagueHandler {
         for (final Fight fight : fights) {
             final Team winner = fight.getWinner();
             if (winner != null) {
-                pointsByTeam.computeIfPresent(winner, (ignoredTeam, points) -> points + SWISS_WIN_POINTS);
+                pointsByTeam.computeIfPresent(winner, (ignoredTeam, points) -> points + winPoints);
             } else if (fight.isOver() && fight.isDrawFight()) {
-                pointsByTeam.computeIfPresent(fight.getTeam1(), (ignoredTeam, points) -> points + SWISS_DRAW_POINTS);
-                pointsByTeam.computeIfPresent(fight.getTeam2(), (ignoredTeam, points) -> points + SWISS_DRAW_POINTS);
+                pointsByTeam.computeIfPresent(fight.getTeam1(), (ignoredTeam, points) -> points + drawPoints);
+                pointsByTeam.computeIfPresent(fight.getTeam2(), (ignoredTeam, points) -> points + drawPoints);
             }
         }
 
         byesByTeam.forEach((team, byeCount) -> pointsByTeam.computeIfPresent(team,
-                (ignoredTeam, points) -> points + (byeCount * SWISS_WIN_POINTS)));
+                (ignoredTeam, points) -> points + (byeCount * winPoints)));
         return pointsByTeam;
     }
 

@@ -36,38 +36,54 @@ public class LoggerAdaptersCoverageTest {
         CacheControllerLogger.warning(getClass(), "warn {}", 2);
         CacheControllerLogger.debug(getClass(), "debug {}", 3);
         CacheControllerLogger.severe(getClass().getName(), "severe {}", 4);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         CacheControllerLogger.errorMessage(getClass(), new RuntimeException("cache"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         CacheControllerLogger.errorMessage(getClass().getName(), "error {}", 5);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         CacheControllerLogger.errorMessage(this, new RuntimeException("cache-obj"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         CacheControllerLogger.isDebugEnabled();
 
         JwtFilterLogger.info(getClass(), "info {}", 1);
         JwtFilterLogger.warning(getClass(), "warn {}", 2);
         JwtFilterLogger.debug(getClass(), "debug {}", 3);
         JwtFilterLogger.severe(getClass().getName(), "severe {}", 4);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         JwtFilterLogger.errorMessage(getClass(), new RuntimeException("jwt"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         JwtFilterLogger.errorMessage(getClass().getName(), "error {}", 5);
         JwtFilterLogger.errorMessage(getClass(), "error2 {}", 6);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         JwtFilterLogger.errorMessage(this, new RuntimeException("jwt-obj"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         JwtFilterLogger.isDebugEnabled();
 
         PdfExporterLog.info(getClass(), "info {}", 1);
         PdfExporterLog.warning(getClass(), "warn {}", 2);
         PdfExporterLog.debug(getClass(), "debug {}", 3);
         PdfExporterLog.severe(getClass().getName(), "severe {}", 4);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         PdfExporterLog.errorMessage(getClass(), new RuntimeException("pdf"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         PdfExporterLog.errorMessage(getClass().getName(), "error {}", 5);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         PdfExporterLog.errorMessage(this, new RuntimeException("pdf-obj"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         PdfExporterLog.isDebugEnabled();
 
         WebsocketsLogger.info(getClass(), "info {}", 1);
         WebsocketsLogger.warning(getClass(), "warn {}", 2);
         WebsocketsLogger.debug(getClass(), "debug {}", 3);
         WebsocketsLogger.severe(getClass().getName(), "severe {}", 4);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         WebsocketsLogger.errorMessage(getClass(), new RuntimeException("ws"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         WebsocketsLogger.errorMessage(getClass().getName(), "error {}", 5);
         WebsocketsLogger.errorMessage(getClass(), "error2 {}", 6);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         WebsocketsLogger.errorMessage(this, new RuntimeException("ws-obj"));
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
         WebsocketsLogger.isDebugEnabled();
     }
 }

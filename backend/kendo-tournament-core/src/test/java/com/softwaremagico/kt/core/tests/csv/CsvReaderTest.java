@@ -147,16 +147,25 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidTeamCSV() throws URISyntaxException, IOException {
-        csvController.addTeams(readCsvFile(CLUBS_CSV_FILE_PATH), tournament.getId(), null);
+        try {
+            csvController.addTeams(readCsvFile(CLUBS_CSV_FILE_PATH), tournament.getId(), null);
+        } finally {
+        }
     }
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidClubCSV() throws URISyntaxException, IOException {
-        csvController.addClubs(readCsvFile(TEAMS_CSV_FILE_PATH), null);
+        try {
+            csvController.addClubs(readCsvFile(TEAMS_CSV_FILE_PATH), null);
+        } finally {
+        }
     }
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidParticipantCSV() throws URISyntaxException, IOException {
-        csvController.addParticipants(readCsvFile(CLUBS_CSV_FILE_PATH), null);
+        try {
+            csvController.addParticipants(readCsvFile(CLUBS_CSV_FILE_PATH), null);
+        } finally {
+        }
     }
 }

@@ -129,6 +129,9 @@ public class CsvTournamentGroupsTest extends AbstractTestNGSpringContextTests {
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void testInvalidCsvFile() throws URISyntaxException, IOException {
-        csvController.addGroupLinks(tournament.getId(), readCsvFile(CSV_INVALID), null);
+        try {
+            csvController.addGroupLinks(tournament.getId(), readCsvFile(CSV_INVALID), null);
+        } finally {
+        }
     }
 }

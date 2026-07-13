@@ -234,6 +234,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+
         this.mockMvc
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

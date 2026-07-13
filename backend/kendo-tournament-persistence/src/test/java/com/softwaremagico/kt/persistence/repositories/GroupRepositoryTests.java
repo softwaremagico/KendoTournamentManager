@@ -51,7 +51,10 @@ public class GroupRepositoryTests extends BasicDataTest {
 
     @Test(expectedExceptions = DataIntegrityViolationException.class)
     public void checkFightsAreNotDeleted() {
-        fightRepository.deleteAll(fights);
+        try {
+            fightRepository.deleteAll(fights);
+        } finally {
+        }
     }
 
     @Test

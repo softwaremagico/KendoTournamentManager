@@ -175,7 +175,12 @@ public class QrServiceUnitTests {
         when(pdfController.generateTournamentQr(any(Locale.class), eq(tournamentDTO), eq(null))).thenReturn(tournamentQr);
         when(tournamentQr.generate()).thenThrow(new InvalidXmlElementException("invalid"));
 
-        qrService.getParticipantDiplomaFromTournamentAsPdf(1, Locale.ENGLISH, mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        try {
+            qrService.getParticipantDiplomaFromTournamentAsPdf(1, Locale.ENGLISH, mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test(expectedExceptions = BadRequestException.class)
@@ -188,7 +193,12 @@ public class QrServiceUnitTests {
         when(pdfController.generateTournamentQr(any(Locale.class), eq(tournamentDTO), eq(null))).thenReturn(tournamentQr);
         when(tournamentQr.generate()).thenThrow(new EmptyPdfBodyException("empty"));
 
-        qrService.getParticipantDiplomaFromTournamentAsPdf(1, Locale.ENGLISH, mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        try {
+            qrService.getParticipantDiplomaFromTournamentAsPdf(1, Locale.ENGLISH, mock(HttpServletResponse.class), mock(HttpServletRequest.class));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test
