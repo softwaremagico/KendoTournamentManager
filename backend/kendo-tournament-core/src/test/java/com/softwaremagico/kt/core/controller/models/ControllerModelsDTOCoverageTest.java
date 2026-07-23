@@ -226,7 +226,7 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(base.equals(differentTournament)).isFalse();
     }
 
-    private AchievementDTO this.createAchievementDTO(int id, String name, String lastname, String tournamentName,
+    private AchievementDTO createAchievementDTO(int id, String name, String lastname, String tournamentName,
                                                 AchievementType type, AchievementGrade grade) {
         final AchievementDTO dto = new AchievementDTO();
         dto.setId(id);
@@ -238,14 +238,14 @@ public class ControllerModelsDTOCoverageTest {
         return dto;
     }
 
-    private RoleDTO this.createRoleDTO(int id, String name, String lastname, RoleType roleType) {
+    private RoleDTO createRoleDTO(int id, String name, String lastname, RoleType roleType) {
         final RoleDTO dto = new RoleDTO(this.createTournamentDTO(id, "Tournament" + id), this.createParticipantDTO(id, name, lastname), roleType);
         dto.setId(id);
         dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         return dto;
     }
 
-    private ParticipantDTO this.createParticipantDTO(int id, String name, String lastname) {
+    private ParticipantDTO createParticipantDTO(int id, String name, String lastname) {
         final ParticipantDTO dto = new ParticipantDTO();
         dto.setId(id);
         dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
@@ -254,7 +254,7 @@ public class ControllerModelsDTOCoverageTest {
         return dto;
     }
 
-    private TournamentDTO this.createTournamentDTO(int id, String name) {
+    private TournamentDTO createTournamentDTO(int id, String name) {
         final TournamentDTO dto = new TournamentDTO(name, 2, 3, TournamentType.LEAGUE);
         dto.setId(id);
         dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
@@ -402,7 +402,7 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(base.toString()).contains("Group{").contains("level=0").contains("index=1");
     }
 
-    private ClubDTO this.createClubDTO(String name, String country, String city) {
+    private ClubDTO createClubDTO(String name, String country, String city) {
         final ClubDTO dto = new ClubDTO();
         dto.setName(name);
         dto.setCountry(country);
@@ -415,14 +415,14 @@ public class ControllerModelsDTOCoverageTest {
         return dto;
     }
 
-    private TeamDTO this.createTeamDTO(int id, String name) {
+    private TeamDTO createTeamDTO(int id, String name) {
         final TeamDTO dto = new TeamDTO(name, this.createTournamentDTO(id, "Tournament" + id));
         dto.setId(id);
         dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
         return dto;
     }
 
-    private GroupDTO this.createGroupDTO(int id, int shiaijo, int level, int index) {
+    private GroupDTO createGroupDTO(int id, int shiaijo, int level, int index) {
         final GroupDTO dto = new GroupDTO();
         dto.setId(id);
         dto.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));

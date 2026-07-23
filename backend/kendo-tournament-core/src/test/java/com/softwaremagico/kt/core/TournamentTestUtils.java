@@ -57,6 +57,9 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
 
+    // Record to group tournament role configuration and reduce parameter count (S107)
+    protected record RoleConfiguration(int members, int teams, int referees, int organizers, int volunteers, int press) {}
+
     @Autowired
     private ClubController clubController;
 
@@ -177,20 +180,24 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     }
 
     protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, int minutesPast) {
-        return addTournament(tournamentName, members, teams, referees, organizers, volunteers, press, TournamentType.LEAGUE, minutesPast);
+        return addTournament(tournamentName, new RoleConfiguration(members, teams, referees, organizers, volunteers, press), TournamentType.LEAGUE, minutesPast);
     }
 
     protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, TournamentType type, int minutesPast) {
+        return addTournament(tournamentName, new RoleConfiguration(members, teams, referees, organizers, volunteers, press), type, minutesPast);
+    }
+
+    protected TournamentDTO addTournament(String tournamentName, RoleConfiguration roleConfig, TournamentType type, int minutesPast) {
         //Create Tournament
-        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null, null);
+        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, roleConfig.members(), type), null, null);
         tournamentDTO.setCreatedAt(LocalDateTime.now().minusMinutes(minutesPast));
         tournamentController.update(tournamentDTO, null, null);
         if (TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION.getAllowedTournaments().contains(type)) {
             tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
                     TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null, null);
         }
-        generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
-        addTeams(tournamentDTO, members);
+        generateRoles(tournamentDTO, roleConfig.members(), roleConfig.teams(), roleConfig.referees(), roleConfig.organizers(), roleConfig.volunteers(), roleConfig.press());
+        addTeams(tournamentDTO, roleConfig.members());
         return tournamentDTO;
     }
 

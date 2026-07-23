@@ -132,7 +132,7 @@
             || (tournament && tournament.type === TournamentType.SWISS)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)) {
             <button biit-icon
               [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
-              (click)="showTeamsClassification(areAllDuelsOver(), false)"
+              (click)="showTeamsClassification(areAllDuelsOver())"
               [title]="t('teamsRanking')">
               <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
             </button>
@@ -157,11 +157,11 @@
               <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
             </button>
           }
-          @if ((RbacActivity.PROJECTOR_MODE | hasPermission) && (!tournament || tournament.locked)) {
+          @if ((RbacActivity.PROJECTOR_MODE | hasPermission) && (tournament && !tournament.locked)) {
             <mat-divider [vertical]="true"
             class="expand-divider"></mat-divider>
           }
-          @if ((RbacActivity.PROJECTOR_MODE | hasPermission) && (!tournament || tournament.locked)) {
+          @if ((RbacActivity.PROJECTOR_MODE | hasPermission) && (tournament && !tournament.locked)) {
             <button biit-icon class="expand-button"
               [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
               (click)="projector()"

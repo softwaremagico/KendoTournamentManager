@@ -245,9 +245,16 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit, 
   private updateDrawStatusAndWarning(): void {
     this.existsDraws = this.importantDrawWinner();
     if (this.hasRelevantWinnerDraw() && this.showDrawWarningOnInit && !this.drawWarningShown) {
-      this.messageService.warningMessage("drawScore");
+      this.messageService.warningMessage(this.getDrawWarningMessageKey());
       this.drawWarningShown = true;
     }
+  }
+
+  private getDrawWarningMessageKey(): string {
+    if (this.tournament?.type === TournamentType.CHAMPIONSHIP) {
+      return "drawScore";
+    }
+    return "drawTopPositionsScore";
   }
 
   private hasRelevantWinnerDraw(): boolean {

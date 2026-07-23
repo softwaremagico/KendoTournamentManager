@@ -73,7 +73,7 @@ class JwtTokenUtilExtendedTest {
 
         assertNotNull(token);
         assertFalse(token.isEmpty());
-        assertTrue(token.split("\\.").length == 3); // JWT has 3 parts separated by dots
+        assertEquals(3, token.split("\\.").length); // JWT has 3 parts separated by dots
     }
 
     @Test
@@ -184,21 +184,21 @@ class JwtTokenUtilExtendedTest {
     void testGetJwtExpirationTime() {
         long expirationTime = jwtTokenUtil.getJwtExpirationTime();
 
-        assertTrue(expirationTime > System.currentTimeMillis());
+        assertTrue(expirationTime > Instant.now().toEpochMilli());
     }
 
     @Test
     void testGetJwtGuestExpirationTime() {
         long expirationTime = jwtTokenUtil.getJwtGuestExpirationTime();
 
-        assertTrue(expirationTime > System.currentTimeMillis());
+        assertTrue(expirationTime > Instant.now().toEpochMilli());
     }
 
     @Test
     void testGetJwtParticipantExpirationTime() {
         long expirationTime = jwtTokenUtil.getJwtParticipantExpirationTime();
 
-        assertTrue(expirationTime > System.currentTimeMillis());
+        assertTrue(expirationTime > Instant.now().toEpochMilli());
     }
 
     @Test
@@ -263,7 +263,7 @@ class JwtTokenUtilExtendedTest {
 
         assertNotNull(util);
         // Should use default expiration
-        assertTrue(util.getJwtExpirationTime() > System.currentTimeMillis());
+        assertTrue(util.getJwtExpirationTime() > Instant.now().toEpochMilli());
     }
 
     @Test
@@ -276,9 +276,9 @@ class JwtTokenUtilExtendedTest {
 
     @Test
     void testExpirationTimeConsistency() {
-        long before = System.currentTimeMillis();
+        long before = Instant.now().toEpochMilli();
         long expirationTime = jwtTokenUtil.getJwtExpirationTime();
-        long after = System.currentTimeMillis();
+        long after = Instant.now().toEpochMilli();
 
         assertTrue(expirationTime >= before + 120000);
         assertTrue(expirationTime <= after + 120000 + 1000); // Allow 1 second tolerance

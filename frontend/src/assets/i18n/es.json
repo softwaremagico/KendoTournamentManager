@@ -409,6 +409,7 @@
   "draw": "Empate",
   "drawResolution": "Resolución de Empates",
   "drawScore": "Hay algunos empates que deben resolverse antes de pasar a la siguiente fase del torneo.",
+  "drawTopPositionsScore": "Hay algunos empates que deben resolverse para determinar los primeros puestos de la clasificación.",
   "duelStored": "Se ha agregado el combate a la base de datos.",
   "duels": "Combates",
   "duelsAverage": "Media de Combates",

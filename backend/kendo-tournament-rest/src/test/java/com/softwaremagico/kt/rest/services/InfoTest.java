@@ -49,7 +49,7 @@ public class InfoTest {
 	}
 
 	@Test
-	public void shouldReturnLatestVersionAndUseCachedValue() {
+	public void shouldReturnLatestVersionAndUseCachedValue() throws Exception {
 		when(this.versionController.getLatestVersionFromGithub()).thenReturn("3.3.0");
 
 		final ResponseEntity<String> firstResponse = this.info.getLatestVersion(this.httpServletRequest);
@@ -61,7 +61,7 @@ public class InfoTest {
 	}
 
 	@Test
-	public void shouldReturnEmptyOnVersionLookupError() {
+	public void shouldReturnEmptyOnVersionLookupError() throws Exception {
 		when(this.versionController.getLatestVersionFromGithub()).thenThrow(new IllegalStateException("boom"));
 
 		final ResponseEntity<String> response = this.info.getLatestVersion(this.httpServletRequest);
@@ -70,7 +70,7 @@ public class InfoTest {
 	}
 
 	@Test
-	public void shouldExecuteHealthCheck() {
+	public void shouldExecuteHealthCheck() throws Exception {
 		this.info.healthCheck(null);
 	}
 }

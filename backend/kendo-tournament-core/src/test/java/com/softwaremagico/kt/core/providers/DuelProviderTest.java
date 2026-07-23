@@ -104,7 +104,7 @@ public class DuelProviderTest {
 
         final long faults = provider.countFaults(tournament);
 
-        assertThat(faults).isEqualTo(0L);
+        assertThat(faults).isZero();
     }
 
     @Test
@@ -174,7 +174,7 @@ public class DuelProviderTest {
 
         final long count = provider.countScoreFromCompetitor(participant, tournaments);
 
-        assertThat(count).isEqualTo(0L);
+        assertThat(count).isZero();
     }
 
     @Test
@@ -185,7 +185,7 @@ public class DuelProviderTest {
 
         final long count = provider.countScoreAgainstCompetitor(participant, tournaments);
 
-        assertThat(count).isEqualTo(0L);
+        assertThat(count).isZero();
     }
 
      @Test
@@ -426,7 +426,7 @@ public class DuelProviderTest {
 
          final long count = provider.countScoreFromCompetitor(participant, tournaments);
 
-         assertThat(count).isEqualTo(0L);
+         assertThat(count).isZero();
      }
 
      @Test
@@ -451,7 +451,7 @@ public class DuelProviderTest {
 
          final long count = provider.countScoreAgainstCompetitor(participant, tournaments);
 
-         assertThat(count).isEqualTo(0L);
+         assertThat(count).isZero();
      }
 
      @Test

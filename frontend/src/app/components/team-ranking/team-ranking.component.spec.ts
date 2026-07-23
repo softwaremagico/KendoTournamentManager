@@ -156,7 +156,47 @@ describe('TeamRankingComponent', () => {
     component.ngOnInit();
 
     expect(component.existsDraws).toBeTrue();
-    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawScore');
+    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawTopPositionsScore');
+  });
+
+  it('should show top positions warning key for non championship tournament types like loop', () => {
+    const tournament = { id: 6, type: TournamentType.LOOP, name: 'L2' } as Tournament;
+    const scores = [
+      { sortingIndex: 0, team: createTeam('A') },
+      { sortingIndex: 0, team: createTeam('B') }
+    ] as unknown as ScoreOfTeam[];
+
+    component.tournament = tournament;
+    component.fightsFinished = true;
+    component.showDrawWarningOnInit = true;
+    rankingServiceSpy.getTeamsScoreRankingByTournament.and.returnValue(of(scores));
+
+    component.ngOnInit();
+
+    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawTopPositionsScore');
+  });
+
+  it('should show top positions warning key for swiss tournaments with champion draw', () => {
+    const tournament = {
+      id: 9,
+      type: TournamentType.SWISS,
+      name: 'S1',
+      tournamentScore: { pointsByVictory: 3, pointsByDraw: 1 }
+    } as unknown as Tournament;
+    const scores = [
+      { sortingIndex: 0, team: createTeam('A'), wonFights: 2, drawFights: 0 },
+      { sortingIndex: 1, team: createTeam('B'), wonFights: 2, drawFights: 0 }
+    ] as unknown as ScoreOfTeam[];
+
+    component.tournament = tournament;
+    component.fightsFinished = true;
+    component.showDrawWarningOnInit = true;
+    rankingServiceSpy.getTeamsScoreRankingByTournament.and.returnValue(of(scores));
+    tournamentExtendedPropertiesServiceSpy.getByTournamentAndKey.and.returnValue(of({ propertyValue: SwissTieBreakRule.BUCHHOLZ } as any));
+
+    component.ngOnInit();
+
+    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawTopPositionsScore');
   });
 
   it('should load swiss tournament ranking and selected tie-break rule on init', () => {

@@ -177,7 +177,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         );
 
         final String userTokenIp = this.jwtTokenUtil.getUserIp(token);
-        if (this.checkClientIp && !participantUser && (userTokenIp == null || userTokenIp.isEmpty() || !this.getClientIpAddress(request).contains(userTokenIp))) {
+        final List<String> clientIps = this.getClientIpAddress(request);
+        final boolean invalidIp = userTokenIp == null || userTokenIp.isEmpty()
+                || clientIps.stream().filter(ip -> ip != null).noneMatch(ip -> ip.contains(userTokenIp));
+        if (this.checkClientIp && !participantUser && invalidIp) {
             throw new InvalidIpException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
 

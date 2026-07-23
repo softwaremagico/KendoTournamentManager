@@ -596,7 +596,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return false;
   }
 
-  showTeamsClassification(fightsFinished: boolean, showDrawWarningOnOpen: boolean = false): void {
+  showTeamsClassification(fightsFinished: boolean, showDrawWarningOnOpen: boolean = true): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
       this.showDrawWarningOnTeamsRankingOpen = showDrawWarningOnOpen;
       this.showTeamsRanking = true;

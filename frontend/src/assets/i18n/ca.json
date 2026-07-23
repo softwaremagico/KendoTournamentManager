@@ -413,6 +413,7 @@
   "draw": "Empat",
   "drawResolution": "Resolució d'empats",
   "drawScore": "Hi ha alguns empats que s'han de resoldre abans de passar a la següent fase del torneig.",
+  "drawTopPositionsScore": "Hi ha alguns empats que s'han de resoldre per determinar les primeres posicions de la classificació.",
   "duelStored": "S'ha agregat el duel a la base de dades.",
   "duels": "Combats",
   "duelsAverage": "Mitjana de Combats",
