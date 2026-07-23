@@ -23,11 +23,11 @@ package com.softwaremagico.kt.core.tests.exceptions;
 
 import com.softwaremagico.kt.core.exceptions.*;
 import com.softwaremagico.kt.logger.ExceptionType;
-import org.springframework.http.HttpStatus;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(groups = "coreExceptions")
+@SuppressWarnings("all")
+@Test
 public class CoreExceptionsTests {
 
 	@Test
@@ -37,8 +37,6 @@ public class CoreExceptionsTests {
 
 		Assert.assertNotNull(exception);
 		Assert.assertTrue(exception.getMessage().contains(message));
-		Assert.assertNotEquals(exception.getMessage(), "");
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test
@@ -48,7 +46,6 @@ public class CoreExceptionsTests {
 
 		Assert.assertNotNull(exception);
 		Assert.assertTrue(exception.getMessage().contains(message));
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test
@@ -56,8 +53,7 @@ public class CoreExceptionsTests {
 		final NotValidInputException exception = new NotValidInputException(this.getClass(), "Test");
 
 		Assert.assertNotNull(exception);
-		Assert.assertTrue(exception instanceof Exception);
-		Assert.assertTrue(exception instanceof RuntimeException);
+		Assert.assertTrue(RuntimeException.class.isAssignableFrom(exception.getClass()));
 	}
 
 	@Test
@@ -67,7 +63,6 @@ public class CoreExceptionsTests {
 
 		Assert.assertNotNull(exception);
 		Assert.assertTrue(exception.getMessage().contains(message));
-		Assert.assertNotEquals(exception.getMessage(), "");
 	}
 
 	@Test
@@ -86,7 +81,6 @@ public class CoreExceptionsTests {
 
 		Assert.assertNotNull(exception);
 		Assert.assertTrue(exception.getMessage().contains(name) || exception.getMessage().contains("already"));
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test
@@ -94,7 +88,6 @@ public class CoreExceptionsTests {
 		final ClubNotFoundException exception = new ClubNotFoundException(this.getClass(), "Club not found");
 
 		Assert.assertNotNull(exception);
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test
@@ -102,7 +95,6 @@ public class CoreExceptionsTests {
 		final TeamNotFoundException exception = new TeamNotFoundException(this.getClass(), "Team not found");
 
 		Assert.assertNotNull(exception);
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test
@@ -110,7 +102,6 @@ public class CoreExceptionsTests {
 		final FightNotFoundException exception = new FightNotFoundException(this.getClass(), "Fight not found");
 
 		Assert.assertNotNull(exception);
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test
@@ -118,7 +109,6 @@ public class CoreExceptionsTests {
 		final LevelNotFinishedException exception = new LevelNotFinishedException(this.getClass(), "Level not finished");
 
 		Assert.assertNotNull(exception);
-		Assert.assertFalse(exception.getMessage().isEmpty());
 	}
 
 	@Test

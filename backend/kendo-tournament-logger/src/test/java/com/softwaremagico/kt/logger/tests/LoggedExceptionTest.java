@@ -10,12 +10,12 @@ package com.softwaremagico.kt.logger.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -60,8 +60,8 @@ public class LoggedExceptionTest {
     public void shouldKeepStatusForEachExceptionType(ExceptionType type) {
         TestLoggedException exception = new TestLoggedException(getClass(), "msg", type, HttpStatus.BAD_REQUEST);
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("msg", exception.getMessage());
+        assertEquals(exception.getStatus(), HttpStatus.BAD_REQUEST);
+        assertEquals(exception.getMessage(), "msg");
         assertTrue(exception instanceof RuntimeException);
     }
 
@@ -71,8 +71,8 @@ public class LoggedExceptionTest {
 
         TestLoggedException exception = new TestLoggedException(getClass(), cause, HttpStatus.CONFLICT);
 
-        assertEquals(cause, exception.getCause());
-        assertEquals(HttpStatus.CONFLICT, exception.getStatus());
+        assertEquals(exception.getCause(), cause);
+        assertEquals(exception.getStatus(), HttpStatus.CONFLICT);
     }
 
     @Test(groups = "loggedExceptionTests")
@@ -81,8 +81,8 @@ public class LoggedExceptionTest {
 
         TestLoggedException exception = new TestLoggedException(getClass(), cause);
 
-        assertEquals(cause, exception.getCause());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatus());
+        assertEquals(exception.getCause(), cause);
+        assertEquals(exception.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 

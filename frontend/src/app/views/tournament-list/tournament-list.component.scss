@@ -26,6 +26,46 @@ $main-black: #262626;
   flex-grow: 1;
 }
 
+.menu-button {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.menu-button .mat-icon.kendo-icon {
+  margin-left: 0;
+}
+
+.menu-button .mat-mdc-button-persistent-ripple,
+.menu-button .mat-mdc-button-touch-target {
+  display: none;
+}
+
+.menu-button.mat-mdc-button .mdc-button__label,
+.menu-button.mat-mdc-button .mat-mdc-button-touch-target,
+.menu-button.mat-mdc-unelevated-button .mdc-button__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-button mat-icon,
+.menu-button .kendo-icon,
+.menu-button [biit-icon] {
+  vertical-align: middle;
+}
+
+mat-divider {
+  margin: 0 2px;
+}
+
 .buttons-row {
   display: flex;
   flex-direction: row;

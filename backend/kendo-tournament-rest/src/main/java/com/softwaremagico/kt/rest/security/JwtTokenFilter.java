@@ -109,7 +109,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.participantProvider = participantProvider;
-        checkClientIp = Boolean.parseBoolean(ipCheck);
+        this.checkClientIp = Boolean.parseBoolean(ipCheck);
         this.participantAccess = Boolean.parseBoolean(participantAccess);
         this.networkController = networkController;
     }
@@ -131,11 +131,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
-        if (!jwtTokenUtil.validate(token)) {
+        if (!this.jwtTokenUtil.validate(token)) {
             JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
             try {
                 chain.doFilter(request, response);
-            } catch (Exception e) {
+            } catch (Exception _) {
                 //No other filters validates it.
                 throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
             }
@@ -143,20 +143,27 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         if (JwtFilterLogger.isDebugEnabled()) {
-            JwtFilterLogger.debug(this.getClass().getName(), "\nJWT Obtained:\n"
-                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tSession: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
-                    jwtTokenUtil.getExpirationDate(token), jwtTokenUtil.getUserId(token), jwtTokenUtil.getUsername(token),
-                    jwtTokenUtil.getSession(token), jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
+            JwtFilterLogger.debug(this.getClass().getName(), """
+                    JWT Obtained:
+                    Expiration date: '{}'
+                    User id: '{}'
+                    Username: '{}'
+                    Session: '{}'
+                    Ip: '{}'
+                    MAC: '{}'
+                    """,
+                    this.jwtTokenUtil.getExpirationDate(token), this.jwtTokenUtil.getUserId(token), this.jwtTokenUtil.getUsername(token),
+                    this.jwtTokenUtil.getSession(token), this.jwtTokenUtil.getUserIp(token), this.jwtTokenUtil.getHostMac(token));
         }
 
         // Get user identity and set it on the spring security context
-        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(jwtTokenUtil.getUsername(token)).orElse(null);
+        final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(this.jwtTokenUtil.getUsername(token)).orElse(null);
 
         //Check if is a participant access.
         boolean participantUser = false;
         final UserDetails userDetails;
-        if (user == null && participantAccess) {
-            userDetails = participantProvider.findByTokenUsername(jwtTokenUtil.getUsername(token)).orElse(null);
+        if (user == null && this.participantAccess) {
+            userDetails = this.participantProvider.findByTokenUsername(this.jwtTokenUtil.getUsername(token)).orElse(null);
             participantUser = true;
         } else {
             //It is a standard user
@@ -169,13 +176,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 userDetails == null ? new ArrayList<>() : userDetails.getAuthorities()
         );
 
-        final String userTokenIp = jwtTokenUtil.getUserIp(token);
-        if (checkClientIp && !participantUser && (userTokenIp == null || userTokenIp.isEmpty() || !getClientIpAddress(request).contains(userTokenIp))) {
+        final String userTokenIp = this.jwtTokenUtil.getUserIp(token);
+        if (this.checkClientIp && !participantUser && (userTokenIp == null || userTokenIp.isEmpty() || !this.getClientIpAddress(request).contains(userTokenIp))) {
             throw new InvalidIpException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
 
-        final String hostMac = networkController.getHostMac();
-        if (checkClientIp && !participantUser && hostMac != null && !hostMac.isEmpty() && !Objects.equals(jwtTokenUtil.getHostMac(token), hostMac)) {
+        final String hostMac = this.networkController.getHostMac();
+        if (this.checkClientIp && !participantUser && hostMac != null && !hostMac.isEmpty() && !Objects.equals(this.jwtTokenUtil.getHostMac(token), hostMac)) {
             throw new InvalidMacException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
 

@@ -116,11 +116,10 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 }
             }
 
-            if (Objects.equals(duel.getCompetitorWinner(), participant)) {
-                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                    totalDuelWonsWithDuration += duel.getDuration();
-                    wonDuelsWithDuration++;
-                }
+            if (Objects.equals(duel.getCompetitorWinner(), participant)
+                    && duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                totalDuelWonsWithDuration += duel.getDuration();
+                wonDuelsWithDuration++;
             }
             if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)
                     && duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {

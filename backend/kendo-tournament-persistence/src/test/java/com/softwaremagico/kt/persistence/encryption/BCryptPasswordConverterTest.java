@@ -31,28 +31,29 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-@Test(groups = "cryptoConverters")
+@SuppressWarnings("unused")
+@Test
 class BCryptPasswordConverterTest {
 
     @Test
-    void shouldKeepNullAndEmptyValuesUntouched() {
+    public void shouldKeepNullAndEmptyValuesUntouched() {
         final BCryptPasswordConverter converter = new BCryptPasswordConverter();
 
         assertNull(converter.convertToDatabaseColumn(null));
-        assertEquals("", converter.convertToDatabaseColumn(""));
+        assertEquals(converter.convertToDatabaseColumn(""), "");
     }
 
     @Test
-    void shouldNotReEncodeExistingBcryptHashes() {
+    public void shouldNotReEncodeExistingBcryptHashes() {
         final BCryptPasswordConverter converter = new BCryptPasswordConverter();
         final String bcryptHash = new BCryptPasswordEncoder().encode("secret-password");
 
-        assertEquals(bcryptHash, converter.convertToDatabaseColumn(bcryptHash));
-        assertEquals(bcryptHash, converter.convertToEntityAttribute(bcryptHash));
+        assertEquals(converter.convertToDatabaseColumn(bcryptHash), bcryptHash);
+        assertEquals(converter.convertToEntityAttribute(bcryptHash), bcryptHash);
     }
 
     @Test
-    void shouldEncodePlainTextPasswordEvenWhenEncoderIsReset() throws Exception {
+    public void shouldEncodePlainTextPasswordEvenWhenEncoderIsReset() throws Exception {
         final BCryptPasswordConverter converter = new BCryptPasswordConverter();
         final Field encoderField = BCryptPasswordConverter.class.getDeclaredField("encoder");
         encoderField.setAccessible(true);
@@ -60,7 +61,7 @@ class BCryptPasswordConverterTest {
 
         final String encoded = converter.convertToDatabaseColumn("secret-password");
 
-        assertNotEquals("secret-password", encoded);
+        assertNotEquals(encoded, "secret-password");
         assertTrue(new BCryptPasswordEncoder().matches("secret-password", encoded));
     }
 }

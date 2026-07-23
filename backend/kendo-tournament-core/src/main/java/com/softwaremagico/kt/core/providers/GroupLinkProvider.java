@@ -87,7 +87,7 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         int tournamentWinners;
         final String numberOfWinnersValue = numberOfWinners != null ? numberOfWinners.getPropertyValue() : null;
         try {
-            tournamentWinners = Integer.parseInt(numberOfWinnersValue);
+            tournamentWinners = numberOfWinnersValue != null ? Integer.parseInt(numberOfWinnersValue) : 1;
         } catch (final NumberFormatException | IndexOutOfBoundsException | NullPointerException ex) {
             KendoTournamentLogger.debug(this.getClass(), "Invalid NUMBER_OF_WINNERS '{}': {}. Using default 1.",
                     numberOfWinnersValue, ex.getMessage());
@@ -176,15 +176,17 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         if (templateDestination >= 0) {
             return nextLevelGroups.get(templateDestination);
         }
-        final int destinationIndex = currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1
-                && currentLevelGroups.size() % 2 == 1
-                        ? this.spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(), currentLevelGroups.size(),
-                                nextLevelGroups.size(), winnerOrder)
-                        : currentLevelGroups.size() % 2 == 0
-                                ? this.spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
-                                        currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder)
-                                : this.obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroup.getIndex(),
-                                        currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder);
+        final int destinationIndex;
+        if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
+            destinationIndex = this.spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(), currentLevelGroups.size(),
+                    nextLevelGroups.size(), winnerOrder);
+        } else if (currentLevelGroups.size() % 2 == 0) {
+            destinationIndex = this.spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(), currentLevelGroups.size(),
+                    nextLevelGroups.size(), winnerOrder);
+        } else {
+            destinationIndex = this.obtainPositionOfWinnerNonBinaryTreeOddSize(sourceGroup.getIndex(), currentLevelGroups.size(),
+                    nextLevelGroups.size(), winnerOrder);
+        }
         return nextLevelGroups.get(destinationIndex);
     }
 
@@ -304,24 +306,44 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
     private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize,
             int numberOfWinners, int winnerOrder) {
         return switch (sourceGroupLevelSize) {
-            case SOURCE_13 ->
-                numberOfWinners == 2 ? Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
-            case SOURCE_12 ->
-                numberOfWinners == 2 ? Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
-            case SOURCE_11 -> switch (numberOfWinners) {
-                case 1 -> Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
-                case 2 -> Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-                default -> -1;
-            };
-            case SOURCE_9 ->
-                numberOfWinners == 1 ? Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
-            case SOURCE_6 -> numberOfWinners == 1
-                    ? Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder)
-                    : Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-            case SOURCE_3 ->
-                numberOfWinners == 2 ? Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
+            case SOURCE_13 -> getPool13Destination(sourceGroupLevelIndex, numberOfWinners, winnerOrder);
+            case SOURCE_12 -> getPool12Destination(sourceGroupLevelIndex, numberOfWinners, winnerOrder);
+            case SOURCE_11 -> getPool11Destination(sourceGroupLevelIndex, numberOfWinners, winnerOrder);
+            case SOURCE_9 -> getPool9Destination(sourceGroupLevelIndex, numberOfWinners, winnerOrder);
+            case SOURCE_6 -> getPool6Destination(sourceGroupLevelIndex, numberOfWinners, winnerOrder);
+            case SOURCE_3 -> getPool3Destination(sourceGroupLevelIndex, numberOfWinners, winnerOrder);
             default -> -1;
         };
+    }
+
+    private int getPool13Destination(int sourceGroupLevelIndex, int numberOfWinners, int winnerOrder) {
+        return numberOfWinners == 2 ? Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
+    }
+
+    private int getPool12Destination(int sourceGroupLevelIndex, int numberOfWinners, int winnerOrder) {
+        return numberOfWinners == 2 ? Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
+    }
+
+    private int getPool11Destination(int sourceGroupLevelIndex, int numberOfWinners, int winnerOrder) {
+        return switch (numberOfWinners) {
+            case 1 -> Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+            case 2 -> Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+            default -> -1;
+        };
+    }
+
+    private int getPool9Destination(int sourceGroupLevelIndex, int numberOfWinners, int winnerOrder) {
+        return numberOfWinners == 1 ? Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
+    }
+
+    private int getPool6Destination(int sourceGroupLevelIndex, int numberOfWinners, int winnerOrder) {
+        return numberOfWinners == 1
+                ? Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder)
+                : Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+    }
+
+    private int getPool3Destination(int sourceGroupLevelIndex, int numberOfWinners, int winnerOrder) {
+        return numberOfWinners == 2 ? Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder) : -1;
     }
 
     public void deleteByTournament(Tournament tournament) {

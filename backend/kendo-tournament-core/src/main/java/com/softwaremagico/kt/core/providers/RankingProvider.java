@@ -594,7 +594,7 @@ public class RankingProvider {
         private final List<Fight> playedFights;
         private final SwissTieBreakRule selectedRule;
         private final Map<Team, ScoreOfTeam> scoreByTeam;
-        private final Map<Team, Integer> swissPoints;
+        private final Map<Team, Integer> swissMatchPoints;
         private final Map<Integer, List<Team>> teamsByPoints;
 
         private SwissRankingContext(Tournament tournament, List<ScoreOfTeam> scores, List<Fight> fights, SwissTieBreakRule selectedRule) {
@@ -602,12 +602,12 @@ public class RankingProvider {
             this.playedFights = fights.stream().filter(Fight::isOver).toList();
             this.selectedRule = selectedRule;
             this.scoreByTeam = new HashMap<>();
-            this.swissPoints = new HashMap<>();
+            this.swissMatchPoints = new HashMap<>();
             this.teamsByPoints = new HashMap<>();
             scores.forEach(score -> {
                 this.scoreByTeam.put(score.getTeam(), score);
                 final int points = RankingProvider.getSwissMatchPoints(score, tournament);
-                this.swissPoints.put(score.getTeam(), points);
+                this.swissMatchPoints.put(score.getTeam(), points);
                 this.teamsByPoints.computeIfAbsent(points, teamsWithSamePoints -> new ArrayList<>()).add(score.getTeam());
             });
         }
@@ -640,7 +640,7 @@ public class RankingProvider {
         }
 
         private int getPoints(Team team) {
-            return this.swissPoints.getOrDefault(team, 0);
+            return this.swissMatchPoints.getOrDefault(team, 0);
         }
 
         private SwissTieBreakRule getSelectedRule() {

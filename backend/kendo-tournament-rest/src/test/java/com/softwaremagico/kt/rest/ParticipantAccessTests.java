@@ -37,13 +37,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -128,14 +125,14 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void createClub() throws Exception {
-        ClubDTO clubDTO = new ClubDTO();
-        clubDTO.setName(CLUB_NAME);
+        ClubDTO clubDto = new ClubDTO();
+        clubDto.setName(CLUB_NAME);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(clubDTO))
+                        .content(toJson(clubDto))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
@@ -147,16 +144,16 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "createClub")
     public void createParticipant() throws Exception {
-        ParticipantDTO participantDTO = new ParticipantDTO();
-        participantDTO.setClub(this.clubDTO);
-        participantDTO.setName(PARTICIPANT_NAME);
-        participantDTO.setLastname(PARTICIPANT_LASTNAME);
+        ParticipantDTO participantDto = new ParticipantDTO();
+        participantDto.setClub(this.clubDTO);
+        participantDto.setName(PARTICIPANT_NAME);
+        participantDto.setLastname(PARTICIPANT_LASTNAME);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(participantDTO))
+                        .content(toJson(participantDto))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
@@ -193,11 +190,11 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+        ParticipantDTO responseParticipantDto = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
 
         this.participantJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
 
-        Assert.assertEquals(participantDTO.getName(), PARTICIPANT_NAME);
+        Assert.assertEquals(responseParticipantDto.getName(), PARTICIPANT_NAME);
     }
 
     @Test(dependsOnMethods = "generateToken")

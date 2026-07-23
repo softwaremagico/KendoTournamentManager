@@ -89,7 +89,6 @@ public class JwtTokenUtil {
 
     private final NetworkController networkController;
 
-    private final String jwtSecret;
     private final SecretKey signingKey;
     private final long jwtExpiration;
     private final long jwtGuestExpiration;
@@ -108,18 +107,14 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedJwtExpiration = Long.parseLong(jwtExpiration);
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException _) {
                 RestServerLogger.warning(this.getClass().getName(), "jwt.expiration value '{}' is invalid. Setting default to '{}'.",
                         jwtExpiration, JWT_EXPIRATION);
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
-        if (jwtSecret != null && !jwtSecret.isBlank()) {
-            this.jwtSecret = jwtSecret;
-        } else {
-            this.jwtSecret = generateRandomSecret();
-        }
-        this.signingKey = createSigningKey(this.jwtSecret);
+        final String signingSecret = jwtSecret != null && !jwtSecret.isBlank() ? jwtSecret : this.generateRandomSecret();
+        this.signingKey = this.createSigningKey(signingSecret);
         this.jwtExpiration = calculatedJwtExpiration;
 
         //If not set, guest expiration is the same that the standard one.
@@ -129,9 +124,9 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException _) {
                 RestServerLogger.debug(this.getClass().getName(), "jwt.guest.expiration value '{}' is invalid ({}). Using default.",
-                        jwtGuestExpiration, ex.getMessage());
+                        jwtGuestExpiration, "invalid");
                 calculatedGuestJwtExpiration = this.jwtExpiration;
             }
         }
@@ -144,10 +139,10 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedParticipantJwtExpiration = Long.parseLong(jwtParticipantExpiration);
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException _) {
                 RestServerLogger.debug(this.getClass().getName(),
                         "jwt.participant.expiration value '{}' is invalid ({}). Using default.", jwtParticipantExpiration,
-                        ex.getMessage());
+                        "invalid");
                 calculatedParticipantJwtExpiration = this.jwtExpiration;
             }
         }
@@ -171,17 +166,17 @@ public class JwtTokenUtil {
         try {
             final byte[] keyBytes = MessageDigest.getInstance("SHA-512").digest(secret.getBytes(StandardCharsets.UTF_8));
             return Keys.hmacShaKeyFor(keyBytes);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException _) {
             throw new IllegalStateException("SHA-512 algorithm is not available.");
         }
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(this.signingKey).build().parseSignedClaims(token).getPayload();
     }
 
     private TokenSubject getTokenSubject(String token) {
-        return TokenSubject.from(getClaims(token).getSubject());
+        return TokenSubject.from(this.getClaims(token).getSubject());
     }
 
 
@@ -193,7 +188,7 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp) {
-        return generateAccessToken(user, userIp, jwtExpiration, UUID.randomUUID().toString());
+        return this.generateAccessToken(user, userIp, this.jwtExpiration, UUID.randomUUID().toString());
     }
 
     /**
@@ -205,7 +200,7 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, String session) {
-        return generateAccessToken(user, userIp, jwtExpiration, session);
+        return this.generateAccessToken(user, userIp, this.jwtExpiration, session);
     }
 
     /**
@@ -217,7 +212,7 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime) {
-        return generateAccessToken(user, userIp, expirationTime, UUID.randomUUID().toString());
+        return this.generateAccessToken(user, userIp, expirationTime, UUID.randomUUID().toString());
     }
 
     /**
@@ -237,11 +232,11 @@ public class JwtTokenUtil {
         final Instant issuedAt = Instant.now();
         return Jwts.builder()
                 .subject(new TokenSubject(String.valueOf(user.getId()), user.getUsername(),
-                        session != null ? session : UUID.randomUUID().toString(), userIp, networkController.getHostMac()).value())
+                        session != null ? session : UUID.randomUUID().toString(), userIp, this.networkController.getHostMac()).value())
                 .issuer(JWT_ISSUER)
                 .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(issuedAt.plusMillis(expirationTime)))
-                .signWith(signingKey, Jwts.SIG.HS512)
+                .signWith(this.signingKey, Jwts.SIG.HS512)
                 .compact();
     }
 
@@ -251,7 +246,7 @@ public class JwtTokenUtil {
      * @return current time plus the configured standard expiration, in Unix epoch milliseconds
      */
     public long getJwtExpirationTime() {
-        return (System.currentTimeMillis() + jwtExpiration);
+        return Instant.now().plusMillis(this.jwtExpiration).toEpochMilli();
     }
 
     /**
@@ -260,7 +255,7 @@ public class JwtTokenUtil {
      * @return current time plus the configured guest expiration, in Unix epoch milliseconds
      */
     public long getJwtGuestExpirationTime() {
-        return (System.currentTimeMillis() + jwtGuestExpiration);
+        return Instant.now().plusMillis(this.jwtGuestExpiration).toEpochMilli();
     }
 
     /**
@@ -269,7 +264,7 @@ public class JwtTokenUtil {
      * @return current time plus the configured participant expiration, in Unix epoch milliseconds
      */
     public long getJwtParticipantExpirationTime() {
-        return (System.currentTimeMillis() + jwtParticipantExpiration);
+        return Instant.now().plusMillis(this.jwtParticipantExpiration).toEpochMilli();
     }
 
     /**
@@ -279,7 +274,7 @@ public class JwtTokenUtil {
      * @return the user entity ID, or {@code null} if the claim is absent or the token is malformed
      */
     public String getUserId(String token) {
-        final String userId = getTokenSubject(token).userId();
+        final String userId = this.getTokenSubject(token).userId();
 
         if (userId == null) {
             JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
@@ -294,7 +289,7 @@ public class JwtTokenUtil {
      * @return the username, or {@code null} if the claim is absent or the token is malformed
      */
     public String getUsername(String token) {
-        final String username = getTokenSubject(token).username();
+        final String username = this.getTokenSubject(token).username();
 
         if (username == null) {
             JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
@@ -309,7 +304,7 @@ public class JwtTokenUtil {
      * @return the session ID, or {@code null} if the claim is absent or the token is malformed
      */
     public String getSession(String token) {
-        final String session = getTokenSubject(token).session();
+        final String session = this.getTokenSubject(token).session();
         if (session == null) {
             JwtFilterLogger.debug(this.getClass().getName(), "No session information on JWT token!");
         }
@@ -323,7 +318,7 @@ public class JwtTokenUtil {
      * @return the IP address string, or {@code null} if the claim is absent or the token is malformed
      */
     public String getUserIp(String token) {
-        final String userIp = getTokenSubject(token).userIp();
+        final String userIp = this.getTokenSubject(token).userIp();
         if (userIp == null) {
             JwtFilterLogger.debug(this.getClass().getName(), "No filed 'user IP' on JWT token!");
         }
@@ -337,7 +332,7 @@ public class JwtTokenUtil {
      * @return the MAC address string, or {@code null} if the claim is absent or the token is malformed
      */
     public String getHostMac(String token) {
-        final String hostMac = getTokenSubject(token).hostMac();
+        final String hostMac = this.getTokenSubject(token).hostMac();
         if (hostMac == null) {
             JwtFilterLogger.debug(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
         }
@@ -351,7 +346,7 @@ public class JwtTokenUtil {
      * @return the expiration {@link Date}
      */
     public Date getExpirationDate(String token) {
-        return getClaims(token).getExpiration();
+        return this.getClaims(token).getExpiration();
     }
 
     /**
@@ -363,14 +358,14 @@ public class JwtTokenUtil {
      */
     public boolean validate(String token) {
         try {
-            getClaims(token);
+            this.getClaims(token);
             return true;
-        } catch (ExpiredJwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
-        } catch (JwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
+        } catch (ExpiredJwtException _) {
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token");
+        } catch (JwtException _) {
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token");
+        } catch (IllegalArgumentException _) {
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty");
         }
         return false;
     }
@@ -387,7 +382,7 @@ public class JwtTokenUtil {
         }
 
         private String value() {
-            return String.join(",", userId, username, session, userIp, hostMac);
+            return String.join(",", this.userId, this.username, this.session, this.userIp, this.hostMac);
         }
     }
 
