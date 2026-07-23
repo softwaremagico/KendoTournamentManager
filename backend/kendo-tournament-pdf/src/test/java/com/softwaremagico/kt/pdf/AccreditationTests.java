@@ -41,45 +41,44 @@ import java.util.Locale;
 @Test(groups = {"accreditationPdf"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class AccreditationTests extends BasicDataTest {
-    private static final String PDF_PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
+	private static final String PDF_PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
 
-    @Autowired
-    private PdfController pdfController;
+	@Autowired
+	private PdfController pdfController;
 
-    @Autowired
-    private RoleController roleController;
+	@Autowired
+	private RoleController roleController;
 
-    @BeforeClass
-    public void prepareData() {
-        populateData();
-    }
+	@BeforeClass
+	public void prepareData() {
+		this.populateData();
+	}
 
-    @Test
-    public void generateAccreditations() {
-        List<RoleDTO> roles = roleController.get(tournament);
-        roles.forEach(roleDTO -> Assert.assertFalse(roleDTO.isAccreditationPrinted()));
+	@Test
+	public void generateAccreditations() {
+		List<RoleDTO> roles = this.roleController.get(this.tournament);
+		roles.forEach(roleDTO -> Assert.assertFalse(roleDTO.isAccreditationPrinted()));
 
-        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null, null)
-                // No clue why are 3 pages and not 2.
-                .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
+		Assert.assertEquals(this.pdfController
+				.generateTournamentAccreditations(Locale.getDefault(), this.tournament, true, null, null)
+				// No clue why are 3 pages and not 2.
+				.createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
 
-        roles = roleController.get(tournament);
-        roles.forEach(roleDTO -> Assert.assertTrue(roleDTO.isAccreditationPrinted()));
-    }
+		roles = this.roleController.get(this.tournament);
+		roles.forEach(roleDTO -> Assert.assertTrue(roleDTO.isAccreditationPrinted()));
+	}
 
-    @Test(dependsOnMethods = "generateAccreditations", expectedExceptions = NoContentException.class)
-    public void generateNewAccreditations() {
-        try {
-            pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null, null);
-        } finally {
-        }
-    }
+	@Test(dependsOnMethods = "generateAccreditations", expectedExceptions = NoContentException.class)
+	public void generateNewAccreditations() {
+		this.pdfController.generateTournamentAccreditations(Locale.getDefault(), this.tournament, true, null, null);
+	}
 
-    @Test(dependsOnMethods = "generateNewAccreditations")
-    public void generateAccreditationsAgain() {
-        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, null, null, (String) null)
-                // No clue why are 3 pages and not 2.
-                .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
-    }
+	@Test(dependsOnMethods = "generateNewAccreditations")
+	public void generateAccreditationsAgain() {
+		Assert.assertEquals(this.pdfController
+				.generateTournamentAccreditations(Locale.getDefault(), this.tournament, null, null, null)
+				// No clue why are 3 pages and not 2.
+				.createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(this.roles.size() / 4.0) + 1);
+	}
 
 }

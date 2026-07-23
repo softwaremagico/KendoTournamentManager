@@ -28,53 +28,52 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class CsvReader<E extends Element> {
-    private static final String CSV_SEPARATOR = ";";
-    private static final String LINE_SEPARATOR = "\\r?\\n";
+	private static final String CSV_SEPARATOR = ";";
+	private static final String LINE_SEPARATOR = "\\r?\\n";
 
-    public abstract List<E> readCSV(String csvContent);
+	public abstract List<E> readCSV(String csvContent);
 
-    protected void checkHeaders(String[] fileHeaders, String... elementHeaders) throws InvalidCsvFieldException {
-        for (String header : fileHeaders) {
-            if (getHeaderIndex(elementHeaders, header) < 0) {
-                throw new InvalidCsvFieldException(this.getClass(), "Invalid header '" + header + "'.", header);
-            }
-        }
-    }
+	protected void checkHeaders(String[] fileHeaders, String... elementHeaders) throws InvalidCsvFieldException {
+		for (final String header : fileHeaders) {
+			if (this.getHeaderIndex(elementHeaders, header) < 0) {
+				throw new InvalidCsvFieldException(this.getClass(), "Invalid header '" + header + "'.", header);
+			}
+		}
+	}
 
-    public String[] getHeaders(String content) {
-        final String[] lines = content.replace("#", "").split(LINE_SEPARATOR);
-        if (lines.length > 1) {
-            return lines[0].split(CSV_SEPARATOR);
-        }
-        return new String[0];
-    }
+	public String[] getHeaders(String content) {
+		final String[] lines = content.replace("#", "").split(LINE_SEPARATOR);
+		if (lines.length > 1) {
+			return lines[0].split(CSV_SEPARATOR);
+		}
+		return new String[0];
+	}
 
+	public String[] getContent(String content) {
+		final String[] lines = content.split(LINE_SEPARATOR);
+		if (lines.length > 1) {
+			return Arrays.copyOfRange(lines, 1, lines.length);
+		}
+		return new String[0];
+	}
 
-    public String[] getContent(String content) {
-        final String[] lines = content.split("\\r?\\n");
-        if (lines.length > 1) {
-            return Arrays.copyOfRange(lines, 1, lines.length);
-        }
-        return new String[0];
-    }
+	public int getHeaderIndex(String[] headers, String header) {
+		for (int i = 0; i < headers.length; i++) {
+			if (header != null && headers[i] != null && headers[i].trim().equalsIgnoreCase(header.trim())) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
-    public int getHeaderIndex(String[] headers, String header) {
-        for (int i = 0; i < headers.length; i++) {
-            if (header != null && headers[i] != null && headers[i].trim().equalsIgnoreCase(header.trim())) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public String getField(String line, int index) {
-        if (index < 0) {
-            return null;
-        }
-        final String[] columns = line.split(CSV_SEPARATOR);
-        if (index < columns.length) {
-            return columns[index].trim();
-        }
-        return null;
-    }
+	public String getField(String line, int index) {
+		if (index < 0) {
+			return null;
+		}
+		final String[] columns = line.split(CSV_SEPARATOR);
+		if (index < columns.length) {
+			return columns[index].trim();
+		}
+		return null;
+	}
 }

@@ -17,6 +17,9 @@ export class MemberSelectorComponent implements OnChanges {
   @Input()
   selections: number = 1;
 
+  @Input()
+  autoSelectSingleMember: boolean = false;
+
   @Output() selectedMember: EventEmitter<Participant[]> = new EventEmitter<Participant[]>();
 
   members: Participant[];
@@ -27,6 +30,15 @@ export class MemberSelectorComponent implements OnChanges {
     const teamMembers: (Participant | undefined)[] = this.team?.members ?? [];
     //Removing undefined members.
     this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
+
+    //If there is only one possible option, select it automatically.
+    if (this.autoSelectSingleMember && this.selections === 1 && this.members.length === 1) {
+      const onlyMember: Participant = this.members[0];
+      if (!this.isSelected(onlyMember) || this.selectedMembers.length !== 1) {
+        this.selectedMembers = [onlyMember];
+        this.selectedMember.emit(this.selectedMembers);
+      }
+    }
   }
 
   transferCard(event: CdkDragDrop<Participant[], any>): Participant {

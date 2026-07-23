@@ -93,6 +93,21 @@ describe('UntieTeamsComponent', () => {
     expect(component.duels[0].tournament).toBe(component.tournament);
   });
 
+  it('should allow duels to be completed immediately when each team has a single selected member', () => {
+    const participantA = createParticipant('One');
+    const participantB = createParticipant('Two');
+    component.teams = [
+      { name: 'A', members: [participantA] } as unknown as Team,
+      { name: 'B', members: [participantB] } as unknown as Team
+    ];
+    component.ngOnInit();
+
+    component.setCompetitor1(0, [participantA]);
+    component.setCompetitor2(0, [participantB]);
+
+    expect(component.duelsCompleted()).toBeTrue();
+  });
+
   it('should update totalDuels when teams input changes', () => {
     component.teams = [createTeam('A'), createTeam('B')];
 

@@ -68,6 +68,7 @@ describe('TeamRankingComponent', () => {
     component.tournament = tournament;
     component.group = group;
     component.fightsFinished = true;
+    component.showDrawWarningOnInit = true;
     rankingServiceSpy.getTeamsScoreRankingByGroup.and.returnValue(of(scores));
     tournamentExtendedPropertiesServiceSpy.getByTournamentAndKey.and.returnValue(of({ propertyValue: '1' } as any));
 
@@ -77,6 +78,52 @@ describe('TeamRankingComponent', () => {
     expect(component.teamScores).toBe(scores);
     expect(component.numberOfWinners).toBe(1);
     expect(component.existsDraws).toBeTrue();
+    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawScore');
+  });
+
+  it('should not show warning when draw exists but warning on init is disabled', () => {
+    const tournament = { id: 1, type: TournamentType.CHAMPIONSHIP, name: 'T1' } as Tournament;
+    const group = { id: 2, index: 0 } as Group;
+    const teamA = createTeam('A');
+    const teamB = createTeam('B');
+    const scores = [
+      { sortingIndex: 0, team: teamA },
+      { sortingIndex: 0, team: teamB }
+    ] as unknown as ScoreOfTeam[];
+
+    component.tournament = tournament;
+    component.group = group;
+    component.fightsFinished = true;
+    component.showDrawWarningOnInit = false;
+    rankingServiceSpy.getTeamsScoreRankingByGroup.and.returnValue(of(scores));
+    tournamentExtendedPropertiesServiceSpy.getByTournamentAndKey.and.returnValue(of({ propertyValue: '1' } as any));
+
+    component.ngOnInit();
+
+    expect(component.existsDraws).toBeTrue();
+    expect(messageServiceSpy.warningMessage).not.toHaveBeenCalled();
+  });
+
+  it('should show warning on auto-open when draw exists even if fightsFinished is false', () => {
+    const tournament = { id: 1, type: TournamentType.CHAMPIONSHIP, name: 'T1' } as Tournament;
+    const group = { id: 2, index: 0 } as Group;
+    const teamA = createTeam('A');
+    const teamB = createTeam('B');
+    const scores = [
+      { sortingIndex: 0, team: teamA },
+      { sortingIndex: 0, team: teamB }
+    ] as unknown as ScoreOfTeam[];
+
+    component.tournament = tournament;
+    component.group = group;
+    component.fightsFinished = false;
+    component.showDrawWarningOnInit = true;
+    rankingServiceSpy.getTeamsScoreRankingByGroup.and.returnValue(of(scores));
+    tournamentExtendedPropertiesServiceSpy.getByTournamentAndKey.and.returnValue(of({ propertyValue: '1' } as any));
+
+    component.ngOnInit();
+
+    expect(component.existsDraws).toBeFalse();
     expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawScore');
   });
 
@@ -92,6 +139,24 @@ describe('TeamRankingComponent', () => {
     expect(rankingServiceSpy.getTeamsScoreRankingByTournament).toHaveBeenCalledOnceWith(5);
     expect(component.teamScores).toBe(scores);
     expect(component.numberOfWinners).toBe(1);
+  });
+
+  it('should show warning for non championship tournaments when winner is tied and auto-open warning is enabled', () => {
+    const tournament = { id: 5, type: TournamentType.LEAGUE, name: 'L1' } as Tournament;
+    const scores = [
+      { sortingIndex: 0, team: createTeam('A') },
+      { sortingIndex: 0, team: createTeam('B') }
+    ] as unknown as ScoreOfTeam[];
+
+    component.tournament = tournament;
+    component.fightsFinished = true;
+    component.showDrawWarningOnInit = true;
+    rankingServiceSpy.getTeamsScoreRankingByTournament.and.returnValue(of(scores));
+
+    component.ngOnInit();
+
+    expect(component.existsDraws).toBeTrue();
+    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('drawScore');
   });
 
   it('should load swiss tournament ranking and selected tie-break rule on init', () => {

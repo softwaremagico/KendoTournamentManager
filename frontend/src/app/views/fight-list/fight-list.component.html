@@ -132,7 +132,7 @@
             || (tournament && tournament.type === TournamentType.SWISS)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)) {
             <button biit-icon
               [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
-              (click)="showTeamsClassification(areAllDuelsOver())"
+              (click)="showTeamsClassification(areAllDuelsOver(), false)"
               [title]="t('teamsRanking')">
               <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
             </button>
@@ -267,8 +267,9 @@
         [tournament]="tournament"
         [showIndex]="true"
         [fightsFinished]="areAllDuelsOver()"
+        [showDrawWarningOnInit]="showDrawWarningOnTeamsRankingOpen"
         [group]="groupRankingToShow()"
-      (closed)="showTeamsRanking=false"></team-ranking>
+      (closed)="showTeamsRanking=false; showDrawWarningOnTeamsRankingOpen=false"></team-ranking>
     </biit-popup>
   }
 

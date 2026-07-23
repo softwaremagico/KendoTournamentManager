@@ -549,7 +549,7 @@ describe('FightListComponent', () => {
 
     component.tournament = buildTournament();
     component.showClassification();
-    expect(component.showTeamsClassification).toHaveBeenCalledWith(true);
+    expect(component.showTeamsClassification).toHaveBeenCalledWith(true, true);
 
     component.tournament.teamSize = 1;
     component.tournament.type = TournamentType.CUSTOMIZED;
@@ -558,7 +558,7 @@ describe('FightListComponent', () => {
 
     component.tournament.type = TournamentType.SWISS;
     component.showClassification();
-    expect(component.showTeamsClassification).toHaveBeenCalledWith(true);
+    expect(component.showTeamsClassification).toHaveBeenCalledWith(true, true);
   });
 
   it('should refresh fights when an untie websocket event arrives from another session', () => {

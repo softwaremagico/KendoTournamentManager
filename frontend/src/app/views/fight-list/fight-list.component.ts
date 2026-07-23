@@ -80,6 +80,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   protected showCompetitorsRanking: boolean = false;
   protected showTeamsRanking: boolean = false;
+  protected showDrawWarningOnTeamsRankingOpen: boolean = false;
   protected confirmResetFights: boolean = false;
   protected confirmDeleteFights: boolean = false;
 
@@ -595,8 +596,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return false;
   }
 
-  showTeamsClassification(fightsFinished: boolean): void {
+  showTeamsClassification(fightsFinished: boolean, showDrawWarningOnOpen: boolean = false): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
+      this.showDrawWarningOnTeamsRankingOpen = showDrawWarningOnOpen;
       this.showTeamsRanking = true;
     }
   }
@@ -757,7 +759,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.SENBATSU
         || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP
         || this.tournament.type === TournamentType.SWISS))) {
-      this.showTeamsClassification(true);
+      this.showTeamsClassification(true, true);
     } else {
       this.showCompetitorsClassification();
     }

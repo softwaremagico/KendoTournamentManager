@@ -5,6 +5,14 @@ import {Participant} from '../../../models/participant';
 describe('MemberSelectorComponent', () => {
   let component: MemberSelectorComponent;
 
+  const createParticipant = (name: string, id: number): Participant => {
+    const participant = new Participant();
+    participant.id = id;
+    participant.name = name;
+    participant.lastname = 'Test';
+    return participant;
+  };
+
   beforeEach(() => {
     component = new MemberSelectorComponent();
   });
@@ -27,6 +35,56 @@ describe('MemberSelectorComponent', () => {
 
     expect(component.members.length).toBe(2);
     expect(component.members).toEqual([participant1, participant2]);
+  });
+
+  it('should auto-select and emit when there is only one member and single selection mode', () => {
+    const onlyMember = createParticipant('Solo', 11);
+    component.selections = 1;
+    component.autoSelectSingleMember = true;
+    component.team = {
+      id: 4,
+      name: 'Team Solo',
+      members: [onlyMember]
+    } as unknown as Team;
+    spyOn(component.selectedMember, 'emit');
+
+    component.ngOnChanges();
+
+    expect(component.selectedMembers).toEqual([onlyMember]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([onlyMember]);
+  });
+
+  it('should not auto-select a single member unless autoSelectSingleMember is enabled', () => {
+    const onlyMember = createParticipant('Solo', 11);
+    component.selections = 1;
+    component.team = {
+      id: 4,
+      name: 'Team Solo',
+      members: [onlyMember]
+    } as unknown as Team;
+    spyOn(component.selectedMember, 'emit');
+
+    component.ngOnChanges();
+
+    expect(component.selectedMembers).toEqual([]);
+    expect(component.selectedMember.emit).not.toHaveBeenCalled();
+  });
+
+  it('should not auto-select when there are multiple members', () => {
+    const memberA = createParticipant('A', 21);
+    const memberB = createParticipant('B', 22);
+    component.selections = 1;
+    component.team = {
+      id: 5,
+      name: 'Team Multi',
+      members: [memberA, memberB]
+    } as unknown as Team;
+    spyOn(component.selectedMember, 'emit');
+
+    component.ngOnChanges();
+
+    expect(component.selectedMembers).toEqual([]);
+    expect(component.selectedMember.emit).not.toHaveBeenCalled();
   });
 
   it('should handle empty team members list when ngOnChanges is called', () => {
