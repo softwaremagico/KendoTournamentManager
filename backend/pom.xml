@@ -79,10 +79,11 @@
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
         <java.version>25</java.version>
-        <maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
+        <maven-scm-provider-gitexe.version>2.2.1</maven-scm-provider-gitexe.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-jar-plugin.version>3.4.0</maven-jar-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-sources.version>3.4.0</maven-sources.version>
         <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
@@ -105,9 +106,12 @@
         <apache-batik.version>1.19</apache-batik.version>
         <pitest-maven.version>1.15.0</pitest-maven.version>
         <jacoco.version>0.8.15</jacoco.version>
-        <mockito.version>5.17.0</mockito.version>
-        <!-- JaCoCo argLine placeholder — Surefire picks this up automatically -->
-        <argLine></argLine>
+        <mockito.version>5.23.0</mockito.version>
+        <!-- JaCoCo argLine placeholder — Surefire picks this up automatically.
+             -XX:+EnableDynamicAgentLoading silences ByteBuddy/Mockito warnings on JDK 21+.
+             -Xshare:off silences "Sharing is only supported for boot loader classes"
+             caused by JaCoCo appending to the bootstrap classpath. -->
+        <argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
     </properties>
 
     <dependencyManagement>
@@ -136,39 +140,40 @@
                 <artifactId>txw2</artifactId>
                 <version>${jaxb-runtime.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
         <finalName>kendo-tournament</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>@{argLine}</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
-            <!-- Resolve the path of the mockito-core jar into ${mockito.agent.jar} so that
-                 maven-surefire-plugin can load it as a -javaagent. This is required by
-                 Mockito 5.x on modern JDKs to avoid the self-attach deprecation warning.
-                 See: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>resolve-mockito-agent-path</id>
-                        <phase>initialize</phase>
                         <goals>
                             <goal>properties</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- @{argLine} is late-bound: JaCoCo prepares its -javaagent value into
-                         the argLine property after initialize phase; Surefire resolves @{...}
-                         at test time, picking up the JaCoCo agent. We append the Mockito
-                         agent via the property set by maven-dependency-plugin above. -->
-                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
