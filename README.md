@@ -1,4 +1,4 @@
-<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle"> 
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle">
 
 ---
 
@@ -9,7 +9,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-892h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-895h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -222,7 +222,7 @@ Running this application requires Java JRE 17 or higher.
 You can manually execute it by entering the following command:
 
 ```
-java -jar kendo-tournament-backend.jar 
+java -jar kendo-tournament-backend.jar
 ```
 
 It's likely that some configuration adjustments may be necessary for the application.
@@ -253,7 +253,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.kendo.datasource.jdbc-url=jdbc:postgresql://kendo-tournament-database:5432/postgres
 spring.kendo.datasource.username=<your user>
 spring.kendo.datasource.password=<your password>
-``` 
+```
 
 3. Upon successful connection of the backend to the database, all necessary database structures will be automatically
    generated.

@@ -189,47 +189,55 @@
         ></filter>
       }
       <div class="fights-container" [ngClass]="{'project-mode': projectorMode, 'with-banner':bannerImage}">
-        @for (group of groups; track group) {
-          <div class="fight-list">
-            @if (showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)) {
-              <h2
-                [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
-              class="level-name">{{ 'level' | transloco }} {{ group.level + 1 }}</h2>
-            }
-            @if (filteredFights.get(group.id!)?.length! > 0) {
-              <h3
-                [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
-              class="group-name">{{ 'group' | transloco }} {{ group.index + 1 }}</h3>
-            }
-            @if (filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0) {
-              <div
-                [ngClass]="groups.length > 1 && (((filteredFights.get(group.id!)?.length ?? 0) > 0) || ((filteredUnties.get(group.id!)?.length ?? 0) > 0))
-                  ? ['fights-of-group', getGroupCardClass(group)]
-                  : []">
-                @for (fight of filteredFights.get(group.id!); track fight) {
-                  <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (selectedFightDuel)="selectDuel($event)"
-                    [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectorMode"
-                    [showAvatars]="showAvatars"
-                    [swapColors]="swappedColors"
-                    [swapTeams]="swappedTeams"
-                    [locked]="tournament && tournament.locked"
-                  [projectMode]="projectorMode"></fight>
-                }
-                <div class="unties-list">
-                  @for (duel of filteredUnties.get(group.id!); track duel) {
-                    <untie-fight
-                      [duel]="duel"
-                      (click)="selectDuel(duel)"
-                      (keydown)="selectDuel(duel)"
-                      [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
-                      [duelSelected]="selectedDuel" [swapColors]="swappedColors"
-                      [projectMode]="projectorMode"
-                    [swapTeams]="swappedTeams"></untie-fight>
-                  }
-                </div>
-              </div>
-            }
+        @if (projectorMode && areAllDuelsOver()) {
+          <div class="projector-empty-state">
+            <mat-icon class="projector-empty-state-icon">emoji_events</mat-icon>
+            <h2>No quedan combates pendientes</h2>
+            <p>Todos los combates del torneo han finalizado.</p>
           </div>
+        } @else {
+          @for (group of groups; track group) {
+            <div class="fight-list">
+              @if (showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)) {
+                <h2
+                  [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+                class="level-name">{{ 'level' | transloco }} {{ group.level + 1 }}</h2>
+              }
+              @if (filteredFights.get(group.id!)?.length! > 0) {
+                <h3
+                  [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+                class="group-name">{{ 'group' | transloco }} {{ group.index + 1 }}</h3>
+              }
+              @if (filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0) {
+                <div
+                  [ngClass]="groups.length > 1 && (((filteredFights.get(group.id!)?.length ?? 0) > 0) || ((filteredUnties.get(group.id!)?.length ?? 0) > 0))
+                    ? ['fights-of-group', getGroupCardClass(group)]
+                    : []">
+                  @for (fight of filteredFights.get(group.id!); track fight) {
+                    <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (selectedFightDuel)="selectDuel($event)"
+                      [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectorMode"
+                      [showAvatars]="showAvatars"
+                      [swapColors]="swappedColors"
+                      [swapTeams]="swappedTeams"
+                      [locked]="tournament && tournament.locked"
+                    [projectMode]="projectorMode"></fight>
+                  }
+                  <div class="unties-list">
+                    @for (duel of filteredUnties.get(group.id!); track duel) {
+                      <untie-fight
+                        [duel]="duel"
+                        (click)="selectDuel(duel)"
+                        (keydown)="selectDuel(duel)"
+                        [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
+                        [duelSelected]="selectedDuel" [swapColors]="swappedColors"
+                        [projectMode]="projectorMode"
+                      [swapTeams]="swappedTeams"></untie-fight>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
         }
       </div>
       @if (bannerImage && projectorMode) {
