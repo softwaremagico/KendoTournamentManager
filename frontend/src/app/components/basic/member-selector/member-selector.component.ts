@@ -24,7 +24,7 @@ export class MemberSelectorComponent implements OnChanges {
 
   ngOnChanges(): void {
     //Refresh automatically the team.
-    const teamMembers: (Participant | undefined)[] = this.team.members;
+    const teamMembers: (Participant | undefined)[] = this.team?.members ?? [];
     //Removing undefined members.
     this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
   }
@@ -43,9 +43,10 @@ export class MemberSelectorComponent implements OnChanges {
   }
 
   selectUser(participant: Participant) {
+    const isAlreadySelected = this.selectedMembers.some(selected => selected?.id === participant?.id);
     if (this.selections > 1) {
-      if (this.selectedMembers.indexOf(participant) > -1) {
-        this.selectedMembers.splice(this.selectedMembers.indexOf(participant), 1);
+      if (isAlreadySelected) {
+        this.selectedMembers = this.selectedMembers.filter(selected => selected?.id !== participant?.id);
       } else {
         this.selectedMembers.push(participant);
       }
@@ -54,5 +55,9 @@ export class MemberSelectorComponent implements OnChanges {
       this.selectedMembers.push(participant);
     }
     this.selectedMember.emit(this.selectedMembers);
+  }
+
+  isSelected(participant: Participant): boolean {
+    return this.selectedMembers.some(selected => selected?.id === participant?.id);
   }
 }

@@ -555,6 +555,10 @@ describe('FightListComponent', () => {
     component.tournament.type = TournamentType.CUSTOMIZED;
     component.showClassification();
     expect(component.showCompetitorsClassification).toHaveBeenCalled();
+
+    component.tournament.type = TournamentType.SWISS;
+    component.showClassification();
+    expect(component.showTeamsClassification).toHaveBeenCalledWith(true);
   });
 
   it('should refresh fights when an untie websocket event arrives from another session', () => {
@@ -618,4 +622,3 @@ describe('FightListComponent', () => {
     expect(component.getGroupCardClass(group)).toBe('group-finished');
   });
 });
-

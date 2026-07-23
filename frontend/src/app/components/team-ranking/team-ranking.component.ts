@@ -56,18 +56,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   ngOnInit(): void {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.SWISS) {
-        if (this.group) {
-          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group.id!);
-          const tieBreakRuleRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService
-            .getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
-
-          forkJoin([rankingRequest, tieBreakRuleRequest]).subscribe(([_scoresOfTeams, _tieBreakRule]): void => {
-            this.teamScores = _scoresOfTeams;
-            this.numberOfWinners = 1;
-            this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tieBreakRule?.propertyValue)
-              ?? SwissTieBreakRule.BUCHHOLZ;
-          });
-        } else if (this.tournament.id) {
+        if (this.tournament.id) {
           const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id);
           const tieBreakRuleRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService
             .getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
@@ -105,6 +94,9 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   importantDrawWinner(): boolean {
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return this.isDrawWinner(0);
+    }
     for (let i = 0; i < this.numberOfWinners; i++) {
       if (this.isDrawWinner(i)) {
         return true;
@@ -114,10 +106,16 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   isDrawWinner(index: number): boolean {
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return index === 0 && this.fightsFinished && this.getSwissChampionDrawTeams().length > 1;
+    }
     return this.teamScores && this.fightsFinished && this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === index).length > 1;
   }
 
   getDrawWinners(index: number): Team[] {
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return index === 0 ? this.getSwissChampionDrawTeams() : [];
+    }
     const teams: Team[] = [];
     if (this.teamScores && this.fightsFinished) {
       const scores: ScoreOfTeam[] = this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === index);
@@ -216,6 +214,24 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       return score.swissTieBreakValue.toFixed(1);
     }
     return score.swissTieBreakValue.toFixed(0);
+  }
+
+  private getSwissChampionDrawTeams(): Team[] {
+    if (!this.teamScores || this.teamScores.length === 0) {
+      return [];
+    }
+    const maxPoints = Math.max(...this.teamScores.map((score: ScoreOfTeam): number => this.getSwissMatchPoints(score)));
+    return this.teamScores
+      .filter((score: ScoreOfTeam): boolean => this.getSwissMatchPoints(score) === maxPoints)
+      .map((score: ScoreOfTeam): Team => score.team);
+  }
+
+  private getSwissMatchPoints(score: ScoreOfTeam): number {
+    const winPoints: number = this.tournament?.tournamentScore?.pointsByVictory ?? 3;
+    const drawPoints: number = this.tournament?.tournamentScore?.pointsByDraw ?? 1;
+    const wonFights: number = score.wonFights ?? 0;
+    const drawFights: number = score.drawFights ?? 0;
+    return wonFights * winPoints + drawFights * drawPoints;
   }
 
 }

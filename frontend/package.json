@@ -26,6 +26,7 @@
     "@biit-solutions/wizardry-theme": "latest",
     "@ngneat/transloco": "^4.3.0",
     "@stomp/rx-stomp": "^2.0.0",
+    "canvg": "^4.0.3",
     "dom-to-image": "^2.6.0",
     "jspdf": "^4.2.1",
     "ngx-cookie-service": "21.3.1",

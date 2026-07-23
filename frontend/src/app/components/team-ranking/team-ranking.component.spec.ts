@@ -94,19 +94,19 @@ describe('TeamRankingComponent', () => {
     expect(component.numberOfWinners).toBe(1);
   });
 
-  it('should load swiss group ranking and selected tie-break rule on init', () => {
+  it('should load swiss tournament ranking and selected tie-break rule on init', () => {
     const tournament = { id: 9, type: TournamentType.SWISS, name: 'S1' } as Tournament;
     const group = { id: 11, index: 0 } as Group;
     const scores = [{ sortingIndex: 0, team: createTeam('A') }] as unknown as ScoreOfTeam[];
 
     component.tournament = tournament;
     component.group = group;
-    rankingServiceSpy.getTeamsScoreRankingByGroup.and.returnValue(of(scores));
+    rankingServiceSpy.getTeamsScoreRankingByTournament.and.returnValue(of(scores));
     tournamentExtendedPropertiesServiceSpy.getByTournamentAndKey.and.returnValue(of({ propertyValue: SwissTieBreakRule.BUCHHOLZ } as any));
 
     component.ngOnInit();
 
-    expect(rankingServiceSpy.getTeamsScoreRankingByGroup).toHaveBeenCalledOnceWith(11);
+    expect(rankingServiceSpy.getTeamsScoreRankingByTournament).toHaveBeenCalledOnceWith(9);
     expect(component.teamScores).toBe(scores);
     expect((component as any).swissTieBreakRule).toBe(SwissTieBreakRule.BUCHHOLZ);
     expect((component as any).showSwissTieBreakScore()).toBeTrue();
@@ -122,6 +122,7 @@ describe('TeamRankingComponent', () => {
   });
 
   it('should detect draw winner based on sortingIndex and fightsFinished', () => {
+    component.tournament = { type: TournamentType.LEAGUE } as Tournament;
     component.fightsFinished = true;
     component.teamScores = [
       { sortingIndex: 0, team: createTeam('A') },
@@ -130,6 +131,27 @@ describe('TeamRankingComponent', () => {
 
     expect(component.isDrawWinner(0)).toBeTrue();
     expect(component.isDrawWinner(1)).toBeFalse();
+  });
+
+  it('should detect swiss final winner draw using match points', () => {
+    component.tournament = {
+      type: TournamentType.SWISS,
+      tournamentScore: { pointsByVictory: 3, pointsByDraw: 1 } as any
+    } as Tournament;
+    component.fightsFinished = true;
+
+    const teamA = createTeam('A');
+    const teamB = createTeam('B');
+    component.teamScores = [
+      { sortingIndex: 0, team: teamA, wonFights: 2, drawFights: 0 } as ScoreOfTeam,
+      { sortingIndex: 1, team: teamB, wonFights: 2, drawFights: 0 } as ScoreOfTeam,
+      { sortingIndex: 2, team: createTeam('C'), wonFights: 1, drawFights: 0 } as ScoreOfTeam
+    ];
+
+    expect(component.isDrawWinner(0)).toBeTrue();
+    expect(component.isDrawWinner(1)).toBeFalse();
+    expect(component.importantDrawWinner()).toBeTrue();
+    expect(component.getDrawWinners(0)).toEqual([teamA, teamB]);
   });
 
   it('should return draw winners for an index', () => {
@@ -208,4 +230,3 @@ describe('TeamRankingComponent', () => {
     expect(result).toBe('John Doe\nJane Roe\n');
   });
 });
-

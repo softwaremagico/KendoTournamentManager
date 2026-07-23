@@ -30,6 +30,10 @@
   border: 3px solid var(--component-color);
 }
 
+.user-selectable {
+  cursor: pointer;
+}
+
 .user-card {
   margin: 20px;
   border-radius: 10px;
@@ -38,7 +42,7 @@
 }
 
 ::ng-deep .selected .user-card {
-  background-color: var(--selected-color) !important;
+  background-color: var(--member-selected-color, var(--selected-color)) !important;
 }
 
 .representative-user {

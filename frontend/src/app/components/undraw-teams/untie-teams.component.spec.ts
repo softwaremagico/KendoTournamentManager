@@ -108,6 +108,26 @@ describe('UntieTeamsComponent', () => {
     expect(component.totalDuels).toBe(1);
   });
 
+  it('should recreate duels when teams input changes', () => {
+    component.teams = [createTeam('A'), createTeam('B')];
+    component.ngOnInit();
+    expect(component.duels.length).toBe(1);
+
+    component.teams = [createTeam('A'), createTeam('B'), createTeam('C')];
+    component.ngOnChanges({
+      teams: {
+        currentValue: component.teams,
+        previousValue: [createTeam('A'), createTeam('B')],
+        firstChange: false,
+        isFirstChange: () => false
+      }
+    });
+
+    expect(component.totalDuels).toBe(3);
+    expect(component.duels.length).toBe(3);
+    expect(component.duels.every(duel => duel.type === DuelType.UNDRAW)).toBeTrue();
+  });
+
   it('should return false from duelsCompleted when a duel has missing competitors', () => {
     const duel = new Duel();
     duel.competitor1 = createParticipant('One');
@@ -167,4 +187,3 @@ describe('UntieTeamsComponent', () => {
     expect(component.closed.emit).toHaveBeenCalledOnceWith([]);
   });
 });
-

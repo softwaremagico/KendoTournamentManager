@@ -125,5 +125,22 @@ describe('MemberSelectorComponent', () => {
     expect(component.selectedMembers.length).toBe(3);
     expect(component.selectedMembers).toEqual([participant1, participant2, participant3]);
   });
-});
 
+  it('should treat participants with same id as the same selected member', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 2;
+
+    const participant1 = new Participant();
+    participant1.id = 7;
+    participant1.name = 'User 1';
+
+    const participant1Clone = new Participant();
+    participant1Clone.id = 7;
+    participant1Clone.name = 'User 1 clone';
+
+    component.selectUser(participant1);
+    component.selectUser(participant1Clone);
+
+    expect(component.selectedMembers.length).toBe(0);
+  });
+});

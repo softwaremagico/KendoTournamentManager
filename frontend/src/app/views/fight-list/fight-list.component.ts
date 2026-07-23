@@ -755,7 +755,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showClassification(): void {
     if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
       (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.SENBATSU
-        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
+        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP
+        || this.tournament.type === TournamentType.SWISS))) {
       this.showTeamsClassification(true);
     } else {
       this.showCompetitorsClassification();
