@@ -35,10 +35,9 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-@Test(groups = "restServicesUnit")
+@Test
 public class KendoUserDetailsServiceTests {
 
     private AuthenticatedUserProvider authenticatedUserProvider;
@@ -46,8 +45,8 @@ public class KendoUserDetailsServiceTests {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        authenticatedUserProvider = mock(AuthenticatedUserProvider.class);
-        kendoUserDetailsService = new KendoUserDetailsService(authenticatedUserProvider);
+        this.authenticatedUserProvider = mock(AuthenticatedUserProvider.class);
+        this.kendoUserDetailsService = new KendoUserDetailsService(this.authenticatedUserProvider);
     }
 
     @Test
@@ -55,9 +54,9 @@ public class KendoUserDetailsServiceTests {
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
         authenticatedUser.setPassword("encoded-password");
 
-        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
 
-        final UserDetails details = kendoUserDetailsService.loadUserByUsername("admin");
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername("admin");
 
         assertEquals(details.getUsername(), "admin");
         assertEquals(details.getPassword(), "encoded-password");
@@ -70,11 +69,8 @@ public class KendoUserDetailsServiceTests {
 
     @Test(expectedExceptions = UsernameNotFoundException.class)
     public void shouldThrowWhenUserDoesNotExist() {
-        when(authenticatedUserProvider.findByUsername("missing")).thenReturn(Optional.empty());
-        try {
-            kendoUserDetailsService.loadUserByUsername("missing");
-        } finally {
-        }
+        when(this.authenticatedUserProvider.findByUsername("missing")).thenReturn(Optional.empty());
+        this.kendoUserDetailsService.loadUserByUsername("missing");
     }
 
     @Test(expectedExceptions = UserNotFoundException.class)
@@ -83,11 +79,8 @@ public class KendoUserDetailsServiceTests {
         participant.setName("p-name");
         participant.setLastname("p-lastname");
 
-        when(authenticatedUserProvider.findByUsername("participant")).thenReturn(Optional.of(participant));
-        try {
-            kendoUserDetailsService.loadUserByUsername("participant");
-        } finally {
-        }
+        when(this.authenticatedUserProvider.findByUsername("participant")).thenReturn(Optional.of(participant));
+        this.kendoUserDetailsService.loadUserByUsername("participant");
     }
 
     @Test
@@ -95,12 +88,12 @@ public class KendoUserDetailsServiceTests {
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
         authenticatedUser.setPassword("encoded-password");
 
-        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
 
-        final UserDetails first = kendoUserDetailsService.loadUserByUsername("admin");
-        final UserDetails second = kendoUserDetailsService.loadUserByUsername("admin");
+        final UserDetails first = this.kendoUserDetailsService.loadUserByUsername("admin");
+        final UserDetails second = this.kendoUserDetailsService.loadUserByUsername("admin");
 
-        assertFalse(first == second);
+        org.testng.Assert.assertNotSame(first, second);
         assertEquals(first.getUsername(), second.getUsername());
         assertEquals(first.getPassword(), second.getPassword());
     }

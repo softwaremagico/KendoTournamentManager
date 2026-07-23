@@ -23,6 +23,7 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 @Test(groups = "cryptoConverters")
@@ -91,21 +92,14 @@ public class CryptoConvertersTests {
 		Assert.assertFalse(decrypted > 0);
 	}
 
-	@Test
-	public void testFloatConverterWithEmptyString() {
-		final Float result = this.floatConverter.convertToEntityAttribute("");
-		Assert.assertNull(result);
+	@DataProvider
+	public Object[][] invalidFloatStrings() {
+		return new Object[][]{{""}, {null}, {"not_a_float"}};
 	}
 
-	@Test
-	public void testFloatConverterWithNullString() {
-		final Float result = this.floatConverter.convertToEntityAttribute(null);
-		Assert.assertNull(result);
-	}
-
-	@Test
-	public void testFloatConverterWithInvalidString() {
-		final Float result = this.floatConverter.convertToEntityAttribute("not_a_float");
+	@Test(dataProvider = "invalidFloatStrings")
+	public void testFloatConverterWithInvalidInput(String rawValue) {
+		final Float result = this.floatConverter.convertToEntityAttribute(rawValue);
 		Assert.assertNull(result);
 	}
 

@@ -48,7 +48,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
 
-@Test(groups = "authApi")
+@Test
 public class AuthApiUnitTests {
 
 	private AuthenticationManager authenticationManager;
@@ -79,10 +79,7 @@ public class AuthApiUnitTests {
 		final AuthGuestRequest request = new AuthGuestRequest();
 		request.setTournamentId(1);
 
-		try {
-			authApi.loginAsGuest(request, mock(HttpServletRequest.class));
-		} finally {
-		}
+		authApi.loginAsGuest(request, mock(HttpServletRequest.class));
 	}
 
 	@Test
@@ -110,10 +107,7 @@ public class AuthApiUnitTests {
 		final Authentication authentication = mock(Authentication.class);
 		when(authentication.getName()).thenReturn("same-user");
 
-		try {
-			authApi.delete("same-user", authentication, mock(HttpServletRequest.class));
-		} finally {
-		}
+		authApi.delete("same-user", authentication, mock(HttpServletRequest.class));
 	}
 
 	@Test
@@ -157,9 +151,6 @@ public class AuthApiUnitTests {
 		when(request.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
-		try {
-			authApi.getNewJWT(authentication, request, "old-token");
-		} finally {
-		}
+		authApi.getNewJWT(authentication, request, "old-token");
 	}
 }

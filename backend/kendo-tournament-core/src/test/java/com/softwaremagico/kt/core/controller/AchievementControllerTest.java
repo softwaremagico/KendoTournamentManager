@@ -127,10 +127,7 @@ public class AchievementControllerTest {
     @Test(expectedExceptions = ParticipantNotFoundException.class)
     public void shouldThrowWhenParticipantDoesNotExist() {
         when(participantProvider.get(99)).thenReturn(Optional.empty());
-        try {
-            controller.getParticipantAchievements(99);
-        } finally {
-        }
+        controller.getParticipantAchievements(99);
     }
 
     @Test
@@ -208,10 +205,7 @@ public class AchievementControllerTest {
     @Test(expectedExceptions = TournamentNotFoundException.class)
     public void shouldThrowOnRegenerateUnknownTournamentId() {
         when(tournamentProvider.get(404)).thenReturn(Optional.empty());
-        try {
-            controller.regenerateAchievements(404);
-        } finally {
-        }
+        controller.regenerateAchievements(404);
     }
 
     @Test
@@ -331,10 +325,7 @@ public class AchievementControllerTest {
     @Test(expectedExceptions = TournamentNotFoundException.class)
     public void shouldThrowWhenTournamentAchievementsNotFound() {
         when(tournamentProvider.get(808)).thenReturn(Optional.empty());
-        try {
-            controller.getTournamentAchievements(808);
-        } finally {
-        }
+        controller.getTournamentAchievements(808);
     }
 
     private Tournament tournament(int id, LocalDateTime createdAt) {
