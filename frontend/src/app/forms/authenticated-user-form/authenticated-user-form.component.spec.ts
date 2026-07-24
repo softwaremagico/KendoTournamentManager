@@ -2,7 +2,7 @@ import {of} from 'rxjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {AuthenticatedUserFormComponent} from './authenticated-user-form.component';
 import {RbacService} from '../../services/rbac/rbac.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {UserService} from '../../services/user.service';
 import {UserSessionService} from '../../services/user-session.service';
 import {ActivityService} from '../../services/rbac/activity.service';

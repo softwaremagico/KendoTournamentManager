@@ -61,6 +61,7 @@ import java.util.Objects;
         @Index(name = "ind_team1", columnList = "team1"),
         @Index(name = "ind_team2", columnList = "team2")
 })
+@SuppressWarnings("java:S2160")
 public class Fight extends Element {
 
     /** The first (left / red) team competing in this fight. */

@@ -71,7 +71,7 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     private T decrypt(String dbData) throws InvalidEncryptionException {
         final T entity = stringToEntityAttribute(cipherEngine.decrypt(dbData));
-        EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
+        EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
     }
 

@@ -1,6 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
 import {AppComponent} from './app.component';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {LoginService} from './services/login.service';
 import {LoggedInService} from './interceptors/logged-in.service';
 import {UserSessionService} from './services/user-session.service';

@@ -1,6 +1,6 @@
 import {Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
-import {provideTranslocoScope, TranslocoService} from '@ngneat/transloco';
+import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";

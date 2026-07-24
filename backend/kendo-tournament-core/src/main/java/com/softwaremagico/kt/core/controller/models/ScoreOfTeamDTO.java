@@ -30,6 +30,7 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("java:S2160")
 public class ScoreOfTeamDTO extends ElementDTO {
 
     @Serial

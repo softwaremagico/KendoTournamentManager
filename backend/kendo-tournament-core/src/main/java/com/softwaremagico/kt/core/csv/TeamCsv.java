@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class TeamCsv extends CsvReader<Team> {
             team.setName(getField(teamLine, nameIndex));
             try {
                 team.setTournament(tournamentProvider.findByName(getField(teamLine, tournamentIndex)).orElse(null));
-            } catch (Exception e) {
+            } catch (DataAccessException e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
             addMember(teamLine, team, member1Index);
@@ -113,7 +114,7 @@ public class TeamCsv extends CsvReader<Team> {
                 if (participant != null) {
                     team.addMember(participant);
                 } else {
-                    KendoTournamentLogger.severe(this.getClass().getName(), "Error when inserting CSV from '" + teamLine + "'.");
+                    KendoTournamentLogger.severe(this.getClass(), "Error when inserting CSV from '" + teamLine + "'.");
                     KendoTournamentLogger.errorMessage(this.getClass(), "No member with id '" + getField(teamLine, memberIndex) + "' on team '"
                             + team.getName() + "'.");
                 }

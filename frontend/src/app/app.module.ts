@@ -1,4 +1,4 @@
-import {ErrorHandler, isDevMode, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
@@ -97,7 +97,15 @@ import {ParticipantFightListModule} from './views/participant-fight-list/partici
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {BiitCookiesConsentModule, BiitProgressBarModule, BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
 import {NavbarModule} from "./components/navigation/navbar/navbar.module";
-import {TRANSLOCO_CONFIG, translocoConfig, TranslocoModule} from "@ngneat/transloco";
+import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
+import {
+  DefaultFallbackStrategy,
+  DefaultInterceptor,
+  DefaultMissingHandler,
+  TRANSLOCO_FALLBACK_STRATEGY,
+  TRANSLOCO_INTERCEPTOR,
+  TRANSLOCO_MISSING_HANDLER
+} from "@jsverse/transloco";
 import {HasPermissionPipe} from "./pipes/has-permission.pipe";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
@@ -205,7 +213,7 @@ registerLocaleData(localeFR, "fr");
         BiitButtonModule,
         BiitProgressBarModule,
         BiitSnackbarModule,
-        TranslocoModule,
+        TranslocoRootModule,
         BiitCookiesConsentModule,
         HasPermissionPipe,
         KeyReversePipe,
@@ -231,21 +239,13 @@ registerLocaleData(localeFR, "fr");
         }, {
             provide: RxStompService,
             useFactory: rxStompServiceFactory,
-        }, {
-            provide: TRANSLOCO_CONFIG,
-            useValue: translocoConfig({
-                availableLangs: ['en', 'es', 'ca', 'it', 'nl', 'de', 'fr'],
-                defaultLang: 'en',
-                fallbackLang: 'en',
-                missingHandler: {
-                    useFallbackTranslation: true
-                },
-                reRenderOnLangChange: true,
-                prodMode: !isDevMode()
-            })
         },
+        {provide: TRANSLOCO_MISSING_HANDLER, useClass: DefaultMissingHandler},
+        {provide: TRANSLOCO_INTERCEPTOR, useClass: DefaultInterceptor},
+        {provide: TRANSLOCO_FALLBACK_STRATEGY, useClass: DefaultFallbackStrategy},
         RedirectGuard,
         provideHttpClient(withInterceptorsFromDi())
-    ] })
+    ]
+})
 export class AppModule {
 }

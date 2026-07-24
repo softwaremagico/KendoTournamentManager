@@ -3,7 +3,7 @@ import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-th
 import {ParticipantListComponent} from './participant-list.component';
 import {ParticipantService} from '../../services/participant.service';
 import {ClubService} from '../../services/club.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {RbacService} from '../../services/rbac/rbac.service';
 import {Router} from '@angular/router';
 import {UserSessionService} from '../../services/user-session.service';

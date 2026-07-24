@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {SystemOverloadService} from '../../services/notifications/system-overload.service';
 import {StatisticsService} from '../../services/statistics.service';
 import {UserSessionService} from '../../services/user-session.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {RankingService} from '../../services/ranking.service';
 import {AchievementsService} from '../../services/achievements.service';
 import {ParticipantService} from '../../services/participant.service';

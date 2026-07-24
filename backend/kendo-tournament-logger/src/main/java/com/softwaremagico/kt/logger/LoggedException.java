@@ -30,19 +30,18 @@ public abstract class LoggedException extends RuntimeException {
     protected LoggedException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
         super(message);
         this.status = status;
-        final String className = clazz.getName();
         switch (type) {
             case INFO:
-                KendoTournamentLogger.info(className, message);
+                KendoTournamentLogger.info(clazz, message);
                 break;
             case WARNING:
-                KendoTournamentLogger.warning(className, message);
+                KendoTournamentLogger.warning(clazz, message);
                 break;
             case SEVERE:
-                KendoTournamentLogger.severe(className, message);
+                KendoTournamentLogger.severe(clazz, message);
                 break;
             default:
-                KendoTournamentLogger.debug(className, message);
+                KendoTournamentLogger.debug(clazz, message);
                 break;
         }
     }

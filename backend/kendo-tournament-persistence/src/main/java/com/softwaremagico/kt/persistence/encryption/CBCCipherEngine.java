@@ -38,9 +38,8 @@ import java.util.Base64;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
- * AES/CBC/PKCS5Padding implementation for encrypting and decrypt.
- * Is the only one fast enough for database access?
- * Better than nothing.
+ * AES/CBC/PKCS5Padding implementation for encrypting and decrypt. Is the only
+ * one fast enough for database access? Better than nothing.
  */
 @SuppressWarnings("squid:S5542")
 public class CBCCipherEngine implements ICipherEngine {
@@ -51,79 +50,82 @@ public class CBCCipherEngine implements ICipherEngine {
     private static final int KEY_SIZE = 16;
     private static final int PADDING_INPUT_BYTES = 3;
     private static final int PADDING_OUTPUT_CHARS = 4;
-    private static final int STORED_KEY_SIZE = ((PADDING_OUTPUT_CHARS * KEY_SIZE / PADDING_INPUT_BYTES) + PADDING_INPUT_BYTES) & ~PADDING_INPUT_BYTES;
+    private static final int STORED_KEY_SIZE = ((PADDING_OUTPUT_CHARS * KEY_SIZE / PADDING_INPUT_BYTES)
+            + PADDING_INPUT_BYTES) & ~PADDING_INPUT_BYTES;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private Cipher cipher;
     private SecretKeySpec keySpec;
 
     @Override
     public String encrypt(String input) throws InvalidEncryptionException {
-        return encrypt(input, getDatabaseEncryptionKey());
+        return this.encrypt(input, getDatabaseEncryptionKey());
     }
 
     @Override
     public synchronized String encrypt(String input, String password) throws InvalidEncryptionException {
         try {
-            final Cipher encryptCipher = getCipher(password);
+            final Cipher encryptCipher = this.getCipher(password);
             final byte[] iv = new byte[encryptCipher.getBlockSize()];
             SECURE_RANDOM.nextBytes(iv);
 
-            getCipher(password).init(Cipher.ENCRYPT_MODE, keySpec, generateIvSpec(iv));
-            final byte[] encryptedBytes = getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
+            this.getCipher(password).init(Cipher.ENCRYPT_MODE, this.keySpec, this.generateIvSpec(iv));
+            final byte[] encryptedBytes = this.getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
-            EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
-            //Add the iv on the message.
+            EncryptorLogger.debug(this.getClass(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
+            // Add the iv on the message.
             return Base64.getEncoder().encodeToString(iv) + encodedValue;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
-                 | InvalidKeyException e) {
+        } catch (final BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
+                       | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
         }
     }
 
     @Override
     public String decrypt(String encrypted) throws InvalidEncryptionException {
-        return decrypt(encrypted, getDatabaseEncryptionKey());
+        return this.decrypt(encrypted, getDatabaseEncryptionKey());
     }
 
     @Override
     public String decrypt(String encrypted, String password) throws InvalidEncryptionException {
         try {
             synchronized (this) {
-                final Cipher deecryptCipher = getCipher(password);
+                final Cipher deecryptCipher = this.getCipher(password);
                 final byte[] iv = Base64.getDecoder().decode(encrypted.substring(0, STORED_KEY_SIZE));
-                getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, generateIvSpec(iv));
-                final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.substring(STORED_KEY_SIZE).getBytes(StandardCharsets.UTF_8));
+                this.getCipher(password).init(Cipher.DECRYPT_MODE, this.keySpec, this.generateIvSpec(iv));
+                final byte[] encryptedBytes = Base64.getDecoder()
+                        .decode(encrypted.substring(STORED_KEY_SIZE).getBytes(StandardCharsets.UTF_8));
                 final byte[] decryptedBytes = deecryptCipher.doFinal(encryptedBytes);
                 final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-                EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
+                EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", encrypted,
+                        decrypted);
                 return decrypted;
             }
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
-                 | InvalidKeyException e) {
+        } catch (final BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
+                       | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
-        } catch (StringIndexOutOfBoundsException e) {
+        } catch (final StringIndexOutOfBoundsException e) {
             return null;
         }
     }
 
     private synchronized Cipher getCipher(String password) {
-        if (cipher == null) {
+        if (this.cipher == null) {
             try {
-                cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
+                this.cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
 
                 // hash keyString with SHA-256 and crop the output to 128-bit for key
                 final MessageDigest digest = MessageDigest.getInstance(SECRET_MESSAGE_DIGEST_ALGORITHM);
                 digest.update(password.getBytes(StandardCharsets.UTF_8));
                 final byte[] key = new byte[KEY_SIZE];
                 System.arraycopy(digest.digest(), 0, key, 0, key.length);
-                keySpec = new SecretKeySpec(key, SECRET_KEY_ALGORITHM);
-            } catch (Exception e) {
-                EncryptorLogger.severe(this.getClass().getName(), "invalid cipher algorithm selected");
-                EncryptorLogger.errorMessage(this.getClass().getName(), e);
+                this.keySpec = new SecretKeySpec(key, SECRET_KEY_ALGORITHM);
+            } catch (final Exception e) {
+                EncryptorLogger.severe(this.getClass(), "invalid cipher algorithm selected");
+                EncryptorLogger.errorMessage(this.getClass(), e);
                 System.exit(0);
             }
         }
-        return cipher;
+        return this.cipher;
     }
 
     public IvParameterSpec generateIvSpec(byte[] iv) {

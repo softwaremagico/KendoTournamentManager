@@ -13,7 +13,7 @@ import {RankingService} from '../../../services/ranking.service';
 import {StatisticsChangedService} from '../../../services/notifications/statistics-changed.service';
 import {FilterResetService} from '../../../services/notifications/filter-reset.service';
 import {CsvService} from '../../../services/csv-service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {Tournament} from '../../../models/tournament';
 import {Team} from '../../../models/team';
 import {Participant} from '../../../models/participant';

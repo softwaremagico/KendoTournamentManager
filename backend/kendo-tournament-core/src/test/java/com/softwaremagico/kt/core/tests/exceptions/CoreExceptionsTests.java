@@ -198,7 +198,7 @@ public class CoreExceptionsTests {
 
 	@Test
 	public void testNoContentAndCustomFightExceptions() {
-		final NoContentException noContentException = new NoContentException(this.getClass(), "empty");
+		final NoContentException noContentException = new NoContentException("empty");
 		final CustomTournamentFightsException customTournamentFightsException =
 				new CustomTournamentFightsException(this.getClass(), "custom");
 		final DatabaseException databaseException = new DatabaseException(this.getClass(), "db");

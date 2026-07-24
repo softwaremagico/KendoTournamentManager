@@ -43,8 +43,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,7 +58,6 @@ public class DataValidationTest extends AbstractTestNGSpringContextTests {
     private static final String USER_PASSWORD = "asd123";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
-    private static final String CLUB_NAME = "The Club";
     private static final String CLUB_CITY = "Valencia";
 
     @Autowired
@@ -80,9 +77,6 @@ public class DataValidationTest extends AbstractTestNGSpringContextTests {
         return objectMapper.writeValueAsString(object);
     }
 
-    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
-        return objectMapper.readValue(payload, clazz);
-    }
 
     @BeforeClass
     public void setUp() {

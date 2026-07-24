@@ -8,7 +8,7 @@ import {LoggerService} from "../../services/logger.service";
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import { HttpHeaders } from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {EnvironmentService} from "../../environment.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 import {BiitLogin} from "@biit-solutions/wizardry-theme/models";

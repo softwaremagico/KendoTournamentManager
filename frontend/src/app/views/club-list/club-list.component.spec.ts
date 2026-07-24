@@ -2,7 +2,7 @@ import {of} from 'rxjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {ClubListComponent} from './club-list.component';
 import {ClubService} from '../../services/club.service';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {RbacService} from '../../services/rbac/rbac.service';
 import {DatePipe} from '@angular/common';
 import {SystemOverloadService} from '../../services/notifications/system-overload.service';

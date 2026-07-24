@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../../models/authenticated-user";
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {
   AuthenticatedUserFormValidationFields
 } from "../../../forms/authenticated-user-form/authenticated-user-form-validation-fields";

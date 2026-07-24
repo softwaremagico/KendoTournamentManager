@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {UntieFightComponent} from "./untie-fight.component";
 import {MatIconModule} from "@angular/material/icon";
 import {DuelModule} from "../fight/duel/duel.module";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 
 
 @NgModule({

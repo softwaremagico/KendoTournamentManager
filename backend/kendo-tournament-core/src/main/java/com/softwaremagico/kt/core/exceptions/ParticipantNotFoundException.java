@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
+@SuppressWarnings("java:S110")
 public class ParticipantNotFoundException extends NotFoundException {
     private static final long serialVersionUID = 3091553835925575861L;
 

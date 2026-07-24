@@ -1,5 +1,5 @@
 import {LanguageSelectorComponent} from './language-selector.component';
-import {TranslocoService} from '@ngneat/transloco';
+import {TranslocoService} from '@jsverse/transloco';
 import {UserSessionService} from '../../services/user-session.service';
 
 describe('LanguageSelectorComponent', () => {

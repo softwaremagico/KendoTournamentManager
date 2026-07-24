@@ -61,6 +61,7 @@ import java.util.List;
 @Table(name = "tournament_groups", indexes = {
         @Index(name = "ind_tournament", columnList = "tournament"),
 })
+@SuppressWarnings("java:S2160")
 public class Group extends Element {
 
     /** The tournament this group belongs to. */

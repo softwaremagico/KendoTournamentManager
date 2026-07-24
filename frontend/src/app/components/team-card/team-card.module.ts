@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {TeamCardComponent} from "./team-card.component";
 import {MatCardModule} from "@angular/material/card";
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {MatIconModule} from "@angular/material/icon";
 import {ParticipantNamePipe} from "../../pipes/visualization/participant-name-pipe";
 import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";

@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from '@jsverse/transloco';
 import {formatDate} from "@angular/common";
 import {AchievementType} from "../../models/achievement-type.model";
 import {NameUtilsService} from "../../services/name-utils.service";

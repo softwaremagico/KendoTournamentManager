@@ -3,7 +3,7 @@ import {InputLimits} from "../../utils/input-limits";
 import {Club} from "../../models/club";
 import {ClubFormValidationFields} from "./club-form-validation-fields";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
+import {provideTranslocoScope, TranslocoService} from "@jsverse/transloco";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {TypeValidations} from "../../utils/type-validations";

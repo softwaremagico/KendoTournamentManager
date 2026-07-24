@@ -33,8 +33,8 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B clean verify -Dgpg.skip=true --file backend/pom.xml
+      - name: Build with Maven and generate coverage
+        run: mvn -B clean verify -Dgpg.skip=true -Djacoco.skip=false --file backend/pom.xml
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
         with:
@@ -44,7 +44,7 @@ jobs:
             "-Dsonar.projectName=Kendo Tournament Manager"
             -Dsonar.projectKey=kendo-tournament-backend
             -Dsonar.java.binaries=kendo-tournament-logger/target/classes,kendo-tournament-persistence/target/classes,kendo-tournament-core/target/classes,kendo-tournament-pdf/target/classes,kendo-tournament-rest/target/classes
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco-aggregate/jacoco.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=kendo-tournament-coverage/target/site/jacoco-aggregate/jacoco.xml
             -Dsonar.verbose=true
             -Dsonar.test.exclusions=**/test/*
             -Dsonar.exclusions=kendo-tournament-persistence/src/test,kendo-tournament-core/src/test,kendo-tournament-pdf/src/test,kendo-tournament-rest/src/test

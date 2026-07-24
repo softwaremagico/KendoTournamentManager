@@ -30,56 +30,56 @@ public class CacheEventLoggerTests {
     @Test
     public void testInfoWithClassName() {
         // Should not throw any exception
-        CacheEventLogger.info("TestClass", "Test message");
+        CacheEventLogger.info(CacheEventLoggerTests.class, "Test message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testInfoWithClass() {
         // Should not throw any exception
-        CacheEventLogger.info(CacheEventLoggerTests.class, "Test message");
+        CacheEventLogger.info(CacheEventLoggerTests.class, "Test message {}", "info");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testInfoWithArguments() {
         // Should not throw any exception
-        CacheEventLogger.info("TestClass", "Test message with {}", "arg1");
+        CacheEventLogger.info(CacheEventLoggerTests.class, "Test message with {}", "arg1");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testWarningWithClassName() {
         // Should not throw any exception
-        CacheEventLogger.warning("TestClass", "Warning message");
+        CacheEventLogger.warning(CacheEventLoggerTests.class, "Warning message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testWarningWithClass() {
         // Should not throw any exception
-        CacheEventLogger.warning(CacheEventLoggerTests.class, "Warning message");
+        CacheEventLogger.warning(CacheEventLoggerTests.class, "Warning {}", "message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testDebugWithClassName() {
         // Should not throw any exception
-        CacheEventLogger.debug("TestClass", "Debug message");
+        CacheEventLogger.debug(CacheEventLoggerTests.class, "Debug message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testDebugWithClass() {
         // Should not throw any exception
-        CacheEventLogger.debug(CacheEventLoggerTests.class, "Debug message");
+        CacheEventLogger.debug(CacheEventLoggerTests.class, "Debug {}", "message");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testSevereWithClassName() {
         // Should not throw any exception
-        CacheEventLogger.severe("TestClass", "Severe message");
+        CacheEventLogger.severe(CacheEventLoggerTests.class, "Severe message");
         Assert.assertTrue(true);
     }
 
@@ -87,7 +87,7 @@ public class CacheEventLoggerTests {
     public void testErrorMessageWithClassName() {
         // Should not throw any exception
         Exception exception = new Exception("Test exception");
-        CacheEventLogger.errorMessage("TestClass", "Error", exception);
+        CacheEventLogger.errorMessage(CacheEventLoggerTests.class, "Error", exception);
         Assert.assertTrue(true);
     }
 
@@ -117,7 +117,7 @@ public class CacheEventLoggerTests {
     @Test
     public void testMultipleArguments() {
         // Should not throw any exception with multiple arguments
-        CacheEventLogger.info("TestClass", "Message with {} and {}", "arg1", "arg2");
+        CacheEventLogger.info(CacheEventLoggerTests.class, "Message with {} and {}", "arg1", "arg2");
         Assert.assertTrue(true);
     }
 }

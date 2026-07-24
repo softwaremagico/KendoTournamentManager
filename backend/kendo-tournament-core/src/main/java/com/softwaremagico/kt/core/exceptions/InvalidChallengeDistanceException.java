@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serial;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
+@SuppressWarnings("java:S110")
 public class InvalidChallengeDistanceException extends InvalidFightException {
 
     @Serial

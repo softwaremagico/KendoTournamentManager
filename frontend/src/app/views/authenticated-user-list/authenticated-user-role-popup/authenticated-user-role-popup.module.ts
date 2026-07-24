@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {AuthenticatedUserRolePopupComponent} from './authenticated-user-role-popup.component';
 import {AuthenticatedUserFormModule} from "../../../forms/authenticated-user-form/authenticated-user-form.module";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
-import {TranslocoModule} from "@ngneat/transloco";
+import {TranslocoModule} from '@jsverse/transloco';
 import {BiitDropdownModule} from "@biit-solutions/wizardry-theme/inputs";
 import {DropdownInterfacePipeModule} from "../../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
 import {HasPermissionPipe} from "../../../pipes/has-permission.pipe";
