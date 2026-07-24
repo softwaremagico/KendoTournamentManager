@@ -527,6 +527,9 @@ public class RankingProvider {
     }
 
     public List<ScoreOfTeam> getTeamsScoreRanking(Tournament tournament) {
+        if (tournament == null) {
+            return new ArrayList<>();
+        }
         if (tournament.getType() == TournamentType.SWISS) {
             return getSwissTeamsScoreRanking(tournament,
                     teamProvider.getAll(tournament),
@@ -535,7 +538,9 @@ public class RankingProvider {
                             .flatMap(group -> group.getUnties().stream())
                             .toList());
         }
-        return getTeamsScoreRanking(tournament.getTournamentScore().getScoreType(),
+        final ScoreType scoreType = tournament.getTournamentScore() != null
+                ? tournament.getTournamentScore().getScoreType() : ScoreType.CLASSIC;
+        return getTeamsScoreRanking(scoreType,
                 teamProvider.getAll(tournament),
                 fightProvider.getFights(tournament),
                 groupProvider.getGroups(tournament).stream()

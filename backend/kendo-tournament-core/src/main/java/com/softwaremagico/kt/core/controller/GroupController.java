@@ -39,6 +39,7 @@ import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -133,8 +134,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         if (tournamentDTO == null) {
             throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to create.");
         }
+        final ITournamentManager tournamentManager = this.tournamentHandlerSelector.selectManager(tournamentDTO.getType());
+        if (tournamentManager == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament handler found for type '" + tournamentDTO.getType() + "'.");
+        }
         try {
-            return this.convert(this.tournamentHandlerSelector.selectManager(tournamentDTO.getType())
+            return this.convert(tournamentManager
                     .addGroup(this.tournamentConverter.reverse(tournamentDTO), this.reverse(groupDTO)));
         } finally {
             new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
@@ -153,8 +158,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         if (tournamentDTO == null) {
             throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to delete.");
         }
+        final ITournamentManager tournamentManager = this.tournamentHandlerSelector.selectManager(tournamentDTO.getType());
+        if (tournamentManager == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament handler found for type '" + tournamentDTO.getType() + "'.");
+        }
         try {
-            this.tournamentHandlerSelector.selectManager(tournamentDTO.getType()).removeGroup(
+            tournamentManager.removeGroup(
                     this.tournamentConverter.reverse(tournamentDTO), groupDTO.getLevel(),
                     groupDTO.getIndex());
         } finally {
