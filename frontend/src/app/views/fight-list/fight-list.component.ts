@@ -93,18 +93,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   filterInUse: boolean = false;
   protected bannerImage: string | null;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute,
-              private tournamentService: TournamentService, private fightService: FightService,
-              private environmentService: EnvironmentService,
-              private groupService: GroupService, private duelService: DuelService,
-              private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
-              private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
-              private userSessionService: UserSessionService,
-              private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              rbacService: RbacService, private fileService: FileService,
-              private systemOverloadService: SystemOverloadService,
-              private rxStompService: RxStompService, private loginService: LoginService,
-              private audioService: AudioService, private projectModeChangedService: ProjectModeChangedService) {
+  constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute,
+              private readonly tournamentService: TournamentService, private readonly fightService: FightService,
+              private readonly environmentService: EnvironmentService,
+              private readonly groupService: GroupService, private readonly duelService: DuelService,
+              private readonly timeChangedService: TimeChangedService, private readonly duelChangedService: DuelChangedService,
+              private readonly untieAddedService: UntieAddedService, private readonly groupUpdatedService: GroupUpdatedService,
+              private readonly userSessionService: UserSessionService,
+              private readonly membersOrderChangedService: MembersOrderChangedService, private readonly messageService: MessageService,
+              rbacService: RbacService, private readonly fileService: FileService,
+              private readonly systemOverloadService: SystemOverloadService,
+              private readonly rxStompService: RxStompService, private readonly loginService: LoginService,
+              private readonly audioService: AudioService, private readonly projectModeChangedService: ProjectModeChangedService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();

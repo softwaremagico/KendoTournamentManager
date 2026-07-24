@@ -126,7 +126,7 @@ describe('UntieTeamsComponent', () => {
   it('should recreate duels when teams input changes', () => {
     component.teams = [createTeam('A'), createTeam('B')];
     component.ngOnInit();
-    expect(component.duels.length).toBe(1);
+    expect(component.duels).toHaveSize(1);
 
     component.teams = [createTeam('A'), createTeam('B'), createTeam('C')];
     component.ngOnChanges({
@@ -139,7 +139,7 @@ describe('UntieTeamsComponent', () => {
     });
 
     expect(component.totalDuels).toBe(3);
-    expect(component.duels.length).toBe(3);
+    expect(component.duels).toHaveSize(3);
     expect(component.duels.every(duel => duel.type === DuelType.UNDRAW)).toBeTrue();
   });
 

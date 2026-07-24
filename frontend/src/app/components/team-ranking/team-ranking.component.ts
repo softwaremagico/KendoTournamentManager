@@ -49,10 +49,10 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit, 
   protected swissTieBreakRule: SwissTieBreakRule = SwissTieBreakRule.BUCHHOLZ;
   protected readonly SwissTieBreakRule = SwissTieBreakRule;
 
-  constructor(private rankingService: RankingService, public translateService: TranslocoService,
-              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
-              public override rbacService: RbacService, private router: Router,
-              protected nameUtils: NameUtilsService) {
+  constructor(private readonly rankingService: RankingService, public readonly translateService: TranslocoService,
+              private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private readonly messageService: MessageService,
+              public override readonly rbacService: RbacService, private readonly router: Router,
+              protected readonly nameUtils: NameUtilsService) {
     super(rbacService);
   }
 

@@ -18,9 +18,9 @@ export class MessageService implements OnDestroy {
 
   private messageSubscription: Subscription;
 
-  constructor(public snackBar: BiitSnackbarService, private translateService: TranslocoService,
-              private loggerService: LoggerService, private rxStompService: RxStompService,
-              private environmentService: EnvironmentService) {
+  constructor(public readonly snackBar: BiitSnackbarService, private readonly translateService: TranslocoService,
+              private readonly loggerService: LoggerService, private readonly rxStompService: RxStompService,
+              private readonly environmentService: EnvironmentService) {
     this.registerWebsocketsMessages();
   }
 

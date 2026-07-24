@@ -199,6 +199,6 @@ describe('MemberSelectorComponent', () => {
     component.selectUser(participant1);
     component.selectUser(participant1Clone);
 
-    expect(component.selectedMembers.length).toBe(0);
+    expect(component.selectedMembers).toHaveSize(0);
   });
 });

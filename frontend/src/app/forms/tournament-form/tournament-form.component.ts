@@ -68,8 +68,8 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   tournamentWithTeams: boolean = false;
 
 
-  constructor(rbacService: RbacService, private transloco: TranslocoService, private biitSnackbarService: BiitSnackbarService,
-              private tournamentService: TournamentService, private fightService: FightService) {
+  constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly biitSnackbarService: BiitSnackbarService,
+              private readonly tournamentService: TournamentService, private readonly fightService: FightService) {
     super(rbacService);
   }
 
