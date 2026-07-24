@@ -96,9 +96,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Transactional
     @Override
     public Tournament save(Tournament entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Tournament to save cannot be null.");
-        }
+        Objects.requireNonNull(entity, "Tournament to save cannot be null.");
         final boolean newEntity = entity.getId() == null;
         final Tournament tournament = super.save(entity);
         //Only for new tournaments.

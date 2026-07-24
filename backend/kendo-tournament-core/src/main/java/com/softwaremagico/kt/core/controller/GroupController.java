@@ -129,6 +129,9 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username, String session) {
+        if (groupDTO.getTournament() == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to create.");
+        }
         try {
             return this.convert(this.tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType())
                     .addGroup(this.tournamentConverter.reverse(groupDTO.getTournament()), this.reverse(groupDTO)));
@@ -145,6 +148,9 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public void delete(GroupDTO groupDTO, String username, String session) {
+        if (groupDTO.getTournament() == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to delete.");
+        }
         try {
             this.tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(
                     this.tournamentConverter.reverse(groupDTO.getTournament()), groupDTO.getLevel(),

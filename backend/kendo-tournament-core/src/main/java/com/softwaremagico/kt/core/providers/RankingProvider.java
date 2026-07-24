@@ -179,6 +179,9 @@ public class RankingProvider {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Group group) {
+        if (group == null) {
+            return new ArrayList<>();
+        }
         return getCompetitorsScoreRanking(getParticipants(group.getTeams()), group.getFights(), group.getUnties(), group.getTournament());
     }
 
@@ -188,7 +191,9 @@ public class RankingProvider {
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, countNotOver(tournamentDTO)));
         }
-        sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
+        if (tournamentDTO != null && tournamentDTO.getTournamentScore() != null) {
+            sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
+        }
         return scores;
     }
 
@@ -205,7 +210,7 @@ public class RankingProvider {
      * @return if it must be counted.
      */
     private boolean countNotOver(Tournament tournament) {
-        return tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
+        return tournament != null && tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
     }
 
     public List<ScoreOfCompetitor> getCompetitorGlobalRanking(ScoreType scoreType) {
@@ -485,9 +490,13 @@ public class RankingProvider {
      */
     public Map<Integer, List<Team>> getTeamsByPosition(Group group) {
         final HashMap<Integer, List<Team>> teamsByPosition = new HashMap<>();
+        if (group == null) {
+            return teamsByPosition;
+        }
         final List<ScoreOfTeam> scores = getTeamsScoreRanking(group);
+        final Tournament tournament = group.getTournament();
 
-        if (group != null && group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS) {
+        if (tournament != null && tournament.getType() == TournamentType.SWISS) {
             scores.forEach(score -> teamsByPosition.computeIfAbsent(score.getSortingIndex(), k -> new ArrayList<>()).add(score.getTeam()));
             return teamsByPosition;
         }
@@ -498,8 +507,8 @@ public class RankingProvider {
             // Put team in position.
             teamsByPosition.get(position).add(scores.get(i).getTeam());
             // Different score with next team.
-            if ((i < scores.size() - 1) && getTeamsSorter(group.getTournament().getTournamentScore().getScoreType(),
-                    checkLevel(group.getTournament()))
+            if (tournament != null && (i < scores.size() - 1) && getTeamsSorter(tournament.getTournamentScore().getScoreType(),
+                    checkLevel(tournament))
                     .compare(scores.get(i), scores.get(i + 1)) != 0) {
                 position++;
             }
