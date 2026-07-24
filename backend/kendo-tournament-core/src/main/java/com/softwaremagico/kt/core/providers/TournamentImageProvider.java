@@ -91,7 +91,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultBanner = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException ex) {
-                KendoTournamentLogger.severe(TournamentImageProvider.class.getName(), "No default banner found: {}", ex.getMessage());
+                KendoTournamentLogger.severe(TournamentImageProvider.class, "No default banner found: {}", ex.getMessage());
             }
         }
         return this.defaultBanner;
@@ -104,7 +104,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultAccreditation = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException ex) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(),
+                KendoTournamentLogger.severe(TournamentImageController.class,
                         "No default accreditation found: {}", ex.getMessage());
             }
         }
@@ -118,7 +118,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultDiploma = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException ex) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found: {}", ex.getMessage());
+                KendoTournamentLogger.severe(TournamentImageController.class, "No default diploma found: {}", ex.getMessage());
             }
         }
         return this.defaultDiploma;
@@ -131,7 +131,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
                     this.defaultPhoto = inputStream.readAllBytes();
                 }
             } catch (NullPointerException | IOException ex) {
-                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found: {}", ex.getMessage());
+                KendoTournamentLogger.severe(TournamentImageController.class, "No default diploma found: {}", ex.getMessage());
             }
         }
         return this.defaultPhoto;

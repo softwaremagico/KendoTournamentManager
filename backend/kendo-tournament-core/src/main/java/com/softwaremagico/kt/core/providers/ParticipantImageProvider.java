@@ -75,7 +75,7 @@ public class ParticipantImageProvider extends CrudProvider<ParticipantImage, Int
             participant.setHasAvatar(true);
             participantRepository.save(participant);
             return save(participantImage);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
     }
@@ -87,7 +87,7 @@ public class ParticipantImageProvider extends CrudProvider<ParticipantImage, Int
         try {
             participantImage.setData(ImageUtils.getBytes(ImageUtils.cropImage(
                     ImageUtils.resizeImage(ImageUtils.getImage(participantImage.getData())))));
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             KendoTournamentLogger.warning(this.getClass(), "Image cannot be cropped");
         }
         final Participant participant = participantImage.getParticipant();

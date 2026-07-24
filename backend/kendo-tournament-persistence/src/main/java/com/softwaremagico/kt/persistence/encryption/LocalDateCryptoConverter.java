@@ -49,7 +49,7 @@ public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate>
         try {
             return (dbData == null || dbData.isEmpty()) ? null : LocalDate.parse(dbData);
         } catch (DateTimeParseException ex) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid date value '{}' in database. Cause: {}", dbData,
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid date value '{}' in database. Cause: {}", dbData,
                     ex.getMessage());
             return null;
         }

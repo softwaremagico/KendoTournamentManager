@@ -103,7 +103,7 @@ public class RankingServicesUnitTests {
                 mock(HttpServletRequest.class));
 
         assertNotNull(result);
-        verify(rankingController).getCompetitorsGlobalScoreRanking(eq(List.of()), eq(null));
+        verify(rankingController).getCompetitorsGlobalScoreRanking(List.of(), null);
     }
 
     @Test

@@ -46,6 +46,9 @@ public class BlogExporter {
     private static final String CLOSING_DIV = "</div>";
     private static final String CLOSING_H4_WITH_NEW_LINE = "</h4>\n";
 
+    public record ScoreData(List<ScoreOfTeamDTO> scoreOfTeams, List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
+    }
+
     private final MessageSource messageSource;
     private final Locale locale;
 
@@ -77,6 +80,11 @@ public class BlogExporter {
         this.competitors.sort(Comparator.comparing(NameUtils::getLastnameName));
         this.scoreOfTeams = scoreOfTeams;
         this.scoreOfCompetitors = scoreOfCompetitors;
+    }
+
+    public BlogExporter(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<RoleDTO> roles,
+                        List<GroupDTO> groups, List<ParticipantDTO> competitors, ScoreData scoreData) {
+        this(messageSource, locale, tournament, roles, groups, competitors, scoreData.scoreOfTeams(), scoreData.scoreOfCompetitors());
     }
 
     /**

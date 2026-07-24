@@ -49,7 +49,7 @@ public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<Ach
         try {
             return (dbData == null || dbData.isEmpty()) ? null : AchievementGrade.getType(dbData);
         } catch (NumberFormatException ex) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid grade value '{}' in database. Cause: {}", dbData,
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid grade value '{}' in database. Cause: {}", dbData,
                     ex.getMessage());
             return null;
         }

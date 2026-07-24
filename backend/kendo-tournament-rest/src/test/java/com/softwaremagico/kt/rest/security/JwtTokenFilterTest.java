@@ -113,11 +113,11 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldContinueChainWhenBearerTokenIsBlank() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer   ");
 
-        filter.doFilterInternal(request, response, chain);
+        localFilter.doFilterInternal(request, response, chain);
 
         verify(chain).doFilter(request, response);
         verify(jwtTokenUtil, never()).validate(any());
@@ -143,7 +143,7 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldThrowInvalidIpWhenIpDoesNotMatchToken() {
-        final JwtTokenFilter filter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
 
@@ -165,12 +165,12 @@ public class JwtTokenFilterTest {
         when(request.getHeader("REMOTE_ADDR")).thenReturn(null);
         when(request.getRemoteAddr()).thenReturn("192.168.1.99");
 
-        assertThrows(InvalidIpException.class, () -> filter.doFilterInternal(request, response, chain));
+        assertThrows(InvalidIpException.class, () -> localFilter.doFilterInternal(request, response, chain));
     }
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldThrowInvalidMacWhenMacDoesNotMatchToken() {
-        final JwtTokenFilter filter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
 
@@ -183,12 +183,12 @@ public class JwtTokenFilterTest {
         when(networkController.getHostMac()).thenReturn("CC-DD");
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
 
-        assertThrows(InvalidMacException.class, () -> filter.doFilterInternal(request, response, chain));
+        assertThrows(InvalidMacException.class, () -> localFilter.doFilterInternal(request, response, chain));
     }
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldAllowParticipantUserWhenParticipantAccessIsEnabled() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final Participant participant = mock(Participant.class);
 
@@ -199,7 +199,7 @@ public class JwtTokenFilterTest {
         when(authenticatedUserProvider.findByUsername("participant-user")).thenReturn(Optional.empty());
         when(participantProvider.findByTokenUsername("participant-user")).thenReturn(Optional.of(participant));
 
-        filter.doFilterInternal(request, response, chain);
+        localFilter.doFilterInternal(request, response, chain);
 
         verify(chain).doFilter(request, response);
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());

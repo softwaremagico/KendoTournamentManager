@@ -132,10 +132,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
         if (!this.jwtTokenUtil.validate(token)) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
+            JwtFilterLogger.errorMessage(this.getClass(), "JWT token invalid!");
             try {
                 chain.doFilter(request, response);
-            } catch (Exception _) {
+            } catch (Exception ignored) {
                 //No other filters validates it.
                 throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
             }
@@ -143,7 +143,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         if (JwtFilterLogger.isDebugEnabled()) {
-            JwtFilterLogger.debug(this.getClass().getName(), """
+            JwtFilterLogger.debug(this.getClass(), """
                     JWT Obtained:
                     Expiration date: '{}'
                     User id: '{}'
@@ -179,7 +179,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String userTokenIp = this.jwtTokenUtil.getUserIp(token);
         final List<String> clientIps = this.getClientIpAddress(request);
         final boolean invalidIp = userTokenIp == null || userTokenIp.isEmpty()
-                || clientIps.stream().filter(ip -> ip != null).noneMatch(ip -> ip.contains(userTokenIp));
+                || clientIps.stream().filter(Objects::nonNull).noneMatch(ip -> ip.contains(userTokenIp));
         if (this.checkClientIp && !participantUser && invalidIp) {
             throw new InvalidIpException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }

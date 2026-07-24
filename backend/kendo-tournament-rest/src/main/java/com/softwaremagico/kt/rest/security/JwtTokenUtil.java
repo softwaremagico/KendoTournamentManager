@@ -107,8 +107,8 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedJwtExpiration = Long.parseLong(jwtExpiration);
-            } catch (NumberFormatException _) {
-                RestServerLogger.warning(this.getClass().getName(), "jwt.expiration value '{}' is invalid. Setting default to '{}'.",
+            } catch (NumberFormatException ignored) {
+                RestServerLogger.warning(this.getClass(), "jwt.expiration value '{}' is invalid. Setting default to '{}'.",
                         jwtExpiration, JWT_EXPIRATION);
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
@@ -124,8 +124,8 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
-            } catch (NumberFormatException _) {
-                RestServerLogger.debug(this.getClass().getName(), "jwt.guest.expiration value '{}' is invalid ({}). Using default.",
+            } catch (NumberFormatException ignored) {
+                RestServerLogger.debug(this.getClass(), "jwt.guest.expiration value '{}' is invalid ({}). Using default.",
                         jwtGuestExpiration, "invalid");
                 calculatedGuestJwtExpiration = this.jwtExpiration;
             }
@@ -139,8 +139,8 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedParticipantJwtExpiration = Long.parseLong(jwtParticipantExpiration);
-            } catch (NumberFormatException _) {
-                RestServerLogger.debug(this.getClass().getName(),
+            } catch (NumberFormatException ignored) {
+                RestServerLogger.debug(this.getClass(),
                         "jwt.participant.expiration value '{}' is invalid ({}). Using default.", jwtParticipantExpiration,
                         "invalid");
                 calculatedParticipantJwtExpiration = this.jwtExpiration;
@@ -166,7 +166,7 @@ public class JwtTokenUtil {
         try {
             final byte[] keyBytes = MessageDigest.getInstance("SHA-512").digest(secret.getBytes(StandardCharsets.UTF_8));
             return Keys.hmacShaKeyFor(keyBytes);
-        } catch (NoSuchAlgorithmException _) {
+        } catch (NoSuchAlgorithmException ignored) {
             throw new IllegalStateException("SHA-512 algorithm is not available.");
         }
     }
@@ -277,7 +277,7 @@ public class JwtTokenUtil {
         final String userId = this.getTokenSubject(token).userId();
 
         if (userId == null) {
-            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
+            JwtFilterLogger.warning(this.getClass(), "No filed 'user id' on JWT token!");
         }
         return userId;
     }
@@ -292,7 +292,7 @@ public class JwtTokenUtil {
         final String username = this.getTokenSubject(token).username();
 
         if (username == null) {
-            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
+            JwtFilterLogger.warning(this.getClass(), "No filed 'user name' on JWT token!");
         }
         return username;
     }
@@ -306,7 +306,7 @@ public class JwtTokenUtil {
     public String getSession(String token) {
         final String session = this.getTokenSubject(token).session();
         if (session == null) {
-            JwtFilterLogger.debug(this.getClass().getName(), "No session information on JWT token!");
+            JwtFilterLogger.debug(this.getClass(), "No session information on JWT token!");
         }
         return session;
     }
@@ -320,7 +320,7 @@ public class JwtTokenUtil {
     public String getUserIp(String token) {
         final String userIp = this.getTokenSubject(token).userIp();
         if (userIp == null) {
-            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'user IP' on JWT token!");
+            JwtFilterLogger.debug(this.getClass(), "No filed 'user IP' on JWT token!");
         }
         return userIp;
     }
@@ -334,7 +334,7 @@ public class JwtTokenUtil {
     public String getHostMac(String token) {
         final String hostMac = this.getTokenSubject(token).hostMac();
         if (hostMac == null) {
-            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
+            JwtFilterLogger.debug(this.getClass(), "No filed 'host MAC' on JWT token!");
         }
         return hostMac;
     }
@@ -360,12 +360,12 @@ public class JwtTokenUtil {
         try {
             this.getClaims(token);
             return true;
-        } catch (ExpiredJwtException _) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token");
-        } catch (JwtException _) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token");
-        } catch (IllegalArgumentException _) {
-            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty");
+        } catch (ExpiredJwtException ignored) {
+            JwtFilterLogger.errorMessage(this.getClass(), "Expired JWT token");
+        } catch (JwtException ignored) {
+            JwtFilterLogger.errorMessage(this.getClass(), "Invalid JWT token");
+        } catch (IllegalArgumentException ignored) {
+            JwtFilterLogger.errorMessage(this.getClass(), "JWT claims string is empty");
         }
         return false;
     }

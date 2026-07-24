@@ -46,7 +46,7 @@ public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> imple
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Double.parseDouble(dbData);
         } catch (NumberFormatException ex) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid double value '{}' in database. Cause: {}", dbData,
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid double value '{}' in database. Cause: {}", dbData,
                     ex.getMessage());
             return null;
         }

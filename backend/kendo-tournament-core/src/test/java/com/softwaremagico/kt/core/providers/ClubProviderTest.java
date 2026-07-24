@@ -121,10 +121,7 @@ public class ClubProviderTest {
     @Test(expectedExceptions = ClubNotFoundException.class)
     public void shouldThrowClubNotFoundExceptionWhenDeletingByNonExistentId() {
         when(clubRepository.findById(99)).thenReturn(Optional.empty());
-        try {
-            clubProvider.deleteById(99);
-        } finally {
-        }
+        clubProvider.deleteById(99);
     }
 }
 

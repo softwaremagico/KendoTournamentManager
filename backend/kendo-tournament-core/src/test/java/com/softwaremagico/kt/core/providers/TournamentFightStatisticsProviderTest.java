@@ -100,7 +100,7 @@ public class TournamentFightStatisticsProviderTest {
 	public void estimate_shouldCalculateByRolesWhenNoTeams() {
 		final Tournament tournament = this.createTournament();
 		final List<Team> emptyTeams = Collections.emptyList();
-		final List<Role> roles = this.createRoles(tournament, 4);
+		final List<Role> roles = this.createRoles(4);
 
 		when(this.mockTeamProvider.getAll(tournament)).thenReturn(emptyTeams);
 		when(this.mockRoleProvider.getAll(tournament)).thenReturn(roles);
@@ -130,7 +130,7 @@ public class TournamentFightStatisticsProviderTest {
 	public void estimateByMembers_shouldFilterOnlyCompetitors() {
 		final Tournament tournament = this.createTournament();
 		tournament.setTeamSize(2);
-		final List<Role> mixedRoles = this.createMixedRoles(tournament);
+		final List<Role> mixedRoles = this.createMixedRoles();
 
 		when(this.mockRoleProvider.getAll(tournament)).thenReturn(mixedRoles);
 		when(this.mockDuelProvider.getDurationAverage()).thenReturn(180L);
@@ -578,7 +578,7 @@ public class TournamentFightStatisticsProviderTest {
 		return teams;
 	}
 
-	private List<Role> createRoles(Tournament tournament, int count) {
+	private List<Role> createRoles(int count) {
 		final List<Role> roles = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			final Role role = new Role();
@@ -593,7 +593,7 @@ public class TournamentFightStatisticsProviderTest {
 		return roles;
 	}
 
-	private List<Role> createMixedRoles(Tournament tournament) {
+	private List<Role> createMixedRoles() {
 		final List<Role> roles = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			final Role role = new Role();
@@ -636,7 +636,7 @@ public class TournamentFightStatisticsProviderTest {
 	public void estimateByMembers_shouldCreateTeamsWhenFiltering() {
 		final Tournament tournament = this.createTournament();
 		tournament.setTeamSize(2);
-		final List<Role> roles = this.createRoles(tournament, 6);
+		final List<Role> roles = this.createRoles(6);
 
 		when(this.mockRoleProvider.getAll(tournament)).thenReturn(roles);
 		when(this.mockDuelProvider.getDurationAverage()).thenReturn(150L);

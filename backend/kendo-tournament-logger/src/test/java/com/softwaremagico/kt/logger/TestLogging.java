@@ -83,11 +83,11 @@ public class TestLogging extends BasicLogger {
      *            the text
      */
     public static void debug(String className, String message) {
-        debug(logger, className, message);
+        BasicLogger.debug(logger, className, message);
     }
 
     public static void debug(String message) {
-        debug(logger, message);
+        BasicLogger.debug(logger, message);
     }
 
     /**

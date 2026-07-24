@@ -47,7 +47,7 @@ public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType> i
         try {
             return (dbData == null || dbData.isEmpty()) ? null : RoleType.getType(dbData);
         } catch (NumberFormatException ex) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid role value '{}' in database. Cause: {}", dbData,
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid role value '{}' in database. Cause: {}", dbData,
                     ex.getMessage());
             return null;
         }

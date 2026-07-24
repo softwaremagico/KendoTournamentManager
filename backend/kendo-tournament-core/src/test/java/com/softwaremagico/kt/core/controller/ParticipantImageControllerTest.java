@@ -84,7 +84,7 @@ public class ParticipantImageControllerTest {
         try {
             controller.deleteByParticipantId(7);
             fail("Expected RuntimeException");
-        } catch (RuntimeException ignored) {
+        } catch (RuntimeException _) {
             verify(participantProvider).save(participant);
             assertEquals(participant.getHasAvatar(), Boolean.FALSE);
         }

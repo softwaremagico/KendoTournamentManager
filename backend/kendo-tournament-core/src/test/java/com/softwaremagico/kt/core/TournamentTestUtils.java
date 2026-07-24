@@ -58,7 +58,9 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     private static final String CLUB_CITY = "ClubCity";
 
     // Record to group tournament role configuration and reduce parameter count (S107)
-    protected record RoleConfiguration(int members, int teams, int referees, int organizers, int volunteers, int press) {}
+    protected record RoleConfiguration(int members, int teams, int referees, int organizers, int volunteers, int press) {
+        // Intentionally empty: this record is a compact immutable parameter group for tests.
+    }
 
     @Autowired
     private ClubController clubController;

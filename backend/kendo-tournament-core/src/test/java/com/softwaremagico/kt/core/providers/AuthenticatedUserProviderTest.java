@@ -154,10 +154,7 @@ public class AuthenticatedUserProviderTest {
         when(authenticatedUserRepository.findByUsername("john")).thenReturn(Optional.of(existing));
 
         final AuthenticatedUserProvider provider = new AuthenticatedUserProvider(authenticatedUserRepository, participantProvider, "false");
-        try {
-            provider.save("creator", "john", "John", "Doe", "pwd", "admin");
-        } finally {
-        }
+        provider.save("creator", "john", "John", "Doe", "pwd", "admin");
     }
 
     @Test

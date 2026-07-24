@@ -47,7 +47,7 @@ public class ImageCompressionCryptoConverter extends AbstractCryptoConverter<Ima
         try {
             return (dbData == null || dbData.isEmpty()) ? null : ImageCompression.getCompression(dbData);
         } catch (NumberFormatException ex) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid type value '{}' in database. Cause: {}", dbData,
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid type value '{}' in database. Cause: {}", dbData,
                     ex.getMessage());
             return null;
         }

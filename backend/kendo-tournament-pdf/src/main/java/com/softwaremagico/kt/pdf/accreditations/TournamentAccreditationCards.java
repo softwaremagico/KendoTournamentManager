@@ -94,7 +94,7 @@ public class TournamentAccreditationCards extends PdfDocument {
         try {
             return Image.getInstance(data);
         } catch (IOException ex) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "{}: {}", errorMessage, ex.getMessage());
+            KendoTournamentLogger.severe(this.getClass(), "{}: {}", errorMessage, ex.getMessage());
             return null;
         }
     }

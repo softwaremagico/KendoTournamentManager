@@ -80,7 +80,7 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
                 //Try with offset.
                 return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
             } catch (DateTimeParseException offsetException) {
-                EncryptorLogger.errorMessage(this.getClass().getName(),
+                EncryptorLogger.errorMessage(this.getClass(),
                         "Invalid datetime value '{}' in database. Causes: '{}', '{}', '{}'", dbData,
                         numberFormatException.getMessage(), ex.getMessage(), offsetException.getMessage());
                 return null;
@@ -92,7 +92,7 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
         try {
             return LocalDateTime.parse(dbData, dateTimeFormatter);
         } catch (DateTimeParseException ex) {
-            EncryptorLogger.debug(this.getClass().getName(), "Datetime '{}' does not match formatter '{}': {}", dbData,
+            EncryptorLogger.debug(this.getClass(), "Datetime '{}' does not match formatter '{}': {}", dbData,
                     dateTimeFormatter, ex.getMessage());
             return null;
         }

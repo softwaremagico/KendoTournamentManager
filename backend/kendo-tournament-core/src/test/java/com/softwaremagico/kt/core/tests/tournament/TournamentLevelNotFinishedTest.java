@@ -254,10 +254,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
 
     @Test(dependsOnMethods = {"solveFights"}, expectedExceptions = LevelNotFinishedException.class)
     public void populateLevel1() {
-        try {
-            treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
-        } finally {
-        }
+        treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
     }
 
     @Test(dependsOnMethods = {"populateLevel1"})

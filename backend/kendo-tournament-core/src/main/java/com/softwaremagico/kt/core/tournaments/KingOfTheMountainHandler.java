@@ -134,7 +134,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         final TournamentExtraProperty extraProperty = getKingIndex(tournament);
         try {
             kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException ignored) {
             kingIndex.set(1);
         }
         kingIndex.getAndIncrement();

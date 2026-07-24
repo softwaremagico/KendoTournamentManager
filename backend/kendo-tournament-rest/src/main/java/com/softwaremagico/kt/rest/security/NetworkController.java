@@ -58,7 +58,7 @@ public class NetworkController {
             }
             return String.join("-", hexadecimal);
         } catch (Exception ex) {
-            RestServerLogger.debug(this.getClass().getName(), "Cannot resolve host MAC: {}", ex.getMessage());
+            RestServerLogger.debug(this.getClass(), "Cannot resolve host MAC: {}", ex.getMessage());
         }
         return "";
     }

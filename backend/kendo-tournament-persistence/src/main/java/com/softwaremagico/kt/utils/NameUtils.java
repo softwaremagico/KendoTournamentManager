@@ -246,7 +246,7 @@ public final class NameUtils {
                 final String index = nameItem.getName().substring(nameItem.getName().indexOf(COPY_SUFFIX + " #") + (COPY_SUFFIX + " #").length()).trim();
                 try {
                     return nameItem.getName().substring(0, nameItem.getName().indexOf(COPY_SUFFIX)).trim() + COPY_SUFFIX + " #" + (Integer.parseInt(index) + 1);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException ignored) {
                     return nameItem.getName() + " #2";
                 }
             } else {

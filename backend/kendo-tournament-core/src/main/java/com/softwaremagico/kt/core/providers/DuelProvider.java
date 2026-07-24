@@ -144,7 +144,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
             final Long leftScore = getRepository().countLeftScoreFromCompetitor(participant, tournaments);
             final Long rightScore = getRepository().countRightScoreFromCompetitor(participant, tournaments);
             return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
-        } catch (final NullPointerException ex) {
+        } catch (final NullPointerException ignored) {
             return 0L;
         }
     }
@@ -157,7 +157,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
             final Long leftScore = getRepository().countLeftScoreAgainstCompetitor(participant, tournaments);
             final Long rightScore = getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
             return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
-        } catch (final NullPointerException ex) {
+        } catch (final NullPointerException ignored) {
             return 0L;
         }
     }

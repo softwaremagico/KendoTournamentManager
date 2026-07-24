@@ -46,7 +46,7 @@ public class IntegerCryptoConverter extends AbstractCryptoConverter<Integer> imp
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Integer.parseInt(dbData);
         } catch (NumberFormatException ex) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid integer value '{}' in database. Cause: {}", dbData,
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid integer value '{}' in database. Cause: {}", dbData,
                     ex.getMessage());
             return null;
         }

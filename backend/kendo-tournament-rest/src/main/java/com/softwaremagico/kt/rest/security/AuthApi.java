@@ -134,17 +134,17 @@ public class AuthApi {
         }
         try {
             //We verify the provided credentials using the authentication manager
-            RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
+            RestServerLogger.debug(this.getClass(), "Trying to log in with '" + request.getUsername() + "'.");
             final Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
+            RestServerLogger.debug(this.getClass(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             return getAuthenticatedLoginResponse(authenticate, ip);
         } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
+            RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
             //Create a default user if no user exists. Needed when database is encrypted.
             if (authenticatedUserController.countUsers() == 0) {
-                RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
+                RestServerLogger.info(this.getClass(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
                         null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ADMIN);
                 final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
@@ -190,7 +190,7 @@ public class AuthApi {
                     .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
                     .body(user);
         } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
+            RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -199,11 +199,11 @@ public class AuthApi {
         try {
             Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         } catch (InterruptedException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Interrupted wait while delaying locked response for '{}' ({}).", ip,
+            RestServerLogger.warning(this.getClass(), "Interrupted wait while delaying locked response for '{}' ({}).", ip,
                     ex.getMessage());
             Thread.currentThread().interrupt();
         }
-        RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '{}' .", ip);
+        RestServerLogger.warning(this.getClass(), "Too many attempts from IP '{}' .", ip);
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip) + bruteForceService.getExpirationTime()));
         return new ResponseEntity<>(headers, HttpStatus.LOCKED);
@@ -222,7 +222,7 @@ public class AuthApi {
                     .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
                     .body(user);
         } catch (UsernameNotFoundException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Bad credentials ({}) .", ex.getMessage());
+            RestServerLogger.warning(this.getClass(), "Bad credentials ({}) .", ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -250,7 +250,7 @@ public class AuthApi {
     @GetMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<AuthenticatedUser> getAll(HttpServletRequest httpRequest) {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "Listing users requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "Listing users requested from '{}'.", getClientIP(httpRequest));
         }
         return authenticatedUserController.findAll();
     }
@@ -261,7 +261,7 @@ public class AuthApi {
     @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "User register requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "User register requested from '{}'.", getClientIP(httpRequest));
         }
         return authenticatedUserController.createUser(authentication.getName(), request);
     }
@@ -271,7 +271,7 @@ public class AuthApi {
     @PatchMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "User update requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "User update requested from '{}'.", getClientIP(httpRequest));
         }
         return authenticatedUserController.updateUser(authentication.getName(), request);
     }
@@ -282,7 +282,7 @@ public class AuthApi {
     public void delete(@Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
                        Authentication authentication, HttpServletRequest httpRequest) {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "User delete requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "User delete requested from '{}'.", getClientIP(httpRequest));
         }
         if (Objects.equals(authentication.getName(), username)) {
             throw new InvalidRequestException(this.getClass(), "You cannot delete the current user!");
@@ -305,7 +305,7 @@ public class AuthApi {
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "Password update requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "Password update requested from '{}'.", getClientIP(httpRequest));
         }
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword(), authentication.getName());
@@ -321,7 +321,7 @@ public class AuthApi {
                                    @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "Admin password update requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "Admin password update requested from '{}'.", getClientIP(httpRequest));
         }
         Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
@@ -338,7 +338,7 @@ public class AuthApi {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public Set<String> getRoles(Authentication authentication, HttpServletRequest httpRequest) {
         if (httpRequest != null) {
-            RestServerLogger.debug(this.getClass().getName(), "Roles requested from '{}'.", getClientIP(httpRequest));
+            RestServerLogger.debug(this.getClass(), "Roles requested from '{}'.", getClientIP(httpRequest));
         }
         return authenticatedUserController.getRoles(authentication.getName());
     }

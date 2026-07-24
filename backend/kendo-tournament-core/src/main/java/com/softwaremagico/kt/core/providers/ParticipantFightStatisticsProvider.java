@@ -93,7 +93,7 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 participantFightStatistics.setFaults(participantFightStatistics.getFaults()
                         + (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
                 participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                        + (duel.getCompetitor2Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
+                        + (duel.getCompetitor1Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
                 for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
                     if (scoreTime != null && scoreTime < quickestHit) {
                         quickestHit = scoreTime;

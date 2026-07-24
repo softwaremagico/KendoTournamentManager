@@ -44,6 +44,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -112,7 +113,7 @@ public class SwissTournamentHandler extends LeagueHandler {
                 return defaultRounds;
             }
             return configuredRounds;
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
             KendoTournamentLogger.warning(this.getClass(), "Invalid configured rounds for tournament "
                     + tournament.getName() + ". Using default rounds: " + defaultRounds);
             return defaultRounds;
@@ -324,21 +325,22 @@ public class SwissTournamentHandler extends LeagueHandler {
 
     private List<Fight> createSwissPairings(Tournament tournament, List<Team> teams, Integer level, String createdBy,
             List<Fight> previousFights, boolean avoidRepeated) {
-        final List<Fight> fights = this.tryCreateSwissPairings(tournament, teams, level, createdBy, previousFights,
-                avoidRepeated);
-        if (fights != null) {
-            return fights;
+        final Optional<List<Fight>> fights = this.tryCreateSwissPairings(tournament, teams, level, createdBy,
+                previousFights, avoidRepeated);
+        if (fights.isPresent()) {
+            return fights.get();
         }
         if (!avoidRepeated) {
             return new ArrayList<>();
         }
-        return this.tryCreateSwissPairings(tournament, teams, level, createdBy, previousFights, false);
+        return this.tryCreateSwissPairings(tournament, teams, level, createdBy, previousFights, false)
+                .orElse(new ArrayList<>());
     }
 
-    private List<Fight> tryCreateSwissPairings(Tournament tournament, List<Team> teams, Integer level, String createdBy,
-            List<Fight> previousFights, boolean avoidRepeated) {
+    private Optional<List<Fight>> tryCreateSwissPairings(Tournament tournament, List<Team> teams, Integer level,
+            String createdBy, List<Fight> previousFights, boolean avoidRepeated) {
         if (teams.isEmpty()) {
-            return new ArrayList<>();
+            return Optional.of(new ArrayList<>());
         }
 
         final Team firstTeam = teams.getFirst();
@@ -352,17 +354,17 @@ public class SwissTournamentHandler extends LeagueHandler {
             remainingTeams.remove(i);
             remainingTeams.removeFirst();
 
-            final List<Fight> remainingPairings = this.tryCreateSwissPairings(tournament, remainingTeams, level,
-                    createdBy, previousFights, avoidRepeated);
-            if (remainingPairings != null) {
+            final Optional<List<Fight>> remainingPairings = this.tryCreateSwissPairings(tournament, remainingTeams,
+                    level, createdBy, previousFights, avoidRepeated);
+            if (remainingPairings.isPresent()) {
                 final List<Fight> fights = new ArrayList<>();
                 fights.add(new Fight(tournament, firstTeam, candidate, 0, level, createdBy));
-                fights.addAll(remainingPairings);
-                return fights;
+                fights.addAll(remainingPairings.get());
+                return Optional.of(fights);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     private boolean havePlayed(Team firstTeam, Team secondTeam, List<Fight> previousFights) {

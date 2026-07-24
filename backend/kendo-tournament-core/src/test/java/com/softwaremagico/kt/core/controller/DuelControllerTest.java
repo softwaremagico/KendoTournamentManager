@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.controller;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -108,21 +108,27 @@ public class DuelControllerTest {
 
     @Test
     public void shouldRegisterShiaijoFinishedListener() {
-        DuelController.ShiaijoFinishedListener listener = (tournament, shiaijo) -> { };
+        DuelController.ShiaijoFinishedListener listener = (tournament, shiaijo) -> {
+            // No-op listener used only to verify registration.
+        };
         controller.addShiaijoFinishedListener(listener);
         assertTrue(true); // no exception = registered
     }
 
     @Test
     public void shouldRegisterFightUpdatedListener() {
-        DuelController.FightUpdatedListener listener = (tournament, fight, duel, actor, session) -> { };
+        DuelController.FightUpdatedListener listener = (tournament, fight, duel, actor, session) -> {
+            // No-op listener used only to verify registration.
+        };
         controller.addFightUpdatedListener(listener);
         assertTrue(true);
     }
 
     @Test
     public void shouldRegisterUntieUpdatedListener() {
-        DuelController.UntieUpdatedListener listener = (tournament, duel, actor, session) -> { };
+        DuelController.UntieUpdatedListener listener = (tournament, duel, actor, session) -> {
+            // No-op listener used only to verify registration.
+        };
         controller.addUntieUpdatedListener(listener);
         assertTrue(true);
     }
