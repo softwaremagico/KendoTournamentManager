@@ -175,18 +175,18 @@ public class TreeTournamentHandler extends LeagueHandler {
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            while (groupsByLevel.get(level).size() < (((previousLevelSize
+            while (this.groupsOfLevel(groupsByLevel, level).size() < (((previousLevelSize
                     // Add +1 unless the number of winners 2.
                     // This +1 will be rounded later but is needed if even teams pass from the
                     // previous level.
                     + (level == 1 && numberOfWinners == 2 ? 0 : 1))
                     // Check on level 1 the number of winners.
                     * (level == 1 ? numberOfWinners : 1)) / 2)) {
-                final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
+                final Group levelGroup = new Group(tournament, level, this.groupsOfLevel(groupsByLevel, level).size());
               this.groupProvider.addGroup(tournament, levelGroup);
-                groupsByLevel.get(level).add(levelGroup);
+                this.groupsOfLevel(groupsByLevel, level).add(levelGroup);
             }
-            previousLevelSize = groupsByLevel.get(level).size();
+            previousLevelSize = this.groupsOfLevel(groupsByLevel, level).size();
         }
 
         // Add extra level if needed.
@@ -203,7 +203,7 @@ public class TreeTournamentHandler extends LeagueHandler {
                     numberOfWinners)) {
                 this.addGroupToLevel(tournament, groupsByLevel, level);
             }
-            previousLevelSize = groupsByLevel.get(level).size();
+            previousLevelSize = this.groupsOfLevel(groupsByLevel, level).size();
         }
 
         if (this.addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners)) {
@@ -221,35 +221,45 @@ public class TreeTournamentHandler extends LeagueHandler {
             int numberOfWinners) {
         final int previousLevelWinners = level == 1 ? numberOfWinners : 1;
         final int expectedLevelSize = GroupUtils.getNextPowerOfTwo(
-                ((groupsByLevel.get(level - 1).size() * previousLevelWinners) + 1) / 2);
-        return groupsByLevel.get(level).size() < expectedLevelSize;
+                ((this.groupsOfLevel(groupsByLevel, level - 1).size() * previousLevelWinners) + 1) / 2);
+        return this.groupsOfLevel(groupsByLevel, level).size() < expectedLevelSize;
     }
 
     private boolean isSingleLastLevelException(Map<Integer, List<Group>> groupsByLevel, Integer level,
             int previousLevelSize) {
-        return groupsByLevel.get(level).size() == 1 && previousLevelSize == 2
-                && groupsByLevel.get(level - 1).getFirst().getNumberOfWinners() == 1;
+        final List<Group> previousLevelGroups = this.groupsOfLevel(groupsByLevel, level - 1);
+        return this.groupsOfLevel(groupsByLevel, level).size() == 1 && previousLevelSize == 2
+                && !previousLevelGroups.isEmpty() && previousLevelGroups.getFirst().getNumberOfWinners() == 1;
     }
 
     private void addGroupToLevel(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
-        final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
+        final Group levelGroup = new Group(tournament, level, this.groupsOfLevel(groupsByLevel, level).size());
         this.groupProvider.addGroup(tournament, levelGroup);
-        groupsByLevel.get(level).add(levelGroup);
+        this.groupsOfLevel(groupsByLevel, level).add(levelGroup);
     }
 
     private boolean addExtraLevelIfNeeded(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
             int numberOfWinners) {
         // Add extra level if needed.
-        if (groupsByLevel.get(groupsByLevel.size() - 1).size() > 1
+        if (this.groupsOfLevel(groupsByLevel, groupsByLevel.size() - 1).size() > 1
                 || (groupsByLevel.size() == 1 && numberOfWinners > 1)) {
             final Integer newLevel = groupsByLevel.size();
             final Group levelGroup = new Group(tournament, newLevel, 0);
             groupsByLevel.put(newLevel, new ArrayList<>());
-            groupsByLevel.get(newLevel).add(levelGroup);
+            this.groupsOfLevel(groupsByLevel, newLevel).add(levelGroup);
           this.groupProvider.addGroup(tournament, levelGroup);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Safe accessor for the groups of a given level. {@link Map#get(Object)} may return {@code null}
+     * when the level is not present, which would otherwise cause a NullPointerException on the callers
+     * that immediately dereference the result.
+     */
+    private List<Group> groupsOfLevel(Map<Integer, List<Group>> groupsByLevel, int level) {
+        return groupsByLevel.getOrDefault(level, new ArrayList<>());
     }
 
     private void adjustGroupsShiaijos(Tournament tournament) {
@@ -260,7 +270,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            this.adjustLevelShiaijos(groupsByLevel.get(level), tournament.getShiaijos());
+            this.adjustLevelShiaijos(this.groupsOfLevel(groupsByLevel, level), tournament.getShiaijos());
         }
     }
 
@@ -332,12 +342,12 @@ public class TreeTournamentHandler extends LeagueHandler {
             this.adjustStandardLevelAfterGroupRemoval(tournament, groupsByLevel, level, previousLevelSize,
                     numberOfWinners);
         }
-        return groupsByLevel.get(level).size();
+        return this.groupsOfLevel(groupsByLevel, level).size();
     }
 
     private void removeLevelIfPreviousIsEmpty(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
             Integer level) {
-        if (level > 0 && (!groupsByLevel.containsKey(level - 1) || groupsByLevel.get(level - 1).isEmpty())) {
+        if (level > 0 && (!groupsByLevel.containsKey(level - 1) || this.groupsOfLevel(groupsByLevel, level - 1).isEmpty())) {
             this.removeAllGroupsFromLevel(tournament, groupsByLevel, level);
         }
     }
@@ -345,7 +355,7 @@ public class TreeTournamentHandler extends LeagueHandler {
     private void adjustOddResolvedLevelAfterGroupRemoval(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
             Integer level, int previousLevelSize, int numberOfWinners) {
         if (level > 1) {
-            while (this.shouldShrinkOddResolvedLevel(groupsByLevel.get(level), previousLevelSize)) {
+            while (this.shouldShrinkOddResolvedLevel(this.groupsOfLevel(groupsByLevel, level), previousLevelSize)) {
                 this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
             }
             return;
@@ -355,7 +365,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             while (this.shouldShrinkFirstOddResolvedLevel(groupsByLevel, level, numberOfWinners)) {
                 this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
             }
-            if (numberOfWinners == 1 && groupsByLevel.get(0).size() == 1) {
+            if (numberOfWinners == 1 && this.groupsOfLevel(groupsByLevel, 0).size() == 1) {
                 this.removeAllGroupsFromLevel(tournament, groupsByLevel, 1);
             }
         }
@@ -363,7 +373,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
     private void adjustStandardLevelAfterGroupRemoval(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
             Integer level, int previousLevelSize, int numberOfWinners) {
-        if (this.shouldShrinkStandardLevel(groupsByLevel.get(level).size(), level, previousLevelSize,
+        if (this.shouldShrinkStandardLevel(this.groupsOfLevel(groupsByLevel, level).size(), level, previousLevelSize,
                 numberOfWinners)) {
             this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
         }
@@ -375,8 +385,8 @@ public class TreeTournamentHandler extends LeagueHandler {
 
     private boolean shouldShrinkFirstOddResolvedLevel(Map<Integer, List<Group>> groupsByLevel, Integer level,
             int numberOfWinners) {
-        return GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(0).size() * numberOfWinners) + 1) / 2)
-                < groupsByLevel.get(level).size();
+        return GroupUtils.getNextPowerOfTwo(((this.groupsOfLevel(groupsByLevel, 0).size() * numberOfWinners) + 1) / 2)
+                < this.groupsOfLevel(groupsByLevel, level).size();
     }
 
     private boolean shouldShrinkStandardLevel(int levelSize, Integer level, int previousLevelSize,
@@ -387,13 +397,16 @@ public class TreeTournamentHandler extends LeagueHandler {
     }
 
     private void removeAllGroupsFromLevel(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
-        while (!groupsByLevel.get(level).isEmpty()) {
+        while (!this.groupsOfLevel(groupsByLevel, level).isEmpty()) {
             this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
         }
     }
 
     private void removeLastGroupFromLevel(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
-        final List<Group> groups = groupsByLevel.get(level);
+        final List<Group> groups = this.groupsOfLevel(groupsByLevel, level);
+        if (groups.isEmpty()) {
+            return;
+        }
         this.groupProvider.deleteGroupByLevelAndIndex(tournament, level, groups.size() - 1);
         groups.removeLast();
     }
@@ -510,7 +523,11 @@ public class TreeTournamentHandler extends LeagueHandler {
     }
 
     private boolean hasPendingCriticalUntie(Group group, Team firstTeam, Team secondTeam) {
-        return group.getUnties().stream().filter(duel -> duel.getType() == DuelType.UNDRAW)
+        final List<Duel> unties = group.getUnties();
+        if (unties == null) {
+            return false;
+        }
+        return unties.stream().filter(duel -> duel.getType() == DuelType.UNDRAW)
                 .anyMatch(duel -> !duel.isFinished() && this.isDuelBetweenTeams(duel, firstTeam, secondTeam));
     }
 

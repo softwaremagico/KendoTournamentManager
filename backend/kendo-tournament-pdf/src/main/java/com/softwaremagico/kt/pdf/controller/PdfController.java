@@ -219,6 +219,9 @@ public class PdfController {
     }
 
     private float getNamePosition(TournamentDTO tournamentDTO) {
+        if (tournamentDTO == null) {
+            return DEFAULT_NAME_POSITION;
+        }
         final TournamentExtraPropertyDTO tournamentExtraPropertyDTO = tournamentExtraPropertyController
                 .getByTournamentAndProperty(tournamentDTO.getId(), TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT);
         if (tournamentExtraPropertyDTO == null) {

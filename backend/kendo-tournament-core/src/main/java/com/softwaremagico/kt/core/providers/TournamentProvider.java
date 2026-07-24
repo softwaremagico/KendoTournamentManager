@@ -96,6 +96,9 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Transactional
     @Override
     public Tournament save(Tournament entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Tournament to save cannot be null.");
+        }
         final boolean newEntity = entity.getId() == null;
         final Tournament tournament = super.save(entity);
         //Only for new tournaments.
@@ -208,9 +211,10 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             //Update winners in group
             final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament);
             final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
-            if (groupsByLevel.get(0) != null) {
-                groupsByLevel.get(0).forEach(group -> group.setNumberOfWinners(numberOfWinners));
-                groupRepository.saveAll(groupsByLevel.get(0));
+            final List<Group> firstLevelGroups = groupsByLevel.get(0);
+            if (firstLevelGroups != null) {
+                firstLevelGroups.forEach(group -> group.setNumberOfWinners(numberOfWinners));
+                groupRepository.saveAll(firstLevelGroups);
             }
 
             //Resize tournament
@@ -301,7 +305,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
             final List<Tournament> tournaments = getRepository().findAll();
             for (Tournament tournament : tournaments) {
-                if (tournament.getName().equalsIgnoreCase(name)) {
+                if (tournament.getName() != null && tournament.getName().equalsIgnoreCase(name)) {
                     return Optional.of(tournament);
                 }
             }
