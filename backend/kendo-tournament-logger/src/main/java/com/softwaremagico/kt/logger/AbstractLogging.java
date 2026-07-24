@@ -98,23 +98,7 @@ public abstract class AbstractLogging {
             logMessage.append("(");
 
             // Add params
-            final Object[] paramValues = joinPoint.getArgs();
-            if (paramValues != null) {
-                for (int i = 0; i < paramValues.length; i++) {
-                    if (paramValues[i] != null) {
-                        if (paramValues[i] instanceof String) {
-                            logMessage.append("'").append(paramValues[i].toString()).append("'");
-                        } else {
-                            logMessage.append(paramValues[i].toString());
-                        }
-                    } else {
-                        logMessage.append(paramValues[i]);
-                    }
-                    if (i < paramValues.length - 1) {
-                        logMessage.append(", ");
-                    }
-                }
-            }
+            logMessage.append(formatParams(joinPoint.getArgs()));
 
             logMessage.append(") in ");
             logMessage.append(millis);
@@ -122,6 +106,27 @@ public abstract class AbstractLogging {
 
             logger.debug(logMessage.toString());
         }
+    }
+
+    private String formatParams(Object[] paramValues) {
+        if (paramValues == null) {
+            return "";
+        }
+        final StringBuilder params = new StringBuilder();
+        for (int i = 0; i < paramValues.length; i++) {
+            params.append(formatParamValue(paramValues[i]));
+            if (i < paramValues.length - 1) {
+                params.append(", ");
+            }
+        }
+        return params.toString();
+    }
+
+    private String formatParamValue(Object value) {
+        if (value instanceof String) {
+            return "'" + value + "'";
+        }
+        return String.valueOf(value);
     }
 
     protected String getTargetClassName(JoinPoint joinPoint) {

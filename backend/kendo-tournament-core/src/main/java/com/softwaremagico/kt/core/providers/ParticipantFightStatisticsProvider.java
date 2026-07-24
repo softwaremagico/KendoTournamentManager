@@ -47,113 +47,115 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     public ParticipantFightStatistics get(Participant participant) {
         final ParticipantFightStatistics participantFightStatistics = new ParticipantFightStatistics();
         final List<Duel> duels = duelProvider.get(participant);
-        long totalDuelsDuration = 0;
         final long participantDurationAverage = duelProvider.getDurationAverage(participant);
-        long totalDuelWonsWithDuration = 0L;
-        long totalDuelLostsWithDuration = 0L;
-        long quickestHit = Integer.MAX_VALUE;
-        long quickestReceivedHit = Integer.MAX_VALUE;
-        long wonDuels = 0L;
-        long wonDuelsWithDuration = 0L;
-        long lostDuels = 0L;
-        long lostDuelsWithDuration = 0L;
-        long drawDuels = 0L;
-        for (final Duel duel : duels) {
-            final int winner = duel.getWinner();
-            if (Objects.equals(duel.getCompetitor1(), participant)) {
-                populateScores(participantFightStatistics, duel.getCompetitor1Score());
-                populateReceivedScores(participantFightStatistics, duel.getCompetitor2Score());
-                participantFightStatistics.setFaults(participantFightStatistics.getFaults()
-                        + (duel.getCompetitor1Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
-                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                        + (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
-                for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestHit) {
-                        quickestHit = scoreTime;
-                    }
-                }
-                for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestReceivedHit) {
-                        quickestReceivedHit = scoreTime;
-                    }
-                }
-                if (winner < 0) {
-                    wonDuels++;
-                } else if (winner == 0) {
-                    drawDuels++;
-                } else {
-                    lostDuels++;
-                }
-                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                    totalDuelsDuration += duel.getDuration();
-                }
-            } else if (Objects.equals(duel.getCompetitor2(), participant)) {
-                populateScores(participantFightStatistics, duel.getCompetitor2Score());
-                populateReceivedScores(participantFightStatistics, duel.getCompetitor1Score());
-                participantFightStatistics.setFaults(participantFightStatistics.getFaults()
-                        + (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
-                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                        + (duel.getCompetitor1Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
-                for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestHit) {
-                        quickestHit = scoreTime;
-                    }
-                }
-                for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
-                    if (scoreTime != null && scoreTime < quickestReceivedHit) {
-                        quickestReceivedHit = scoreTime;
-                    }
-                }
-                if (winner > 0) {
-                    wonDuels++;
-                } else if (winner == 0) {
-                    drawDuels++;
-                } else {
-                    lostDuels++;
-                }
-                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                    totalDuelsDuration += duel.getDuration();
-                }
-            }
+        final DuelStatisticsAccumulator accumulator = new DuelStatisticsAccumulator();
 
-            if (Objects.equals(duel.getCompetitorWinner(), participant)
-                    && duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                totalDuelWonsWithDuration += duel.getDuration();
-                wonDuelsWithDuration++;
-            }
-            if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)
-                    && duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                totalDuelLostsWithDuration += duel.getDuration();
-                lostDuelsWithDuration++;
-            }
+        for (final Duel duel : duels) {
+            processDuel(participantFightStatistics, duel, participant, accumulator);
         }
-        if (participantDurationAverage > 0) {
-            participantFightStatistics.setAverageTime(participantDurationAverage);
-        } else {
-            participantFightStatistics.setAverageTime(0L);
-        }
-        if (totalDuelWonsWithDuration > 0) {
-            participantFightStatistics.setAverageWinTime(totalDuelWonsWithDuration / wonDuelsWithDuration);
-        } else {
-            participantFightStatistics.setAverageWinTime(0L);
-        }
-        if (totalDuelLostsWithDuration > 0) {
-            participantFightStatistics.setAverageLostTime(totalDuelLostsWithDuration / lostDuelsWithDuration);
-        } else {
-            participantFightStatistics.setAverageLostTime(0L);
-        }
-        if (quickestHit < Integer.MAX_VALUE) {
-            participantFightStatistics.setQuickestHit(quickestHit);
-        }
-        if (quickestReceivedHit < Integer.MAX_VALUE) {
-            participantFightStatistics.setQuickestReceivedHit(quickestReceivedHit);
-        }
-        participantFightStatistics.setTotalDuelsTime(totalDuelsDuration);
+
+        applyAverageTimes(participantFightStatistics, participantDurationAverage, accumulator);
+        applyQuickestHits(participantFightStatistics, accumulator);
+
+        participantFightStatistics.setTotalDuelsTime(accumulator.totalDuelsDuration);
         participantFightStatistics.setDuelsNumber((long) duels.size());
-        participantFightStatistics.setWonDuels(wonDuels);
-        participantFightStatistics.setDrawDuels(drawDuels);
-        participantFightStatistics.setLostDuels(lostDuels);
+        participantFightStatistics.setWonDuels(accumulator.wonDuels);
+        participantFightStatistics.setDrawDuels(accumulator.drawDuels);
+        participantFightStatistics.setLostDuels(accumulator.lostDuels);
         return participantFightStatistics;
+    }
+
+    private void processDuel(ParticipantFightStatistics participantFightStatistics, Duel duel, Participant participant,
+                             DuelStatisticsAccumulator accumulator) {
+        if (Objects.equals(duel.getCompetitor1(), participant)) {
+            processAsCompetitor(participantFightStatistics, duel, accumulator, duel.getCompetitor1Score(), duel.getCompetitor2Score(),
+                    duel.getCompetitor1Fault(), duel.getCompetitor2Fault(), duel.getCompetitor1ScoreTime(), duel.getCompetitor2ScoreTime(),
+                    duel.getWinner() < 0, duel.getWinner() == 0);
+        } else if (Objects.equals(duel.getCompetitor2(), participant)) {
+            processAsCompetitor(participantFightStatistics, duel, accumulator, duel.getCompetitor2Score(), duel.getCompetitor1Score(),
+                    duel.getCompetitor2Fault(), duel.getCompetitor1Fault(), duel.getCompetitor2ScoreTime(), duel.getCompetitor1ScoreTime(),
+                    duel.getWinner() > 0, duel.getWinner() == 0);
+        }
+        updateDurationAgainstWinner(duel, participant, accumulator);
+    }
+
+    private void processAsCompetitor(ParticipantFightStatistics participantFightStatistics, Duel duel, DuelStatisticsAccumulator accumulator,
+                                     List<Score> ownScores, List<Score> opponentScores, Boolean ownFault, Boolean opponentFault,
+                                     List<Integer> ownScoreTimes, List<Integer> opponentScoreTimes, boolean won, boolean draw) {
+        populateScores(participantFightStatistics, ownScores);
+        populateReceivedScores(participantFightStatistics, opponentScores);
+        participantFightStatistics.setFaults(participantFightStatistics.getFaults() + (ownFault != null && ownFault ? 1 : 0));
+        participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
+                + (opponentFault != null && opponentFault ? 1 : 0));
+        accumulator.quickestHit = Math.min(accumulator.quickestHit, quickestScoreTime(ownScoreTimes));
+        accumulator.quickestReceivedHit = Math.min(accumulator.quickestReceivedHit, quickestScoreTime(opponentScoreTimes));
+        if (won) {
+            accumulator.wonDuels++;
+        } else if (draw) {
+            accumulator.drawDuels++;
+        } else {
+            accumulator.lostDuels++;
+        }
+        if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+            accumulator.totalDuelsDuration += duel.getDuration();
+        }
+    }
+
+    private long quickestScoreTime(List<Integer> scoreTimes) {
+        long quickest = Integer.MAX_VALUE;
+        for (final Integer scoreTime : scoreTimes) {
+            if (scoreTime != null && scoreTime < quickest) {
+                quickest = scoreTime;
+            }
+        }
+        return quickest;
+    }
+
+    private void updateDurationAgainstWinner(Duel duel, Participant participant, DuelStatisticsAccumulator accumulator) {
+        if (duel.getDuration() == null || duel.getDuration() <= Duel.DEFAULT_DURATION) {
+            return;
+        }
+        if (Objects.equals(duel.getCompetitorWinner(), participant)) {
+            accumulator.totalDuelWonsWithDuration += duel.getDuration();
+            accumulator.wonDuelsWithDuration++;
+        } else if (duel.getCompetitorWinner() != null) {
+            accumulator.totalDuelLostsWithDuration += duel.getDuration();
+            accumulator.lostDuelsWithDuration++;
+        }
+    }
+
+    private void applyAverageTimes(ParticipantFightStatistics participantFightStatistics, long participantDurationAverage,
+                                   DuelStatisticsAccumulator accumulator) {
+        participantFightStatistics.setAverageTime(participantDurationAverage > 0 ? participantDurationAverage : 0L);
+        participantFightStatistics.setAverageWinTime(accumulator.totalDuelWonsWithDuration > 0
+                ? accumulator.totalDuelWonsWithDuration / accumulator.wonDuelsWithDuration : 0L);
+        participantFightStatistics.setAverageLostTime(accumulator.totalDuelLostsWithDuration > 0
+                ? accumulator.totalDuelLostsWithDuration / accumulator.lostDuelsWithDuration : 0L);
+    }
+
+    private void applyQuickestHits(ParticipantFightStatistics participantFightStatistics, DuelStatisticsAccumulator accumulator) {
+        if (accumulator.quickestHit < Integer.MAX_VALUE) {
+            participantFightStatistics.setQuickestHit(accumulator.quickestHit);
+        }
+        if (accumulator.quickestReceivedHit < Integer.MAX_VALUE) {
+            participantFightStatistics.setQuickestReceivedHit(accumulator.quickestReceivedHit);
+        }
+    }
+
+    /**
+     * Mutable holder for the statistics accumulated while iterating the duels of a participant.
+     */
+    private static final class DuelStatisticsAccumulator {
+        private long totalDuelsDuration = 0L;
+        private long totalDuelWonsWithDuration = 0L;
+        private long totalDuelLostsWithDuration = 0L;
+        private long quickestHit = Integer.MAX_VALUE;
+        private long quickestReceivedHit = Integer.MAX_VALUE;
+        private long wonDuels = 0L;
+        private long wonDuelsWithDuration = 0L;
+        private long lostDuels = 0L;
+        private long lostDuelsWithDuration = 0L;
+        private long drawDuels = 0L;
     }
 
     private void populateScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
