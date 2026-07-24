@@ -39,6 +39,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -80,43 +81,27 @@ public class SwissTournamentHandlerTest {
 		assertEquals(this.swissTournamentHandler.getDefaultRounds(5), 3);
 	}
 
-	@Test
-	public void shouldReturnConfiguredRoundsWhenValidOverrideExists() {
+	@DataProvider(name = "configuredRoundsScenarios")
+	public Object[][] configuredRoundsScenarios() {
+		return new Object[][]{
+				// teams, propertyValue, expectedRounds
+				{5, "6", 6},
+				{5, "invalid", 3},
+				{4, "0", 2},
+		};
+	}
+
+	@Test(dataProvider = "configuredRoundsScenarios")
+	public void shouldResolveConfiguredRounds(int teams, String propertyValue, int expectedRounds) {
 		final Tournament tournament = this.tournament();
-		final Group group = this.groupWithTeams(tournament, 5);
+		final Group group = this.groupWithTeams(tournament, teams);
 
 		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
-				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "6"));
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, propertyValue));
 
-		assertEquals(this.swissTournamentHandler.getConfiguredRounds(tournament), 6);
-	}
-
-	@Test
-	public void shouldFallbackToDefaultRoundsWhenOverrideIsNotNumeric() {
-		final Tournament tournament = this.tournament();
-		final Group group = this.groupWithTeams(tournament, 5);
-
-		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
-		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
-				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any())).thenReturn(
-						new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "invalid"));
-
-		assertEquals(this.swissTournamentHandler.getConfiguredRounds(tournament), 3);
-	}
-
-	@Test
-	public void shouldFallbackToDefaultRoundsWhenOverrideIsLessThanOne() {
-		final Tournament tournament = this.tournament();
-		final Group group = this.groupWithTeams(tournament, 4);
-
-		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
-		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
-				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
-				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "0"));
-
-		assertEquals(this.swissTournamentHandler.getConfiguredRounds(tournament), 2);
+		assertEquals(this.swissTournamentHandler.getConfiguredRounds(tournament), expectedRounds);
 	}
 
 	@Test

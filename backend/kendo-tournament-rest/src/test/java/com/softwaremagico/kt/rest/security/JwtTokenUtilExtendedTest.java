@@ -91,7 +91,7 @@ class JwtTokenUtilExtendedTest {
         String token = jwtTokenUtil.generateAccessToken(authenticatedUser, TEST_IP, expirationTime);
 
         assertNotNull(token);
-        Instant expirationDate = jwtTokenUtil.getExpirationDate(token).toInstant();
+        Instant expirationDate = jwtTokenUtil.getExpirationDate(token);
         assertNotNull(expirationDate);
         assertTrue(expirationDate.isAfter(Instant.now()));
     }
@@ -174,7 +174,7 @@ class JwtTokenUtilExtendedTest {
     @Test
     void testGetExpirationDateFromToken() {
         String token = jwtTokenUtil.generateAccessToken(authenticatedUser, TEST_IP);
-        Instant expirationDate = jwtTokenUtil.getExpirationDate(token).toInstant();
+        Instant expirationDate = jwtTokenUtil.getExpirationDate(token);
 
         assertNotNull(expirationDate);
         assertTrue(expirationDate.isAfter(Instant.now()));

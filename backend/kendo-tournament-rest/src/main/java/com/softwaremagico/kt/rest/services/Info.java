@@ -70,7 +70,7 @@ public class Info {
             latestVersion = versionController.getLatestVersionFromGithub();
             checkedVersionAt = LocalDateTime.now(ZoneId.systemDefault());
             return ResponseEntity.ok().body(latestVersion);
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             return ResponseEntity.ok().body("");
         }
     }

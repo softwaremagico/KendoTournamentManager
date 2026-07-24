@@ -113,7 +113,7 @@ public class SwissTournamentHandler extends LeagueHandler {
                 return defaultRounds;
             }
             return configuredRounds;
-        } catch (final Exception ignored) {
+        } catch (Exception _) {
             KendoTournamentLogger.warning(this.getClass(), "Invalid configured rounds for tournament "
                     + tournament.getName() + ". Using default rounds: " + defaultRounds);
             return defaultRounds;

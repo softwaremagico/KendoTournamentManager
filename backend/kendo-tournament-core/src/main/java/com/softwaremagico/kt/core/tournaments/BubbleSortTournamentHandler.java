@@ -173,7 +173,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         final TournamentExtraProperty extraProperty = getKingIndex(tournament);
         try {
             kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));
-        } catch (NumberFormatException | NullPointerException ignored) {
+        } catch (NumberFormatException | NullPointerException _) {
             kingIndex.set(1);
         }
         kingIndex.getAndIncrement();

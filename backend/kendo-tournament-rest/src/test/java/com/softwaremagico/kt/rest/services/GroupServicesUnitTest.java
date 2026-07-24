@@ -35,7 +35,6 @@ import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
@@ -79,13 +78,13 @@ public class GroupServicesUnitTest {
     @Mock
     private HttpServletResponse response;
 
-    @InjectMocks
     private GroupServices groupServices;
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         when(authentication.getName()).thenReturn("editor");
+        groupServices = new GroupServices(groupController, kendoSecurityService, pdfController, tournamentController);
     }
 
     @Test

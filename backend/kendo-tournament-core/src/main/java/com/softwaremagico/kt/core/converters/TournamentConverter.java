@@ -49,7 +49,7 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
                 tournamentDTO.setTournamentScore(tournamentScoreConverter.convert(
                         new TournamentScoreConverterRequest(from.getEntity().getTournamentScore())));
             }
-        } catch (UnexpectedValueException ignored) {
+        } catch (UnexpectedValueException _) {
             tournamentDTO.setTournamentScore(null);
         }
         return tournamentDTO;

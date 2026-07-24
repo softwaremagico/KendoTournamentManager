@@ -135,7 +135,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             JwtFilterLogger.errorMessage(this.getClass(), "JWT token invalid!");
             try {
                 chain.doFilter(request, response);
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 //No other filters validates it.
                 throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
             }

@@ -70,7 +70,7 @@ public class InfoTest {
 	}
 
 	@Test
-	public void shouldExecuteHealthCheck() throws Exception {
+	public void shouldExecuteHealthCheck() {
 		this.info.healthCheck(null);
 	}
 }

@@ -43,37 +43,37 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
     private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public DuelConverter(ParticipantReducedConverter participantReducedConverter, ParticipantConverter participantConverter,
-                         TournamentConverter tournamentConverter, TournamentRepository tournamentRepository) {
+    public DuelConverter(ParticipantReducedConverter participantReducedConverter,
+            ParticipantConverter participantConverter, TournamentConverter tournamentConverter,
+            TournamentRepository tournamentRepository) {
         this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.tournamentConverter = tournamentConverter;
         this.tournamentRepository = tournamentRepository;
     }
 
-
     @Override
     protected DuelDTO convertElement(DuelConverterRequest from) {
         final DuelDTO duelDTO = new DuelDTO();
         BeanUtils.copyProperties(from.getEntity(), duelDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        duelDTO.setCompetitor1(participantReducedConverter.convert(
-                new ParticipantConverterRequest(from.getEntity().getCompetitor1())));
-        duelDTO.setCompetitor2(participantReducedConverter.convert(
-                new ParticipantConverterRequest(from.getEntity().getCompetitor2())));
+        duelDTO.setCompetitor1(this.participantReducedConverter
+                .convert(new ParticipantConverterRequest(from.getEntity().getCompetitor1())));
+        duelDTO.setCompetitor2(this.participantReducedConverter
+                .convert(new ParticipantConverterRequest(from.getEntity().getCompetitor2())));
         try {
             if (from.getTournamentDTO() != null) {
                 duelDTO.setTournament(from.getTournamentDTO());
             } else if (from.getTournament() != null) {
-                //Converter can have the tournament defined already.
-                duelDTO.setTournament(tournamentConverter.convert(
-                        new TournamentConverterRequest(from.getTournament())));
+                // Converter can have the tournament defined already.
+                duelDTO.setTournament(
+                    this.tournamentConverter.convert(new TournamentConverterRequest(from.getTournament())));
             } else {
-                duelDTO.setTournament(tournamentConverter.convert(
-                        new TournamentConverterRequest(from.getEntity().getTournament())));
+                duelDTO.setTournament(
+                    this.tournamentConverter.convert(new TournamentConverterRequest(from.getEntity().getTournament())));
             }
-        } catch (LazyInitializationException | FatalBeanException e) {
-            duelDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
+        } catch (LazyInitializationException | FatalBeanException _) {
+            duelDTO.setTournament(this.tournamentConverter.convert(new TournamentConverterRequest(
+                this.tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         return duelDTO;
     }
@@ -85,9 +85,9 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
         }
         final Duel duel = new Duel();
         BeanUtils.copyProperties(to, duel, ConverterUtils.getNullPropertyNames(to));
-        duel.setCompetitor1(participantConverter.reverse(to.getCompetitor1()));
-        duel.setCompetitor2(participantConverter.reverse(to.getCompetitor2()));
-        duel.setTournament(tournamentConverter.reverse(to.getTournament()));
+        duel.setCompetitor1(this.participantConverter.reverse(to.getCompetitor1()));
+        duel.setCompetitor2(this.participantConverter.reverse(to.getCompetitor2()));
+        duel.setTournament(this.tournamentConverter.reverse(to.getTournament()));
         return duel;
     }
 }
