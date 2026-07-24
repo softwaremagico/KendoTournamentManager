@@ -130,7 +130,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         // Get jwt token and validate
-        final String token = header.split(" ")[1].trim();
+        final String token = header.substring("Bearer ".length()).trim();
+        if (token.isEmpty()) {
+            chain.doFilter(request, response);
+            JwtFilterLogger.debug(this.getClass(), "Bearer token is blank");
+            return;
+        }
         if (!this.jwtTokenUtil.validate(token)) {
             JwtFilterLogger.errorMessage(this.getClass(), "JWT token invalid!");
             try {
