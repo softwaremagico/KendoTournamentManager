@@ -70,14 +70,10 @@ public class TeamList extends ParentList {
         teamTable.addCell(getHeader4(NameUtils.getShortName(teamDTO), 0));
 
         for (final ParticipantDTO member : teamDTO.getMembers()) {
-            String memberName;
-            try {
-                if (member.getLastname() != null && !member.getLastname().isEmpty()) {
-                    memberName = NameUtils.getLastnameName(member);
-                } else {
-                    memberName = " ";
-                }
-            } catch (NullPointerException npe) {
+            final String memberName;
+            if (member != null && member.getLastname() != null && !member.getLastname().isEmpty()) {
+                memberName = NameUtils.getLastnameName(member);
+            } else {
                 memberName = " ";
             }
             teamTable.addCell(getCell(memberName, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_LEFT));

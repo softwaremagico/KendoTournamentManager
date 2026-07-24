@@ -71,10 +71,18 @@ public class SwissAchievementGenerator extends AchievementGenerationSupport {
             return new ArrayList<>();
         }
 
-        final ScoreOfTeam winner = scoreOfTeams.getFirst();
-        final ScoreOfTeam runnerUp = scoreOfTeams.get(1);
-        final int winnerSwissPoints = winner.getWonFights() * SWISS_WIN_POINTS + winner.getDrawFights() * SWISS_DRAW_POINTS;
-        final int runnerUpSwissPoints = runnerUp.getWonFights() * SWISS_WIN_POINTS + runnerUp.getDrawFights() * SWISS_DRAW_POINTS;
+         final ScoreOfTeam winner = scoreOfTeams.getFirst();
+         final ScoreOfTeam runnerUp = scoreOfTeams.get(1);
+         // Get Swiss points from tournament configuration or use defaults
+         final int winPoints = tournament.getTournamentScore() != null && tournament.getTournamentScore().getPointsByVictory() != null
+                 ? tournament.getTournamentScore().getPointsByVictory()
+                 : SWISS_WIN_POINTS;
+         final int drawPoints = tournament.getTournamentScore() != null && tournament.getTournamentScore().getPointsByDraw() != null
+                 ? tournament.getTournamentScore().getPointsByDraw()
+                 : SWISS_DRAW_POINTS;
+
+        final int winnerSwissPoints = winner.getWonFights() * winPoints + winner.getDrawFights() * drawPoints;
+        final int runnerUpSwissPoints = runnerUp.getWonFights() * winPoints + runnerUp.getDrawFights() * drawPoints;
 
         if (winnerSwissPoints == runnerUpSwissPoints && !Objects.equals(winner.getSwissTieBreakValue(), runnerUp.getSwissTieBreakValue())) {
             return generateAchievement(AchievementType.BUCHHOLZ_WHISPERER, AchievementGrade.NORMAL,

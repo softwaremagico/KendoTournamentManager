@@ -409,6 +409,7 @@
   "draw": "Unentschieden",
   "drawResolution": "Auflösung von Bindungen",
   "drawScore": "Es gibt einige Unentschieden, die geklärt werden müssen, bevor zur nächsten Turnierphase übergegangen werden kann.",
+  "drawTopPositionsScore": "Es gibt Unentschieden, die aufgelöst werden müssen, um die ersten Plätze der Rangliste zu bestimmen.",
   "duelStored": "Das Kampfduell wurde gespeichert.",
   "duels": "Kämpfe",
   "duelsAverage": "Medienkämpfe",

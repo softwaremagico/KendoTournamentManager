@@ -66,7 +66,7 @@ public class ParticipantController extends BasicInsertableController<Participant
             try {
                 return this.convert(this.getProvider().get(Integer.parseInt(fields[0])).orElseThrow(() ->
                         new UserNotFoundException(this.getClass(), "No user found for the provided token!")));
-            } catch (final NumberFormatException exception) {
+            } catch (NumberFormatException _) {
                 throw new UserNotFoundException(this.getClass(), "No user found with username '" + userName + "'!");
             }
         }

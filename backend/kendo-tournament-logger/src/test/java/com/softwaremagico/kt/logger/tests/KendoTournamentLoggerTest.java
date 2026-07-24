@@ -10,12 +10,12 @@ package com.softwaremagico.kt.logger.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -29,6 +29,7 @@ import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -36,57 +37,52 @@ import static org.testng.Assert.assertTrue;
 
 public class KendoTournamentLoggerTest {
 
-    private Logger logger;
-    private ListAppender<ILoggingEvent> appender;
+	private Logger logger;
+	private ListAppender<ILoggingEvent> appender;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        logger = (Logger) LoggerFactory.getLogger(KendoTournamentLogger.class);
-        logger.setLevel(Level.DEBUG);
-        appender = new ListAppender<>();
-        appender.start();
-        logger.addAppender(appender);
-    }
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+        this.logger = (Logger) LoggerFactory.getLogger(KendoTournamentLogger.class);
+        this.logger.setLevel(Level.DEBUG);
+        this.appender = new ListAppender<>();
+        this.appender.start();
+        this.logger.addAppender(this.appender);
+	}
 
-    @AfterMethod(alwaysRun = true)
-    public void tearDown() {
-        logger.detachAppender(appender);
-    }
+	@AfterMethod(alwaysRun = true)
+	public void tearDown() {
+        this.logger.detachAppender(this.appender);
+	}
 
-    @Test(groups = "kendoTournamentLoggerTests")
-    public void shouldLogInfo() {
-        KendoTournamentLogger.info(getClass(), "created {}", 7);
+	@DataProvider(name = "logLevels")
+	public Object[][] logLevels() {
+		return new Object[][]{
+				{Level.INFO, "created {}", 7, "created 7"},
+				{Level.WARN, "warn {}", "x", "warn x"},
+				{Level.DEBUG, "dbg {}", 1, "dbg 1"},
+		};
+	}
 
-        ILoggingEvent event = appender.list.get(appender.list.size() - 1);
-        assertEquals(event.getLevel(), Level.INFO);
-        assertTrue(event.getFormattedMessage().contains(getClass().getName() + ": created 7"));
-    }
+	@Test(groups = "kendoTournamentLoggerTests", dataProvider = "logLevels")
+	public void shouldLogAtGivenLevel(Level level, String format, Object argument, String expectedMessage) {
+		switch (level.toString()) {
+			case "INFO" -> KendoTournamentLogger.info(this.getClass(), format, argument);
+			case "WARN" -> KendoTournamentLogger.warning(this.getClass(), format, argument);
+			case "DEBUG" -> KendoTournamentLogger.debug(this.getClass(), format, argument);
+			default -> throw new IllegalArgumentException("Unsupported level: " + level);
+		}
 
-    @Test(groups = "kendoTournamentLoggerTests")
-    public void shouldLogWarning() {
-        KendoTournamentLogger.warning(getClass(), "warn {}", "x");
+		final ILoggingEvent event = this.appender.list.get(this.appender.list.size() - 1);
+		assertEquals(event.getLevel(), level);
+		assertTrue(event.getFormattedMessage().contains(this.getClass().getName() + ": " + expectedMessage));
+	}
 
-        ILoggingEvent event = appender.list.get(appender.list.size() - 1);
-        assertEquals(event.getLevel(), Level.WARN);
-        assertTrue(event.getFormattedMessage().contains(getClass().getName() + ": warn x"));
-    }
+	@Test(groups = "kendoTournamentLoggerTests")
+	public void shouldLogErrorMessage() {
+		KendoTournamentLogger.errorMessage(this.getClass(), new RuntimeException("error now"));
 
-    @Test(groups = "kendoTournamentLoggerTests")
-    public void shouldLogDebug() {
-        KendoTournamentLogger.debug(getClass(), "dbg {}", 1);
-
-        ILoggingEvent event = appender.list.get(appender.list.size() - 1);
-        assertEquals(event.getLevel(), Level.DEBUG);
-        assertTrue(event.getFormattedMessage().contains(getClass().getName() + ": dbg 1"));
-    }
-
-    @Test(groups = "kendoTournamentLoggerTests")
-    public void shouldLogErrorMessage() {
-        KendoTournamentLogger.errorMessage(getClass(), new RuntimeException("error now"));
-
-        ILoggingEvent event = appender.list.get(appender.list.size() - 1);
-        assertEquals(event.getLevel(), Level.ERROR);
-        assertTrue(event.getFormattedMessage().contains(getClass().getSimpleName()));
-    }
+		final ILoggingEvent event = this.appender.list.get(this.appender.list.size() - 1);
+		assertEquals(event.getLevel(), Level.ERROR);
+		assertTrue(event.getFormattedMessage().contains(this.getClass().getSimpleName()));
+	}
 }
-

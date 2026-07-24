@@ -26,14 +26,13 @@ import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
-import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Test(groups = {"scoreTests"})
 public class ScoreOfCompetitorTest {
@@ -46,51 +45,51 @@ public class ScoreOfCompetitorTest {
     public void shouldComputeStatisticsFromFightsAndUnties() {
         final Participant competitor = competitor();
 
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
-        final Fight fightOver = Mockito.mock(Fight.class);
-        Mockito.when(fightOver.isOver()).thenReturn(true);
-        Mockito.when(fightOver.getDuels(competitor)).thenReturn(List.of(Mockito.mock(Duel.class), Mockito.mock(Duel.class)));
-        Mockito.when(fightOver.getDuelsWon(competitor)).thenReturn(1);
-        Mockito.when(fightOver.isWon(competitor)).thenReturn(true);
-        Mockito.when(fightOver.getWinner()).thenReturn(null);
-        Mockito.when(fightOver.getTeam1()).thenReturn(team1);
-        Mockito.when(fightOver.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(true);
-        Mockito.when(team2.isMember(competitor)).thenReturn(false);
-        Mockito.when(fightOver.getDrawDuels(competitor)).thenReturn(1);
-        Mockito.when(fightOver.getScore(competitor)).thenReturn(3);
-        Mockito.when(fightOver.getScoreAgainst(competitor)).thenReturn(1);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
+        final Fight fightOver = mock(Fight.class);
+        when(fightOver.isOver()).thenReturn(true);
+        when(fightOver.getDuels(competitor)).thenReturn(List.of(mock(Duel.class), mock(Duel.class)));
+        when(fightOver.getDuelsWon(competitor)).thenReturn(1);
+        when(fightOver.isWon(competitor)).thenReturn(true);
+        when(fightOver.getWinner()).thenReturn(null);
+        when(fightOver.getTeam1()).thenReturn(team1);
+        when(fightOver.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(true);
+        when(team2.isMember(competitor)).thenReturn(false);
+        when(fightOver.getDrawDuels(competitor)).thenReturn(1);
+        when(fightOver.getScore(competitor)).thenReturn(3);
+        when(fightOver.getScoreAgainst(competitor)).thenReturn(1);
 
-        final Team team1b = Mockito.mock(Team.class);
-        final Team team2b = Mockito.mock(Team.class);
-        final Fight fightNotOver = Mockito.mock(Fight.class);
-        Mockito.when(fightNotOver.isOver()).thenReturn(false);
-        Mockito.when(fightNotOver.getDuels(competitor)).thenReturn(List.of(Mockito.mock(Duel.class)));
-        Mockito.when(fightNotOver.getDuelsWon(competitor)).thenReturn(1);
-        Mockito.when(fightNotOver.isWon(competitor)).thenReturn(false);
-        Mockito.when(fightNotOver.getWinner()).thenReturn(team2b);
-        Mockito.when(fightNotOver.getTeam1()).thenReturn(team1b);
-        Mockito.when(fightNotOver.getTeam2()).thenReturn(team2b);
-        Mockito.when(team1b.isMember(competitor)).thenReturn(false);
-        Mockito.when(team2b.isMember(competitor)).thenReturn(true);
-        Mockito.when(fightNotOver.getDrawDuels(competitor)).thenReturn(0);
-        Mockito.when(fightNotOver.getScore(competitor)).thenReturn(4);
-        Mockito.when(fightNotOver.getScoreAgainst(competitor)).thenReturn(2);
+        final Team team1b = mock(Team.class);
+        final Team team2b = mock(Team.class);
+        final Fight fightNotOver = mock(Fight.class);
+        when(fightNotOver.isOver()).thenReturn(false);
+        when(fightNotOver.getDuels(competitor)).thenReturn(List.of(mock(Duel.class)));
+        when(fightNotOver.getDuelsWon(competitor)).thenReturn(1);
+        when(fightNotOver.isWon(competitor)).thenReturn(false);
+        when(fightNotOver.getWinner()).thenReturn(team2b);
+        when(fightNotOver.getTeam1()).thenReturn(team1b);
+        when(fightNotOver.getTeam2()).thenReturn(team2b);
+        when(team1b.isMember(competitor)).thenReturn(false);
+        when(team2b.isMember(competitor)).thenReturn(true);
+        when(fightNotOver.getDrawDuels(competitor)).thenReturn(0);
+        when(fightNotOver.getScore(competitor)).thenReturn(4);
+        when(fightNotOver.getScoreAgainst(competitor)).thenReturn(2);
 
-        final Duel untie1 = Mockito.mock(Duel.class);
-        Mockito.when(untie1.getCompetitor1()).thenReturn(competitor);
-        Mockito.when(untie1.getCompetitor2()).thenReturn(null);
-        Mockito.when(untie1.getWinner()).thenReturn(-1);
-        Mockito.when(untie1.getCompetitor1ScoreValue()).thenReturn(1);
-        Mockito.when(untie1.getCompetitor2ScoreValue()).thenReturn(0);
+        final Duel untie1 = mock(Duel.class);
+        when(untie1.getCompetitor1()).thenReturn(competitor);
+        when(untie1.getCompetitor2()).thenReturn(null);
+        when(untie1.getWinner()).thenReturn(-1);
+        when(untie1.getCompetitor1ScoreValue()).thenReturn(1);
+        when(untie1.getCompetitor2ScoreValue()).thenReturn(0);
 
-        final Duel untie2 = Mockito.mock(Duel.class);
-        Mockito.when(untie2.getCompetitor1()).thenReturn(null);
-        Mockito.when(untie2.getCompetitor2()).thenReturn(competitor);
-        Mockito.when(untie2.getWinner()).thenReturn(1);
-        Mockito.when(untie2.getCompetitor1ScoreValue()).thenReturn(0);
-        Mockito.when(untie2.getCompetitor2ScoreValue()).thenReturn(2);
+        final Duel untie2 = mock(Duel.class);
+        when(untie2.getCompetitor1()).thenReturn(null);
+        when(untie2.getCompetitor2()).thenReturn(competitor);
+        when(untie2.getWinner()).thenReturn(1);
+        when(untie2.getCompetitor1ScoreValue()).thenReturn(0);
+        when(untie2.getCompetitor2ScoreValue()).thenReturn(2);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(
                 competitor,
@@ -98,38 +97,38 @@ public class ScoreOfCompetitorTest {
                 List.of(untie1, untie2),
                 false);
 
-        assertEquals(score.getDuelsDone().intValue(), 2);
-        assertEquals(score.getWonDuels().intValue(), 1);
-        assertEquals(score.getDrawDuels().intValue(), 1);
-        assertEquals(score.getWonFights().intValue(), 1);
-        assertEquals(score.getDrawFights().intValue(), 1);
-        assertEquals(score.getUntieDuels().intValue(), 2);
-        assertEquals(score.getUntieHits().intValue(), 3);
-        assertEquals(score.getHits().intValue(), 7);
-        assertEquals(score.getHitsLost().intValue(), 3);
-        assertEquals(score.getTotalFights().intValue(), 1);
-        assertTrue(score.toString().contains("HL:"));
+        assertThat(score.getDuelsDone()).isEqualTo(2);
+        assertThat(score.getWonDuels()).isEqualTo(1);
+        assertThat(score.getDrawDuels()).isEqualTo(1);
+        assertThat(score.getWonFights()).isEqualTo(1);
+        assertThat(score.getDrawFights()).isEqualTo(1);
+        assertThat(score.getUntieDuels()).isEqualTo(2);
+        assertThat(score.getUntieHits()).isEqualTo(3);
+        assertThat(score.getHits()).isEqualTo(7);
+        assertThat(score.getHitsLost()).isEqualTo(3);
+        assertThat(score.getTotalFights()).isEqualTo(1);
+        assertThat(score.toString()).contains("HL:");
     }
 
     @Test
     public void shouldIncludeNotOverFightsWhenCountNotOverIsTrue() {
         final Participant competitor = competitor();
 
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
-        final Fight fightNotOver = Mockito.mock(Fight.class);
-        Mockito.when(fightNotOver.isOver()).thenReturn(false);
-        Mockito.when(fightNotOver.getDuels(competitor)).thenReturn(List.of(Mockito.mock(Duel.class), Mockito.mock(Duel.class)));
-        Mockito.when(fightNotOver.getDuelsWon(competitor)).thenReturn(2);
-        Mockito.when(fightNotOver.isWon(competitor)).thenReturn(true);
-        Mockito.when(fightNotOver.getWinner()).thenReturn(null);
-        Mockito.when(fightNotOver.getTeam1()).thenReturn(team1);
-        Mockito.when(fightNotOver.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(true);
-        Mockito.when(team2.isMember(competitor)).thenReturn(false);
-        Mockito.when(fightNotOver.getDrawDuels(competitor)).thenReturn(1);
-        Mockito.when(fightNotOver.getScore(competitor)).thenReturn(5);
-        Mockito.when(fightNotOver.getScoreAgainst(competitor)).thenReturn(1);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
+        final Fight fightNotOver = mock(Fight.class);
+        when(fightNotOver.isOver()).thenReturn(false);
+        when(fightNotOver.getDuels(competitor)).thenReturn(List.of(mock(Duel.class), mock(Duel.class)));
+        when(fightNotOver.getDuelsWon(competitor)).thenReturn(2);
+        when(fightNotOver.isWon(competitor)).thenReturn(true);
+        when(fightNotOver.getWinner()).thenReturn(null);
+        when(fightNotOver.getTeam1()).thenReturn(team1);
+        when(fightNotOver.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(true);
+        when(team2.isMember(competitor)).thenReturn(false);
+        when(fightNotOver.getDrawDuels(competitor)).thenReturn(1);
+        when(fightNotOver.getScore(competitor)).thenReturn(5);
+        when(fightNotOver.getScoreAgainst(competitor)).thenReturn(1);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(
                 competitor,
@@ -137,17 +136,17 @@ public class ScoreOfCompetitorTest {
                 List.of(),
                 true);
 
-        assertEquals(score.getDuelsDone().intValue(), 2);
-        assertEquals(score.getWonDuels().intValue(), 2);
-        assertEquals(score.getWonFights().intValue(), 1);
-        assertEquals(score.getDrawFights().intValue(), 1);
-        assertEquals(score.getDrawDuels().intValue(), 1);
-        assertEquals(score.getHits().intValue(), 5);
-        assertEquals(score.getHitsLost().intValue(), 1);
+        assertThat(score.getDuelsDone()).isEqualTo(2);
+        assertThat(score.getWonDuels()).isEqualTo(2);
+        assertThat(score.getWonFights()).isEqualTo(1);
+        assertThat(score.getDrawFights()).isEqualTo(1);
+        assertThat(score.getDrawDuels()).isEqualTo(1);
+        assertThat(score.getHits()).isEqualTo(5);
+        assertThat(score.getHitsLost()).isEqualTo(1);
 
         score.setCountNotOver(false);
         score.update();
-        assertEquals(score.getDuelsDone().intValue(), 0);
+        assertThat(score.getDuelsDone()).isZero();
     }
 
     // ========== New Tests ==========
@@ -232,22 +231,22 @@ public class ScoreOfCompetitorTest {
     @Test
     public void testUpdateResetsAndRecalculates() {
         final Participant competitor = competitor();
-        final Fight fight = Mockito.mock(Fight.class);
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
+        final Fight fight = mock(Fight.class);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
 
-        Mockito.when(fight.isOver()).thenReturn(true);
-        Mockito.when(fight.getDuels(competitor)).thenReturn(List.of(Mockito.mock(Duel.class)));
-        Mockito.when(fight.getDuelsWon(competitor)).thenReturn(1);
-        Mockito.when(fight.isWon(competitor)).thenReturn(true);
-        Mockito.when(fight.getWinner()).thenReturn(team1);
-        Mockito.when(fight.getTeam1()).thenReturn(team1);
-        Mockito.when(fight.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(true);
-        Mockito.when(team2.isMember(competitor)).thenReturn(false);
-        Mockito.when(fight.getDrawDuels(competitor)).thenReturn(0);
-        Mockito.when(fight.getScore(competitor)).thenReturn(2);
-        Mockito.when(fight.getScoreAgainst(competitor)).thenReturn(0);
+        when(fight.isOver()).thenReturn(true);
+        when(fight.getDuels(competitor)).thenReturn(List.of(mock(Duel.class)));
+        when(fight.getDuelsWon(competitor)).thenReturn(1);
+        when(fight.isWon(competitor)).thenReturn(true);
+        when(fight.getWinner()).thenReturn(team1);
+        when(fight.getTeam1()).thenReturn(team1);
+        when(fight.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(true);
+        when(team2.isMember(competitor)).thenReturn(false);
+        when(fight.getDrawDuels(competitor)).thenReturn(0);
+        when(fight.getScore(competitor)).thenReturn(2);
+        when(fight.getScoreAgainst(competitor)).thenReturn(0);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(fight), List.of(), false);
 
@@ -266,13 +265,13 @@ public class ScoreOfCompetitorTest {
         final Participant other = new Participant("ID-2", "Other", "Player", new Club("Club2", "ES", "City"));
         other.setId(2);
 
-        final Duel untie = Mockito.mock(Duel.class);
+        final Duel untie = mock(Duel.class);
         // competitor is competitor2, winner=1 means competitor2 wins (per setUntieDuels: competitor2 && winner==1)
-        Mockito.when(untie.getCompetitor1()).thenReturn(other);
-        Mockito.when(untie.getCompetitor2()).thenReturn(competitor);
-        Mockito.when(untie.getWinner()).thenReturn(1);
-        Mockito.when(untie.getCompetitor1ScoreValue()).thenReturn(0);
-        Mockito.when(untie.getCompetitor2ScoreValue()).thenReturn(2);
+        when(untie.getCompetitor1()).thenReturn(other);
+        when(untie.getCompetitor2()).thenReturn(competitor);
+        when(untie.getWinner()).thenReturn(1);
+        when(untie.getCompetitor1ScoreValue()).thenReturn(0);
+        when(untie.getCompetitor2ScoreValue()).thenReturn(2);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(), List.of(untie), false);
 
@@ -283,22 +282,22 @@ public class ScoreOfCompetitorTest {
     @Test
     public void testDrawFightCountedOnlyWhenBothTeamsHaveMember() {
         final Participant competitor = competitor();
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
-        final Fight drawFight = Mockito.mock(Fight.class);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
+        final Fight drawFight = mock(Fight.class);
 
-        Mockito.when(drawFight.isOver()).thenReturn(true);
-        Mockito.when(drawFight.getDuels(competitor)).thenReturn(List.of());
-        Mockito.when(drawFight.getDuelsWon(competitor)).thenReturn(0);
-        Mockito.when(drawFight.isWon(competitor)).thenReturn(false);
-        Mockito.when(drawFight.getWinner()).thenReturn(null); // draw
-        Mockito.when(drawFight.getTeam1()).thenReturn(team1);
-        Mockito.when(drawFight.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(true);
-        Mockito.when(team2.isMember(competitor)).thenReturn(false);
-        Mockito.when(drawFight.getDrawDuels(competitor)).thenReturn(0);
-        Mockito.when(drawFight.getScore(competitor)).thenReturn(1);
-        Mockito.when(drawFight.getScoreAgainst(competitor)).thenReturn(1);
+        when(drawFight.isOver()).thenReturn(true);
+        when(drawFight.getDuels(competitor)).thenReturn(List.of());
+        when(drawFight.getDuelsWon(competitor)).thenReturn(0);
+        when(drawFight.isWon(competitor)).thenReturn(false);
+        when(drawFight.getWinner()).thenReturn(null); // draw
+        when(drawFight.getTeam1()).thenReturn(team1);
+        when(drawFight.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(true);
+        when(team2.isMember(competitor)).thenReturn(false);
+        when(drawFight.getDrawDuels(competitor)).thenReturn(0);
+        when(drawFight.getScore(competitor)).thenReturn(1);
+        when(drawFight.getScoreAgainst(competitor)).thenReturn(1);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(drawFight), List.of(), false);
 
@@ -318,20 +317,20 @@ public class ScoreOfCompetitorTest {
     @Test
     public void testNotOverFightNotCountedWhenFlagFalse() {
         final Participant competitor = competitor();
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
-        final Fight notOverFight = Mockito.mock(Fight.class);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
+        final Fight notOverFight = mock(Fight.class);
 
-        Mockito.when(notOverFight.isOver()).thenReturn(false);
-        Mockito.when(notOverFight.getDuels(competitor)).thenReturn(List.of(Mockito.mock(Duel.class)));
-        Mockito.when(notOverFight.getDuelsWon(competitor)).thenReturn(1);
-        Mockito.when(notOverFight.isWon(competitor)).thenReturn(true);
-        Mockito.when(notOverFight.getTeam1()).thenReturn(team1);
-        Mockito.when(notOverFight.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(true);
-        Mockito.when(team2.isMember(competitor)).thenReturn(false);
-        Mockito.when(notOverFight.getScore(competitor)).thenReturn(2);
-        Mockito.when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
+        when(notOverFight.isOver()).thenReturn(false);
+        when(notOverFight.getDuels(competitor)).thenReturn(List.of(mock(Duel.class)));
+        when(notOverFight.getDuelsWon(competitor)).thenReturn(1);
+        when(notOverFight.isWon(competitor)).thenReturn(true);
+        when(notOverFight.getTeam1()).thenReturn(team1);
+        when(notOverFight.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(true);
+        when(team2.isMember(competitor)).thenReturn(false);
+        when(notOverFight.getScore(competitor)).thenReturn(2);
+        when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(notOverFight), List.of(), false);
 
@@ -344,30 +343,30 @@ public class ScoreOfCompetitorTest {
     @Test
     public void testTotalFightsCountsOnlyOverFights() {
         final Participant competitor = competitor();
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
 
-        final Fight overFight = Mockito.mock(Fight.class);
-        Mockito.when(overFight.isOver()).thenReturn(true);
-        Mockito.when(overFight.getDuels(competitor)).thenReturn(List.of());
-        Mockito.when(overFight.getDuelsWon(competitor)).thenReturn(0);
-        Mockito.when(overFight.isWon(competitor)).thenReturn(false);
-        Mockito.when(overFight.getWinner()).thenReturn(null);
-        Mockito.when(overFight.getTeam1()).thenReturn(team1);
-        Mockito.when(overFight.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(true);
-        Mockito.when(team2.isMember(competitor)).thenReturn(false);
-        Mockito.when(overFight.getDrawDuels(competitor)).thenReturn(0);
-        Mockito.when(overFight.getScore(competitor)).thenReturn(0);
-        Mockito.when(overFight.getScoreAgainst(competitor)).thenReturn(0);
+        final Fight overFight = mock(Fight.class);
+        when(overFight.isOver()).thenReturn(true);
+        when(overFight.getDuels(competitor)).thenReturn(List.of());
+        when(overFight.getDuelsWon(competitor)).thenReturn(0);
+        when(overFight.isWon(competitor)).thenReturn(false);
+        when(overFight.getWinner()).thenReturn(null);
+        when(overFight.getTeam1()).thenReturn(team1);
+        when(overFight.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(true);
+        when(team2.isMember(competitor)).thenReturn(false);
+        when(overFight.getDrawDuels(competitor)).thenReturn(0);
+        when(overFight.getScore(competitor)).thenReturn(0);
+        when(overFight.getScoreAgainst(competitor)).thenReturn(0);
 
-        final Fight notOverFight = Mockito.mock(Fight.class);
-        Mockito.when(notOverFight.isOver()).thenReturn(false);
-        Mockito.when(notOverFight.getDuels(competitor)).thenReturn(List.of());
-        Mockito.when(notOverFight.getDuelsWon(competitor)).thenReturn(0);
-        Mockito.when(notOverFight.getScore(competitor)).thenReturn(0);
-        Mockito.when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
-        Mockito.when(notOverFight.getTeam2()).thenReturn(team2);
+        final Fight notOverFight = mock(Fight.class);
+        when(notOverFight.isOver()).thenReturn(false);
+        when(notOverFight.getDuels(competitor)).thenReturn(List.of());
+        when(notOverFight.getDuelsWon(competitor)).thenReturn(0);
+        when(notOverFight.getScore(competitor)).thenReturn(0);
+        when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
+        when(notOverFight.getTeam2()).thenReturn(team2);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(overFight, notOverFight), List.of(), false);
 
@@ -377,19 +376,19 @@ public class ScoreOfCompetitorTest {
     @Test
     public void testTotalFightsDoesNotCountNotOverFightWhenCompetitorIsInTeam2() {
         final Participant competitor = competitor();
-        final Team team1 = Mockito.mock(Team.class);
-        final Team team2 = Mockito.mock(Team.class);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
 
-        final Fight notOverFight = Mockito.mock(Fight.class);
-        Mockito.when(notOverFight.isOver()).thenReturn(false);
-        Mockito.when(notOverFight.getDuels(competitor)).thenReturn(List.of());
-        Mockito.when(notOverFight.getDuelsWon(competitor)).thenReturn(0);
-        Mockito.when(notOverFight.getTeam1()).thenReturn(team1);
-        Mockito.when(notOverFight.getTeam2()).thenReturn(team2);
-        Mockito.when(team1.isMember(competitor)).thenReturn(false);
-        Mockito.when(team2.isMember(competitor)).thenReturn(true);
-        Mockito.when(notOverFight.getScore(competitor)).thenReturn(0);
-        Mockito.when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
+        final Fight notOverFight = mock(Fight.class);
+        when(notOverFight.isOver()).thenReturn(false);
+        when(notOverFight.getDuels(competitor)).thenReturn(List.of());
+        when(notOverFight.getDuelsWon(competitor)).thenReturn(0);
+        when(notOverFight.getTeam1()).thenReturn(team1);
+        when(notOverFight.getTeam2()).thenReturn(team2);
+        when(team1.isMember(competitor)).thenReturn(false);
+        when(team2.isMember(competitor)).thenReturn(true);
+        when(notOverFight.getScore(competitor)).thenReturn(0);
+        when(notOverFight.getScoreAgainst(competitor)).thenReturn(0);
 
         final ScoreOfCompetitor score = new ScoreOfCompetitor(competitor, List.of(notOverFight), List.of(), false);
 

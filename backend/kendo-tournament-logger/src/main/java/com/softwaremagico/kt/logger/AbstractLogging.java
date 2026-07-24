@@ -27,21 +27,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
 /**
  * Abstract class to provide basic logging capabilities to logging advises.
  */
 @Component
 @Aspect
-@SuppressWarnings("java:S2143")
 public abstract class AbstractLogging {
-    private static final DateTimeFormatter LOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-
     // Logger specialized for each subclass.
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected Logger getLogger() {
@@ -63,7 +61,7 @@ public abstract class AbstractLogging {
         }
         logMessage.append(") at ");
 
-        logMessage.append(LocalDateTime.now(ZoneId.systemDefault()).format(LOG_DATE_FORMAT));
+        logMessage.append(LocalDateTime.now(ZoneId.systemDefault()).format(DATE_TIME_FORMATTER));
         return logMessage.toString();
     }
 
@@ -99,7 +97,8 @@ public abstract class AbstractLogging {
             logMessage.append(joinPoint.getSignature().getName());
             logMessage.append("(");
 
-            appendParameters(logMessage, joinPoint.getArgs());
+            // Add params
+            logMessage.append(formatParams(joinPoint.getArgs()));
 
             logMessage.append(") in ");
             logMessage.append(millis);
@@ -109,24 +108,26 @@ public abstract class AbstractLogging {
         }
     }
 
-    private void appendParameters(StringBuilder logMessage, Object[] paramValues) {
+    private String formatParams(Object[] paramValues) {
         if (paramValues == null) {
-            return;
+            return "";
         }
-
+        final StringBuilder params = new StringBuilder();
         for (int i = 0; i < paramValues.length; i++) {
-            final Object paramValue = paramValues[i];
-            if (paramValue instanceof String) {
-                logMessage.append("'").append(paramValue).append("'");
-            } else {
-                logMessage.append(paramValue);
-            }
+            params.append(formatParamValue(paramValues[i]));
             if (i < paramValues.length - 1) {
-                logMessage.append(", ");
+                params.append(", ");
             }
         }
+        return params.toString();
     }
 
+    private String formatParamValue(Object value) {
+        if (value instanceof String) {
+            return "'" + value + "'";
+        }
+        return String.valueOf(value);
+    }
 
     protected String getTargetClassName(JoinPoint joinPoint) {
         // Get the fully-qualified name of the class

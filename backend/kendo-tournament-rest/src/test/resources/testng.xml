@@ -12,6 +12,7 @@
                 <include name="dtoToEntity"/>
                 <include name="bruteForce"/>
                 <include name="restSimpleChampionshipTest"/>
+                <include name="restTreeChampionshipCriticalUntieTest"/>
                 <include name="userRegister"/>
                 <include name="passwordTests"/>
                 <include name="websockets"/>
@@ -38,6 +39,7 @@
             <class name="com.softwaremagico.kt.security.PasswordTests"/>
             <class name="com.softwaremagico.kt.rest.DtoToEntityTest"/>
             <class name="com.softwaremagico.kt.rest.RestSimpleChampionshipTest"/>
+            <class name="com.softwaremagico.kt.rest.RestTreeChampionshipCriticalUntieTest"/>
             <class name="com.softwaremagico.kt.rest.UserRegisterTests"/>
             <class name="com.softwaremagico.kt.rest.ParticipantAccessTests"/>
             <class name="com.softwaremagico.kt.rest.DataValidationTest"/>

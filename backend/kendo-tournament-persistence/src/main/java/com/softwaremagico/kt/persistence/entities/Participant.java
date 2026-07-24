@@ -203,7 +203,14 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-        return collator.compare(string1, string2);
+        final int comparison = collator.compare(string1, string2);
+        if (comparison != 0) {
+            return comparison;
+        }
+        if (this.getId() != null && otherParticipant.getId() != null) {
+            return this.getId().compareTo(otherParticipant.getId());
+        }
+        return Integer.compare(System.identityHashCode(this), System.identityHashCode(otherParticipant));
     }
 
     public String getToken() {

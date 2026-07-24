@@ -27,9 +27,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType>
-        implements
-            AttributeConverter<RoleType, String> {
+public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType> implements AttributeConverter<RoleType, String> {
 
     public RoleTypeCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -48,8 +46,9 @@ public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType>
     protected RoleType stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : RoleType.getType(dbData);
-        } catch (final NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass(), "Invalid role value '{}' in database.", dbData);
+        } catch (NumberFormatException ex) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid role value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

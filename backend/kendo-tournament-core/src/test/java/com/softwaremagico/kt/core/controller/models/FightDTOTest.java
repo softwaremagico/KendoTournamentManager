@@ -26,9 +26,11 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 @Test(groups = {"scoreTests"})
@@ -383,49 +385,49 @@ public class FightDTOTest {
 	public void shouldBeEqualWhenAllRelevantFieldsMatch() {
 		final FightDTO left = new FightDTO(this.tournament, this.team1, this.team2, 0, 1);
 		left.setId(100);
-		left.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		left.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		final DuelDTO duel = this.duelWithScores(this.competitor1A, this.competitor2A, List.of(Score.MEN), List.of());
 		left.setDuels(List.of(duel));
 
 		final FightDTO right = new FightDTO(this.tournament, this.team1, this.team2, 0, 1);
 		right.setId(100);
-		right.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		right.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		right.setDuels(List.of(duel));
 
 		assertEquals(right, left);
-		assertEquals(left.hashCode(), right.hashCode());
+		assertThat(left).hasSameHashCodeAs(right);
 	}
 
 	@Test
 	public void shouldNotBeEqualForDifferentTypeOrDifferentFields() {
 		final FightDTO base = new FightDTO(this.tournament, this.team1, this.team2, 0, 1);
 		base.setId(200);
-		base.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		base.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		base.setDuels(List.of());
 
 		final FightDTO differentTeam1 = new FightDTO(this.tournament, null, this.team2, 0, 1);
 		differentTeam1.setId(200);
-		differentTeam1.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentTeam1.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		assertNotEquals(differentTeam1, base);
 
 		final FightDTO differentTeam2 = new FightDTO(this.tournament, this.team1, null, 0, 1);
 		differentTeam2.setId(200);
-		differentTeam2.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentTeam2.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		assertNotEquals(differentTeam2, base);
 
 		final FightDTO differentTournament = new FightDTO(null, this.team1, this.team2, 0, 1);
 		differentTournament.setId(200);
-		differentTournament.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentTournament.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		assertNotEquals(differentTournament, base);
 
 		final FightDTO differentShiaijo = new FightDTO(this.tournament, this.team1, this.team2, 9, 1);
 		differentShiaijo.setId(200);
-		differentShiaijo.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentShiaijo.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		assertNotEquals(differentShiaijo, base);
 
 		final FightDTO differentLevel = new FightDTO(this.tournament, this.team1, this.team2, 0, 2);
 		differentLevel.setId(200);
-		differentLevel.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentLevel.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		assertNotEquals(differentLevel, base);
 	}
 
@@ -433,12 +435,12 @@ public class FightDTOTest {
 	public void shouldHandleEqualsWhenTeamsAndTournamentAreAllNull() {
 		final FightDTO left = new FightDTO(null, null, null, 0, 1);
 		left.setId(300);
-		left.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		left.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		left.setDuels(List.of());
 
 		final FightDTO right = new FightDTO(null, null, null, 0, 1);
 		right.setId(300);
-		right.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		right.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		right.setDuels(List.of());
 
 		assertEquals(right, left);
@@ -448,24 +450,24 @@ public class FightDTOTest {
 	public void shouldNotBeEqualWhenDuelsOrFinishedAtDiffer() {
 		final FightDTO base = new FightDTO(this.tournament, this.team1, this.team2, 0, 1);
 		base.setId(301);
-		base.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		base.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		base.setDuels(
 				List.of(this.duelWithScores(this.competitor1A, this.competitor2A, List.of(Score.MEN), List.of())));
-		base.setFinishedAt(java.time.LocalDateTime.of(2026, 1, 1, 11, 0));
+		base.setFinishedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 11, 0));
 
 		final FightDTO differentDuels = new FightDTO(this.tournament, this.team1, this.team2, 0, 1);
 		differentDuels.setId(301);
-		differentDuels.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentDuels.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		differentDuels.setDuels(List.of());
-		differentDuels.setFinishedAt(java.time.LocalDateTime.of(2026, 1, 1, 11, 0));
+		differentDuels.setFinishedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 11, 0));
 		assertNotEquals(differentDuels, base);
 
 		final FightDTO differentFinishedAt = new FightDTO(this.tournament, this.team1, this.team2, 0, 1);
 		differentFinishedAt.setId(301);
-		differentFinishedAt.setCreatedAt(java.time.LocalDateTime.of(2026, 1, 1, 10, 0));
+		differentFinishedAt.setCreatedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 10, 0));
 		differentFinishedAt.setDuels(
 				List.of(this.duelWithScores(this.competitor1A, this.competitor2A, List.of(Score.MEN), List.of())));
-		differentFinishedAt.setFinishedAt(java.time.LocalDateTime.of(2026, 1, 1, 12, 0));
+		differentFinishedAt.setFinishedAt(java.time.LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
 		assertNotEquals(differentFinishedAt, base);
 	}
 }

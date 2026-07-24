@@ -409,6 +409,7 @@
   "draw": "Égalité",
   "drawResolution": "Résolution des égalités",
   "drawScore": "Certaines égalités doivent être résolues avant de passer à la phase suivante du tournoi.",
+  "drawTopPositionsScore": "Certaines égalités doivent être départagées pour déterminer les premières positions du classement.",
   "duelStored": "Le duel a été ajouté à la base de données.",
   "duels": "Duels",
   "duelsAverage": "Moyenne des duels",

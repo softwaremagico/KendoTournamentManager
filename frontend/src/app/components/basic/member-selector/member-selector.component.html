@@ -2,9 +2,12 @@
   <div class="team-name">{{ team.name }}</div>
   <div class="users-container">
     @for (user of members; track user) {
-      <user-card [user]="user" [dragDisabled]="true"
-        (clickEvent)="selectUser($event)"
-      [ngClass]="{'selected': selectedMembers.indexOf(user)>-1}"></user-card>
+      <button type="button" class="user-selectable"
+        (click)="selectUser(user)"
+        [attr.aria-pressed]="isSelected(user)">
+        <user-card [user]="user" [dragDisabled]="true"
+        [ngClass]="{'selected': isSelected(user)}"></user-card>
+      </button>
     }
   </div>
 </div>

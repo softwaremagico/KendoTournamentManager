@@ -11,20 +11,20 @@
       >
       <ng-template #actions>
         @if (RbacActivity.CREATE_CLUB | hasPermission) {
-          <button id="button-plus" biit-icon icon="plus"
+          <button id="button-plus" class="menu-button" biit-icon icon="plus"
             [title]="t('clubAdd')"
             (click)="addElement()"
           ></button>
         }
         @if (RbacActivity.DELETE_CLUB | hasPermission) {
-          <button id="button-minus" biit-icon icon="minus" class="warning"
+          <button id="button-minus" class="menu-button warning" biit-icon icon="minus"
             [title]="t('delete')"
             (click)="confirmDelete=true"
             [disabled]="!table.selectedRows.length"
           ></button>
         }
         @if (RbacActivity.READ_ONE_CLUB | hasPermission) {
-          <button id="button-edit" biit-icon icon="edit"
+          <button id="button-edit" class="menu-button" biit-icon icon="edit"
             [title]="t('clubEdit')"
             (click)="editElement(table.selectedRows[0])"
             [disabled]="!table.selectedRows || table.selectedRows.length != 1"
@@ -33,7 +33,7 @@
         <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
         <span class="extra-menu">
           @if ((RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)) {
-            <button id="club-ranking" mat-button
+            <button id="club-ranking" mat-button class="menu-button"
               [title]="t('competitorsClubRanking')"
               (click)="showRanking=true"
               [disabled]="!table.selectedRows || table.selectedRows.length != 1">

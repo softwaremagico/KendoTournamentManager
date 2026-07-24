@@ -80,6 +80,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   protected showCompetitorsRanking: boolean = false;
   protected showTeamsRanking: boolean = false;
+  protected showDrawWarningOnTeamsRankingOpen: boolean = false;
   protected confirmResetFights: boolean = false;
   protected confirmDeleteFights: boolean = false;
 
@@ -92,18 +93,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   filterInUse: boolean = false;
   protected bannerImage: string | null;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute,
-              private tournamentService: TournamentService, private fightService: FightService,
-              private environmentService: EnvironmentService,
-              private groupService: GroupService, private duelService: DuelService,
-              private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
-              private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
-              private userSessionService: UserSessionService,
-              private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              rbacService: RbacService, private fileService: FileService,
-              private systemOverloadService: SystemOverloadService,
-              private rxStompService: RxStompService, private loginService: LoginService,
-              private audioService: AudioService, private projectModeChangedService: ProjectModeChangedService) {
+  constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute,
+              private readonly tournamentService: TournamentService, private readonly fightService: FightService,
+              private readonly environmentService: EnvironmentService,
+              private readonly groupService: GroupService, private readonly duelService: DuelService,
+              private readonly timeChangedService: TimeChangedService, private readonly duelChangedService: DuelChangedService,
+              private readonly untieAddedService: UntieAddedService, private readonly groupUpdatedService: GroupUpdatedService,
+              private readonly userSessionService: UserSessionService,
+              private readonly membersOrderChangedService: MembersOrderChangedService, private readonly messageService: MessageService,
+              rbacService: RbacService, private readonly fileService: FileService,
+              private readonly systemOverloadService: SystemOverloadService,
+              private readonly rxStompService: RxStompService, private readonly loginService: LoginService,
+              private readonly audioService: AudioService, private readonly projectModeChangedService: ProjectModeChangedService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -595,8 +596,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return false;
   }
 
-  showTeamsClassification(fightsFinished: boolean): void {
+  showTeamsClassification(fightsFinished: boolean, showDrawWarningOnOpen: boolean = true): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
+      this.showDrawWarningOnTeamsRankingOpen = showDrawWarningOnOpen;
       this.showTeamsRanking = true;
     }
   }
@@ -755,8 +757,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showClassification(): void {
     if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
       (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.SENBATSU
-        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
-      this.showTeamsClassification(true);
+        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP
+        || this.tournament.type === TournamentType.SWISS))) {
+      this.showTeamsClassification(true, true);
     } else {
       this.showCompetitorsClassification();
     }

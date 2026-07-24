@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.Month;
 
 @Test(groups = "cryptoConverters")
 public class CryptoConvertersAdditionalTests {
@@ -54,7 +55,7 @@ public class CryptoConvertersAdditionalTests {
         final Integer decrypted = integerConverter.convertToEntityAttribute(encrypted);
 
         Assert.assertNotNull(encrypted);
-        Assert.assertEquals(decrypted, value);
+        Assert.assertEquals(value, decrypted);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class CryptoConvertersAdditionalTests {
         final Double decrypted = doubleConverter.convertToEntityAttribute(encrypted);
 
         Assert.assertNotNull(encrypted);
-        Assert.assertEquals(decrypted, value, 0.0000001);
+        Assert.assertEquals(value, decrypted, 0.0000001);
     }
 
     @Test
@@ -83,12 +84,12 @@ public class CryptoConvertersAdditionalTests {
 
     @Test
     public void shouldRoundTripLocalDateValues() {
-        final LocalDate value = LocalDate.of(2026, 6, 22);
+        final LocalDate value = LocalDate.of(2026, Month.JUNE, 22);
         final String encrypted = localDateConverter.convertToDatabaseColumn(value);
         final LocalDate decrypted = localDateConverter.convertToEntityAttribute(encrypted);
 
         Assert.assertNotNull(encrypted);
-        Assert.assertEquals(decrypted, value);
+        Assert.assertEquals(value, decrypted);
     }
 
     @Test
@@ -105,7 +106,7 @@ public class CryptoConvertersAdditionalTests {
         final Timestamp decrypted = timestampConverter.convertToEntityAttribute(encrypted);
 
         Assert.assertNotNull(encrypted);
-        Assert.assertEquals(decrypted, value);
+        Assert.assertEquals(value, decrypted);
     }
 
     @Test

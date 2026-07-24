@@ -44,55 +44,56 @@ public class ParticipantImageProvider extends CrudProvider<ParticipantImage, Int
     private final ParticipantRepository participantRepository;
 
     @Autowired
-    public ParticipantImageProvider(ParticipantImageRepository repository, ParticipantRepository participantRepository) {
+    public ParticipantImageProvider(ParticipantImageRepository repository,
+            ParticipantRepository participantRepository) {
         super(repository);
         this.participantRepository = participantRepository;
     }
 
     public Optional<ParticipantImage> get(Participant participant) {
-        return getRepository().findByParticipant(participant);
+        return this.getRepository().findByParticipant(participant);
     }
 
     public List<ParticipantImage> getBy(Collection<Participant> participants) {
-        return getRepository().findByParticipantIn(participants);
+        return this.getRepository().findByParticipantIn(participants);
     }
 
     public int delete(Participant participant) {
         participant.setHasAvatar(false);
-        participantRepository.save(participant);
-        return getRepository().deleteByParticipant(participant);
+        this.participantRepository.save(participant);
+        return this.getRepository().deleteByParticipant(participant);
     }
 
-    public ParticipantImage add(MultipartFile file, Participant participant, String username) throws DataInputException {
+    public ParticipantImage add(MultipartFile file, Participant participant, String username)
+            throws DataInputException {
         try {
-            delete(participant);
+            this.delete(participant);
             final ParticipantImage participantImage = new ParticipantImage();
             participantImage.setParticipant(participant);
-            participantImage.setData(ImageUtils.getBytes(ImageUtils.cropImage(
-                    ImageUtils.resizeImage(ImageUtils.getImage(file.getBytes())))));
+            participantImage.setData(ImageUtils
+                    .getBytes(ImageUtils.cropImage(ImageUtils.resizeImage(ImageUtils.getImage(file.getBytes())))));
             participantImage.setImageFormat(ImageFormat.BASE64);
             participantImage.setCreatedBy(username);
             participant.setHasAvatar(true);
-            participantRepository.save(participant);
-            return save(participantImage);
-        } catch (IOException e) {
+            this.participantRepository.save(participant);
+            return this.save(participantImage);
+        } catch (IOException _) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
     }
 
-
     public ParticipantImage add(ParticipantImage participantImage, String username) throws DataInputException {
-        delete(participantImage.getParticipant());
+        this.delete(participantImage.getParticipant());
         participantImage.setCreatedBy(username);
         try {
-            participantImage.setData(ImageUtils.getBytes(ImageUtils.cropImage(
-                    ImageUtils.resizeImage(ImageUtils.getImage(participantImage.getData())))));
-        } catch (IOException e) {
+            participantImage.setData(ImageUtils.getBytes(
+                    ImageUtils.cropImage(ImageUtils.resizeImage(ImageUtils.getImage(participantImage.getData())))));
+        } catch (IOException _) {
             KendoTournamentLogger.warning(this.getClass(), "Image cannot be cropped");
         }
         final Participant participant = participantImage.getParticipant();
         participant.setHasAvatar(participantImage.getData() != null);
-        participantRepository.save(participant);
-        return save(participantImage);
+        this.participantRepository.save(participant);
+        return this.save(participantImage);
     }
 }

@@ -26,10 +26,10 @@ import com.softwaremagico.kt.persistence.values.AchievementType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+
 @Converter
 public class AchievementTypeCryptoConverter extends AbstractCryptoConverter<AchievementType>
-        implements
-            AttributeConverter<AchievementType, String> {
+        implements AttributeConverter<AchievementType, String> {
 
     public AchievementTypeCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -48,8 +48,9 @@ public class AchievementTypeCryptoConverter extends AbstractCryptoConverter<Achi
     protected AchievementType stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : AchievementType.getType(dbData);
-        } catch (final NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass(), "Invalid type value '{}' in database.", dbData);
+        } catch (NumberFormatException ex) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid type value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

@@ -39,121 +39,103 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "entityBeans")
 public class EntityBeansCoverageTest {
 
-    @Test
-    public void shouldCoverEntityGettersSettersAndObjectMethods() throws Exception {
-        final Class<?>[] entityClasses = new Class<?>[]{
-                Achievement.class,
-                AuthenticatedUser.class,
-                Club.class,
-                Duel.class,
-                DuelType.class,
-                Element.class,
-                Fight.class,
-                Group.class,
-                GroupLink.class,
-                Participant.class,
-                ParticipantImage.class,
-                Role.class,
-                Team.class,
-                Tournament.class,
-                TournamentExtraProperty.class,
-                TournamentImage.class,
-                TournamentScore.class
-        };
+	@Test
+	public void shouldCoverEntityGettersSettersAndObjectMethods() throws Exception {
+		final Class<?>[] entityClasses = new Class<?>[]{Achievement.class, AuthenticatedUser.class, Club.class,
+				Duel.class, DuelType.class, Element.class, Fight.class, Group.class, GroupLink.class, Participant.class,
+				ParticipantImage.class, Role.class, Team.class, Tournament.class, TournamentExtraProperty.class,
+				TournamentImage.class, TournamentScore.class};
 
-        for (Class<?> entityClass : entityClasses) {
-            final Object instance = newInstanceOrNull(entityClass);
-            if (instance == null) {
-                continue;
-            }
-            assertNotNull(instance);
+		for (final Class<?> entityClass : entityClasses) {
+			final Object instance = this.newInstanceOrNull(entityClass);
+			if (instance == null) {
+				continue;
+			}
+			assertNotNull(instance);
 
-            for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(entityClass, Object.class).getPropertyDescriptors()) {
-                final Method writeMethod = propertyDescriptor.getWriteMethod();
-                if (writeMethod != null && Modifier.isPublic(writeMethod.getModifiers())) {
-                    final Class<?> parameterType = writeMethod.getParameterTypes()[0];
-                    try {
-                        writeMethod.invoke(instance, sampleValue(parameterType));
-                    } catch (Exception _) {
-                        // Some write methods validate domain rules and may reject synthetic values.
-                    }
-                }
-                final Method readMethod = propertyDescriptor.getReadMethod();
-                if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
-                    try {
-                        readMethod.invoke(instance);
-                    } catch (Exception _) {
-                        // Some read methods depend on richer object graphs.
-                    }
-                }
-            }
+			for (final PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(entityClass, Object.class)
+					.getPropertyDescriptors()) {
+				final Method writeMethod = propertyDescriptor.getWriteMethod();
+				if (writeMethod != null && Modifier.isPublic(writeMethod.getModifiers())) {
+					final Class<?> parameterType = writeMethod.getParameterTypes()[0];
+					try {
+						writeMethod.invoke(instance, this.sampleValue(parameterType));
+					} catch (Exception _) {
+						// Some write methods validate domain rules and may reject synthetic values.
+					}
+				}
+				final Method readMethod = propertyDescriptor.getReadMethod();
+				if (readMethod != null && Modifier.isPublic(readMethod.getModifiers())) {
+					try {
+						readMethod.invoke(instance);
+					} catch (Exception _) {
+						// Some read methods depend on richer object graphs.
+					}
+				}
+			}
 
-            try {
-                instance.hashCode();
-            } catch (Exception _) {
-                // Some entities compute hash from nullable binary fields.
-            }
-            instance.equals(instance);
-            try {
-                instance.toString();
-            } catch (Exception _) {
-                // Some entities compute toString from nullable binary fields.
-            }
-        }
-    }
+			try {
+				instance.hashCode();
+			} catch (Exception _) {
+				// Some entities compute hash from nullable binary fields.
+			}
+			instance.equals(instance);
+			try {
+				instance.toString();
+			} catch (Exception _) {
+				// Some entities compute toString from nullable binary fields.
+			}
+		}
+	}
 
-    private Object newInstanceOrNull(Class<?> clazz) throws Exception {
-        for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            if (constructor.getParameterCount() == 0) {
-                constructor.setAccessible(true);
-                try {
-                    return constructor.newInstance();
-                } catch (InstantiationException _) {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
+	private Object newInstanceOrNull(Class<?> clazz) throws Exception {
+		for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+			if (constructor.getParameterCount() == 0) {
+				constructor.setAccessible(true);
+				try {
+					return constructor.newInstance();
+				} catch (InstantiationException _) {
+					return null;
+				}
+			}
+		}
+		return null;
+	}
 
-    private Object sampleValue(Class<?> type) throws Exception {
-        if (type == String.class) {
-            return "x";
-        }
-        if (type == int.class || type == Integer.class) {
-            return 1;
-        }
-        if (type == long.class || type == Long.class) {
-            return 1L;
-        }
-        if (type == boolean.class || type == Boolean.class) {
-            return true;
-        }
-        if (type == double.class || type == Double.class) {
-            return 1.0d;
-        }
-        if (type == float.class || type == Float.class) {
-            return 1.0f;
-        }
-        if (type == LocalDateTime.class) {
-            return LocalDateTime.now();
-        }
-        if (List.class.isAssignableFrom(type)) {
-            return new ArrayList<>();
-        }
-        if (Set.class.isAssignableFrom(type)) {
-            return new HashSet<>();
-        }
-        if (type.isEnum()) {
-            return type.getEnumConstants()[0];
-        }
-        if (type.getName().startsWith("com.softwaremagico.kt.persistence.entities.")) {
-            return newInstanceOrNull(type);
-        }
-        return null;
-    }
+	private Object sampleValue(Class<?> type) throws Exception {
+		if (type == String.class) {
+			return "x";
+		}
+		if (type == int.class || type == Integer.class) {
+			return 1;
+		}
+		if (type == long.class || type == Long.class) {
+			return 1L;
+		}
+		if (type == boolean.class || type == Boolean.class) {
+			return true;
+		}
+		if (type == double.class || type == Double.class) {
+			return 1.0d;
+		}
+		if (type == float.class || type == Float.class) {
+			return 1.0f;
+		}
+		if (type == LocalDateTime.class) {
+			return LocalDateTime.now();
+		}
+		if (List.class.isAssignableFrom(type)) {
+			return new ArrayList<>();
+		}
+		if (Set.class.isAssignableFrom(type)) {
+			return new HashSet<>();
+		}
+		if (type.isEnum()) {
+			return type.getEnumConstants()[0];
+		}
+		if (type.getName().startsWith("com.softwaremagico.kt.persistence.entities.")) {
+			return this.newInstanceOrNull(type);
+		}
+		return null;
+	}
 }
-
-
-
-

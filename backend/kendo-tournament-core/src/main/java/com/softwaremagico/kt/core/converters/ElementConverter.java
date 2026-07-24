@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST extends ConverterRequest<ENTITY>>
         extends SimpleConverter<ENTITY, DTO, REQUEST> implements IElementConverter<ENTITY, DTO, REQUEST> {
@@ -42,7 +41,7 @@ public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST e
         }
         //Returns the DTOs sorted by creation time by default
         return from.stream().map(this::convert).sorted(Comparator.comparing(ElementDTO::getCreatedAt,
-                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+                Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 
     public List<DTO> convertAllNotSorted(Collection<REQUEST> from) {
@@ -50,6 +49,6 @@ public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST e
             return new ArrayList<>();
         }
         //Returns the DTOs sorted by creation time by default
-        return from.stream().map(this::convert).collect(Collectors.toList());
+        return from.stream().map(this::convert).toList();
     }
 }

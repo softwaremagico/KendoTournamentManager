@@ -46,14 +46,14 @@ public class FightRepositoryTests extends BasicDataTest {
     @Test
     private void getAllFightsFromParticipants() {
         Assert.assertEquals(fightRepository.findByParticipantIn(members).size(), fights.size());
-        Assert.assertEquals(fightRepository.findByParticipantIn(Collections.singletonList(members.get(0))).size(), 2);
+        Assert.assertEquals(fightRepository.findByParticipantIn(Collections.singletonList(members.getFirst())).size(), 2);
         Assert.assertEquals(fightRepository.findByParticipantIn(Collections.singletonList(members.get(1))).size(), 2);
         Assert.assertEquals(fightRepository.findByParticipantIn(Collections.singletonList(members.get(2))).size(), 2);
     }
 
     @Test
     private void getFightFromDuel() {
-        Assert.assertEquals(fightRepository.findByDuels(fights.get(0).getDuels().get(0)).get(), fights.get(0));
-        Assert.assertNotEquals(fightRepository.findByDuels(fights.get(1).getDuels().get(0)).get(), fights.get(0));
+        Assert.assertEquals(fightRepository.findByDuels(fights.getFirst().getDuels().getFirst()).get(), fights.getFirst());
+        Assert.assertNotEquals(fightRepository.findByDuels(fights.get(1).getDuels().getFirst()).get(), fights.getFirst());
     }
 }

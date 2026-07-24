@@ -161,13 +161,13 @@ public final class NameUtils {
      * @return
      */
     public static String getShortLastnameName(String lastname, String name, int maxLength) {
-        if (name.length() + lastname.length() == 0) {
+        if (name.isEmpty() && lastname.isEmpty()) {
             return "";
         }
 
         final float rateLastname = (name.length() + getShortLastname(lastname, MAX_ALLOWED_NAME_LENGTH).length())
-                / ((float) lastname.length() > 0 ? (float) lastname.length() : 1);
-        final float rateName = (name.length() + getShortName(name, MAX_ALLOWED_NAME_LENGTH).length()) / ((float) name.length() > 0 ? (float) name.length() : 1);
+                / (!lastname.isEmpty() ? (float) lastname.length() : 1);
+        final float rateName = (name.length() + getShortName(name, MAX_ALLOWED_NAME_LENGTH).length()) / (!name.isEmpty() ? (float) name.length() : 1);
         final String ret = getShortLastname(lastname, (int) (maxLength / rateLastname)).trim() + ", " + getShortName(name, (int) (maxLength / rateName));
         return ret.trim();
     }
@@ -246,7 +246,7 @@ public final class NameUtils {
                 final String index = nameItem.getName().substring(nameItem.getName().indexOf(COPY_SUFFIX + " #") + (COPY_SUFFIX + " #").length()).trim();
                 try {
                     return nameItem.getName().substring(0, nameItem.getName().indexOf(COPY_SUFFIX)).trim() + COPY_SUFFIX + " #" + (Integer.parseInt(index) + 1);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException _) {
                     return nameItem.getName() + " #2";
                 }
             } else {

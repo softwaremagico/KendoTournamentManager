@@ -31,36 +31,38 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Test(groups = {"csvReaderUnit"})
+@SuppressWarnings("all")
+@Test
 public class CsvReaderUnitTest {
 
-    private ClubCsv clubCsv;
+    private ClubCsv clubCsvReader;
 
-    private static final String VALID_CSV =
-            "name;country;city;address;email;phone;web\n" +
-            "Madrid club;Spain;Madrid;Street 1;a@test.com;123;www.a.com\n" +
-            "Paris club;France;Paris;Rue 2;b@test.com;456;www.b.com";
+    private static final String VALID_CSV = """
+            name;country;city;address;email;phone;web
+            Madrid club;Spain;Madrid;Street 1;a@test.com;123;www.a.com
+            Paris club;France;Paris;Rue 2;b@test.com;456;www.b.com
+            """;
 
     private static final String SINGLE_LINE_CSV =
             "name;country;city;address;email;phone;web";
 
     @BeforeMethod
     public void setUp() {
-        clubCsv = new ClubCsv();
+        clubCsvReader = new ClubCsv();
     }
 
     // ---------- getHeaders() ----------
 
     @Test
     public void when_multilineContent_expect_headersFromFirstLine() {
-        final String[] headers = clubCsv.getHeaders(VALID_CSV);
+        final String[] headers = clubCsvReader.getHeaders(VALID_CSV);
 
         assertThat(headers).containsExactly("name", "country", "city", "address", "email", "phone", "web");
     }
 
     @Test
     public void when_singleLineContent_expect_emptyHeaders() {
-        final String[] headers = clubCsv.getHeaders(SINGLE_LINE_CSV);
+        final String[] headers = clubCsvReader.getHeaders(SINGLE_LINE_CSV);
 
         assertThat(headers).isEmpty();
     }
@@ -68,7 +70,7 @@ public class CsvReaderUnitTest {
     @Test
     public void when_contentWithHash_expect_hashStripped() {
         final String csvWithHash = "#name;country;city;address;email;phone;web\nClubA;Spain;Madrid;St;a@t.com;1;w";
-        final String[] headers = clubCsv.getHeaders(csvWithHash);
+        final String[] headers = clubCsvReader.getHeaders(csvWithHash);
 
         assertThat(headers).contains("name");
         assertThat(headers[0]).doesNotContain("#");
@@ -78,7 +80,7 @@ public class CsvReaderUnitTest {
 
     @Test
     public void when_multilineContent_expect_dataLinesWithoutHeader() {
-        final String[] content = clubCsv.getContent(VALID_CSV);
+        final String[] content = clubCsvReader.getContent(VALID_CSV);
 
         assertThat(content).hasSize(2);
         assertThat(content[0]).contains("Madrid");
@@ -87,7 +89,7 @@ public class CsvReaderUnitTest {
 
     @Test
     public void when_singleLineContent_expect_emptyContentArray() {
-        final String[] content = clubCsv.getContent(SINGLE_LINE_CSV);
+        final String[] content = clubCsvReader.getContent(SINGLE_LINE_CSV);
 
         assertThat(content).isEmpty();
     }
@@ -98,37 +100,37 @@ public class CsvReaderUnitTest {
     public void when_knownHeader_expect_correctIndex() {
         final String[] headers = {"name", "country", "city"};
 
-        assertThat(clubCsv.getHeaderIndex(headers, "country")).isEqualTo(1);
-        assertThat(clubCsv.getHeaderIndex(headers, "city")).isEqualTo(2);
+        assertThat(clubCsvReader.getHeaderIndex(headers, "country")).isEqualTo(1);
+        assertThat(clubCsvReader.getHeaderIndex(headers, "city")).isEqualTo(2);
     }
 
     @Test
     public void when_unknownHeader_expect_minusOne() {
         final String[] headers = {"name", "country"};
 
-        assertThat(clubCsv.getHeaderIndex(headers, "unknown")).isEqualTo(-1);
+        assertThat(clubCsvReader.getHeaderIndex(headers, "unknown")).isEqualTo(-1);
     }
 
     @Test
     public void when_nullHeader_expect_minusOne() {
         final String[] headers = {"name", "country"};
 
-        assertThat(clubCsv.getHeaderIndex(headers, null)).isEqualTo(-1);
+        assertThat(clubCsvReader.getHeaderIndex(headers, null)).isEqualTo(-1);
     }
 
     @Test
     public void when_headerCaseInsensitive_expect_found() {
         final String[] headers = {"Name", "Country"};
 
-        assertThat(clubCsv.getHeaderIndex(headers, "name")).isEqualTo(0);
-        assertThat(clubCsv.getHeaderIndex(headers, "COUNTRY")).isEqualTo(1);
+        assertThat(clubCsvReader.getHeaderIndex(headers, "name")).isZero();
+        assertThat(clubCsvReader.getHeaderIndex(headers, "COUNTRY")).isEqualTo(1);
     }
 
     @Test
     public void when_headerWithWhitespace_expect_found() {
         final String[] headers = {" name ", "country"};
 
-        assertThat(clubCsv.getHeaderIndex(headers, "name")).isEqualTo(0);
+        assertThat(clubCsvReader.getHeaderIndex(headers, "name")).isZero();
     }
 
     // ---------- getField() ----------
@@ -137,19 +139,19 @@ public class CsvReaderUnitTest {
     public void when_validIndex_expect_fieldValue() {
         final String line = "ClubA;Spain;Madrid";
 
-        assertThat(clubCsv.getField(line, 0)).isEqualTo("ClubA");
-        assertThat(clubCsv.getField(line, 1)).isEqualTo("Spain");
-        assertThat(clubCsv.getField(line, 2)).isEqualTo("Madrid");
+        assertThat(clubCsvReader.getField(line, 0)).isEqualTo("ClubA");
+        assertThat(clubCsvReader.getField(line, 1)).isEqualTo("Spain");
+        assertThat(clubCsvReader.getField(line, 2)).isEqualTo("Madrid");
     }
 
     @Test
     public void when_indexNegative_expect_null() {
-        assertThat(clubCsv.getField("ClubA;Spain", -1)).isNull();
+        assertThat(clubCsvReader.getField("ClubA;Spain", -1)).isNull();
     }
 
     @Test
     public void when_indexBeyondColumns_expect_null() {
-        assertThat(clubCsv.getField("ClubA;Spain", 10)).isNull();
+        assertThat(clubCsvReader.getField("ClubA;Spain", 10)).isNull();
     }
 
     // ---------- checkHeaders() via readCSV (throws on invalid header) ----------
@@ -160,7 +162,7 @@ public class CsvReaderUnitTest {
                 "name;wrongHeader;city;address;email;phone;web\n" +
                 "ClubA;Spain;Madrid;St;a@t.com;1;w";
 
-        assertThatThrownBy(() -> clubCsv.readCSV(invalidCsv))
+        assertThatThrownBy(() -> clubCsvReader.readCSV(invalidCsv))
                 .isInstanceOf(InvalidCsvFieldException.class);
     }
 
@@ -168,7 +170,7 @@ public class CsvReaderUnitTest {
 
     @Test
     public void when_validCsv_expect_clubsParsed() {
-        final List<Club> clubs = clubCsv.readCSV(VALID_CSV);
+        final List<Club> clubs = clubCsvReader.readCSV(VALID_CSV);
 
         assertThat(clubs).hasSize(2);
         // Club.setName uses StringUtils.setCase() which capitalizes first letter of each word
@@ -181,7 +183,7 @@ public class CsvReaderUnitTest {
     public void when_headerOnlyCsv_expect_emptyList() {
         final String headerOnly = "name;country;city;address;email;phone;web";
         // Single-line CSV returns no content rows
-        final String[] content = clubCsv.getContent(headerOnly);
+        final String[] content = clubCsvReader.getContent(headerOnly);
         assertThat(content).isEmpty();
     }
 }

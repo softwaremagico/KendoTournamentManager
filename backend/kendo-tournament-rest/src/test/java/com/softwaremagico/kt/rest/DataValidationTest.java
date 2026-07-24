@@ -10,12 +10,12 @@ package com.softwaremagico.kt.rest;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -52,73 +52,65 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "dataValidation")
 public class DataValidationTest extends AbstractTestNGSpringContextTests {
 
-    private static final String USER_NAME = "admin";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
-    private static final String USER_PASSWORD = "asd123";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+	private static final String USER_NAME = "admin";
+	private static final String USER_FIRST_NAME = "Test";
+	private static final String USER_LAST_NAME = "User";
+	private static final String USER_PASSWORD = "asd123";
+	private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
-    private static final String CLUB_CITY = "Valencia";
+	private static final String CLUB_CITY = "Valencia";
 
-    @Autowired
-    private AuthenticatedUserController authenticatedUserController;
+	@Autowired
+	private AuthenticatedUserController authenticatedUserController;
 
-    @Autowired
-    private WebApplicationContext context;
+	@Autowired
+	private WebApplicationContext context;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    private MockMvc mockMvc;
+	private MockMvc mockMvc;
 
-    private String jwtToken;
+	private String jwtToken;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(object);
-    }
+	private <T> String toJson(T object) throws JsonProcessingException {
+		return this.objectMapper.writeValueAsString(object);
+	}
 
+	@BeforeClass
+	public void setUp() {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
+	}
 
-    @BeforeClass
-    public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
-    }
+	@BeforeClass(dependsOnMethods = "setUp")
+	public void setAuthentication() throws Exception {
+		// Create the admin user
+		this.authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD,
+				USER_ROLES);
 
-    @BeforeClass(dependsOnMethods = "setUp")
-    public void setAuthentication() throws Exception {
-        //Create the admin user
-        authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+		final AuthRequest request = new AuthRequest();
+		request.setUsername(USER_NAME);
+		request.setPassword(USER_PASSWORD);
 
-        AuthRequest request = new AuthRequest();
-        request.setUsername(USER_NAME);
-        request.setPassword(USER_PASSWORD);
+		final MvcResult createResult = this.mockMvc
+				.perform(post("/auth/public/login").contentType(MediaType.APPLICATION_JSON)
+						.content(this.toJson(request)).with(csrf()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION)).andReturn();
 
-        MvcResult createResult = this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
-                .andReturn();
+		this.jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+		Assert.assertNotNull(this.jwtToken);
+	}
 
-        jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertNotNull(jwtToken);
-    }
+	@Test
+	public void emptyClubNameException() throws Exception {
+		Assert.assertNotNull(this.jwtToken);
 
-
-    @Test
-    public void emptyClubNameException() throws Exception {
-        Assert.assertNotNull(jwtToken);
-
-        this.mockMvc
-                .perform(post("/clubs/new-club")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(new ClubDTO("", CLUB_CITY)))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andReturn();
-    }
+		this.mockMvc
+				.perform(post("/clubs/new-club").contentType(MediaType.APPLICATION_JSON)
+						.header("Authorization", "Bearer " + this.jwtToken)
+						.content(this.toJson(new ClubDTO("", CLUB_CITY))).with(csrf()))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+	}
 }

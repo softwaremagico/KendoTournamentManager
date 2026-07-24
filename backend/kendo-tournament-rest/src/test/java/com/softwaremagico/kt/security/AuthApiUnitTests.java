@@ -44,113 +44,113 @@ import org.testng.annotations.Test;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
-@Test(groups = "authApi")
+@Test
 public class AuthApiUnitTests {
 
-    private AuthenticationManager authenticationManager;
-    private JwtTokenUtil jwtTokenUtil;
-    private AuthenticatedUserController authenticatedUserController;
-    private BruteForceService bruteForceService;
-    private AuthenticatedUserProvider authenticatedUserProvider;
-    private ParticipantController participantController;
-    private TournamentProvider tournamentProvider;
+	private AuthenticationManager authenticationManager;
+	private JwtTokenUtil jwtTokenUtil;
+	private AuthenticatedUserController authenticatedUserController;
+	private BruteForceService bruteForceService;
+	private AuthenticatedUserProvider authenticatedUserProvider;
+	private ParticipantController participantController;
+	private TournamentProvider tournamentProvider;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        authenticationManager = mock(AuthenticationManager.class);
-        jwtTokenUtil = mock(JwtTokenUtil.class);
-        authenticatedUserController = mock(AuthenticatedUserController.class);
-        bruteForceService = mock(BruteForceService.class);
-        authenticatedUserProvider = mock(AuthenticatedUserProvider.class);
-        participantController = mock(ParticipantController.class);
-        tournamentProvider = mock(TournamentProvider.class);
-    }
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		this.authenticationManager = mock(AuthenticationManager.class);
+		this.jwtTokenUtil = mock(JwtTokenUtil.class);
+		this.authenticatedUserController = mock(AuthenticatedUserController.class);
+		this.bruteForceService = mock(BruteForceService.class);
+		this.authenticatedUserProvider = mock(AuthenticatedUserProvider.class);
+		this.participantController = mock(ParticipantController.class);
+		this.tournamentProvider = mock(TournamentProvider.class);
+	}
 
-    @Test(expectedExceptions = GuestDisabledException.class)
-    public void shouldRejectGuestLoginWhenGuestUsersDisabled() {
-        final AuthApi authApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-                bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "false");
+	@Test(expectedExceptions = GuestDisabledException.class)
+	public void shouldRejectGuestLoginWhenGuestUsersDisabled() {
+		final AuthApi authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "false");
 
-        final AuthGuestRequest request = new AuthGuestRequest();
-        request.setTournamentId(1);
+		final AuthGuestRequest request = new AuthGuestRequest();
+		request.setTournamentId(1);
 
-        authApi.loginAsGuest(request, mock(HttpServletRequest.class));
-    }
+		authApi.loginAsGuest(request, mock(HttpServletRequest.class));
+	}
 
-    @Test
-    public void shouldGetRolesFromAuthenticatedUserController() {
-        final AuthApi authApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-                bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+	@Test
+	public void shouldGetRolesFromAuthenticatedUserController() {
+		final AuthApi authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
-        final Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("admin");
-        when(authenticatedUserController.getRoles("admin")).thenReturn(Set.of("admin", "editor"));
+		final Authentication authentication = mock(Authentication.class);
+		when(authentication.getName()).thenReturn("admin");
+		when(this.authenticatedUserController.getRoles("admin")).thenReturn(Set.of("admin", "editor"));
 
-        final Set<String> roles = authApi.getRoles(authentication, mock(HttpServletRequest.class));
+		final Set<String> roles = authApi.getRoles(authentication, mock(HttpServletRequest.class));
 
-        assertEquals(roles.size(), 2);
-        assertTrue(roles.contains("admin"));
-    }
+		assertEquals(roles.size(), 2);
+		assertTrue(roles.contains("admin"));
+	}
 
-    @Test(expectedExceptions = InvalidRequestException.class)
-    public void shouldRejectDeleteOfCurrentUser() {
-        final AuthApi authApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-                bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+	@Test(expectedExceptions = InvalidRequestException.class)
+	public void shouldRejectDeleteOfCurrentUser() {
+		final AuthApi authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
-        final Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("same-user");
+		final Authentication authentication = mock(Authentication.class);
+		when(authentication.getName()).thenReturn("same-user");
 
-        authApi.delete("same-user", authentication, mock(HttpServletRequest.class));
-    }
+		authApi.delete("same-user", authentication, mock(HttpServletRequest.class));
+	}
 
-    @Test
-    public void shouldGenerateRenewedJwtHeaders() {
-        final AuthApi authApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-                bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+	@Test
+	public void shouldGenerateRenewedJwtHeaders() {
+		final AuthApi authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
-        final Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("john");
+		final Authentication authentication = mock(Authentication.class);
+		when(authentication.getName()).thenReturn("john");
 
-        final IAuthenticatedUser authenticatedUser = mock(IAuthenticatedUser.class);
-        when(authenticatedUserProvider.findByUsername("john")).thenReturn(Optional.of(authenticatedUser));
+		final IAuthenticatedUser authenticatedUser = mock(IAuthenticatedUser.class);
+		when(this.authenticatedUserProvider.findByUsername("john")).thenReturn(Optional.of(authenticatedUser));
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("X-Forwarded-For")).thenReturn("1.2.3.4, 10.0.0.1");
+		final HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getHeader("X-Forwarded-For")).thenReturn("1.2.3.4, 10.0.0.1");
 
-        when(jwtTokenUtil.getJwtExpirationTime()).thenReturn(99999L);
-        when(jwtTokenUtil.generateAccessToken(eq(authenticatedUser), eq("1.2.3.4"))).thenReturn("jwt-token");
-        when(jwtTokenUtil.getSession("jwt-token")).thenReturn("session-id");
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(99999L);
+		when(this.jwtTokenUtil.generateAccessToken(authenticatedUser, "1.2.3.4")).thenReturn("jwt-token");
+		when(this.jwtTokenUtil.getSession("jwt-token")).thenReturn("session-id");
 
-        final ResponseEntity<Void> response = authApi.getNewJWT(authentication, request, "old-token");
+		final ResponseEntity<Void> response = authApi.getNewJWT(authentication, request, "old-token");
 
-        assertEquals(response.getStatusCode().value(), 200);
-        assertNotNull(response.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
-        assertEquals(response.getHeaders().getFirst(HttpHeaders.AUTHORIZATION), "jwt-token");
-        assertEquals(response.getHeaders().getFirst(AuthApi.SESSION_HEADER), "session-id");
-    }
+		assertEquals(response.getStatusCode().value(), 200);
+		assertNotNull(response.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+		assertEquals(response.getHeaders().getFirst(HttpHeaders.AUTHORIZATION), "jwt-token");
+		assertEquals(response.getHeaders().getFirst(AuthApi.SESSION_HEADER), "session-id");
+	}
 
-    @Test(expectedExceptions = UsernameNotFoundException.class)
-    public void shouldFailRenewJwtWhenAuthenticatedUserNotFound() {
-        final AuthApi authApi = new AuthApi(authenticationManager, jwtTokenUtil, authenticatedUserController,
-                bruteForceService, authenticatedUserProvider, participantController, tournamentProvider, "true");
+	@Test(expectedExceptions = UsernameNotFoundException.class)
+	public void shouldFailRenewJwtWhenAuthenticatedUserNotFound() {
+		final AuthApi authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, "true");
 
-        final Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("missing");
-        when(authenticatedUserProvider.findByUsername("missing")).thenReturn(Optional.empty());
+		final Authentication authentication = mock(Authentication.class);
+		when(authentication.getName()).thenReturn("missing");
+		when(this.authenticatedUserProvider.findByUsername("missing")).thenReturn(Optional.empty());
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("X-Forwarded-For")).thenReturn(null);
-        when(request.getRemoteAddr()).thenReturn("127.0.0.1");
+		final HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        authApi.getNewJWT(authentication, request, "old-token");
-    }
+		authApi.getNewJWT(authentication, request, "old-token");
+	}
 }
-

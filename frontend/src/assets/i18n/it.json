@@ -407,6 +407,7 @@
   "draw": "Pareggio",
   "drawResolution": "Risoluzione dei pareggi",
   "drawScore": "Ci sono alcuni punteggi di pareggio che devono essere risolti prima di passare alla fase successiva del torneo.",
+  "drawTopPositionsScore": "Ci sono alcuni pareggi che devono essere risolti per determinare le prime posizioni della classifica.",
   "duelStored": "Il combattimento è stato salvato nel database.",
   "duels": "Combattimenti",
   "duelsAverage": "Media dei Combattimenti",

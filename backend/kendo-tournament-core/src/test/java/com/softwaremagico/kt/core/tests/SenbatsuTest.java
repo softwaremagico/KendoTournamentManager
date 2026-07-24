@@ -170,7 +170,7 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         Team team = null;
         int teamMember = 0;
 
-        final Group group = groupProvider.getGroups(tournament).get(0);
+        final Group group = groupProvider.getGroups(tournament).getFirst();
 
         for (Participant competitor : participantProvider.getAll()) {
             // Create a new team.
@@ -205,7 +205,7 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
 
         //First team challenge fourth one.
         FightDTO fight = new FightDTO(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
-                teamConverter.convert(new TeamConverterRequest(teams.get(0))),
+                teamConverter.convert(new TeamConverterRequest(teams.getFirst())),
                 teamConverter.convert(new TeamConverterRequest(teams.get(4))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team05");
@@ -232,7 +232,7 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
 
         //First team challenge third one.
         FightDTO fight = new FightDTO(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
-                teamConverter.convert(new TeamConverterRequest(teams.get(0))),
+                teamConverter.convert(new TeamConverterRequest(teams.getFirst())),
                 teamConverter.convert(new TeamConverterRequest(teams.get(2))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team03");
@@ -240,12 +240,12 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
-        fight.getDuels().get(0).addCompetitor1Score(Score.DO);
+        fight.getDuels().getFirst().addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null, null);
 
         //Save the fight at group.
-        Group group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        Group group = senbatsuTournamentHandler.getGroups(tournament, 0).getFirst();
         group.getFights().add(fightConverter.reverse(fight));
         groupProvider.save(group);
 
@@ -265,12 +265,12 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
-        fight.getDuels().get(0).addCompetitor2Score(Score.DO);
+        fight.getDuels().getFirst().addCompetitor2Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null, null);
 
         //Save the fight at group.
-        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).getFirst();
         group.getFights().add(fightConverter.reverse(fight));
         groupProvider.save(group);
 
@@ -291,12 +291,12 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
-        fight.getDuels().get(0).addCompetitor1Score(Score.DO);
+        fight.getDuels().getFirst().addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null, null);
 
         //Save the fight at group.
-        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).getFirst();
         group.getFights().add(fightConverter.reverse(fight));
         groupProvider.save(group);
 
@@ -318,12 +318,12 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
-        fight.getDuels().get(0).addCompetitor1Score(Score.DO);
+        fight.getDuels().getFirst().addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null, null);
 
         //Save the fight at group.
-        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).getFirst();
         group.getFights().add(fightConverter.reverse(fight));
         groupProvider.save(group);
 
@@ -346,12 +346,12 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
-        fight.getDuels().get(0).addCompetitor2Score(Score.DO);
+        fight.getDuels().getFirst().addCompetitor2Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null, null);
 
         //Save the fight at group.
-        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).getFirst();
         group.getFights().add(fightConverter.reverse(fight));
         groupProvider.save(group);
 
@@ -375,8 +375,8 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournamentDTO, AchievementType.CLIMB_THE_LADDER);
         Assert.assertEquals(achievementsDTOs.size(), MEMBERS);
 
-        Assert.assertEquals(achievementsDTOs.get(0).getParticipant().getLastname(), "Lastname0"); //P4 -> Lastname 3
-        Assert.assertEquals(achievementsDTOs.get(0).getAchievementGrade(), AchievementGrade.SILVER);
+        Assert.assertEquals(achievementsDTOs.getFirst().getParticipant().getLastname(), "Lastname0"); //P4 -> Lastname 3
+        Assert.assertEquals(achievementsDTOs.getFirst().getAchievementGrade(), AchievementGrade.SILVER);
     }
 
 

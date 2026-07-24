@@ -47,7 +47,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testDecodeFromBase64WithValidData() throws Exception {
+	public void testDecodeFromBase64WithValidData() {
 		final String testData = "SGVsbG8gV29ybGQ="; // "Hello World" in base64
 		final byte[] encoded = testData.getBytes();
 		final byte[] decoded = ImageUtils.decodeFromBase64(encoded);
@@ -91,7 +91,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testResizeImageWhenSmallerThanDefaults() throws Exception {
+	public void testResizeImageWhenSmallerThanDefaults() {
 		final BufferedImage originalImage = this.createTestImage(TEST_IMAGE_WIDTH, TEST_IMAGE_HEIGHT);
 		final BufferedImage resizedImage = ImageUtils.resizeImage(originalImage);
 
@@ -102,7 +102,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testResizeImageWhenLargerThanDefaults() throws Exception {
+	public void testResizeImageWhenLargerThanDefaults() {
 		final BufferedImage originalImage = this.createTestImage(1000, 800);
 		final BufferedImage resizedImage = ImageUtils.resizeImage(originalImage);
 
@@ -114,7 +114,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testResizeImageWithSpecificDimensions() throws Exception {
+	public void testResizeImageWithSpecificDimensions() {
 		final BufferedImage originalImage = this.createTestImage(1000, 800);
 		final BufferedImage resizedImage = ImageUtils.resizeImage(originalImage, 500, 400);
 
@@ -126,7 +126,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testCropImageNormalize() throws Exception {
+	public void testCropImageNormalize() {
 		// Create image with DNI proportions (26/32)
 		final BufferedImage originalImage = createTestImage(400, 200);
 		final BufferedImage croppedImage = ImageUtils.cropImage(originalImage);
@@ -140,7 +140,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testCropImageWithSpecificCoordinates() throws Exception {
+	public void testCropImageWithSpecificCoordinates() {
 		final BufferedImage originalImage = this.createTestImage(200, 200);
 		final BufferedImage croppedImage = ImageUtils.cropImage(originalImage, 10, 10, 100, 100);
 
@@ -188,7 +188,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testResizeImagePreservesAspectRatio() throws Exception {
+	public void testResizeImagePreservesAspectRatio() {
 		// Wide image: 1000x500
 		final BufferedImage wideImage = this.createTestImage(1000, 500);
 		final BufferedImage resizedWideImage = ImageUtils.resizeImage(wideImage, 680, 480);
@@ -204,7 +204,7 @@ public class ImageUtilsTests {
 	}
 
 	@Test
-	public void testResizeImageTallImage() throws Exception {
+	public void testResizeImageTallImage() {
 		// Tall image: 500x1000
 		final BufferedImage tallImage = this.createTestImage(500, 1000);
 		final BufferedImage resizedTallImage = ImageUtils.resizeImage(tallImage, 680, 480);

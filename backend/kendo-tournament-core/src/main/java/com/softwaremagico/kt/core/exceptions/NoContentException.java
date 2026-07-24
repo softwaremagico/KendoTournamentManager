@@ -31,4 +31,8 @@ public class NoContentException extends RuntimeException {
     public NoContentException(String message) {
         super(message);
     }
+
+    public NoContentException(Class<?> clazz, String message) {
+        super(clazz.getName() + ": " + message);
+    }
 }

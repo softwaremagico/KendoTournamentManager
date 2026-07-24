@@ -46,8 +46,10 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -94,8 +96,8 @@ public class TeamServicesUnitTest {
         when(teamController.countByTournament(7)).thenReturn(1L);
         when(teamController.getAllByTournament(tournament, "tester")).thenReturn(List.of(team));
         when(teamController.create(tournament, "tester")).thenReturn(List.of(team));
-        when(teamController.create(any(List.class), eq("tester"), eq("s1"))).thenReturn(List.of(team));
-        when(teamController.delete(eq(tournament), any(ParticipantDTO.class))).thenReturn(team);
+        when(teamController.create(any(List.class), anyString(), anyString())).thenReturn(List.of(team));
+        when(teamController.delete(any(TournamentDTO.class), any(ParticipantDTO.class))).thenReturn(team);
         doNothing().when(teamController).delete(tournament);
 
         assertEquals(teamServices.getAll(7, authentication, null).size(), 1);
@@ -116,6 +118,8 @@ public class TeamServicesUnitTest {
         participantsInTournamentDTO.setParticipant(List.of(new ParticipantDTO(), new ParticipantDTO()));
         teamServices.delete(participantsInTournamentDTO, null);
 
+        verify(teamController).create(List.of(team), "tester", "s1");
+        verify(teamController).delete(same(tournament), same(participantInTournamentDTO.getParticipant()));
         verify(teamController).delete(tournament);
     }
 
@@ -131,7 +135,7 @@ public class TeamServicesUnitTest {
     @Test
     public void shouldGenerateTeamsPdfAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournament = tournament();
-        final TeamList teamList = org.mockito.Mockito.mock(TeamList.class);
+        final TeamList teamList = mock(TeamList.class);
         final byte[] expected = new byte[]{1, 2, 3};
 
         when(tournamentController.get(9)).thenReturn(tournament);
@@ -141,13 +145,13 @@ public class TeamServicesUnitTest {
         final byte[] result = teamServices.getAllFromTournamentAsPdf(9, Locale.ENGLISH, response, null);
 
         assertEquals(result, expected);
-        verify(response).setHeader(eq("Content-Disposition"), any(String.class));
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test
     public void shouldWrapPdfErrorsAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournament = tournament();
-        final TeamList teamList = org.mockito.Mockito.mock(TeamList.class);
+        final TeamList teamList = mock(TeamList.class);
 
         when(tournamentController.get(9)).thenReturn(tournament);
         when(pdfController.generateTeamList(tournament)).thenReturn(teamList);

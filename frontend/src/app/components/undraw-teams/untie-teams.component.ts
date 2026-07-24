@@ -39,18 +39,24 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
   }
 
   ngOnInit() {
-    for (let i = 0; i < this.getTotalDuels(); i++) {
-      const duel: Duel = new Duel();
-      duel.totalDuration = this.tournament.duelsDuration;
-      duel.type = DuelType.UNDRAW;
-      duel.tournament = this.tournament;
-      this.duels[i] = duel;
-    }
+    this.initializeDuels();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['teams']) {
       this.totalDuels = this.getTotalDuels();
+      this.initializeDuels();
+    }
+  }
+
+  private initializeDuels(): void {
+    this.duels = [];
+    for (let i = 0; i < this.getTotalDuels(); i++) {
+      const duel: Duel = new Duel();
+      duel.totalDuration = this.tournament?.duelsDuration;
+      duel.type = DuelType.UNDRAW;
+      duel.tournament = this.tournament;
+      this.duels[i] = duel;
     }
   }
 
@@ -88,10 +94,16 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
   }
 
   setCompetitor1(duelIndex: number, participant: Participant[]): void {
+    if (!this.duels[duelIndex]) {
+      return;
+    }
     this.duels[duelIndex].competitor1 = participant[0];
   }
 
   setCompetitor2(duelIndex: number, participant: Participant[]): void {
+    if (!this.duels[duelIndex]) {
+      return;
+    }
     this.duels[duelIndex].competitor2 = participant[0];
   }
 }

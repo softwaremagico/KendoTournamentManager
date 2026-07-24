@@ -331,6 +331,74 @@ public class SwissTournament16TeamsTieBreakRulesTest extends AbstractTestNGSprin
 				"Unexpected 3-win teams order for tie-break rule " + rule);
 	}
 
+	@Test(dependsOnMethods = "checkFinalSwissScoreDistribution")
+	public void checkSwissTieBreakFallbackChainResolvesForcedTies() {
+		final List<Fight> allFights = SwissTestAssertions.getAllRoundFightsWithoutDuplicates(this.groupController,
+				this.tournamentDTO, ROUNDS);
+		final Map<String, Integer> pointsByTeam = SwissTestAssertions.getSwissPointsByTeam(allFights);
+
+		// BUCHHOLZ selected: Team09 and Team05 tie in points, Buchholz and Median.
+		// Sonneborn-Berger resolves the tie and Team09 must rank ahead of Team05.
+		Assert.assertEquals(pointsByTeam.get("Team09"), pointsByTeam.get("Team05"));
+		Assert.assertEquals(SwissTestAssertions.getBuchholz("Team09", allFights, pointsByTeam),
+				SwissTestAssertions.getBuchholz("Team05", allFights, pointsByTeam), 0.0001d);
+		Assert.assertEquals(SwissTestAssertions.getMedianBuchholz("Team09", allFights, pointsByTeam),
+				SwissTestAssertions.getMedianBuchholz("Team05", allFights, pointsByTeam), 0.0001d);
+		Assert.assertNotEquals(SwissTestAssertions.getSonnebornBerger("Team09", allFights, pointsByTeam),
+				SwissTestAssertions.getSonnebornBerger("Team05", allFights, pointsByTeam),
+				"After Buchholz and Median tie, Sonneborn-Berger should break the tie in this scenario.");
+		this.tournamentExtraPropertyController.update(new TournamentExtraPropertyDTO(this.tournamentDTO,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()), null, null);
+		List<ScoreOfTeam> ranking = this.rankingProvider.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		Assert.assertTrue(SwissTestAssertions.getTeamPosition(ranking, "Team09")
+				< SwissTestAssertions.getTeamPosition(ranking, "Team05"));
+
+		// SONNEBORN_BERGER selected: Team07 and Team03 tie in points and Sonneborn.
+		// Buchholz also ties, so Median-Buchholz must resolve the tie and Team07 ranks
+		// ahead of Team03.
+		Assert.assertEquals(pointsByTeam.get("Team07"), pointsByTeam.get("Team03"));
+		Assert.assertEquals(SwissTestAssertions.getSonnebornBerger("Team07", allFights, pointsByTeam),
+				SwissTestAssertions.getSonnebornBerger("Team03", allFights, pointsByTeam), 0.0001d);
+		Assert.assertEquals(SwissTestAssertions.getBuchholz("Team07", allFights, pointsByTeam),
+				SwissTestAssertions.getBuchholz("Team03", allFights, pointsByTeam), 0.0001d);
+		Assert.assertTrue(SwissTestAssertions.getMedianBuchholz("Team07", allFights, pointsByTeam)
+				> SwissTestAssertions.getMedianBuchholz("Team03", allFights, pointsByTeam));
+		this.tournamentExtraPropertyController.update(new TournamentExtraPropertyDTO(this.tournamentDTO,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.SONNEBORN_BERGER.name()), null,
+				null);
+		ranking = this.rankingProvider.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		Assert.assertTrue(SwissTestAssertions.getTeamPosition(ranking, "Team07")
+				< SwissTestAssertions.getTeamPosition(ranking, "Team03"));
+
+		// DIRECT_ENCOUNTER selected: Team07 and Team03 tie in points, direct encounter
+		// and Buchholz. Median-Buchholz resolves the tie and Team07 must rank ahead.
+		Assert.assertEquals(pointsByTeam.get("Team07"), pointsByTeam.get("Team03"));
+		Assert.assertEquals(SwissTestAssertions.getDirectEncounter("Team07", allFights, pointsByTeam),
+				SwissTestAssertions.getDirectEncounter("Team03", allFights, pointsByTeam), 0.0001d);
+		Assert.assertEquals(SwissTestAssertions.getBuchholz("Team07", allFights, pointsByTeam),
+				SwissTestAssertions.getBuchholz("Team03", allFights, pointsByTeam), 0.0001d);
+		Assert.assertTrue(SwissTestAssertions.getMedianBuchholz("Team07", allFights, pointsByTeam)
+				> SwissTestAssertions.getMedianBuchholz("Team03", allFights, pointsByTeam));
+		this.tournamentExtraPropertyController.update(new TournamentExtraPropertyDTO(this.tournamentDTO,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.DIRECT_ENCOUNTER.name()), null, null);
+		ranking = this.rankingProvider.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		Assert.assertTrue(SwissTestAssertions.getTeamPosition(ranking, "Team07")
+				< SwissTestAssertions.getTeamPosition(ranking, "Team03"));
+
+		// POINT_DIFFERENTIAL selected: Team09 and Team15 tie in points and point
+		// differential. Buchholz resolves the tie and Team09 must rank ahead.
+		Assert.assertEquals(pointsByTeam.get("Team09"), pointsByTeam.get("Team15"));
+		Assert.assertEquals(SwissTestAssertions.getPointDifferential("Team09", allFights),
+				SwissTestAssertions.getPointDifferential("Team15", allFights), 0.0001d);
+		Assert.assertTrue(SwissTestAssertions.getBuchholz("Team09", allFights, pointsByTeam)
+				> SwissTestAssertions.getBuchholz("Team15", allFights, pointsByTeam));
+		this.tournamentExtraPropertyController.update(new TournamentExtraPropertyDTO(this.tournamentDTO,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.POINT_DIFFERENTIAL.name()), null, null);
+		ranking = this.rankingProvider.getTeamsScoreRanking(this.tournamentConverter.reverse(this.tournamentDTO));
+		Assert.assertTrue(SwissTestAssertions.getTeamPosition(ranking, "Team09")
+				< SwissTestAssertions.getTeamPosition(ranking, "Team15"));
+	}
+
 	private Map<Integer, List<String>> getExpectedPairingsByRound() {
 		final Map<Integer, List<String>> pairings = new LinkedHashMap<>();
 		// Expected pairings for the deterministic scenario
@@ -413,6 +481,7 @@ public class SwissTournament16TeamsTieBreakRulesTest extends AbstractTestNGSprin
 	private List<String> getTeamsWithWinsSorted(List<ScoreOfTeam> ranking, int wins) {
 		return this.getTeamsWithWins(ranking, wins).stream().sorted().toList();
 	}
+
 
 	private Map<String, Integer> getSwissWinsBeforeRoundWithoutByes(int roundLevel) {
 		final Map<String, Integer> winsByTeam = new HashMap<>();

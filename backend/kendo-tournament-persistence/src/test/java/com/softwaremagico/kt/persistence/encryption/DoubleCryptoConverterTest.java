@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.encryption;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,12 +43,13 @@ class DoubleCryptoConverterTest {
     @Mock
     private ICipherEngine cipherEngine;
 
+    @InjectMocks
     private DoubleCryptoConverter converter;
     private static final String ENCRYPTION_KEY = "test-key";
 
     @BeforeEach
     void setUp() {
-        converter = new DoubleCryptoConverter(cipherEngine);
+        // Mockito @InjectMocks handles converter construction.
     }
 
     @Test

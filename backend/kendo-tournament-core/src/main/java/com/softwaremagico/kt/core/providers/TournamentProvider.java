@@ -64,6 +64,7 @@ import java.util.Optional;
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
     public static final int DEFAULT_TEAM_SIZE = 3;
+    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
     private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
     private final GroupRepository groupRepository;
     private final FightRepository fightRepository;
@@ -95,6 +96,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Transactional
     @Override
     public Tournament save(Tournament entity) {
+        Objects.requireNonNull(entity, "Tournament to save cannot be null.");
         final boolean newEntity = entity.getId() == null;
         final Tournament tournament = super.save(entity);
         //Only for new tournaments.
@@ -146,7 +148,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Override
     public Tournament update(Tournament tournament) {
         if (tournament.isLocked() && tournament.getLockedAt() == null) {
-            tournament.setLockedAt(LocalDateTime.now(ZoneId.systemDefault()));
+            tournament.setLockedAt(LocalDateTime.now(DEFAULT_ZONE_ID));
         } else if (!tournament.isLocked()) {
             tournament.setLockedAt(null);
         }
@@ -175,7 +177,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     public long countTournamentsAfter(LocalDateTime createdAfter) {
         if (createdAfter == null) {
             return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt() != null
-                    && tournament.getCreatedAt().isAfter(LocalDateTime.now(ZoneId.systemDefault()).minusYears(1)
+                    && tournament.getCreatedAt().isAfter(LocalDateTime.now(DEFAULT_ZONE_ID).minusYears(1)
                     .with(LocalTime.MIN))).count();
 
         }
@@ -187,7 +189,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     public void markAsFinished(Tournament tournament, boolean finish) {
         if (finish && tournament.getFinishedAt() == null) {
-            tournament.updateFinishedAt(LocalDateTime.now(ZoneId.systemDefault()));
+            tournament.updateFinishedAt(LocalDateTime.now(DEFAULT_ZONE_ID));
             getRepository().save(tournament);
         } else if (!finish && tournament.getFinishedAt() != null) {
             tournament.updateFinishedAt(null);
@@ -207,9 +209,10 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             //Update winners in group
             final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament);
             final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
-            if (groupsByLevel.get(0) != null) {
-                groupsByLevel.get(0).forEach(group -> group.setNumberOfWinners(numberOfWinners));
-                groupRepository.saveAll(groupsByLevel.get(0));
+            final List<Group> firstLevelGroups = groupsByLevel.get(0);
+            if (firstLevelGroups != null) {
+                firstLevelGroups.forEach(group -> group.setNumberOfWinners(numberOfWinners));
+                groupRepository.saveAll(firstLevelGroups);
             }
 
             //Resize tournament
@@ -290,7 +293,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         final List<Tournament> tournaments = getRepository().findByLocked(false);
         if (!tournaments.isEmpty()) {
             tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-            return tournaments.get(0);
+            return tournaments.getFirst();
         }
         return null;
     }
@@ -300,7 +303,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
             final List<Tournament> tournaments = getRepository().findAll();
             for (Tournament tournament : tournaments) {
-                if (tournament.getName().equalsIgnoreCase(name)) {
+                if (tournament.getName() != null && tournament.getName().equalsIgnoreCase(name)) {
                     return Optional.of(tournament);
                 }
             }

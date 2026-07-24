@@ -18,9 +18,9 @@ export class MessageService implements OnDestroy {
 
   private messageSubscription: Subscription;
 
-  constructor(public snackBar: BiitSnackbarService, private translateService: TranslocoService,
-              private loggerService: LoggerService, private rxStompService: RxStompService,
-              private environmentService: EnvironmentService) {
+  constructor(public readonly snackBar: BiitSnackbarService, private readonly translateService: TranslocoService,
+              private readonly loggerService: LoggerService, private readonly rxStompService: RxStompService,
+              private readonly environmentService: EnvironmentService) {
     this.registerWebsocketsMessages();
   }
 
@@ -62,11 +62,11 @@ export class MessageService implements OnDestroy {
 
 
   infoMessage(message: string) {
-    this.openSnackBar(message, NotificationType.SUCCESS, this.getDuration(message, 2));
+    this.openSnackBar(message, NotificationType.SUCCESS, this.getDuration(message, 4));
   }
 
   warningMessage(message: string) {
-    this.openSnackBar(message, NotificationType.WARNING, this.getDuration(message, 3));
+    this.openSnackBar(message, NotificationType.WARNING, this.getDuration(message, 7));
   }
 
   private getDuration(message: string, minDuration: number): number {
@@ -74,7 +74,7 @@ export class MessageService implements OnDestroy {
   }
 
   errorMessage(message: string) {
-    this.openSnackBar(message, NotificationType.ERROR, this.getDuration(message, 5));
+    this.openSnackBar(message, NotificationType.ERROR, this.getDuration(message, 10));
   }
 
   backendErrorMessage(error: number, code: string) {

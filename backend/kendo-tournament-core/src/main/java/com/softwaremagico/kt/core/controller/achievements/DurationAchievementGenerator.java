@@ -31,6 +31,8 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -38,10 +40,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalLong;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 
 @Component
 public class DurationAchievementGenerator extends AchievementGenerationSupport {
@@ -56,7 +57,7 @@ public class DurationAchievementGenerator extends AchievementGenerationSupport {
     private final DuelProvider duelProvider;
 
     public DurationAchievementGenerator(AchievementProvider achievementProvider, TournamentProvider tournamentProvider,
-                                        ParticipantProvider participantProvider, DuelProvider duelProvider) {
+            ParticipantProvider participantProvider, DuelProvider duelProvider) {
         super(achievementProvider);
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
@@ -64,61 +65,53 @@ public class DurationAchievementGenerator extends AchievementGenerationSupport {
     }
 
     public List<Achievement> generateLongPathAchievement(Tournament tournament) {
+        final Map<Participant, Long> tournamentDuration = this.getAccumulatedDurations(tournament);
+        final Set<Participant> normalAchievements = this.getParticipantsExceedingDuration(tournamentDuration,
+                LONG_PATH_NORMAL_DURATION, this.getParticipantsWithAchievement(AchievementGrade.NORMAL));
+        final Set<Participant> bronzeAchievements = this.getParticipantsExceedingDuration(tournamentDuration,
+                LONG_PATH_BRONZE_DURATION, this.getParticipantsWithAchievement(AchievementGrade.BRONZE));
+        final Set<Participant> silverAchievements = this.getParticipantsExceedingDuration(tournamentDuration,
+                LONG_PATH_SILVER_DURATION, this.getParticipantsWithAchievement(AchievementGrade.SILVER));
+        final Set<Participant> goldAchievements = this.getParticipantsExceedingDuration(tournamentDuration,
+                LONG_PATH_GOLD_DURATION, this.getParticipantsWithAchievement(AchievementGrade.GOLD));
+
         final List<Achievement> achievements = new ArrayList<>();
-        final Map<Participant, Long> tournamentDuration = calculateTournamentDurations(tournament);
-
-        final Set<Participant> alreadyWithNormalAchievements = getParticipantsWithAchievement(AchievementGrade.NORMAL);
-        final Set<Participant> alreadyWithBronzeAchievements = getParticipantsWithAchievement(AchievementGrade.BRONZE);
-        final Set<Participant> alreadyWithSilverAchievements = getParticipantsWithAchievement(AchievementGrade.SILVER);
-        final Set<Participant> alreadyWithGoldAchievements = getParticipantsWithAchievement(AchievementGrade.GOLD);
-
-        final Set<Participant> normalAchievements = new HashSet<>();
-        final Set<Participant> bronzeAchievements = new HashSet<>();
-        final Set<Participant> silverAchievements = new HashSet<>();
-        final Set<Participant> goldAchievements = new HashSet<>();
-
-        addQualifiedParticipants(tournamentDuration, LONG_PATH_NORMAL_DURATION, alreadyWithNormalAchievements, normalAchievements);
-        addQualifiedParticipants(tournamentDuration, LONG_PATH_BRONZE_DURATION, alreadyWithBronzeAchievements, bronzeAchievements);
-        addQualifiedParticipants(tournamentDuration, LONG_PATH_SILVER_DURATION, alreadyWithSilverAchievements, silverAchievements);
-        addQualifiedParticipants(tournamentDuration, LONG_PATH_GOLD_DURATION, alreadyWithGoldAchievements, goldAchievements);
-
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.NORMAL, normalAchievements, tournament));
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.BRONZE, bronzeAchievements, tournament));
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.SILVER, silverAchievements, tournament));
-        achievements.addAll(generateAchievement(AchievementType.LONG_PATH, AchievementGrade.GOLD, goldAchievements, tournament));
-
+        achievements.addAll(this.generateAchievement(AchievementType.LONG_PATH, AchievementGrade.NORMAL,
+                normalAchievements, tournament));
+        achievements.addAll(this.generateAchievement(AchievementType.LONG_PATH, AchievementGrade.BRONZE,
+                bronzeAchievements, tournament));
+        achievements.addAll(this.generateAchievement(AchievementType.LONG_PATH, AchievementGrade.SILVER,
+                silverAchievements, tournament));
+        achievements.addAll(this.generateAchievement(AchievementType.LONG_PATH, AchievementGrade.GOLD, goldAchievements,
+                tournament));
         return achievements;
     }
 
-    private Map<Participant, Long> calculateTournamentDurations(Tournament tournament) {
-        final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament);
+    private Map<Participant, Long> getAccumulatedDurations(Tournament tournament) {
+        final List<Tournament> previousTournaments = this.tournamentProvider.getPreviousTo(tournament);
         previousTournaments.addFirst(tournament);
         final Map<Participant, Long> tournamentDuration = new HashMap<>();
-        for (Tournament oldTournament : previousTournaments) {
-            addTournamentDuration(tournament, oldTournament, tournamentDuration);
+        for (final Tournament oldTournament : previousTournaments) {
+            final Optional<Long> durationOfTournament = this.getTournamentDuration(oldTournament);
+            if (durationOfTournament.isEmpty()) {
+                continue;
+            }
+            final List<Participant> participants = this.participantProvider.get(tournament);
+            participants.forEach(
+                    participant -> tournamentDuration.merge(participant, durationOfTournament.get(), Long::sum));
         }
         return tournamentDuration;
     }
 
-    private void addTournamentDuration(Tournament tournament, Tournament oldTournament, Map<Participant, Long> tournamentDuration) {
-        final List<Duel> duels = duelProvider.get(oldTournament);
+    @SuppressWarnings("java:S7467")
+    private Optional<Long> getTournamentDuration(Tournament tournament) {
+        final List<Duel> duels = this.duelProvider.get(tournament);
         if (duels.isEmpty()) {
-            return;
+            return Optional.empty();
         }
-
-        final OptionalLong durationOfTournament = getDurationOfTournament(duels);
-        if (durationOfTournament.isEmpty()) {
-            return;
-        }
-
-        final List<Participant> participants = participantProvider.get(tournament);
-        participants.forEach(participant -> tournamentDuration.merge(participant, durationOfTournament.getAsLong(), Long::sum));
-    }
-
-    private OptionalLong getDurationOfTournament(List<Duel> duels) {
         LocalDateTime startingTime = LocalDateTime.MAX;
         LocalDateTime endingTime = LocalDateTime.MIN;
-        for (Duel duel : duels) {
+        for (final Duel duel : duels) {
             if (duel.getStartedAt() != null && duel.getStartedAt().isBefore(startingTime)) {
                 startingTime = duel.getStartedAt();
             }
@@ -127,26 +120,27 @@ public class DurationAchievementGenerator extends AchievementGenerationSupport {
             }
         }
         try {
-            return OptionalLong.of(endingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            return Optional.of(endingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                     - startingTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        } catch (ArithmeticException e) {
-            return OptionalLong.empty();
+        } catch (ArithmeticException _) {
+            // Ignore invalid dates
+            return Optional.empty();
         }
     }
 
-    private Set<Participant> getParticipantsWithAchievement(AchievementGrade achievementGrade) {
-        return getAchievementProvider().get(AchievementType.LONG_PATH, achievementGrade)
-                .stream().map(Achievement::getParticipant).collect(Collectors.toSet());
+    private Set<Participant> getParticipantsWithAchievement(AchievementGrade grade) {
+        return this.getAchievementProvider().get(AchievementType.LONG_PATH, grade).stream()
+                .map(Achievement::getParticipant).collect(Collectors.toSet());
     }
 
-    private void addQualifiedParticipants(Map<Participant, Long> tournamentDuration, long durationThreshold,
-                                          Set<Participant> alreadyWithAchievements, Set<Participant> qualifiedParticipants) {
-        for (Map.Entry<Participant, Long> duration : tournamentDuration.entrySet()) {
-            if (duration.getValue() > durationThreshold && !alreadyWithAchievements.contains(duration.getKey())) {
-                qualifiedParticipants.add(duration.getKey());
+    private Set<Participant> getParticipantsExceedingDuration(Map<Participant, Long> tournamentDuration,
+            long requiredDuration, Set<Participant> alreadyAwardedParticipants) {
+        final Set<Participant> participants = new HashSet<>();
+        for (final Map.Entry<Participant, Long> duration : tournamentDuration.entrySet()) {
+            if (duration.getValue() > requiredDuration && !alreadyAwardedParticipants.contains(duration.getKey())) {
+                participants.add(duration.getKey());
             }
         }
+        return participants;
     }
 }
-
-

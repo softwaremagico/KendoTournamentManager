@@ -90,13 +90,13 @@ public class EntityEqualsCoverageTest {
     public void when_hashCodeWithId_expect_consistent() {
         final Club club = new Club();
         club.setId(5);
-        assertThat(club.hashCode()).isEqualTo(club.hashCode());
+        assertThat(club).hasSameHashCodeAs(club);
     }
 
     @Test
     public void when_hashCodeNullId_expect_nonException() {
         final Club club = new Club();
-        assertThat(club.hashCode()).isEqualTo(club.hashCode());
+        assertThat(club).hasSameHashCodeAs(club);
     }
 
     // --- Element setCreatedBy/updatedBy also set hash ---

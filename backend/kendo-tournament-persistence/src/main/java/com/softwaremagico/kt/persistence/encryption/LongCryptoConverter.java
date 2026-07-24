@@ -45,8 +45,9 @@ public class LongCryptoConverter extends AbstractCryptoConverter<Long> implement
     protected Long stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Long.parseLong(dbData);
-        } catch (final NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass(), "Invalid long value '{}' in database.", dbData);
+        } catch (NumberFormatException ex) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid long value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

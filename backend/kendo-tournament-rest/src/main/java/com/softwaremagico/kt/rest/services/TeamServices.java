@@ -151,7 +151,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
                 throw new BadRequestException(getClass(), "Team data is missing");
             }
         });
-        getController().delete(teamsDTOs.get(0).getTournament());
+        getController().delete(teamsDTOs.getFirst().getTournament());
         return getController().create(teamsDTOs, authentication.getName(), session);
     }
 

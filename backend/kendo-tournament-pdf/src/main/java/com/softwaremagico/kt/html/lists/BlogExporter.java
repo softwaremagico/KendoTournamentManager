@@ -43,8 +43,11 @@ import java.util.Objects;
 
 public class BlogExporter {
     private static final String NEW_LINE = "&nbsp;\n";
-    private static final String HEADER_4_CLOSE_NEW_LINE = "</h4>\n";
-    private static final String DIV_CLOSE = "</div>";
+    private static final String CLOSING_DIV = "</div>";
+    private static final String CLOSING_H4_WITH_NEW_LINE = "</h4>\n";
+
+    public record ScoreData(List<ScoreOfTeamDTO> scoreOfTeams, List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
+    }
 
     private final MessageSource messageSource;
     private final Locale locale;
@@ -63,11 +66,10 @@ public class BlogExporter {
 
     private final List<ScoreOfCompetitorDTO> scoreOfCompetitors;
 
-    public record ScoreData(List<ScoreOfTeamDTO> scoreOfTeams, List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
-    }
-
+    @SuppressWarnings("java:S107")
     public BlogExporter(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<RoleDTO> roles,
-                        List<GroupDTO> groups, List<ParticipantDTO> competitors, ScoreData scoreData) {
+                        List<GroupDTO> groups, List<ParticipantDTO> competitors, List<ScoreOfTeamDTO> scoreOfTeams,
+                        List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
@@ -76,8 +78,13 @@ public class BlogExporter {
         this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
         this.competitors = new ArrayList<>(competitors);
         this.competitors.sort(Comparator.comparing(NameUtils::getLastnameName));
-        this.scoreOfTeams = scoreData.scoreOfTeams();
-        this.scoreOfCompetitors = scoreData.scoreOfCompetitors();
+        this.scoreOfTeams = scoreOfTeams;
+        this.scoreOfCompetitors = scoreOfCompetitors;
+    }
+
+    public BlogExporter(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<RoleDTO> roles,
+                        List<GroupDTO> groups, List<ParticipantDTO> competitors, ScoreData scoreData) {
+        this(messageSource, locale, tournament, roles, groups, competitors, scoreData.scoreOfTeams(), scoreData.scoreOfCompetitors());
     }
 
     /**
@@ -142,59 +149,60 @@ public class BlogExporter {
 
         final int[] widths = {25, 5, 5, 5, 5, 5, 5, 5, 25};
         for (int i = 0; i < groups.size(); i++) {
-            addGroupScoreTables(stringBuilder, tournament, groups.get(i), i, widths);
+            final GroupDTO group = groups.get(i);
+            appendGroupHeader(stringBuilder, group, i);
+            appendGroupFights(stringBuilder, tournament, widths, group);
         }
     }
 
-    private void addGroupScoreTables(StringBuilder stringBuilder, TournamentDTO tournament, GroupDTO group, int groupIndex, int[] widths) {
-        addGroupHeader(stringBuilder, group, groupIndex);
-        for (final FightDTO fight : getFightsOfGroup(group)) {
-            addFightTitle(stringBuilder, tournament, fight);
-            createTable(stringBuilder, getFightRows(fight), widths);
+    private void appendGroupHeader(StringBuilder stringBuilder, GroupDTO group, int groupIndex) {
+        if (groups.size() > 1) {
+            stringBuilder.append("<h4>").append(messageSource.getMessage("tournament.group", null, locale))
+                    .append(" ").append(groupIndex + 1).append(" (")
+                    .append(messageSource.getMessage("tournament.shiaijo", null, locale)).append(" ")
+                    .append(ShiaijoName.getShiaijoName(group.getShiaijo())).append(")")
+                    .append(CLOSING_H4_WITH_NEW_LINE);
         }
     }
 
-    private void addGroupHeader(StringBuilder stringBuilder, GroupDTO group, int groupIndex) {
-        if (groups.size() <= 1) {
-            return;
-        }
-        stringBuilder.append("<h4>").append(messageSource.getMessage("tournament.group", null, locale))
-                .append(" ").append(groupIndex + 1).append(" (").append(messageSource.getMessage("tournament.shiaijo", null, locale))
-                .append(" ").append(ShiaijoName.getShiaijoName(group.getShiaijo())).append(")").append(HEADER_4_CLOSE_NEW_LINE);
-    }
-
-    private List<FightDTO> getFightsOfGroup(GroupDTO group) {
-        return fights.stream().filter(fight -> group.getFights().contains(fight)).toList();
-    }
-
-    private void addFightTitle(StringBuilder stringBuilder, TournamentDTO tournament, FightDTO fight) {
-        if (tournament.getTeamSize() > 1) {
-            stringBuilder.append(NEW_LINE).append("<h5>").append(fight.getTeam1().getName()).append(" - ")
-                    .append(fight.getTeam2().getName()).append("</h5>\n");
+    private void appendGroupFights(StringBuilder stringBuilder, TournamentDTO tournament, int[] widths, GroupDTO group) {
+        for (final FightDTO fight : fights) {
+            if (!group.getFights().contains(fight)) {
+                continue;
+            }
+            if (tournament.getTeamSize() > 1) {
+                stringBuilder.append(NEW_LINE).append("<h5>").append(fight.getTeam1().getName()).append(" - ")
+                        .append(fight.getTeam2().getName()).append("</h5>\n");
+            }
+            createTable(stringBuilder, createFightRows(fight), widths);
         }
     }
 
-    private List<List<String>> getFightRows(FightDTO fight) {
+    private List<List<String>> createFightRows(FightDTO fight) {
         final List<List<String>> rows = new ArrayList<>();
-        for (DuelDTO duelDTO : fight.getDuels()) {
-            final List<String> columns = new ArrayList<>();
-            columns.add(NameUtils.getLastnameName(duelDTO.getCompetitor1()));
-            columns.add(getFaultsDiv(duelDTO, true));
-            columns.add(getScoreDiv(duelDTO, 1, true));
-            columns.add(getScoreDiv(duelDTO, 0, true));
-            columns.add(getDrawFight(duelDTO));
-            columns.add(getScoreDiv(duelDTO, 0, false));
-            columns.add(getScoreDiv(duelDTO, 1, false));
-            columns.add(getFaultsDiv(duelDTO, false));
-            columns.add(duelDTO.getCompetitor2() != null ? NameUtils.getLastnameName(duelDTO.getCompetitor2()) : "");
-            rows.add(columns);
+        for (final DuelDTO duelDTO : fight.getDuels()) {
+            rows.add(createFightRow(duelDTO));
         }
         return rows;
     }
 
+    private List<String> createFightRow(DuelDTO duelDTO) {
+        final List<String> columns = new ArrayList<>();
+        columns.add(NameUtils.getLastnameName(duelDTO.getCompetitor1()));
+        columns.add(getFaultsDiv(duelDTO, true));
+        columns.add(getScoreDiv(duelDTO, 1, true));
+        columns.add(getScoreDiv(duelDTO, 0, true));
+        columns.add(getDrawFight(duelDTO));
+        columns.add(getScoreDiv(duelDTO, 0, false));
+        columns.add(getScoreDiv(duelDTO, 1, false));
+        columns.add(getFaultsDiv(duelDTO, false));
+        columns.add(duelDTO.getCompetitor2() != null ? NameUtils.getLastnameName(duelDTO.getCompetitor2()) : "");
+        return columns;
+    }
+
     private void addTeamClassificationTable(StringBuilder stringBuilder) {
         stringBuilder.append(NEW_LINE + "<h4>").append(messageSource.getMessage("classification.score", null, locale))
-                .append(HEADER_4_CLOSE_NEW_LINE);
+                .append(CLOSING_H4_WITH_NEW_LINE);
         final List<List<String>> rows = new ArrayList<>();
         // Header
         List<String> columns = new ArrayList<>();
@@ -218,7 +226,7 @@ public class BlogExporter {
 
     private void addCompetitorClassificationTable(StringBuilder stringBuilder) {
         stringBuilder.append(NEW_LINE + "<h4>").append(messageSource.getMessage("classification.competitors.title", null, locale))
-                .append(HEADER_4_CLOSE_NEW_LINE);
+                .append(CLOSING_H4_WITH_NEW_LINE);
         final List<List<String>> rows = new ArrayList<>();
         // Header
         List<String> columns = new ArrayList<>();
@@ -261,10 +269,14 @@ public class BlogExporter {
     }
 
     private String getDrawFight(DuelDTO duelDTO) {
-        if (duelDTO.getWinner() != 0 || !duelDTO.isOver()) {
+        // Draw Fights
+        if (duelDTO.getWinner() == 0 && duelDTO.isOver()) {
+            return "<div style=\"text-align: center;\">"
+                    + Score.DRAW.getPdfAbbreviation()
+                    + CLOSING_DIV;
+        } else {
             return String.valueOf(Score.EMPTY.getPdfAbbreviation());
         }
-        return "<div style=\"text-align: center;\">" + Score.DRAW.getPdfAbbreviation() + DIV_CLOSE;
     }
 
     private String getFaultsDiv(DuelDTO duelDTO, boolean leftTeam) {
@@ -273,11 +285,15 @@ public class BlogExporter {
             return "";
         }
         return "<div style=\"width: 0;height: 0;border-left: 5px solid transparent;border-right: 5px solid transparent;border-bottom: 10px solid black;\">"
-                + DIV_CLOSE;
+                + CLOSING_DIV;
     }
 
     private boolean getFaults(DuelDTO duelDTO, boolean leftTeam) {
-        return leftTeam ? duelDTO.getCompetitor1Fault() : duelDTO.getCompetitor2Fault();
+        if (leftTeam) {
+            return duelDTO.getCompetitor1Fault();
+        } else {
+            return duelDTO.getCompetitor2Fault();
+        }
     }
 
     private String getScoreDiv(DuelDTO duelDTO, int score, boolean leftTeam) {
@@ -289,30 +305,22 @@ public class BlogExporter {
         return "<div style=\"border-radius: 50%;border: 1px solid black; text-align: center;height=100%\""
                 + (scoreTime > 0 ? "  title=\"" + scoreTime + "&quot;\">" : ">")
                 + String.valueOf(scoreText.getPdfAbbreviation()).replace(" ", "&nbsp;")
-                + DIV_CLOSE;
+                + CLOSING_DIV;
     }
 
     private int getScoreTime(DuelDTO duelDTO, int score, boolean leftTeam) {
-        final Integer scoreTime = getListValue(getScoresTimeBySide(duelDTO, leftTeam), score);
-        return scoreTime != null ? scoreTime : -1;
+        final List<Integer> scoreTimes = leftTeam ? duelDTO.getCompetitor1ScoreTime() : duelDTO.getCompetitor2ScoreTime();
+        if (scoreTimes == null || score < 0 || score >= scoreTimes.size()) {
+            return -1;
+        }
+        return scoreTimes.get(score);
     }
 
     private Score getScore(DuelDTO duelDTO, int score, boolean leftTeam) {
-        return getListValue(getScoresBySide(duelDTO, leftTeam), score);
-    }
-
-    private List<Integer> getScoresTimeBySide(DuelDTO duelDTO, boolean leftTeam) {
-        return leftTeam ? duelDTO.getCompetitor1ScoreTime() : duelDTO.getCompetitor2ScoreTime();
-    }
-
-    private List<Score> getScoresBySide(DuelDTO duelDTO, boolean leftTeam) {
-        return leftTeam ? duelDTO.getCompetitor1Score() : duelDTO.getCompetitor2Score();
-    }
-
-    private <T> T getListValue(List<T> values, int index) {
-        if (values == null || index < 0 || index >= values.size()) {
+        final List<Score> scores = leftTeam ? duelDTO.getCompetitor1Score() : duelDTO.getCompetitor2Score();
+        if (scores == null || score < 0 || score >= scores.size()) {
             return null;
         }
-        return values.get(index);
+        return scores.get(score);
     }
 }

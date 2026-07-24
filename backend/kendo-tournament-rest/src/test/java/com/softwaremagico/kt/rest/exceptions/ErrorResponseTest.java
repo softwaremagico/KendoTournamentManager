@@ -28,35 +28,34 @@ import static org.testng.Assert.assertNull;
 
 public class ErrorResponseTest {
 
-    @Test(groups = "restErrorResponse")
-    public void shouldKeepExplicitCode() {
-        ErrorResponse response = new ErrorResponse("Message", "EXPLICIT_CODE");
+	@Test(groups = "restErrorResponse")
+	public void shouldKeepExplicitCode() {
+		final ErrorResponse response = new ErrorResponse("Message", "EXPLICIT_CODE");
 
-        assertEquals(response.getCode(), "EXPLICIT_CODE");
-        assertEquals(response.getMessage(), "Message");
-    }
+		assertEquals(response.getCode(), "EXPLICIT_CODE");
+		assertEquals(response.getMessage(), "Message");
+	}
 
-    @Test(groups = "restErrorResponse")
-    public void shouldGenerateCodeFromMessageWhenCodeIsNull() {
-        ErrorResponse response = new ErrorResponse("Invalid Credentials");
+	@Test(groups = "restErrorResponse")
+	public void shouldGenerateCodeFromMessageWhenCodeIsNull() {
+		final ErrorResponse response = new ErrorResponse("Invalid Credentials");
 
-        assertEquals(response.getCode(), "invalid_credentials");
-    }
+		assertEquals(response.getCode(), "invalid_credentials");
+	}
 
-    @Test(groups = "restErrorResponse")
-    public void shouldReturnNullCodeWhenMessageAndCodeAreNull() {
-        ErrorResponse response = new ErrorResponse(null, null, null);
+	@Test(groups = "restErrorResponse")
+	public void shouldReturnNullCodeWhenMessageAndCodeAreNull() {
+		final ErrorResponse response = new ErrorResponse(null, null, null);
 
-        assertNull(response.getCode());
-    }
+		assertNull(response.getCode());
+	}
 
-    @Test(groups = "restErrorResponse")
-    public void shouldExposeCauseAndToString() {
-        RuntimeException cause = new RuntimeException("boom");
-        ErrorResponse response = new ErrorResponse("Bad request", cause);
+	@Test(groups = "restErrorResponse")
+	public void shouldExposeCauseAndToString() {
+		final RuntimeException cause = new RuntimeException("boom");
+		final ErrorResponse response = new ErrorResponse("Bad request", cause);
 
-        assertEquals(response.getCause(), cause);
-        assertEquals(response.toString(), "Bad request");
-    }
+		assertEquals(cause, response.getCause());
+		assertEquals(response.toString(), "Bad request");
+	}
 }
-

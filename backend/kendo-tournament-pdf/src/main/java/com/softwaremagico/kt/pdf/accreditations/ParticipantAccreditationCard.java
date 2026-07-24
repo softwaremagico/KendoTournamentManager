@@ -44,11 +44,12 @@ import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
 import java.awt.Color;
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 
-@SuppressWarnings("java:S2143")
 public class ParticipantAccreditationCard extends PdfDocument {
     private static final int BORDER = 0;
     private static final int NAME_LENGTH = 18;
@@ -100,9 +101,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-        // This override is intentionally empty. The single-card layout does not require any writer events,
-        // such as page numbering or header/footer content, which are typically managed by the base class.
-        // This method is defined here to comply with the parent class contract.
+        // No writer events are needed for this accreditation layout.
     }
 
     private PdfPTable createNameTable() throws BadElementException {
@@ -228,6 +227,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 }
             }
         } catch (NullPointerException npe) {
+            KendoTournamentLogger.debug(this.getClass(), "Using default accreditation color due to missing role information ({}).",
+                    npe.getMessage());
             cell.setBackgroundColor(DEFAULT_COLOR);
         }
         table2.addCell(cell);
@@ -338,15 +339,15 @@ public class ParticipantAccreditationCard extends PdfDocument {
         Paragraph p;
         final PdfPCell cell;
 
-        final Date date = new java.util.Date();
-        final long lnMilliseconds = date.getTime();
-        final Date sqlDate = new java.sql.Date(lnMilliseconds);
-        final Time sqlTime = new java.sql.Time(lnMilliseconds);
+        final LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+        final LocalDate sqlDate = now.toLocalDate();
+        final LocalTime sqlTime = now.toLocalTime().withNano(0);
 
         try {
             p = new Paragraph(tournament.getName() + " (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
-        } catch (NullPointerException npen) {
+        } catch (NullPointerException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Falling back to generic accreditation signature ({}).", ex.getMessage());
             p = new Paragraph("Accreditation Card (" + sqlTime + " " + sqlDate + ")",
                     new Font(PdfTheme.getLineFont(), fontSize));
         }

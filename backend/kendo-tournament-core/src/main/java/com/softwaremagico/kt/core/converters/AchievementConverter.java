@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -52,21 +53,23 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
     }
 
 
-    @Override
+     @Override
     protected AchievementDTO convertElement(AchievementConverterRequest from) {
         final AchievementDTO achievementDTO = new AchievementDTO();
         BeanUtils.copyProperties(from.getEntity(), achievementDTO);
         try {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | FatalBeanException e) {
+        } catch (LazyInitializationException | FatalBeanException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Fallback tournament conversion due to lazy entity access: {}", ex.getMessage());
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
             achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
-        } catch (LazyInitializationException | FatalBeanException e) {
+        } catch (LazyInitializationException | FatalBeanException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Fallback participant conversion due to lazy entity access: {}", ex.getMessage());
             achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }

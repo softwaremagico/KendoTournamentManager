@@ -33,15 +33,10 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 @Converter
-@SuppressWarnings("java:S2143")
-public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalDateTime>
-        implements
-            AttributeConverter<LocalDateTime, String> {
+public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalDateTime> implements AttributeConverter<LocalDateTime, String> {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-    private final DateTimeFormatter formatterWithMilliseconds = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault());
-    private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx",
-            Locale.getDefault());
+    private final DateTimeFormatter formatterWithMilliseconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault());
+    private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx", Locale.getDefault());
 
     public LocalDateTimeCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -61,72 +56,44 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
         if (dbData == null || dbData.isEmpty()) {
             return null;
         }
-
-        LocalDateTime result = this.parseAsLongTimestamp(dbData);
-        if (result != null) {
-            return result;
-        }
-
-        result = this.parseAsLocalDateTime(dbData);
-        if (result != null) {
-            return result;
-        }
-
-        result = this.parseWithMilliseconds(dbData);
-        if (result != null) {
-            return result;
-        }
-
-        result = this.parseWithoutMilliseconds(dbData);
-        if (result != null) {
-            return result;
-        }
-
-        result = this.parseWithOffset(dbData);
-        if (result != null) {
-            return result;
-        }
-
-        EncryptorLogger.errorMessage(this.getClass(), "Invalid datetime value '{}' in database.", dbData);
-        return null;
-    }
-
-    private LocalDateTime parseAsLongTimestamp(String dbData) {
         try {
             return new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
-        } catch (final NumberFormatException nfe) {
-            return null;
+        } catch (NumberFormatException ex) {
+            return parseLegacyDateTime(dbData, ex);
         }
     }
 
-    private LocalDateTime parseAsLocalDateTime(String dbData) {
+    private LocalDateTime parseLegacyDateTime(String dbData, NumberFormatException numberFormatException) {
         try {
+            //Old versions store it as LocalDateTime
             return LocalDateTime.parse(dbData);
-        } catch (final DateTimeParseException dtpe) {
-            return null;
+        } catch (DateTimeParseException ex) {
+            final LocalDateTime withMillis = tryParseWithFormatter(dbData, formatterWithMilliseconds);
+            if (withMillis != null) {
+                return withMillis;
+            }
+            final LocalDateTime withoutMillis = tryParseWithFormatter(dbData, formatter);
+            if (withoutMillis != null) {
+                return withoutMillis;
+            }
+            try {
+                //Try with offset.
+                return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
+            } catch (DateTimeParseException offsetException) {
+                EncryptorLogger.errorMessage(this.getClass(),
+                        "Invalid datetime value '{}' in database. Causes: '{}', '{}', '{}'", dbData,
+                        numberFormatException.getMessage(), ex.getMessage(), offsetException.getMessage());
+                return null;
+            }
         }
     }
 
-    private LocalDateTime parseWithMilliseconds(String dbData) {
+    private LocalDateTime tryParseWithFormatter(String dbData, DateTimeFormatter dateTimeFormatter) {
         try {
-            return LocalDateTime.parse(dbData, this.formatterWithMilliseconds);
-        } catch (final DateTimeParseException dte) {
-            return null;
-        }
-    }
-
-    private LocalDateTime parseWithoutMilliseconds(String dbData) {
-        try {
-            return LocalDateTime.parse(dbData, this.formatter);
-        } catch (final DateTimeParseException dteo) {
-            return null;
-        }
-    }
-
-    private LocalDateTime parseWithOffset(String dbData) {
-        try {
-            return OffsetDateTime.parse(dbData, this.formatterOffset).toLocalDateTime();
-        } catch (final DateTimeParseException e) {
+            return LocalDateTime.parse(dbData, dateTimeFormatter);
+        } catch (DateTimeParseException ex) {
+            EncryptorLogger.debug(this.getClass(), "Datetime '{}' does not match formatter '{}': {}", dbData,
+                    dateTimeFormatter, ex.getMessage());
             return null;
         }
     }

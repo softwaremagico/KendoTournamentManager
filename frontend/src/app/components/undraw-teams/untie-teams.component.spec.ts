@@ -93,6 +93,21 @@ describe('UntieTeamsComponent', () => {
     expect(component.duels[0].tournament).toBe(component.tournament);
   });
 
+  it('should allow duels to be completed immediately when each team has a single selected member', () => {
+    const participantA = createParticipant('One');
+    const participantB = createParticipant('Two');
+    component.teams = [
+      { name: 'A', members: [participantA] } as unknown as Team,
+      { name: 'B', members: [participantB] } as unknown as Team
+    ];
+    component.ngOnInit();
+
+    component.setCompetitor1(0, [participantA]);
+    component.setCompetitor2(0, [participantB]);
+
+    expect(component.duelsCompleted()).toBeTrue();
+  });
+
   it('should update totalDuels when teams input changes', () => {
     component.teams = [createTeam('A'), createTeam('B')];
 
@@ -106,6 +121,26 @@ describe('UntieTeamsComponent', () => {
     });
 
     expect(component.totalDuels).toBe(1);
+  });
+
+  it('should recreate duels when teams input changes', () => {
+    component.teams = [createTeam('A'), createTeam('B')];
+    component.ngOnInit();
+    expect(component.duels).toHaveSize(1);
+
+    component.teams = [createTeam('A'), createTeam('B'), createTeam('C')];
+    component.ngOnChanges({
+      teams: {
+        currentValue: component.teams,
+        previousValue: [createTeam('A'), createTeam('B')],
+        firstChange: false,
+        isFirstChange: () => false
+      }
+    });
+
+    expect(component.totalDuels).toBe(3);
+    expect(component.duels).toHaveSize(3);
+    expect(component.duels.every(duel => duel.type === DuelType.UNDRAW)).toBeTrue();
   });
 
   it('should return false from duelsCompleted when a duel has missing competitors', () => {
@@ -167,4 +202,3 @@ describe('UntieTeamsComponent', () => {
     expect(component.closed.emit).toHaveBeenCalledOnceWith([]);
   });
 });
-

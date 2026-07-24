@@ -178,7 +178,7 @@ public class StatisticsServicesTest {
 		when(auth.getName()).thenReturn("testuser");
 		when(this.mockTournamentController.get(tournamentId)).thenReturn(tournamentDTO);
 		when(this.mockTournamentController.getPreviousTo(tournamentDTO, 1)).thenReturn(previousTournaments);
-		when(this.mockTournamentStatisticsController.get(previousTournaments.get(0))).thenReturn(stats);
+		when(this.mockTournamentStatisticsController.get(previousTournaments.getFirst())).thenReturn(stats);
 
 		final List<TournamentStatisticsDTO> result = this.service.getStatisticsFromPreviousTournament(tournamentId,
 				null, auth, null);

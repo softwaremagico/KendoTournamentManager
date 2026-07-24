@@ -89,7 +89,7 @@ public abstract class LeagueHandler implements ITournamentManager {
             group.setTeams(teamProvider.getAll(tournament));
             return addGroup(tournament, group);
         }
-        return groups.get(0);
+        return groups.getFirst();
     }
 
     protected Group addGroup(Tournament tournament, Integer level) {
@@ -139,7 +139,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     public Group addGroup(Tournament tournament, Group group) {
         final List<Group> existingGroups = groupProvider.getGroups(tournament);
         if (!existingGroups.isEmpty()) {
-            final Group existingGroup = existingGroups.get(0);
+            final Group existingGroup = existingGroups.getFirst();
             // For league tournaments there is only one group; if we're updating that same group,
             // keep the row and update it in-place to avoid detached entity issues.
             if (group.getId() != null && Objects.equals(existingGroup.getId(), group.getId())) {
@@ -161,7 +161,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     public boolean exist(Tournament tournament, Team team) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
-            return groups.get(0).getTeams().contains(team);
+            return groups.getFirst().getTeams().contains(team);
         }
         return false;
     }

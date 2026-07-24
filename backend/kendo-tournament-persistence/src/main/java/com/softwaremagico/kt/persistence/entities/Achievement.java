@@ -130,7 +130,7 @@ public class Achievement extends Element {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (!(o instanceof Achievement that)) {
             return false;
         }

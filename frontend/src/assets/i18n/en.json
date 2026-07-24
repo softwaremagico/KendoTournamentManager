@@ -409,6 +409,7 @@
   "draw": "Draw",
   "drawResolution": "Draws Resolution",
   "drawScore": "There is some draw scores that must be resolved before passing to the next tournament phase.",
+  "drawTopPositionsScore": "There are tied scores that must be resolved to determine the top ranking positions.",
   "duelStored": "The fight has been stored into the database.",
   "duels": "Fights",
   "duelsAverage": "Fights Average",

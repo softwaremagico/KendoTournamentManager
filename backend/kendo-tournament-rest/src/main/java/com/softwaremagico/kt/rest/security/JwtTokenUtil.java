@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.logger.JwtFilterLogger;
+import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -99,6 +100,7 @@ public class JwtTokenUtil {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final NetworkController networkController;
+
     private final SecretKey signingKey;
     private final long jwtExpiration;
     private final long jwtGuestExpiration;
@@ -118,16 +120,17 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedJwtExpiration = Long.parseLong(jwtExpiration);
-            } catch (final NumberFormatException e) {
-                JwtFilterLogger.errorMessage(this.getClass(), e);
-                JwtFilterLogger.warning(this.getClass(),
+            } catch (NumberFormatException _) {
+                RestServerLogger.warning(this.getClass(),
                         "jwt.expiration value '{}' is invalid. Setting default to '{}'.", jwtExpiration,
                         JWT_EXPIRATION);
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
-        final String secret = (jwtSecret != null && !jwtSecret.isBlank()) ? jwtSecret : this.generateRandomSecret();
-        this.signingKey = this.createSigningKey(secret);
+        final String signingSecret = jwtSecret != null && !jwtSecret.isBlank()
+                ? jwtSecret
+                : this.generateRandomSecret();
+        this.signingKey = this.createSigningKey(signingSecret);
         this.jwtExpiration = calculatedJwtExpiration;
 
         // If not set, guest expiration is the same that the standard one.
@@ -137,8 +140,10 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
-            } catch (final NumberFormatException e) {
-                JwtFilterLogger.errorMessage(this.getClass(), e);
+            } catch (NumberFormatException _) {
+                RestServerLogger.debug(this.getClass(),
+                        "jwt.guest.expiration value '{}' is invalid ({}). Using default.", jwtGuestExpiration,
+                        "invalid");
                 calculatedGuestJwtExpiration = this.jwtExpiration;
             }
         }
@@ -151,8 +156,10 @@ public class JwtTokenUtil {
         } else {
             try {
                 calculatedParticipantJwtExpiration = Long.parseLong(jwtParticipantExpiration);
-            } catch (final NumberFormatException e) {
-                JwtFilterLogger.errorMessage(this.getClass(), e);
+            } catch (NumberFormatException _) {
+                RestServerLogger.debug(this.getClass(),
+                        "jwt.participant.expiration value '{}' is invalid ({}). Using default.",
+                        jwtParticipantExpiration, "invalid");
                 calculatedParticipantJwtExpiration = this.jwtExpiration;
             }
         }
@@ -176,8 +183,8 @@ public class JwtTokenUtil {
             final byte[] keyBytes = MessageDigest.getInstance("SHA-512")
                     .digest(secret.getBytes(StandardCharsets.UTF_8));
             return Keys.hmacShaKeyFor(keyBytes);
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-512 algorithm is not available.", e);
+        } catch (NoSuchAlgorithmException _) {
+            throw new IllegalStateException("SHA-512 algorithm is not available.");
         }
     }
 
@@ -271,7 +278,7 @@ public class JwtTokenUtil {
      *         milliseconds
      */
     public long getJwtExpirationTime() {
-        return (System.currentTimeMillis() + this.jwtExpiration);
+        return Instant.now().plusMillis(this.jwtExpiration).toEpochMilli();
     }
 
     /**
@@ -281,7 +288,7 @@ public class JwtTokenUtil {
      *         milliseconds
      */
     public long getJwtGuestExpirationTime() {
-        return (System.currentTimeMillis() + this.jwtGuestExpiration);
+        return Instant.now().plusMillis(this.jwtGuestExpiration).toEpochMilli();
     }
 
     /**
@@ -291,7 +298,7 @@ public class JwtTokenUtil {
      *         epoch milliseconds
      */
     public long getJwtParticipantExpirationTime() {
-        return (System.currentTimeMillis() + this.jwtParticipantExpiration);
+        return Instant.now().plusMillis(this.jwtParticipantExpiration).toEpochMilli();
     }
 
     /**
@@ -377,11 +384,11 @@ public class JwtTokenUtil {
     }
 
     /**
-     * Returns the expiration instant embedded in the given JWT token.
+     * Returns the expiration date embedded in the given JWT token.
      *
      * @param token
      *            the JWT string to parse
-     * @return the expiration instant
+     * @return the expiration {@link Instant}
      */
     public Instant getExpirationDate(String token) {
         return this.getClaims(token).getExpiration().toInstant();
@@ -400,12 +407,12 @@ public class JwtTokenUtil {
         try {
             this.getClaims(token);
             return true;
-        } catch (final ExpiredJwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass(), "Expired JWT token '{}'", ex.getMessage());
-        } catch (final JwtException ex) {
-            JwtFilterLogger.errorMessage(this.getClass(), "Invalid JWT token '{}'", ex.getMessage());
-        } catch (final IllegalArgumentException ex) {
-            JwtFilterLogger.errorMessage(this.getClass(), "JWT claims string is empty '{}'", ex.getMessage());
+        } catch (ExpiredJwtException _) {
+            JwtFilterLogger.errorMessage(this.getClass(), "Expired JWT token");
+        } catch (JwtException _) {
+            JwtFilterLogger.errorMessage(this.getClass(), "Invalid JWT token");
+        } catch (IllegalArgumentException _) {
+            JwtFilterLogger.errorMessage(this.getClass(), "JWT claims string is empty");
         }
         return false;
     }

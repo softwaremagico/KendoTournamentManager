@@ -160,7 +160,7 @@ public class GroupProviderTest {
         assertEquals(existing.getIndex(), 3);
         assertEquals(existing.getShiaijo(), 4);
         assertEquals(existing.getNumberOfWinners(), 2);
-        assertEquals(existing.getTeams().get(0).getName(), "new-team");
+        assertEquals(existing.getTeams().getFirst().getName(), "new-team");
         assertEquals(existing.getUpdatedBy(), "new-user");
         verify(groupLinkRepository).deleteByTournament(tournament);
         verify(groupRepository).save(existing);
@@ -210,7 +210,7 @@ public class GroupProviderTest {
 
         assertSame(result, group);
         assertEquals(result.getTeams().size(), 2);
-        assertEquals(result.getTeams().get(0).getName(), "team-1");
+        assertEquals(result.getTeams().getFirst().getName(), "team-1");
         assertEquals(result.getTeams().get(1).getName(), "team-2");
         assertEquals(result.getUpdatedBy(), "alice");
         verify(groupRepository, times(2)).save(group);
@@ -362,7 +362,7 @@ public class GroupProviderTest {
         final List<Group> updated = provider.deleteTeams(tournament, List.of(sharedTeam), "tester");
 
         assertEquals(updated.size(), 1);
-        assertSame(updated.get(0), g1);
+        assertSame(updated.getFirst(), g1);
         verify(groupRepository, times(1)).save(any(Group.class));
     }
 
@@ -380,7 +380,7 @@ public class GroupProviderTest {
         final List<Group> updated = provider.deleteTeams(tournament, "tester");
 
         assertEquals(updated.size(), 1);
-        assertSame(updated.get(0), nonEmpty);
+        assertSame(updated.getFirst(), nonEmpty);
         assertTrue(nonEmpty.getTeams().isEmpty());
         verify(groupRepository, times(1)).save(any(Group.class));
     }
@@ -396,4 +396,3 @@ public class GroupProviderTest {
         return tournament;
     }
 }
-

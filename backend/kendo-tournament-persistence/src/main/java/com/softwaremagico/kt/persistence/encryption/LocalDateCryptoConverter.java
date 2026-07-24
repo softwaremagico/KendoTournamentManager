@@ -29,9 +29,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 @Converter
-public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate>
-        implements
-            AttributeConverter<LocalDate, String> {
+public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate> implements AttributeConverter<LocalDate, String> {
 
     public LocalDateCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -50,8 +48,9 @@ public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate>
     protected LocalDate stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : LocalDate.parse(dbData);
-        } catch (final DateTimeParseException nfe) {
-            EncryptorLogger.errorMessage(this.getClass(), "Invalid date value '{}' in database.", dbData);
+        } catch (DateTimeParseException ex) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid date value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

@@ -34,8 +34,8 @@ public abstract class CsvReader<E extends Element> {
     public abstract List<E> readCSV(String csvContent);
 
     protected void checkHeaders(String[] fileHeaders, String... elementHeaders) throws InvalidCsvFieldException {
-        for (String header : fileHeaders) {
-            if (getHeaderIndex(elementHeaders, header) < 0) {
+        for (final String header : fileHeaders) {
+            if (this.getHeaderIndex(elementHeaders, header) < 0) {
                 throw new InvalidCsvFieldException(this.getClass(), "Invalid header '" + header + "'.", header);
             }
         }
@@ -48,7 +48,6 @@ public abstract class CsvReader<E extends Element> {
         }
         return new String[0];
     }
-
 
     public String[] getContent(String content) {
         final String[] lines = content.split(LINE_SEPARATOR);

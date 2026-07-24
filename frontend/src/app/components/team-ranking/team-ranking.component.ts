@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
 import {Tournament} from "../../models/tournament";
@@ -25,7 +25,7 @@ import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
   templateUrl: './team-ranking.component.html',
   styleUrls: ['./team-ranking.component.scss']
 })
-export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
+export class TeamRankingComponent extends RbacBasedComponent implements OnInit, OnChanges {
 
   teamScores: ScoreOfTeam[];
   @Input()
@@ -36,9 +36,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   group: Group | undefined | null;
   @Input()
   showIndex: boolean | undefined;
+  @Input()
+  showDrawWarningOnInit: boolean = false;
   @Output()
   closed: EventEmitter<Duel[]> = new EventEmitter<Duel[]>();
   existsDraws: boolean = false;
+  private drawWarningShown: boolean = false;
   numberOfWinners: number;
   protected untieTeamsPopup: boolean = false;
   protected drawTeams: Team[] = [];
@@ -46,28 +49,17 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   protected swissTieBreakRule: SwissTieBreakRule = SwissTieBreakRule.BUCHHOLZ;
   protected readonly SwissTieBreakRule = SwissTieBreakRule;
 
-  constructor(private rankingService: RankingService, public translateService: TranslocoService,
-              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
-              public override rbacService: RbacService, private router: Router,
-              protected nameUtils: NameUtilsService) {
+  constructor(private readonly rankingService: RankingService, public readonly translateService: TranslocoService,
+              private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private readonly messageService: MessageService,
+              public override readonly rbacService: RbacService, private readonly router: Router,
+              protected readonly nameUtils: NameUtilsService) {
     super(rbacService);
   }
 
   ngOnInit(): void {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.SWISS) {
-        if (this.group) {
-          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group.id!);
-          const tieBreakRuleRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService
-            .getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
-
-          forkJoin([rankingRequest, tieBreakRuleRequest]).subscribe(([_scoresOfTeams, _tieBreakRule]): void => {
-            this.teamScores = _scoresOfTeams;
-            this.numberOfWinners = 1;
-            this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tieBreakRule?.propertyValue)
-              ?? SwissTieBreakRule.BUCHHOLZ;
-          });
-        } else if (this.tournament.id) {
+        if (this.tournament.id) {
           const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id);
           const tieBreakRuleRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService
             .getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
@@ -77,6 +69,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
             this.numberOfWinners = 1;
             this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tieBreakRule?.propertyValue)
               ?? SwissTieBreakRule.BUCHHOLZ;
+            this.updateDrawStatusAndWarning();
           });
         }
       } else if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
@@ -87,10 +80,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
           forkJoin([rankingRequest, winnersRequest]).subscribe(([_scoresOfTeams, _numberOfWinners]): void => {
             this.teamScores = _scoresOfTeams;
             this.numberOfWinners = _numberOfWinners ? Number(_numberOfWinners.propertyValue) : 1;
-            if (this.isDrawWinner(0) || (_numberOfWinners && _numberOfWinners.propertyValue == "2" && this.isDrawWinner(1))) {
-              this.messageService.warningMessage("drawScore");
-              this.existsDraws = true;
-            }
+            this.updateDrawStatusAndWarning();
           });
         }
       } else {
@@ -98,13 +88,23 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
           this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
             this.numberOfWinners = 1;
             this.teamScores = scoresOfTeams;
+            this.updateDrawStatusAndWarning();
           });
         }
       }
     }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if ((changes['showDrawWarningOnInit'] || changes['fightsFinished']) && this.teamScores) {
+      this.updateDrawStatusAndWarning();
+    }
+  }
+
   importantDrawWinner(): boolean {
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return this.isDrawWinner(0);
+    }
     for (let i = 0; i < this.numberOfWinners; i++) {
       if (this.isDrawWinner(i)) {
         return true;
@@ -114,10 +114,16 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   isDrawWinner(index: number): boolean {
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return index === 0 && this.fightsFinished && this.getSwissChampionDrawTeams().length > 1;
+    }
     return this.teamScores && this.fightsFinished && this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === index).length > 1;
   }
 
   getDrawWinners(index: number): Team[] {
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return index === 0 ? this.getSwissChampionDrawTeams() : [];
+    }
     const teams: Team[] = [];
     if (this.teamScores && this.fightsFinished) {
       const scores: ScoreOfTeam[] = this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === index);
@@ -216,6 +222,54 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       return score.swissTieBreakValue.toFixed(1);
     }
     return score.swissTieBreakValue.toFixed(0);
+  }
+
+  private getSwissChampionDrawTeams(): Team[] {
+    if (!this.teamScores || this.teamScores.length === 0) {
+      return [];
+    }
+    const maxPoints = Math.max(...this.teamScores.map((score: ScoreOfTeam): number => this.getSwissMatchPoints(score)));
+    return this.teamScores
+      .filter((score: ScoreOfTeam): boolean => this.getSwissMatchPoints(score) === maxPoints)
+      .map((score: ScoreOfTeam): Team => score.team);
+  }
+
+  private getSwissMatchPoints(score: ScoreOfTeam): number {
+    const winPoints: number = this.tournament?.tournamentScore?.pointsByVictory ?? 3;
+    const drawPoints: number = this.tournament?.tournamentScore?.pointsByDraw ?? 1;
+    const wonFights: number = score.wonFights ?? 0;
+    const drawFights: number = score.drawFights ?? 0;
+    return wonFights * winPoints + drawFights * drawPoints;
+  }
+
+  private updateDrawStatusAndWarning(): void {
+    this.existsDraws = this.importantDrawWinner();
+    if (this.hasRelevantWinnerDraw() && this.showDrawWarningOnInit && !this.drawWarningShown) {
+      this.messageService.warningMessage(this.getDrawWarningMessageKey());
+      this.drawWarningShown = true;
+    }
+  }
+
+  private getDrawWarningMessageKey(): string {
+    if (this.tournament?.type === TournamentType.CHAMPIONSHIP) {
+      return "drawScore";
+    }
+    return "drawTopPositionsScore";
+  }
+
+  private hasRelevantWinnerDraw(): boolean {
+    if (!this.teamScores || this.teamScores.length === 0) {
+      return false;
+    }
+    if (this.tournament?.type === TournamentType.SWISS) {
+      return this.getSwissChampionDrawTeams().length > 1;
+    }
+    for (let i = 0; i < this.numberOfWinners; i++) {
+      if (this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === i).length > 1) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

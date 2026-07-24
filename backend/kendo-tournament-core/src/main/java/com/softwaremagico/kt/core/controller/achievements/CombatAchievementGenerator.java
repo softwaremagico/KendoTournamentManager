@@ -28,17 +28,14 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.Score;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class CombatAchievementGenerator extends ConsecutiveAchievementGenerationSupport {
@@ -70,39 +67,46 @@ public class CombatAchievementGenerator extends ConsecutiveAchievementGeneration
         if (this.fightProvider.getFights(tournament).size() < this.minimumTournamentFights) {
             return new ArrayList<>();
         }
-        FastestScoreResult fastestScoreResult = new FastestScoreResult(null, tournament.getDuelsDuration());
+        int minTime = tournament.getDuelsDuration();
+        com.softwaremagico.kt.persistence.entities.Participant participant = null;
         for (final Duel duel : this.duelProvider.get(tournament)) {
-            fastestScoreResult = updateFastestScoreResult(fastestScoreResult, duel.getCompetitor1(), duel.getCompetitor1ScoreTime());
-            fastestScoreResult = updateFastestScoreResult(fastestScoreResult, duel.getCompetitor2(), duel.getCompetitor2ScoreTime());
+            final BillyTheKidResult firstCompetitorResult = evaluateCompetitorFastestScores(duel.getCompetitor1(),
+                    duel.getCompetitor1ScoreTime(), participant, minTime);
+            participant = firstCompetitorResult.participant();
+            minTime = firstCompetitorResult.minTime();
+
+            final BillyTheKidResult secondCompetitorResult = evaluateCompetitorFastestScores(duel.getCompetitor2(),
+                    duel.getCompetitor2ScoreTime(), participant, minTime);
+            participant = secondCompetitorResult.participant();
+            minTime = secondCompetitorResult.minTime();
         }
-        if (fastestScoreResult.participant() != null) {
-            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL,
-                    Collections.singleton(fastestScoreResult.participant()), tournament);
+        if (participant != null) {
+            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, java.util.Collections.singleton(participant), tournament);
         }
         return new ArrayList<>();
     }
 
-    private FastestScoreResult updateFastestScoreResult(FastestScoreResult currentResult, Participant competitor,
-                                                        List<Integer> scoreTimes) {
-        Participant bestParticipant = currentResult.participant();
-        int bestTime = currentResult.time();
+    private BillyTheKidResult evaluateCompetitorFastestScores(com.softwaremagico.kt.persistence.entities.Participant competitor,
+                                                               List<Integer> scoreTimes,
+                                                               com.softwaremagico.kt.persistence.entities.Participant currentWinner,
+                                                               int currentMinTime) {
+        var updatedWinner = currentWinner;
+        var updatedMinTime = currentMinTime;
         for (final Integer time : scoreTimes) {
             if (time == null) {
                 continue;
             }
-            if (time == bestTime && !Objects.equals(bestParticipant, competitor)) {
-                bestParticipant = null;
-                continue;
-            }
-            if (time < bestTime && time > Duel.DEFAULT_DURATION) {
-                bestParticipant = competitor;
-                bestTime = time;
+            if (time == updatedMinTime && !java.util.Objects.equals(updatedWinner, competitor)) {
+                updatedWinner = null;
+            } else if (time < updatedMinTime && time > Duel.DEFAULT_DURATION) {
+                updatedWinner = competitor;
+                updatedMinTime = time;
             }
         }
-        return new FastestScoreResult(bestParticipant, bestTime);
+        return new BillyTheKidResult(updatedWinner, updatedMinTime);
     }
 
-    private record FastestScoreResult(Participant participant, int time) {
+    private record BillyTheKidResult(com.softwaremagico.kt.persistence.entities.Participant participant, int minTime) {
     }
 
     public List<Achievement> generateLethalWeaponAchievement(Tournament tournament) {

@@ -34,6 +34,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
@@ -44,7 +45,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -63,13 +63,12 @@ public class SwissTournamentHandlerBranchCoverageTest {
 	@Mock
 	private TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
+	@InjectMocks
 	private SwissTournamentHandler swissTournamentHandler;
 
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		this.swissTournamentHandler = new SwissTournamentHandler(this.groupProvider, this.teamProvider, this.rankingProvider,
-				this.tournamentExtraPropertyProvider);
 	}
 
 	// Branch coverage for getGroups(Tournament) when groups is empty
@@ -79,7 +78,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		final Group firstGroup = this.groupWithTeams(tournament, 4);
 
 		when(this.groupProvider.getGroups(tournament)).thenReturn(new ArrayList<>());
-		when(this.groupProvider.getGroups(eq(tournament))).thenReturn(List.of(firstGroup));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(firstGroup));
 
 		final List<Group> result = this.swissTournamentHandler.getGroups(tournament);
 
@@ -105,7 +104,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		final Tournament tournament = this.tournament();
 		final Group firstGroup = this.groupWithTeams(tournament, 4);
 
-		when(this.groupProvider.getGroups(eq(tournament), eq(0))).thenReturn(new ArrayList<>());
+		when(this.groupProvider.getGroups(tournament, 0)).thenReturn(new ArrayList<>());
 		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(firstGroup));
 
 		final List<Group> result = this.swissTournamentHandler.getGroups(tournament, 0);
@@ -118,7 +117,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 	public void when_getGroupsWithLevel_and_groupsIsEmpty_and_levelIsNotZero_expect_returnEmpty() {
 		final Tournament tournament = this.tournament();
 
-		when(this.groupProvider.getGroups(eq(tournament), eq(1))).thenReturn(new ArrayList<>());
+		when(this.groupProvider.getGroups(tournament, 1)).thenReturn(new ArrayList<>());
 
 		final List<Group> result = this.swissTournamentHandler.getGroups(tournament, 1);
 
@@ -158,8 +157,8 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		group.setFights(new ArrayList<>());
 
 		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
-		when(this.groupProvider.getGroups(eq(tournament), eq(0))).thenReturn(List.of(group));
-		when(this.groupProvider.getGroupByLevelAndIndex(eq(tournament), eq(0), eq(0))).thenReturn(group);
+		when(this.groupProvider.getGroups(tournament, 0)).thenReturn(List.of(group));
+		when(this.groupProvider.getGroupByLevelAndIndex(tournament, 0, 0)).thenReturn(group);
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "3"));
@@ -177,8 +176,8 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		group.setFights(new ArrayList<>());
 
 		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
-		when(this.groupProvider.getGroups(eq(tournament), eq(0))).thenReturn(List.of(group));
-		when(this.groupProvider.getGroupByLevelAndIndex(eq(tournament), eq(0), eq(0))).thenReturn(group);
+		when(this.groupProvider.getGroups(tournament, 0)).thenReturn(List.of(group));
+		when(this.groupProvider.getGroupByLevelAndIndex(tournament, 0, 0)).thenReturn(group);
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "3"));
@@ -253,7 +252,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		group.setFights(new ArrayList<>());
 
 		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
-		when(this.groupProvider.getGroups(eq(tournament), eq(0))).thenReturn(List.of(group));
+		when(this.groupProvider.getGroups(tournament, 0)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "1"));
@@ -273,7 +272,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		group.setFights(new ArrayList<>());
 
 		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
-		when(this.groupProvider.getGroups(eq(tournament), eq(0))).thenReturn(List.of(group));
+		when(this.groupProvider.getGroups(tournament, 0)).thenReturn(List.of(group));
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_ROUNDS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_ROUNDS, "3"));
@@ -309,7 +308,5 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		return team;
 	}
 }
-
-
 
 

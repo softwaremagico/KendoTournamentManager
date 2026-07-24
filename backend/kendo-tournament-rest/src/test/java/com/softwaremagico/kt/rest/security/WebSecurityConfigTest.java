@@ -37,179 +37,170 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 /**
- * Test suite for {@link WebSecurityConfig}.
- * Ensures Spring Security configuration for stateless JWT-based authentication.
+ * Test suite for {@link WebSecurityConfig}. Ensures Spring Security
+ * configuration for stateless JWT-based authentication.
  */
 @ExtendWith(MockitoExtension.class)
 class WebSecurityConfigTest {
 
-    @Mock
-    private JwtTokenFilter jwtTokenFilter;
+	@Mock
+	private JwtTokenFilter jwtTokenFilter;
 
-    @InjectMocks
-    private WebSecurityConfig webSecurityConfig;
+	@InjectMocks
+	private WebSecurityConfig webSecurityConfig;
 
-    @BeforeEach
-    void setUp() {
-        webSecurityConfig = new WebSecurityConfig(jwtTokenFilter);
-    }
+	@BeforeEach
+	void setUp() {
+        this.webSecurityConfig = new WebSecurityConfig(this.jwtTokenFilter);
+	}
 
-    @Test
-    void testConstructor() {
-        assertNotNull(webSecurityConfig);
-    }
+	@Test
+	void testConstructor() {
+		assertNotNull(this.webSecurityConfig);
+	}
 
-    @Test
-    void testPasswordEncoderBean() {
-        PasswordEncoder encoder = webSecurityConfig.passwordEncoder();
+	@Test
+	void testPasswordEncoderBean() {
+		final PasswordEncoder encoder = this.webSecurityConfig.passwordEncoder();
 
-        assertNotNull(encoder);
-        String rawPassword = "testPassword123";
-        String encodedPassword = encoder.encode(rawPassword);
+		assertNotNull(encoder);
+		final String rawPassword = "testPassword123";
+		final String encodedPassword = encoder.encode(rawPassword);
 
-        assertNotEquals(rawPassword, encodedPassword);
-        assertTrue(encoder.matches(rawPassword, encodedPassword));
-    }
+		assertNotEquals(rawPassword, encodedPassword);
+		assertTrue(encoder.matches(rawPassword, encodedPassword));
+	}
 
-    @Test
-    void testPasswordEncoderDifferentEachTime() {
-        PasswordEncoder encoder = webSecurityConfig.passwordEncoder();
-        String password = "testPassword";
+	@Test
+	void testPasswordEncoderDifferentEachTime() {
+		final PasswordEncoder encoder = this.webSecurityConfig.passwordEncoder();
+		final String password = "testPassword";
 
-        String encoded1 = encoder.encode(password);
-        String encoded2 = encoder.encode(password);
+		final String encoded1 = encoder.encode(password);
+		final String encoded2 = encoder.encode(password);
 
-        assertNotEquals(encoded1, encoded2);
-        assertTrue(encoder.matches(password, encoded1));
-        assertTrue(encoder.matches(password, encoded2));
-    }
+		assertNotEquals(encoded1, encoded2);
+		assertTrue(encoder.matches(password, encoded1));
+		assertTrue(encoder.matches(password, encoded2));
+	}
 
-    @Test
-    void testCorsConfigurationSourceWithDefaultSettings() {
-        // Set null to use default unrestricted CORS
-        ReflectionTestUtils.setField(webSecurityConfig, "serverCorsDomains", null);
+	@Test
+	void testCorsConfigurationSourceWithDefaultSettings() {
+		// Set null to use default unrestricted CORS
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", null);
 
-        CorsConfigurationSource source = getCorsConfigurationSource();
-        CorsConfiguration config = source.getCorsConfiguration(getMockRequest());
+		final CorsConfigurationSource source = this.getCorsConfigurationSource();
+		final CorsConfiguration config = source.getCorsConfiguration(this.getMockRequest());
 
-        assertNotNull(config);
-        assertNotNull(config.getAllowedOriginPatterns());
-        assertTrue(config.getAllowedOriginPatterns().contains("*"));
-        assertFalse(config.getAllowCredentials());
-    }
+		assertNotNull(config);
+		assertNotNull(config.getAllowedOriginPatterns());
+		assertTrue(config.getAllowedOriginPatterns().contains("*"));
+		assertFalse(config.getAllowCredentials());
+	}
 
-    @Test
-    void testCorsConfigurationSourceWithWildcard() {
-        ReflectionTestUtils.setField(webSecurityConfig, "serverCorsDomains",
-                Arrays.asList("*"));
+	@Test
+	void testCorsConfigurationSourceWithWildcard() {
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", List.of("*"));
 
-        CorsConfigurationSource source = getCorsConfigurationSource();
-        CorsConfiguration config = source.getCorsConfiguration(getMockRequest());
+		final CorsConfigurationSource source = this.getCorsConfigurationSource();
+		final CorsConfiguration config = source.getCorsConfiguration(this.getMockRequest());
 
-        assertNotNull(config);
-        assertNotNull(config.getAllowedOriginPatterns());
-        assertTrue(config.getAllowedOriginPatterns().contains("*"));
-    }
+		assertNotNull(config);
+		assertNotNull(config.getAllowedOriginPatterns());
+		assertTrue(config.getAllowedOriginPatterns().contains("*"));
+	}
 
-    @Test
-    void testCorsConfigurationSourceWithSpecificDomains() {
-        List<String> domains = Arrays.asList("https://example.com", "https://another.com");
-        ReflectionTestUtils.setField(webSecurityConfig, "serverCorsDomains", domains);
+	@Test
+	void testCorsConfigurationSourceWithSpecificDomains() {
+		final List<String> domains = Arrays.asList("https://example.com", "https://another.com");
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", domains);
 
-        CorsConfigurationSource source = getCorsConfigurationSource();
-        CorsConfiguration config = source.getCorsConfiguration(getMockRequest());
+		final CorsConfigurationSource source = this.getCorsConfigurationSource();
+		final CorsConfiguration config = source.getCorsConfiguration(this.getMockRequest());
 
-        assertNotNull(config);
-        assertEquals(domains, config.getAllowedOrigins());
-        assertTrue(config.getAllowCredentials());
-    }
+		assertNotNull(config);
+		assertEquals(domains, config.getAllowedOrigins());
+		assertTrue(config.getAllowCredentials());
+	}
 
-    @Test
-    void testCorsConfigurationAllowedMethods() {
-        ReflectionTestUtils.setField(webSecurityConfig, "serverCorsDomains", null);
+	@Test
+	void testCorsConfigurationAllowedMethods() {
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", null);
 
-        CorsConfigurationSource source = getCorsConfigurationSource();
-        CorsConfiguration config = source.getCorsConfiguration(getMockRequest());
+		final CorsConfigurationSource source = this.getCorsConfigurationSource();
+		final CorsConfiguration config = source.getCorsConfiguration(this.getMockRequest());
 
-        assertNotNull(config);
-        assertTrue(config.getAllowedMethods().contains("*"));
-    }
+		assertNotNull(config);
+		assertTrue(config.getAllowedMethods().contains("*"));
+	}
 
-    @Test
-    void testCorsConfigurationAllowedHeaders() {
-        ReflectionTestUtils.setField(webSecurityConfig, "serverCorsDomains", null);
+	@Test
+	void testCorsConfigurationAllowedHeaders() {
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", null);
 
-        CorsConfigurationSource source = getCorsConfigurationSource();
-        CorsConfiguration config = source.getCorsConfiguration(getMockRequest());
+		final CorsConfigurationSource source = this.getCorsConfigurationSource();
+		final CorsConfiguration config = source.getCorsConfiguration(this.getMockRequest());
 
-        assertNotNull(config);
-        assertTrue(config.getAllowedHeaders().contains("*"));
-    }
+		assertNotNull(config);
+		assertTrue(config.getAllowedHeaders().contains("*"));
+	}
 
-    @Test
-    void testCorsConfigurationExposedHeaders() {
-        ReflectionTestUtils.setField(webSecurityConfig, "serverCorsDomains", null);
+	@Test
+	void testCorsConfigurationExposedHeaders() {
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", null);
 
-        CorsConfigurationSource source = getCorsConfigurationSource();
-        CorsConfiguration config = source.getCorsConfiguration(getMockRequest());
+		final CorsConfigurationSource source = this.getCorsConfigurationSource();
+		final CorsConfiguration config = source.getCorsConfiguration(this.getMockRequest());
 
-        assertNotNull(config);
-        assertNotNull(config.getExposedHeaders());
-        assertTrue(config.getExposedHeaders().contains("Authorization"));
-        assertTrue(config.getExposedHeaders().contains("Expires"));
-    }
+		assertNotNull(config);
+		assertNotNull(config.getExposedHeaders());
+		assertTrue(config.getExposedHeaders().contains("Authorization"));
+		assertTrue(config.getExposedHeaders().contains("Expires"));
+	}
 
-    @Test
-    void testAuthWhitelistContainsSwaggerPaths() {
-        assertTrue(hasAuthWhitelistPath("/v3/api-docs"));
-        assertTrue(hasAuthWhitelistPath("/swagger-ui"));
-    }
+	@Test
+	void testAuthWhitelistContainsSwaggerPaths() {
+		assertTrue(this.hasAuthWhitelistPath("/v3/api-docs"));
+		assertTrue(this.hasAuthWhitelistPath("/swagger-ui"));
+	}
 
-    @Test
-    void testAuthWhitelistContainsInfoPath() {
-        assertTrue(hasAuthWhitelistPath("/info"));
-    }
+	@Test
+	void testAuthWhitelistContainsInfoPath() {
+		assertTrue(this.hasAuthWhitelistPath("/info"));
+	}
 
-    @Test
-    void testAuthWhitelistContainsWebSocketPath() {
-        assertTrue(hasAuthWhitelistPath(WebSocketConfiguration.SOCKETS_STOMP_URL));
-    }
+	@Test
+	void testAuthWhitelistContainsWebSocketPath() {
+		assertTrue(this.hasAuthWhitelistPath(WebSocketConfiguration.SOCKETS_STOMP_URL));
+	}
 
-    @Test
-    void testAuthWhitelistContainsRootPath() {
-        assertTrue(hasAuthWhitelistPath("/"));
-    }
+	@Test
+	void testAuthWhitelistContainsRootPath() {
+		assertTrue(this.hasAuthWhitelistPath("/"));
+	}
 
-    // Helper methods
-    private CorsConfigurationSource getCorsConfigurationSource() {
-        return (CorsConfigurationSource) ReflectionTestUtils.invokeMethod(
-                webSecurityConfig, "generateCorsConfigurationSource");
-    }
+	// Helper methods
+	private CorsConfigurationSource getCorsConfigurationSource() {
+		return ReflectionTestUtils.invokeMethod(this.webSecurityConfig,
+				"generateCorsConfigurationSource");
+	}
 
-    private org.springframework.mock.web.MockHttpServletRequest getMockRequest() {
-        return new org.springframework.mock.web.MockHttpServletRequest();
-    }
+	private org.springframework.mock.web.MockHttpServletRequest getMockRequest() {
+		return new org.springframework.mock.web.MockHttpServletRequest();
+	}
 
-    private boolean hasAuthWhitelistPath(String path) {
-        // We'll check if the path would match any of the AUTH_WHITELIST patterns
-        String[] whitelistPatterns = {
-                "/v3/api-docs/**",
-                "/swagger-ui/**",
-                "/",
-                "/info/**",
-                "/*/public/**",
-                WebSocketConfiguration.SOCKETS_STOMP_URL + "/**"
-        };
+	private boolean hasAuthWhitelistPath(String path) {
+		// We'll check if the path would match any of the AUTH_WHITELIST patterns
+		final String[] whitelistPatterns = {"/v3/api-docs/**", "/swagger-ui/**", "/", "/info/**", "/*/public/**",
+				WebSocketConfiguration.SOCKETS_STOMP_URL + "/**"};
 
-        for (String pattern : whitelistPatterns) {
-            if (path.matches(pattern.replace("**", ".*").replace("*", ".*"))) {
-                return true;
-            }
-        }
-        return false;
-    }
+		for (final String pattern : whitelistPatterns) {
+			if (path.matches(pattern.replace("**", ".*").replace("*", ".*"))) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
-

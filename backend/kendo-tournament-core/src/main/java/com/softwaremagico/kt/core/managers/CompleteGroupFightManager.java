@@ -32,67 +32,67 @@ import java.util.List;
 @Service
 public class CompleteGroupFightManager {
 
-    private record FightContext(Tournament tournament, Integer level, Integer shiaijo, String createdBy) {
+    private record FightContext(Tournament tournament, Integer shiaijo, Integer level, String createdBy) {
     }
 
     public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
                                     Integer shiaijo, boolean fifo, String createdBy) {
-        return this.createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
+        return createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer level, Integer shiaijo, String createdBy) {
-        return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
+    private Fight createFight(Tournament tournament, Team firstTeam, Team secondTeam, Integer shiaijo, Integer level,
+                              String createdBy) {
+        return new Fight(tournament, firstTeam, secondTeam, shiaijo, level, createdBy);
+    }
+
+    private Fight createOrderedFight(FightContext context, Team team1, Team team2, Fight lastFight, int currentSize) {
+        if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
+            return createFight(context.tournament(), team2, team1, context.shiaijo(), context.level(), context.createdBy());
+        }
+        if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
+            return createFight(context.tournament(), team1, team2, context.shiaijo(), context.level(), context.createdBy());
+        }
+        return currentSize % 2 == 0
+                ? createFight(context.tournament(), team1, team2, context.shiaijo(), context.level(), context.createdBy())
+                : createFight(context.tournament(), team2, team1, context.shiaijo(), context.level(), context.createdBy());
     }
 
     /**
      * Create a list of fights where all teams fight versus all others.
      *
-     * @param tournament tournament where the fights are generated
-     * @param teams teams that must fight each other
-     * @param teamsOrder strategy used to select the next team
-     * @return generated fight list for the group
+     * @param tournament
+     * @param teams
+     * @param teamsOrder
+     * @return
      */
     protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, Integer shiaijo, boolean fifo,
-                                                   String createdBy) {
+                                                  String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
         }
         final List<Fight> fights = new ArrayList<>();
         final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
+        final FightContext context = new FightContext(tournament, shiaijo, level, createdBy);
 
-        final FightContext fightContext = new FightContext(tournament, level, shiaijo, createdBy);
         Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
+        Fight fight;
         Fight lastFight = null;
         while (teamSelector.remainFights()) {
             final Team team2 = teamSelector.getNextAdversary(team1, teamsOrder);
+            // Team1 has no more adversaries. Use another one.
             if (team2 == null) {
                 team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
                 continue;
             }
-            final Fight fight = determineFightOrder(team1, team2, lastFight, fights.size(), fightContext);
+            fight = createOrderedFight(context, team1, team2, lastFight, fights.size());
             fights.add(fight);
             lastFight = fight;
             teamSelector.removeAdversary(team1, team2);
+            //Depending on the league strategy for fight generation, the second fight can start with team1 or team2.
             if (fifo || fights.size() != 1) {
                 team1 = team2;
             }
         }
         return fights;
-    }
-
-    private Fight determineFightOrder(Team team1, Team team2, Fight lastFight, int fightCount, FightContext fightContext) {
-        if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-            return createFight(fightContext.tournament(), team2, team1, fightContext.level(), fightContext.shiaijo(),
-                    fightContext.createdBy());
-        } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-            return createFight(fightContext.tournament(), team1, team2, fightContext.level(), fightContext.shiaijo(),
-                    fightContext.createdBy());
-        } else if (fightCount % 2 == 0) {
-            return createFight(fightContext.tournament(), team1, team2, fightContext.level(), fightContext.shiaijo(),
-                    fightContext.createdBy());
-        } else {
-            return createFight(fightContext.tournament(), team2, team1, fightContext.level(), fightContext.shiaijo(),
-                    fightContext.createdBy());
-        }
     }
 }

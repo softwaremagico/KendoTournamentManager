@@ -29,37 +29,10 @@ import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 @Service
 public class ParticipantFightStatisticsProvider extends CrudProvider<ParticipantFightStatistics, Integer, ParticipantFightStatisticsRepository> {
-
-    private static final Map<Score, ScoreCounterAccessor> SCORE_COUNTERS = Map.of(
-            Score.MEN, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getMenNumber, ParticipantFightStatistics::setMenNumber,
-                    ParticipantFightStatistics::getReceivedMenNumber, ParticipantFightStatistics::setReceivedMenNumber),
-            Score.KOTE, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getKoteNumber, ParticipantFightStatistics::setKoteNumber,
-                    ParticipantFightStatistics::getReceivedKoteNumber, ParticipantFightStatistics::setReceivedKoteNumber),
-            Score.DO, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getDoNumber, ParticipantFightStatistics::setDoNumber,
-                    ParticipantFightStatistics::getReceivedDoNumber, ParticipantFightStatistics::setReceivedDoNumber),
-            Score.TSUKI, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getTsukiNumber, ParticipantFightStatistics::setTsukiNumber,
-                    ParticipantFightStatistics::getReceivedTsukiNumber, ParticipantFightStatistics::setReceivedTsukiNumber),
-            Score.HANSOKU, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getHansokuNumber, ParticipantFightStatistics::setHansokuNumber,
-                    ParticipantFightStatistics::getReceivedHansokuNumber, ParticipantFightStatistics::setReceivedHansokuNumber),
-            Score.IPPON, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getIpponNumber, ParticipantFightStatistics::setIpponNumber,
-                    ParticipantFightStatistics::getReceivedIpponNumber, ParticipantFightStatistics::setReceivedIpponNumber),
-            Score.FUSEN_GACHI, new ScoreCounterAccessor(
-                    ParticipantFightStatistics::getFusenGachiNumber, ParticipantFightStatistics::setFusenGachiNumber,
-                    ParticipantFightStatistics::getReceivedFusenGachiNumber, ParticipantFightStatistics::setReceivedFusenGachiNumber)
-    );
 
     private final DuelProvider duelProvider;
 
@@ -75,163 +48,151 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         final ParticipantFightStatistics participantFightStatistics = new ParticipantFightStatistics();
         final List<Duel> duels = duelProvider.get(participant);
         final long participantDurationAverage = duelProvider.getDurationAverage(participant);
-        final FightComputationState state = new FightComputationState();
+        final DuelStatisticsAccumulator accumulator = new DuelStatisticsAccumulator();
+
         for (final Duel duel : duels) {
-            accumulateDuelStatistics(participantFightStatistics, participant, duel, state);
+            processDuel(participantFightStatistics, duel, participant, accumulator);
         }
-        participantFightStatistics.setAverageTime(Math.max(participantDurationAverage, 0L));
-        participantFightStatistics.setAverageWinTime(calculateAverageDuration(state.totalDuelWonsWithDuration, state.wonDuelsWithDuration));
-        participantFightStatistics.setAverageLostTime(calculateAverageDuration(state.totalDuelLostsWithDuration, state.lostDuelsWithDuration));
-        if (state.quickestHit < Integer.MAX_VALUE) {
-            participantFightStatistics.setQuickestHit(state.quickestHit);
-        }
-        if (state.quickestReceivedHit < Integer.MAX_VALUE) {
-            participantFightStatistics.setQuickestReceivedHit(state.quickestReceivedHit);
-        }
-        participantFightStatistics.setTotalDuelsTime(state.totalDuelsDuration);
+
+        applyAverageTimes(participantFightStatistics, participantDurationAverage, accumulator);
+        applyQuickestHits(participantFightStatistics, accumulator);
+
+        participantFightStatistics.setTotalDuelsTime(accumulator.totalDuelsDuration);
         participantFightStatistics.setDuelsNumber((long) duels.size());
-        participantFightStatistics.setWonDuels(state.wonDuels);
-        participantFightStatistics.setDrawDuels(state.drawDuels);
-        participantFightStatistics.setLostDuels(state.lostDuels);
+        participantFightStatistics.setWonDuels(accumulator.wonDuels);
+        participantFightStatistics.setDrawDuels(accumulator.drawDuels);
+        participantFightStatistics.setLostDuels(accumulator.lostDuels);
         return participantFightStatistics;
     }
 
-    private void accumulateDuelStatistics(ParticipantFightStatistics participantFightStatistics, Participant participant,
-                                          Duel duel, FightComputationState state) {
-        final DuelAccumulator accumulator = createDuelAccumulator(duel, participant);
-        if (accumulator != null) {
-            accumulateParticipantDuel(participantFightStatistics, duel, accumulator, state);
-        }
-        accumulateWinLossDurations(participant, duel, state);
-    }
-
-    private DuelAccumulator createDuelAccumulator(Duel duel, Participant participant) {
-        final int winner = duel.getWinner();
+    private void processDuel(ParticipantFightStatistics participantFightStatistics, Duel duel, Participant participant,
+                             DuelStatisticsAccumulator accumulator) {
         if (Objects.equals(duel.getCompetitor1(), participant)) {
-            return new DuelAccumulator(
-                    duel.getCompetitor1Score(), duel.getCompetitor2Score(),
-                    duel.getCompetitor1Fault(), duel.getCompetitor2Fault(),
-                    duel.getCompetitor1ScoreTime(), duel.getCompetitor2ScoreTime(),
-                    winner < 0);
+            processAsCompetitor(participantFightStatistics, duel, accumulator, duel.getCompetitor1Score(), duel.getCompetitor2Score(),
+                    duel.getCompetitor1Fault(), duel.getCompetitor2Fault(), duel.getCompetitor1ScoreTime(), duel.getCompetitor2ScoreTime(),
+                    duel.getWinner() < 0, duel.getWinner() == 0);
+        } else if (Objects.equals(duel.getCompetitor2(), participant)) {
+            processAsCompetitor(participantFightStatistics, duel, accumulator, duel.getCompetitor2Score(), duel.getCompetitor1Score(),
+                    duel.getCompetitor2Fault(), duel.getCompetitor1Fault(), duel.getCompetitor2ScoreTime(), duel.getCompetitor1ScoreTime(),
+                    duel.getWinner() > 0, duel.getWinner() == 0);
         }
-        if (Objects.equals(duel.getCompetitor2(), participant)) {
-            return new DuelAccumulator(
-                    duel.getCompetitor2Score(), duel.getCompetitor1Score(),
-                    duel.getCompetitor2Fault(), duel.getCompetitor1Fault(),
-                    duel.getCompetitor2ScoreTime(), duel.getCompetitor1ScoreTime(),
-                    winner > 0);
-        }
-        return null;
+        updateDurationAgainstWinner(duel, participant, accumulator);
     }
 
-    private void accumulateParticipantDuel(ParticipantFightStatistics participantFightStatistics, Duel duel,
-                                           DuelAccumulator accumulator, FightComputationState state) {
-        populateScores(participantFightStatistics, accumulator.myScores(), false);
-        populateScores(participantFightStatistics, accumulator.opponentScores(), true);
-        participantFightStatistics.setFaults(participantFightStatistics.getFaults()
-                + (Boolean.TRUE.equals(accumulator.myFault()) ? 1 : 0));
+    private void processAsCompetitor(ParticipantFightStatistics participantFightStatistics, Duel duel, DuelStatisticsAccumulator accumulator,
+                                     List<Score> ownScores, List<Score> opponentScores, Boolean ownFault, Boolean opponentFault,
+                                     List<Integer> ownScoreTimes, List<Integer> opponentScoreTimes, boolean won, boolean draw) {
+        populateScores(participantFightStatistics, ownScores);
+        populateReceivedScores(participantFightStatistics, opponentScores);
+        participantFightStatistics.setFaults(participantFightStatistics.getFaults() + (ownFault != null && ownFault ? 1 : 0));
         participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                + (Boolean.TRUE.equals(accumulator.opponentFault()) ? 1 : 0));
-
-        state.quickestHit = updateQuickest(accumulator.myScoreTimes(), state.quickestHit);
-        state.quickestReceivedHit = updateQuickest(accumulator.opponentScoreTimes(), state.quickestReceivedHit);
-
-        if (accumulator.won()) {
-            state.wonDuels++;
-        } else if (duel.getWinner() == 0) {
-            state.drawDuels++;
+                + (opponentFault != null && opponentFault ? 1 : 0));
+        accumulator.quickestHit = Math.min(accumulator.quickestHit, quickestScoreTime(ownScoreTimes));
+        accumulator.quickestReceivedHit = Math.min(accumulator.quickestReceivedHit, quickestScoreTime(opponentScoreTimes));
+        if (won) {
+            accumulator.wonDuels++;
+        } else if (draw) {
+            accumulator.drawDuels++;
         } else {
-            state.lostDuels++;
+            accumulator.lostDuels++;
         }
-
-        if (isValidDuration(duel.getDuration())) {
-            state.totalDuelsDuration += duel.getDuration();
+        if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+            accumulator.totalDuelsDuration += duel.getDuration();
         }
     }
 
-    private void accumulateWinLossDurations(Participant participant, Duel duel, FightComputationState state) {
-        if (!isValidDuration(duel.getDuration())) {
+    private long quickestScoreTime(List<Integer> scoreTimes) {
+        long quickest = Integer.MAX_VALUE;
+        for (final Integer scoreTime : scoreTimes) {
+            if (scoreTime != null && scoreTime < quickest) {
+                quickest = scoreTime;
+            }
+        }
+        return quickest;
+    }
+
+    private void updateDurationAgainstWinner(Duel duel, Participant participant, DuelStatisticsAccumulator accumulator) {
+        if (duel.getDuration() == null || duel.getDuration() <= Duel.DEFAULT_DURATION) {
             return;
         }
         if (Objects.equals(duel.getCompetitorWinner(), participant)) {
-            state.totalDuelWonsWithDuration += duel.getDuration();
-            state.wonDuelsWithDuration++;
+            accumulator.totalDuelWonsWithDuration += duel.getDuration();
+            accumulator.wonDuelsWithDuration++;
         } else if (duel.getCompetitorWinner() != null) {
-            state.totalDuelLostsWithDuration += duel.getDuration();
-            state.lostDuelsWithDuration++;
+            accumulator.totalDuelLostsWithDuration += duel.getDuration();
+            accumulator.lostDuelsWithDuration++;
         }
     }
 
-    private record DuelAccumulator(
-        List<Score> myScores,
-        List<Score> opponentScores,
-        Boolean myFault,
-        Boolean opponentFault,
-        List<Integer> myScoreTimes,
-        List<Integer> opponentScoreTimes,
-        boolean won) {
+    private void applyAverageTimes(ParticipantFightStatistics participantFightStatistics, long participantDurationAverage,
+                                   DuelStatisticsAccumulator accumulator) {
+        participantFightStatistics.setAverageTime(participantDurationAverage > 0 ? participantDurationAverage : 0L);
+        participantFightStatistics.setAverageWinTime(accumulator.totalDuelWonsWithDuration > 0
+                ? accumulator.totalDuelWonsWithDuration / accumulator.wonDuelsWithDuration : 0L);
+        participantFightStatistics.setAverageLostTime(accumulator.totalDuelLostsWithDuration > 0
+                ? accumulator.totalDuelLostsWithDuration / accumulator.lostDuelsWithDuration : 0L);
     }
 
-    private static final class FightComputationState {
-        private long totalDuelsDuration;
-        private long totalDuelWonsWithDuration;
-        private long totalDuelLostsWithDuration;
+    private void applyQuickestHits(ParticipantFightStatistics participantFightStatistics, DuelStatisticsAccumulator accumulator) {
+        if (accumulator.quickestHit < Integer.MAX_VALUE) {
+            participantFightStatistics.setQuickestHit(accumulator.quickestHit);
+        }
+        if (accumulator.quickestReceivedHit < Integer.MAX_VALUE) {
+            participantFightStatistics.setQuickestReceivedHit(accumulator.quickestReceivedHit);
+        }
+    }
+
+    /**
+     * Mutable holder for the statistics accumulated while iterating the duels of a participant.
+     */
+    private static final class DuelStatisticsAccumulator {
+        private long totalDuelsDuration = 0L;
+        private long totalDuelWonsWithDuration = 0L;
+        private long totalDuelLostsWithDuration = 0L;
         private long quickestHit = Integer.MAX_VALUE;
         private long quickestReceivedHit = Integer.MAX_VALUE;
-        private long wonDuels;
-        private long wonDuelsWithDuration;
-        private long lostDuels;
-        private long lostDuelsWithDuration;
-        private long drawDuels;
+        private long wonDuels = 0L;
+        private long wonDuelsWithDuration = 0L;
+        private long lostDuels = 0L;
+        private long lostDuelsWithDuration = 0L;
+        private long drawDuels = 0L;
     }
 
-    private record ScoreCounterAccessor(
-            Function<ParticipantFightStatistics, Long> ownGetter,
-            BiConsumer<ParticipantFightStatistics, Long> ownSetter,
-            Function<ParticipantFightStatistics, Long> receivedGetter,
-            BiConsumer<ParticipantFightStatistics, Long> receivedSetter) {
-    }
-
-    private long updateQuickest(List<Integer> scoreTimes, long current) {
-        long best = current;
-        for (final Integer scoreTime : scoreTimes) {
-            if (scoreTime != null && scoreTime < best) {
-                best = scoreTime;
+    private void populateScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
+        //Remove null values
+        scores = scores.parallelStream().filter(Objects::nonNull).toList();
+        for (final Score score : scores) {
+            switch (score) {
+                case MEN -> participantFightStatistics.setMenNumber(participantFightStatistics.getMenNumber() + 1);
+                case KOTE -> participantFightStatistics.setKoteNumber(participantFightStatistics.getKoteNumber() + 1);
+                case DO -> participantFightStatistics.setDoNumber(participantFightStatistics.getDoNumber() + 1);
+                case TSUKI -> participantFightStatistics.setTsukiNumber(participantFightStatistics.getTsukiNumber() + 1);
+                case HANSOKU -> participantFightStatistics.setHansokuNumber(participantFightStatistics.getHansokuNumber() + 1);
+                case IPPON -> participantFightStatistics.setIpponNumber(participantFightStatistics.getIpponNumber() + 1);
+                case FUSEN_GACHI -> participantFightStatistics.setFusenGachiNumber(participantFightStatistics.getFusenGachiNumber() + 1);
+                default -> {
+                    //Do nothing for empty score.
+                }
             }
         }
-        return best;
     }
 
-    private void populateScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores, boolean received) {
-        // Remove null values before counting score types.
-        scores = scores.stream().filter(Objects::nonNull).toList();
+    private void populateReceivedScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
+        //Remove null values
+        scores = scores.parallelStream().filter(Objects::nonNull).toList();
         for (final Score score : scores) {
-            incrementScore(participantFightStatistics, score, received);
+            switch (score) {
+                case MEN -> participantFightStatistics.setReceivedMenNumber(participantFightStatistics.getReceivedMenNumber() + 1);
+                case KOTE -> participantFightStatistics.setReceivedKoteNumber(participantFightStatistics.getReceivedKoteNumber() + 1);
+                case DO -> participantFightStatistics.setReceivedDoNumber(participantFightStatistics.getReceivedDoNumber() + 1);
+                case TSUKI -> participantFightStatistics.setReceivedTsukiNumber(participantFightStatistics.getReceivedTsukiNumber() + 1);
+                case HANSOKU -> participantFightStatistics.setReceivedHansokuNumber(participantFightStatistics.getReceivedHansokuNumber() + 1);
+                case IPPON -> participantFightStatistics.setReceivedIpponNumber(participantFightStatistics.getReceivedIpponNumber() + 1);
+                case FUSEN_GACHI -> participantFightStatistics.setReceivedFusenGachiNumber(participantFightStatistics.getReceivedFusenGachiNumber() + 1);
+                default -> {
+                    //Do nothing for empty score.
+                }
+            }
         }
-    }
-
-    private boolean isValidDuration(Integer duration) {
-        return duration != null && duration > Duel.DEFAULT_DURATION;
-    }
-
-    private long calculateAverageDuration(long totalDuration, long duelsWithDuration) {
-        if (totalDuration <= 0 || duelsWithDuration <= 0) {
-            return 0L;
-        }
-        return totalDuration / duelsWithDuration;
-    }
-
-    private void incrementScore(ParticipantFightStatistics participantFightStatistics, Score score, boolean received) {
-        final ScoreCounterAccessor counterAccessor = SCORE_COUNTERS.get(score);
-        if (counterAccessor == null) {
-            return;
-        }
-        final Function<ParticipantFightStatistics, Long> getter = received
-                ? counterAccessor.receivedGetter()
-                : counterAccessor.ownGetter();
-        final BiConsumer<ParticipantFightStatistics, Long> setter = received
-                ? counterAccessor.receivedSetter()
-                : counterAccessor.ownSetter();
-        setter.accept(participantFightStatistics, getter.apply(participantFightStatistics) + 1);
     }
 }

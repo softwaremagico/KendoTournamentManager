@@ -160,6 +160,18 @@ public class Team extends Element implements Comparable<Team>, IName {
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-        return collator.compare(getName(), team.getName());
+        final int nameComparison = collator.compare(getName(), team.getName());
+        if (nameComparison != 0) {
+            return nameComparison;
+        }
+        if (this.getId() != null && team.getId() != null) {
+            return this.getId().compareTo(team.getId());
+        }
+        final Integer thisTournamentId = this.tournament != null ? this.tournament.getId() : null;
+        final Integer otherTournamentId = team.tournament != null ? team.tournament.getId() : null;
+        if (thisTournamentId != null && otherTournamentId != null) {
+            return thisTournamentId.compareTo(otherTournamentId);
+        }
+        return Integer.compare(System.identityHashCode(this.tournament), System.identityHashCode(team.tournament));
     }
 }

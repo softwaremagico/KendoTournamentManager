@@ -34,9 +34,13 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
@@ -62,10 +66,10 @@ public class TreeTournamentHandler extends LeagueHandler {
     private final GroupLinkProvider groupLinkProvider;
     private final RankingProvider rankingProvider;
 
-
-    public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
-                                 TournamentExtraPropertyProvider tournamentExtraPropertyProvider, CompleteGroupFightManager completeGroupFightManager,
-                                 MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider, GroupLinkProvider groupLinkProvider) {
+    public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider,
+            RankingProvider rankingProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
+            CompleteGroupFightManager completeGroupFightManager, MinimumGroupFightManager minimumGroupFightManager,
+            FightProvider fightProvider, GroupLinkProvider groupLinkProvider) {
         super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.rankingProvider = rankingProvider;
         this.groupProvider = groupProvider;
@@ -76,54 +80,55 @@ public class TreeTournamentHandler extends LeagueHandler {
         this.groupLinkProvider = groupLinkProvider;
     }
 
-
     @Override
     public List<Group> getGroups(Tournament tournament, Integer level) {
-        return groupProvider.getGroups(tournament, level);
+        return this.groupProvider.getGroups(tournament, level);
     }
 
-
     private int getNumberOfWinners(Tournament tournament) {
-        final TournamentExtraProperty numberOfWinnersProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+        final TournamentExtraProperty numberOfWinnersProperty = this.tournamentExtraPropertyProvider
+                .getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
 
         if (numberOfWinnersProperty != null) {
             try {
                 return Integer.parseInt(numberOfWinnersProperty.getPropertyValue());
-            } catch (NumberFormatException ignore) {
-                //Ignored.
+            } catch (Exception ex) {
+                KendoTournamentLogger.debug(this.getClass(), "Invalid NUMBER_OF_WINNERS '{}': {}", numberOfWinnersProperty.getPropertyValue(),
+                        ex.getMessage());
             }
         }
         return 1;
     }
 
-
     private boolean getMaxGroupFights(Tournament tournament) {
-        final TournamentExtraProperty maximizeFightsProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
+        final TournamentExtraProperty maximizeFightsProperty = this.tournamentExtraPropertyProvider
+                .getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
 
         if (maximizeFightsProperty != null) {
-            return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
+            try {
+                return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
+            } catch (Exception ex) {
+                KendoTournamentLogger.debug(this.getClass(), "Invalid MAXIMIZE_FIGHTS '{}': {}", maximizeFightsProperty.getPropertyValue(),
+                        ex.getMessage());
+            }
         }
         return true;
     }
-
 
     @Override
     public Group addGroup(Tournament tournament, Group group) {
         if (group.getLevel() > 0) {
             throw new InvalidGroupException(this.getClass(), "Groups can only be added at level 0.");
         }
-        correctGroupWinners(tournament, group);
-        final Group savedGroup = groupProvider.addGroup(tournament, group);
-        adjustGroupSize(tournament, getNumberOfWinners(tournament));
-        adjustGroupsShiaijos(tournament);
+      this.correctGroupWinners(tournament, group);
+        final Group savedGroup = this.groupProvider.addGroup(tournament, group);
+      this.adjustGroupSize(tournament, this.getNumberOfWinners(tournament));
+      this.adjustGroupsShiaijos(tournament);
         return savedGroup;
     }
 
-
     private void correctGroupWinners(Tournament tournament, Group group) {
-        final TournamentExtraProperty numberOfWinners = tournamentExtraPropertyProvider
+        final TournamentExtraProperty numberOfWinners = this.tournamentExtraPropertyProvider
                 .getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
         if (numberOfWinners != null) {
             try {
@@ -131,142 +136,173 @@ public class TreeTournamentHandler extends LeagueHandler {
                 if (group.getLevel() == 0 && winners != group.getNumberOfWinners()) {
                     group.setNumberOfWinners(winners);
                 }
-            } catch (NumberFormatException e) {
+            } catch (final Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
         }
     }
 
-
     /**
      * Clean up all inner levels and recalculate them.
      *
-     * @param tournament      The tournament to be updated.
-     * @param numberOfWinners Number of winners that pass from level one to level two.
+     * @param tournament
+     *            The tournament to be updated.
+     * @param numberOfWinners
+     *            Number of winners that pass from level one to level two.
      */
     public void recreateGroupSize(Tournament tournament, int numberOfWinners) {
-        groupProvider.delete(tournament, 1);
-        adjustGroupSize(tournament, numberOfWinners);
-        adjustGroupsShiaijos(tournament);
+      this.groupProvider.delete(tournament, 1);
+      this.adjustGroupSize(tournament, numberOfWinners);
+      this.adjustGroupsShiaijos(tournament);
     }
-
 
     public void adjustGroupSize(Tournament tournament, int numberOfWinners) {
-        final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
-                .getByTournamentAndProperty(tournament,
-                        TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
+        final TournamentExtraProperty oddTeamsResolvedAsapProperty = this.tournamentExtraPropertyProvider
+                .getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP,
+                        DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
 
-        //Update the group size.
+        // Update the group size.
         if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue())) {
-            adjustGroupsSizeRemovingOddNumbers(tournament, numberOfWinners);
+          this.adjustGroupsSizeRemovingOddNumbers(tournament, numberOfWinners);
         } else {
-            adjustGroupsSizeAsBinaryTree(tournament, numberOfWinners);
+          this.adjustGroupsSizeAsBinaryTree(tournament, numberOfWinners);
         }
     }
-
 
     private void adjustGroupsSizeAsBinaryTree(Tournament tournament, int numberOfWinners) {
-        //Check if inner levels must be increased on size.
-        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+        // Check if inner levels must be increased on size.
+        final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            while (groupsByLevel.get(level).size()
-                    < (((previousLevelSize
+            while (this.groupsOfLevel(groupsByLevel, level).size() < (((previousLevelSize
                     // Add +1 unless the number of winners 2.
-                    // This +1 will be rounded later but is needed if even teams pass from the previous level.
+                    // This +1 will be rounded later but is needed if even teams pass from the
+                    // previous level.
                     + (level == 1 && numberOfWinners == 2 ? 0 : 1))
-                    //Check on level 1 the number of winners.
+                    // Check on level 1 the number of winners.
                     * (level == 1 ? numberOfWinners : 1)) / 2)) {
-                final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
-                groupProvider.addGroup(tournament, levelGroup);
-                groupsByLevel.get(level).add(levelGroup);
+                final Group levelGroup = new Group(tournament, level, this.groupsOfLevel(groupsByLevel, level).size());
+              this.groupProvider.addGroup(tournament, levelGroup);
+                this.groupsOfLevel(groupsByLevel, level).add(levelGroup);
             }
-            previousLevelSize = groupsByLevel.get(level).size();
+            previousLevelSize = this.groupsOfLevel(groupsByLevel, level).size();
         }
 
-        //Add extra level if needed.
-        addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners);
+        // Add extra level if needed.
+      this.addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners);
     }
-
 
     public void adjustGroupsSizeRemovingOddNumbers(Tournament tournament, int numberOfWinners) {
-        //Check if inner levels must be increased on size.
-        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+        // Check if inner levels must be increased on size.
+        final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            while (level > 0
-                    //It is not a power of two.
-                    && (groupsByLevel.get(level).size()
-                    < GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(level - 1).size() * (level == 1 ? numberOfWinners : 1)) + 1) / 2))
-                    //Except the Last level, that has only one group. Unless the previous level has more than one winner.
-                    && !(groupsByLevel.get(level).size() == 1 && previousLevelSize == 2 && groupsByLevel.get(level - 1).get(0).getNumberOfWinners() == 1)) {
-                final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
-                groupProvider.addGroup(tournament, levelGroup);
-                groupsByLevel.get(level).add(levelGroup);
+            while (this.shouldAddGroupRemovingOddNumbers(groupsByLevel, level, previousLevelSize,
+                    numberOfWinners)) {
+                this.addGroupToLevel(tournament, groupsByLevel, level);
             }
-            previousLevelSize = groupsByLevel.get(level).size();
+            previousLevelSize = this.groupsOfLevel(groupsByLevel, level).size();
         }
 
-        if (addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners)) {
-            adjustGroupsSizeRemovingOddNumbers(tournament, numberOfWinners);
+        if (this.addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners)) {
+            this.adjustGroupsSizeRemovingOddNumbers(tournament, numberOfWinners);
         }
     }
 
+    private boolean shouldAddGroupRemovingOddNumbers(Map<Integer, List<Group>> groupsByLevel, Integer level,
+            int previousLevelSize, int numberOfWinners) {
+        return level > 0 && this.isLevelBelowExpectedOddResolvedSize(groupsByLevel, level, numberOfWinners)
+                && !this.isSingleLastLevelException(groupsByLevel, level, previousLevelSize);
+    }
 
-    private boolean addExtraLevelIfNeeded(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, int numberOfWinners) {
-        //Add extra level if needed.
-        if (groupsByLevel.get(groupsByLevel.size() - 1).size() > 1 || (groupsByLevel.size() == 1 && numberOfWinners > 1)) {
+    private boolean isLevelBelowExpectedOddResolvedSize(Map<Integer, List<Group>> groupsByLevel, Integer level,
+            int numberOfWinners) {
+        final int previousLevelWinners = level == 1 ? numberOfWinners : 1;
+        final int expectedLevelSize = GroupUtils.getNextPowerOfTwo(
+                ((this.groupsOfLevel(groupsByLevel, level - 1).size() * previousLevelWinners) + 1) / 2);
+        return this.groupsOfLevel(groupsByLevel, level).size() < expectedLevelSize;
+    }
+
+    private boolean isSingleLastLevelException(Map<Integer, List<Group>> groupsByLevel, Integer level,
+            int previousLevelSize) {
+        final List<Group> previousLevelGroups = this.groupsOfLevel(groupsByLevel, level - 1);
+        return this.groupsOfLevel(groupsByLevel, level).size() == 1 && previousLevelSize == 2
+                && !previousLevelGroups.isEmpty() && previousLevelGroups.getFirst().getNumberOfWinners() == 1;
+    }
+
+    private void addGroupToLevel(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
+        final Group levelGroup = new Group(tournament, level, this.groupsOfLevel(groupsByLevel, level).size());
+        this.groupProvider.addGroup(tournament, levelGroup);
+        this.groupsOfLevel(groupsByLevel, level).add(levelGroup);
+    }
+
+    private boolean addExtraLevelIfNeeded(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
+            int numberOfWinners) {
+        // Add extra level if needed.
+        if (this.groupsOfLevel(groupsByLevel, groupsByLevel.size() - 1).size() > 1
+                || (groupsByLevel.size() == 1 && numberOfWinners > 1)) {
             final Integer newLevel = groupsByLevel.size();
             final Group levelGroup = new Group(tournament, newLevel, 0);
             groupsByLevel.put(newLevel, new ArrayList<>());
-            groupsByLevel.get(newLevel).add(levelGroup);
-            groupProvider.addGroup(tournament, levelGroup);
+            this.groupsOfLevel(groupsByLevel, newLevel).add(levelGroup);
+          this.groupProvider.addGroup(tournament, levelGroup);
             return true;
         }
         return false;
     }
 
+    /**
+     * Safe accessor for the groups of a given level. {@link Map#get(Object)} may return {@code null}
+     * when the level is not present, which would otherwise cause a NullPointerException on the callers
+     * that immediately dereference the result.
+     */
+    private List<Group> groupsOfLevel(Map<Integer, List<Group>> groupsByLevel, int level) {
+        return groupsByLevel.getOrDefault(level, new ArrayList<>());
+    }
 
     private void adjustGroupsShiaijos(Tournament tournament) {
         if (tournament.getShiaijos() <= 1) {
             return;
         }
-        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+
+        final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            adjustShiaijosForLevel(groupsByLevel.get(level), tournament.getShiaijos());
+            this.adjustLevelShiaijos(this.groupsOfLevel(groupsByLevel, level), tournament.getShiaijos());
         }
     }
 
-    private void adjustShiaijosForLevel(List<Group> levelGroups, int totalShiaijos) {
-        final int groupsByShiaijo = levelGroups.size() / totalShiaijos;
+    private void adjustLevelShiaijos(List<Group> groups, int shiaijos) {
+        final int groupsByShiaijo = groups.size() / shiaijos;
         int currentShiaijo = 0;
         int groupsInCurrentShiaijo = 0;
-
-        for (final Group group : levelGroups) {
-            if (groupsInCurrentShiaijo >= getMaxGroupsForShiaijo(levelGroups.size(), totalShiaijos, groupsByShiaijo, currentShiaijo)) {
+        for (final Group group : groups) {
+            if (groupsInCurrentShiaijo >= this.getGroupsLimitForShiaijo(groups, shiaijos, groupsByShiaijo, currentShiaijo)) {
                 currentShiaijo++;
                 groupsInCurrentShiaijo = 0;
             }
-            updateGroupShiaijoIfNeeded(group, currentShiaijo);
+            this.updateGroupShiaijoIfNeeded(group, currentShiaijo);
             groupsInCurrentShiaijo++;
         }
     }
 
-    private int getMaxGroupsForShiaijo(int levelSize, int totalShiaijos, int groupsByShiaijo, int currentShiaijo) {
-        return currentShiaijo < levelSize % totalShiaijos ? groupsByShiaijo + 1 : groupsByShiaijo;
-    }
-
-    private void updateGroupShiaijoIfNeeded(Group group, int targetShiaijo) {
-        if (group.getShiaijo() != targetShiaijo) {
-            KendoTournamentLogger.info(this.getClass(), "Adjusting shiaijo for group '{}' to '{}'", group, targetShiaijo);
-            group.setShiaijo(targetShiaijo);
-            groupProvider.save(group);
+    private int getGroupsLimitForShiaijo(List<Group> groups, int shiaijos, int groupsByShiaijo, int currentShiaijo) {
+        if (currentShiaijo < groups.size() % shiaijos) {
+            return groupsByShiaijo + 1;
         }
+        return groupsByShiaijo;
     }
 
+    private void updateGroupShiaijoIfNeeded(Group group, int shiaijo) {
+        if (group.getShiaijo() == shiaijo) {
+            return;
+        }
+        KendoTournamentLogger.info(this.getClass(), "Adjusting shiaijo for group '{}' to '{}'", group, shiaijo);
+        group.setShiaijo(shiaijo);
+        this.groupProvider.save(group);
+    }
 
     @Override
     public void removeGroup(Tournament tournament, Integer groupLevel, Integer groupIndex) {
@@ -274,117 +310,137 @@ public class TreeTournamentHandler extends LeagueHandler {
             throw new InvalidGroupException(this.getClass(), "Groups can only be deleted at level 0.");
         }
 
-        groupProvider.deleteGroupByLevelAndIndex(tournament, groupLevel, groupIndex);
-        final int numberOfWinners = getNumberOfWinners(tournament);
+        this.removeLevelZeroGroupAndAdjustTree(tournament, groupLevel, groupIndex);
+    }
 
-        final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
-                .getByTournamentAndProperty(tournament,
-                        TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
+    private void removeLevelZeroGroupAndAdjustTree(Tournament tournament, Integer groupLevel, Integer groupIndex) {
+        this.groupProvider.deleteGroupByLevelAndIndex(tournament, groupLevel, groupIndex);
+        final int numberOfWinners = this.getNumberOfWinners(tournament);
+        final boolean oddTeamsResolvedAsap = Boolean.parseBoolean(this.tournamentExtraPropertyProvider
+                .getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP,
+                        DEFAULT_ODD_TEAMS_RESOLUTION_ASAP)
+                .getPropertyValue());
 
-
-        //Check if inner levels must be decreased on size.
-        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+        // Check if inner levels must be decreased on size.
+        final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
-        final boolean oddTeamsResolvedAsap = Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue());
         int previousLevelSize = Integer.MAX_VALUE - 1;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            removeGroupsWhenPreviousLevelIsEmpty(tournament, groupsByLevel, level);
-            adjustLevelAfterRemoval(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners, oddTeamsResolvedAsap);
-            previousLevelSize = groupsByLevel.get(level).size();
+            previousLevelSize = this.adjustLevelAfterRemovingGroup(tournament, groupsByLevel, level,
+                    previousLevelSize, numberOfWinners, oddTeamsResolvedAsap);
         }
-        adjustGroupsShiaijos(tournament);
+        this.adjustGroupsShiaijos(tournament);
     }
 
-    private void adjustLevelAfterRemoval(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level,
-                                         int previousLevelSize, int numberOfWinners, boolean oddTeamsResolvedAsap) {
+    private int adjustLevelAfterRemovingGroup(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
+            Integer level, int previousLevelSize, int numberOfWinners, boolean oddTeamsResolvedAsap) {
+        this.removeLevelIfPreviousIsEmpty(tournament, groupsByLevel, level);
         if (oddTeamsResolvedAsap) {
-            adjustOddTeamsResolvedAsapLevels(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners);
+            this.adjustOddResolvedLevelAfterGroupRemoval(tournament, groupsByLevel, level, previousLevelSize,
+                    numberOfWinners);
         } else {
-            adjustStandardLevels(tournament, groupsByLevel, level, previousLevelSize, numberOfWinners);
+            this.adjustStandardLevelAfterGroupRemoval(tournament, groupsByLevel, level, previousLevelSize,
+                    numberOfWinners);
+        }
+        return this.groupsOfLevel(groupsByLevel, level).size();
+    }
+
+    private void removeLevelIfPreviousIsEmpty(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
+            Integer level) {
+        if (level > 0 && (!groupsByLevel.containsKey(level - 1) || this.groupsOfLevel(groupsByLevel, level - 1).isEmpty())) {
+            this.removeAllGroupsFromLevel(tournament, groupsByLevel, level);
         }
     }
 
-    private void removeGroupsWhenPreviousLevelIsEmpty(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
-        if (level > 0 && (!groupsByLevel.containsKey(level - 1) || groupsByLevel.get(level - 1).isEmpty())) {
-            while (!groupsByLevel.get(level).isEmpty()) {
-                removeLastGroup(tournament, groupsByLevel, level);
-            }
-        }
-    }
-
-    private void adjustOddTeamsResolvedAsapLevels(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level,
-                                                  int previousLevelSize, int numberOfWinners) {
+    private void adjustOddResolvedLevelAfterGroupRemoval(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
+            Integer level, int previousLevelSize, int numberOfWinners) {
         if (level > 1) {
-            while ((previousLevelSize == 1 && !groupsByLevel.get(level).isEmpty())
-                    || groupsByLevel.get(level).size() > ((previousLevelSize + 1) / 2)) {
-                removeLastGroup(tournament, groupsByLevel, level);
+            while (this.shouldShrinkOddResolvedLevel(this.groupsOfLevel(groupsByLevel, level), previousLevelSize)) {
+                this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
             }
             return;
         }
 
         if (level == 1) {
-            while (GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(0).size() * numberOfWinners) + 1) / 2) < groupsByLevel.get(level).size()) {
-                removeLastGroup(tournament, groupsByLevel, level);
+            while (this.shouldShrinkFirstOddResolvedLevel(groupsByLevel, level, numberOfWinners)) {
+                this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
             }
-            if (numberOfWinners == 1 && groupsByLevel.get(0).size() == 1) {
-                while (!groupsByLevel.get(1).isEmpty()) {
-                    removeLastGroup(tournament, groupsByLevel, 1);
-                }
+            if (numberOfWinners == 1 && this.groupsOfLevel(groupsByLevel, 0).size() == 1) {
+                this.removeAllGroupsFromLevel(tournament, groupsByLevel, 1);
             }
         }
     }
 
-    private void adjustStandardLevels(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level,
-                                      int previousLevelSize, int numberOfWinners) {
-        final boolean tooManyRegularGroups = (numberOfWinners == 1 || level > 1)
-                && (previousLevelSize == 1 || groupsByLevel.get(level).size() > ((previousLevelSize + 1) / 2));
-        final boolean tooManyTwoWinnersGroups = numberOfWinners == 2 && groupsByLevel.get(level).size() > previousLevelSize;
-        if (tooManyRegularGroups || tooManyTwoWinnersGroups) {
-            removeLastGroup(tournament, groupsByLevel, level);
+    private void adjustStandardLevelAfterGroupRemoval(Tournament tournament, Map<Integer, List<Group>> groupsByLevel,
+            Integer level, int previousLevelSize, int numberOfWinners) {
+        if (this.shouldShrinkStandardLevel(this.groupsOfLevel(groupsByLevel, level).size(), level, previousLevelSize,
+                numberOfWinners)) {
+            this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
         }
     }
 
-    private void removeLastGroup(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
-        final int lastIndex = groupsByLevel.get(level).size() - 1;
-        groupProvider.deleteGroupByLevelAndIndex(tournament, level, lastIndex);
-        groupsByLevel.get(level).remove(lastIndex);
+    private boolean shouldShrinkOddResolvedLevel(List<Group> groups, int previousLevelSize) {
+        return (previousLevelSize == 1 && !groups.isEmpty()) || groups.size() > ((previousLevelSize + 1) / 2);
     }
 
+    private boolean shouldShrinkFirstOddResolvedLevel(Map<Integer, List<Group>> groupsByLevel, Integer level,
+            int numberOfWinners) {
+        return GroupUtils.getNextPowerOfTwo(((this.groupsOfLevel(groupsByLevel, 0).size() * numberOfWinners) + 1) / 2)
+                < this.groupsOfLevel(groupsByLevel, level).size();
+    }
+
+    private boolean shouldShrinkStandardLevel(int levelSize, Integer level, int previousLevelSize,
+            int numberOfWinners) {
+        return ((numberOfWinners == 1 || level > 1) && (previousLevelSize == 1
+                || levelSize > ((previousLevelSize + 1) / 2)))
+                || (numberOfWinners == 2 && levelSize > previousLevelSize);
+    }
+
+    private void removeAllGroupsFromLevel(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
+        while (!this.groupsOfLevel(groupsByLevel, level).isEmpty()) {
+            this.removeLastGroupFromLevel(tournament, groupsByLevel, level);
+        }
+    }
+
+    private void removeLastGroupFromLevel(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, Integer level) {
+        final List<Group> groups = this.groupsOfLevel(groupsByLevel, level);
+        if (groups.isEmpty()) {
+            return;
+        }
+        this.groupProvider.deleteGroupByLevelAndIndex(tournament, level, groups.size() - 1);
+        groups.removeLast();
+    }
 
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+        final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         final List<Fight> createdFights = new ArrayList<>();
-        tournamentGroups.stream()
-                .filter(group -> Objects.equals(group.getLevel(), level))
-                .forEach(group -> createdFights.addAll(createAndPersistGroupFights(tournament, level, createdBy, group)));
+        tournamentGroups.forEach(group -> {
+            if (Objects.equals(group.getLevel(), level)) {
+                final List<Fight> fights;
+                if (this.getMaxGroupFights(tournament)) {
+                    final TournamentExtraProperty extraProperty = this.getLeagueFightsOrder(tournament);
+                    fights = this.fightProvider.saveAll(this.completeGroupFightManager.createFights(tournament, group.getTeams(),
+                            TeamsOrder.NONE, level, group.getShiaijo(),
+                            LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO,
+                            createdBy));
+                } else {
+                    fights = this.fightProvider.saveAll(this.minimumGroupFightManager.createFights(tournament, group.getTeams(),
+                            TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
+                }
+                group.setFights(fights);
+              this.groupProvider.save(group);
+                createdFights.addAll(fights);
+            }
+        });
         return createdFights;
     }
-
-    private List<Fight> createAndPersistGroupFights(Tournament tournament, Integer level, String createdBy, Group group) {
-        final List<Fight> fights = createGroupFights(tournament, level, createdBy, group);
-        group.setFights(fights);
-        groupProvider.save(group);
-        return fights;
-    }
-
-    private List<Fight> createGroupFights(Tournament tournament, Integer level, String createdBy, Group group) {
-        if (getMaxGroupFights(tournament)) {
-            final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
-            final boolean fifoOrder = LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO;
-            return fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(), TeamsOrder.NONE,
-                    level, group.getShiaijo(), fifoOrder, createdBy));
-        }
-        return fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
-                TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
-    }
-
 
     private Integer getNextEmptyLevel(List<Group> tournamentGroups) {
         if (tournamentGroups == null) {
             return null;
         }
-        for (Group group : tournamentGroups) {
+        for (final Group group : tournamentGroups) {
             if (group.getTeams().isEmpty()) {
                 return group.getLevel();
             }
@@ -392,72 +448,125 @@ public class TreeTournamentHandler extends LeagueHandler {
         return null;
     }
 
-
     private void populateLevel(Tournament tournament, int level) throws LevelNotFinishedException {
-        final List<GroupLink> links = groupLinkProvider.getGroupLinks(tournament);
-        final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level).toList();
+        final List<GroupLink> links = this.groupLinkProvider.getGroupLinks(tournament);
+        final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level)
+                .toList();
         final Set<Group> groupsOfLevel = new HashSet<>();
         for (final GroupLink link : levelLinks) {
-            final List<ScoreOfTeam> teamsRanking = rankingProvider.getTeamsScoreRanking(link.getSource());
-            checkDrawScore(link.getSource(), teamsRanking, link.getWinner());
-            addWinnerToDestinationOrWarn(level, link, teamsRanking);
+            final List<ScoreOfTeam> teamsRanking = this.rankingProvider.getTeamsScoreRanking(link.getSource());
+          this.checkDrawScore(link.getSource(), teamsRanking, link.getWinner());
+            if (link.getWinner() != null && teamsRanking.get(link.getWinner()) != null
+                    && teamsRanking.get(link.getWinner()).getTeam() != null
+                    && !link.getDestination().getTeams().contains(teamsRanking.get(link.getWinner()).getTeam())) {
+                link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
+            } else {
+                KendoTournamentLogger.warning(this.getClass(),
+                        "Missing data for level '{}' population with winner '{}' using ranking:\n\t{}", level,
+                        link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
+            }
             groupsOfLevel.add(link.getDestination());
         }
-        groupProvider.saveAll(groupsOfLevel);
+      this.groupProvider.saveAll(groupsOfLevel);
     }
-
-    private void addWinnerToDestinationOrWarn(int level, GroupLink link, List<ScoreOfTeam> teamsRanking) {
-        if (isWinnerAvailable(link, teamsRanking) && !link.getDestination().getTeams().contains(teamsRanking.get(link.getWinner()).getTeam())) {
-            link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
-            return;
-        }
-        KendoTournamentLogger.warning(this.getClass(), "Missing data for level '{}' population with winner '{}' using ranking:\n\t{}",
-                level, link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
-    }
-
-    private boolean isWinnerAvailable(GroupLink link, List<ScoreOfTeam> teamsRanking) {
-        return link.getWinner() != null
-                && link.getWinner() >= 0
-                && link.getWinner() < teamsRanking.size()
-                && teamsRanking.get(link.getWinner()) != null
-                && teamsRanking.get(link.getWinner()).getTeam() != null;
-    }
-
 
     private void checkDrawScore(Group group, List<ScoreOfTeam> scoresOfTeamsDTO, int numberOfWinners) {
-        for (int winner = 0; winner <= numberOfWinners; winner++) {
-            final List<ScoreOfTeam> sameLevelScore = getSameRankedTeams(scoresOfTeamsDTO, winner);
+        for (int i = 0; i <= numberOfWinners; i++) {
+            final int winner = i;
+            final List<ScoreOfTeam> sameLevelScore = scoresOfTeamsDTO.stream()
+                    .filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == winner).toList();
             if (sameLevelScore.size() > 1) {
-                KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.", sameLevelScore.stream().map(ScoreOfTeam::getTeam).toList());
-                throw new LevelNotFinishedException(this.getClass(), "There is a draw value on winner '" + winner + "' on group '" + group + "'");
+              this.createCriticalUntieIfRequired(group, sameLevelScore);
+                KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.",
+                        sameLevelScore.stream().map(ScoreOfTeam::getTeam).toList());
+                throw new LevelNotFinishedException(this.getClass(),
+                        "There is a draw value on winner '" + winner + "' on group '" + group + "'");
             }
         }
     }
 
-    private List<ScoreOfTeam> getSameRankedTeams(List<ScoreOfTeam> scoresOfTeamsDTO, int rankingIndex) {
-        return scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == rankingIndex).toList();
+    private void createCriticalUntieIfRequired(Group group, List<ScoreOfTeam> tiedScores) {
+        if (tiedScores.size() != 2) {
+            return;
+        }
+
+        final Team firstTeam = tiedScores.getFirst().getTeam();
+        final Team secondTeam = tiedScores.get(1).getTeam();
+        if (firstTeam == null || secondTeam == null) {
+            return;
+        }
+
+        final Participant firstCompetitor = this.getRepresentativeCompetitor(firstTeam);
+        final Participant secondCompetitor = this.getRepresentativeCompetitor(secondTeam);
+        if (firstCompetitor == null || secondCompetitor == null) {
+            return;
+        }
+
+        // Reload the group from DB to get a clean managed entity. Using the detached
+        // entity from the GroupLink cache can cause the cascade-persist to be silently
+        // dropped when the PersistentBag is merged. The fresh load also ensures that
+        // hasPendingCriticalUntie reflects any untie already created on a prior
+        // attempt.
+        final Group freshGroup = this.groupProvider.getGroup(group.getId());
+        if (freshGroup == null) {
+            return;
+        }
+
+        if (this.hasPendingCriticalUntie(freshGroup, firstTeam, secondTeam)) {
+            return;
+        }
+
+        final Duel untie = new Duel(firstCompetitor, secondCompetitor, freshGroup.getTournament(), "system");
+        untie.setType(DuelType.UNDRAW);
+        freshGroup.getUnties().add(untie);
+      this.groupProvider.save(freshGroup);
     }
 
+    private boolean hasPendingCriticalUntie(Group group, Team firstTeam, Team secondTeam) {
+        final List<Duel> unties = group.getUnties();
+        if (unties == null) {
+            return false;
+        }
+        return unties.stream().filter(duel -> duel.getType() == DuelType.UNDRAW)
+                .anyMatch(duel -> !duel.isFinished() && this.isDuelBetweenTeams(duel, firstTeam, secondTeam));
+    }
+
+    private boolean isDuelBetweenTeams(Duel duel, Team firstTeam, Team secondTeam) {
+        return this.isCompetitorFromTeam(duel.getCompetitor1(), firstTeam)
+                && this.isCompetitorFromTeam(duel.getCompetitor2(), secondTeam)
+                || this.isCompetitorFromTeam(duel.getCompetitor1(), secondTeam)
+                        && this.isCompetitorFromTeam(duel.getCompetitor2(), firstTeam);
+    }
+
+    private boolean isCompetitorFromTeam(Participant competitor, Team team) {
+        return competitor != null && team.getMembers() != null && team.getMembers().contains(competitor);
+    }
+
+    private Participant getRepresentativeCompetitor(Team team) {
+        if (team.getMembers() == null || team.getMembers().isEmpty()) {
+            return null;
+        }
+        return team.getMembers().getFirst();
+    }
 
     @Override
     public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
-        //Get the next level to continue if exists.
-        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+        // Get the next level to continue if exists.
+        final List<Group> tournamentGroups = this.groupProvider.getGroups(tournament);
         if (tournamentGroups == null) {
             return new ArrayList<>();
         }
 
-        final Integer nextLevel = getNextEmptyLevel(tournamentGroups);
+        final Integer nextLevel = this.getNextEmptyLevel(tournamentGroups);
         if (nextLevel == null) {
             KendoTournamentLogger.debug(this.getClass(), "No next level to populate!");
             return new ArrayList<>();
         }
 
-        //Populate the next level with winners.
-        populateLevel(tournament, nextLevel);
+        // Populate the next level with winners.
+      this.populateLevel(tournament, nextLevel);
 
-
-        //Generate next Level fights.
-        return createFights(tournament, TeamsOrder.NONE, nextLevel, createdBy);
+        // Generate next Level fights.
+        return this.createFights(tournament, TeamsOrder.NONE, nextLevel, createdBy);
     }
 }

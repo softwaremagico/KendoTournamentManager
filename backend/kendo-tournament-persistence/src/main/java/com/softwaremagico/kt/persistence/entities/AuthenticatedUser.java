@@ -44,6 +44,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -195,5 +196,30 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
                 + ", roles=" + roles
                 + ", authorities=" + authorities
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AuthenticatedUser that = (AuthenticatedUser) o;
+        return Objects.equals(password, that.password)
+                && Objects.equals(username, that.username)
+                && Objects.equals(usernameHash, that.usernameHash)
+                && Objects.equals(name, that.name)
+                && Objects.equals(lastname, that.lastname)
+                && Objects.equals(roles, that.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), password, username, usernameHash, name, lastname, roles);
     }
 }

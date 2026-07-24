@@ -51,7 +51,7 @@ public class KingOfTheMountainFightManager {
 
         // If only exists two teams, there are only one fight. If no, as many
         // fights as teams
-        final Team team1 = teams.get(0);
+        final Team team1 = teams.getFirst();
         final Team team2 = teams.get(1);
         fights.add(createFight(tournament, team1, team2, 0, level, createdBy));
         return fights;

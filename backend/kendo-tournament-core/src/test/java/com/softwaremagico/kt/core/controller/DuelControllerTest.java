@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.controller;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -41,6 +41,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -79,7 +81,7 @@ public class DuelControllerTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        controller = org.mockito.Mockito.spy(new DuelController(duelProvider, duelConverter, tournamentConverter,
+        controller = spy(new DuelController(duelProvider, duelConverter, tournamentConverter,
                 fightProvider, fightConverter, tournamentProvider, participantProvider));
     }
 
@@ -106,21 +108,27 @@ public class DuelControllerTest {
 
     @Test
     public void shouldRegisterShiaijoFinishedListener() {
-        DuelController.ShiaijoFinishedListener listener = (tournament, shiaijo) -> { };
+        DuelController.ShiaijoFinishedListener listener = (tournament, shiaijo) -> {
+            // No-op listener used only to verify registration.
+        };
         controller.addShiaijoFinishedListener(listener);
         assertTrue(true); // no exception = registered
     }
 
     @Test
     public void shouldRegisterFightUpdatedListener() {
-        DuelController.FightUpdatedListener listener = (tournament, fight, duel, actor, session) -> { };
+        DuelController.FightUpdatedListener listener = (tournament, fight, duel, actor, session) -> {
+            // No-op listener used only to verify registration.
+        };
         controller.addFightUpdatedListener(listener);
         assertTrue(true);
     }
 
     @Test
     public void shouldRegisterUntieUpdatedListener() {
-        DuelController.UntieUpdatedListener listener = (tournament, duel, actor, session) -> { };
+        DuelController.UntieUpdatedListener listener = (tournament, duel, actor, session) -> {
+            // No-op listener used only to verify registration.
+        };
         controller.addUntieUpdatedListener(listener);
         assertTrue(true);
     }
@@ -134,50 +142,27 @@ public class DuelControllerTest {
         controller.validate(dto);
     }
 
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor1HasEmptyScore() {
+    @DataProvider(name = "invalidScores")
+    private Object[][] invalidScores() {
+        return new Object[][]{
+                {Score.EMPTY},
+                {Score.DRAW},
+                {Score.FAULT}
+        };
+    }
+
+    @Test(dataProvider = "invalidScores")
+    public void shouldThrowValidationExceptionWhenCompetitor1HasInvalidScore(Score invalidScore) {
         final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor1Score(new ArrayList<>(List.of(Score.EMPTY)));
+        dto.setCompetitor1Score(new ArrayList<>(List.of(invalidScore)));
 
         assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
     }
 
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor1HasDrawScore() {
+    @Test(dataProvider = "invalidScores")
+    public void shouldThrowValidationExceptionWhenCompetitor2HasInvalidScore(Score invalidScore) {
         final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor1Score(new ArrayList<>(List.of(Score.DRAW)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor1HasFaultScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor1Score(new ArrayList<>(List.of(Score.FAULT)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor2HasEmptyScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor2Score(new ArrayList<>(List.of(Score.EMPTY)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor2HasDrawScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor2Score(new ArrayList<>(List.of(Score.DRAW)));
-
-        assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
-    }
-
-    @Test
-    public void shouldThrowValidationExceptionWhenCompetitor2HasFaultScore() {
-        final DuelDTO dto = validDuelDTO();
-        dto.setCompetitor2Score(new ArrayList<>(List.of(Score.FAULT)));
+        dto.setCompetitor2Score(new ArrayList<>(List.of(invalidScore)));
 
         assertThrows(ValidateBadRequestException.class, () -> controller.validate(dto));
     }

@@ -116,11 +116,12 @@ public class WebSecurityConfig {
 
 
     @Bean
+    @SuppressWarnings("java:S4502")
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 //Disable cors headers
                 .cors(cors -> cors.configurationSource(generateCorsConfigurationSource()))
-                //Disable csrf protection
+                // CSRF is intentionally disabled because this API is fully stateless and authenticated via JWT bearer tokens.
                 .csrf(AbstractHttpConfigurer::disable)
                 //Sessions should be stateless
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
@@ -139,7 +140,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(this.jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

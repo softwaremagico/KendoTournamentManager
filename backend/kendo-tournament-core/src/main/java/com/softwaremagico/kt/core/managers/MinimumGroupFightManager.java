@@ -36,8 +36,9 @@ public class MinimumGroupFightManager {
         return createFightList(tournament, teams, teamsOrder, level, shiaijo, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
-        return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
+    private Fight createFight(Tournament tournament, Team firstTeam, Team secondTeam, Integer shiaijo, Integer level,
+                              String createdBy) {
+        return new Fight(tournament, firstTeam, secondTeam, shiaijo, level, createdBy);
     }
 
     /**

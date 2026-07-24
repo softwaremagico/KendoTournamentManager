@@ -53,103 +53,112 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
 
     @Autowired
     public DuelProvider(DuelRepository duelRepository, GroupRepository groupRepository,
-                        TournamentRepository tournamentRepository) {
+            TournamentRepository tournamentRepository) {
         super(duelRepository);
         this.groupRepository = groupRepository;
         this.tournamentRepository = tournamentRepository;
     }
 
     public long delete(Tournament tournament) {
-        return getRepository().deleteByTournament(tournament);
+        return this.getRepository().deleteByTournament(tournament);
     }
 
     public long count(Tournament tournament) {
-        return getRepository().countByTournament(tournament);
+        return this.getRepository().countByTournament(tournament);
     }
 
     public List<Duel> get(Participant participant) {
-        return getRepository().findByParticipant(participant);
+        return this.getRepository().findByParticipant(participant);
     }
 
     public List<Duel> getWhenBothAreInvolved(Participant participant1, Participant participant2) {
-        return getRepository().findByParticipants(participant1, participant2);
+        return this.getRepository().findByParticipants(participant1, participant2);
     }
 
     public List<Duel> get(Tournament tournament) {
-        return getRepository().findByTournament(tournament);
+        return this.getRepository().findByTournament(tournament);
     }
 
     public List<Duel> getUnties(Collection<Participant> participants) {
-        return getRepository().findUntiesByParticipantIn(participants);
+        return this.getRepository().findUntiesByParticipantIn(participants);
     }
 
     public List<Duel> getUnties() {
-        return getRepository().findAllUnties();
+        return this.getRepository().findAllUnties();
     }
 
     @Cacheable(value = "duels-duration-average", key = "'average'")
     public Long getDurationAverage() {
-        final Long duration = getRepository().getDurationAverage();
+        final Long duration = this.getRepository().getDurationAverage();
         return duration != null ? duration : -1;
     }
 
     public Long getDurationAverage(Participant participant) {
-        final Long duration = getRepository().getDurationAverage(participant);
+        final Long duration = this.getRepository().getDurationAverage(participant);
         return duration != null ? duration : -1;
     }
 
     public Long getDurationAverage(Tournament tournament) {
-        return getRepository().getDurationAverage(tournament);
+        return this.getRepository().getDurationAverage(tournament);
     }
 
     public Duel getFirstDuel(Tournament tournament) {
-        return getRepository().findFirstByTournamentOrderByStartedAtAsc(tournament);
+        return this.getRepository().findFirstByTournamentOrderByStartedAtAsc(tournament);
     }
 
     public Duel getLastDuel(Tournament tournament) {
-        return getRepository().findFirstByTournamentOrderByFinishedAtDesc(tournament);
+        return this.getRepository().findFirstByTournamentOrderByFinishedAtDesc(tournament);
     }
 
     public Long countScore(Tournament tournament, Score score) {
-        return getRepository().countScore(tournament, Collections.singletonList(score));
+        return this.getRepository().countScore(tournament, Collections.singletonList(score));
     }
 
     public Set<Duel> findByOnlyScore(Tournament tournament, Score score) {
         final List<Score> forbiddenScores = new ArrayList<>(Arrays.asList(Score.values()));
         forbiddenScores.remove(score);
         forbiddenScores.remove(Score.EMPTY);
-        return getRepository().findByOnlyScore(tournament, forbiddenScores);
+        return this.getRepository().findByOnlyScore(tournament, forbiddenScores);
     }
 
     public Set<Duel> findByScorePerformedInLessThan(Tournament tournament, int maxSeconds) {
-        return getRepository().findByScoreOnTimeLess(tournament, maxSeconds);
+        return this.getRepository().findByScoreOnTimeLess(tournament, maxSeconds);
     }
 
     public List<Duel> findByScoreDuration(Tournament tournament, int scoreMaxDuration) {
-        return getRepository().findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
-                tournament, scoreMaxDuration, scoreMaxDuration);
+        return this.getRepository()
+                .findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(tournament,
+                        scoreMaxDuration, scoreMaxDuration);
     }
 
     public long countFaults(Tournament tournament) {
-        final Long faults = getRepository().countFaultsByTournament(tournament, true);
-        final Long hansokus = getRepository().countScore(tournament, Collections.singletonList(Score.HANSOKU));
+        final Long faults = this.getRepository().countFaultsByTournament(tournament, true);
+        final Long hansokus = this.getRepository().countScore(tournament, Collections.singletonList(Score.HANSOKU));
         return (faults != null ? faults : 0) + (hansokus != null ? hansokus : 0) * 2;
     }
 
     public long countScoreFromCompetitor(Participant participant, Collection<Tournament> tournaments) {
+        if (participant == null || tournaments == null || tournaments.isEmpty()) {
+            return 0L;
+        }
         try {
-            return getRepository().countLeftScoreFromCompetitor(participant, tournaments)
-                    + getRepository().countRightScoreFromCompetitor(participant, tournaments);
-        } catch (NullPointerException e) {
+            final Long leftScore = this.getRepository().countLeftScoreFromCompetitor(participant, tournaments);
+            final Long rightScore = this.getRepository().countRightScoreFromCompetitor(participant, tournaments);
+            return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
+        } catch (NullPointerException _) {
             return 0L;
         }
     }
 
     public long countScoreAgainstCompetitor(Participant participant, Collection<Tournament> tournaments) {
+        if (participant == null || tournaments == null || tournaments.isEmpty()) {
+            return 0L;
+        }
         try {
-            return getRepository().countLeftScoreAgainstCompetitor(participant, tournaments)
-                    + getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
-        } catch (NullPointerException e) {
+            final Long leftScore = this.getRepository().countLeftScoreAgainstCompetitor(participant, tournaments);
+            final Long rightScore = this.getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
+            return (leftScore != null ? leftScore : 0L) + (rightScore != null ? rightScore : 0L);
+        } catch (NullPointerException _) {
             return 0L;
         }
     }
@@ -157,18 +166,19 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @CacheEvict(allEntries = true, value = {"duels-duration-average"})
     @Scheduled(fixedDelay = CACHE_EXPIRATION_TIME)
     public void reportCacheEvict() {
-        //Only for handling Spring cache.
+        // Only for handling Spring cache.
     }
 
     public List<Duel> getUntiesFromTournament(Integer tournamentId) {
-        final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
-                        ExceptionType.INFO)));
+        final List<Group> groups = this.groupRepository
+                .findByTournamentOrderByLevelAscIndexAsc(this.tournamentRepository.findById(tournamentId)
+                        .orElseThrow(() -> new TournamentNotFoundException(this.getClass(),
+                                "No tournament found with id '" + tournamentId + "',", ExceptionType.INFO)));
         return groups.stream().flatMap(group -> group.getUnties().stream()).toList();
     }
 
     public List<Duel> getUntiesFromGroup(Integer groupId) {
-        final Group group = groupRepository.findById(groupId).orElse(null);
+        final Group group = this.groupRepository.findById(groupId).orElse(null);
         if (group == null) {
             return new ArrayList<>();
         }
@@ -176,7 +186,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     }
 
     public List<Duel> getUntiesFromParticipant(Participant participant) {
-        return getRepository().findUntiesByParticipantIn(Collections.singletonList(participant));
+        return this.getRepository().findUntiesByParticipantIn(Collections.singletonList(participant));
     }
 
 }

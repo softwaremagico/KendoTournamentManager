@@ -75,7 +75,7 @@ public class CBCCipherEngine implements ICipherEngine {
             // Add the iv on the message.
             return Base64.getEncoder().encodeToString(iv) + encodedValue;
         } catch (final BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
-                       | InvalidKeyException e) {
+                | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
         }
     }
@@ -96,14 +96,13 @@ public class CBCCipherEngine implements ICipherEngine {
                         .decode(encrypted.substring(STORED_KEY_SIZE).getBytes(StandardCharsets.UTF_8));
                 final byte[] decryptedBytes = deecryptCipher.doFinal(encryptedBytes);
                 final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-                EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", encrypted,
-                        decrypted);
+                EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
                 return decrypted;
             }
         } catch (final BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
-                       | InvalidKeyException e) {
+                | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
-        } catch (final StringIndexOutOfBoundsException e) {
+        } catch (StringIndexOutOfBoundsException _) {
             return null;
         }
     }

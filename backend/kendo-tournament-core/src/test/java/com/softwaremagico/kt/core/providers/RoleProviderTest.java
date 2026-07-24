@@ -65,8 +65,9 @@ public class RoleProviderTest {
 
         final List<Role> result = provider.getAll(tournament);
 
-        assertThat(result).containsExactly(firstRole, secondRole);
-        assertThat(result).allSatisfy(role -> assertThat(role.getTournament()).isEqualTo(tournament));
+        assertThat(result)
+                .containsExactly(firstRole, secondRole)
+                .allSatisfy(role -> assertThat(role.getTournament()).isEqualTo(tournament));
     }
 
     @Test

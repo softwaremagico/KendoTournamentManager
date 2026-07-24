@@ -42,6 +42,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuppressWarnings("java:S2160")
 public class TournamentScore extends Element {
 
+    /** Default points awarded for a win in a Swiss tournament. */
+    public static final int SWISS_DEFAULT_WIN_POINTS = 3;
+
+    /** Default points awarded for a draw in a Swiss tournament. */
+    public static final int SWISS_DEFAULT_DRAW_POINTS = 1;
+
     @Column(name = "score_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @Convert(converter = StringCryptoConverter.class)
@@ -63,6 +69,20 @@ public class TournamentScore extends Element {
     public TournamentScore(ScoreType scoreType) {
         super();
         this.scoreType = scoreType;
+    }
+
+    /**
+     * Creates a TournamentScore with explicit win and draw point values.
+     *
+     * @param scoreType      the scoring algorithm to use for ranking
+     * @param pointsByVictory points awarded to the winner of a fight
+     * @param pointsByDraw    points awarded to each team in a drawn fight
+     */
+    public TournamentScore(ScoreType scoreType, int pointsByVictory, int pointsByDraw) {
+        super();
+        this.scoreType = scoreType;
+        this.pointsByVictory = pointsByVictory;
+        this.pointsByDraw = pointsByDraw;
     }
 
     public ScoreType getScoreType() {

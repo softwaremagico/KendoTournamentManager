@@ -55,6 +55,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -126,7 +127,6 @@ public class AchievementControllerTest {
     @Test(expectedExceptions = ParticipantNotFoundException.class)
     public void shouldThrowWhenParticipantDoesNotExist() {
         when(participantProvider.get(99)).thenReturn(Optional.empty());
-
         controller.getParticipantAchievements(99);
     }
 
@@ -157,9 +157,9 @@ public class AchievementControllerTest {
     @Test
     public void shouldRegenerateAllAchievementsSortedByCreatedAtThenIdAndNotify() {
         final AchievementController spyController = spy(controller);
-        final TournamentDTO t1 = tournamentDTO(2, LocalDateTime.of(2024, 1, 1, 0, 0));
-        final TournamentDTO t2 = tournamentDTO(1, LocalDateTime.of(2024, 1, 1, 0, 0));
-        final TournamentDTO t3 = tournamentDTO(3, LocalDateTime.of(2025, 1, 1, 0, 0));
+        final TournamentDTO t1 = tournamentDTO(2, LocalDateTime.of(2024, Month.JANUARY, 1, 0, 0));
+        final TournamentDTO t2 = tournamentDTO(1, LocalDateTime.of(2024, Month.JANUARY, 1, 0, 0));
+        final TournamentDTO t3 = tournamentDTO(3, LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0));
         final List<Integer> generationOrder = new ArrayList<>();
         final List<Integer> listenerTournamentIds = new ArrayList<>();
 
@@ -230,7 +230,7 @@ public class AchievementControllerTest {
     }
 
     @Test
-    public void shouldGenerateSwissWinnerAchievementForWinningTeamMembers() throws Exception {
+    public void shouldGenerateSwissWinnerAchievementForWinningTeamMembers() {
         final Tournament tournament = new Tournament("Tournament", 1, 2, TournamentType.SWISS, "tester", ScoreType.INTERNATIONAL);
         tournament.setId(77);
         tournament.setCreatedAt(LocalDateTime.now().minusDays(1));
@@ -254,7 +254,7 @@ public class AchievementControllerTest {
     }
 
     @Test
-    public void shouldGenerateBuchholzWhispererWhenSwissWinnerIsDecidedByTieBreak() throws Exception {
+    public void shouldGenerateBuchholzWhispererWhenSwissWinnerIsDecidedByTieBreak() {
         final Tournament tournament = new Tournament("Tournament", 1, 2, TournamentType.SWISS, "tester", ScoreType.INTERNATIONAL);
         tournament.setId(78);
         tournament.setCreatedAt(LocalDateTime.now().minusDays(1));
@@ -292,7 +292,7 @@ public class AchievementControllerTest {
     }
 
     @Test
-    public void shouldNotGenerateBuchholzWhispererWithoutPointsTie() throws Exception {
+    public void shouldNotGenerateBuchholzWhispererWithoutPointsTie() {
         final Tournament tournament = new Tournament("Tournament", 1, 2, TournamentType.SWISS, "tester", ScoreType.INTERNATIONAL);
         tournament.setId(79);
         tournament.setCreatedAt(LocalDateTime.now().minusDays(1));

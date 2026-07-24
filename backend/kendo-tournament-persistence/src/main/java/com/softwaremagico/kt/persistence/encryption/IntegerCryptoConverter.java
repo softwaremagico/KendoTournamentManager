@@ -26,9 +26,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class IntegerCryptoConverter extends AbstractCryptoConverter<Integer>
-        implements
-            AttributeConverter<Integer, String> {
+public class IntegerCryptoConverter extends AbstractCryptoConverter<Integer> implements AttributeConverter<Integer, String> {
 
     public IntegerCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -47,8 +45,9 @@ public class IntegerCryptoConverter extends AbstractCryptoConverter<Integer>
     protected Integer stringToEntityAttribute(String dbData) {
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Integer.parseInt(dbData);
-        } catch (final NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass(), "Invalid integer value '{}' in database.", dbData);
+        } catch (NumberFormatException ex) {
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid integer value '{}' in database. Cause: {}", dbData,
+                    ex.getMessage());
             return null;
         }
     }

@@ -115,12 +115,13 @@ public class TeamProviderTest {
 
         final List<Team> result = provider.createDefaultTeams(tournament, "coach");
 
-        assertThat(result).hasSize(3);
+        assertThat(result)
+                .hasSize(3)
+                .allSatisfy(team -> {
+                    assertThat(team.getTournament()).isEqualTo(tournament);
+                    assertThat(team.getCreatedBy()).isEqualTo("coach");
+                });
         assertThat(result).extracting(Team::getName).containsExactly("Team 1", "Team 2", "Team 3");
-        assertThat(result).allSatisfy(team -> {
-            assertThat(team.getTournament()).isEqualTo(tournament);
-            assertThat(team.getCreatedBy()).isEqualTo("coach");
-        });
         verify(teamRepository).saveAll(anyCollection());
     }
 
@@ -146,8 +147,9 @@ public class TeamProviderTest {
 
         final List<Team> result = provider.getAll(tournament);
 
-        assertThat(result).containsExactly(firstTeam, secondTeam);
-        assertThat(result).allSatisfy(team -> assertThat(team.getTournament()).isEqualTo(tournament));
+        assertThat(result)
+                .containsExactly(firstTeam, secondTeam)
+                .allSatisfy(team -> assertThat(team.getTournament()).isEqualTo(tournament));
     }
 
     @Test

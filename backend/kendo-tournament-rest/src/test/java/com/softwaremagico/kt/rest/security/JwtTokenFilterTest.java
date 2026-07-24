@@ -10,12 +10,12 @@ package com.softwaremagico.kt.rest.security;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -30,14 +30,15 @@ import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,23 +53,34 @@ import static org.testng.Assert.assertThrows;
 
 public class JwtTokenFilterTest {
 
+    @Mock
     private JwtTokenUtil jwtTokenUtil;
+
+    @Mock
     private AuthenticatedUserProvider authenticatedUserProvider;
+
+    @Mock
     private ParticipantProvider participantProvider;
+
+    @Mock
     private NetworkController networkController;
+
+    @Mock
     private HttpServletRequest request;
+
+    @Mock
     private HttpServletResponse response;
+
+    @Mock
     private FilterChain chain;
+
+    @InjectMocks
+    private JwtTokenFilter filter;
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        jwtTokenUtil = mock(JwtTokenUtil.class);
-        authenticatedUserProvider = mock(AuthenticatedUserProvider.class);
-        participantProvider = mock(ParticipantProvider.class);
-        networkController = mock(NetworkController.class);
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        chain = mock(FilterChain.class);
+        MockitoAnnotations.openMocks(this);
+        filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider, participantProvider, networkController);
         SecurityContextHolder.clearContext();
     }
 
@@ -79,8 +91,6 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldContinueChainWhenAuthorizationHeaderIsMissing() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
-                participantProvider, networkController);
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(null);
         when(request.getContextPath()).thenReturn("/api");
 
@@ -92,8 +102,6 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldContinueChainWhenTokenIsInvalid() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
-                participantProvider, networkController);
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer invalid-token");
         when(jwtTokenUtil.validate("invalid-token")).thenReturn(false);
 
@@ -105,11 +113,11 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldContinueChainWhenBearerTokenIsBlank() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer   ");
 
-        filter.doFilterInternal(request, response, chain);
+        localFilter.doFilterInternal(request, response, chain);
 
         verify(chain).doFilter(request, response);
         verify(jwtTokenUtil, never()).validate(any());
@@ -118,8 +126,6 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldAuthenticateStandardUserWhenTokenIsValid() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
-                participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
         authenticatedUser.setRoles(Set.of("ROLE_ADMIN"));
 
@@ -137,7 +143,7 @@ public class JwtTokenFilterTest {
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldThrowInvalidIpWhenIpDoesNotMatchToken() {
-        final JwtTokenFilter filter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
 
@@ -159,12 +165,12 @@ public class JwtTokenFilterTest {
         when(request.getHeader("REMOTE_ADDR")).thenReturn(null);
         when(request.getRemoteAddr()).thenReturn("192.168.1.99");
 
-        assertThrows(InvalidIpException.class, () -> filter.doFilterInternal(request, response, chain));
+        assertThrows(InvalidIpException.class, () -> localFilter.doFilterInternal(request, response, chain));
     }
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldThrowInvalidMacWhenMacDoesNotMatchToken() {
-        final JwtTokenFilter filter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
 
@@ -177,14 +183,14 @@ public class JwtTokenFilterTest {
         when(networkController.getHostMac()).thenReturn("CC-DD");
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
 
-        assertThrows(InvalidMacException.class, () -> filter.doFilterInternal(request, response, chain));
+        assertThrows(InvalidMacException.class, () -> localFilter.doFilterInternal(request, response, chain));
     }
 
     @Test(groups = {"jwtTokenUtil"})
     public void shouldAllowParticipantUserWhenParticipantAccessIsEnabled() throws Exception {
-        final JwtTokenFilter filter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
-        final Participant participant = Mockito.mock(Participant.class);
+        final Participant participant = mock(Participant.class);
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer participant-token");
         when(jwtTokenUtil.validate("participant-token")).thenReturn(true);
@@ -193,7 +199,7 @@ public class JwtTokenFilterTest {
         when(authenticatedUserProvider.findByUsername("participant-user")).thenReturn(Optional.empty());
         when(participantProvider.findByTokenUsername("participant-user")).thenReturn(Optional.of(participant));
 
-        filter.doFilterInternal(request, response, chain);
+        localFilter.doFilterInternal(request, response, chain);
 
         verify(chain).doFilter(request, response);
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());

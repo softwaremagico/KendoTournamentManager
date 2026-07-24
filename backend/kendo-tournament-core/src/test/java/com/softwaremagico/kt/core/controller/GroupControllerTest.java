@@ -99,7 +99,7 @@ public class GroupControllerTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		this.controller = org.mockito.Mockito.spy(new GroupController(this.groupProvider, this.groupConverter,
+		this.controller = spy(new GroupController(this.groupProvider, this.groupConverter,
 				this.tournamentConverter, this.tournamentProvider, this.fightProvider, this.fightConverter,
 				this.duelProvider, this.duelConverter, this.teamConverter, this.tournamentHandlerSelector));
 	}

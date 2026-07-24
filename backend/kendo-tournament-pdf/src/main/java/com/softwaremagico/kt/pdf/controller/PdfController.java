@@ -44,6 +44,7 @@ import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
+import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards.ImageAssets;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
 import com.softwaremagico.kt.pdf.lists.FightSummary;
@@ -56,6 +57,7 @@ import com.softwaremagico.kt.pdf.qr.TournamentQr;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
@@ -92,6 +94,7 @@ public class PdfController {
 
     private final QrController qrController;
 
+    @SuppressWarnings("java:S107")
     public PdfController(MessageSource messageSource, RoleController roleController, TeamController teamController, GroupController groupController,
                          TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
                          TournamentExtraPropertyController tournamentExtraPropertyController, ParticipantProvider participantProvider,
@@ -156,21 +159,13 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.getForAccreditations(tournamentDTO, onlyNews,
                 roleTypes != null ? Arrays.asList(roleTypes) : new ArrayList<>());
         if (roleDTOS.isEmpty()) {
-            throw new NoContentException("No roles matching this criteria are found");
+            throw new NoContentException(this.getClass(), "No roles matching this criteria are found");
         }
-        final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
-        final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
-        final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
-        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).toList();
-        final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
-        final Map<ParticipantDTO, ParticipantImageDTO> participantImages = participantImageDTOS.stream()
-                .collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
+        final Map<ParticipantDTO, ParticipantImageDTO> participantImages = getParticipantImages(roleDTOS.stream().map(RoleDTO::getParticipant).toList());
+        final Map<ParticipantDTO, RoleDTO> competitorsRoles = roleDTOS.stream().collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity()));
         try {
-            return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
-                    .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages,
-                    banner != null ? banner.getData() : null,
-                    accreditationBackground != null ? accreditationBackground.getData() : null,
-                    defaultPhoto != null ? defaultPhoto.getData() : null);
+            return new TournamentAccreditationCards(this.messageSource, locale, tournamentDTO, competitorsRoles,
+                    participantImages, getAccreditationImageAssets(tournamentDTO));
         } finally {
             roleDTOS.forEach(roleDTO -> roleDTO.setAccreditationPrinted(true));
             roleController.updateAll(roleDTOS, username, session);
@@ -187,25 +182,12 @@ public class PdfController {
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
                                                                          ParticipantDTO participantDTO, RoleDTO roleDTO, String username, String session) {
-        final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
-        final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
-        final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
-        final List<ParticipantDTO> participantDTOS = Collections.singletonList(participantDTO);
-        final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
-        if (participantDTO.getId() != null) {
-            final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
-            participantImages = participantImageDTOS.stream()
-                    .collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
-        } else {
-            participantImages = new HashMap<>();
-        }
+        final Map<ParticipantDTO, ParticipantImageDTO> participantImages = getParticipantImagesFor(participantDTO);
         final Map<ParticipantDTO, RoleDTO> competitorsRoles = new HashMap<>();
         competitorsRoles.put(participantDTO, roleDTO);
         try {
-            return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, competitorsRoles, participantImages,
-                    banner != null ? banner.getData() : null,
-                    accreditationBackground != null ? accreditationBackground.getData() : null,
-                    defaultPhoto != null ? defaultPhoto.getData() : null);
+            return new TournamentAccreditationCards(this.messageSource, locale, tournamentDTO, competitorsRoles, participantImages,
+                    getAccreditationImageAssets(tournamentDTO));
         } finally {
             if (roleDTO.getId() != null) {
                 roleDTO.setAccreditationPrinted(true);
@@ -219,7 +201,7 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.getForDiplomas(tournamentDTO, onlyNews,
                 roleTypes != null ? Arrays.asList(roleTypes) : new ArrayList<>());
         if (roleDTOS.isEmpty()) {
-            throw new NoContentException("No roles matching this criteria are found");
+            throw new NoContentException(this.getClass(), "No roles matching this criteria are found");
         }
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).toList();
@@ -237,6 +219,9 @@ public class PdfController {
     }
 
     private float getNamePosition(TournamentDTO tournamentDTO) {
+        if (tournamentDTO == null) {
+            return DEFAULT_NAME_POSITION;
+        }
         final TournamentExtraPropertyDTO tournamentExtraPropertyDTO = tournamentExtraPropertyController
                 .getByTournamentAndProperty(tournamentDTO.getId(), TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT);
         if (tournamentExtraPropertyDTO == null) {
@@ -244,9 +229,32 @@ public class PdfController {
         }
         try {
             return Float.parseFloat(tournamentExtraPropertyDTO.getPropertyValue());
-        } catch (NumberFormatException e) {
+        } catch (Exception ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Invalid DIPLOMA_NAME_HEIGHT value '{}': {}",
+                    tournamentExtraPropertyDTO.getPropertyValue(), ex.getMessage());
             return DEFAULT_NAME_POSITION;
         }
+    }
+
+    private ImageAssets getAccreditationImageAssets(TournamentDTO tournamentDTO) {
+        final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
+        final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
+        final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
+        return new ImageAssets(banner != null ? banner.getData() : null,
+                accreditationBackground != null ? accreditationBackground.getData() : null,
+                defaultPhoto != null ? defaultPhoto.getData() : null);
+    }
+
+    private Map<ParticipantDTO, ParticipantImageDTO> getParticipantImages(List<ParticipantDTO> participantDTOS) {
+        final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
+        return participantImageDTOS.stream().collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
+    }
+
+    private Map<ParticipantDTO, ParticipantImageDTO> getParticipantImagesFor(ParticipantDTO participantDTO) {
+        if (participantDTO.getId() == null) {
+            return new HashMap<>();
+        }
+        return getParticipantImages(Collections.singletonList(participantDTO));
     }
 
     public TournamentQr generateTournamentQr(Locale locale, TournamentDTO tournament, Integer port) {

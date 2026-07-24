@@ -10,12 +10,12 @@ package com.softwaremagico.kt.logger.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -32,89 +32,88 @@ import org.testng.annotations.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class BasicLoggerTest {
 
-    @Mock
-    private Logger logger;
+	@Mock
+	private Logger logger;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldSanitizeWarningArgsAndTemplate() {
-        when(logger.isWarnEnabled()).thenReturn(true);
+	@Test(groups = "basicLoggerTests")
+	@SuppressWarnings("java:S6068")
+	public void shouldSanitizeWarningArgsAndTemplate() {
+		when(this.logger.isWarnEnabled()).thenReturn(true);
 
-        BasicLogger.warning(logger, "Clazz", "line\n{}", "a\tb");
+		BasicLogger.warning(this.logger, "Clazz", "line\n{}", "a\tb");
 
-        ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
-        verify(logger).warn(eq("Clazz: line_{}"), argsCaptor.capture());
-        assertEquals(argsCaptor.getValue()[0], "a_b");
-    }
+		final ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
+		verify(this.logger).warn(eq("Clazz: line_{}"), argsCaptor.capture());
+		assertEquals(argsCaptor.getValue()[0], "a_b");
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldNotLogWarningWhenDisabled() {
-        when(logger.isWarnEnabled()).thenReturn(false);
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotLogWarningWhenDisabled() {
+		when(this.logger.isWarnEnabled()).thenReturn(false);
 
-        BasicLogger.warning(logger, "Clazz", "msg", "x");
+		BasicLogger.warning(this.logger, "Clazz", "msg", "x");
 
-        verify(logger, never()).warn(anyString(), any(Object[].class));
-    }
+		verify(this.logger, never()).warn(anyString(), any(Object[].class));
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldSanitizeInfo() {
-        when(logger.isInfoEnabled()).thenReturn(true);
+	@Test(groups = "basicLoggerTests")
+	public void shouldSanitizeInfo() {
+		when(this.logger.isInfoEnabled()).thenReturn(true);
 
-        BasicLogger.info(logger, "info\r{}", "a\nb");
+		BasicLogger.info(this.logger, "info\r{}", "a\nb");
 
-        verify(logger).isInfoEnabled();
-    }
+		verify(this.logger).isInfoEnabled();
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldSanitizeDebugWithClassName() {
-        when(logger.isDebugEnabled()).thenReturn(true);
+	@Test(groups = "basicLoggerTests")
+	@SuppressWarnings("java:S6068")
+	public void shouldSanitizeDebugWithClassName() {
+		when(this.logger.isDebugEnabled()).thenReturn(true);
 
-        BasicLogger.debug(logger, "Clazz", "d\tebug {}", "v\n1");
+		BasicLogger.debug(this.logger, "Clazz", "d\tebug {}", "v\n1");
 
-        ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
-        verify(logger).debug(eq("Clazz: d_ebug {}"), argsCaptor.capture());
-        assertEquals(argsCaptor.getValue()[0], "v_1");
-    }
+		final ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
+		verify(this.logger).debug(eq("Clazz: d_ebug {}"), argsCaptor.capture());
+		assertEquals(argsCaptor.getValue()[0], "v_1");
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldLogSevereWithClassPrefix() {
-        when(logger.isErrorEnabled()).thenReturn(true);
+	@Test(groups = "basicLoggerTests")
+	public void shouldLogSevereWithClassPrefix() {
+		when(this.logger.isErrorEnabled()).thenReturn(true);
 
-        BasicLogger.severe(logger, "Clazz", "boom");
+		BasicLogger.severe(this.logger, "Clazz", "boom");
 
-        verify(logger).error(eq("Clazz: boom"), eq(new Object[]{}));
-    }
+		verify(this.logger).error("Clazz: boom", new Object[0]);
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldLogThrowableNotification() {
-        when(logger.isErrorEnabled()).thenReturn(true);
-        Throwable throwable = new IllegalArgumentException("bad");
+	@Test(groups = "basicLoggerTests")
+	public void shouldLogThrowableNotification() {
+		when(this.logger.isErrorEnabled()).thenReturn(true);
+		final Throwable throwable = new IllegalArgumentException("bad");
 
-        BasicLogger.errorMessageNotification(logger, "Clazz", throwable);
+		BasicLogger.errorMessageNotification(this.logger, "Clazz", throwable);
 
-        verify(logger).error(eq("Exception on class {}:\n"), eq("Clazz"), eq(throwable));
-    }
+		verify(this.logger).error("Exception on class {}:\n", "Clazz", throwable);
+	}
 
-    @Test(groups = "basicLoggerTests")
-    public void shouldBuildStackTraceText() {
-        RuntimeException exception = new RuntimeException("kaboom");
+	@Test(groups = "basicLoggerTests")
+	public void shouldBuildStackTraceText() {
+		final RuntimeException exception = new RuntimeException("kaboom");
 
-        String stackTrace = BasicLogger.getStackTrace(exception);
+		final String stackTrace = BasicLogger.getStackTrace(exception);
 
-        assertTrue(stackTrace.contains("kaboom"));
-        assertTrue(stackTrace.contains("RuntimeException"));
-    }
+		assertTrue(stackTrace.contains("kaboom"));
+		assertTrue(stackTrace.contains("RuntimeException"));
+	}
 }
-

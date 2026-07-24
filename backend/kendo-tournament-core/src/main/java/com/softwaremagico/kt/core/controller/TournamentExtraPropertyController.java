@@ -41,7 +41,7 @@ import java.util.List;
 @Controller
 public class TournamentExtraPropertyController extends BasicInsertableController<TournamentExtraProperty, TournamentExtraPropertyDTO,
         TournamentExtraPropertyRepository, TournamentExtraPropertyProvider, TournamentExtraPropertyConverterRequest, TournamentExtraPropertyConverter> {
-    private static final String TOURNAMENT_NOT_FOUND_PREFIX = "No tournament found with id '";
+    private static final String TOURNAMENT_NOT_FOUND_WITH_ID = "No tournament found with id '";
 
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
@@ -79,17 +79,17 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {
         return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + "'."))));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'."))));
     }
 
     public TournamentExtraPropertyDTO getByTournamentAndProperty(Integer tournamentId, TournamentExtraPropertyKey key) {
         if (key == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
             return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
-                            .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + "'.")), key,
+                            .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'.")), key,
                     SenbatsuTournamentHandler.DEFAULT_CHALLENGE_DISTANCE));
         }
         return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_PREFIX + tournamentId + "'.")), key));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'.")), key));
     }
 
     public List<TournamentExtraPropertyDTO> getLatest(String username) {

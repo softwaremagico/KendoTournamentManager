@@ -43,9 +43,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 @SpringBootTest
-@Test(groups = {"csvReader"})
+@Test
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CsvReaderTest extends AbstractTestNGSpringContextTests {
 
@@ -80,83 +81,83 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
     private TournamentDTO tournament;
 
     private String readCsvFile(String fileName) throws URISyntaxException, IOException {
-        return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader()
-                .getResource(fileName).toURI())));
+        return new String(Files.readAllBytes(Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
+                .getResource(fileName)).toURI())));
     }
 
     @BeforeClass
     public void prepareTournament1() {
         //Create Tournament
-        tournament = tournamentController.create(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE), null, null);
+        this.tournament = this.tournamentController.create(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE), null, null);
     }
 
     @Test
     public void addOneClub() throws URISyntaxException, IOException {
-        Assert.assertEquals(clubProvider.count(), 0);
-        csvController.addClubs(readCsvFile(ONE_CLUBS_CSV_FILE_PATH), null);
-        Assert.assertEquals(clubProvider.count(), 1);
+        Assert.assertEquals(this.clubProvider.count(), 0);
+        this.csvController.addClubs(this.readCsvFile(ONE_CLUBS_CSV_FILE_PATH), null);
+        Assert.assertEquals(this.clubProvider.count(), 1);
     }
 
     @Test(dependsOnMethods = "addOneClub")
     public void addMultiplesClubs() throws URISyntaxException, IOException {
-        Assert.assertEquals(clubProvider.count(), 1);
-        csvController.addClubs(readCsvFile(CLUBS_CSV_FILE_PATH), null);
-        Assert.assertEquals(clubProvider.count(), 8);
+        Assert.assertEquals(this.clubProvider.count(), 1);
+        this.csvController.addClubs(this.readCsvFile(CLUBS_CSV_FILE_PATH), null);
+        Assert.assertEquals(this.clubProvider.count(), 8);
     }
 
     @Test(dependsOnMethods = "addMultiplesClubs")
     public void addOneParticipant() throws URISyntaxException, IOException {
-        Assert.assertEquals(participantProvider.count(), 0);
-        csvController.addParticipants(readCsvFile(ONE_PARTICIPANT_CSV_FILE_PATH), null);
-        Assert.assertEquals(participantProvider.count(), 3);
+        Assert.assertEquals(this.participantProvider.count(), 0);
+        this.csvController.addParticipants(this.readCsvFile(ONE_PARTICIPANT_CSV_FILE_PATH), null);
+        Assert.assertEquals(this.participantProvider.count(), 3);
     }
 
     @Test(dependsOnMethods = "addOneParticipant")
     public void addMultipleParticipant() throws URISyntaxException, IOException {
-        Assert.assertEquals(participantProvider.count(), 3);
-        csvController.addParticipants(readCsvFile(PARTICIPANTS_CSV_FILE_PATH), null);
-        Assert.assertEquals(participantProvider.count(), 18);
+        Assert.assertEquals(this.participantProvider.count(), 3);
+        this.csvController.addParticipants(this.readCsvFile(PARTICIPANTS_CSV_FILE_PATH), null);
+        Assert.assertEquals(this.participantProvider.count(), 18);
     }
 
     @Test(dependsOnMethods = "addOneParticipant")
     public void addInvalidParticipant() throws URISyntaxException, IOException {
-        final List<ParticipantDTO> invalidParticipants = csvController.addParticipants(readCsvFile(INVALID_PARTICIPANTS_CSV_FILE_PATH), null);
+        final List<ParticipantDTO> invalidParticipants = this.csvController.addParticipants(this.readCsvFile(INVALID_PARTICIPANTS_CSV_FILE_PATH), null);
         Assert.assertEquals(invalidParticipants.size(), 3);
     }
 
     @Test(dependsOnMethods = "addMultipleParticipant")
     public void addOneTeam() throws URISyntaxException, IOException {
-        Assert.assertEquals(teamProvider.count(), 0);
-        csvController.addTeams(readCsvFile(ONE_TEAM_CSV_FILE_PATH), tournament.getId(), null);
-        Assert.assertEquals(teamProvider.count(), 1);
-        Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(0).getIdCard(), "00000003");
-        Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(1).getIdCard(), "00000001");
-        Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(2).getIdCard(), "00000002");
+        Assert.assertEquals(this.teamProvider.count(), 0);
+        this.csvController.addTeams(this.readCsvFile(ONE_TEAM_CSV_FILE_PATH), this.tournament.getId(), null);
+        Assert.assertEquals(this.teamProvider.count(), 1);
+        Assert.assertEquals(this.teamProvider.getAll().getFirst().getMembers().get(0).getIdCard(), "00000003");
+        Assert.assertEquals(this.teamProvider.getAll().getFirst().getMembers().get(1).getIdCard(), "00000001");
+        Assert.assertEquals(this.teamProvider.getAll().getFirst().getMembers().get(2).getIdCard(), "00000002");
     }
 
     @Test(dependsOnMethods = "addOneTeam")
     public void addMultipleTeams() throws URISyntaxException, IOException {
-        Assert.assertEquals(teamProvider.count(), 1);
-        csvController.addTeams(readCsvFile(TEAMS_CSV_FILE_PATH), tournament.getId(), null);
-        Assert.assertEquals(teamProvider.count(), 6);
+        Assert.assertEquals(this.teamProvider.count(), 1);
+        this.csvController.addTeams(this.readCsvFile(TEAMS_CSV_FILE_PATH), this.tournament.getId(), null);
+        Assert.assertEquals(this.teamProvider.count(), 6);
         //Members order is corrected.
-        Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(0).getIdCard(), "00000001");
-        Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(1).getIdCard(), "00000002");
-        Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(2).getIdCard(), "00000003");
+        Assert.assertEquals(this.teamProvider.getAll().getFirst().getMembers().get(0).getIdCard(), "00000001");
+        Assert.assertEquals(this.teamProvider.getAll().getFirst().getMembers().get(1).getIdCard(), "00000002");
+        Assert.assertEquals(this.teamProvider.getAll().getFirst().getMembers().get(2).getIdCard(), "00000003");
     }
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidTeamCSV() throws URISyntaxException, IOException {
-        csvController.addTeams(readCsvFile(CLUBS_CSV_FILE_PATH), tournament.getId(), null);
+        this.csvController.addTeams(this.readCsvFile(CLUBS_CSV_FILE_PATH), this.tournament.getId(), null);
     }
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidClubCSV() throws URISyntaxException, IOException {
-        csvController.addClubs(readCsvFile(TEAMS_CSV_FILE_PATH), null);
+        this.csvController.addClubs(this.readCsvFile(TEAMS_CSV_FILE_PATH), null);
     }
 
     @Test(expectedExceptions = InvalidCsvFieldException.class)
     public void checkInvalidParticipantCSV() throws URISyntaxException, IOException {
-        csvController.addParticipants(readCsvFile(CLUBS_CSV_FILE_PATH), null);
+        this.csvController.addParticipants(this.readCsvFile(CLUBS_CSV_FILE_PATH), null);
     }
 }

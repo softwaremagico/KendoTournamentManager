@@ -3,7 +3,7 @@
     <mat-icon class="kendo-icon" svgIcon="ribbon"></mat-icon>
   </div>
   <div class="untie">
-    <duel [duel]="duel" [ngClass]="{duelSelected: duelSelected, over: isOver(duel)}"
+    <duel [duel]="duel" [ngClass]="{duelSelected: duelSelected?.id === duel.id, over: isOver(duel)}"
           (click)="selectDuel(duel)"
           (keydown)="selectDuel(duel)"
           [duelSelected]="duelSelected" [swapTeams]="swapTeams"

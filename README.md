@@ -1,4 +1,4 @@
-<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle"> 
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle">
 
 ---
 
@@ -222,7 +222,7 @@ Running this application requires Java JRE 17 or higher.
 You can manually execute it by entering the following command:
 
 ```
-java -jar kendo-tournament-backend.jar 
+java -jar kendo-tournament-backend.jar
 ```
 
 It's likely that some configuration adjustments may be necessary for the application.
@@ -253,7 +253,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.kendo.datasource.jdbc-url=jdbc:postgresql://kendo-tournament-database:5432/postgres
 spring.kendo.datasource.username=<your user>
 spring.kendo.datasource.password=<your password>
-``` 
+```
 
 3. Upon successful connection of the backend to the database, all necessary database structures will be automatically
    generated.

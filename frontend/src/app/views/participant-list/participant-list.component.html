@@ -11,27 +11,27 @@
       >
       <ng-template #actions>
         @if (RbacActivity.CREATE_PARTICIPANT | hasPermission) {
-          <button id="button-plus" biit-icon icon="plus"
+          <button id="button-plus" class="menu-button" biit-icon icon="plus"
             [title]="t('participantAdd')"
             (click)="addElement()"
           ></button>
         }
         @if (RbacActivity.DELETE_PARTICIPANT | hasPermission) {
-          <button id="button-minus" biit-icon icon="minus" class="warning"
+          <button id="button-minus" class="menu-button warning" biit-icon icon="minus"
             [title]="t('delete')"
             (click)="confirmDelete=true"
             [disabled]="!table.selectedRows.length"
           ></button>
         }
         @if (RbacActivity.READ_ONE_PARTICIPANT | hasPermission) {
-          <button id="button-edit" biit-icon icon="edit"
+          <button id="button-edit" class="menu-button" biit-icon icon="edit"
             [title]="t('participantEdit')"
             (click)="editElement(table.selectedRows[0])"
             [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
           ></button>
         }
         @if (RbacActivity.READ_ONE_PARTICIPANT | hasPermission) {
-          <button id="button-camera" biit-icon icon="camera"
+          <button id="button-camera" class="menu-button" biit-icon icon="camera"
             [title]="t('photo')"
             (click)="addPhoto=true"
             [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
@@ -39,7 +39,7 @@
         }
         <mat-divider class="divider" [vertical]="true"></mat-divider>
         @if ((RbacActivity.VIEW_PARTICIPANT_STATISTICS | hasPermission)) {
-          <button mat-button
+          <button mat-button class="menu-button"
             [title]="t('titleStatistics')"
             (click)="openStatistics(table.selectedRows[0])"
             [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
@@ -48,14 +48,14 @@
         }
         <mat-divider [vertical]="true" class="divider"></mat-divider>
         @if ((RbacActivity.READ_ALL_COMPETITORS_RANKINGS | hasPermission)) {
-          <button id="competitors-ranking" mat-button
+          <button id="competitors-ranking" mat-button class="menu-button"
             [title]="t('competitorsRanking')"
             (click)="showRanking=true">
             <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
           </button>
         }
         @if ((RbacActivity.SEE_QR_CODE | hasPermission)) {
-          <button id="qr-code" mat-button
+          <button id="qr-code" mat-button class="menu-button"
             [title]="t('qrCodeHint')"
             (click)="showQr=true"
             [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">

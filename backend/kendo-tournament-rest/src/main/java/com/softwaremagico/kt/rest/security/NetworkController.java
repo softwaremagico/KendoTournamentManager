@@ -21,12 +21,14 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.RestServerLogger;
 import org.springframework.stereotype.Controller;
 
+import java.net.SocketException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.UnknownHostException;
+
 
 @Controller
 public class NetworkController {
@@ -47,7 +49,7 @@ public class NetworkController {
                 return "";
             }
             final byte[] hardwareAddress = ni.getHardwareAddress();
-            if (hardwareAddress == null || hardwareAddress.length == 0) {
+            if (hardwareAddress == null || hardwareAddress.length < 1) {
                 return "";
             }
             final String[] hexadecimal = new String[hardwareAddress.length];
@@ -55,8 +57,8 @@ public class NetworkController {
                 hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
             }
             return String.join("-", hexadecimal);
-        } catch (final Exception ex) {
-            // Ignored.
+        } catch (Exception ex) {
+            RestServerLogger.debug(this.getClass(), "Cannot resolve host MAC: {}", ex.getMessage());
         }
         return "";
     }

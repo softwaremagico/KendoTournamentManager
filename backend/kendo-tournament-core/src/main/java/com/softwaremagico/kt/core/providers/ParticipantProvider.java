@@ -137,8 +137,8 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
             try {
                 return getRepository().findById(Integer.parseInt(fields[0]));
-            } catch (NumberFormatException ignore) {
-                //Ignored exception.
+            } catch (NumberFormatException ex) {
+                KendoTournamentLogger.debug(this.getClass(), "Invalid token username id '{}': {}", fields[0], ex.getMessage());
             }
         }
         KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
@@ -174,7 +174,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
         final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            final int maxScore = sortedLostBy.get(0).getValue();
+            final int maxScore = sortedLostBy.getFirst().getValue();
             int count = 0;
             while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
                 selected.add(sortedLostBy.get(count).getKey());
@@ -204,7 +204,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
         final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            final int maxScore = sortedLostBy.get(0).getValue();
+            final int maxScore = sortedLostBy.getFirst().getValue();
             int count = 0;
             while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
                 selected.add(sortedLostBy.get(count).getKey());

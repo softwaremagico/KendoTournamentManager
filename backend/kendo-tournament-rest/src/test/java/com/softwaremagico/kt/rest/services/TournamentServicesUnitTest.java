@@ -39,228 +39,222 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.Locale;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.expectThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 @Test(groups = "restServicesUnit")
 public class TournamentServicesUnitTest {
 
-    @Mock
-    private TournamentController tournamentController;
+	@Mock
+	private TournamentController tournamentController;
 
-    @Mock
-    private KendoSecurityService kendoSecurityService;
+	@Mock
+	private KendoSecurityService kendoSecurityService;
 
-    @Mock
-    private PdfController pdfController;
+	@Mock
+	private PdfController pdfController;
 
-    @Mock
-    private Authentication authentication;
+	@Mock
+	private Authentication authentication;
 
-    @Mock
-    private HttpServletRequest request;
+	@Mock
+	private HttpServletRequest request;
 
-    @Mock
-    private HttpServletResponse response;
+	@Mock
+	private HttpServletResponse response;
 
-    private TournamentServices tournamentServices;
+	private TournamentServices tournamentServices;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(authentication.getName()).thenReturn("editor");
-        when(kendoSecurityService.getGuestPrivilege()).thenReturn("GUEST");
-        when(kendoSecurityService.getParticipantPrivilege()).thenReturn("PARTICIPANT");
-        when(kendoSecurityService.getViewerPrivilege()).thenReturn("VIEWER");
-        when(kendoSecurityService.getEditorPrivilege()).thenReturn("EDITOR");
-        when(kendoSecurityService.getAdminPrivilege()).thenReturn("ADMIN");
-        tournamentServices = new TournamentServices(tournamentController, kendoSecurityService, pdfController);
-    }
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+		when(this.authentication.getName()).thenReturn("editor");
+		when(this.kendoSecurityService.getGuestPrivilege()).thenReturn("GUEST");
+		when(this.kendoSecurityService.getParticipantPrivilege()).thenReturn("PARTICIPANT");
+		when(this.kendoSecurityService.getViewerPrivilege()).thenReturn("VIEWER");
+		when(this.kendoSecurityService.getEditorPrivilege()).thenReturn("EDITOR");
+		when(this.kendoSecurityService.getAdminPrivilege()).thenReturn("ADMIN");
+        this.tournamentServices = new TournamentServices(this.tournamentController, this.kendoSecurityService, this.pdfController);
+	}
 
-    @Test
-    public void shouldReturnRequiredRolesIncludingGuest() {
-        final String[] roles = tournamentServices.requiredRoleForEntityById();
-        assertNotNull(roles);
-        assertEquals(roles.length, 5);
-    }
+	@Test
+	public void shouldReturnRequiredRolesIncludingGuest() {
+		final String[] roles = this.tournamentServices.requiredRoleForEntityById();
+		assertNotNull(roles);
+		assertEquals(roles.length, 5);
+	}
 
-    @Test
-    public void shouldAddTournamentWithBasicInfo() {
-        final TournamentDTO tournamentDTO = new TournamentDTO();
-        tournamentDTO.setName("Spring Cup");
-        when(tournamentController.create("Spring Cup", 2, 3, TournamentType.LEAGUE, "editor")).thenReturn(tournamentDTO);
+	@Test
+	public void shouldAddTournamentWithBasicInfo() {
+		final TournamentDTO tournamentDTO = new TournamentDTO();
+		tournamentDTO.setName("Spring Cup");
+		when(this.tournamentController.create("Spring Cup", 2, 3, TournamentType.LEAGUE, "editor"))
+				.thenReturn(tournamentDTO);
 
-        final TournamentDTO result = tournamentServices.add("Spring Cup", 2, 3, TournamentType.LEAGUE, authentication, request);
+		final TournamentDTO result = this.tournamentServices.add("Spring Cup", 2, 3, TournamentType.LEAGUE, this.authentication,
+            this.request);
 
-        assertNotNull(result);
-        verify(tournamentController).create("Spring Cup", 2, 3, TournamentType.LEAGUE, "editor");
-    }
+		assertNotNull(result);
+		verify(this.tournamentController).create("Spring Cup", 2, 3, TournamentType.LEAGUE, "editor");
+	}
 
-    @Test
-    public void shouldGenerateAccreditationsAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException, NoContentException {
-        final TournamentDTO tournamentDTO = tournamentWithName("Autumn Cup");
-        final TournamentAccreditationCards cards = org.mockito.Mockito.mock(TournamentAccreditationCards.class);
-        when(tournamentController.get(5)).thenReturn(tournamentDTO);
-        when(pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
-                .thenReturn(cards);
-        when(cards.generate()).thenReturn(new byte[]{1, 2, 3});
+	@Test
+	public void shouldGenerateAccreditationsAndSetHeader()
+			throws InvalidXmlElementException, EmptyPdfBodyException, NoContentException {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Autumn Cup");
+		final TournamentAccreditationCards cards = mock(TournamentAccreditationCards.class);
+		when(this.tournamentController.get(5)).thenReturn(tournamentDTO);
+		when(this.pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(false),
+				eq("editor"), isNull(), any())).thenReturn(cards);
+		when(cards.generate()).thenReturn(new byte[]{1, 2, 3});
 
-        final byte[] bytes = tournamentServices.getAllAccreditationsFromTournamentAsPdf(5, null, null, null,
-                Locale.ENGLISH, response, authentication, request);
+		final byte[] bytes = this.tournamentServices.getAllAccreditationsFromTournamentAsPdf(5, null, null, null,
+				Locale.ENGLISH, this.response, this.authentication, this.request);
 
-        assertEquals(bytes, new byte[]{1, 2, 3});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
-    }
+		assertEquals(bytes, new byte[]{1, 2, 3});
+		verify(this.response).setHeader(anyString(), anyString());
+	}
 
-    @Test
-    public void shouldWrapAccreditationsInvalidXmlAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
-        final TournamentDTO tournamentDTO = tournamentWithName("Autumn Cup");
-        final TournamentAccreditationCards cards = org.mockito.Mockito.mock(TournamentAccreditationCards.class);
-        when(tournamentController.get(5)).thenReturn(tournamentDTO);
-        when(pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
-                .thenReturn(cards);
-        when(cards.generate()).thenThrow(new InvalidXmlElementException("invalid"));
+	@Test
+	public void shouldWrapAccreditationsInvalidXmlAsBadRequest()
+			throws InvalidXmlElementException, EmptyPdfBodyException {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Autumn Cup");
+		final TournamentAccreditationCards cards = mock(TournamentAccreditationCards.class);
+		when(this.tournamentController.get(5)).thenReturn(tournamentDTO);
+		when(this.pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(false),
+				eq("editor"), isNull(), any())).thenReturn(cards);
+		when(cards.generate()).thenThrow(new InvalidXmlElementException("invalid"));
 
-        expectThrows(BadRequestException.class, () ->
-                tournamentServices.getAllAccreditationsFromTournamentAsPdf(5, null, null, null,
-                        Locale.ENGLISH, response, authentication, request));
-    }
+		expectThrows(BadRequestException.class, () -> this.tournamentServices.getAllAccreditationsFromTournamentAsPdf(5,
+				null, null, null, Locale.ENGLISH, this.response, this.authentication, this.request));
+	}
 
-    @Test
-    public void shouldGenerateParticipantAccreditationAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
-        final TournamentDTO tournamentDTO = tournamentWithName("Cup");
-        final ParticipantDTO participantDTO = new ParticipantDTO();
-        final TournamentAccreditationCards cards = org.mockito.Mockito.mock(TournamentAccreditationCards.class);
-        when(tournamentController.get(6)).thenReturn(tournamentDTO);
-        when(pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(participantDTO),
-                eq(RoleType.COMPETITOR), eq("editor"), isNull())).thenReturn(cards);
-        when(cards.generate()).thenReturn(new byte[]{4, 5, 6});
+	@Test
+	public void shouldGenerateParticipantAccreditationAndSetHeader()
+			throws InvalidXmlElementException, EmptyPdfBodyException {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Cup");
+		final ParticipantDTO participantDTO = new ParticipantDTO();
+		final TournamentAccreditationCards cards = mock(TournamentAccreditationCards.class);
+		when(this.tournamentController.get(6)).thenReturn(tournamentDTO);
+		when(this.pdfController.generateTournamentAccreditations(any(Locale.class), eq(tournamentDTO), eq(participantDTO),
+				eq(RoleType.COMPETITOR), eq("editor"), isNull())).thenReturn(cards);
+		when(cards.generate()).thenReturn(new byte[]{4, 5, 6});
 
-        final byte[] bytes = tournamentServices.getParticipantAccreditationFromTournamentAsPdf(6, RoleType.COMPETITOR,
-                participantDTO, null, Locale.ENGLISH, response, authentication, request);
+		final byte[] bytes = this.tournamentServices.getParticipantAccreditationFromTournamentAsPdf(6, RoleType.COMPETITOR,
+				participantDTO, null, Locale.ENGLISH, this.response, this.authentication, this.request);
 
-        assertEquals(bytes, new byte[]{4, 5, 6});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
-    }
+		assertEquals(bytes, new byte[]{4, 5, 6});
+		verify(this.response).setHeader(anyString(), anyString());
+	}
 
-    @Test
-    public void shouldThrowWhenParticipantIsNullForAccreditation() {
-        expectThrows(InvalidRequestException.class, () ->
-                tournamentServices.getParticipantAccreditationFromTournamentAsPdf(6, RoleType.COMPETITOR,
-                        null, null, Locale.ENGLISH, response, authentication, request));
-    }
+	@Test
+	public void shouldThrowWhenParticipantIsNullForAccreditation() {
+		expectThrows(InvalidRequestException.class,
+				() -> this.tournamentServices.getParticipantAccreditationFromTournamentAsPdf(6, RoleType.COMPETITOR, null,
+						null, Locale.ENGLISH, this.response, this.authentication, this.request));
+	}
 
-    @Test
-    public void shouldGenerateDiplomasAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException, NoContentException {
-        final TournamentDTO tournamentDTO = tournamentWithName("Winter Cup");
-        final DiplomaPDF diplomaPDF = org.mockito.Mockito.mock(DiplomaPDF.class);
-        when(tournamentController.get(7)).thenReturn(tournamentDTO);
-        when(pdfController.generateTournamentDiplomas(eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
-                .thenReturn(diplomaPDF);
-        when(diplomaPDF.generate()).thenReturn(new byte[]{7, 8, 9});
+	@Test
+	public void shouldGenerateDiplomasAndSetHeader()
+			throws InvalidXmlElementException, EmptyPdfBodyException, NoContentException {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Winter Cup");
+		final DiplomaPDF diplomaPDF = mock(DiplomaPDF.class);
+		when(this.tournamentController.get(7)).thenReturn(tournamentDTO);
+		when(this.pdfController.generateTournamentDiplomas(eq(tournamentDTO), eq(false), eq("editor"), isNull(), any()))
+				.thenReturn(diplomaPDF);
+		when(diplomaPDF.generate()).thenReturn(new byte[]{7, 8, 9});
 
-        final byte[] bytes = tournamentServices.getAllDiplomasFromTournamentAsPdf(7, null, null, null,
-                Locale.ENGLISH, response, authentication, request);
+		final byte[] bytes = this.tournamentServices.getAllDiplomasFromTournamentAsPdf(7, null, null, null, Locale.ENGLISH,
+            this.response, this.authentication, this.request);
 
-        assertEquals(bytes, new byte[]{7, 8, 9});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
-    }
+		assertEquals(bytes, new byte[]{7, 8, 9});
+		verify(this.response).setHeader(anyString(), anyString());
+	}
 
-    @Test
-    public void shouldWrapDiplomasEmptyPdfAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
-        final TournamentDTO tournamentDTO = tournamentWithName("Winter Cup");
-        final DiplomaPDF diplomaPDF = org.mockito.Mockito.mock(DiplomaPDF.class);
-        when(tournamentController.get(7)).thenReturn(tournamentDTO);
-        when(pdfController.generateTournamentDiplomas(eq(tournamentDTO), eq(true), eq("editor"), isNull(), any()))
-                .thenReturn(diplomaPDF);
-        when(diplomaPDF.generate()).thenThrow(new EmptyPdfBodyException("empty"));
+	@Test
+	public void shouldWrapDiplomasEmptyPdfAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Winter Cup");
+		final DiplomaPDF diplomaPDF = mock(DiplomaPDF.class);
+		when(this.tournamentController.get(7)).thenReturn(tournamentDTO);
+		when(this.pdfController.generateTournamentDiplomas(eq(tournamentDTO), eq(true), eq("editor"), isNull(), any()))
+				.thenReturn(diplomaPDF);
+		when(diplomaPDF.generate()).thenThrow(new EmptyPdfBodyException("empty"));
 
-        expectThrows(BadRequestException.class, () ->
-                tournamentServices.getAllDiplomasFromTournamentAsPdf(7, null, true, null,
-                        Locale.ENGLISH, response, authentication, request));
-    }
+		expectThrows(BadRequestException.class, () -> this.tournamentServices.getAllDiplomasFromTournamentAsPdf(7, null,
+				true, null, Locale.ENGLISH, this.response, this.authentication, this.request));
+	}
 
-    @Test
-    public void shouldGenerateParticipantDiplomaAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
-        final TournamentDTO tournamentDTO = tournamentWithName("Summer Cup");
-        final ParticipantDTO participantDTO = new ParticipantDTO();
-        participantDTO.setName("Miyamoto");
-        participantDTO.setLastname("Musashi");
-        final DiplomaPDF diplomaPDF = org.mockito.Mockito.mock(DiplomaPDF.class);
-        when(tournamentController.get(8)).thenReturn(tournamentDTO);
-        when(pdfController.generateTournamentDiploma(tournamentDTO, participantDTO)).thenReturn(diplomaPDF);
-        when(diplomaPDF.generate()).thenReturn(new byte[]{10, 11, 12});
+	@Test
+	public void shouldGenerateParticipantDiplomaAndSetHeader()
+			throws InvalidXmlElementException, EmptyPdfBodyException {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Summer Cup");
+		final ParticipantDTO participantDTO = new ParticipantDTO();
+		participantDTO.setName("Miyamoto");
+		participantDTO.setLastname("Musashi");
+		final DiplomaPDF diplomaPDF = mock(DiplomaPDF.class);
+		when(this.tournamentController.get(8)).thenReturn(tournamentDTO);
+		when(this.pdfController.generateTournamentDiploma(tournamentDTO, participantDTO)).thenReturn(diplomaPDF);
+		when(diplomaPDF.generate()).thenReturn(new byte[]{10, 11, 12});
 
-        final byte[] bytes = tournamentServices.getParticipantDiplomaFromTournamentAsPdf(8, participantDTO,
-                Locale.ENGLISH, response, request);
+		final byte[] bytes = this.tournamentServices.getParticipantDiplomaFromTournamentAsPdf(8, participantDTO,
+				Locale.ENGLISH, this.response, this.request);
 
-        assertEquals(bytes, new byte[]{10, 11, 12});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
-    }
+		assertEquals(bytes, new byte[]{10, 11, 12});
+		verify(this.response).setHeader(anyString(), anyString());
+	}
 
-    @Test
-    public void shouldThrowWhenParticipantIsNullForDiploma() {
-        expectThrows(InvalidRequestException.class, () ->
-                tournamentServices.getParticipantDiplomaFromTournamentAsPdf(8, null, Locale.ENGLISH, response, request));
-    }
+	@Test
+	public void shouldThrowWhenParticipantIsNullForDiploma() {
+		expectThrows(InvalidRequestException.class, () -> this.tournamentServices.getParticipantDiplomaFromTournamentAsPdf(8,
+				null, Locale.ENGLISH, this.response, this.request));
+	}
 
-    @Test
-    public void shouldDelegateCloneAndNumberOfWinners() {
-        final TournamentDTO cloned = tournamentWithName("Cloned Cup");
-        when(tournamentController.clone(9, "editor")).thenReturn(cloned);
-        doNothing().when(tournamentController).setNumberOfWinners(9, 3, "editor");
+	@Test
+	public void shouldDelegateCloneAndNumberOfWinners() {
+		final TournamentDTO cloned = this.tournamentWithName("Cloned Cup");
+		when(this.tournamentController.clone(9, "editor")).thenReturn(cloned);
+		doNothing().when(this.tournamentController).setNumberOfWinners(9, 3, "editor");
 
-        final TournamentDTO result = tournamentServices.clone(9, authentication, request);
-        tournamentServices.numberOfWinners(9, 3, authentication, request);
+		final TournamentDTO result = this.tournamentServices.clone(9, this.authentication, this.request);
+        this.tournamentServices.numberOfWinners(9, 3, this.authentication, this.request);
 
-        assertNotNull(result);
-        verify(tournamentController).clone(9, "editor");
-        verify(tournamentController).setNumberOfWinners(9, 3, "editor");
-    }
+		assertNotNull(result);
+		verify(this.tournamentController).clone(9, "editor");
+		verify(this.tournamentController).setNumberOfWinners(9, 3, "editor");
+	}
 
-    @Test
-    public void shouldGetLastUnlockedTournament() {
-        final TournamentDTO tournamentDTO = tournamentWithName("Unlocked Cup");
-        when(tournamentController.getLatestUnlocked()).thenReturn(tournamentDTO);
+	@Test
+	public void shouldGetLastUnlockedTournament() {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("Unlocked Cup");
+		when(this.tournamentController.getLatestUnlocked()).thenReturn(tournamentDTO);
 
-        final TournamentDTO result = tournamentServices.getLastUnlockedTournament();
+		final TournamentDTO result = this.tournamentServices.getLastUnlockedTournament();
 
-        assertNotNull(result);
-        verify(tournamentController).getLatestUnlocked();
-    }
+		assertNotNull(result);
+		verify(this.tournamentController).getLatestUnlocked();
+	}
 
-    @Test
-    public void shouldGetTournamentById() {
-        final TournamentDTO tournamentDTO = tournamentWithName("T1");
-        when(tournamentController.get(1)).thenReturn(tournamentDTO);
+	@Test
+	public void shouldGetTournamentById() {
+		final TournamentDTO tournamentDTO = this.tournamentWithName("T1");
+		when(this.tournamentController.get(1)).thenReturn(tournamentDTO);
 
-        final TournamentDTO result = tournamentServices.get(1, request);
+		final TournamentDTO result = this.tournamentServices.get(1, this.request);
 
-        assertNotNull(result);
-        verify(tournamentController).get(1);
-    }
+		assertNotNull(result);
+		verify(this.tournamentController).get(1);
+	}
 
-    private TournamentDTO tournamentWithName(String name) {
-        final TournamentDTO dto = new TournamentDTO();
-        dto.setName(name);
-        return dto;
-    }
+	private TournamentDTO tournamentWithName(String name) {
+		final TournamentDTO dto = new TournamentDTO();
+		dto.setName(name);
+		return dto;
+	}
 }
-
-
-

@@ -31,6 +31,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Date;
 
 import static org.testng.Assert.*;
@@ -121,8 +122,8 @@ public class JwtTokenUtilTest {
     public void shouldReturnFalseForExpiredToken() {
         final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
         final String expiredToken = Jwts.builder().subject("7,user7,s,10.0.0.1,AA-BB")
-                .issuedAt(new Date(System.currentTimeMillis() - 10_000L))
-                .expiration(new Date(System.currentTimeMillis() - 1_000L))
+                .issuedAt(Date.from(Instant.now().minusSeconds(10)))
+                .expiration(Date.from(Instant.now().minusSeconds(1)))
                 .signWith(signingKey(SECRET), Jwts.SIG.HS512)
                 .compact();
 
@@ -133,8 +134,8 @@ public class JwtTokenUtilTest {
     public void shouldReturnFalseForTokenWithWrongSignature() {
         final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
         final String invalidSignatureToken = Jwts.builder().subject("7,user7,s,10.0.0.1,AA-BB")
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 20_000L))
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusSeconds(20)))
                 .signWith(signingKey("different-secret"), Jwts.SIG.HS512)
                 .compact();
 

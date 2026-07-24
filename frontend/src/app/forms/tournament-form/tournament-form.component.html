@@ -71,9 +71,9 @@
         [class.row-with-button]="tournament.tournamentScore.scoreType == scoreTypeCustom"
         >
         <biit-dropdown id="tournament-score-rules"
-          [ngModel]="tournament.tournamentScore? (tournament.tournamentScore.scoreType | dropdownInterface: translatedScores) : '' "
+          [ngModel]="tournament.tournamentScore? (tournament.tournamentScore.scoreType | dropdownInterface: getAvailableScores()) : '' "
           (ngModelChange)="tournament.tournamentScore.scoreType = $event.value"
-          [data]="translatedScores"
+          [data]="getAvailableScores()"
           [label]="'label'"
           [value]="'value'"
           [title]="t('scoreRules')"

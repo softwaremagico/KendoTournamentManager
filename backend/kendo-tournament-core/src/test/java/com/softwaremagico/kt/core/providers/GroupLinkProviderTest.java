@@ -109,10 +109,6 @@ public class GroupLinkProviderTest {
 
     @Test
     public void shouldCoverWinnerOrder1AtLevel1InBinaryTree() {
-        // Level 0: 2, Level 1: 2, Level 2: 1
-        // Call getDestination(level1_group0, 2, 1, allGroups)
-        // → obtainPositionOfWinnerAsBinaryTree(groups, 0, 2, 2, 1, 1)
-        // → winnerOrder==1 && sourceLevel>0 → (2-0+1)/2-1 = 0 → level2_group0
         final Group l0g0 = group(0, 0);
         final Group l0g1 = group(0, 1);
         final Group l1g0 = group(1, 0);
@@ -141,7 +137,7 @@ public class GroupLinkProviderTest {
 
         mockAsapFalse();
 
-        final Group result = groupLinkProvider.getDestination(groups.get(0), 3, 2, groups);
+        final Group result = groupLinkProvider.getDestination(groups.getFirst(), 3, 2, groups);
 
         assertNull(result);
     }
@@ -185,7 +181,7 @@ public class GroupLinkProviderTest {
 
         mockAsapTrue();
 
-        final Group result = groupLinkProvider.getDestination(groups.get(0), 3, 2, groups);
+        final Group result = groupLinkProvider.getDestination(groups.getFirst(), 3, 2, groups);
 
         assertNull(result);
     }
@@ -195,14 +191,15 @@ public class GroupLinkProviderTest {
     @Test
     public void shouldReturnNullWhenSpreadWinnersReturnsNegativeOne() {
         // 3 groups level 0 → 4 groups level 1
-        // ASAP=true, 3 < 4 && 3>1 && 3%2==1 → spreadWinnersOnTreeAsMuchAsPossible(0, 3, 4, 2) → -1 → null
+        // Con resolución ASAP y un reparto impar de ganadores en este escenario,
+        // el cálculo de destino queda sin posición válida y el resultado esperado es null.
         final List<Group> groups = List.of(
                 group(0, 0), group(0, 1), group(0, 2),
                 group(1, 0), group(1, 1), group(1, 2), group(1, 3));
 
         mockAsapTrue();
 
-        final Group result = groupLinkProvider.getDestination(groups.get(0), 3, 2, groups);
+        final Group result = groupLinkProvider.getDestination(groups.getFirst(), 3, 2, groups);
 
         assertNull(result);
     }
@@ -229,4 +226,3 @@ public class GroupLinkProviderTest {
                 .thenReturn(prop);
     }
 }
-

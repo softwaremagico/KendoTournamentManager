@@ -1,4 +1,4 @@
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FightListComponent} from './fight-list.component';
 import {MessageService} from '../../services/message.service';
@@ -30,6 +30,7 @@ import {Team} from '../../models/team';
 import {Participant} from '../../models/participant';
 import {Score} from '../../models/score';
 import {DuelType} from '../../models/duel-type';
+import {Message} from '@stomp/stompjs';
 
 describe('FightListComponent', () => {
   let component: FightListComponent;
@@ -548,12 +549,76 @@ describe('FightListComponent', () => {
 
     component.tournament = buildTournament();
     component.showClassification();
-    expect(component.showTeamsClassification).toHaveBeenCalledWith(true);
+    expect(component.showTeamsClassification).toHaveBeenCalledWith(true, true);
 
     component.tournament.teamSize = 1;
     component.tournament.type = TournamentType.CUSTOMIZED;
     component.showClassification();
     expect(component.showCompetitorsClassification).toHaveBeenCalled();
+
+    component.tournament.type = TournamentType.SWISS;
+    component.showClassification();
+    expect(component.showTeamsClassification).toHaveBeenCalledWith(true, true);
+  });
+
+  it('should refresh fights when an untie websocket event arrives from another session', () => {
+    const untiesTopic$ = new Subject<Message>();
+    const fightsTopic$ = new Subject<Message>();
+    (rxStompServiceMock as any).watch = jasmine.createSpy('watch').and.callFake((topic: string) => {
+      if (topic.endsWith('/unties')) {
+        return untiesTopic$.asObservable();
+      }
+      return fightsTopic$.asObservable();
+    });
+
+    localStorage.setItem('session', 'current-session');
+    tournamentServiceSpy.get.and.returnValue(of(buildTournament()));
+    groupServiceSpy.getFromTournament.and.returnValue(of([]));
+    const refreshSpy = spyOn<any>(component, 'refreshFights');
+
+    component.initializeData();
+    refreshSpy.calls.reset();
+
+    untiesTopic$.next({
+      body: JSON.stringify({topic: 'Duel', session: 'other-session'})
+    } as Message);
+
+    expect(refreshSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should ignore untie websocket events from the same session', () => {
+    const untiesTopic$ = new Subject<Message>();
+    const fightsTopic$ = new Subject<Message>();
+    (rxStompServiceMock as any).watch = jasmine.createSpy('watch').and.callFake((topic: string) => {
+      if (topic.endsWith('/unties')) {
+        return untiesTopic$.asObservable();
+      }
+      return fightsTopic$.asObservable();
+    });
+
+    localStorage.setItem('session', 'current-session');
+    tournamentServiceSpy.get.and.returnValue(of(buildTournament()));
+    groupServiceSpy.getFromTournament.and.returnValue(of([]));
+    const refreshSpy = spyOn<any>(component, 'refreshFights');
+
+    component.initializeData();
+    refreshSpy.calls.reset();
+
+    untiesTopic$.next({
+      body: JSON.stringify({topic: 'Duel', session: 'current-session'})
+    } as Message);
+
+    expect(refreshSpy).not.toHaveBeenCalled();
+  });
+
+  it('should keep group pending while an untie is unfinished and finish it once untie is solved', () => {
+    const finishedFight = buildFight(1, [buildDuel(1, true)]);
+    const pendingUntie = buildDuel(2, false);
+    const group = buildGroup(1, 0, [finishedFight], [pendingUntie]);
+
+    expect(component.getGroupCardClass(group)).toBe('group-pending');
+
+    pendingUntie.finished = true;
+    expect(component.getGroupCardClass(group)).toBe('group-finished');
   });
 });
-

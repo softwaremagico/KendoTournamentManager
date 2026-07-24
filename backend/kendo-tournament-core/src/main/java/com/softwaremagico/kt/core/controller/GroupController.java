@@ -39,6 +39,7 @@ import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Controller
@@ -93,10 +95,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
+    @SuppressWarnings("java:S2696")
     public void addGroupUpdatedListeners(GroupsUpdatedListener listener) {
         this.groupsUpdatedListeners.add(listener);
     }
 
+    @SuppressWarnings("java:S2696")
     public void addUntieUpdatedListener(UntieUpdatedListener listener) {
         this.untiesUpdatedListeners.add(listener);
     }
@@ -126,12 +130,20 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username, String session) {
+        final TournamentDTO tournamentDTO = groupDTO.getTournament();
+        if (tournamentDTO == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to create.");
+        }
+        final ITournamentManager tournamentManager = this.tournamentHandlerSelector.selectManager(tournamentDTO.getType());
+        if (tournamentManager == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament handler found for type '" + tournamentDTO.getType() + "'.");
+        }
         try {
-            return this.convert(this.tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType())
-                    .addGroup(this.tournamentConverter.reverse(groupDTO.getTournament()), this.reverse(groupDTO)));
+            return this.convert(tournamentManager
+                    .addGroup(this.tournamentConverter.reverse(tournamentDTO), this.reverse(groupDTO)));
         } finally {
             new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
-                    .updated(groupDTO.getTournament(), username, session))).start();
+                    .updated(tournamentDTO, username, session))).start();
         }
     }
 
@@ -142,13 +154,21 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public void delete(GroupDTO groupDTO, String username, String session) {
+        final TournamentDTO tournamentDTO = groupDTO.getTournament();
+        if (tournamentDTO == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to delete.");
+        }
+        final ITournamentManager tournamentManager = this.tournamentHandlerSelector.selectManager(tournamentDTO.getType());
+        if (tournamentManager == null) {
+            throw new TournamentNotFoundException(this.getClass(), "No tournament handler found for type '" + tournamentDTO.getType() + "'.");
+        }
         try {
-            this.tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(
-                    this.tournamentConverter.reverse(groupDTO.getTournament()), groupDTO.getLevel(),
+            tournamentManager.removeGroup(
+                    this.tournamentConverter.reverse(tournamentDTO), groupDTO.getLevel(),
                     groupDTO.getIndex());
         } finally {
             new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
-                    .updated(groupDTO.getTournament(), username, session))).start();
+                    .updated(tournamentDTO, username, session))).start();
         }
     }
 
@@ -165,7 +185,23 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     @Override
     public GroupDTO update(GroupDTO groupDTO, String username, String session) {
         this.validate(groupDTO);
-        final GroupDTO oldGroupDTO = this.get(groupDTO.getId());
+        final List<DuelDTO> previousUnties = clearPreviousFightsAndUnties(groupDTO.getId());
+        resetFightAndUntieIdentifiers(groupDTO);
+        ensureFightTeamsAreInGroup(groupDTO);
+
+        try {
+            return super.update(groupDTO, username, session);
+        } finally {
+            new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
+                    .updated(groupDTO.getTournament(), username, session))).start();
+            if (!previousUnties.isEmpty()) {
+                this.sendUntieChangeMessageThroughWebsocket(previousUnties, username, session);
+            }
+        }
+    }
+
+    private List<DuelDTO> clearPreviousFightsAndUnties(Integer groupId) {
+        final GroupDTO oldGroupDTO = this.get(groupId);
         final List<FightDTO> fights = new ArrayList<>(oldGroupDTO.getFights());
         oldGroupDTO.getFights().clear();
         this.fightProvider.delete(this.fightConverter.reverseAll(fights));
@@ -174,12 +210,14 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         oldGroupDTO.getUnties().clear();
         this.duelProvider.delete(this.duelConverter.reverseAll(unties));
 
-        // Remove all fights and duels from the group. Will be added on the update.
+        // Remove all fights and duels from the group. Will be added on update.
         this.convert(this.getProvider().save(this.reverse(oldGroupDTO)));
+        return unties;
+    }
 
-        // Reset fight/duel IDs so Hibernate re-inserts them rather than trying to
-        // merge the now-deleted rows (prevents StaleObjectStateException in Hibernate
-        // 6+).
+    private void resetFightAndUntieIdentifiers(GroupDTO groupDTO) {
+        // Reset fight/duel IDs so Hibernate re-inserts them rather than merging
+        // now-deleted rows (prevents StaleObjectStateException in Hibernate 6+).
         groupDTO.getFights().forEach(f -> {
             f.setId(null);
             f.setVersion(null);
@@ -192,27 +230,20 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
             d.setId(null);
             d.setVersion(null);
         });
+    }
 
-        // Ensure that the group contains the teams of the fight.
-        groupDTO.getFights().forEach(fightDTO -> {
-            if (fightDTO != null) {
-                if (!groupDTO.getTeams().contains(fightDTO.getTeam1())) {
-                    groupDTO.getTeams().add(fightDTO.getTeam1());
-                }
-                if (!groupDTO.getTeams().contains(fightDTO.getTeam2())) {
-                    groupDTO.getTeams().add(fightDTO.getTeam2());
-                }
-            }
-        });
+    private void ensureFightTeamsAreInGroup(GroupDTO groupDTO) {
+        groupDTO.getFights().stream()
+                .filter(Objects::nonNull)
+                .forEach(fightDTO -> {
+                    addTeamIfMissing(groupDTO, fightDTO.getTeam1());
+                    addTeamIfMissing(groupDTO, fightDTO.getTeam2());
+                });
+    }
 
-        try {
-            return super.update(groupDTO, username, session);
-        } finally {
-            new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
-                    .updated(groupDTO.getTournament(), username, session))).start();
-            if (!unties.isEmpty()) {
-                this.sendUntieChangeMessageThroughWebsocket(unties, username, session);
-            }
+    private void addTeamIfMissing(GroupDTO groupDTO, TeamDTO teamDTO) {
+        if (!groupDTO.getTeams().contains(teamDTO)) {
+            groupDTO.getTeams().add(teamDTO);
         }
     }
 
@@ -296,7 +327,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
     public GroupDTO setTeams(List<TeamDTO> teams, String username, String session) {
-        final GroupDTO groupDTO = this.get(teams.get(0).getTournament()).stream().findAny()
+        final GroupDTO groupDTO = this.get(teams.getFirst().getTournament()).stream().findAny()
                 .orElseThrow(() -> new GroupNotFoundException(this.getClass(), "No groups found!"));
         try {
             return this.convert(

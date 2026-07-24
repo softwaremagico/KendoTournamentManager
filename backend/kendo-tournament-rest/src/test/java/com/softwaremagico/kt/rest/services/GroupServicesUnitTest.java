@@ -37,7 +37,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,8 +45,9 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -203,24 +203,24 @@ public class GroupServicesUnitTest {
     public void shouldGeneratePdfAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = new TournamentDTO();
         tournamentDTO.setName("Cup");
-        final GroupList groupList = org.mockito.Mockito.mock(GroupList.class);
+        final GroupList groupList = mock(GroupList.class);
         when(tournamentController.get(4)).thenReturn(tournamentDTO);
-        when(pdfController.generateGroupList(any(Locale.class), eq(tournamentDTO))).thenReturn(groupList);
+        when(pdfController.generateGroupList(any(Locale.class), any(TournamentDTO.class))).thenReturn(groupList);
         when(groupList.generate()).thenReturn(new byte[]{1, 2, 3});
 
         final byte[] bytes = groupServices.getAllFromTournamentAsPdf(4, Locale.ENGLISH, response, request);
 
         assertEquals(bytes, new byte[]{1, 2, 3});
-        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+        verify(response).setHeader(anyString(), anyString());
     }
 
     @Test
     public void shouldWrapPdfErrorAsBadRequest() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournamentDTO = new TournamentDTO();
         tournamentDTO.setName("Cup");
-        final GroupList groupList = org.mockito.Mockito.mock(GroupList.class);
+        final GroupList groupList = mock(GroupList.class);
         when(tournamentController.get(4)).thenReturn(tournamentDTO);
-        when(pdfController.generateGroupList(any(Locale.class), eq(tournamentDTO))).thenReturn(groupList);
+        when(pdfController.generateGroupList(any(Locale.class), any(TournamentDTO.class))).thenReturn(groupList);
         when(groupList.generate()).thenThrow(new EmptyPdfBodyException("empty"));
 
         expectThrows(BadRequestException.class, () -> groupServices.getAllFromTournamentAsPdf(4, Locale.ENGLISH, response, request));

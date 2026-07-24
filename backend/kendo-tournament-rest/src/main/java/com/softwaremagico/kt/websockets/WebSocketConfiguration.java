@@ -24,10 +24,10 @@ package com.softwaremagico.kt.websockets;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
-import io.jsonwebtoken.JwtException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -89,51 +89,49 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
             @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (shouldAuthenticate(accessor)) {
-                    authenticateWebsocketUser(accessor);
+                if (accessor != null && requiresAuthentication(accessor)) {
+                    authenticateIfPossible(accessor);
                 }
                 return message;
             }
         });
     }
 
-    private boolean shouldAuthenticate(StompHeaderAccessor accessor) {
-        return accessor != null
-                && (StompCommand.CONNECT.equals(accessor.getCommand())
-                || StompCommand.SEND.equals(accessor.getCommand()));
+    private boolean requiresAuthentication(StompHeaderAccessor accessor) {
+        return StompCommand.CONNECT.equals(accessor.getCommand()) || StompCommand.SEND.equals(accessor.getCommand());
+    }
+
+    private void authenticateIfPossible(StompHeaderAccessor accessor) {
+        final List<String> jwtToken = getJwtToken(accessor);
+        if (jwtToken.isEmpty()) {
+            return;
+        }
+        try {
+            final String username = jwtTokenUtil.getUsername(jwtToken.getFirst());
+            if (username != null && !username.isEmpty()) {
+                accessor.setUser(new UserPrincipal(username));
+                WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
+            } else {
+                throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
+            }
+        } catch (Exception ex) {
+            //Unauthorized.
+            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets ({})!", ex.getMessage());
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private void authenticateWebsocketUser(StompHeaderAccessor accessor) {
+    private List<String> getJwtToken(StompHeaderAccessor accessor) {
         final LinkedMultiValueMap<String, String> nativeHeaders =
                 (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
         if (nativeHeaders == null) {
-            return;
+            return List.of();
         }
-
-        final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
-        if (jwtToken == null || jwtToken.isEmpty()) {
-            return;
-        }
-
-        try {
-            final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
-            validateUsername(username);
-            accessor.setUser(new UserPrincipal(username));
-            WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
-        } catch (InvalidJwtException | JwtException | IllegalArgumentException ignored) {
-            // Unauthorized websocket token.
-            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
-        }
-    }
-
-    private void validateUsername(String username) {
-        if (username == null || username.isEmpty()) {
-            throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
-        }
+        final List<String> jwtHeader = nativeHeaders.get(JWT_CUSTOM_HEADER);
+        return jwtHeader == null ? List.of() : jwtHeader;
     }
 
     static class UserPrincipal implements Principal {

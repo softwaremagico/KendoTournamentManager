@@ -60,101 +60,91 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "csvServices")
 public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 
-    private static final String USER_FIRST_NAME = "Test";
-    private static final String USER_LAST_NAME = "User";
+	private static final String USER_FIRST_NAME = "Test";
+	private static final String USER_LAST_NAME = "User";
 
-    private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
-    private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+	private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
+	private static final String USER_PASSWORD = "password";
+	private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
-    private static final String ONE_CLUBS_CSV_FILE_PATH = "csv/oneClub.csv";
-    private static final String CLUBS_CSV_FILE_PATH = "csv/clubs.csv";
+	private static final String ONE_CLUBS_CSV_FILE_PATH = "csv/oneClub.csv";
+	private static final String CLUBS_CSV_FILE_PATH = "csv/clubs.csv";
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @Autowired
-    private AuthenticatedUserController authenticatedUserController;
+	@Autowired
+	private AuthenticatedUserController authenticatedUserController;
 
-    @Autowired
-    private ClubRepository clubRepository;
+	@Autowired
+	private ClubRepository clubRepository;
 
-    private String jwtToken;
+	private String jwtToken;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(object);
-    }
+	private <T> String toJson(T object) throws JsonProcessingException {
+		return this.objectMapper.writeValueAsString(object);
+	}
 
-    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
-        return objectMapper.readValue(payload, clazz);
-    }
+	private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+		return this.objectMapper.readValue(payload, clazz);
+	}
 
-    @BeforeClass
-    public void setUp() throws Exception {
-        authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+	@BeforeClass
+	public void setUp() throws Exception {
+		this.authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD,
+				USER_ROLES);
 
-        AuthRequest request = new AuthRequest();
-        request.setUsername(USER_NAME);
-        request.setPassword(USER_PASSWORD);
+		final AuthRequest request = new AuthRequest();
+		request.setUsername(USER_NAME);
+		request.setPassword(USER_PASSWORD);
 
-        MvcResult createResult = this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
-                .andReturn();
+		final MvcResult createResult = this.mockMvc
+				.perform(post("/auth/public/login").contentType(MediaType.APPLICATION_JSON)
+						.content(this.toJson(request)).with(csrf()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION)).andReturn();
 
-        jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertNotNull(jwtToken);
-    }
+		this.jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+		Assert.assertNotNull(this.jwtToken);
+	}
 
-    @Test
-    public void uploadClubs() throws Exception {
-        Assert.assertNotNull(jwtToken);
+	@Test
+	public void uploadClubs() throws Exception {
+		Assert.assertNotNull(this.jwtToken);
 
-        final byte[] bytes = Files.readAllBytes(Paths.get(getClass().getClassLoader()
-                .getResource(ONE_CLUBS_CSV_FILE_PATH).toURI()));
+		final byte[] bytes = Files
+				.readAllBytes(Paths.get(this.getClass().getClassLoader().getResource(ONE_CLUBS_CSV_FILE_PATH).toURI()));
 
-        MvcResult createResult = this.mockMvc
-                .perform(multipart("/csv/clubs")
-                        .file("file", bytes)
-                        .header("Authorization", "Bearer " + jwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-                .andReturn();
+		final MvcResult createResult = this.mockMvc.perform(multipart("/csv/clubs").file("file", bytes)
+				.header("Authorization", "Bearer " + this.jwtToken).with(csrf()))
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
 
-        //One is malformed, so it is returned as an error.
-        final List<ClubDTO> clubDTO = Arrays.asList(fromJson(createResult.getResponse().getContentAsString(), ClubDTO[].class));
-        Assert.assertEquals(clubDTO.size(), 0);
-    }
+		// One is malformed, so it is returned as an error.
+		final List<ClubDTO> clubDTO = Arrays
+				.asList(this.fromJson(createResult.getResponse().getContentAsString(), ClubDTO[].class));
+		Assert.assertEquals(clubDTO.size(), 0);
+	}
 
-    @Test
-    public void uploadInvalidClubs() throws Exception {
-        Assert.assertNotNull(jwtToken);
+	@Test
+	public void uploadInvalidClubs() throws Exception {
+		Assert.assertNotNull(this.jwtToken);
 
-        final byte[] bytes = Files.readAllBytes(Paths.get(getClass().getClassLoader()
-                .getResource(CLUBS_CSV_FILE_PATH).toURI()));
+		final byte[] bytes = Files
+				.readAllBytes(Paths.get(this.getClass().getClassLoader().getResource(CLUBS_CSV_FILE_PATH).toURI()));
 
-        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        this.mockMvc
-                .perform(multipart("/csv/clubs")
-                        .file("file", bytes)
-                        .header("Authorization", "Bearer " + jwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andReturn();
-        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-    }
+		System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+		this.mockMvc.perform(multipart("/csv/clubs").file("file", bytes)
+				.header("Authorization", "Bearer " + this.jwtToken).with(csrf()))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+		System.out.println("------------------------- End Expected Logged Exception -------------------------");
+	}
 
-
-    @AfterClass(alwaysRun = true)
-    public void cleanUp() {
-        clubRepository.deleteAll();
-        authenticatedUserController.deleteAll();
-    }
+	@AfterClass(alwaysRun = true)
+	public void cleanUp() {
+		this.clubRepository.deleteAll();
+		this.authenticatedUserController.deleteAll();
+	}
 }

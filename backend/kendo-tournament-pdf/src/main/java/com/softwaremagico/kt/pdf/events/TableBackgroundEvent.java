@@ -61,7 +61,7 @@ public class TableBackgroundEvent implements PdfPTableEvent {
                             this.document.getPageSize().getHeight());
                     this.defaultBackgroundImage.setAbsolutePosition(0, 0);
                 }
-            } catch (final NullPointerException | BadElementException | IOException ex) {
+            } catch (NullPointerException | BadElementException | IOException _) {
                 PdfExporterLog.severe(TableBackgroundEvent.class, "No background image found!");
             }
         }

@@ -41,7 +41,7 @@ public class OpenApiServices {
     @Operation(summary = "Redirects root address to API web site.")
     @GetMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
-    public void root(HttpServletResponse response, HttpServletRequest httpRequest) throws IOException {
+    public void root(HttpServletResponse response, HttpServletRequest request) throws IOException {
         response.sendRedirect("./swagger-ui/index.html");
     }
 }

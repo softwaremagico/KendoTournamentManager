@@ -44,6 +44,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -103,7 +104,7 @@ public class DuelProviderTest {
 
         final long faults = provider.countFaults(tournament);
 
-        assertThat(faults).isEqualTo(0L);
+        assertThat(faults).isZero();
     }
 
     @Test
@@ -173,7 +174,7 @@ public class DuelProviderTest {
 
         final long count = provider.countScoreFromCompetitor(participant, tournaments);
 
-        assertThat(count).isEqualTo(0L);
+        assertThat(count).isZero();
     }
 
     @Test
@@ -184,14 +185,14 @@ public class DuelProviderTest {
 
         final long count = provider.countScoreAgainstCompetitor(participant, tournaments);
 
-        assertThat(count).isEqualTo(0L);
+        assertThat(count).isZero();
     }
 
      @Test
      public void testReportCacheEvictIsCallable() {
          provider.reportCacheEvict();
 
-         verify(duelRepository, org.mockito.Mockito.never()).countByTournament(any(Tournament.class));
+         verify(duelRepository, never()).countByTournament(any(Tournament.class));
      }
 
      // ============= Additional comprehensive tests for 90%+ coverage =============
@@ -425,7 +426,7 @@ public class DuelProviderTest {
 
          final long count = provider.countScoreFromCompetitor(participant, tournaments);
 
-         assertThat(count).isEqualTo(0L);
+         assertThat(count).isZero();
      }
 
      @Test
@@ -450,7 +451,7 @@ public class DuelProviderTest {
 
          final long count = provider.countScoreAgainstCompetitor(participant, tournaments);
 
-         assertThat(count).isEqualTo(0L);
+         assertThat(count).isZero();
      }
 
      @Test

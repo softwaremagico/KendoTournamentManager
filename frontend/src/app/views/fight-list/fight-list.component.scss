@@ -20,6 +20,55 @@ $fight-border-color: var(--fight-border-color);
   height: 83vh;
 }
 
+/* Compact layout in projector mode to avoid large vertical gaps. */
+.fights-container.project-mode .fight-list {
+  height: auto;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.fights-container.project-mode h2.level-name {
+  padding-top: 45px;
+  margin: 6px 0;
+}
+
+.fights-container.project-mode .group-name {
+  margin: 6px 0 8px 20px;
+}
+
+.fights-container.project-mode .fights-of-group {
+  margin: 4px 5px 10px;
+}
+
+.projector-empty-state {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.projector-empty-state-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: var(--active-fight-color);
+}
+
+.projector-empty-state h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.projector-empty-state p {
+  margin: 0;
+  font-size: 20px;
+  opacity: 0.85;
+}
+
 
 
 .upper-menu {
@@ -253,3 +302,4 @@ h2.level-name {
     height: 75vh;
   }
 }
+
