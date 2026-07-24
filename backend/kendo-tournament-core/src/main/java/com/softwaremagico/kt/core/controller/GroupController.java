@@ -129,15 +129,16 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username, String session) {
-        if (groupDTO.getTournament() == null) {
+        final TournamentDTO tournamentDTO = groupDTO.getTournament();
+        if (tournamentDTO == null) {
             throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to create.");
         }
         try {
-            return this.convert(this.tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType())
-                    .addGroup(this.tournamentConverter.reverse(groupDTO.getTournament()), this.reverse(groupDTO)));
+            return this.convert(this.tournamentHandlerSelector.selectManager(tournamentDTO.getType())
+                    .addGroup(this.tournamentConverter.reverse(tournamentDTO), this.reverse(groupDTO)));
         } finally {
             new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
-                    .updated(groupDTO.getTournament(), username, session))).start();
+                    .updated(tournamentDTO, username, session))).start();
         }
     }
 
@@ -148,16 +149,17 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public void delete(GroupDTO groupDTO, String username, String session) {
-        if (groupDTO.getTournament() == null) {
+        final TournamentDTO tournamentDTO = groupDTO.getTournament();
+        if (tournamentDTO == null) {
             throw new TournamentNotFoundException(this.getClass(), "No tournament set on the group to delete.");
         }
         try {
-            this.tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(
-                    this.tournamentConverter.reverse(groupDTO.getTournament()), groupDTO.getLevel(),
+            this.tournamentHandlerSelector.selectManager(tournamentDTO.getType()).removeGroup(
+                    this.tournamentConverter.reverse(tournamentDTO), groupDTO.getLevel(),
                     groupDTO.getIndex());
         } finally {
             new Thread(() -> this.groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener
-                    .updated(groupDTO.getTournament(), username, session))).start();
+                    .updated(tournamentDTO, username, session))).start();
         }
     }
 

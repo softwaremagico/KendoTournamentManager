@@ -284,13 +284,19 @@ public class RankingProvider {
     }
 
     public List<Participant> getParticipants(Group group) {
+        if (group == null) {
+            return new ArrayList<>();
+        }
+        final Tournament tournament = group.getTournament();
         final Set<Participant> competitors = getParticipants(group.getTeams());
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, group.getFights(), group.getUnties(),
-                    countNotOver(group.getTournament())));
+                    countNotOver(tournament)));
         }
-        sortCompetitorsScores(group.getTournament().getTournamentScore().getScoreType(), scores);
+        if (tournament != null && tournament.getTournamentScore() != null) {
+            sortCompetitorsScores(tournament.getTournamentScore().getScoreType(), scores);
+        }
         final List<Participant> competitorsRanking = new ArrayList<>();
         for (final ScoreOfCompetitor score : scores) {
             competitorsRanking.add(score.getCompetitor());
@@ -347,15 +353,18 @@ public class RankingProvider {
         if (group == null) {
             return new ArrayList<>();
         }
-        if (group.getTournament() != null && group.getTournament().getType() == TournamentType.SWISS) {
+        final Tournament tournament = group.getTournament();
+        if (tournament != null && tournament.getType() == TournamentType.SWISS) {
             // For Swiss tournaments in a group: ranking is group-specific,
             // but tie-breaks use all fights from tournament start up to (and including) this group
             final List<Fight> allFightsUpToGroup = getAllFightsUpToGroup(group);
-            return getSwissTeamsScoreRankingWithGlobalTieBreaks(group.getTournament(), group.getTeams(),
+            return getSwissTeamsScoreRankingWithGlobalTieBreaks(tournament, group.getTeams(),
                     group.getFights(), allFightsUpToGroup, group.getUnties());
         }
-        return getTeamsScoreRanking(group.getTournament().getTournamentScore().getScoreType(),
-                group.getTeams(), group.getFights(), group.getUnties(), checkLevel(group.getTournament()));
+        final ScoreType scoreType = tournament != null && tournament.getTournamentScore() != null
+                ? tournament.getTournamentScore().getScoreType() : ScoreType.CLASSIC;
+        return getTeamsScoreRanking(scoreType,
+                group.getTeams(), group.getFights(), group.getUnties(), checkLevel(tournament));
     }
 
     /**
