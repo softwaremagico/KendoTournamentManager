@@ -62,7 +62,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn(TEST_VALUE);
 
-			assertEquals(ENCRYPTED_VALUE, result);
+			assertEquals(result, ENCRYPTED_VALUE);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn(TEST_VALUE);
 
-			assertEquals(TEST_VALUE, result);
+			assertEquals(result, TEST_VALUE);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn(TEST_VALUE);
 
-			assertEquals(TEST_VALUE, result);
+			assertEquals(result, TEST_VALUE);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn("");
 
-			assertEquals("", result);
+			assertEquals(result, "");
 		}
 	}
 
@@ -119,7 +119,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToEntityAttribute(ENCRYPTED_VALUE);
 
-			assertEquals(TEST_VALUE, result);
+			assertEquals(result, TEST_VALUE);
 		}
 	}
 
@@ -130,7 +130,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToEntityAttribute(ENCRYPTED_VALUE);
 
-			assertEquals(ENCRYPTED_VALUE, result);
+			assertEquals(result, ENCRYPTED_VALUE);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToEntityAttribute(ENCRYPTED_VALUE);
 
-			assertEquals(ENCRYPTED_VALUE, result);
+			assertEquals(result, ENCRYPTED_VALUE);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToEntityAttribute("");
 
-			assertEquals("", result);
+			assertEquals(result, "");
 		}
 	}
 
@@ -179,8 +179,8 @@ public class StringCryptoConverterTest {
 			final String encrypted = converter2.convertToDatabaseColumn(original);
 			final String decrypted = converter2.convertToEntityAttribute(encrypted);
 
-			assertEquals(original, decrypted);
-			assertNotEquals(original, encrypted);
+			assertEquals(decrypted, original);
+			assertNotEquals(encrypted, original);
 		}
 	}
 
@@ -196,7 +196,7 @@ public class StringCryptoConverterTest {
 		final String input = "testString";
 		final String result = this.converter.stringToEntityAttribute(input);
 
-		assertEquals(input, result);
+		assertEquals(result, input);
 	}
 
 	@Test
@@ -211,7 +211,7 @@ public class StringCryptoConverterTest {
 		final String input = "testString";
 		final String result = this.converter.entityAttributeToString(input);
 
-		assertEquals(input, result);
+		assertEquals(result, input);
 	}
 
 	@Test
@@ -231,7 +231,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn(specialValue);
 
-			assertEquals(ENCRYPTED_VALUE, result);
+			assertEquals(result, ENCRYPTED_VALUE);
 		}
 	}
 
@@ -245,7 +245,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn(unicodeValue);
 
-			assertEquals(ENCRYPTED_VALUE, result);
+			assertEquals(result, ENCRYPTED_VALUE);
 		}
 	}
 
@@ -259,7 +259,7 @@ public class StringCryptoConverterTest {
 
 			final String result = this.converter.convertToDatabaseColumn(longValue);
 
-			assertEquals(ENCRYPTED_VALUE, result);
+			assertEquals(result, ENCRYPTED_VALUE);
 		}
 	}
 
@@ -300,9 +300,9 @@ public class StringCryptoConverterTest {
 			final String value2 = "value2";
 			final String value3 = "value3";
 
-			assertEquals(value1, this.converter.convertToDatabaseColumn(value1));
-			assertEquals(value2, this.converter.convertToDatabaseColumn(value2));
-			assertEquals(value3, this.converter.convertToDatabaseColumn(value3));
+			assertEquals(this.converter.convertToDatabaseColumn(value1), value1);
+			assertEquals(this.converter.convertToDatabaseColumn(value2), value2);
+			assertEquals(this.converter.convertToDatabaseColumn(value3), value3);
 		}
 	}
 }

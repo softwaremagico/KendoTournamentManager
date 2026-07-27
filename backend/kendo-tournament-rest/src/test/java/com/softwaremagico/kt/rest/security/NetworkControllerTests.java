@@ -142,5 +142,31 @@ public class NetworkControllerTests {
 
         assertEquals(controller.getHostMac(), "");
     }
+
+    @Test
+    public void shouldNotThrowException() {
+        try {
+            networkController.getHostMac();
+        } catch (Exception e) {
+            org.testng.Assert.fail("getHostMac should not throw any exception", e);
+        }
+    }
+
+    @Test
+    public void shouldReturnSameMacForDifferentInstances() {
+        final NetworkController controller1 = new NetworkController();
+        final NetworkController controller2 = new NetworkController();
+
+        assertEquals(controller1.getHostMac(), controller2.getHostMac());
+    }
+
+    @Test
+    public void shouldNotThrowOnConstruction() {
+        try {
+            new NetworkController();
+        } catch (Exception e) {
+            org.testng.Assert.fail("Constructor should not throw", e);
+        }
+    }
 }
 

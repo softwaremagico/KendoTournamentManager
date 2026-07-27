@@ -58,7 +58,7 @@ public class IntegerCryptoConverterTest {
 
             String result = converter.convertToDatabaseColumn(42);
 
-            assertEquals("42", result);
+            assertEquals(result, "42");
         }
     }
 
@@ -69,7 +69,7 @@ public class IntegerCryptoConverterTest {
 
             Integer result = converter.convertToEntityAttribute("42");
 
-            assertEquals(42, result);
+            assertEquals(result, 42);
         }
     }
 
@@ -104,7 +104,7 @@ public class IntegerCryptoConverterTest {
 
             String result = converter.convertToDatabaseColumn(42);
 
-            assertEquals("encryptedValue", result);
+            assertEquals(result, "encryptedValue");
         }
     }
 
@@ -117,7 +117,7 @@ public class IntegerCryptoConverterTest {
 
             Integer result = converter.convertToEntityAttribute("encryptedValue");
 
-            assertEquals(42, result);
+            assertEquals(result, 42);
         }
     }
 
@@ -129,7 +129,7 @@ public class IntegerCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(0);
             Integer entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(0, entity);
+            assertEquals(entity, 0);
         }
     }
 
@@ -141,7 +141,7 @@ public class IntegerCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(-42);
             Integer entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(-42, entity);
+            assertEquals(entity, -42);
         }
     }
 
@@ -153,7 +153,7 @@ public class IntegerCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(Integer.MAX_VALUE);
             Integer entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(Integer.MAX_VALUE, entity);
+            assertEquals(entity, Integer.MAX_VALUE);
         }
     }
 
@@ -165,7 +165,7 @@ public class IntegerCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(Integer.MIN_VALUE);
             Integer entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(Integer.MIN_VALUE, entity);
+            assertEquals(entity, Integer.MIN_VALUE);
         }
     }
 
@@ -191,9 +191,8 @@ public class IntegerCryptoConverterTest {
             for (int i = -100; i < 100; i++) {
                 String dbColumn = converter.convertToDatabaseColumn(i);
                 Integer entity = converter.convertToEntityAttribute(dbColumn);
-                assertEquals(i, entity);
+                assertEquals(entity, i);
             }
         }
     }
 }
-

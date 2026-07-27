@@ -35,6 +35,8 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 @Test
@@ -96,6 +98,107 @@ public class KendoUserDetailsServiceTests {
         org.testng.Assert.assertNotSame(first, second);
         assertEquals(first.getUsername(), second.getUsername());
         assertEquals(first.getPassword(), second.getPassword());
+    }
+
+    @Test
+    public void shouldReturnEmptyAuthoritiesList() {
+        final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
+        authenticatedUser.setPassword("encoded-password");
+
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername("admin");
+
+        assertNotNull(details.getAuthorities());
+        assertTrue(details.getAuthorities().isEmpty());
+    }
+
+    @Test
+    public void shouldReflectAccountExpiredFlag() {
+        final AuthenticatedUser mockAuthenticatedUser = mock(AuthenticatedUser.class);
+        when(mockAuthenticatedUser.getUsername()).thenReturn("admin");
+        when(mockAuthenticatedUser.getPassword()).thenReturn("encoded-password");
+        when(mockAuthenticatedUser.isAccountNonExpired()).thenReturn(false);
+        when(mockAuthenticatedUser.isAccountNonLocked()).thenReturn(true);
+        when(mockAuthenticatedUser.isCredentialsNonExpired()).thenReturn(true);
+        when(mockAuthenticatedUser.isEnabled()).thenReturn(true);
+
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(mockAuthenticatedUser));
+
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername("admin");
+
+        assertFalse(details.isAccountNonExpired());
+    }
+
+    @Test
+    public void shouldReflectAccountLockedFlag() {
+        final AuthenticatedUser mockAuthenticatedUser = mock(AuthenticatedUser.class);
+        when(mockAuthenticatedUser.getUsername()).thenReturn("admin");
+        when(mockAuthenticatedUser.getPassword()).thenReturn("encoded-password");
+        when(mockAuthenticatedUser.isAccountNonExpired()).thenReturn(true);
+        when(mockAuthenticatedUser.isAccountNonLocked()).thenReturn(false);
+        when(mockAuthenticatedUser.isCredentialsNonExpired()).thenReturn(true);
+        when(mockAuthenticatedUser.isEnabled()).thenReturn(true);
+
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(mockAuthenticatedUser));
+
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername("admin");
+
+        assertFalse(details.isAccountNonLocked());
+    }
+
+    @Test
+    public void shouldReflectCredentialsExpiredFlag() {
+        final AuthenticatedUser mockAuthenticatedUser = mock(AuthenticatedUser.class);
+        when(mockAuthenticatedUser.getUsername()).thenReturn("admin");
+        when(mockAuthenticatedUser.getPassword()).thenReturn("encoded-password");
+        when(mockAuthenticatedUser.isAccountNonExpired()).thenReturn(true);
+        when(mockAuthenticatedUser.isAccountNonLocked()).thenReturn(true);
+        when(mockAuthenticatedUser.isCredentialsNonExpired()).thenReturn(false);
+        when(mockAuthenticatedUser.isEnabled()).thenReturn(true);
+
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(mockAuthenticatedUser));
+
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername("admin");
+
+        assertFalse(details.isCredentialsNonExpired());
+    }
+
+    @Test
+    public void shouldReflectDisabledFlag() {
+        final AuthenticatedUser mockAuthenticatedUser = mock(AuthenticatedUser.class);
+        when(mockAuthenticatedUser.getUsername()).thenReturn("admin");
+        when(mockAuthenticatedUser.getPassword()).thenReturn("encoded-password");
+        when(mockAuthenticatedUser.isAccountNonExpired()).thenReturn(true);
+        when(mockAuthenticatedUser.isAccountNonLocked()).thenReturn(true);
+        when(mockAuthenticatedUser.isCredentialsNonExpired()).thenReturn(true);
+        when(mockAuthenticatedUser.isEnabled()).thenReturn(false);
+
+        when(this.authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(mockAuthenticatedUser));
+
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername("admin");
+
+        assertFalse(details.isEnabled());
+    }
+
+    @Test
+    public void shouldLoadUserWithSpecialCharactersInUsername() {
+        final String specialUsername = "user@example.com";
+        final AuthenticatedUser authenticatedUser = new AuthenticatedUser(specialUsername);
+        authenticatedUser.setPassword("encoded-password");
+
+        when(this.authenticatedUserProvider.findByUsername(specialUsername)).thenReturn(Optional.of(authenticatedUser));
+
+        final UserDetails details = this.kendoUserDetailsService.loadUserByUsername(specialUsername);
+
+        assertNotNull(details);
+        assertEquals(details.getUsername(), specialUsername);
+    }
+
+    @Test
+    public void shouldBuildServiceThroughConstructor() {
+        final KendoUserDetailsService service = new KendoUserDetailsService(this.authenticatedUserProvider);
+        assertNotNull(service);
     }
 }
 

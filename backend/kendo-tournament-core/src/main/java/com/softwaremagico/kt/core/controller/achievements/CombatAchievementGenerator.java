@@ -67,7 +67,8 @@ public class CombatAchievementGenerator extends ConsecutiveAchievementGeneration
         if (this.fightProvider.getFights(tournament).size() < this.minimumTournamentFights) {
             return new ArrayList<>();
         }
-        int minTime = tournament.getDuelsDuration();
+        final Integer duelsDuration = tournament.getDuelsDuration();
+        int minTime = duelsDuration != null ? duelsDuration : Integer.MAX_VALUE;
         com.softwaremagico.kt.persistence.entities.Participant participant = null;
         for (final Duel duel : this.duelProvider.get(tournament)) {
             final BillyTheKidResult firstCompetitorResult = evaluateCompetitorFastestScores(duel.getCompetitor1(),

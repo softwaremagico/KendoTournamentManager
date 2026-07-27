@@ -11,9 +11,11 @@
                 <include name="restAccess"/>
                 <include name="dtoToEntity"/>
                 <include name="bruteForce"/>
+                <include name="bruteForceService"/>
                 <include name="restSimpleChampionshipTest"/>
                 <include name="restTreeChampionshipCriticalUntieTest"/>
                 <include name="userRegister"/>
+                <include name="userRegistration"/>
                 <include name="passwordTests"/>
                 <include name="websockets"/>
                 <!-- working on local, but not on ci github-->
@@ -36,6 +38,7 @@
             <class name="com.softwaremagico.kt.security.AuthApiUnitTests"/>
             <class name="com.softwaremagico.kt.security.RestAccessTests"/>
             <class name="com.softwaremagico.kt.security.BruteForceTests"/>
+            <class name="com.softwaremagico.kt.security.UserRegistrationTest"/>
             <class name="com.softwaremagico.kt.security.PasswordTests"/>
             <class name="com.softwaremagico.kt.rest.DtoToEntityTest"/>
             <class name="com.softwaremagico.kt.rest.RestSimpleChampionshipTest"/>
@@ -52,6 +55,7 @@
             <class name="com.softwaremagico.kt.rest.security.dto.AuthRequestsCoverageTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenUtilTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenFilterTest"/>
+            <class name="com.softwaremagico.kt.rest.security.BruteForceServiceTests"/>
             <class name="com.softwaremagico.kt.logger.FrontendLoggerTest"/>
             <class name="com.softwaremagico.kt.ServerConfigurationTests"/>
             <class name="com.softwaremagico.kt.rest.security.KendoUserDetailsServiceTests"/>

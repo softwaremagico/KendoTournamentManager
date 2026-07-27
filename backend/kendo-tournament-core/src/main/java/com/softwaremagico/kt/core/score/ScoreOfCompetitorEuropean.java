@@ -45,16 +45,32 @@ public class ScoreOfCompetitorEuropean implements Comparator<ScoreOfCompetitor> 
 
         // Fewer hits lost
         if (!Objects.equals(scoreOfCompetitor1.getHitsLost(), scoreOfCompetitor2.getHitsLost())) {
-            return scoreOfCompetitor1.getDuelsDone().compareTo(scoreOfCompetitor2.getDuelsDone());
+            return compareNullable(scoreOfCompetitor1.getDuelsDone(), scoreOfCompetitor2.getDuelsDone());
         }
 
         // More duels done with same score is negative.
         if (!Objects.equals(scoreOfCompetitor1.getDuelsDone(), scoreOfCompetitor2.getDuelsDone())) {
-            return scoreOfCompetitor1.getDuelsDone().compareTo(scoreOfCompetitor2.getDuelsDone());
+            return compareNullable(scoreOfCompetitor1.getDuelsDone(), scoreOfCompetitor2.getDuelsDone());
         }
 
         // Same obtained score, order by name
         return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
+    }
+
+    /**
+     * Null-safe comparison for Integer values. Nulls are considered lower than any non-null value.
+     */
+    private static int compareNullable(Integer value1, Integer value2) {
+        if (Objects.equals(value1, value2)) {
+            return 0;
+        }
+        if (value1 == null) {
+            return -1;
+        }
+        if (value2 == null) {
+            return 1;
+        }
+        return value1.compareTo(value2);
     }
 
 }

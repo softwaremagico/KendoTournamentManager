@@ -191,6 +191,81 @@ public class JwtTokenUtilTest {
         assertNull(util.getUserIp(partialSubjectToken));
         assertNull(util.getHostMac(partialSubjectToken));
     }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldGenerateAccessTokenWithoutExplicitSession() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertNotNull(token);
+        assertTrue(util.validate(token));
+        assertEquals(util.getUserId(token), "7");
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldGenerateAccessTokenWithCustomExpirationOnly() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1", 3_600_000L);
+
+        assertNotNull(token);
+        assertTrue(util.validate(token));
+        assertNotNull(util.getExpirationDate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldValidateFreshlyGeneratedToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertTrue(util.validate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnFalseForEmptyToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertFalse(util.validate(""));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnFalseForNullToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertFalse(util.validate(null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldGenerateDifferentSessionsOnEachCall() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token1 = util.generateAccessToken(this.user, "10.0.0.1");
+        final String token2 = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertNotEquals(util.getSession(token1), util.getSession(token2));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnPositiveExpirationTimesForValidConfiguration() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final long now = Instant.now().toEpochMilli();
+
+        assertTrue(util.getJwtExpirationTime() > now);
+        assertTrue(util.getJwtGuestExpirationTime() > now);
+        assertTrue(util.getJwtParticipantExpirationTime() > now);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldBuildUtilWhenSecretIsNull() {
+        final JwtTokenUtil util = new JwtTokenUtil(null, "1200000", null, null, this.networkController);
+
+        assertNotNull(util);
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+        assertNotNull(token);
+        assertTrue(util.validate(token));
+    }
 }
 
 class TestNetworkController extends NetworkController {

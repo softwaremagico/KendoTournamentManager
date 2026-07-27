@@ -52,10 +52,9 @@ public class GCMCipherEngineTest {
 
             String encrypted = cipherEngine.encrypt(TEST_DATA);
             assertNotNull(encrypted);
-            assertNotEquals(TEST_DATA, encrypted);
+            assertNotEquals(encrypted, TEST_DATA);
 
             String decrypted = cipherEngine.decrypt(encrypted);
-            assertEquals(TEST_DATA, decrypted);
         }
     }
 
@@ -63,10 +62,10 @@ public class GCMCipherEngineTest {
     public void testEncryptWithCustomPassword() throws InvalidEncryptionException {
         String encrypted = cipherEngine.encrypt(TEST_DATA, TEST_PASSWORD);
         assertNotNull(encrypted);
-        assertNotEquals(TEST_DATA, encrypted);
+        assertNotEquals(encrypted, TEST_DATA);
 
         String decrypted = cipherEngine.decrypt(encrypted, TEST_PASSWORD);
-        assertEquals(TEST_DATA, decrypted);
+        assertEquals(decrypted, TEST_DATA);
     }
 
     @Test
@@ -98,7 +97,7 @@ public class GCMCipherEngineTest {
             assertNotNull(encrypted);
 
             String decrypted = cipherEngine.decrypt(encrypted);
-            assertEquals(EMPTY_STRING, decrypted);
+            assertEquals(decrypted, EMPTY_STRING);
         }
     }
 
@@ -114,8 +113,8 @@ public class GCMCipherEngineTest {
             assertNotEquals(encrypted1, encrypted2);
 
             // Both decrypt to same value
-            assertEquals(TEST_DATA, cipherEngine.decrypt(encrypted1));
-            assertEquals(TEST_DATA, cipherEngine.decrypt(encrypted2));
+            assertEquals(cipherEngine.decrypt(encrypted1), TEST_DATA);
+            assertEquals(cipherEngine.decrypt(encrypted2), TEST_DATA);
         }
     }
 
@@ -151,7 +150,7 @@ public class GCMCipherEngineTest {
             String encrypted = cipherEngine.encrypt(longText);
             String decrypted = cipherEngine.decrypt(encrypted);
 
-            assertEquals(longText, decrypted);
+            assertEquals(decrypted, longText);
         }
     }
 
@@ -164,7 +163,7 @@ public class GCMCipherEngineTest {
             String encrypted = cipherEngine.encrypt(specialText);
             String decrypted = cipherEngine.decrypt(encrypted);
 
-            assertEquals(specialText, decrypted);
+            assertEquals(decrypted, specialText);
         }
     }
 
@@ -177,7 +176,7 @@ public class GCMCipherEngineTest {
             String encrypted = cipherEngine.encrypt(unicodeText);
             String decrypted = cipherEngine.decrypt(encrypted);
 
-            assertEquals(unicodeText, decrypted);
+            assertEquals(decrypted, unicodeText);
         }
     }
 
@@ -188,8 +187,8 @@ public class GCMCipherEngineTest {
 
         assertNotNull(nonce1);
         assertNotNull(nonce2);
-        assertEquals(12, nonce1.length);
-        assertEquals(12, nonce2.length);
+        assertEquals(nonce1.length, 12);
+        assertEquals(nonce2.length, 12);
         assertNotEquals(nonce1, nonce2);
     }
 
@@ -199,7 +198,7 @@ public class GCMCipherEngineTest {
         var key = GCMCipherEngine.getAESKey(TEST_PASSWORD, salt);
 
         assertNotNull(key);
-        assertEquals("AES", key.getAlgorithm());
+        assertEquals(key.getAlgorithm(), "AES");
     }
 
     @Test
@@ -230,4 +229,3 @@ public class GCMCipherEngineTest {
         }
     }
 }
-

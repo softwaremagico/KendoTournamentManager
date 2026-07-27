@@ -77,5 +77,71 @@ public class ServerConfigurationTests {
         assertEquals(threadPoolTaskExecutor.getMaxPoolSize(), 100);
         assertEquals(threadPoolTaskExecutor.getThreadNamePrefix(), "Rest_Async-");
     }
+
+    @Test
+    public void shouldCreateIndependentThreadPoolExecutorInstances() {
+        final TaskExecutor first = serverConfiguration.getAsyncExecutor();
+        final TaskExecutor second = serverConfiguration.getAsyncExecutor();
+
+        assertNotSame(first, second);
+    }
+
+    @Test
+    public void shouldMapPropertiesBetweenObjectsUsingModelMapper() {
+        final ModelMapper modelMapper = serverConfiguration.modelMapper();
+
+        final TestSourceClass source = new TestSourceClass("John", 30);
+        final TestTargetClass target = modelMapper.map(source, TestTargetClass.class);
+
+        assertEquals(target.getName(), source.getName());
+        assertEquals(target.getAge(), source.getAge());
+    }
+
+    public static class TestSourceClass {
+        private String name;
+        private int age;
+
+        public TestSourceClass(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+    }
+
+    public static class TestTargetClass {
+        private String name;
+        private int age;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+    }
 }
 

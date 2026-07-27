@@ -52,7 +52,7 @@ public class SHA512HashGeneratorTest {
             String hash = hashGenerator.convertToDatabaseColumn(TEST_PASSWORD);
 
             assertNotNull(hash);
-            assertNotEquals(TEST_PASSWORD, hash);
+            assertNotEquals(hash, TEST_PASSWORD);
             assertTrue(hash.length() >= 128); // SHA-512 produces at least 128 hex characters
         }
     }
@@ -135,7 +135,7 @@ public class SHA512HashGeneratorTest {
             String hash = SHA512HashGenerator.createHash(TEST_PASSWORD);
 
             assertNotNull(hash);
-            assertNotEquals(TEST_PASSWORD, hash);
+            assertNotEquals(hash, TEST_PASSWORD);
         }
     }
 
@@ -210,9 +210,9 @@ public class SHA512HashGeneratorTest {
 
     @Test
     public void testHashAlgorithmName() {
-        assertEquals("SHA-512", SHA512HashGenerator.class.getSimpleName()
+        assertEquals(SHA512HashGenerator.class.getSimpleName()
                 .replace("SHA512", "SHA-512")
-                .replace("HashGenerator", ""));
+                .replace("HashGenerator", ""), "SHA-512");
     }
 
     @Test

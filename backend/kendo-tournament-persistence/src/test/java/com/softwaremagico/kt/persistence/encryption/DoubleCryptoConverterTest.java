@@ -59,7 +59,7 @@ public class DoubleCryptoConverterTest {
 
             String result = converter.convertToDatabaseColumn(42.5);
 
-            assertEquals("42.5", result);
+            assertEquals(result, "42.5");
         }
     }
 
@@ -70,7 +70,7 @@ public class DoubleCryptoConverterTest {
 
             Double result = converter.convertToEntityAttribute("42.5");
 
-            assertEquals(42.5, result);
+            assertEquals(result, 42.5);
         }
     }
 
@@ -104,7 +104,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(0.0);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(0.0, entity);
+            assertEquals(entity, 0.0);
         }
     }
 
@@ -116,7 +116,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(-42.75);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(-42.75, entity);
+            assertEquals(entity, -42.75);
         }
     }
 
@@ -128,7 +128,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(0.00001);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(0.00001, entity, 0.000001);
+            assertEquals(entity, 0.00001, 0.000001);
         }
     }
 
@@ -140,7 +140,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(1234567890.123456);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(1234567890.123456, entity, 0.000001);
+            assertEquals(entity, 1234567890.123456, 0.000001);
         }
     }
 
@@ -152,7 +152,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(Double.MAX_VALUE);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(Double.MAX_VALUE, entity);
+            assertEquals(entity, Double.MAX_VALUE);
         }
     }
 
@@ -164,7 +164,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(Double.MIN_VALUE);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(Double.MIN_VALUE, entity);
+            assertEquals(entity, Double.MIN_VALUE);
         }
     }
 
@@ -177,7 +177,7 @@ public class DoubleCryptoConverterTest {
 
             String result = converter.convertToDatabaseColumn(42.5);
 
-            assertEquals("encryptedValue", result);
+            assertEquals(result, "encryptedValue");
         }
     }
 
@@ -190,7 +190,7 @@ public class DoubleCryptoConverterTest {
 
             Double result = converter.convertToEntityAttribute("encryptedValue");
 
-            assertEquals(42.5, result);
+            assertEquals(result, 42.5);
         }
     }
 
@@ -217,7 +217,7 @@ public class DoubleCryptoConverterTest {
             String dbColumn = converter.convertToDatabaseColumn(originalValue);
             Double entity = converter.convertToEntityAttribute(dbColumn);
 
-            assertEquals(originalValue, entity, 0.000000000000001);
+            assertEquals(entity, originalValue, 0.000000000000001);
         }
     }
 
@@ -230,7 +230,7 @@ public class DoubleCryptoConverterTest {
             for (double value : testValues) {
                 String dbColumn = converter.convertToDatabaseColumn(value);
                 Double entity = converter.convertToEntityAttribute(dbColumn);
-                assertEquals(value, entity, 0.00001);
+                assertEquals(entity, value, 0.00001);
             }
         }
     }
@@ -250,4 +250,3 @@ public class DoubleCryptoConverterTest {
         }
     }
 }
-
