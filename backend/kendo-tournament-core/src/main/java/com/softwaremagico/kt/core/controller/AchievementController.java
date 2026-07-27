@@ -61,7 +61,6 @@ import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
@@ -104,7 +103,6 @@ public class AchievementController extends BasicInsertableController<Achievement
     private final TournamentProvider tournamentProvider;
     private final ParticipantProvider participantProvider;
     private final ParticipantConverter participantConverter;
-    private final RoleProvider roleProvider;
     private final TeamProvider teamProvider;
     private final AchievementProvider achievementProvider;
     private final FightProvider fightProvider;
@@ -144,13 +142,12 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Team> teamsFromTournament;
     private List<Fight> fightsFromTournament;
     private Map<Participant, List<Score>> scoresByParticipant = null;
-    private Map<Participant, List<Score>> scoresReceivedByParticipant = null;
     private Map<Participant, Long> totalScoreFromParticipant = null;
     private Map<Participant, Long> totalScoreAgainstParticipant = null;
-    private Map<Participant, List<Role>> rolesByParticipant = null;
     private final Set<AchievementsGeneratedListener> achievementsGeneratedListeners = new HashSet<>();
     private final Set<AchievementsGeneratedAllTournamentsListener> achievementsGeneratedAllTournamentsListeners = new HashSet<>();
 
+    @SuppressWarnings("java:S107")
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
             TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
             ParticipantProvider participantProvider, ParticipantConverter participantConverter,
@@ -163,7 +160,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
         this.participantConverter = participantConverter;
-        this.roleProvider = roleProvider;
         this.teamProvider = teamProvider;
         this.achievementProvider = achievementProvider;
         this.fightProvider = fightProvider;
@@ -393,10 +389,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.duelsFromTournament = null;
         this.participantsFromTournament = null;
         this.scoresByParticipant = null;
-        this.scoresReceivedByParticipant = null;
         this.totalScoreFromParticipant = null;
         this.totalScoreAgainstParticipant = null;
-        this.rolesByParticipant = null;
         this.fightsFromTournament = null;
         this.teamsFromTournament = null;
         this.getProvider().delete(this.tournament);

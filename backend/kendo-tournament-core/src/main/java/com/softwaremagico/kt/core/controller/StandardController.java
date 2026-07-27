@@ -28,21 +28,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
-        PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>> implements Validates<DTO> {
-    private final PROVIDER provider;
+public abstract class StandardController<E, D, R extends JpaRepository<E, Integer>,
+        P extends CrudProvider<E, Integer, R>> implements Validates<D> {
+    private final P provider;
 
-    protected StandardController(PROVIDER provider) {
+    protected StandardController(P provider) {
         this.provider = provider;
     }
 
-    public PROVIDER getProvider() {
+    public P getProvider() {
         return provider;
     }
 
-    public abstract Collection<DTO> get();
+    public abstract Collection<D> get();
 
-    public abstract DTO get(Integer id);
+    public abstract D get(Integer id);
 
     @SuppressWarnings("java:S1172")
     public void deleteById(Integer id, String username, String session) {
@@ -53,5 +53,5 @@ public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepo
         return getProvider().count();
     }
 
-    public abstract List<DTO> get(Collection<Integer> ids);
+    public abstract List<D> get(Collection<Integer> ids);
 }

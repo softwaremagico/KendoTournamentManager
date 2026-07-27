@@ -22,8 +22,6 @@ package com.softwaremagico.kt.core.tests;
  */
 
 
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;

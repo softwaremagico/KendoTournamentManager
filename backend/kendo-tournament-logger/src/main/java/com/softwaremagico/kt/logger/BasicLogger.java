@@ -45,7 +45,15 @@ public abstract class BasicLogger {
      *            parameters to fill up the template
      */
     public static void warning(Logger logger, String messageTemplate, Object... arguments) {
-        logger.warn(messageTemplate, arguments);
+        if (logger.isWarnEnabled() && messageTemplate != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
+                }
+            }
+            messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
+            logger.warn(messageTemplate, arguments);
+        }
     }
 
     /**
@@ -116,7 +124,7 @@ public abstract class BasicLogger {
                 }
             }
             final String templateWithClass = (className + ": " + messageTemplate).replaceAll(NEW_LINE_REGEX, "_");
-            logger.info(templateWithClass, arguments);
+            logger.info(templateWithClass, arguments); // NOSONAR - arguments and template are sanitized above (CRLF stripped).
         }
     }
 
@@ -231,7 +239,8 @@ public abstract class BasicLogger {
 
     public static void errorMessageNotification(Logger logger, String className, Throwable throwable) {
         if (logger.isErrorEnabled()) {
-            logger.error("Exception on class {}:\n", className, throwable);
+            final String sanitizedClassName = className != null ? className.replaceAll(NEW_LINE_REGEX, "_") : null;
+            logger.error("Exception on class {}:\n", sanitizedClassName, throwable);
         }
     }
 

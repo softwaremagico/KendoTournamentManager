@@ -42,8 +42,8 @@ import java.util.stream.Collectors;
  * Abstract generic controller that adds full CRUD lifecycle management to
  * {@link StandardController}, including DTO↔entity conversion and event propagation.
  * <ol>
- *   <li>Convert incoming DTOs to entities via the bound {@link CONVERTER}.</li>
- *   <li>Delegate persistence to the {@link PROVIDER}.</li>
+ *   <li>Convert incoming DTOs to entities via the bound {@link C}.</li>
+ *   <li>Delegate persistence to the {@link P}.</li>
  *   <li>Notify registered {@link ElementCreatedListener}, {@link ElementUpdatedListener}
  *       or {@link ElementDeletedListener} observers (e.g. WebSocket broadcast).</li>
  * </ol>
@@ -51,23 +51,23 @@ import java.util.stream.Collectors;
  * All write operations are transactional by default.
  * </p>
  *
- * @param <ENTITY>            the JPA entity type
- * @param <DTO>               the data-transfer object type exposed by the REST layer
- * @param <REPOSITORY>        the JPA repository for the entity
- * @param <PROVIDER>          the CRUD provider delegating to the repository
- * @param <CONVERTER_REQUEST> the converter request wrapper
- * @param <CONVERTER>         the converter that maps between entity and DTO
+ * @param <E> the JPA entity type
+ * @param <D> the data-transfer object type exposed by the REST layer
+ * @param <R> the JPA repository for the entity
+ * @param <P> the CRUD provider delegating to the repository
+ * @param <Q> the converter request wrapper
+ * @param <C> the converter that maps between entity and DTO
  */
-public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
-        PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,
-        CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>>
-        extends StandardController<ENTITY, DTO, REPOSITORY, PROVIDER> {
+public abstract class BasicInsertableController<E, D extends ElementDTO, R extends JpaRepository<E, Integer>,
+        P extends CrudProvider<E, Integer, R>, Q extends ConverterRequest<E>,
+        C extends ElementConverter<E, D, Q>>
+        extends StandardController<E, D, R, P> {
 
     private final Set<ElementCreatedListener> elementCreatedListeners = new HashSet<>();
     private final Set<ElementUpdatedListener> elementUpdatedListeners = new HashSet<>();
     private final Set<ElementDeletedListener> elementDeletedListeners = new HashSet<>();
 
-    private final CONVERTER converter;
+    private final C converter;
 
     public interface ElementCreatedListener {
         void created(ElementDTO element, String actor, String session);
@@ -81,12 +81,12 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         void deleted(ElementDTO element, String actor, String session);
     }
 
-    protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
+    protected BasicInsertableController(P provider, C converter) {
         super(provider);
         this.converter = converter;
     }
 
-    public CONVERTER getConverter() {
+    public C getConverter() {
         return converter;
     }
 
@@ -125,19 +125,19 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @return the entity as a DTO
      * @throws com.softwaremagico.kt.core.exceptions.NotFoundException if no entity with the given ID exists
      */
-    public DTO get(Integer id) {
-        final ENTITY entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
+    public D get(Integer id) {
+        final E entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
                 ExceptionType.INFO));
         return convert(entity);
     }
 
     @Override
-    public List<DTO> get() {
+    public List<D> get() {
         return convertAll(getProvider().getAll());
     }
 
     @Override
-    public List<DTO> get(Collection<Integer> ids) {
+    public List<D> get(Collection<Integer> ids) {
         return convertAll(getProvider().get(ids));
     }
 
@@ -151,10 +151,10 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @return the updated entity as a DTO
      */
     @Transactional
-    public DTO update(DTO dto, String username, String session) {
+    public D update(D dto, String username, String session) {
         dto.setUpdatedBy(username);
         validate(dto);
-        final DTO updatedDTO = convert(super.getProvider().save(reverse(dto)));
+        final D updatedDTO = convert(super.getProvider().save(reverse(dto)));
 
         try {
             return updatedDTO;
@@ -176,8 +176,8 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @return the updated entities as DTOs, in the same order as the input list
      */
     @Transactional
-    public List<DTO> updateAll(List<DTO> dtos, String username, String session) {
-        final List<DTO> refreshedData = new ArrayList<>();
+    public List<D> updateAll(List<D> dtos, String username, String session) {
+        final List<D> refreshedData = new ArrayList<>();
         dtos.forEach(dto -> {
             dto.setUpdatedBy(username);
             refreshedData.add(convert(super.getProvider().save(reverse(dto))));
@@ -203,12 +203,12 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @return the persisted entity as a DTO
      */
     @Transactional
-    public DTO create(DTO dto, String username, String session) {
+    public D create(D dto, String username, String session) {
         if (dto.getCreatedBy() == null && username != null) {
             dto.setCreatedBy(username);
         }
         validate(dto);
-        final DTO savedDTO = convert(super.getProvider().save(reverse(dto)));
+        final D savedDTO = convert(super.getProvider().save(reverse(dto)));
 
         try {
             return savedDTO;
@@ -230,14 +230,14 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @return the persisted entities as a list of DTOs
      */
     @Transactional
-    public List<DTO> create(Collection<DTO> dtos, String username, String session) {
+    public List<D> create(Collection<D> dtos, String username, String session) {
         dtos.forEach(dto -> {
             if (dto.getCreatedBy() == null && username != null) {
                 dto.setCreatedBy(username);
             }
         });
         validate(dtos);
-        final List<DTO> savedDTOs = convertAll(super.getProvider().save(reverseAll(dtos)));
+        final List<D> savedDTOs = convertAll(super.getProvider().save(reverseAll(dtos)));
         try {
             return savedDTOs;
         } finally {
@@ -258,7 +258,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @param username the authenticated user performing the deletion
      * @param session  the client session identifier for WebSocket notifications
      */
-    public void delete(DTO entity, String username, String session) {
+    public void delete(D entity, String username, String session) {
         try {
             getProvider().delete(reverse(entity));
         } finally {
@@ -277,7 +277,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @param username the authenticated user performing the deletion
      * @param session  the client session identifier for WebSocket notifications
      */
-    public void delete(Collection<DTO> entities, String username, String session) {
+    public void delete(Collection<D> entities, String username, String session) {
         try {
             getProvider().delete(reverseAll(entities));
         } finally {
@@ -293,10 +293,10 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         getProvider().deleteAll();
     }
 
-    protected abstract CONVERTER_REQUEST createConverterRequest(ENTITY entity);
+    protected abstract Q createConverterRequest(E entity);
 
-    protected List<CONVERTER_REQUEST> createConverterRequest(Collection<ENTITY> entities) {
-        final List<CONVERTER_REQUEST> requests = new ArrayList<>();
+    protected List<Q> createConverterRequest(Collection<E> entities) {
+        final List<Q> requests = new ArrayList<>();
         entities.forEach(entity -> requests.add(createConverterRequest(entity)));
         return requests;
     }
@@ -307,7 +307,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @param entity the entity to convert
      * @return the converted DTO
      */
-    protected DTO convert(ENTITY entity) {
+    protected D convert(E entity) {
         return converter.convert(createConverterRequest(entity));
     }
 
@@ -317,31 +317,31 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
      * @param dto the DTO to reverse-convert
      * @return the corresponding entity
      */
-    protected ENTITY reverse(DTO dto) {
+    protected E reverse(D dto) {
         return converter.reverse(dto);
     }
 
-    protected List<DTO> convertAll(Collection<ENTITY> entities) {
+    protected List<D> convertAll(Collection<E> entities) {
         return new ArrayList<>(converter.convertAll(entities.stream().map(this::createConverterRequest)
                 .collect(Collectors.toCollection(ArrayList::new))));
     }
 
-    protected List<DTO> convertAllNotSorted(Collection<ENTITY> entities) {
+    protected List<D> convertAllNotSorted(Collection<E> entities) {
         return new ArrayList<>(converter.convertAllNotSorted(entities.stream().map(this::createConverterRequest)
                 .collect(Collectors.toCollection(ArrayList::new))));
     }
 
-    protected List<ENTITY> reverseAll(Collection<DTO> dtos) {
+    protected List<E> reverseAll(Collection<D> dtos) {
         return converter.reverseAll(dtos);
     }
 
     @Override
-    public void validate(DTO dto) throws ValidateBadRequestException {
+    public void validate(D dto) throws ValidateBadRequestException {
 
     }
 
     @Override
-    public void validate(Collection<DTO> dtos) throws ValidateBadRequestException {
+    public void validate(Collection<D> dtos) throws ValidateBadRequestException {
         dtos.forEach(this::validate);
     }
 }

@@ -359,14 +359,10 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         while (!fightProvider.areOver(tournament)) {
             Fight currentFight = fightProvider.getCurrent(tournament);
             // First duel
-            if (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team01").get())
-                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team02").get())) {
-                currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-                currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-            } else if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team03").get())
-                    && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team04").get())) {
+            if ((currentFight.getTeam1().equals(teamProvider.get(tournament, "Team01").get())
+                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team02").get()))
+                    || (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team03").get())
+                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team04").get()))) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
@@ -409,20 +405,12 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         while (!fightProvider.areOver(tournament)) {
             Fight currentFight = fightProvider.getCurrent(tournament);
             // First duel
-            if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team01").get())
-                    && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team02").get())) {
-                currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-            } else if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team03").get())
-                    && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team04").get())) {
-                currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-            } else if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team05").get())
-                    && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team06").get())) {
+            if ((currentFight.getTeam1().equals(teamProvider.get(tournament, "Team01").get())
+                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team02").get()))
+                    || (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team03").get())
+                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team04").get()))
+                    || (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team05").get())
+                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team06").get()))) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
             currentFight.getDuels().forEach(duel -> duel.setFinished(true));

@@ -99,6 +99,9 @@ public class ParticipantImageController extends BasicInsertableController<Partic
 
     public int delete(ParticipantDTO participantDTO) {
         final Participant participant = participantConverter.reverse(participantDTO);
+        if (participant == null) {
+            return 0;
+        }
         participant.setHasAvatar(false);
         participantProvider.save(participant);
         return getProvider().delete(participant);

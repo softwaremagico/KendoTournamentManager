@@ -145,6 +145,7 @@ public class RankingController {
 
     private final SenbatsuTournamentHandler senbatsuTournamentHandler;
 
+    @SuppressWarnings("java:S107")
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
                              TeamConverter teamConverter, DuelConverter duelConverter,

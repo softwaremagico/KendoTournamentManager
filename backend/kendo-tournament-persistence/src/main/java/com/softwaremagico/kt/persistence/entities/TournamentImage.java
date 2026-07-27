@@ -109,7 +109,8 @@ public class TournamentImage extends Element {
 
     @Override
     public String toString() {
-        return "TournamentImage{tournament='" + tournament + "', size='" + getData().length + "'}";
+        final byte[] currentData = getData();
+        return "TournamentImage{tournament='" + tournament + "', size='" + (currentData == null ? 0 : currentData.length) + "'}";
     }
 
 }

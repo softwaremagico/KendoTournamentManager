@@ -95,7 +95,8 @@ public class ParticipantImage extends Element {
 
     @Override
     public String toString() {
-        return "ParticipantImage{participant='" + participant + "', size='" + getData().length + "'}";
+        final byte[] currentData = getData();
+        return "ParticipantImage{participant='" + participant + "', size='" + (currentData == null ? 0 : currentData.length) + "'}";
     }
 
 }

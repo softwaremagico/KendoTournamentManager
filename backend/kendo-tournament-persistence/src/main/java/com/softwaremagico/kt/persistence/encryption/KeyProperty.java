@@ -48,6 +48,7 @@ public class KeyProperty {
      * {@link #configure(String, String, String)} for manually created instances (tests).
      */
     @PostConstruct
+    @SuppressWarnings("java:S2696")
     private void register() {
         instance = this;
     }

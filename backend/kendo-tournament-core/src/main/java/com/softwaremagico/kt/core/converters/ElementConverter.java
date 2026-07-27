@@ -29,13 +29,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST extends ConverterRequest<ENTITY>>
-        extends SimpleConverter<ENTITY, DTO, REQUEST> implements IElementConverter<ENTITY, DTO, REQUEST> {
+public abstract class ElementConverter<E, D extends ElementDTO, Q extends ConverterRequest<E>>
+        extends SimpleConverter<E, D, Q> implements IElementConverter<E, D, Q> {
 
-    protected abstract DTO convertElement(REQUEST from);
+    protected abstract D convertElement(Q from);
 
     @Override
-    public List<DTO> convertAll(Collection<REQUEST> from) {
+    public List<D> convertAll(Collection<Q> from) {
         if (from == null) {
             return new ArrayList<>();
         }
@@ -44,7 +44,7 @@ public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST e
                 Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 
-    public List<DTO> convertAllNotSorted(Collection<REQUEST> from) {
+    public List<D> convertAllNotSorted(Collection<Q> from) {
         if (from == null) {
             return new ArrayList<>();
         }

@@ -28,12 +28,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class SimpleConverter<ENTITY, DTO, REQUEST extends ConverterRequest<ENTITY>>
-        implements IElementConverter<ENTITY, DTO, REQUEST> {
+public abstract class SimpleConverter<E, D, Q extends ConverterRequest<E>>
+        implements IElementConverter<E, D, Q> {
 
-    protected abstract DTO convertElement(REQUEST from);
+    protected abstract D convertElement(Q from);
 
-    public DTO convert(REQUEST from) {
+    public D convert(Q from) {
         if (from == null || !from.hasEntity()) {
             return null;
         }
@@ -41,7 +41,7 @@ public abstract class SimpleConverter<ENTITY, DTO, REQUEST extends ConverterRequ
     }
 
     @Override
-    public List<DTO> convertAll(Collection<REQUEST> from) {
+    public List<D> convertAll(Collection<Q> from) {
         if (from == null) {
             return new ArrayList<>();
         }
@@ -49,7 +49,7 @@ public abstract class SimpleConverter<ENTITY, DTO, REQUEST extends ConverterRequ
     }
 
     @Override
-    public List<ENTITY> reverseAll(Collection<DTO> to) {
+    public List<E> reverseAll(Collection<D> to) {
         if (to == null) {
             return new ArrayList<>();
         }
