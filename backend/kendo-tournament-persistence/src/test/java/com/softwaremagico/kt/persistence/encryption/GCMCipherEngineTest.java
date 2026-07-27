@@ -54,7 +54,7 @@ public class GCMCipherEngineTest {
             assertNotNull(encrypted);
             assertNotEquals(encrypted, TEST_DATA);
 
-            String decrypted = cipherEngine.decrypt(encrypted);
+            assertEquals(cipherEngine.decrypt(encrypted), TEST_DATA);
         }
     }
 

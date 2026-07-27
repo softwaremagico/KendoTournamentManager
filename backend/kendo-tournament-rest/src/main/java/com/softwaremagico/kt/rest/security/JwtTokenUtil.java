@@ -266,9 +266,25 @@ public class JwtTokenUtil {
                 .subject(new TokenSubject(String.valueOf(user.getId()), user.getUsername(),
                         session != null ? session : UUID.randomUUID().toString(), userIp,
                         this.networkController.getHostMac()).value())
-                .issuer(JWT_ISSUER).issuedAt(Date.from(issuedAt))
-                .expiration(Date.from(issuedAt.plusMillis(expirationTime))).signWith(this.signingKey, Jwts.SIG.HS512)
+                .issuer(JWT_ISSUER).issuedAt(toLegacyDate(issuedAt))
+                .expiration(toLegacyDate(issuedAt.plusMillis(expirationTime))).signWith(this.signingKey, Jwts.SIG.HS512)
                 .compact();
+    }
+
+    /**
+     * Converts a {@link java.time.Instant} to a legacy {@link Date}.
+     * <p>
+     * The JJWT builder API ({@link Jwts.Builder#issuedAt(Date)} and
+     * {@link Jwts.Builder#expiration(Date)}) only accepts {@link Date}, so this
+     * conversion at the library boundary is unavoidable. Isolating it here keeps
+     * the rest of the class working exclusively with the {@code java.time} API.
+     * </p>
+     *
+     * @param instant the instant to convert
+     * @return the equivalent {@link Date}
+     */
+    private static Date toLegacyDate(Instant instant) {
+        return Date.from(instant); //NOSONAR - JJWT API requires java.util.Date, conversion isolated here.
     }
 
     /**

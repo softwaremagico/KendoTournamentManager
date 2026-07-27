@@ -68,30 +68,42 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     private void processDuel(ParticipantFightStatistics participantFightStatistics, Duel duel, Participant participant,
                              DuelStatisticsAccumulator accumulator) {
         if (Objects.equals(duel.getCompetitor1(), participant)) {
-            processAsCompetitor(participantFightStatistics, duel, accumulator, duel.getCompetitor1Score(), duel.getCompetitor2Score(),
-                    duel.getCompetitor1Fault(), duel.getCompetitor2Fault(), duel.getCompetitor1ScoreTime(), duel.getCompetitor2ScoreTime(),
-                    duel.getWinner() < 0, duel.getWinner() == 0);
+            processAsCompetitor(participantFightStatistics, duel, accumulator, new CompetitorDuelData(
+                    duel.getCompetitor1Score(), duel.getCompetitor2Score(),
+                    duel.getCompetitor1Fault(), duel.getCompetitor2Fault(),
+                    duel.getCompetitor1ScoreTime(), duel.getCompetitor2ScoreTime(),
+                    duel.getWinner() < 0, duel.getWinner() == 0));
         } else if (Objects.equals(duel.getCompetitor2(), participant)) {
-            processAsCompetitor(participantFightStatistics, duel, accumulator, duel.getCompetitor2Score(), duel.getCompetitor1Score(),
-                    duel.getCompetitor2Fault(), duel.getCompetitor1Fault(), duel.getCompetitor2ScoreTime(), duel.getCompetitor1ScoreTime(),
-                    duel.getWinner() > 0, duel.getWinner() == 0);
+            processAsCompetitor(participantFightStatistics, duel, accumulator, new CompetitorDuelData(
+                    duel.getCompetitor2Score(), duel.getCompetitor1Score(),
+                    duel.getCompetitor2Fault(), duel.getCompetitor1Fault(),
+                    duel.getCompetitor2ScoreTime(), duel.getCompetitor1ScoreTime(),
+                    duel.getWinner() > 0, duel.getWinner() == 0));
         }
         updateDurationAgainstWinner(duel, participant, accumulator);
     }
 
+    /**
+     * Groups the per-competitor data extracted from a {@link Duel} needed to update the statistics,
+     * so that {@link #processAsCompetitor} does not require an excessive number of parameters.
+     */
+    private record CompetitorDuelData(List<Score> ownScores, List<Score> opponentScores, Boolean ownFault, Boolean opponentFault,
+                                      List<Integer> ownScoreTimes, List<Integer> opponentScoreTimes, boolean won, boolean draw) {
+    }
+
     private void processAsCompetitor(ParticipantFightStatistics participantFightStatistics, Duel duel, DuelStatisticsAccumulator accumulator,
-                                     List<Score> ownScores, List<Score> opponentScores, Boolean ownFault, Boolean opponentFault,
-                                     List<Integer> ownScoreTimes, List<Integer> opponentScoreTimes, boolean won, boolean draw) {
-        populateScores(participantFightStatistics, ownScores);
-        populateReceivedScores(participantFightStatistics, opponentScores);
-        participantFightStatistics.setFaults(participantFightStatistics.getFaults() + (ownFault != null && ownFault ? 1 : 0));
+                                     CompetitorDuelData competitorDuelData) {
+        populateScores(participantFightStatistics, competitorDuelData.ownScores());
+        populateReceivedScores(participantFightStatistics, competitorDuelData.opponentScores());
+        participantFightStatistics.setFaults(participantFightStatistics.getFaults()
+                + (competitorDuelData.ownFault() != null && competitorDuelData.ownFault() ? 1 : 0));
         participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
-                + (opponentFault != null && opponentFault ? 1 : 0));
-        accumulator.quickestHit = Math.min(accumulator.quickestHit, quickestScoreTime(ownScoreTimes));
-        accumulator.quickestReceivedHit = Math.min(accumulator.quickestReceivedHit, quickestScoreTime(opponentScoreTimes));
-        if (won) {
+                + (competitorDuelData.opponentFault() != null && competitorDuelData.opponentFault() ? 1 : 0));
+        accumulator.quickestHit = Math.min(accumulator.quickestHit, quickestScoreTime(competitorDuelData.ownScoreTimes()));
+        accumulator.quickestReceivedHit = Math.min(accumulator.quickestReceivedHit, quickestScoreTime(competitorDuelData.opponentScoreTimes()));
+        if (competitorDuelData.won()) {
             accumulator.wonDuels++;
-        } else if (draw) {
+        } else if (competitorDuelData.draw()) {
             accumulator.drawDuels++;
         } else {
             accumulator.lostDuels++;

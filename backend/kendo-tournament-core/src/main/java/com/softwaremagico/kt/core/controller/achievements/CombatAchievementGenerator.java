@@ -64,7 +64,7 @@ public class CombatAchievementGenerator extends ConsecutiveAchievementGeneration
     }
 
     public List<Achievement> generateBillyTheKidAchievement(Tournament tournament) {
-        if (this.fightProvider.getFights(tournament).size() < this.minimumTournamentFights) {
+        if (tournament == null || this.fightProvider.getFights(tournament).size() < this.minimumTournamentFights) {
             return new ArrayList<>();
         }
         final Integer duelsDuration = tournament.getDuelsDuration();

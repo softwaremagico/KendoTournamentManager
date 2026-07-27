@@ -21,6 +21,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #L%
  */
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,15 @@ public class KeyProperty {
         this.databaseEncryptionKey = databaseEncryptionKey;
         this.databasePublicKey = databasePublicKey;
         this.databasePrivateKey = databasePrivateKey;
+    }
+
+    /**
+     * Registers this instance as the shared singleton once construction has finished.
+     * Invoked automatically by Spring after bean initialization, and explicitly by
+     * {@link #configure(String, String, String)} for manually created instances (tests).
+     */
+    @PostConstruct
+    private void register() {
         instance = this;
     }
 
@@ -47,7 +57,7 @@ public class KeyProperty {
      * without exposing a public constructor on this class.
      */
     public static void configure(String databaseEncryptionKey, String databasePublicKey, String databasePrivateKey) {
-        new KeyProperty(databaseEncryptionKey, databasePublicKey, databasePrivateKey);
+        new KeyProperty(databaseEncryptionKey, databasePublicKey, databasePrivateKey).register();
     }
 
     public static String getDatabaseEncryptionKey() {

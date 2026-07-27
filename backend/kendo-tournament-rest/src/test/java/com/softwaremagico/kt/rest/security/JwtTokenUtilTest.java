@@ -25,6 +25,7 @@ import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import javax.crypto.SecretKey;
@@ -87,11 +88,20 @@ public class JwtTokenUtilTest {
         assertTrue(participant > 1_199_000 && participant < 1_201_000);
     }
 
-    @Test(groups = "jwtTokenUtil")
-    public void shouldReturnFalseForInvalidToken() {
+    @DataProvider(name = "invalidTokens")
+    public Object[][] invalidTokens() {
+        return new Object[][]{
+                {"not-a-jwt"},
+                {""},
+                {null},
+        };
+    }
+
+    @Test(groups = "jwtTokenUtil", dataProvider = "invalidTokens")
+    public void shouldReturnFalseForInvalidToken(String invalidToken) {
         final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
 
-        assertFalse(util.validate("not-a-jwt"));
+        assertFalse(util.validate(invalidToken));
     }
 
     @Test(groups = "jwtTokenUtil")
@@ -223,19 +233,6 @@ public class JwtTokenUtilTest {
         assertTrue(util.validate(token));
     }
 
-    @Test(groups = "jwtTokenUtil")
-    public void shouldReturnFalseForEmptyToken() {
-        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
-
-        assertFalse(util.validate(""));
-    }
-
-    @Test(groups = "jwtTokenUtil")
-    public void shouldReturnFalseForNullToken() {
-        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
-
-        assertFalse(util.validate(null));
-    }
 
     @Test(groups = "jwtTokenUtil")
     public void shouldGenerateDifferentSessionsOnEachCall() {

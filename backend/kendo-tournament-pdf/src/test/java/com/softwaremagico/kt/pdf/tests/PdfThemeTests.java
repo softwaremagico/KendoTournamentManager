@@ -58,7 +58,7 @@ public class PdfThemeTests {
 
 	@Test
 	public void testHeaderFontSizeConstant() {
-		Assert.assertEquals(PdfTheme.HEADER_FONT_SIZE, PdfTheme.FONT_SIZE + 15);
+		Assert.assertEquals(PdfTheme.FONT_SIZE + 15, PdfTheme.HEADER_FONT_SIZE);
 		Assert.assertEquals(PdfTheme.HEADER_FONT_SIZE, 27);
 		Assert.assertTrue(PdfTheme.HEADER_FONT_SIZE > PdfTheme.FONT_SIZE);
 	}
