@@ -175,6 +175,23 @@
                             <goal>properties</goal>
                         </goals>
                     </execution>
+                    <!-- Materializes all dependency jars under target/dependency so that
+                         the SonarQube CLI scanner (which does not resolve the Maven
+                         classpath by itself) can find them via sonar.java.libraries. -->
+                    <execution>
+                        <id>copy-dependencies-for-sonar</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dependency</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>test</includeScope>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
