@@ -71,7 +71,7 @@ public class Info {
             checkedVersionAt = LocalDateTime.now(ZoneId.systemDefault());
             return ResponseEntity.ok().body(latestVersion);
         } catch (Exception _) {
-            return ResponseEntity.ok().body("");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         }
     }
 }

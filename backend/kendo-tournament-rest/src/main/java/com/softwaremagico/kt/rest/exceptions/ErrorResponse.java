@@ -21,6 +21,8 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import org.springframework.lang.Nullable;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -35,20 +37,21 @@ public class ErrorResponse implements Serializable {
         this(message, null, null);
     }
 
-    public ErrorResponse(String message, String code) {
+    public ErrorResponse(String message, @Nullable String code) {
         this(message, code, null);
     }
 
-    public ErrorResponse(String message, Throwable cause) {
+    public ErrorResponse(String message, @Nullable Throwable cause) {
         this(message, null, cause);
     }
 
-    public ErrorResponse(String message, String code, Throwable cause) {
+    public ErrorResponse(String message, @Nullable String code, @Nullable Throwable cause) {
         this.message = message;
         this.cause = cause;
         this.code = code;
     }
 
+    @Nullable
     public Throwable getCause() {
         return cause;
     }
@@ -57,6 +60,7 @@ public class ErrorResponse implements Serializable {
         return message;
     }
 
+    @Nullable
     public String getCode() {
         if (code != null) {
             return code;

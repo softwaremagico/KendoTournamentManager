@@ -30,7 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.Collection;
 /**
  * Is automatically injected to the AuthenticationManager in WebSecurityConfig
  */
-@Component
+@Service
 public class KendoUserDetailsService implements UserDetailsService {
     private static final String USER_NOT_FOUND_MESSAGE = "User '%s' not found!";
     private static final String USER_WITH_USERNAME_PREFIX = "User with username '";
