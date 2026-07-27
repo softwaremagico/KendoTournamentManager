@@ -21,33 +21,31 @@
 
 package com.softwaremagico.kt.persistence.encryption;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
+import static org.testng.Assert.*;
 
 /**
  * Test suite for {@link SHA512HashGenerator}.
  * Tests SHA-512 hashing functionality for passwords and sensitive data.
  */
-@ExtendWith(MockitoExtension.class)
-class SHA512HashGeneratorTest {
+@Test(groups = "cryptoConverters")
+public class SHA512HashGeneratorTest {
 
     private SHA512HashGenerator hashGenerator;
     private static final String TEST_PASSWORD = "MySecurePassword123!@#";
     private static final String ENCRYPTION_KEY = "databaseEncryptionKey";
 
-    @BeforeEach
-    void setUp() {
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
         hashGenerator = new SHA512HashGenerator();
     }
 
     @Test
-    void testConvertToDatabaseColumn() {
+    public void testConvertToDatabaseColumn() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -60,7 +58,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testConvertToDatabaseColumnNull() {
+    public void testConvertToDatabaseColumnNull() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -71,7 +69,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testConvertToEntityAttributeAlwaysNull() {
+    public void testConvertToEntityAttributeAlwaysNull() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -82,7 +80,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashIsDeterministic() {
+    public void testHashIsDeterministic() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -94,7 +92,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testDifferentInputsDifferentHashes() {
+    public void testDifferentInputsDifferentHashes() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -106,7 +104,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashWithoutEncryptionKey() {
+    public void testHashWithoutEncryptionKey() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -118,7 +116,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashWithEmptyEncryptionKey() {
+    public void testHashWithEmptyEncryptionKey() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn("");
 
@@ -130,7 +128,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testCreateHashStaticMethod() {
+    public void testCreateHashStaticMethod() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -142,14 +140,14 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testCreateHashNull() {
+    public void testCreateHashNull() {
         String hash = SHA512HashGenerator.createHash(null);
 
         assertNull(hash);
     }
 
     @Test
-    void testHashForEmptyString() {
+    public void testHashForEmptyString() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -161,7 +159,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashLengthIsConsistent() {
+    public void testHashLengthIsConsistent() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -174,7 +172,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashWithSpecialCharacters() {
+    public void testHashWithSpecialCharacters() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -187,7 +185,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashWithUnicodeCharacters() {
+    public void testHashWithUnicodeCharacters() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -200,7 +198,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashContainsOnlyHexCharacters() {
+    public void testHashContainsOnlyHexCharacters() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -211,14 +209,14 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashAlgorithmName() {
+    public void testHashAlgorithmName() {
         assertEquals("SHA-512", SHA512HashGenerator.class.getSimpleName()
                 .replace("SHA512", "SHA-512")
                 .replace("HashGenerator", ""));
     }
 
     @Test
-    void testHashImpossibleToReverseEngineer() {
+    public void testHashImpossibleToReverseEngineer() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -230,7 +228,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testSmallVariationInInputProducesDifferentHash() {
+    public void testSmallVariationInInputProducesDifferentHash() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -245,7 +243,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testHashIsStableAcrossInstances() {
+    public void testHashIsStableAcrossInstances() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -260,7 +258,7 @@ class SHA512HashGeneratorTest {
     }
 
     @Test
-    void testLongPasswordHashing() {
+    public void testLongPasswordHashing() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 

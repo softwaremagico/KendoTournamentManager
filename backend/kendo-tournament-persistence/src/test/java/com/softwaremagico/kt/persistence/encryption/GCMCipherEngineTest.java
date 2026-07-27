@@ -21,34 +21,32 @@
 
 package com.softwaremagico.kt.persistence.encryption;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
+import static org.testng.Assert.*;
 
 /**
  * Test suite for {@link GCMCipherEngine}.
  * Tests AES/GCM encryption and decryption with high security requirements.
  */
-@ExtendWith(MockitoExtension.class)
-class GCMCipherEngineTest {
+@Test(groups = "cryptoConverters")
+public class GCMCipherEngineTest {
 
     private GCMCipherEngine cipherEngine;
     private static final String TEST_PASSWORD = "testPassword123!@#";
     private static final String TEST_DATA = "This is sensitive data";
     private static final String EMPTY_STRING = "";
 
-    @BeforeEach
-    void setUp() {
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
         cipherEngine = new GCMCipherEngine();
     }
 
     @Test
-    void testEncryptAndDecrypt() throws InvalidEncryptionException {
+    public void testEncryptAndDecrypt() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -62,7 +60,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testEncryptWithCustomPassword() throws InvalidEncryptionException {
+    public void testEncryptWithCustomPassword() throws InvalidEncryptionException {
         String encrypted = cipherEngine.encrypt(TEST_DATA, TEST_PASSWORD);
         assertNotNull(encrypted);
         assertNotEquals(TEST_DATA, encrypted);
@@ -72,7 +70,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testEncryptNullValue() throws InvalidEncryptionException {
+    public void testEncryptNullValue() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -82,7 +80,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testDecryptNullValue() throws InvalidEncryptionException {
+    public void testDecryptNullValue() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -92,7 +90,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testEncryptEmptyString() throws InvalidEncryptionException {
+    public void testEncryptEmptyString() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -105,7 +103,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testMultipleEncryptionsProduceDifferentCiphertexts() throws InvalidEncryptionException {
+    public void testMultipleEncryptionsProduceDifferentCiphertexts() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -122,7 +120,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testWrongPasswordDecryptionFails() throws InvalidEncryptionException {
+    public void testWrongPasswordDecryptionFails() throws InvalidEncryptionException {
         String encrypted = cipherEngine.encrypt(TEST_DATA, "correctPassword123");
 
         assertThrows(InvalidEncryptionException.class, () ->
@@ -130,7 +128,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testTamperedCiphertextFailsDecryption() throws InvalidEncryptionException {
+    public void testTamperedCiphertextFailsDecryption() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -145,7 +143,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testEncryptLongText() throws InvalidEncryptionException {
+    public void testEncryptLongText() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -158,7 +156,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testEncryptSpecialCharacters() throws InvalidEncryptionException {
+    public void testEncryptSpecialCharacters() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -171,7 +169,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testEncryptUnicodeCharacters() throws InvalidEncryptionException {
+    public void testEncryptUnicodeCharacters() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 
@@ -184,7 +182,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testRandomNonceGeneration() {
+    public void testRandomNonceGeneration() {
         byte[] nonce1 = GCMCipherEngine.getRandomNonce(12);
         byte[] nonce2 = GCMCipherEngine.getRandomNonce(12);
 
@@ -196,7 +194,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testAESKeyGeneration() throws Exception {
+    public void testAESKeyGeneration() throws Exception {
         byte[] salt = GCMCipherEngine.getRandomNonce(16);
         var key = GCMCipherEngine.getAESKey(TEST_PASSWORD, salt);
 
@@ -205,7 +203,7 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testConsistentKeyDerivation() throws Exception {
+    public void testConsistentKeyDerivation() throws Exception {
         byte[] salt = GCMCipherEngine.getRandomNonce(16);
         var key1 = GCMCipherEngine.getAESKey(TEST_PASSWORD, salt);
         var key2 = GCMCipherEngine.getAESKey(TEST_PASSWORD, salt);
@@ -215,13 +213,13 @@ class GCMCipherEngineTest {
     }
 
     @Test
-    void testInvalidBase64Decryption() {
+    public void testInvalidBase64Decryption() {
         assertThrows(InvalidEncryptionException.class, () ->
             cipherEngine.decrypt("not@valid@base64!!!"));
     }
 
     @Test
-    void testCiphertextIsBase64Encoded() throws InvalidEncryptionException {
+    public void testCiphertextIsBase64Encoded() throws InvalidEncryptionException {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(TEST_PASSWORD);
 

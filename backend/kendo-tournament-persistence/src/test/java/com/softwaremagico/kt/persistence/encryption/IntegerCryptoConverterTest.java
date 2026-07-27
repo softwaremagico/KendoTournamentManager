@@ -21,24 +21,23 @@
 
 package com.softwaremagico.kt.persistence.encryption;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.*;
 
 /**
  * Test suite for {@link IntegerCryptoConverter}.
  * Tests JPA attribute converter for encrypted Integer values.
  */
-@ExtendWith(MockitoExtension.class)
-class IntegerCryptoConverterTest {
+@Test(groups = "cryptoConverters")
+public class IntegerCryptoConverterTest {
 
     @Mock
     private ICipherEngine cipherEngine;
@@ -47,13 +46,13 @@ class IntegerCryptoConverterTest {
     private IntegerCryptoConverter converter;
     private static final String ENCRYPTION_KEY = "test-key";
 
-    @BeforeEach
-    void setUp() {
-        // Mockito @InjectMocks handles converter construction.
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testConvertToDatabaseColumnWithoutEncryption() {
+    public void testConvertToDatabaseColumnWithoutEncryption() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -64,7 +63,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertToEntityAttributeWithoutEncryption() {
+    public void testConvertToEntityAttributeWithoutEncryption() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -75,7 +74,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertToDatabaseColumnNull() {
+    public void testConvertToDatabaseColumnNull() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -86,7 +85,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertToEntityAttributeNull() {
+    public void testConvertToEntityAttributeNull() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
 
@@ -97,7 +96,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertToDatabaseColumnWithEncryption() throws InvalidEncryptionException {
+    public void testConvertToDatabaseColumnWithEncryption() throws InvalidEncryptionException {
         when(cipherEngine.encrypt("42")).thenReturn("encryptedValue");
 
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
@@ -110,7 +109,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertToEntityAttributeWithEncryption() throws InvalidEncryptionException {
+    public void testConvertToEntityAttributeWithEncryption() throws InvalidEncryptionException {
         when(cipherEngine.decrypt("encryptedValue")).thenReturn("42");
 
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
@@ -123,7 +122,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertZero() {
+    public void testConvertZero() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -135,7 +134,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertNegativeNumber() {
+    public void testConvertNegativeNumber() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -147,7 +146,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertMaxInteger() {
+    public void testConvertMaxInteger() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -159,7 +158,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConvertMinInteger() {
+    public void testConvertMinInteger() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
@@ -171,13 +170,13 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testConstructorWithDefaultEngine() {
+    public void testConstructorWithDefaultEngine() {
         IntegerCryptoConverter defaultConverter = new IntegerCryptoConverter();
         assertNotNull(defaultConverter);
     }
 
     @Test
-    void testIsNotNullOrEmptyMethod() {
+    public void testIsNotNullOrEmptyMethod() {
         assertTrue(converter.isNotNullOrEmpty(1));
         assertTrue(converter.isNotNullOrEmpty(0));
         assertTrue(converter.isNotNullOrEmpty(-1));
@@ -185,7 +184,7 @@ class IntegerCryptoConverterTest {
     }
 
     @Test
-    void testMultipleConversions() {
+    public void testMultipleConversions() {
         try (MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
             keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
 
