@@ -31,6 +31,8 @@
                 <include name="restServicesUnit"/>
                 <include name="duelServices"/>
                 <include name="statisticsServices"/>
+                <include name="restSwissEndpoints"/>
+                <include name="authApiTests"/>
             </run>
         </groups>
         <classes>
@@ -76,6 +78,12 @@
             <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.WebSocketControllerUnitTests"/>
             <class name="com.softwaremagico.kt.websockets.WebsocketMessageParametersTest"/>
+            <class name="com.softwaremagico.kt.logger.RestServerLoggerTest"/>
+            <class name="com.softwaremagico.kt.rest.RestSwissEndpointsTest"/>
+            <class name="com.softwaremagico.kt.rest.security.AuthApiTest"/>
+            <class name="com.softwaremagico.kt.rest.services.AchievementServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.TournamentExtraPropertiesServicesUnitTest"/>
+            <class name="com.softwaremagico.kt.security.UserRegistrationTest"/>
         </classes>
     </test>
 </suite>

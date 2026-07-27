@@ -137,7 +137,8 @@ public class GCMCipherEngine implements ICipherEngine {
                  | InvalidKeyException
                  | NoSuchPaddingException
                  | NoSuchAlgorithmException
-                 | InvalidKeySpecException e) {
+                 | InvalidKeySpecException
+                 | IllegalArgumentException e) {
             throw new InvalidEncryptionException(e);
         }
     }

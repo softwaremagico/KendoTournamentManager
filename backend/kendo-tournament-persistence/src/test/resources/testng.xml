@@ -52,6 +52,12 @@
             <class name="com.softwaremagico.kt.persistence.entities.EntityEqualsCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.DuelEntityCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.values.PersistenceValuesCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.DoubleCryptoConverterTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.GCMCipherEngineTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverterTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.SHA512HashGeneratorTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.StringCryptoConverterTest"/>
+            <class name="com.softwaremagico.kt.utils.NameUtilsTests"/>
         </classes>
     </test>
 </suite>

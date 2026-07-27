@@ -59,7 +59,7 @@ public class CsvTournamentGroupsTest extends AbstractTestNGSpringContextTests {
     private static final String CSV_3_GROUPS_2_WINNERS_TO_2_GROUPS_CSV = "csv/links3groups2winnersTo2groups.csv";
     private static final String CSV_4_GROUPS_2_WINNERS_TO_4_GROUPS_CSV = "csv/links4groups2winnersTo4groups.csv";
     private static final String CSV_5_GROUPS_2_WINNERS_TO_5_GROUPS_CSV = "csv/links5groups2winnersTo5groups.csv";
-    private static final String CSV_INVALID = "csv/linksInvalidNumber.csv.csv";
+    private static final String CSV_INVALID = "csv/linksInvalidNumber.csv";
 
     @Autowired
     private TournamentProvider tournamentProvider;

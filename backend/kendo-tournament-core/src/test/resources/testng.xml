@@ -55,6 +55,28 @@
                 <include name="tournamentFightStatistics"/>
                 <include name="rankingProviderTests"/>
                 <include name="controllerModelsCoverageTest"/>
+                <include name="clubProviderTests"/>
+                <include name="groupLinkProviderTests"/>
+                <include name="participantProviderTests"/>
+                <include name="participantStatisticsProviderTests"/>
+                <include name="qrProviderTests"/>
+                <include name="tournamentStatisticsProviderTests"/>
+                <include name="swissAchievementTests"/>
+                <include name="controllerModelsCoverage"/>
+                <include name="swissTournament10NoDrawsTest"/>
+                <include name="swissTournament15ByesTest"/>
+                <include name="swissTournament16Test"/>
+                <include name="swissTournament16TieBreakLevelByLevelTest"/>
+                <include name="swissTournament16TieBreakRulesTest"/>
+                <include name="swissTournament27ByesTest"/>
+                <include name="swissTournament64Test"/>
+                <include name="swissTournamentHandlerBranchCoverageTests"/>
+                <include name="swissTournamentHandlerTests"/>
+                <include name="tournamentHandlerSelectorTests"/>
+                <include name="teamCsvTests"/>
+                <include name="participantCsvTests"/>
+                <include name="scoreOfCompetitorCustomTests"/>
+                <include name="namespaceContextImplTests"/>
             </run>
         </groups>
         <classes>
@@ -131,10 +153,33 @@
             <class name="com.softwaremagico.kt.core.tests.ConverterUtilsTests"/>
             <class name="com.softwaremagico.kt.core.converters.models.ConverterRequestCoverageTest"/>
             <class name="com.softwaremagico.kt.core.csv.CsvReaderUnitTest"/>
-            <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsTests"/>
-            <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsConstructorsCoverageTest"/>
-            <class name="com.softwaremagico.kt.core.pool.BasePoolTest"/>
-            <class name="com.softwaremagico.kt.logger.PoolLoggerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.ControllerModelsDTOCoverageTest"/>
+            <class name="com.softwaremagico.kt.core.tests.models.ControllerModelsCoverageTest"/>
+            <class name="com.softwaremagico.kt.core.tournaments.LeagueHandlerTest"/>
+            <class name="com.softwaremagico.kt.core.providers.RankingProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TournamentImageProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.ClubProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.GroupLinkProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.ParticipantProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.ParticipantStatisticsProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.QrProviderTest"/>
+            <class name="com.softwaremagico.kt.core.providers.TournamentStatisticsProviderTest"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.SwissTournamentAchievementsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.csv.CsvTournamentGroupsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament10TeamsNoDrawsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament15TeamsWithByesTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament16TeamsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament16TeamsTieBreakLevelByLevelTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament16TeamsTieBreakRulesTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament27TeamsWithByesTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.SwissTournament64TeamsTest"/>
+            <class name="com.softwaremagico.kt.core.tournaments.SwissTournamentHandlerBranchCoverageTest"/>
+            <class name="com.softwaremagico.kt.core.tournaments.SwissTournamentHandlerTest"/>
+            <class name="com.softwaremagico.kt.core.tournaments.TournamentHandlerSelectorTest"/>
+            <class name="com.softwaremagico.kt.core.csv.TeamCsvTest"/>
+            <class name="com.softwaremagico.kt.core.csv.ParticipantCsvTest"/>
+            <class name="com.softwaremagico.kt.core.score.ScoreOfCompetitorCustomTest"/>
+            <class name="com.softwaremagico.kt.core.controller.VersionControllerNamespaceContextImplTest"/>
         </classes>
     </test>
 </suite>

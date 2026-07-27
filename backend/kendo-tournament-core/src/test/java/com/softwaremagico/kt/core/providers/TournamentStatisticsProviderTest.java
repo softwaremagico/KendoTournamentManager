@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentStatisticsRepository;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
@@ -65,6 +66,7 @@ public class TournamentStatisticsProviderTest {
 		final Tournament tournament = new Tournament();
 		tournament.setId(42);
 		tournament.setName("World Kendo Championship");
+		tournament.setType(TournamentType.LEAGUE);
 		tournament.setTeamSize(3);
 		tournament.setFightSize(3);
 		tournament.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 9, 0));

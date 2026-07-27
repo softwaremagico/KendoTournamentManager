@@ -58,6 +58,17 @@
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <!-- Dummy in-memory JpaRepository implementations: statistics are never
+                                     persisted, these classes only provide no-op/default overrides required
+                                     to satisfy the JpaRepository contract and have no real business logic. -->
+                                <exclude>**/statistics/TournamentStatisticsRepository.class</exclude>
+                                <exclude>**/statistics/TournamentFightStatisticsRepository.class</exclude>
+                                <exclude>**/statistics/ParticipantStatisticsRepository.class</exclude>
+                                <exclude>**/statistics/ParticipantFightStatisticsRepository.class</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

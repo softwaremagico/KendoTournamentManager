@@ -21,7 +21,6 @@
 
 package com.softwaremagico.kt.persistence.encryption;
 
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
@@ -42,13 +41,13 @@ public class DoubleCryptoConverterTest {
     @Mock
     private ICipherEngine cipherEngine;
 
-    @InjectMocks
     private DoubleCryptoConverter converter;
     private static final String ENCRYPTION_KEY = "test-key";
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        this.converter = new DoubleCryptoConverter(this.cipherEngine);
     }
 
     @Test

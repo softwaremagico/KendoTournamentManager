@@ -34,7 +34,6 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
@@ -63,12 +62,13 @@ public class SwissTournamentHandlerBranchCoverageTest {
 	@Mock
 	private TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
-	@InjectMocks
 	private SwissTournamentHandler swissTournamentHandler;
 
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
+		this.swissTournamentHandler = new SwissTournamentHandler(this.groupProvider, this.teamProvider,
+				this.rankingProvider, this.tournamentExtraPropertyProvider);
 	}
 
 	// Branch coverage for getGroups(Tournament) when groups is empty
