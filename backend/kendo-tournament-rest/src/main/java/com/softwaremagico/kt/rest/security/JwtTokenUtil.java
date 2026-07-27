@@ -283,7 +283,7 @@ public class JwtTokenUtil {
      * @param instant the instant to convert
      * @return the equivalent {@link Date}
      */
-    private static Date toLegacyDate(Instant instant) {
+    private static Date toLegacyDate(Instant instant) { //NOSONAR - JJWT API requires java.util.Date, conversion isolated here.
         return Date.from(instant); //NOSONAR - JJWT API requires java.util.Date, conversion isolated here.
     }
 

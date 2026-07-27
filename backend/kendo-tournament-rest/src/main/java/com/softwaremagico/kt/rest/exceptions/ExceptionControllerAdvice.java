@@ -31,13 +31,14 @@ import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -54,6 +55,7 @@ import java.util.Map;
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @Override
+    @Nullable
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
@@ -85,6 +87,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @Nullable
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
@@ -93,6 +96,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @Nullable
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
             HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
@@ -210,9 +214,10 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
 
     @Override
+    @Nullable
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            final MethodArgumentNotValidException ex, @NotNull final HttpHeaders headers, @NotNull final HttpStatusCode status,
-            @NotNull final WebRequest request) {
+            final MethodArgumentNotValidException ex, @NonNull final HttpHeaders headers, @NonNull final HttpStatusCode status,
+            @NonNull final WebRequest request) {
         final Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error -> {
