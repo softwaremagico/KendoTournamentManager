@@ -38,7 +38,7 @@ public class CryptoConvertersTests {
 
 	@BeforeClass
 	public void setup() {
-		new KeyProperty(ENCRYPTION_CODE, PUBLIC_KEY, PRIVATE_KEY);
+		KeyProperty.configure(ENCRYPTION_CODE, PUBLIC_KEY, PRIVATE_KEY);
 		this.floatConverter = new FloatCryptoConverter();
 		this.booleanConverter = new BooleanCryptoConverter();
 	}

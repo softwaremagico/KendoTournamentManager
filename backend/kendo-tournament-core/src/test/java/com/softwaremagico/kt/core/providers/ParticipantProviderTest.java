@@ -62,12 +62,12 @@ public class ParticipantProviderTest {
         MockitoAnnotations.openMocks(this);
         provider = new ParticipantProvider(participantRepository, duelRepository);
         // Reset static key for isolation between tests.
-        new KeyProperty(null, null, null);
+        KeyProperty.configure(null, null, null);
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
-        new KeyProperty(null, null, null);
+        KeyProperty.configure(null, null, null);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class ParticipantProviderTest {
 
     @Test
     public void shouldUseRepositoryFindByIdCardWhenEncryptionKeyIsBlank() {
-        new KeyProperty("   ", null, null);
+        KeyProperty.configure("   ", null, null);
         final Participant participant = participant(11, "Blank", "Key");
         when(participantRepository.findByIdCard("ID-2")).thenReturn(Optional.of(participant));
 
@@ -127,7 +127,7 @@ public class ParticipantProviderTest {
 
     @Test
     public void shouldSearchInMemoryByIdCardWhenEncryptionKeyIsConfiguredAndFindMatch() {
-        new KeyProperty("encryption-key", null, null);
+        KeyProperty.configure("encryption-key", null, null);
         final Participant p1 = mock(Participant.class);
         final Participant p2 = mock(Participant.class);
         when(p1.getIdCard()).thenReturn("X-100");
@@ -139,7 +139,7 @@ public class ParticipantProviderTest {
 
     @Test
     public void shouldSearchInMemoryByIdCardWhenEncryptionKeyIsConfiguredAndReturnEmpty() {
-        new KeyProperty("encryption-key", null, null);
+        KeyProperty.configure("encryption-key", null, null);
         final Participant p1 = participant(1, "John", "A");
         p1.setIdCard("X-100");
         when(participantRepository.findAll()).thenReturn(List.of(p1));
@@ -149,7 +149,7 @@ public class ParticipantProviderTest {
 
     @Test
     public void shouldIgnoreParticipantsWithNullIdCardWhenEncryptionKeyIsConfigured() {
-        new KeyProperty("encryption-key", null, null);
+        KeyProperty.configure("encryption-key", null, null);
         final Participant p1 = mock(Participant.class);
         when(p1.getIdCard()).thenReturn(null);
         when(participantRepository.findAll()).thenReturn(List.of(p1));

@@ -289,4 +289,53 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
     public void setDrawDuels(Long drawDuels) {
         this.drawDuels = drawDuels;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ParticipantFightStatisticsDTO that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return Objects.equals(getMenNumber(), that.getMenNumber())
+                && Objects.equals(getKoteNumber(), that.getKoteNumber())
+                && Objects.equals(getDoNumber(), that.getDoNumber())
+                && Objects.equals(getTsukiNumber(), that.getTsukiNumber())
+                && Objects.equals(getHansokuNumber(), that.getHansokuNumber())
+                && Objects.equals(getIpponNumber(), that.getIpponNumber())
+                && Objects.equals(getFusenGachiNumber(), that.getFusenGachiNumber())
+                && Objects.equals(getReceivedMenNumber(), that.getReceivedMenNumber())
+                && Objects.equals(getReceivedKoteNumber(), that.getReceivedKoteNumber())
+                && Objects.equals(getReceivedDoNumber(), that.getReceivedDoNumber())
+                && Objects.equals(getReceivedTsukiNumber(), that.getReceivedTsukiNumber())
+                && Objects.equals(getReceivedHansokuNumber(), that.getReceivedHansokuNumber())
+                && Objects.equals(getReceivedIpponNumber(), that.getReceivedIpponNumber())
+                && Objects.equals(getReceivedFusenGachiNumber(), that.getReceivedFusenGachiNumber())
+                && Objects.equals(getDuelsNumber(), that.getDuelsNumber())
+                && Objects.equals(getAverageTime(), that.getAverageTime())
+                && Objects.equals(getAverageWinTime(), that.getAverageWinTime())
+                && Objects.equals(getAverageLostTime(), that.getAverageLostTime())
+                && Objects.equals(getTotalDuelsTime(), that.getTotalDuelsTime())
+                && Objects.equals(getFaults(), that.getFaults())
+                && Objects.equals(getReceivedFaults(), that.getReceivedFaults())
+                && Objects.equals(getQuickestHit(), that.getQuickestHit())
+                && Objects.equals(getQuickestReceivedHit(), that.getQuickestReceivedHit())
+                && Objects.equals(getWonDuels(), that.getWonDuels())
+                && Objects.equals(getLostDuels(), that.getLostDuels())
+                && Objects.equals(getDrawDuels(), that.getDrawDuels());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getMenNumber(), getKoteNumber(), getDoNumber(), getTsukiNumber(),
+                getHansokuNumber(), getIpponNumber(), getFusenGachiNumber(), getReceivedMenNumber(),
+                getReceivedKoteNumber(), getReceivedDoNumber(), getReceivedTsukiNumber(), getReceivedHansokuNumber(),
+                getReceivedIpponNumber(), getReceivedFusenGachiNumber(), getDuelsNumber(), getAverageTime(),
+                getAverageWinTime(), getAverageLostTime(), getTotalDuelsTime(), getFaults(), getReceivedFaults(),
+                getQuickestHit(), getQuickestReceivedHit(), getWonDuels(), getLostDuels(), getDrawDuels());
+    }
 }

@@ -40,9 +40,9 @@ public class CompleteGroupFightManager {
         return createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team firstTeam, Team secondTeam, Integer shiaijo, Integer level,
+    private Fight createFight(Tournament tournament, Team teamA, Team teamB, Integer shiaijo, Integer level,
                               String createdBy) {
-        return new Fight(tournament, firstTeam, secondTeam, shiaijo, level, createdBy);
+        return new Fight(tournament, teamA, teamB, shiaijo, level, createdBy);
     }
 
     private Fight createOrderedFight(FightContext context, Team team1, Team team2, Fight lastFight, int currentSize) {

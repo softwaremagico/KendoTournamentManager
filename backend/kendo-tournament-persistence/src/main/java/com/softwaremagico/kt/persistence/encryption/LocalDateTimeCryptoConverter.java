@@ -25,9 +25,10 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
@@ -57,7 +58,7 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
             return null;
         }
         try {
-            return new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
+            return Instant.ofEpochMilli(Long.parseLong(dbData)).atZone(ZoneId.systemDefault()).toLocalDateTime();
         } catch (NumberFormatException ex) {
             return parseLegacyDateTime(dbData, ex);
         }
@@ -100,6 +101,7 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
 
     @Override
     protected String entityAttributeToString(LocalDateTime attribute) {
-        return attribute == null ? null : String.valueOf(Timestamp.valueOf(attribute).getTime());
+        return attribute == null ? null
+                : String.valueOf(attribute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
     }
 }

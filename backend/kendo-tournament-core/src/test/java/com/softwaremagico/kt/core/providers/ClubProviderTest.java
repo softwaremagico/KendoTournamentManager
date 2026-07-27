@@ -52,7 +52,7 @@ public class ClubProviderTest {
         clubRepository = mock(ClubRepository.class);
         participantRepository = mock(ParticipantRepository.class);
         clubProvider = new ClubProvider(clubRepository, participantRepository);
-        new KeyProperty(null, null, null);
+        KeyProperty.configure(null, null, null);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ClubProviderTest {
 
     @Test
     public void shouldUseRepositoryQueryWhenEncryptionKeyIsBlank() {
-        new KeyProperty("   ", null, null);
+        KeyProperty.configure("   ", null, null);
         when(clubRepository.findByNameIgnoreCaseAndCityIgnoreCase("Dojo", "Madrid")).thenReturn(Optional.empty());
 
         final Optional<Club> found = clubProvider.findBy("Dojo", "Madrid");
@@ -82,7 +82,7 @@ public class ClubProviderTest {
 
     @Test
     public void shouldFindClubFromInMemoryLoopWhenEncryptionEnabled() {
-        new KeyProperty("enc-key", null, null);
+        KeyProperty.configure("enc-key", null, null);
         final Club first = new Club("Other", "Spain", "Bilbao");
         final Club matching = new Club("Dojo", "Spain", "Madrid");
         when(clubRepository.findAll()).thenReturn(List.of(first, matching));
@@ -97,7 +97,7 @@ public class ClubProviderTest {
 
     @Test
     public void shouldReturnEmptyWhenEncryptionEnabledAndNoClubMatches() {
-        new KeyProperty("enc-key", null, null);
+        KeyProperty.configure("enc-key", null, null);
         when(clubRepository.findAll()).thenReturn(List.of(new Club("Dojo", "Spain", "Sevilla")));
 
         final Optional<Club> found = clubProvider.findBy("Dojo", "Madrid");

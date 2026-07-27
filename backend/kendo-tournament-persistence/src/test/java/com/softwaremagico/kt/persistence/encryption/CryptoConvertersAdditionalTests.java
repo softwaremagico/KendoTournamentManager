@@ -41,7 +41,7 @@ public class CryptoConvertersAdditionalTests {
 
     @BeforeClass(alwaysRun = true)
     public void setup() {
-        new KeyProperty(ENCRYPTION_CODE, null, null);
+        KeyProperty.configure(ENCRYPTION_CODE, null, null);
         integerConverter = new IntegerCryptoConverter();
         doubleConverter = new DoubleCryptoConverter();
         localDateConverter = new LocalDateCryptoConverter();

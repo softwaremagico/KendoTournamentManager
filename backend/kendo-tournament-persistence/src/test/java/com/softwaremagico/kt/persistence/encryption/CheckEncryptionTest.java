@@ -44,7 +44,7 @@ public class CheckEncryptionTest {
 
     @BeforeClass
     public void loadPassword() {
-        new KeyProperty(PASSWORD, PUBLIC_KEY, PRIVATE_KEY);
+        KeyProperty.configure(PASSWORD, PUBLIC_KEY, PRIVATE_KEY);
     }
 
     @Test

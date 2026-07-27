@@ -54,7 +54,7 @@ public class AuthenticatedUserProviderTest {
     public void setUp() {
         authenticatedUserRepository = mock(AuthenticatedUserRepository.class);
         participantProvider = mock(ParticipantProvider.class);
-        new KeyProperty(null, null, null);
+        KeyProperty.configure(null, null, null);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class AuthenticatedUserProviderTest {
 
     @Test
     public void shouldSearchByUsernameHashWhenEncryptionEnabled() {
-        new KeyProperty("enc-key", null, null);
+        KeyProperty.configure("enc-key", null, null);
         final AuthenticatedUser auth = new AuthenticatedUser("john");
         auth.setUsernameHash("legacy");
 
@@ -86,7 +86,7 @@ public class AuthenticatedUserProviderTest {
 
     @Test
     public void shouldReturnEmptyWhenEncryptionEnabledAndNoMatchesAnywhere() {
-        new KeyProperty("enc-key", null, null);
+        KeyProperty.configure("enc-key", null, null);
         when(authenticatedUserRepository.findByUsernameHash("unknown")).thenReturn(Optional.empty());
         when(participantProvider.findByTokenUsername("unknown")).thenReturn(Optional.empty());
 
@@ -110,7 +110,7 @@ public class AuthenticatedUserProviderTest {
 
     @Test
     public void shouldSearchByPlainUsernameWhenEncryptionKeyIsBlank() {
-        new KeyProperty("  ", null, null);
+        KeyProperty.configure("  ", null, null);
         final AuthenticatedUser auth = new AuthenticatedUser("john");
         when(authenticatedUserRepository.findByUsername("john")).thenReturn(Optional.of(auth));
 

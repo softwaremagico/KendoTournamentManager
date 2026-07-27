@@ -27,39 +27,38 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyProperty {
 
-    private static String databaseEncryptionKey;
-    private static String databasePublicKey;
-    private static String databasePrivateKey;
+    private static KeyProperty instance;
 
-    public KeyProperty(@Value("${database.encryption.key:#{null}}") String databaseEncryptionKey,
+    private final String databaseEncryptionKey;
+    private final String databasePublicKey;
+    private final String databasePrivateKey;
+
+    protected KeyProperty(@Value("${database.encryption.key:#{null}}") String databaseEncryptionKey,
                        @Value("${database.public.key:#{null}}") String databasePublicKey,
                        @Value("${database.private.key:#{null}}") String databasePrivateKey) {
-        setDatabaseEncryptionKey(databaseEncryptionKey);
-        setDatabasePublicKey(databasePublicKey);
-        setDatabasePrivateKey(databasePrivateKey);
+        this.databaseEncryptionKey = databaseEncryptionKey;
+        this.databasePublicKey = databasePublicKey;
+        this.databasePrivateKey = databasePrivateKey;
+        instance = this;
     }
 
-    public static synchronized String getDatabaseEncryptionKey() {
-        return databaseEncryptionKey;
+    /**
+     * Factory method used to (re)configure the shared encryption keys, mainly from tests,
+     * without exposing a public constructor on this class.
+     */
+    public static void configure(String databaseEncryptionKey, String databasePublicKey, String databasePrivateKey) {
+        new KeyProperty(databaseEncryptionKey, databasePublicKey, databasePrivateKey);
     }
 
-    private static synchronized void setDatabaseEncryptionKey(String databaseEncryptionKey) {
-        KeyProperty.databaseEncryptionKey = databaseEncryptionKey;
+    public static String getDatabaseEncryptionKey() {
+        return instance.databaseEncryptionKey;
     }
 
-    public static synchronized String getDatabasePublicKey() {
-        return databasePublicKey;
+    public static String getDatabasePublicKey() {
+        return instance.databasePublicKey;
     }
 
-    private static synchronized void setDatabasePublicKey(String databasePublicKey) {
-        KeyProperty.databasePublicKey = databasePublicKey;
-    }
-
-    public static synchronized String getDatabasePrivateKey() {
-        return databasePrivateKey;
-    }
-
-    private static synchronized void setDatabasePrivateKey(String databasePrivateKey) {
-        KeyProperty.databasePrivateKey = databasePrivateKey;
+    public static String getDatabasePrivateKey() {
+        return instance.databasePrivateKey;
     }
 }

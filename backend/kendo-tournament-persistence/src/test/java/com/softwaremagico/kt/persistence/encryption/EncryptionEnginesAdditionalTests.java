@@ -34,7 +34,7 @@ public class EncryptionEnginesAdditionalTests {
 
     @BeforeClass(alwaysRun = true)
     public void setup() {
-        new KeyProperty(ENCRYPTION_CODE, null, null);
+        KeyProperty.configure(ENCRYPTION_CODE, null, null);
         gcmCipherEngine = new GCMCipherEngine();
     }
 

@@ -226,7 +226,18 @@ public class Club extends Element implements Comparable<Club> {
         return collator.compare(getName() + getCity(), c.getName() + c.getCity());
     }
 
+    /**
+     * Identity equality is kept based on the entity id (see {@link Element#equals(Object)}),
+     * as required to fulfil JPA/Hibernate entity semantics. This override only exists to comply
+     * with the contract between {@link Comparable#compareTo(Object)} and {@link Object#equals(Object)}.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

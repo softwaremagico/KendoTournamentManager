@@ -39,7 +39,7 @@ public class EnumCryptoConvertersCoverageTest {
     @BeforeMethod(alwaysRun = true)
     public void resetEncryptionKey() {
         // Plain conversion path is enough to execute enum converter branches.
-        new KeyProperty(null, null, null);
+        KeyProperty.configure(null, null, null);
     }
 
     @Test

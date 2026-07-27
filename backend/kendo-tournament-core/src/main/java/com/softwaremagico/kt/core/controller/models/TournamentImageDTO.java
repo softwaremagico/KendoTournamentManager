@@ -27,7 +27,9 @@ import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Objects;
 
 public class TournamentImageDTO extends ElementDTO {
 
@@ -101,5 +103,29 @@ public class TournamentImageDTO extends ElementDTO {
             case JPG -> IMAGE_JPG_BASE_64 + Base64.getEncoder().encodeToString(data);
             case PNG -> IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TournamentImageDTO that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return isDefaultImage() == that.isDefaultImage()
+                && Objects.equals(getTournament(), that.getTournament())
+                && Arrays.equals(getData(), that.getData())
+                && getImageType() == that.getImageType()
+                && getImageCompression() == that.getImageCompression();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getTournament(), getImageType(), getImageCompression(),
+                isDefaultImage(), Arrays.hashCode(getData()));
     }
 }
