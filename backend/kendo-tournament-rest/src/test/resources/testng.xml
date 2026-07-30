@@ -105,6 +105,9 @@
             <class name="com.softwaremagico.kt.rest.services.RoleServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.CsvServicesUnitTest"/>
             <class name="com.softwaremagico.kt.rest.controllers.AuthenticatedUserControllerTest"/>
+            <class name="com.softwaremagico.kt.logger.LoggedHttpExceptionTest"/>
+            <class name="com.softwaremagico.kt.websockets.WebSocketConfigurationTest"/>
+            <class name="com.softwaremagico.kt.websockets.WebsocketMessagesTest"/>
         </classes>
     </test>
 </suite>

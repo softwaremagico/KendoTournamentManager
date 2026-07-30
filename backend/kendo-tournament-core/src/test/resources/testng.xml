@@ -202,6 +202,15 @@
             <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsTest"/>
             <class name="com.softwaremagico.kt.logger.PoolLoggerTest"/>
             <class name="com.softwaremagico.kt.core.csv.ClubCsvTest"/>
+            <class name="com.softwaremagico.kt.core.controller.TournamentImageControllerTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ElementConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ParticipantReducedConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ParticipantStatisticsConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ScoreOfCompetitorConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.SimpleConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.TournamentImageConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.TournamentStatisticsConverterTest"/>
+            <class name="com.softwaremagico.kt.core.csv.GroupLinkCsvTest"/>
         </classes>
     </test>
 </suite>
