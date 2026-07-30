@@ -38,43 +38,44 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"tournament6GroupsTwoWinnersTest"})
-public class Tournament6GroupsTwoWinnersTest extends TreeTournamentBasedTests {
+public class Tournament6GroupsTwoWinnersTest extends TreeTournamentBasedTest {
 
-    private static final int MEMBERS = 1;
-    private static final int TEAMS = 12;
-    private static final int GROUPS = 6;
-    private static final int WINNERS = 2;
+	private static final int MEMBERS = 1;
+	private static final int TEAMS = 12;
+	private static final int GROUPS = 6;
+	private static final int WINNERS = 2;
 
-    @Autowired
-    private GroupController groupController;
+	@Autowired
+	private GroupController groupController;
 
-    @Autowired
-    private FightController fightController;
+	@Autowired
+	private FightController fightController;
 
-    private TournamentDTO tournamentDTO;
+	private TournamentDTO tournamentDTO;
 
-    @Test
-    public void checkTournamentWith6Groups() {
-        tournamentDTO = createTournament(GROUPS, TEAMS, MEMBERS, WINNERS);
-        Assert.assertEquals(groupController.get(tournamentDTO).size(), 21);
-    }
+	@Test
+	public void checkTournamentWith6Groups() {
+		this.tournamentDTO = this.createTournament(GROUPS, TEAMS, MEMBERS, WINNERS);
+		Assert.assertEquals(this.groupController.get(this.tournamentDTO).size(), 21);
+	}
 
-    @Test(dependsOnMethods = {"checkTournamentWith6Groups"})
-    public void pressWizardButton() {
-        Assert.assertEquals(groupController.count(), 21);
-        List<FightDTO> tournamentFights = fightController.createFights(tournamentDTO.getId(), TeamsOrder.NONE, 0, null, null);
-        Assert.assertEquals(groupController.count(), 21);
-        Assert.assertEquals(tournamentFights.size(), TEAMS / 2);
-        final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
-        for (final Group group : groups) {
-            Assert.assertEquals(group.getFights().size(), 1);
-        }
-    }
+	@Test(dependsOnMethods = {"checkTournamentWith6Groups"})
+	public void pressWizardButton() {
+		Assert.assertEquals(this.groupController.count(), 21);
+		final List<FightDTO> tournamentFights = this.fightController.createFights(this.tournamentDTO.getId(),
+				TeamsOrder.NONE, 0, null, null);
+		Assert.assertEquals(this.groupController.count(), 21);
+		Assert.assertEquals(tournamentFights.size(), TEAMS / 2);
+		final List<Group> groups = this.groupController.getGroups(this.tournamentDTO, 0);
+		for (final Group group : groups) {
+			Assert.assertEquals(group.getFights().size(), 1);
+		}
+	}
 
-    @Test(dependsOnMethods = {"pressWizardButton"})
-    public void getGroupsAgain() {
-        final List<GroupDTO> groupDTOS = groupController.get(tournamentDTO);
-        groupDTOS.sort(Comparator.comparing(GroupDTO::getLevel).thenComparing(GroupDTO::getIndex));
-        Assert.assertEquals(groupDTOS.size(), 21);
-    }
+	@Test(dependsOnMethods = {"pressWizardButton"})
+	public void getGroupsAgain() {
+		final List<GroupDTO> groupDTOS = this.groupController.get(this.tournamentDTO);
+		groupDTOS.sort(Comparator.comparing(GroupDTO::getLevel).thenComparing(GroupDTO::getIndex));
+		Assert.assertEquals(groupDTOS.size(), 21);
+	}
 }

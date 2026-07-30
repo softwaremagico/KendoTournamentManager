@@ -43,6 +43,8 @@
                 <include name="frontendLoggerServices"/>
                 <include name="openApiServices"/>
                 <include name="roleServices"/>
+                <include name="csvServicesUnit"/>
+                <include name="authenticatedUserController"/>
             </run>
         </groups>
         <classes>
@@ -93,7 +95,6 @@
             <class name="com.softwaremagico.kt.rest.security.AuthApiTest"/>
             <class name="com.softwaremagico.kt.rest.services.AchievementServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.TournamentExtraPropertiesServicesUnitTest"/>
-            <class name="com.softwaremagico.kt.security.UserRegistrationTest"/>
             <class name="com.softwaremagico.kt.rest.security.WebSocketSecurityConfigTest"/>
             <class name="com.softwaremagico.kt.LoggableDispatcherServletTest"/>
             <class name="com.softwaremagico.kt.rest.exceptions.LoggedHttpExceptionTest"/>
@@ -102,6 +103,8 @@
             <class name="com.softwaremagico.kt.rest.services.FrontendLoggerServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.OpenApiServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.RoleServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.CsvServicesUnitTest"/>
+            <class name="com.softwaremagico.kt.rest.controllers.AuthenticatedUserControllerTest"/>
         </classes>
     </test>
 </suite>
