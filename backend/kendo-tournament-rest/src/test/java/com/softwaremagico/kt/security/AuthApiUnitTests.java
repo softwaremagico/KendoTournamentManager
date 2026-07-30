@@ -48,7 +48,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
 
-@Test
+@Test(groups = "authApiUnitTests")
 public class AuthApiUnitTests {
 
 	private AuthenticationManager authenticationManager;

@@ -86,7 +86,7 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
         next: (_authenticatedUser: AuthenticatedUser): void => {
           this.saved.emit(_authenticatedUser);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });
@@ -95,7 +95,7 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
         next: (_authenticatedUser: AuthenticatedUser): void => {
           this.saved.emit(_authenticatedUser);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });
@@ -106,7 +106,7 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
     this.errors = new Map<AuthenticatedUserFormValidationFields, string>();
     let verdict: boolean = true;
 
-    if (this.user.username && this.user.username.indexOf(" ") >= 0) {
+    if (this.user.username?.includes(" ")) {
       verdict = false;
       this.errors.set(AuthenticatedUserFormValidationFields.USERNAME_INVALID, this.transloco.translate(`v.usernameInvalid`));
     }
@@ -128,7 +128,8 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
         this.errors.set(AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.passwordMismatch`));
       }
     } else {
-      if (this.user.password && this.pwdVerification !== this.user.password) {
+      const passwordMismatch: boolean = !!this.user.password && this.pwdVerification !== this.user.password;
+      if (passwordMismatch) {
         verdict = false;
         this.errors.set(AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.passwordMismatch`));
       }

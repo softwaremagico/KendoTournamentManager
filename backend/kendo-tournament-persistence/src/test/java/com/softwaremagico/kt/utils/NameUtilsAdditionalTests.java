@@ -280,6 +280,79 @@ public class NameUtilsAdditionalTests {
         IName nameItem = new NameTest("Cup");
         Assert.assertEquals(NameUtils.getShortName(nameItem), "Cup");
     }
+
+    @Test
+    public void testGetLastnameNameIniWithMaxLengthAndNullParticipant() {
+        Assert.assertEquals(NameUtils.getLastnameNameIni((IParticipantName) null, 8), " --- --- ");
+    }
+
+    @Test
+    public void testGetLastnameNameIniWithMaxLengthAndValidParticipant() {
+        IParticipantName participant = new ParticipantNameTest("Perez", "Ana");
+        String result = NameUtils.getLastnameNameIni(participant, 20);
+        Assert.assertTrue(result.contains("PEREZ"));
+    }
+
+    @Test
+    public void testGetLastnameNameIniFullNameBranch() {
+        // Short enough lastname+name so the "full name" (not truncated) branch is used.
+        String result = NameUtils.getLastnameNameIni("Ana", "Li", 20);
+        Assert.assertEquals(result, "ANA, Li");
+    }
+
+    @Test
+    public void testGetShortLastnameWithLengthAndNullParticipant() {
+        Assert.assertEquals(NameUtils.getShortLastname((IParticipantName) null, 5), " --- --- ");
+    }
+
+    @Test
+    public void testGetShortLastnameWithLengthAndValidParticipant() {
+        IParticipantName participant = new ParticipantNameTest("Jimenez", "Sara");
+        Assert.assertEquals(NameUtils.getShortLastname(participant, 4), "Jime");
+    }
+
+    @Test
+    public void testGetShortLastnameNameWithEmptyLastname() {
+        // lastname empty forces the ternary "else 1" branch on rateLastname.
+        String result = NameUtils.getShortLastnameName("", "Roberto", 12);
+        Assert.assertTrue(result.contains(","));
+    }
+
+    @Test
+    public void testGetShortNameWithLengthAndNullParticipant() {
+        Assert.assertEquals(NameUtils.getShortName((IParticipantName) null, 5), " --- ");
+    }
+
+    @Test
+    public void testGetShortNameWithLengthAndValidParticipant() {
+        IParticipantName participant = new ParticipantNameTest("Ruiz", "Alexandra");
+        Assert.assertEquals(NameUtils.getShortName(participant, 5), "Alexa");
+    }
+
+    // Tests for getNameCopy
+    @Test
+    public void testGetNameCopyWithoutCopySuffix() {
+        IName nameItem = new NameTest("Tournament");
+        Assert.assertEquals(NameUtils.getNameCopy(nameItem), "Tournament - Copy");
+    }
+
+    @Test
+    public void testGetNameCopyWithCopySuffixIncrementsIndex() {
+        IName nameItem = new NameTest("Tournament - Copy #2");
+        Assert.assertEquals(NameUtils.getNameCopy(nameItem), "Tournament - Copy #3");
+    }
+
+    @Test
+    public void testGetNameCopyWithCopySuffixAndInvalidIndex() {
+        IName nameItem = new NameTest("Tournament - Copy #abc");
+        Assert.assertEquals(NameUtils.getNameCopy(nameItem), "Tournament - Copy #abc #2");
+    }
+
+    @Test
+    public void testGetNameCopyWithNullName() {
+        IName nameItem = new NameTest(null);
+        Assert.assertNull(NameUtils.getNameCopy(nameItem));
+    }
 }
 
 

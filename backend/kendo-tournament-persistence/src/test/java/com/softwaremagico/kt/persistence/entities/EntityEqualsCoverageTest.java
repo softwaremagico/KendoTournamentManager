@@ -70,10 +70,19 @@ public class EntityEqualsCoverageTest {
     }
 
     @Test
-    public void when_equalsBothNullId_expect_true() {
+    public void when_equalsBothNullId_expect_false() {
+        // Two distinct transient (unsaved) entities must never be considered equal,
+        // otherwise all "new" instances of the same class would collapse into a single
+        // logical value (e.g. in Sets/Lists) before being persisted.
         final Club club1 = new Club();
         final Club club2 = new Club();
-        assertThat(club1.equals(club2)).isTrue();
+        assertThat(club1.equals(club2)).isFalse();
+    }
+
+    @Test
+    public void when_equalsBothNullIdSameInstance_expect_true() {
+        final Club club = new Club();
+        assertThat(club.equals(club)).isTrue();
     }
 
     @Test

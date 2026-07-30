@@ -39,7 +39,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-@Test
+@Test(groups = "kendoUserDetailsServiceTests")
 public class KendoUserDetailsServiceTests {
 
     private AuthenticatedUserProvider authenticatedUserProvider;

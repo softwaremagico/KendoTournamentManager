@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("all")
-@Test
+@Test(groups = "csvReaderUnit")
 public class CsvReaderUnitTest {
 
     private ClubCsv clubCsvReader;

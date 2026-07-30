@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {catchError, map, tap} from "rxjs/operators";
 import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
@@ -26,11 +26,11 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class FightService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/fights';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/fights';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
 
   }
 
@@ -181,12 +181,12 @@ export class FightService {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/next';
     return this.http.put<Fight[]>(url, undefined, {observe: 'response'})
       .pipe(
-        map((response: any) => {
+        map((response: HttpResponse<Fight[]>) => {
           //204 means that fights are not created due to an existing draw score.
           if (response.status === 204) {
-            return of(null);
+            return [];
           }
-          return response.body;
+          return response.body ?? [];
         })
       );
   }

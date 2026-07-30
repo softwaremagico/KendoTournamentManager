@@ -27,14 +27,14 @@
           <button id="button-edit" class="menu-button" biit-icon icon="edit"
             [title]="t('participantEdit')"
             (click)="editElement(table.selectedRows[0])"
-            [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1 || table.selectedRows[0].locked"
           ></button>
         }
         @if (RbacActivity.READ_ONE_PARTICIPANT | hasPermission) {
           <button id="button-camera" class="menu-button" biit-icon icon="camera"
             [title]="t('photo')"
             (click)="addPhoto=true"
-            [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1 || table.selectedRows[0].locked"
           ></button>
         }
         <mat-divider class="divider" [vertical]="true"></mat-divider>
@@ -42,7 +42,7 @@
           <button mat-button class="menu-button"
             [title]="t('titleStatistics')"
             (click)="openStatistics(table.selectedRows[0])"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
             <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
           </button>
         }
@@ -58,7 +58,7 @@
           <button id="qr-code" mat-button class="menu-button"
             [title]="t('qrCodeHint')"
             (click)="showQr=true"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
             <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
           </button>
         }

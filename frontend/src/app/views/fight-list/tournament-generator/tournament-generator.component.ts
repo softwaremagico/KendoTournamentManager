@@ -21,6 +21,7 @@ import {
   TournamentChangedService
 } from "../../../components/tournament-brackets-editor/tournament-brackets/tournament-changed.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -47,13 +48,13 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   protected generateGroupConfirmation: boolean = false;
   loadingGlobal: boolean = false;
 
-  constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
-              private fightService: FightService, private messageService: MessageService,
-              private groupService: GroupService, private tournamentChangedService: TournamentChangedService,
-              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
-              private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
+  constructor(private readonly router: Router, rbacService: RbacService, private readonly tournamentService: TournamentService,
+              private readonly fightService: FightService, private readonly messageService: MessageService,
+              private readonly groupService: GroupService, private readonly tournamentChangedService: TournamentChangedService,
+              private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
+              private readonly numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
     super(rbacService);
-    const state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.lastSuccessfulNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -67,7 +68,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   ngOnInit(): void {
-    this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
+    this.tournamentService.get(this.tournamentId).pipe(takeUntil(this.destroySubject)).subscribe((tournament: Tournament): void => {
       this.tournament = tournament;
       this.tournamentChangedService.isTournamentChanged.next(tournament);
       this.refreshWinner();
@@ -94,7 +95,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
 
   generateElements(): void {
     this.loadingGlobal = true;
-    this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
+    this.fightService.create(this.tournamentId, 0).pipe(takeUntil(this.destroySubject)).subscribe((fights: Fight[]): void => {
       this.messageService.infoMessage("infoFightCreated");
       this.goBackToFights();
     }).add(() => this.loadingGlobal = false);
@@ -107,7 +108,8 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     });
   }
 
-  groupsActionsDisabled(disabled: boolean) {
+  groupsActionsDisabled(_disabled: boolean): void {
+    void _disabled;
     this.updatingGroup = false;
   }
 
@@ -117,7 +119,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
 
   downloadPDF(): void {
     if (this.tournament?.id) {
-      this.groupService.getGroupsByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
+      this.groupService.getGroupsByTournament(this.tournament.id).pipe(takeUntil(this.destroySubject)).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
@@ -130,17 +132,15 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   private refreshWinner(): void {
-    if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
-      this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
+    if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
+      this.tournamentExtendedPropertiesService.getByTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
         if (_tournamentSelection) {
           for (const _tournamentProperty of _tournamentSelection) {
-            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
-              this.numberOfWinners = Number(_tournamentProperty.propertyValue.toLowerCase());
+            if (_tournamentProperty.propertyKey === TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
+              const parsedNumberOfWinners: number = Number(_tournamentProperty.propertyValue.toLowerCase());
+              this.numberOfWinners = Number.isNaN(parsedNumberOfWinners) ? this.numberOfWinners : parsedNumberOfWinners;
             }
           }
-        }
-        if (this.numberOfWinners == undefined) {
-          this.numberOfWinners = 1;
         }
       });
     }
@@ -153,15 +153,15 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = numberOfWinners + "";
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.NUMBER_OF_WINNERS;
-    this.tournamentService.setNumberOfWinners(this.tournament, numberOfWinners).subscribe((): void => {
+    this.tournamentService.setNumberOfWinners(this.tournament, numberOfWinners).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
       this.numberOfWinnersUpdatedService.numberOfWinners.next(numberOfWinners);
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }
 
-  refreshGroups() {
+  refreshGroups(): void {
     this.loadingGlobal = true;
-    this.groupService.refreshNonStartedGroups(this.tournamentId, 1).subscribe((): void => {
+    this.groupService.refreshNonStartedGroups(this.tournamentId, 1).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
       this.tournamentBracketsEditorComponent.updateData(true, true);
     }).add(() => this.loadingGlobal = false);
   }

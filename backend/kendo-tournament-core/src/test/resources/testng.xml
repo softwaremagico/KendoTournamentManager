@@ -77,6 +77,15 @@
                 <include name="participantCsvTests"/>
                 <include name="scoreOfCompetitorCustomTests"/>
                 <include name="namespaceContextImplTests"/>
+                <include name="versionController"/>
+                <include name="clubCsvTests"/>
+                <include name="cacheController"/>
+                <include name="tournamentImageDTO"/>
+                <include name="achievementConverter"/>
+                <include name="participantImageConverter"/>
+                <include name="scoreOfCompetitorWinOverDrawsTests"/>
+                <include name="scoreOfTeam"/>
+                <include name="scoreOfTeamConverter"/>
             </run>
         </groups>
         <classes>
@@ -92,7 +101,7 @@
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentDeleteGroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.LeagueWithFinalFightTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentShiaijosTest"/>
-            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLinkTests"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLinkTest"/>
             <class name="com.softwaremagico.kt.core.tests.LoopLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainFiFoTest"/>
@@ -135,6 +144,17 @@
             <class name="com.softwaremagico.kt.core.controller.DuelControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.QrControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.RankingControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.FightStatisticsControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.TeamControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.BasicInsertableControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.ParticipantControllerTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ScoreOfTeamConverterTest"/>
+            <class name="com.softwaremagico.kt.core.controller.CacheControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.TournamentImageDTOTest"/>
+            <class name="com.softwaremagico.kt.core.converters.AchievementConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ParticipantImageConverterTest"/>
+            <class name="com.softwaremagico.kt.core.score.ScoreOfCompetitorWinOverDrawsTest"/>
+            <class name="com.softwaremagico.kt.core.score.ScoreOfTeamTest"/>
             <class name="com.softwaremagico.kt.core.controller.ParticipantImageControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.TournamentExtraPropertyControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTOCoverageTest"/>
@@ -153,11 +173,7 @@
             <class name="com.softwaremagico.kt.core.tests.ConverterUtilsTests"/>
             <class name="com.softwaremagico.kt.core.converters.models.ConverterRequestCoverageTest"/>
             <class name="com.softwaremagico.kt.core.csv.CsvReaderUnitTest"/>
-            <class name="com.softwaremagico.kt.core.controller.models.ControllerModelsDTOCoverageTest"/>
             <class name="com.softwaremagico.kt.core.tests.models.ControllerModelsCoverageTest"/>
-            <class name="com.softwaremagico.kt.core.tournaments.LeagueHandlerTest"/>
-            <class name="com.softwaremagico.kt.core.providers.RankingProviderTest"/>
-            <class name="com.softwaremagico.kt.core.providers.TournamentImageProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.ClubProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.GroupLinkProviderTest"/>
             <class name="com.softwaremagico.kt.core.providers.ParticipantProviderTest"/>
@@ -180,6 +196,12 @@
             <class name="com.softwaremagico.kt.core.csv.ParticipantCsvTest"/>
             <class name="com.softwaremagico.kt.core.score.ScoreOfCompetitorCustomTest"/>
             <class name="com.softwaremagico.kt.core.controller.VersionControllerNamespaceContextImplTest"/>
+            <class name="com.softwaremagico.kt.core.controller.VersionControllerTest"/>
+            <class name="com.softwaremagico.kt.core.pool.BasePoolTest"/>
+            <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsConstructorsCoverageTest"/>
+            <class name="com.softwaremagico.kt.core.tests.exceptions.CoreExceptionsTest"/>
+            <class name="com.softwaremagico.kt.logger.PoolLoggerTest"/>
+            <class name="com.softwaremagico.kt.core.csv.ClubCsvTest"/>
         </classes>
     </test>
 </suite>
