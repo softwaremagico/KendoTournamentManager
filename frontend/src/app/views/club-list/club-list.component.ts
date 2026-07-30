@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
@@ -39,11 +39,12 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   protected confirmDelete: boolean = false;
   protected showRanking: boolean = false;
 
-  constructor(private readonly clubService: ClubService,
-              private readonly transloco: TranslocoService, rbacService: RbacService, private readonly _datePipe: DatePipe,
-              private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,) {
-    super(rbacService);
-  }
+   constructor(private readonly clubService: ClubService,
+               private readonly transloco: TranslocoService, rbacService: RbacService, private readonly _datePipe: DatePipe,
+               private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,
+               private readonly cdr: ChangeDetectorRef) {
+     super(rbacService);
+   }
 
   datePipe() {
     return {
@@ -86,19 +87,20 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
     });
   }
 
-  loadData(): void {
-    this.loading = true;
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    this.clubService.getAll().subscribe({
-      next: (_clubs: Club[]): void => {
-        this.clubs = _clubs.map(_club => Club.clone(_club));
-      },
-      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
-    }).add(() => {
-      this.loading = false;
-      this.systemOverloadService.isTransactionalBusy.next(false);
-    });
-  }
+   loadData(): void {
+     this.loading = true;
+     this.systemOverloadService.isTransactionalBusy.next(true);
+     this.clubService.getAll().subscribe({
+       next: (_clubs: Club[]): void => {
+         this.clubs = _clubs.map(_club => Club.clone(_club));
+         this.cdr.markForCheck();
+       },
+       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+     }).add(() => {
+       this.loading = false;
+       this.systemOverloadService.isTransactionalBusy.next(false);
+     });
+   }
 
   addElement(): void {
     this.target = new Club();

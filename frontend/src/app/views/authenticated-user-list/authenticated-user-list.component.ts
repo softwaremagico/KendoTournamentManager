@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {UserService} from "../../services/user.service";
@@ -41,11 +41,12 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
 
   protected loading: boolean = false;
 
-  constructor(private readonly userService: UserService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
-               private readonly userSessionService: UserSessionService, private readonly transloco: TranslocoService,
-               private readonly biitSnackbarService: BiitSnackbarService, private readonly _datePipe: DatePipe) {
-    super(rbacService);
-  }
+   constructor(private readonly userService: UserService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+                private readonly userSessionService: UserSessionService, private readonly transloco: TranslocoService,
+                private readonly biitSnackbarService: BiitSnackbarService, private readonly _datePipe: DatePipe,
+                private readonly cdr: ChangeDetectorRef) {
+     super(rbacService);
+   }
 
   datePipe() {
     return {
@@ -82,19 +83,20 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
     });
   }
 
-  loadData(): void {
-    this.loading = true;
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    this.userService.getAll().subscribe({
-      next: (_users: AuthenticatedUser[]): void => {
-        this.users = _users.map(_user => AuthenticatedUser.clone(_user));
-      },
-      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
-    }).add(() => {
-      this.loading = false;
-      this.systemOverloadService.isTransactionalBusy.next(false);
-    });
-  }
+   loadData(): void {
+     this.loading = true;
+     this.systemOverloadService.isTransactionalBusy.next(true);
+     this.userService.getAll().subscribe({
+       next: (_users: AuthenticatedUser[]): void => {
+         this.users = _users.map(_user => AuthenticatedUser.clone(_user));
+         this.cdr.markForCheck();
+       },
+       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+     }).add(() => {
+       this.loading = false;
+       this.systemOverloadService.isTransactionalBusy.next(false);
+     });
+   }
 
   addElement(): void {
     const authenticatedUser: AuthenticatedUser = new AuthenticatedUser();

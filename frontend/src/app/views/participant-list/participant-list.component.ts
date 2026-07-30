@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {ParticipantService} from "../../services/participant.service";
 import {ClubService} from "../../services/club.service";
@@ -59,13 +59,14 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
 
   protected readonly port: number = +globalThis.location.port;
 
-  constructor(private readonly router: Router, private readonly userSessionService: UserSessionService,
-              private readonly participantService: ParticipantService,
-              private readonly clubService: ClubService, private readonly transloco: TranslocoService, rbacService: RbacService,
-              private readonly _datePipe: DatePipe, private readonly _clubNamePipe: ClubNamePipe,
-              private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,) {
-    super(rbacService);
-  }
+   constructor(private readonly router: Router, private readonly userSessionService: UserSessionService,
+               private readonly participantService: ParticipantService,
+               private readonly clubService: ClubService, private readonly transloco: TranslocoService, rbacService: RbacService,
+               private readonly _datePipe: DatePipe, private readonly _clubNamePipe: ClubNamePipe,
+               private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,
+               private readonly cdr: ChangeDetectorRef) {
+     super(rbacService);
+   }
 
   datePipe(): { transform: (value: number | string | Date | null | undefined) => string | null } {
     return {
@@ -100,23 +101,24 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
     });
   }
 
-  loadData(): void {
-    this.loading = true;
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    forkJoin({
-      clubs: this.clubService.getAll(),
-      participants: this.participantService.getAll()
-    }).pipe(takeUntil(this.destroySubject)).subscribe({
-      next: ({clubs, participants}: { clubs: Club[], participants: Participant[] }): void => {
-        this.clubs = clubs ? this.sortClubs(clubs) : [];
-        this.participants = participants.map(_participant => Participant.clone(_participant));
-      },
-      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
-    }).add(() => {
-      this.loading = false;
-      this.systemOverloadService.isTransactionalBusy.next(false);
-    });
-  }
+   loadData(): void {
+     this.loading = true;
+     this.systemOverloadService.isTransactionalBusy.next(true);
+     forkJoin({
+       clubs: this.clubService.getAll(),
+       participants: this.participantService.getAll()
+     }).pipe(takeUntil(this.destroySubject)).subscribe({
+       next: ({clubs, participants}: { clubs: Club[], participants: Participant[] }): void => {
+         this.clubs = clubs ? this.sortClubs(clubs) : [];
+         this.participants = participants.map(_participant => Participant.clone(_participant));
+         this.cdr.markForCheck();
+       },
+       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+     }).add(() => {
+       this.loading = false;
+       this.systemOverloadService.isTransactionalBusy.next(false);
+     });
+   }
 
   addElement(): void {
     this.target = new Participant();
