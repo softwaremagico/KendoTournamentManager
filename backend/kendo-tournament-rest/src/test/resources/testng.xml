@@ -35,6 +35,8 @@
                 <include name="authApiTests"/>
                 <include name="webSocketSecurityConfigTests"/>
                 <include name="loggableDispatcherServletTests"/>
+                <include name="authApiUnitTests"/>
+                <include name="kendoUserDetailsServiceTests"/>
             </run>
         </groups>
         <classes>
