@@ -304,7 +304,7 @@
   @if (openNewFightPopup) {
     <biit-popup id="fight-creator" closable
       [title]="t('addFight')"
-      (closed)="openNewFightPopup=false">
+      (onClosed)="openNewFightPopup=false">
       <fight-creator
         [tournament]="tournament"
         [previousFight]="this.selectedFight"
@@ -314,14 +314,14 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (closed)="openNewFightPopup=false"></fight-creator>
+      (onClosed)="openNewFightPopup=false"></fight-creator>
     </biit-popup>
   }
 
   @if (openSenbatsuFightPopup) {
     <biit-popup id="senbatsu-fight-creator" closable
       [title]="t('addFight')"
-      (closed)="openSenbatsuFightPopup=false">
+      (onClosed)="openSenbatsuFightPopup=false">
       <senbatsu-fight-creator
         [tournament]="tournament"
         [previousFight]="this.selectedFight"
@@ -331,7 +331,7 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (closed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
+      (onClosed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
     </biit-popup>
   }
 

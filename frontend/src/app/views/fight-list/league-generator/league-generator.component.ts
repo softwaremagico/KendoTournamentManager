@@ -204,7 +204,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
         //Accumulate the index of each member. Lower member means better participant statistics.
         let score: number = 0;
         for (let member of team.members) {
-          if (member != undefined) {
+          if (member !== undefined) {
             score += sortedParticipants.indexOf(<Participant>sortedParticipants.find(p => p.id === member?.id));
           }
         }

@@ -25,13 +25,13 @@ export class ClubFormPopupComponent implements OnInit {
   @Input() club: Club;
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
   @Output() saved: EventEmitter<Club> = new EventEmitter<Club>();
-  @Output() error: EventEmitter<any> = new EventEmitter<any>();
+  error: EventEmitter<unknown> = new EventEmitter<unknown>();
 
   protected errors: Map<ClubFormValidationFields, string> = new Map<ClubFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;
 
-  constructor(protected sessionService: UserSessionService, private csvService: CsvService,
-              private biitSnackbarService: BiitSnackbarService, protected transloco: TranslocoService) {
+  constructor(protected sessionService: UserSessionService, private readonly csvService: CsvService,
+              private readonly biitSnackbarService: BiitSnackbarService, protected transloco: TranslocoService) {
   }
 
   ngOnInit(): void {
@@ -45,7 +45,7 @@ export class ClubFormPopupComponent implements OnInit {
       const file: File | null = fileList.item(0);
       if (file) {
         this.csvService.addClubs(file).subscribe(_clubs => {
-          if (_clubs.length == 0) {
+          if (_clubs.length === 0) {
             this.transloco.selectTranslate('clubStored').subscribe(
               translation => {
                 this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);

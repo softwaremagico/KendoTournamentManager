@@ -159,6 +159,44 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return event.container.data[memberIndex];
   }
 
+  private sortParticipantLists(): void {
+    this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+  }
+
+  private removeParticipantFromList(participant: Participant): void {
+    if (this.userListData.filteredParticipants.includes(participant)) {
+      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    }
+    if (this.userListData.participants.includes(participant)) {
+      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
+    }
+  }
+
+  private ensureParticipantInList(participant: Participant): void {
+    if (!this.userListData.participants.includes(participant)) {
+      this.userListData.participants.push(participant);
+    }
+    if (!this.userListData.filteredParticipants.includes(participant)) {
+      this.userListData.filteredParticipants.push(participant);
+    }
+  }
+
+  private reorderMemberOnSameTeam(team: Team, participant: Participant, memberIndex: number, sourceIndex: number): void {
+    if (team.members[memberIndex] === undefined) {
+      team.members[memberIndex] = participant;
+      team.members[sourceIndex] = undefined;
+    } else {
+      moveItemInArray(team.members, sourceIndex, memberIndex);
+    }
+  }
+
+  private updateSingleMemberTeamName(team: Team, participant: Participant): void {
+    if (this.tournament.teamSize === 1) {
+      team.name = participant.lastname + ", " + participant.name;
+    }
+  }
+
   removeFromTeam(event: CdkDragDrop<Participant[], any>): void {
     // Correct index, as always return the first non-empty.
     const sourceTeam: Team | undefined = this.searchTeam(event as CdkDragDrop<(Participant | undefined)[], any>);
@@ -167,7 +205,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     //Remove from source data.
     if (sourceTeam && this.members) {
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(movedParticipant);
-      if (sourceIndex || sourceIndex === 0) {
+      if (sourceIndex !== undefined) {
         //Removing team member from team.
         const teamMembers: (Participant | undefined)[] | undefined = this.members.get(sourceTeam);
         if (teamMembers) {
@@ -177,16 +215,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
         this.deleteMemberFromTeam(movedParticipant);
         this.updateTeam(sourceTeam, undefined);
-        //Add to user list.
-        if (!this.userListData.participants.includes(movedParticipant)) {
-          this.userListData.participants.push(movedParticipant);
-        }
-        if (!this.userListData.filteredParticipants.includes(movedParticipant)) {
-          this.userListData.filteredParticipants.push(movedParticipant);
-        }
-
-        this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
-        this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+        this.ensureParticipantInList(movedParticipant);
+        this.sortParticipantLists();
       }
     }
   }
@@ -209,15 +239,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     if (sourceTeam === team) {
       //Reordering the team.
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(event.item.data);
-      if (sourceIndex || sourceIndex === 0) {
-        // Moving to an empty space.
-        if (team.members[memberIndex] === undefined) {
-          team.members[memberIndex] = participant;
-          team.members[sourceIndex] = undefined;
-        } else {
-          //Swapping with an existing member.
-          moveItemInArray(team.members, sourceIndex, memberIndex);
-        }
+      if (sourceIndex !== undefined) {
+        this.reorderMemberOnSameTeam(team, participant, memberIndex, sourceIndex);
       }
       this.updateTeam(team, participant);
     } else {
@@ -233,16 +256,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     }
     //Reset filter
     this.filterResetService.resetFilter.next(true);
-    //Set default name as the member.
-    if (this.tournament.teamSize === 1) {
-      team.name = participant.lastname + ", " + participant.name
-    }
-    if (this.userListData.filteredParticipants.includes(participant)) {
-      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
-    }
-    if (this.userListData.participants.includes(participant)) {
-      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
-    }
+    this.updateSingleMemberTeamName(team, participant);
+    this.removeParticipantFromList(participant);
   }
 
   updateTeam(team: Team, member: Participant | undefined): void {
@@ -278,7 +293,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   dropListEnterPredicate(memberIndex: number, team: Team) {
     return function (_item: CdkDrag<Participant>, _dropList: CdkDropList): boolean {
       if (team) {
-        return !team.locked && (team.members[memberIndex] === undefined || team.members[memberIndex] === null);
+        return !team.locked && team.members[memberIndex] === undefined;
       }
       return true;
     };

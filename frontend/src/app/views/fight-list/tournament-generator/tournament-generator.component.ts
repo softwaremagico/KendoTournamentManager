@@ -137,12 +137,10 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
         if (_tournamentSelection) {
           for (const _tournamentProperty of _tournamentSelection) {
             if (_tournamentProperty.propertyKey === TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
-              this.numberOfWinners ??= Number(_tournamentProperty.propertyValue.toLowerCase());
+              const parsedNumberOfWinners: number = Number(_tournamentProperty.propertyValue.toLowerCase());
+              this.numberOfWinners = Number.isNaN(parsedNumberOfWinners) ? this.numberOfWinners : parsedNumberOfWinners;
             }
           }
-        }
-        if (this.numberOfWinners === undefined) {
-          this.numberOfWinners = 1;
         }
       });
     }
