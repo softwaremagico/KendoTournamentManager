@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SpringBootTest
-@Test
+@Test(groups = "csvReader")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CsvReaderTest extends AbstractTestNGSpringContextTests {
 
