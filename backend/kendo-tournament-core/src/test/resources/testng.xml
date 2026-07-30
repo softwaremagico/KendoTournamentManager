@@ -79,6 +79,13 @@
                 <include name="namespaceContextImplTests"/>
                 <include name="versionController"/>
                 <include name="clubCsvTests"/>
+                <include name="cacheController"/>
+                <include name="tournamentImageDTO"/>
+                <include name="achievementConverter"/>
+                <include name="participantImageConverter"/>
+                <include name="scoreOfCompetitorWinOverDrawsTests"/>
+                <include name="scoreOfTeam"/>
+                <include name="scoreOfTeamConverter"/>
             </run>
         </groups>
         <classes>
@@ -137,6 +144,17 @@
             <class name="com.softwaremagico.kt.core.controller.DuelControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.QrControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.RankingControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.FightStatisticsControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.TeamControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.BasicInsertableControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.ParticipantControllerTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ScoreOfTeamConverterTest"/>
+            <class name="com.softwaremagico.kt.core.controller.CacheControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.models.TournamentImageDTOTest"/>
+            <class name="com.softwaremagico.kt.core.converters.AchievementConverterTest"/>
+            <class name="com.softwaremagico.kt.core.converters.ParticipantImageConverterTest"/>
+            <class name="com.softwaremagico.kt.core.score.ScoreOfCompetitorWinOverDrawsTest"/>
+            <class name="com.softwaremagico.kt.core.score.ScoreOfTeamTest"/>
             <class name="com.softwaremagico.kt.core.controller.ParticipantImageControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.TournamentExtraPropertyControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTOCoverageTest"/>

@@ -21,7 +21,7 @@
           @if ((RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType && !tournament.locked) {
             <button id="button-plus" biit-icon class="add-button"
               (click)="addElement()"
-              [disabled]="tournament && (tournament.locked || (tournament.type == TournamentType.SENBATSU && this.selectedGroup?.teams?.length == 0))"
+              [disabled]="tournament && (tournament.locked || (tournament.type === TournamentType.SENBATSU && this.selectedGroup?.teams?.length === 0))"
               [title]="t('addFight')"
               icon="plus">
             </button>
@@ -46,7 +46,7 @@
             <mat-divider [vertical]="true" class="timer-divider"
             ></mat-divider>
           }
-          @if ((RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel.finished == false) && !tournament.locked) {
+          @if ((RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel.finished === false) && !tournament.locked) {
             <button biit-icon
               (click)="finishDuel()"
               [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
@@ -54,7 +54,7 @@
               <mat-icon class="kendo-icon" svgIcon="check"></mat-icon>
             </button>
           }
-          @if ((RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished == true && !tournament.locked) {
+          @if ((RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished === true && !tournament.locked) {
             <button biit-icon
               (click)="unfinishDuel()"
               [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
@@ -131,7 +131,7 @@
             || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU)
             || (tournament && tournament.type === TournamentType.SWISS)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)) {
             <button biit-icon
-              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+               [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length === 0"
               (click)="showTeamsClassification(areAllDuelsOver())"
               [title]="t('teamsRanking')">
               <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
@@ -139,7 +139,7 @@
           }
           @if ((RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)) {
             <button biit-icon class="competitors-classification"
-              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length === 0"
               (click)="showCompetitorsClassification()"
               [title]="t('competitorsRanking')">
               <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
@@ -151,7 +151,7 @@
           }
           @if ((RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)) {
             <button biit-icon class="download-button"
-              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length === 0"
               (click)="downloadPDF()"
               [title]="t('fightList')">
               <mat-icon class="kendo-icon" svgIcon="download"></mat-icon>
@@ -163,7 +163,7 @@
           }
           @if ((RbacActivity.PROJECTOR_MODE | hasPermission) && (tournament && !tournament.locked)) {
             <button biit-icon class="expand-button"
-              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+              [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length === 0"
               (click)="projector()"
               [title]="t('projectMode')">
               <mat-icon class="kendo-icon" svgIcon="projector"></mat-icon>
@@ -171,7 +171,7 @@
           }
         </div>
       }
-      @if (tournament!=undefined && tournament!.shiaijos! > 1 && !projectorMode) {
+      @if (tournament !== undefined && tournament!.shiaijos! > 1 && !projectorMode) {
         <div class="filter-shiaijo">
           <div class="shiaijo-label">
             {{ 'shiaijo'| transloco }}
@@ -200,12 +200,12 @@
             <div class="fight-list">
               @if (showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)) {
                 <h2
-                  [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+                   [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length === 0}"
                 class="level-name">{{ 'level' | transloco }} {{ group.level + 1 }}</h2>
               }
               @if (filteredFights.get(group.id!)?.length! > 0) {
                 <h3
-                  [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+                   [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length === 0}"
                 class="group-name">{{ 'group' | transloco }} {{ group.index + 1 }}</h3>
               }
               @if (filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0) {

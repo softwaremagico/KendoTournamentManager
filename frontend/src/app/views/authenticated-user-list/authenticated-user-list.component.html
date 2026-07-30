@@ -9,6 +9,7 @@
       scrollbarH
       selectable
       >
+      <!--suppress AngularUnusedReference -->
       <ng-template #actions>
         @if (RbacActivity.CREATE_USER | hasPermission) {
           <button id="button-plus" class="menu-button" biit-icon icon="plus"
@@ -27,14 +28,14 @@
           <button id="button-edit" class="menu-button" biit-icon icon="edit"
             [title]="t('authenticatedUserEdit')"
             (click)="editElement(table.selectedRows[0])"
-            [disabled]="!table.selectedRows || table.selectedRows.length != 1"
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1"
           ></button>
         }
         @if (RbacActivity.READ_ONE_USER | hasPermission) {
           <button id="button-role" class="menu-button" biit-icon icon="badge"
             [title]="t('roles')"
             (click)="roleSelector=true"
-            [disabled]="!table.selectedRows || table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1">
           </button>
         }
       </ng-template>

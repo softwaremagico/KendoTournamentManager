@@ -129,6 +129,16 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.avoidDuplicatedFights = TournamentExtraPropertyKey.avoidDuplicateFightsGeneration();
   }
 
+  private persistTournamentProperty(propertyKey: TournamentExtraPropertyKey, propertyValue: string): void {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = propertyValue;
+    tournamentProperty.propertyKey = propertyKey;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
   acceptAction() {
     this.closed.emit(this.teamsOrder);
   }
@@ -250,44 +260,20 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   }
 
   maxFightsToggle($event: MatSlideToggleChange): void {
-    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
-    tournamentProperty.tournament = this.tournament;
-    tournamentProperty.propertyValue = $event.checked + "";
-    tournamentProperty.propertyKey = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
-      this.messageService.infoMessage('infoTournamentUpdated');
-    });
+    this.persistTournamentProperty(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, $event.checked + '');
   }
 
   selectDrawResolution(drawResolution: DrawResolution): void {
     this.selectedDrawResolution = drawResolution;
-    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
-    tournamentProperty.tournament = this.tournament;
-    tournamentProperty.propertyValue = drawResolution;
-    tournamentProperty.propertyKey = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
-      this.messageService.infoMessage('infoTournamentUpdated');
-    });
+    this.persistTournamentProperty(TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, drawResolution);
   }
 
   fifoToggle($event: MatSlideToggleChange): void {
-    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
-    tournamentProperty.tournament = this.tournament;
-    tournamentProperty.propertyValue = $event.checked ? LeagueFightsOrder.FIFO : LeagueFightsOrder.LIFO;
-    tournamentProperty.propertyKey = TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
-      this.messageService.infoMessage('infoTournamentUpdated');
-    });
+    this.persistTournamentProperty(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, $event.checked ? LeagueFightsOrder.FIFO : LeagueFightsOrder.LIFO);
   }
 
   avoidDuplicatesToggle($event: MatSlideToggleChange): void {
-    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
-    tournamentProperty.tournament = this.tournament;
-    tournamentProperty.propertyValue = $event.checked + "";
-    tournamentProperty.propertyKey = TournamentExtraPropertyKey.AVOID_DUPLICATES;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
-      this.messageService.infoMessage('infoTournamentUpdated');
-    });
+    this.persistTournamentProperty(TournamentExtraPropertyKey.AVOID_DUPLICATES, $event.checked + '');
   }
 
   protected readonly TournamentType = TournamentType;

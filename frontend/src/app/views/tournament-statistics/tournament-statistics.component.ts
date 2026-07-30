@@ -74,13 +74,13 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public tournament: Tournament;
 
 
-  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private statisticsService: StatisticsService, private userSessionService: UserSessionService,
-              private rankingService: RankingService, private nameUtilsService: NameUtilsService,
-              private translateService: TranslocoService, private achievementService: AchievementsService,
-              private tournamentService: TournamentService, private environmentService: EnvironmentService) {
+  constructor(private readonly router: Router, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+              private readonly statisticsService: StatisticsService, private readonly userSessionService: UserSessionService,
+              private readonly rankingService: RankingService, private readonly nameUtilsService: NameUtilsService,
+              private readonly translateService: TranslocoService, private readonly achievementService: AchievementsService,
+              private readonly tournamentService: TournamentService, private readonly environmentService: EnvironmentService) {
     super(rbacService);
-    let state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.lastSuccessfulNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -144,7 +144,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
         .subscribe((tournamentStatistics: TournamentStatistics[]): void => {
           if (tournamentStatistics) {
             for (let tournamentStatistic of tournamentStatistics) {
-              if (tournamentStatistic && tournamentStatistic.tournamentId != tournamentId) {
+              if (tournamentStatistic && tournamentStatistic.tournamentId !== tournamentId) {
                 this.generateStackedStatistics(TournamentStatistics.clone(tournamentStatistic));
               }
             }
@@ -246,29 +246,32 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   obtainParticipants(tournamentStatistics: TournamentStatistics): [string, number][] {
-    const participants: [string, number][] = [];
-    if (tournamentStatistics) {
-      participants.push([this.translateService.translate(RoleType.COMPETITOR.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.COMPETITOR)]);
-      participants.push([this.translateService.translate(RoleType.REFEREE.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.REFEREE)]);
-      participants.push([this.translateService.translate(RoleType.ORGANIZER.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.ORGANIZER)]);
-      participants.push([this.translateService.translate(RoleType.VOLUNTEER.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.VOLUNTEER)]);
-      participants.push([this.translateService.translate(RoleType.PRESS.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.PRESS)]);
+    if (!tournamentStatistics) {
+      return [];
     }
-    return participants;
+    return [
+      [this.translateService.translate(RoleType.COMPETITOR.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.COMPETITOR)],
+      [this.translateService.translate(RoleType.REFEREE.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.REFEREE)],
+      [this.translateService.translate(RoleType.ORGANIZER.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.ORGANIZER)],
+      [this.translateService.translate(RoleType.VOLUNTEER.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.VOLUNTEER)],
+      [this.translateService.translate(RoleType.PRESS.toLowerCase()), tournamentStatistics.numberOfParticipantsByRole(RoleType.PRESS)]
+    ];
   }
 
   obtainPoints(tournamentStatistics: TournamentStatistics): [string, number][] {
-    const scores: [string, number][] = [];
-    if (tournamentStatistics?.tournamentFightStatistics) {
-      scores.push([this.translateService.translate(Score.toCamel(Score.MEN)), tournamentStatistics.tournamentFightStatistics.menNumber ? tournamentStatistics.tournamentFightStatistics.menNumber : 0]);
-      scores.push([this.translateService.translate(Score.toCamel(Score.KOTE)), tournamentStatistics.tournamentFightStatistics.koteNumber ? tournamentStatistics.tournamentFightStatistics.koteNumber : 0]);
-      scores.push([this.translateService.translate(Score.toCamel(Score.DO)), tournamentStatistics.tournamentFightStatistics.doNumber ? tournamentStatistics.tournamentFightStatistics.doNumber : 0]);
-      scores.push([this.translateService.translate(Score.toCamel(Score.TSUKI)), tournamentStatistics.tournamentFightStatistics.tsukiNumber ? tournamentStatistics.tournamentFightStatistics.tsukiNumber : 0]);
-      scores.push([this.translateService.translate(Score.toCamel(Score.IPPON)), tournamentStatistics.tournamentFightStatistics.ipponNumber ? tournamentStatistics.tournamentFightStatistics.ipponNumber : 0]);
-      scores.push([this.translateService.translate(Score.toCamel(Score.FUSEN_GACHI)), tournamentStatistics.tournamentFightStatistics.fusenGachiNumber ? tournamentStatistics.tournamentFightStatistics.fusenGachiNumber : 0]);
-      scores.push([this.translateService.translate(Score.toCamel(Score.HANSOKU)), tournamentStatistics.tournamentFightStatistics.hansokuNumber ? tournamentStatistics.tournamentFightStatistics.hansokuNumber : 0]);
+    if (!tournamentStatistics?.tournamentFightStatistics) {
+      return [];
     }
-    return scores;
+    const fightStatistics = tournamentStatistics.tournamentFightStatistics;
+    return [
+      [this.translateService.translate(Score.toCamel(Score.MEN)), fightStatistics.menNumber ? fightStatistics.menNumber : 0],
+      [this.translateService.translate(Score.toCamel(Score.KOTE)), fightStatistics.koteNumber ? fightStatistics.koteNumber : 0],
+      [this.translateService.translate(Score.toCamel(Score.DO)), fightStatistics.doNumber ? fightStatistics.doNumber : 0],
+      [this.translateService.translate(Score.toCamel(Score.TSUKI)), fightStatistics.tsukiNumber ? fightStatistics.tsukiNumber : 0],
+      [this.translateService.translate(Score.toCamel(Score.IPPON)), fightStatistics.ipponNumber ? fightStatistics.ipponNumber : 0],
+      [this.translateService.translate(Score.toCamel(Score.FUSEN_GACHI)), fightStatistics.fusenGachiNumber ? fightStatistics.fusenGachiNumber : 0],
+      [this.translateService.translate(Score.toCamel(Score.HANSOKU)), fightStatistics.hansokuNumber ? fightStatistics.hansokuNumber : 0]
+    ];
   }
 
   obtainTimes(tournamentStatistics: TournamentStatistics): [string, number] {

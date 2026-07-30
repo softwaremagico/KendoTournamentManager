@@ -156,42 +156,56 @@ export class LoginService {
   }
 
   public autoRenewToken(jwt: string | null, expiration: number, callback: (token: string, expiration: number) => void): void {
-    if (this.interval != null) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
+    this.clearRenewInterval();
     if (expiration > 0 && jwt != null) {
       this.setIntervalRenew(jwt, expiration, callback);
     }
   }
 
+  private clearRenewInterval(): void {
+    if (this.interval != null) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+  }
+
+  private stopAutoRenew(jwt: string, reason: string): void {
+    console.error(reason);
+    this.autoRenewToken(jwt, -1, (): void => {
+    });
+  }
+
+  private getRenewedSession(response: HttpResponse<unknown>): { authToken: string, expiration: number } | null {
+    const authToken: string | null = response.headers.get('Authorization');
+    const expiration: number = Number(response.headers.get('Expires'));
+    if (!authToken || !expiration || Number.isNaN(expiration)) {
+      return null;
+    }
+    return {authToken, expiration};
+  }
+
+  private handleRenewResponse(jwt: string, response: HttpResponse<unknown>, callback: (jwt: string, expiration: number) => void): void {
+    const renewedSession = this.getRenewedSession(response);
+    if (!renewedSession) {
+      this.stopAutoRenew(jwt, 'Server returned invalid renew response');
+      return;
+    }
+    const renewValue: number = (renewedSession.expiration - Date.now()) - LoginService.JWT_RENEW_MARGIN;
+    callback(renewedSession.authToken, renewedSession.expiration);
+    this.setJwtValue(renewedSession.authToken, renewedSession.expiration);
+    this.autoRenewToken(renewedSession.authToken, renewValue, callback);
+  }
+
   private setIntervalRenew(jwt: string, timeout: number, callback: (jwt: string, expiration: number) => void): void {
     this.interval = setInterval((): void => {
-      this.renew().subscribe(
-        response => {
-          if (!response) {
-            console.error('No renew response!!!');
-              this.autoRenewToken(jwt, -1, (): void => {
-            });
-            throw new Error('Server returned no response');
-          }
-          const authToken: string | null = response.headers.get('Authorization');
-          let expiration: number = Number(response.headers.get('Expires'));
-          if (!authToken || !expiration) {
-            this.autoRenewToken(jwt, -1, (): void => {
-            });
-            throw new Error('Server returned invalid response');
-          }
-          if (Number.isNaN(expiration)) {
-            throw new TypeError('Server returned invalid expiration time');
-          }
-          const renewValue: number = (expiration - Date.now()) - LoginService.JWT_RENEW_MARGIN;
-          callback(authToken, expiration);
-          //Set current JWT.
-          this.setJwtValue(authToken, expiration);
-          this.autoRenewToken(authToken, renewValue, callback);
+      this.renew().subscribe({
+        next: (response: HttpResponse<unknown>): void => {
+          this.handleRenewResponse(jwt, response, callback);
+        },
+        error: (): void => {
+          this.stopAutoRenew(jwt, 'JWT renewal failed');
         }
-      )
+      });
     }, timeout);
   }
 

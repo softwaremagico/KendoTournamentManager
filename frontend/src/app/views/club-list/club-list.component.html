@@ -9,6 +9,7 @@
       scrollbarH
       selectable
       >
+      <!--suppress AngularUnusedReference -->
       <ng-template #actions>
         @if (RbacActivity.CREATE_CLUB | hasPermission) {
           <button id="button-plus" class="menu-button" biit-icon icon="plus"
@@ -27,7 +28,7 @@
           <button id="button-edit" class="menu-button" biit-icon icon="edit"
             [title]="t('clubEdit')"
             (click)="editElement(table.selectedRows[0])"
-            [disabled]="!table.selectedRows || table.selectedRows.length != 1"
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1"
           ></button>
         }
         <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
@@ -36,7 +37,7 @@
             <button id="club-ranking" mat-button class="menu-button"
               [title]="t('competitorsClubRanking')"
               (click)="showRanking=true"
-              [disabled]="!table.selectedRows || table.selectedRows.length != 1">
+              [disabled]="!table.selectedRows || table.selectedRows.length !== 1">
               <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
             </button>
           }
@@ -76,7 +77,7 @@
       <competitors-ranking
         [club]="table.selectedRows[0]"
         [showIndex]="true"
-      (onClosed)="showRanking=false"></competitors-ranking>
+      (closed)="showRanking=false"></competitors-ranking>
     </biit-popup>
   }
 

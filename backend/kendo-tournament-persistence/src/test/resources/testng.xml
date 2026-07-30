@@ -29,6 +29,9 @@
                 <include name="fightEntity"/>
                 <include name="teamEntity"/>
                 <include name="groupEntity"/>
+                <include name="authenticatedUserEntity"/>
+                <include name="clubEntity"/>
+                <include name="participantEntity"/>
             </run>
         </groups>
         <classes>
@@ -65,6 +68,9 @@
             <class name="com.softwaremagico.kt.persistence.encryption.SHA512HashGeneratorTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.StringCryptoConverterTest"/>
             <class name="com.softwaremagico.kt.utils.NameUtilsTests"/>
+            <class name="com.softwaremagico.kt.persistence.entities.AuthenticatedUserTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.ClubTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.ParticipantTest"/>
         </classes>
     </test>
 </suite>

@@ -15,6 +15,8 @@
       scrollbarH
       selectable
       >
+      <!--suppress AngularUnusedReference -->
+      <!-- NOSONAR: template ref consumed by datatable -->
       <ng-template #actions>
         @if (RbacActivity.CREATE_TOURNAMENT | hasPermission) {
           <button id="button-plus" class="menu-button" biit-icon icon="plus"
@@ -33,14 +35,14 @@
           <button id="button-edit" class="menu-button" biit-icon icon="edit"
             [title]="t('tournamentEdit')"
             (click)="editElement(table.selectedRows[0])"
-            [disabled]="!table.selectedRows || table.selectedRows.length != 1 || table.selectedRows[0].locked"
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1 || table.selectedRows[0].locked"
           ></button>
         }
         @if ((RbacActivity.READ_ONE_TOURNAMENT | hasPermission)) {
           <button mat-button class="menu-button"
             [title]="t('tournamentClone')"
             (click)="confirmClone=true"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
             <mat-icon class="kendo-icon" svgIcon="clone"></mat-icon>
           </button>
         }
@@ -49,7 +51,7 @@
           <button mat-button class="menu-button"
             [title]="t('roles')"
             (click)="showTournamentRoles=true"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
             <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
           </button>
         }
@@ -57,7 +59,7 @@
           <button mat-button class="menu-button"
             [title]="t('teams')"
             (click)="showTournamentTeams=true"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
             <mat-icon class="kendo-icon" svgIcon="team"></mat-icon>
           </button>
         }
@@ -65,22 +67,22 @@
           <button mat-button class="menu-button"
             [title]="t('fights')"
             (click)="openFights(table.selectedRows[0])"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
             <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
           </button>
         }
-        @if ((RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && (!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked)) {
+        @if ((RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && (!table.selectedRows ||  table.selectedRows.length !== 1 || !table.selectedRows[0]!.locked)) {
           <button class="menu-button" biit-icon icon="lock"
             [title]="t('tournamentLock')"
             (click)="lockElement(table.selectedRows[0],true)"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
           </button>
         }
-        @if ((RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked && table.selectedRows.length == 1) {
+        @if ((RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission) && table.selectedRows && table.selectedRows[0] && table.selectedRows[0]!.locked && table.selectedRows.length === 1) {
           <button class="menu-button" biit-icon icon="unlock"
             [title]="t('tournamentUnlock')"
             (click)="lockElement(table.selectedRows[0],false)"
-            [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
+            [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || !(RbacActivity.EDIT_LOCKED_TOURNAMENT | hasPermission)">
           </button>
         }
         <mat-divider class="extra-menu" [vertical]="true"></mat-divider>
@@ -89,7 +91,7 @@
             <button mat-button class="menu-button"
               [title]="t('titleStatistics')"
               (click)="openStatistics(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
               <mat-icon class="kendo-icon" svgIcon="bar_chart"></mat-icon>
             </button>
           }
@@ -97,7 +99,7 @@
             <button mat-button class="menu-button"
               [title]="t('qrCodeHint')"
               (click)="showQr=true"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || table.selectedRows[0]!.locked">
               <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
             </button>
           }
@@ -105,7 +107,7 @@
             <button mat-button class="menu-button"
               [title]="t('accreditationsHint')"
               (click)="showAccreditationRoles=true"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
               <mat-icon class="kendo-icon" svgIcon="badge"></mat-icon>
             </button>
           }
@@ -113,7 +115,7 @@
             <button mat-button class="menu-button"
               [title]="t('diplomasHint')"
               (click)="showDiplomasRoles=true"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || table.selectedRows[0]!.locked">
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || table.selectedRows[0]!.locked">
               <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
             </button>
           }
@@ -121,7 +123,7 @@
             <button mat-button class="menu-button"
               [title]="t('bloggerStatistics')"
               (click)="downloadBlogCode(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1 || !table.selectedRows[0]!.locked">
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || !table.selectedRows[0]!.locked">
               <mat-icon class="kendo-icon" svgIcon="tournament-blog"></mat-icon>
             </button>
           }
@@ -129,7 +131,7 @@
             <button mat-button class="menu-button"
               [title]="t('tournamentListAsZip')"
               (click)="downloadZip(table.selectedRows[0])"
-              [disabled]="!table.selectedRows ||  table.selectedRows.length != 1">
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1">
               <mat-icon class="kendo-icon" svgIcon="zip-file"></mat-icon>
             </button>
           }
@@ -206,7 +208,7 @@
       [title]="t('addTeamToTournament')">
       <tournament-teams
         [tournament]="table.selectedRows[0]"
-      (onClosed)="showTournamentTeams=false"></tournament-teams>
+      (closed)="showTournamentTeams=false"></tournament-teams>
     </biit-popup>
   }
 

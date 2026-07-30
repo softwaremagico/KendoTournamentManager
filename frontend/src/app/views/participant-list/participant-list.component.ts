@@ -11,7 +11,7 @@ import {UserSessionService} from "../../services/user-session.service";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {DatePipe} from "@angular/common";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
-import {combineLatest, takeUntil} from "rxjs";
+import {combineLatest, forkJoin, takeUntil} from "rxjs";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
@@ -32,6 +32,17 @@ import {ClubNamePipe} from "../../pipes/visualization/club-name-pipe";
   ]
 })
 export class ParticipantListComponent extends RbacBasedComponent implements AfterViewInit {
+  private static readonly COLUMN_TRANSLATION_KEYS: readonly string[] = [
+    'id',
+    'idCard',
+    'name',
+    'lastname',
+    'club',
+    'createdBy',
+    'createdAt',
+    'updatedBy',
+    'updatedAt'
+  ];
 
   protected columns: DatatableColumn[] = [];
   protected pageSize: number = 10;
@@ -58,38 +69,33 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
 
   datePipe(): { transform: (value: number | string | Date | null | undefined) => string | null } {
     return {
-      transform: (value: number | string | Date | null | undefined) => {
-        const normalizedValue: number | string | Date = value ?? 0;
-        return this._datePipe.transform(normalizedValue, Constants.FORMAT.DATE);
-      }
+      transform: (value: number | string | Date | null | undefined = 0) => this._datePipe.transform(value, Constants.FORMAT.DATE)
     }
   }
 
+  private buildColumns(labels: string[]): DatatableColumn[] {
+    const [id, idCard, name, lastname, clubName, createdBy, createdAt, updatedBy, updatedAt] = labels;
+    return [
+      new DatatableColumn(id, 'id', false, 80),
+      new DatatableColumn(idCard, 'idCard', false),
+      new DatatableColumn(name, 'name'),
+      new DatatableColumn(lastname, 'lastname'),
+      new DatatableColumn(clubName, 'club', true, undefined, undefined, this._clubNamePipe),
+      new DatatableColumn(createdBy, 'createdBy', false),
+      new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
+      new DatatableColumn(updatedBy, 'updatedBy', false),
+      new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+    ];
+  }
+
+  private sortClubs(clubs: Club[]): Club[] {
+    return clubs.sort((a: Club, b: Club): number => a.name.localeCompare(b.name));
+  }
+
   ngAfterViewInit() {
-    combineLatest(
-      [
-        this.transloco.selectTranslate('id'),
-        this.transloco.selectTranslate('idCard'),
-        this.transloco.selectTranslate('name'),
-        this.transloco.selectTranslate('lastname'),
-        this.transloco.selectTranslate('club'),
-        this.transloco.selectTranslate('createdBy'),
-        this.transloco.selectTranslate('createdAt'),
-        this.transloco.selectTranslate('updatedBy'),
-        this.transloco.selectTranslate('updatedAt'),
-      ]
-    ).pipe(takeUntil(this.destroySubject)).subscribe(([id, idCard, name, lastname, clubName, createdBy, createdAt, updatedBy, updatedAt]) => {
-      this.columns = [
-        new DatatableColumn(id, 'id', false, 80),
-        new DatatableColumn(idCard, 'idCard', false),
-        new DatatableColumn(name, 'name'),
-        new DatatableColumn(lastname, 'lastname'),
-        new DatatableColumn(clubName, 'club', true, undefined, undefined, this._clubNamePipe),
-        new DatatableColumn(createdBy, 'createdBy', false),
-        new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
-        new DatatableColumn(updatedBy, 'updatedBy', false),
-        new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
-      ];
+    combineLatest(ParticipantListComponent.COLUMN_TRANSLATION_KEYS.map((key: string) => this.transloco.selectTranslate(key)))
+      .pipe(takeUntil(this.destroySubject)).subscribe((labels: string[]) => {
+      this.columns = this.buildColumns(labels);
       this.loadData();
     });
   }
@@ -97,17 +103,13 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   loadData(): void {
     this.loading = true;
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.clubService.getAll().pipe(takeUntil(this.destroySubject)).subscribe((_clubs: Club[]): void => {
-      if (_clubs) {
-        _clubs.sort(function (a: Club, b: Club) {
-          return a.name.localeCompare(b.name);
-        });
-        this.clubs = _clubs
-      }
-    });
-    this.participantService.getAll().pipe(takeUntil(this.destroySubject)).subscribe({
-      next: (_participants: Participant[]): void => {
-        this.participants = _participants.map(_participant => Participant.clone(_participant));
+    forkJoin({
+      clubs: this.clubService.getAll(),
+      participants: this.participantService.getAll()
+    }).pipe(takeUntil(this.destroySubject)).subscribe({
+      next: ({clubs, participants}: { clubs: Club[], participants: Participant[] }): void => {
+        this.clubs = clubs ? this.sortClubs(clubs) : [];
+        this.participants = participants.map(_participant => Participant.clone(_participant));
       },
       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
     }).add(() => {
@@ -144,8 +146,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
     }
   }
 
-  onSaved(savedParticipant?: Participant): void {
-    void savedParticipant;
+  onSaved(_savedParticipant?: Participant): void {
     this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantStored'), NotificationType.INFO);
     this.loadData();
     this.target = null;

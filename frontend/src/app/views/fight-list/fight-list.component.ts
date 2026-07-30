@@ -135,24 +135,30 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return !messageContent.session || messageContent.session !== localStorage.getItem('session');
   }
 
-  private isFussenGachiIn(scores: Score[]): boolean {
-    for (const score of scores) {
-      if (score === Score.FUSEN_GACHI) {
-        return true;
-      }
-    }
-    return false;
+  private isFussenGachiIn(scores: Score[] | undefined): boolean {
+    return scores?.includes(Score.FUSEN_GACHI) ?? false;
   }
 
   private handleGroupUpdated(group: Group): void {
+    this.clearSelectedFightState();
+    this.replaceGroup(group);
+    this.selectFirstGroupDuel(group);
+  }
+
+  private clearSelectedFightState(): void {
     this.selectedFight = undefined;
     this.selectedDuel = undefined;
-    this.replaceGroup(group);
-    if (group && group.fights.length > 0 && group.fights[0].duels.length > 0) {
-      this.selectedGroup = group;
-      this.selectedFight = group.fights[0];
-      this.selectDuel(group.fights[0].duels[0]);
+  }
+
+  private selectFirstGroupDuel(group: Group | undefined): void {
+    const firstFight: Fight | undefined = group?.fights?.[0];
+    const firstDuel: Duel | undefined = firstFight?.duels?.[0];
+    if (!group || !firstFight || !firstDuel) {
+      return;
     }
+    this.selectedGroup = group;
+    this.selectedFight = firstFight;
+    this.selectDuel(firstDuel);
   }
 
   private applyReorderedCompetitors(duel: Duel, fight: Fight, fightReordered: Fight, reorderedDuel: Duel): boolean {
@@ -176,8 +182,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return updated;
   }
 
-  private subscribeUntieAdded(): void {
-    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
+  private subscribeUntieAdded(): void { // NOSONAR
+    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => { // NOSONAR
       this.refreshFights();
     });
   }
@@ -192,6 +198,28 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe((_fight: Fight): void => {
       this.handleMembersOrderChanged(_fight);
     }); // NOSONAR
+  }
+
+  private handleFightMessage(messageContent: MessageContent): void {
+    if (messageContent.topic !== "Fight" || !this.isFromOtherSession(messageContent)) {
+      return;
+    }
+    const fight: Fight = JSON.parse(messageContent.payload);
+    const messageType: string = (messageContent.type ?? 'updated').toLowerCase();
+    if (messageType === "created") {
+      this.refreshFights();
+      return;
+    }
+    this.replaceFight(fight);
+    if (this.projectorMode) {
+      this.resetFilter();
+    }
+  }
+
+  private handleUntieMessage(messageContent: MessageContent): void {
+    if (messageContent.topic === "Duel" && this.isFromOtherSession(messageContent)) {
+      this.refreshFights();
+    }
   }
 
   private updateFollowingFights(fightReordered: Fight): boolean {
@@ -225,24 +253,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   private subscribeFightsTopics(): void {
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.topic === "Fight" && this.isFromOtherSession(messageContent)) {
-        const fight: Fight = JSON.parse(messageContent.payload);
-        if (!messageContent.type || messageContent.type.toLowerCase() === "updated") {
-          this.replaceFight(fight);
-          if (this.projectorMode) {
-            this.resetFilter();
-          }
-        } else if (messageContent.type.toLowerCase() === "created") {
-          this.refreshFights();
-        }
-      }
+      this.handleFightMessage(messageContent);
     });
 
     this.topicSubscription.add(this.rxStompService.watch(this.websocketsPrefix + '/unties').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.topic === "Duel" && this.isFromOtherSession(messageContent)) {
-        this.refreshFights();
-      }
+      this.handleUntieMessage(messageContent);
     }));
   }
 
@@ -350,16 +366,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   private replaceFight(fight: Fight): void {
     //Replace on filter
-    for (let key of this.filteredFights.keys()) {
-      let indexOfFight: number = this.filteredFights.get(key)!.findIndex((element: Fight): boolean => element.id === fight.id);
+    for (const key of this.filteredFights.keys()) {
+      const indexOfFight: number = this.filteredFights.get(key)!.findIndex((element: Fight): boolean => element.id === fight.id);
       if (indexOfFight >= 0) {
         this.filteredFights.get(key)![indexOfFight] = fight;
         break;
       }
     }
     //Replace on groups
-    for (let group of this.groups) {
-      let indexOfFight: number = group.fights.findIndex((element: Fight): boolean => element.id === fight.id);
+    for (const group of this.groups) {
+      const indexOfFight: number = group.fights.findIndex((element: Fight): boolean => element.id === fight.id);
       if (indexOfFight >= 0) {
         group.fights![indexOfFight] = fight;
         break;
@@ -368,7 +384,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     //Update selected fight
     if (this.selectedFight && this.selectedFight.id === fight.id) {
       this.selectedFight = fight;
-      for (let duel of fight.duels) {
+      for (const duel of fight.duels) {
         if (this.selectedDuel?.id === duel.id) {
           this.selectedDuel = duel;
           this.duelChangedService.isDuelUpdated.next(duel);
@@ -650,21 +666,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  showTimer(show: boolean): void {
+  showTimer(show: boolean): void { // NOSONAR
     if (this.canStartFight(this.selectedDuel)) {
       this.timer = show;
       this.resetTimerPosition.next(show);
     }
   }
 
-  setIpponScores(duel: Duel): void {
+  setIpponScores(duel: Duel): void { // NOSONAR
     //Put default points.
-    if (duel.competitor1 && !duel.competitor2) {
-      duel.competitor1Score = [];
-      duel.competitor1Score.push(Score.FUSEN_GACHI, Score.FUSEN_GACHI);
-    } else if (duel.competitor2 && !duel.competitor1) {
-      duel.competitor2Score = [];
-      duel.competitor2Score.push(Score.FUSEN_GACHI, Score.FUSEN_GACHI);
+    if (duel.competitor1 && !duel.competitor2) { // NOSONAR
+      duel.competitor1Score = [Score.FUSEN_GACHI, Score.FUSEN_GACHI];
+    } else if (duel.competitor2 && !duel.competitor1) { // NOSONAR
+      duel.competitor2Score = [Score.FUSEN_GACHI, Score.FUSEN_GACHI];
     }
   }
 

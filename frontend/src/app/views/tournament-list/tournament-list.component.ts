@@ -35,6 +35,19 @@ import {RoleType} from "../../models/role-type";
   ]
 })
 export class TournamentListComponent extends RbacBasedComponent implements AfterViewInit {
+  private static readonly COLUMN_TRANSLATION_KEYS: readonly string[] = [
+    'id',
+    'name',
+    'tournamentType',
+    'scoreRules',
+    'locked',
+    'shiaijos',
+    'teamSize',
+    'createdBy',
+    'createdAt',
+    'updatedBy',
+    'updatedAt'
+  ];
 
   protected columns: DatatableColumn[] = [];
   protected pageSize: number = 10;
@@ -53,7 +66,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected showQr: boolean = false;
   protected readonly port: number = +window.location.port;
 
-  @ViewChildren('booleanCell') booleanCell: QueryList<TemplateRef<any>>;
+  @ViewChildren('booleanCell') booleanCellTemplates: QueryList<TemplateRef<unknown>>;
   @ViewChild('table')
   table: BiitDatatableComponent<Tournament>;
 
@@ -73,35 +86,37 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     }
   }
 
+  private buildColumns(labels: string[]): DatatableColumn[] {
+    const [id, name, type, scoreRules, locked, shiaijos, teamSize, createdBy, createdAt, updatedBy, updatedAt] = labels;
+    return [
+      new DatatableColumn(id, 'id', false, 80),
+      new DatatableColumn(name, 'name'),
+      new DatatableColumn(type, 'type', true, undefined, undefined, this.tableColumnTranslationPipe),
+      new DatatableColumn(scoreRules, 'tournamentScore', false, undefined, undefined, this.tableColumnTranslationPipe),
+      new DatatableColumn(locked, 'locked', false, 200, undefined, undefined, this.booleanCellTemplates.first),
+      new DatatableColumn(shiaijos, 'shiaijos', false, 150),
+      new DatatableColumn(teamSize, 'teamSize', true, 150),
+      new DatatableColumn(createdBy, 'createdBy', false),
+      new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
+      new DatatableColumn(updatedBy, 'updatedBy', false),
+      new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+    ];
+  }
+
+  private downloadFile(content: BlobPart, type: string, fileName: string): void {
+    const blob: Blob = new Blob([content], {type});
+    const downloadURL: string = window.URL.createObjectURL(blob);
+    const anchor: HTMLAnchorElement = document.createElement('a');
+    anchor.download = fileName;
+    anchor.href = downloadURL;
+    anchor.click();
+    window.URL.revokeObjectURL(downloadURL);
+  }
+
   ngAfterViewInit() {
-    combineLatest(
-      [
-        this.transloco.selectTranslate('id'),
-        this.transloco.selectTranslate('name'),
-        this.transloco.selectTranslate('tournamentType'),
-        this.transloco.selectTranslate('scoreRules'),
-        this.transloco.selectTranslate('locked'),
-        this.transloco.selectTranslate('shiaijos'),
-        this.transloco.selectTranslate('teamSize'),
-        this.transloco.selectTranslate('createdBy'),
-        this.transloco.selectTranslate('createdAt'),
-        this.transloco.selectTranslate('updatedBy'),
-        this.transloco.selectTranslate('updatedAt'),
-      ]
-    ).pipe(takeUntil(this.destroySubject)).subscribe(([id, name, type, scoreRules, locked, shiaijos, teamSize, createdBy, createdAt, updatedBy, updatedAt]) => {
-      this.columns = [
-        new DatatableColumn(id, 'id', false, 80),
-        new DatatableColumn(name, 'name'),
-        new DatatableColumn(type, 'type', true, undefined, undefined, this.tableColumnTranslationPipe),
-        new DatatableColumn(scoreRules, 'tournamentScore', false, undefined, undefined, this.tableColumnTranslationPipe),
-        new DatatableColumn(locked, 'locked', false, 200, undefined, undefined, this.booleanCell.first),
-        new DatatableColumn(shiaijos, 'shiaijos', false, 150),
-        new DatatableColumn(teamSize, 'teamSize', true, 150),
-        new DatatableColumn(createdBy, 'createdBy', false),
-        new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
-        new DatatableColumn(updatedBy, 'updatedBy', false),
-        new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
-      ];
+    combineLatest(TournamentListComponent.COLUMN_TRANSLATION_KEYS.map((key: string) => this.transloco.selectTranslate(key)))
+      .pipe(takeUntil(this.destroySubject)).subscribe((labels: string[]) => {
+      this.columns = this.buildColumns(labels);
       this.loadData();
     });
   }
@@ -161,13 +176,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     if (tournament?.id) {
       this.loadingGlobal = true;
       this.rankingService.getTournamentSummaryAsHtml(tournament.id).subscribe((html: Blob): void => {
-        const blob: Blob = new Blob([html], {type: 'txt/plain'});
-        const downloadURL: string = window.URL.createObjectURL(blob);
-
-        const anchor = document.createElement("a");
-        anchor.download = "Code - " + tournament!.name + ".txt";
-        anchor.href = downloadURL;
-        anchor.click();
+        this.downloadFile(html, 'txt/plain', "Code - " + tournament.name + '.txt');
       }).add(() => {
         this.loadingGlobal = false;
       });
@@ -178,13 +187,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     if (data?.tournament?.id) {
       this.tournamentService.getAccreditations(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob): void => {
         if (html !== null) {
-          const blob: Blob = new Blob([html], {type: 'application/pdf'});
-          const downloadURL: string = window.URL.createObjectURL(blob);
-
-          const anchor: HTMLAnchorElement = document.createElement("a");
-          anchor.download = "Accreditations - " + data.tournament!.name + ".pdf";
-          anchor.href = downloadURL;
-          anchor.click();
+          this.downloadFile(html, 'application/pdf', 'Accreditations - ' + data.tournament.name + '.pdf');
           this.showAccreditationRoles = false;
         } else {
           this.messageService.warningMessage('noResults');
@@ -200,13 +203,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
       this.loadingGlobal = true;
       this.tournamentService.getDiplomas(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob) => {
         if (html !== null) {
-          const blob: Blob = new Blob([html], {type: 'application/pdf'});
-          const downloadURL: string = window.URL.createObjectURL(blob);
-
-          const anchor: HTMLAnchorElement = document.createElement("a");
-          anchor.download = "Diplomas - " + data.tournament!.name + ".pdf";
-          anchor.href = downloadURL;
-          anchor.click();
+          this.downloadFile(html, 'application/pdf', 'Diplomas - ' + data.tournament.name + '.pdf');
           this.showDiplomasRoles = false;
         } else {
           this.messageService.warningMessage('noResults');
@@ -257,13 +254,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     if (tournament?.id) {
       this.loadingGlobal = true;
       this.rankingService.getAllListAsZip(tournament.id).subscribe((html: Blob): void => {
-        const blob: Blob = new Blob([html], {type: 'application/zip'});
-        const downloadURL: string = window.URL.createObjectURL(blob);
-
-        const anchor = document.createElement("a");
-        anchor.download = tournament!.name + ".zip";
-        anchor.href = downloadURL;
-        anchor.click();
+        this.downloadFile(html, 'application/zip', tournament.name + '.zip');
       }).add(() => {
         this.loadingGlobal = false
       });

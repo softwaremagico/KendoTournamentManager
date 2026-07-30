@@ -37,6 +37,12 @@
                 <include name="loggableDispatcherServletTests"/>
                 <include name="authApiUnitTests"/>
                 <include name="kendoUserDetailsServiceTests"/>
+                <include name="loggedHttpException"/>
+                <include name="cachingServices"/>
+                <include name="fileServices"/>
+                <include name="frontendLoggerServices"/>
+                <include name="openApiServices"/>
+                <include name="roleServices"/>
             </run>
         </groups>
         <classes>
@@ -90,6 +96,12 @@
             <class name="com.softwaremagico.kt.security.UserRegistrationTest"/>
             <class name="com.softwaremagico.kt.rest.security.WebSocketSecurityConfigTest"/>
             <class name="com.softwaremagico.kt.LoggableDispatcherServletTest"/>
+            <class name="com.softwaremagico.kt.rest.exceptions.LoggedHttpExceptionTest"/>
+            <class name="com.softwaremagico.kt.rest.services.CachingServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.FileServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.FrontendLoggerServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.OpenApiServicesTest"/>
+            <class name="com.softwaremagico.kt.rest.services.RoleServicesTest"/>
         </classes>
     </test>
 </suite>

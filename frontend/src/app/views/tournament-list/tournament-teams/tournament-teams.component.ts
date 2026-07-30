@@ -68,61 +68,82 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return this.members.get(team)!;
   }
 
-  ngOnInit(): void {
-    let teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
-    let roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
-    forkJoin([teamsRequest, roleRequests]).pipe(takeUntil(this.destroySubject)).subscribe(([teams, roles]): void => {
-      roles ??= [];
-      this.userListData.participants = roles.map((role: Role) => role.participant).sort(function (a: Participant, b: Participant) {
-        return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
-      });
-      //Block participants.
-      if (this.tournament.locked) {
-        for (let participant of this.userListData.participants) {
-          participant.locked = participant.locked || this.tournament.locked;
+  private sortTeamsByName(teams: Team[]): Team[] {
+    return teams.sort((a: Team, b: Team): number => a.name.localeCompare(b.name));
+  }
+
+  private buildTeamSize(): void {
+    this.teamSize = [];
+    for (let i = 0; i < this.tournament.teamSize; i++) {
+      this.teamSize.push(i);
+    }
+  }
+
+  private blockParticipantsIfTournamentLocked(): void {
+    if (!this.tournament.locked) {
+      return;
+    }
+    for (const participant of this.userListData.participants) {
+      participant.locked = participant.locked || this.tournament.locked;
+    }
+  }
+
+  private removeAssignedParticipantsFromAvailableList(teams: Team[]): void {
+    const memberIds: Set<number> = new Set<number>();
+    for (const team of teams) {
+      for (const member of team.members) {
+        if (member?.id !== undefined) {
+          memberIds.add(member.id);
         }
       }
-      if (teams !== undefined) {
-        teams.sort(function (a: Team, b: Team) {
-          return a.name.localeCompare(b.name);
-        });
-        for (let team of teams) {
-          for (let member of team.members) {
-            if (member) {
-              this.userListData.participants.splice(this.userListData.participants.map(function (p: Participant) {
-                return p.id;
-              }).indexOf(member.id), 1)
-            }
-          }
-          this.members.set(team, team.members);
-        }
-        this.userListData.filteredParticipants = this.userListData.participants;
-        this.teams = teams;
-        this.teamSize = []
-        for (let i = 0; i < this.tournament.teamSize; i++) {
-          this.teamSize.push(i);
+      this.members.set(team, team.members);
+    }
+    this.userListData.participants = this.userListData.participants.filter((participant: Participant): boolean => !memberIds.has(participant.id!));
+  }
+
+  private loadTeamsAndParticipants(): void {
+    const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
+    const roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
+    forkJoin([teamsRequest, roleRequests]).pipe(takeUntil(this.destroySubject)).subscribe(([teams, roles]): void => {
+      roles ??= [];
+      this.userListData.participants = roles.map((role: Role) => role.participant).sort((a: Participant, b: Participant): number => {
+        return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
+      });
+      this.blockParticipantsIfTournamentLocked();
+      if (teams === undefined) {
+        return;
+      }
+      this.teams = this.sortTeamsByName(teams);
+      this.removeAssignedParticipantsFromAvailableList(this.teams);
+      this.userListData.filteredParticipants = this.userListData.participants;
+      this.buildTeamSize();
+    });
+  }
+
+  private loadGroups(): void {
+    this.groupService.getFromTournament(this.tournament.id!).pipe(takeUntil(this.destroySubject)).subscribe((_groups: Group[]): void => {
+      this.groups = _groups;
+    });
+  }
+
+  private loadTeamLocks(): void {
+    this.fightService.getFromTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_fights: Fight[]): void => {
+      const teamIdsInFights: Set<number> = new Set<number>([
+        ..._fights.map((fight: Fight) => fight.team1?.id),
+        ..._fights.map((fight: Fight) => fight.team2?.id)
+      ].filter((teamId): teamId is number => teamId !== undefined));
+      if (this.teams) {
+        for (const team of this.teams) {
+          team.locked = teamIdsInFights.has(team.id!);
         }
       }
     });
-    //Get tournament groups
-    this.groupService.getFromTournament(this.tournament.id!).pipe(takeUntil(this.destroySubject)).subscribe((_groups: Group[]): void => {
-        this.groups = _groups;
-      }
-    )
-    //Prevent removing teams that are on fights
-    this.fightService.getFromTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_fights: Fight[]): void => {
-      let teamInFights: Team[] = [
-        ..._fights.map((fight: Fight) => fight.team1),
-        ..._fights.map((fight: Fight) => fight.team2)
-      ];
-      //Remove duplicates.
-      teamInFights = teamInFights.filter((team: Team, i: number, a: Team[]): boolean => i === a.indexOf(team));
-      if (this.teams) {
-        for (let team of this.teams) {
-          team.locked = teamInFights.some((t: Team): boolean => t.id === team.id);
-        }
-      }
-    })
+  }
+
+  ngOnInit(): void {
+    this.loadTeamsAndParticipants();
+    this.loadGroups();
+    this.loadTeamLocks();
   }
 
   getMember(team: Team, index: number): Participant | undefined {
