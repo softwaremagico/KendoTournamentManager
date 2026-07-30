@@ -117,8 +117,10 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   ngAfterViewInit() {
     combineLatest(TournamentListComponent.COLUMN_TRANSLATION_KEYS.map((key: string) => this.transloco.selectTranslate(key)))
       .pipe(takeUntil(this.destroySubject)).subscribe((labels: string[]) => {
-      this.columns = this.buildColumns(labels);
-      this.loadData();
+      setTimeout((): void => {
+        this.columns = this.buildColumns(labels);
+        this.loadData();
+      });
     });
   }
 
