@@ -6,6 +6,8 @@ import {formatDate} from "@angular/common";
 import {AchievementType} from "../../models/achievement-type.model";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {AchievementsService} from "../../services/achievements.service";
+import {KendoComponent} from "../kendo-component";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -15,7 +17,7 @@ import {AchievementsService} from "../../services/achievements.service";
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class AchievementTileComponent implements OnInit, OnChanges {
+export class AchievementTileComponent extends KendoComponent implements OnInit, OnChanges {
 
   @Input()
   achievementType: AchievementType;
@@ -41,9 +43,9 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   tooltipHtml: string;
   totalHtml: string;
 
-  constructor(private translateService: TranslocoService, private nameUtils: NameUtilsService,
-              private achievementsService: AchievementsService) {
-
+  constructor(private readonly translateService: TranslocoService, private readonly nameUtils: NameUtilsService,
+              private readonly achievementsService: AchievementsService) {
+    super();
   }
 
 
@@ -60,14 +62,14 @@ export class AchievementTileComponent implements OnInit, OnChanges {
       //Set border color.
       if (this.achievements) {
         for (const achievement of this.achievements) {
-          if (achievement.achievementGrade == AchievementGrade.BRONZE &&
-            this.grade != AchievementGrade.SILVER) {
+          if (achievement.achievementGrade === AchievementGrade.BRONZE &&
+            this.grade !== AchievementGrade.SILVER) {
             this.grade = AchievementGrade.BRONZE;
           }
-          if (achievement.achievementGrade == AchievementGrade.SILVER) {
+          if (achievement.achievementGrade === AchievementGrade.SILVER) {
             this.grade = AchievementGrade.SILVER;
           }
-          if (achievement.achievementGrade == AchievementGrade.GOLD) {
+          if (achievement.achievementGrade === AchievementGrade.GOLD) {
             this.grade = AchievementGrade.GOLD;
             break;
           }
@@ -75,7 +77,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
         }
       }
       if (this.achievements && this.achievements?.length) {
-        this.achievementsService.countByType(this.achievementType).subscribe(_count => {
+        this.achievementsService.countByType(this.achievementType).pipe(takeUntil(this.destroySubject)).subscribe(_count => {
           this.totalHtml = this.totalAchievedByText(_count);
         });
       }
@@ -91,7 +93,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   getAchievementImage(): string {
-    if (!this.achievements || this.achievements?.length == 0) {
+    if (!this.achievements || this.achievements?.length === 0) {
       return "assets/achievements/locked.svg";
     }
     return "assets/achievements/" + this.achievementType.toLowerCase() + ".svg";
@@ -149,7 +151,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   participantToolTipText(): string {
-    if (!this.view || !this.achievements || this.achievements.length == 0) {
+    if (!this.view || !this.achievements || this.achievements.length === 0) {
       return "";
     }
     let tooltipText: string = this.getAchievementDescription();
@@ -160,16 +162,16 @@ export class AchievementTileComponent implements OnInit, OnChanges {
         if (achievement.tournament) {
           tooltipText += '<div class="tournament-item">';
           tooltipText += '<div class="circle ';
-          if (achievement.achievementGrade == AchievementGrade.NORMAL) {
+          if (achievement.achievementGrade === AchievementGrade.NORMAL) {
             tooltipText += ' normal';
           }
-          if (achievement.achievementGrade == AchievementGrade.BRONZE) {
+          if (achievement.achievementGrade === AchievementGrade.BRONZE) {
             tooltipText += ' bronze';
           }
-          if (achievement.achievementGrade == AchievementGrade.SILVER) {
+          if (achievement.achievementGrade === AchievementGrade.SILVER) {
             tooltipText += ' silver';
           }
-          if (achievement.achievementGrade == AchievementGrade.GOLD) {
+          if (achievement.achievementGrade === AchievementGrade.GOLD) {
             tooltipText += ' gold';
           }
           tooltipText += '"></div>';
@@ -187,7 +189,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   tournamentToolTipText(): string {
-    if (!this.view || !this.achievements || this.achievements.length == 0) {
+    if (!this.view || !this.achievements || this.achievements.length === 0) {
       return "";
     }
     let tooltipText: string = this.getAchievementDescription();
@@ -198,16 +200,16 @@ export class AchievementTileComponent implements OnInit, OnChanges {
         if (achievement.tournament) {
           tooltipText += '<div class="tournament-item">';
           tooltipText += '<div class="circle ';
-          if (achievement.achievementGrade == AchievementGrade.NORMAL) {
+          if (achievement.achievementGrade === AchievementGrade.NORMAL) {
             tooltipText += ' normal';
           }
-          if (achievement.achievementGrade == AchievementGrade.BRONZE) {
+          if (achievement.achievementGrade === AchievementGrade.BRONZE) {
             tooltipText += ' bronze';
           }
-          if (achievement.achievementGrade == AchievementGrade.SILVER) {
+          if (achievement.achievementGrade === AchievementGrade.SILVER) {
             tooltipText += ' silver';
           }
-          if (achievement.achievementGrade == AchievementGrade.GOLD) {
+          if (achievement.achievementGrade === AchievementGrade.GOLD) {
             tooltipText += ' gold';
           }
           tooltipText += '"></div>';
@@ -223,7 +225,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   private getAchievementDescription(): string {
-    if (!this.view || !this.achievements || this.achievements.length == 0) {
+    if (!this.view || !this.achievements || this.achievements.length === 0) {
       return "";
     }
     const achievementTag: string = AchievementType.toCamel(this.achievements[0].achievementType);

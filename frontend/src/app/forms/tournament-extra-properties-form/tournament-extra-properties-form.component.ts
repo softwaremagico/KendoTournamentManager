@@ -12,7 +12,7 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {LeagueFightsOrder} from "../../models/league-fights-order";
 import {Tournament} from "../../models/tournament";
 import {TournamentType} from "../../models/tournament-type";
-import {combineLatest} from "rxjs";
+import {combineLatest, takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -56,13 +56,11 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
   swissAvoidRepeatedPairings: boolean;
   protected swissTieBreakRules = SwissTieBreakRule.toArray();
   protected swissTieBreakRuleValues: { value: string, label: string, description: string }[] = [];
-  protected readonly SwissTieBreakRule = SwissTieBreakRule;
-
   protected readonly TournamentExtraPropertyKey = TournamentExtraPropertyKey;
   protected readonly Type = Type;
 
   constructor(rbacService: RbacService, public transloco: TranslocoService,
-              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
+              private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
               public messageService: MessageService) {
     super(rbacService);
 
@@ -82,41 +80,52 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
     this.canResolveOddFightsAsap = TournamentType.resolveOddFightsAsap(this.tournament.type)
     this.canConfigureSwiss = TournamentType.isSwiss(this.tournament.type);
 
-    this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
+    this.tournamentExtendedPropertiesService.getByTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
       if (_tournamentSelection) {
         for (const _tournamentProperty of _tournamentSelection) {
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.KING_DRAW_RESOLUTION) {
-            this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.propertyValue);
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.MAXIMIZE_FIGHTS) {
-            this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-            this.firstInFirstOut = (_tournamentProperty.propertyValue.toUpperCase() == LeagueFightsOrder.FIFO);
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.AVOID_DUPLICATES) {
-            this.avoidDuplicatedFights = (_tournamentProperty.propertyValue.toLowerCase() == "true");
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
-            this.resolveOddFightsAsap = (_tournamentProperty.propertyValue.toLowerCase() == "true");
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
-            this.challengeDistance = Number.isNaN(+_tournamentProperty.propertyValue) ? TournamentExtraPropertyKey.senbatsuChallengeDistance() : Number(_tournamentProperty.propertyValue);
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SWISS_ROUNDS) {
-            const parsed = Number(_tournamentProperty.propertyValue);
-            this.swissRounds = Number.isNaN(parsed) ? null : parsed;
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE) {
-            this.swissTieBreakRule = SwissTieBreakRule.getByKey(_tournamentProperty.propertyValue)
-              ?? TournamentExtraPropertyKey.swissDefaultTieBreakRule();
-          }
-          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS) {
-            this.swissAvoidRepeatedPairings = (_tournamentProperty.propertyValue.toLowerCase() === 'true');
-          }
+          this.applyTournamentProperty(_tournamentProperty);
         }
       }
     });
+  }
+
+  private applyTournamentProperty(property: TournamentExtendedProperty): void {
+    switch (property.propertyKey) {
+      case TournamentExtraPropertyKey.KING_DRAW_RESOLUTION:
+        this.selectedDrawResolution = DrawResolution.getByKey(property.propertyValue);
+        break;
+      case TournamentExtraPropertyKey.MAXIMIZE_FIGHTS:
+        this.areFightsMaximized = property.propertyValue.toLowerCase() === "true";
+        break;
+      case TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION:
+        this.firstInFirstOut = property.propertyValue.toUpperCase() === LeagueFightsOrder.FIFO;
+        break;
+      case TournamentExtraPropertyKey.AVOID_DUPLICATES:
+        this.avoidDuplicatedFights = property.propertyValue.toLowerCase() === "true";
+        break;
+      case TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP:
+        this.resolveOddFightsAsap = property.propertyValue.toLowerCase() === "true";
+        break;
+      case TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE:
+        this.challengeDistance = Number.isNaN(+property.propertyValue)
+          ? TournamentExtraPropertyKey.senbatsuChallengeDistance()
+          : Number(property.propertyValue);
+        break;
+      case TournamentExtraPropertyKey.SWISS_ROUNDS: {
+        const parsed: number = Number(property.propertyValue);
+        this.swissRounds = Number.isNaN(parsed) ? null : parsed;
+        break;
+      }
+      case TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE:
+        this.swissTieBreakRule = SwissTieBreakRule.getByKey(property.propertyValue)
+          ?? TournamentExtraPropertyKey.swissDefaultTieBreakRule();
+        break;
+      case TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS:
+        this.swissAvoidRepeatedPairings = property.propertyValue.toLowerCase() === 'true';
+        break;
+      default:
+        break;
+    }
   }
 
   defaultPropertiesValue(): void {
@@ -133,7 +142,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
 
   private translateDrawResolution() {
     const scoresTranslations = this.drawResolutions.map(drawValue => this.transloco.selectTranslate(`${DrawResolution.toCamel(drawValue)}`));
-    combineLatest(scoresTranslations).subscribe((translations) => {
+    combineLatest(scoresTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
       translations.forEach((label, index) => this.drawResolutionValues.push({
         value: this.drawResolutions[index],
         label: label,
@@ -154,7 +163,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
     const translations = this.swissTieBreakRules.map(rule =>
       this.transloco.selectTranslate(SwissTieBreakRule.toCamel(rule))
     );
-    combineLatest(translations).subscribe((labels) => {
+    combineLatest(translations).pipe(takeUntil(this.destroySubject)).subscribe((labels) => {
       labels.forEach((label, index) => this.swissTieBreakRuleValues.push({
         value: this.swissTieBreakRules[index],
         label: label,
@@ -165,7 +174,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
 
   onSave(tournamentExtraProperty: TournamentExtraPropertyKey, propertyValue: string) {
     if (tournamentExtraProperty === TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-      if (propertyValue == "true") {
+      if (propertyValue === "true") {
         propertyValue = LeagueFightsOrder.FIFO;
       } else {
         propertyValue = LeagueFightsOrder.LIFO;

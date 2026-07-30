@@ -9,6 +9,7 @@ import {GroupService} from "../../services/group.service";
 import {MessageService} from "../../services/message.service";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -38,7 +39,7 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
     this.duels = [];
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initializeDuels();
   }
 
@@ -61,7 +62,7 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
   }
 
   getTotalDuels(): number {
-    if (this.teams.length == 2) {
+    if (this.teams.length === 2) {
       return 1;
     }
     if (this.teams.length > 2) {
@@ -81,7 +82,7 @@ export class UntieTeamsComponent extends RbacBasedComponent implements OnChanges
 
   createFights(): void {
     if (this.groupId) {
-      this.groupServices.addUnties(this.groupId, this.duels).subscribe((): void => {
+      this.groupServices.addUnties(this.groupId, this.duels).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
         this.messageService.infoMessage("addFight");
         this.untieAddedService.isDuelsAdded.next(this.duels);
         this.closed.emit(this.duels);

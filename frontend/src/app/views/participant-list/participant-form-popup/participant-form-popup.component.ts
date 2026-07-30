@@ -25,45 +25,36 @@ export class ParticipantFormPopupComponent implements OnInit {
   @Input() participant: Participant;
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
   @Output() saved: EventEmitter<Participant> = new EventEmitter<Participant>();
-  @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() errorEvent: EventEmitter<unknown> = new EventEmitter<unknown>();
 
   protected readonly RbacActivity = RbacActivity;
 
   protected errors: Map<ParticipantFormValidationFields, string> = new Map<ParticipantFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;
 
-  constructor(protected sessionService: UserSessionService, private csvService: CsvService,
-              private biitSnackbarService: BiitSnackbarService, protected transloco: TranslocoService) {
+  constructor(protected sessionService: UserSessionService, private readonly csvService: CsvService,
+              private readonly biitSnackbarService: BiitSnackbarService, protected transloco: TranslocoService) {
   }
 
   ngOnInit(): void {
     this.loggedUser = this.sessionService.getUser();
   }
 
-  handleFileInput(event: Event) {
-    const element = event.currentTarget as HTMLInputElement;
-    let fileList: FileList | null = element.files;
-    if (fileList) {
-      const file: File | null = fileList.item(0);
-      if (file) {
-        this.csvService.addParticipants(file).subscribe(_participants => {
-          if (_participants.length == 0) {
-            this.transloco.selectTranslate('infoParticipantStored').subscribe(
-              translation => {
-                this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
-              }
-            );
-            this.saved.emit();
-          } else {
-            const parameters: object = {element: _participants[0].name};
-            this.transloco.selectTranslate('failedOnCsvField', parameters).subscribe(
-              translation => {
-                this.biitSnackbarService.showNotification(translation, NotificationType.ERROR);
-              }
-            );
-          }
-        });
-      }
+  handleFileInput(event: Event): void {
+    const element: HTMLInputElement = event.currentTarget as HTMLInputElement;
+    const file: File | null | undefined = element.files?.item(0);
+    if (!file) {
+      return;
     }
+
+    this.csvService.addParticipants(file).subscribe(_participants => {
+      if (_participants.length === 0) {
+        this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantStored'), NotificationType.SUCCESS);
+        this.saved.emit();
+      } else {
+        const parameters: object = {element: _participants[0].name};
+        this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', parameters), NotificationType.ERROR);
+      }
+    });
   }
 }

@@ -26,6 +26,9 @@
                 <include name="persistenceValues"/>
                 <include name="entityEquals"/>
                 <include name="duelEntity"/>
+                <include name="fightEntity"/>
+                <include name="teamEntity"/>
+                <include name="groupEntity"/>
             </run>
         </groups>
         <classes>
@@ -51,6 +54,9 @@
             <class name="com.softwaremagico.kt.persistence.entities.EntityBeansCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.EntityEqualsCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.DuelEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.FightEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.TeamEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.GroupEntityCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.values.PersistenceValuesCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.DoubleCryptoConverterTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.GCMCipherEngineTest"/>

@@ -7,6 +7,8 @@ import {ScoreUpdatedService} from "../../../../../services/notifications/score-u
 import {TranslocoService} from '@jsverse/transloco';
 import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
+import {KendoComponent} from "../../../../../components/kendo-component";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -16,7 +18,7 @@ import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class ScoreComponent implements OnInit, OnChanges {
+export class ScoreComponent extends KendoComponent implements OnInit, OnChanges {
 
   @Input()
   index: number;
@@ -55,11 +57,12 @@ export class ScoreComponent implements OnInit, OnChanges {
 
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
               private translateService: TranslocoService, public rbacService: RbacService) {
+    super();
   }
 
   ngOnInit(): void {
-    this.scoreUpdatedService.isScoreUpdated.subscribe((duel: Duel): void => {
-      if (duel == this.duel) {
+    this.scoreUpdatedService.isScoreUpdated.pipe(takeUntil(this.destroySubject)).subscribe((duel: Duel): void => {
+      if (duel === this.duel) {
         this.scoreRepresentation = this.getScoreRepresentation();
         this.setTime();
       }
@@ -147,7 +150,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   updateScore(score: Score): void {
     if (this.updateDuel(score)) {
       this.duel.finishedAt = undefined;
-      this.duelService.update(this.duel).subscribe((duel: Duel): Duel => {
+      this.duelService.update(this.duel).pipe(takeUntil(this.destroySubject)).subscribe((duel: Duel): Duel => {
         this.messageService.infoMessage('infoScoreUpdated');
         return duel;
       });
@@ -234,7 +237,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   }
 
   tooltipText(): string {
-    if (!this.timeRepresentation || this.timeRepresentation.length == 0) {
+    if (!this.timeRepresentation?.length) {
       return "";
     }
     return '<span class="tooltip-score"><b>' + this.getScore() + '</b></span><br>' +

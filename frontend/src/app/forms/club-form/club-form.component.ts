@@ -6,9 +6,9 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {provideTranslocoScope, TranslocoService} from "@jsverse/transloco";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
-import {TypeValidations} from "../../utils/type-validations";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {ClubService} from "../../services/club.service";
+import {validateClubForm} from "./club-form-validation";
 
 @Component({
   standalone: false,
@@ -51,87 +51,9 @@ export class ClubFormComponent extends RbacBasedComponent {
     super(rbacService)
   }
 
-  protected validate(): boolean {
+  protected validate(): boolean { // NOSONAR
     this.errors = new Map<ClubFormValidationFields, string>();
-    let verdict: boolean = true;
-    if (!this.club.name || this.club.name.length == 0) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    } else {
-      if (this.club.name && this.club.name.length < this.CLUB_NAME_MIN_LENGTH) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
-      }
-      if (this.club.name && this.club.name.length > this.CLUB_NAME_MAX_LENGTH) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
-      }
-    }
-    if (!this.club.country || this.club.country.length == 0) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.COUNTRY_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    } else {
-      if (this.club.country && this.club.country.length < this.CLUB_COUNTRY_MIN_LENGTH) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.COUNTRY_ERRORS, this.transloco.translate(`v.minLengthError`));
-      }
-      if (this.club.country && this.club.country.length > this.CLUB_COUNTRY_MAX_LENGTH) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.COUNTRY_ERRORS, this.transloco.translate(`v.maxLengthError`));
-      }
-    }
-    if (!this.club.city || this.club.city.length == 0) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.CITY_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    } else {
-      if (this.club.city && this.club.city.length < this.CLUB_CITY_MIN_LENGTH) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.CITY_ERRORS, this.transloco.translate(`v.minLengthError`));
-      }
-      if (this.club.city && this.club.city.length > this.CLUB_CITY_MAX_LENGTH) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.CITY_ERRORS, this.transloco.translate(`v.maxLengthError`));
-      }
-    }
-    if (this.club.email) {
-      if (!TypeValidations.isEmail(this.club.email)) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.EMAIL_ERRORS, this.transloco.translate(`v.formatInvalid`));
-      }
-    }
-    if (this.club.email && this.club.email.length > this.CLUB_EMAIL_MAX_LENGTH) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.EMAIL_ERRORS, this.transloco.translate(`v.maxLengthError`));
-    }
-    if (this.club.phone) {
-      if (!TypeValidations.isPhoneNumber(this.club.phone)) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.PHONE_ERRORS, this.transloco.translate(`v.formatInvalid`));
-      }
-    }
-    if (this.club.phone && this.club.phone.length < this.CLUB_PHONE_MIN_LENGTH) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.PHONE_ERRORS, this.transloco.translate(`v.minLengthError`));
-    }
-    if (this.club.phone && this.club.phone.length > this.CLUB_PHONE_MAX_LENGTH) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.PHONE_ERRORS, this.transloco.translate(`v.maxLengthError`));
-    }
-    if (this.club.web) {
-      if (!TypeValidations.isWebPage(this.club.web)) {
-        verdict = false;
-        this.errors.set(ClubFormValidationFields.WEB_ERRORS, this.transloco.translate(`v.formatInvalid`));
-      }
-    }
-    if (this.club.web && this.club.web.length < this.CLUB_WEB_MIN_LENGTH) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.WEB_ERRORS, this.transloco.translate(`v.minLengthError`));
-    }
-    if (this.club.web && this.club.web.length > this.CLUB_WEB_MAX_LENGTH) {
-      verdict = false;
-      this.errors.set(ClubFormValidationFields.WEB_ERRORS, this.transloco.translate(`v.maxLengthError`));
-    }
-    return verdict;
+    return validateClubForm(this.club, this.transloco, this.errors);
   }
 
   onSave() {
@@ -147,7 +69,7 @@ export class ClubFormComponent extends RbacBasedComponent {
         next: (club: Club): void => {
           this.saved.emit(club);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });
@@ -156,7 +78,7 @@ export class ClubFormComponent extends RbacBasedComponent {
         next: (club: Club): void => {
           this.saved.emit(club);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });

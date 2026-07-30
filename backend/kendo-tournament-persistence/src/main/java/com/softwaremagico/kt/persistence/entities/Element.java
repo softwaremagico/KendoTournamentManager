@@ -169,8 +169,9 @@ public abstract class Element implements Serializable {
     }
 
     /**
-     * Two entities are considered equal when they share the same database primary key.
-     * A {@code null} ID (transient entity) is never equal to another entity.
+     * Two entities are considered equal when they share the same non-null database primary key.
+     * A {@code null} ID (transient/unsaved entity) is never equal to another entity, even if the
+     * other entity is also transient, unless it is the very same instance ({@code this == o}).
      */
     @Override
     public boolean equals(Object o) {
@@ -181,6 +182,9 @@ public abstract class Element implements Serializable {
             return false;
         }
         final Element element = (Element) o;
+        if (id == null || element.id == null) {
+            return false;
+        }
         return Objects.equals(id, element.id);
     }
 

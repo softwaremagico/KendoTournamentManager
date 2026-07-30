@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {map, tap} from "rxjs/operators";
 
@@ -36,15 +36,15 @@ import {RbacService} from "./rbac/rbac.service";
 })
 export class LoginService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
   static readonly JWT_RENEW_MARGIN: number = 20000;
   private interval: ReturnType<typeof setInterval> | null;
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private activityService: ActivityService, private router: Router, private userSessionService: UserSessionService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
+              private readonly activityService: ActivityService, private readonly router: Router, private readonly userSessionService: UserSessionService) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
-      this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
-        (jwt: string, expires: number): void => {
+      this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - Date.now()) - LoginService.JWT_RENEW_MARGIN,
+        (): void => {
         });
     }
   }
@@ -57,12 +57,7 @@ export class LoginService {
       observe: 'response'
     })
       .pipe(
-        map((response: any) => {
-          response.body.jwt = response.headers.get('Authorization');
-          response.body.expires = response.headers.get('Expires');
-          response.body.session = response.headers.get('X-Session');
-          return response.body;
-        }));
+        map((response: HttpResponse<AuthenticatedUser>) => this.withAuthHeaders(response)));
   }
 
   loginAsGuest(tournamentId: number): Observable<AuthenticatedUser> {
@@ -73,12 +68,7 @@ export class LoginService {
       observe: 'response'
     })
       .pipe(
-        map((response: any) => {
-          response.body.jwt = response.headers.get('Authorization');
-          response.body.expires = response.headers.get('Expires');
-          response.body.session = response.headers.get('X-Session');
-          return response.body;
-        }));
+        map((response: HttpResponse<AuthenticatedUser>) => this.withAuthHeaders(response)));
   }
 
   loginAsParticipant(temporalToken: string): Observable<AuthenticatedUser> {
@@ -89,12 +79,15 @@ export class LoginService {
       observe: 'response'
     })
       .pipe(
-        map((response: any) => {
-          response.body.jwt = response.headers.get('Authorization');
-          response.body.expires = response.headers.get('Expires');
-          response.body.session = response.headers.get('X-Session');
-          return response.body;
-        }));
+        map((response: HttpResponse<AuthenticatedUser>) => this.withAuthHeaders(response)));
+  }
+
+  private withAuthHeaders(response: HttpResponse<AuthenticatedUser>): AuthenticatedUser {
+    const authenticatedUser: AuthenticatedUser = response.body as AuthenticatedUser;
+    authenticatedUser.jwt = response.headers.get('Authorization') ?? '';
+    authenticatedUser.expires = Number(response.headers.get('Expires') ?? 0);
+    authenticatedUser.session = response.headers.get('X-Session') ?? '';
+    return authenticatedUser;
   }
 
   setGuestUserSession(tournamentId: number, callback: (token: string, expiration: number) => void): void {
@@ -124,7 +117,7 @@ export class LoginService {
 
   setAuthenticatedUser(authenticatedUser: AuthenticatedUser, callback: (token: string, expiration: number) => void): void {
     this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
-    this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+    this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - Date.now()) - LoginService.JWT_RENEW_MARGIN,
       (): void => {
       });
     this.activityService.setRoles(authenticatedUser.roles);
@@ -178,21 +171,21 @@ export class LoginService {
         response => {
           if (!response) {
             console.error('No renew response!!!');
-            this.autoRenewToken(jwt, -1, (jwt: string, expires: number): void => {
+              this.autoRenewToken(jwt, -1, (): void => {
             });
             throw new Error('Server returned no response');
           }
           const authToken: string | null = response.headers.get('Authorization');
           let expiration: number = Number(response.headers.get('Expires'));
           if (!authToken || !expiration) {
-            this.autoRenewToken(jwt, -1, (jwt: string, expires: number): void => {
+            this.autoRenewToken(jwt, -1, (): void => {
             });
             throw new Error('Server returned invalid response');
           }
           if (Number.isNaN(expiration)) {
-            throw new Error('Server returned invalid expiration time');
+            throw new TypeError('Server returned invalid expiration time');
           }
-          const renewValue: number = (expiration - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN;
+          const renewValue: number = (expiration - Date.now()) - LoginService.JWT_RENEW_MARGIN;
           callback(authToken, expiration);
           //Set current JWT.
           this.setJwtValue(authToken, expiration);
@@ -212,8 +205,8 @@ export class LoginService {
       );
   }
 
-  private renew(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/jwt/renew`, {observe: 'response'}).pipe(
+  private renew(): Observable<HttpResponse<unknown>> {
+    return this.http.get<unknown>(`${this.baseUrl}/jwt/renew`, {observe: 'response'}).pipe(
       tap({
         next: () => console.info(`Renewing JWT successfully!`)
       })

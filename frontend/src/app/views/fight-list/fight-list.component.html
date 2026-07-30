@@ -265,7 +265,7 @@
       <competitors-ranking
         [tournament]="tournament"
         [showIndex]="true"
-      (onClosed)="showCompetitorsRanking=false"></competitors-ranking>
+      (closed)="showCompetitorsRanking=false"></competitors-ranking>
     </biit-popup>
   }
 
@@ -304,7 +304,7 @@
   @if (openNewFightPopup) {
     <biit-popup id="fight-creator" closable
       [title]="t('addFight')"
-      (onClosed)="openNewFightPopup=false">
+      (closed)="openNewFightPopup=false">
       <fight-creator
         [tournament]="tournament"
         [previousFight]="this.selectedFight"
@@ -314,14 +314,14 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (onClosed)="openNewFightPopup=false"></fight-creator>
+      (closed)="openNewFightPopup=false"></fight-creator>
     </biit-popup>
   }
 
   @if (openSenbatsuFightPopup) {
     <biit-popup id="senbatsu-fight-creator" closable
       [title]="t('addFight')"
-      (onClosed)="openSenbatsuFightPopup=false">
+      (closed)="openSenbatsuFightPopup=false">
       <senbatsu-fight-creator
         [tournament]="tournament"
         [previousFight]="this.selectedFight"
@@ -331,7 +331,7 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (onClosed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
+      (closed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
     </biit-popup>
   }
 
@@ -358,7 +358,7 @@
     <biit-popup id="league-generator-popup" no-header closable>
       <league-generator
         [tournament]="tournament"
-      (onClosed)="createGroupFight($event); openLeagueGeneratorPopup=false"></league-generator>
+      (closed)="createGroupFight($event); openLeagueGeneratorPopup=false"></league-generator>
     </biit-popup>
   }
 </ng-container>

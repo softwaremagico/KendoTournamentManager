@@ -61,11 +61,11 @@ export class MessageService implements OnDestroy {
   }
 
 
-  infoMessage(message: string) {
+  infoMessage(message: string): void {
     this.openSnackBar(message, NotificationType.SUCCESS, this.getDuration(message, 4));
   }
 
-  warningMessage(message: string) {
+  warningMessage(message: string): void {
     this.openSnackBar(message, NotificationType.WARNING, this.getDuration(message, 7));
   }
 
@@ -73,25 +73,24 @@ export class MessageService implements OnDestroy {
     return Math.max((message.length / 15), minDuration);
   }
 
-  errorMessage(message: string) {
+  errorMessage(message: string): void {
     this.openSnackBar(message, NotificationType.ERROR, this.getDuration(message, 10));
   }
 
-  backendErrorMessage(error: number, code: string) {
+  backendErrorMessage(error: number, code: string): void {
     this.openSnackBar(`Error '${error}' with code '${code}' received.`, NotificationType.ERROR, this.getDuration(code, 5));
   }
 
   handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: unknown): Observable<T> => {
+      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
       //Log error
       const log: Log = new Log();
-      if (error) {
-        log.message = `${operation} failed: ${error.message}`;
-      }
+      log.message = `${operation} failed: ${errorMessage}`;
       this.loggerService.sendError(log);
 
       //Show error
-      this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${error ? error.message : ""}`);
+      this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${errorMessage}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -99,10 +98,11 @@ export class MessageService implements OnDestroy {
   }
 
   logOnlyError<T>(operation: string = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: unknown): Observable<T> => {
+      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
       //Log error
       const log: Log = new Log();
-      log.message = `${operation} failed: ${error.message}`;
+      log.message = `${operation} failed: ${errorMessage}`;
       this.loggerService.sendError(log);
 
       // Let the app keep running by returning an empty result.

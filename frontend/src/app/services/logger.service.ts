@@ -11,9 +11,9 @@ import {Observable, of} from "rxjs";
 })
 export class LoggerService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/logger';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/logger';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, public loginService: LoginService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, public loginService: LoginService) {
   }
 
   info(message: string) {
@@ -23,10 +23,7 @@ export class LoggerService {
   }
 
   sendInfo(log: Log) {
-    const url: string = `${this.baseUrl}/info`;
-    return this.http.post(url, log).pipe(
-      catchError(this.handleErrorConsole('sendInfo'))
-    ).subscribe();
+    return this.sendLog('info', log, 'sendInfo');
   }
 
   warning(message: string) {
@@ -36,10 +33,7 @@ export class LoggerService {
   }
 
   sendWarning(log: Log) {
-    const url: string = `${this.baseUrl}/warning`;
-    return this.http.post(url, log).pipe(
-      catchError(this.handleErrorConsole('sendWarning'))
-    ).subscribe();
+    return this.sendLog('warning', log, 'sendWarning');
   }
 
   error(message: string) {
@@ -49,21 +43,26 @@ export class LoggerService {
   }
 
   sendError(log: Log) {
-    const url: string = `${this.baseUrl}/error`;
+    return this.sendLog('error', log, 'sendError');
+  }
+
+  private sendLog(level: 'info' | 'warning' | 'error', log: Log, operation: string) {
+    const url: string = `${this.baseUrl}/${level}`;
     return this.http.post(url, log).pipe(
-      catchError(this.handleErrorConsole('sendError'))
+      catchError(this.handleErrorConsole(operation))
     ).subscribe();
   }
 
   handleErrorConsole<T>(_operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (_error: unknown): Observable<T> => {
       return of(result as T);
     };
   }
 
   handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      this.error(`${operation} failed: ${error.message}`);
+    return (error: unknown): Observable<T> => {
+      const message: string = error instanceof Error ? error.message : String(error);
+      this.error(`${operation} failed: ${message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

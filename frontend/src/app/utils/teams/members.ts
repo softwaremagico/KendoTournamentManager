@@ -5,10 +5,10 @@ export function getBalancedMember(_participants: (Participant | undefined)[], se
   const participants: (Participant | undefined)[] = _participants.filter((item: Participant | undefined) => !!item);
   let selected: number = Math.floor(random() * (participants.length / availableSectors));
   let participant: Participant;
-  if (selectFromSector == 0) {
+  if (selectFromSector === 0) {
     participant = participants[selected]!;
     participants.splice(selected, 1);
-  } else if (selectFromSector == availableSectors - 1) {
+  } else if (selectFromSector === availableSectors - 1) {
     selected = participants.length - selected - 1;
     participant = participants[selected]!;
     participants.splice(selected, 1);
