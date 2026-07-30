@@ -15,6 +15,7 @@
                  <include name="diplomaPdf"/>
                  <include name="qrPdf"/>
                  <include name="blogTests"/>
+                 <include name="emptyFightsListTests"/>
              </run>
          </groups>
          <classes>
@@ -27,6 +28,7 @@
              <class name="com.softwaremagico.kt.pdf.QrTests"/>
              <class name="com.softwaremagico.kt.html.HtmlTests"/>
              <class name="com.softwaremagico.kt.html.controller.ZipControllerTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.EmptyFightsListTest"/>
          </classes>
      </test>
 </suite>

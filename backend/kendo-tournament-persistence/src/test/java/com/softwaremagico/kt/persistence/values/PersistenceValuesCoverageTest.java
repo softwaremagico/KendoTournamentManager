@@ -117,6 +117,14 @@ public class PersistenceValuesCoverageTest {
 
         assertThat(Score.FUSEN_GACHI.getPdfAbbreviation()).isEqualTo(' ');
     }
+
+    @Test
+    public void shouldResolveSwissTieBreakRuleByName() {
+        assertThat(SwissTieBreakRule.values().length).isGreaterThan(0);
+        assertThat(SwissTieBreakRule.getType("buchholz")).isEqualTo(SwissTieBreakRule.BUCHHOLZ);
+        assertThat(SwissTieBreakRule.getType("MEDIAN_BUCHHOLZ")).isEqualTo(SwissTieBreakRule.MEDIAN_BUCHHOLZ);
+        assertThat(SwissTieBreakRule.getType("unknown")).isNull();
+    }
 }
 
 

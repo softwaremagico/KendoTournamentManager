@@ -59,6 +59,27 @@ public class BasicLoggerTest {
 	}
 
 	@Test(groups = "basicLoggerTests")
+	@SuppressWarnings("java:S6068")
+	public void shouldSanitizeWarningWithoutClassName() {
+		when(this.logger.isWarnEnabled()).thenReturn(true);
+
+		BasicLogger.warning(this.logger, "line\n{}", new Object[]{"a\tb"});
+
+		final ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
+		verify(this.logger).warn(eq("line_{}"), argsCaptor.capture());
+		assertEquals(argsCaptor.getValue()[0], "a_b");
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotLogWarningWithoutClassNameWhenDisabled() {
+		when(this.logger.isWarnEnabled()).thenReturn(false);
+
+		BasicLogger.warning(this.logger, "msg", "x");
+
+		verify(this.logger, never()).warn(anyString(), any(Object[].class));
+	}
+
+	@Test(groups = "basicLoggerTests")
 	public void shouldNotLogWarningWhenDisabled() {
 		when(this.logger.isWarnEnabled()).thenReturn(false);
 
@@ -89,6 +110,27 @@ public class BasicLoggerTest {
 	}
 
 	@Test(groups = "basicLoggerTests")
+	@SuppressWarnings("java:S6068")
+	public void shouldSanitizeDebugWithoutClassName() {
+		when(this.logger.isDebugEnabled()).thenReturn(true);
+
+		BasicLogger.debug(this.logger, "d\tebug {}", new Object[]{"v\n1"});
+
+		final ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
+		verify(this.logger).debug(eq("d_ebug {}"), argsCaptor.capture());
+		assertEquals(argsCaptor.getValue()[0], "v_1");
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotLogDebugWithoutClassNameWhenDisabled() {
+		when(this.logger.isDebugEnabled()).thenReturn(false);
+
+		BasicLogger.debug(this.logger, "msg", "x");
+
+		verify(this.logger, never()).debug(anyString(), any(Object[].class));
+	}
+
+	@Test(groups = "basicLoggerTests")
 	public void shouldLogSevereWithClassPrefix() {
 		when(this.logger.isErrorEnabled()).thenReturn(true);
 
@@ -105,6 +147,51 @@ public class BasicLoggerTest {
 		BasicLogger.errorMessageNotification(this.logger, "Clazz", throwable);
 
 		verify(this.logger).error("Exception on class {}:\n", "Clazz", throwable);
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotifyErrorWithClassNameWhenEnabled() {
+		when(this.logger.isErrorEnabled()).thenReturn(true);
+
+		BasicLogger.errorMessageNotification(this.logger, "Clazz", "boom {}", "x");
+
+		verify(this.logger).error(eq("Clazz: boom {}"), any(Object[].class));
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotNotifyErrorWithClassNameWhenDisabled() {
+		when(this.logger.isErrorEnabled()).thenReturn(false);
+
+		BasicLogger.errorMessageNotification(this.logger, "Clazz", "boom {}", "x");
+
+		verify(this.logger, never()).error(anyString(), any(Object[].class));
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotifyErrorWithoutClassNameWhenEnabled() {
+		when(this.logger.isErrorEnabled()).thenReturn(true);
+
+		BasicLogger.errorMessageNotification(this.logger, "boom {}", new Object[]{"x"});
+
+		verify(this.logger).error(eq("boom {}"), any(Object[].class));
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotNotifyErrorWithoutClassNameWhenDisabled() {
+		when(this.logger.isErrorEnabled()).thenReturn(false);
+
+		BasicLogger.errorMessageNotification(this.logger, "boom {}", new Object[]{"x"});
+
+		verify(this.logger, never()).error(anyString(), any(Object[].class));
+	}
+
+	@Test(groups = "basicLoggerTests")
+	public void shouldNotNotifyThrowableWhenDisabled() {
+		when(this.logger.isErrorEnabled()).thenReturn(false);
+
+		BasicLogger.errorMessageNotification(this.logger, "Clazz", new IllegalStateException("bad"));
+
+		verify(this.logger, never()).error(anyString(), any(), any());
 	}
 
 	@Test(groups = "basicLoggerTests")

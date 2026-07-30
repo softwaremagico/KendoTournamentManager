@@ -21,8 +21,9 @@ package com.softwaremagico.kt.logger.tests;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.BasicLogging;
 import ch.qos.logback.classic.Level;
+import com.softwaremagico.kt.logger.RestAccessLogging;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.mockito.Mock;
@@ -37,9 +38,9 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-public class BasicLoggingTest {
+public class RestAccessLoggingTest {
 
-    private BasicLogging basicLogging;
+    private RestAccessLogging restAccessLogging;
 
     @Mock
     private ProceedingJoinPoint joinPoint;
@@ -50,11 +51,11 @@ public class BasicLoggingTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        basicLogging = new BasicLogging();
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(BasicLogging.class)).setLevel(Level.DEBUG);
+        restAccessLogging = new RestAccessLogging();
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(RestAccessLogging.class)).setLevel(Level.DEBUG);
     }
 
-    @Test(groups = "basicLoggingTests")
+    @Test(groups = "restAccessLoggingTests")
     public void shouldExecuteAroundAndReturnValue() throws Throwable {
         when(joinPoint.getSignature()).thenReturn(signature);
         when(signature.getName()).thenReturn("method");
@@ -62,13 +63,13 @@ public class BasicLoggingTest {
         when(joinPoint.getArgs()).thenReturn(new Object[0]);
         when(joinPoint.proceed()).thenReturn("ok");
 
-        Object result = basicLogging.logAround(joinPoint);
+        Object result = restAccessLogging.logAround(joinPoint);
 
         assertEquals(result, "ok");
         verify(joinPoint, times(1)).proceed();
     }
 
-    @Test(groups = "basicLoggingTests")
+    @Test(groups = "restAccessLoggingTests")
     public void shouldHandleNullReturnValue() throws Throwable {
         when(joinPoint.getSignature()).thenReturn(signature);
         when(signature.getName()).thenReturn("method");
@@ -76,34 +77,28 @@ public class BasicLoggingTest {
         when(joinPoint.getArgs()).thenReturn(new Object[0]);
         when(joinPoint.proceed()).thenReturn(null);
 
-        Object result = basicLogging.logAround(joinPoint);
+        Object result = restAccessLogging.logAround(joinPoint);
 
         assertNull(result);
         verify(joinPoint, times(1)).proceed();
     }
 
-
-    @Test(groups = "basicLoggingTests")
+    @Test(groups = "restAccessLoggingTests")
     public void shouldAcceptBeforeAndAfterAdviceCalls() {
-        basicLogging.beforeAdvice(joinPoint);
-        basicLogging.afterAdvice();
+        final JoinPoint before = joinPoint;
+        restAccessLogging.beforeAdvice(before);
+        restAccessLogging.afterAdvice();
     }
 
-    @Test(groups = "basicLoggingTests")
+    @Test(groups = "restAccessLoggingTests")
     public void shouldAcceptAfterReturningAdviceForBothBranches() {
-        basicLogging.afterReturningAdvice("value");
-        basicLogging.afterReturningAdvice(null);
+        restAccessLogging.afterReturningAdvice("value");
+        restAccessLogging.afterReturningAdvice(null);
     }
 
-    @Test(groups = "basicLoggingTests")
+    @Test(groups = "restAccessLoggingTests")
     public void shouldAcceptAfterThrowingAdvice() {
-        basicLogging.afterThrowingAdvice(new IllegalArgumentException("bad input"));
+        restAccessLogging.afterThrowingAdvice(new IllegalArgumentException("bad input"));
     }
 }
-
-
-
-
-
-
 
