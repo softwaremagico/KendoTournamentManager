@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
 import {MessageService} from "../../services/message.service";
@@ -72,13 +72,14 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   public lockedTournaments: (row: Tournament) => boolean = (row) => row.locked;
 
-  constructor(private readonly router: Router, private readonly userSessionService: UserSessionService, private readonly tournamentService: TournamentService,
-              private readonly rankingService: RankingService,
-              private readonly messageService: MessageService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
-              private readonly achievementsService: AchievementsService, private readonly transloco: TranslocoService, private readonly _datePipe: DatePipe,
-              private readonly biitSnackbarService: BiitSnackbarService, private readonly tableColumnTranslationPipe: TableColumnTranslationPipe) {
-    super(rbacService);
-  }
+   constructor(private readonly router: Router, private readonly userSessionService: UserSessionService, private readonly tournamentService: TournamentService,
+               private readonly rankingService: RankingService,
+               private readonly messageService: MessageService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+               private readonly achievementsService: AchievementsService, private readonly transloco: TranslocoService, private readonly _datePipe: DatePipe,
+               private readonly biitSnackbarService: BiitSnackbarService, private readonly tableColumnTranslationPipe: TableColumnTranslationPipe,
+               private readonly cdr: ChangeDetectorRef) {
+     super(rbacService);
+   }
 
   datePipe(): { transform: (value?: number | string | Date | null) => string | null } {
     return {
@@ -121,22 +122,23 @@ export class TournamentListComponent extends RbacBasedComponent implements After
     });
   }
 
-  loadData(tournament?: Tournament): void {
-    this.loading = true;
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    this.tournamentService.getAll().pipe(takeUntil(this.destroySubject)).subscribe({
-      next: (_tournaments: Tournament[]): void => {
-        this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament)).sort((a: Tournament, b: Tournament): number => {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
-      },
-      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
-    }).add(() => {
-      this.loading = false;
-      this.systemOverloadService.isTransactionalBusy.next(false);
-      this.selectItem(tournament);
-    });
-  }
+   loadData(tournament?: Tournament): void {
+     this.loading = true;
+     this.systemOverloadService.isTransactionalBusy.next(true);
+     this.tournamentService.getAll().pipe(takeUntil(this.destroySubject)).subscribe({
+       next: (_tournaments: Tournament[]): void => {
+         this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament)).sort((a: Tournament, b: Tournament): number => {
+           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+         });
+         this.cdr.markForCheck();
+       },
+       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+     }).add(() => {
+       this.loading = false;
+       this.systemOverloadService.isTransactionalBusy.next(false);
+       this.selectItem(tournament);
+     });
+   }
 
   addElement(): void {
     const tournament: Tournament = new Tournament();
