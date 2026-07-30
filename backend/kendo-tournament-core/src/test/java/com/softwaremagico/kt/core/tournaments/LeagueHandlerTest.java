@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tournaments;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -238,6 +238,183 @@ public class LeagueHandlerTest {
         final Tournament tournament = tournament();
 
         assertTrue(handler.createInitialFights(tournament, TeamsOrder.NONE, "user").isEmpty());
+    }
+
+    @Test
+    public void shouldAddGroupWithTeamsForLevel() {
+        final Tournament tournament = tournament();
+        final Team team = new Team("team-1", tournament);
+
+        when(teamProvider.getAll(tournament)).thenReturn(List.of(team));
+        when(groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
+
+        final Group result = handler.addGroup(tournament, 2);
+
+        assertEquals(result.getLevel(), Integer.valueOf(2));
+        assertEquals(result.getTeams(), List.of(team));
+    }
+
+    @Test
+    public void shouldAddGroupWithGivenTeamsAndLevel() {
+        final Tournament tournament = tournament();
+        final Team team = new Team("team-1", tournament);
+
+        when(groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
+
+        final Group result = handler.addGroup(tournament, List.of(team), 1);
+
+        assertEquals(result.getLevel(), Integer.valueOf(1));
+        assertEquals(result.getIndex(), Integer.valueOf(0));
+        assertEquals(result.getTeams(), List.of(team));
+    }
+
+    @Test
+    public void shouldAddGroupWithTeamsLevelAndIndex() {
+        final Tournament tournament = tournament();
+        final Team team = new Team("team-1", tournament);
+
+        when(groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
+
+        final Group result = handler.addGroup(tournament, List.of(team), 1, 3);
+
+        assertEquals(result.getLevel(), Integer.valueOf(1));
+        assertEquals(result.getIndex(), Integer.valueOf(3));
+    }
+
+    @Test
+    public void shouldReturnEmptyGroupsForNonZeroLevel() {
+        final Tournament tournament = tournament();
+
+        assertTrue(handler.getGroups(tournament, 1).isEmpty());
+    }
+
+    @Test
+    public void shouldUpdateExistingGroupInPlaceWhenSameId() {
+        final Tournament tournament = tournament();
+        final Group existingGroup = new Group(tournament, 0, 0);
+        existingGroup.setId(5);
+        final Group updatedGroup = new Group(tournament, 0, 0);
+        updatedGroup.setId(5);
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(existingGroup));
+        when(groupProvider.addGroup(tournament, updatedGroup)).thenReturn(updatedGroup);
+
+        final Group result = handler.addGroup(tournament, updatedGroup);
+
+        assertSame(result, updatedGroup);
+        verify(groupProvider, never()).delete(tournament);
+    }
+
+    @Test
+    public void shouldDeleteExistingGroupWhenDifferentId() {
+        final Tournament tournament = tournament();
+        final Group existingGroup = new Group(tournament, 0, 0);
+        existingGroup.setId(5);
+        final Group newGroup = new Group(tournament, 0, 0);
+        newGroup.setId(6);
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(existingGroup));
+        when(groupProvider.addGroup(tournament, newGroup)).thenReturn(newGroup);
+
+        final Group result = handler.addGroup(tournament, newGroup);
+
+        assertSame(result, newGroup);
+        verify(groupProvider).delete(tournament);
+    }
+
+    @Test
+    public void shouldSetDefaultFightAreaOnFirstGroup() {
+        final Tournament tournament = tournament();
+        final Group group = new Group(tournament, 0, 0);
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+        handler.setDefaultFightAreas(tournament);
+
+        assertEquals(group.getShiaijo(), Integer.valueOf(0));
+        verify(groupProvider).save(group);
+    }
+
+    @Test
+    public void shouldReturnGroupWhenFightBelongsToFirstGroup() {
+        final Tournament tournament = tournament();
+        final Group group = new Group(tournament, 0, 0);
+        final Fight fight = new Fight();
+        group.setFights(new ArrayList<>(List.of(fight)));
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+        assertSame(handler.getGroup(tournament, fight), group);
+    }
+
+    @Test
+    public void shouldReturnNullWhenFightDoesNotBelongToFirstGroup() {
+        final Tournament tournament = tournament();
+        final Group group = new Group(tournament, 0, 0);
+        group.setFights(new ArrayList<>());
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+        assertEquals(handler.getGroup(tournament, new Fight()), null);
+    }
+
+    @Test
+    public void shouldSetHowManyTeamsOfGroupPassToTheTreeWithoutError() {
+        handler.setHowManyTeamsOfGroupPassToTheTree(2);
+    }
+
+    @Test
+    public void shouldReturnZeroIndexForAnyGroup() {
+        assertEquals(handler.getIndex(0, new Group()), 0);
+    }
+
+    @Test
+    public void shouldRemoveFightsFromFirstGroup() {
+        final Tournament tournament = tournament();
+        final Group group = new Group(tournament, 0, 0);
+        final Fight fight = new Fight();
+        group.setFights(new ArrayList<>(List.of(fight)));
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+        handler.removeFights(tournament);
+
+        assertTrue(group.getFights().isEmpty());
+        verify(groupProvider).save(group);
+    }
+
+    @Test
+    public void shouldRemoveTeamsFromFirstGroup() {
+        final Tournament tournament = tournament();
+        final Group group = new Group(tournament, 0, 0);
+        group.setTeams(new ArrayList<>(List.of(new Team("team-1", tournament))));
+
+        when(groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+        handler.removeTeams(tournament);
+
+        assertTrue(group.getTeams().isEmpty());
+        verify(groupProvider).save(group);
+    }
+
+    @Test
+    public void shouldReturnIndexOfGroup() {
+        assertEquals(handler.getIndexOfGroup(new Group()), 0);
+    }
+
+    @Test
+    public void shouldDelegateGetGroupsByShiaijoToProvider() {
+        final Tournament tournament = tournament();
+        final Group group = new Group(tournament, 0, 0);
+
+        when(groupProvider.getGroupsByShiaijo(tournament, 1)).thenReturn(List.of(group));
+
+        assertEquals(handler.getGroupsByShiaijo(tournament, 1), List.of(group));
+    }
+
+    @Test
+    public void shouldDoNothingWhenCreatingNextLevel() throws com.softwaremagico.kt.core.exceptions.TournamentFinishedException {
+        handler.createNextLevel(tournament());
     }
 
     private Tournament tournament() {

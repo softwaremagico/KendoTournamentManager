@@ -44,10 +44,10 @@ export class UserService {
     const url: string = `${this.baseUrl}/register`;
     return this.http.get<AuthenticatedUser[]>(url)
       .pipe(
-        map((_users: any) => {
-          for (let user of _users) {
+        map((_users: AuthenticatedUser[]) => {
+          _users.forEach((user: AuthenticatedUser): void => {
             user.roles = UserRoles.getByKeys(user.roles);
-          }
+          });
           return _users;
         }),
         tap({
@@ -67,7 +67,7 @@ export class UserService {
           next: (_authenticatedUser: AuthenticatedUser) => {
             this.loggerService.info(`adding user ${_authenticatedUser}`);
           },
-          error: (error: { status: any; }): void => {
+          error: (error: unknown): void => {
             this.systemOverloadService.isBusy.next(false);
             if (error instanceof HttpErrorResponse) {
               switch (error.status) {
@@ -123,7 +123,6 @@ export class UserService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        //catchError(this.messageService.handleError<void>(`Updating password!`))
       );
   }
 
@@ -151,7 +150,6 @@ export class UserService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        //catchError(this.messageService.handleError<UserRoles[]>(`Roles cannot be retrieved!`))
       );
   }
 }

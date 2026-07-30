@@ -16,6 +16,8 @@ import {
   ApexYAxis
 } from "ng-apexcharts";
 import {ApexTheme, ChartType} from "./apex-types";
+import {KendoComponent} from "../kendo-component";
+import {takeUntil} from "rxjs";
 
 interface ApexToolBar {
   show?: boolean;
@@ -29,12 +31,12 @@ interface ApexToolBar {
     zoomout?: boolean | string;
     pan?: boolean | string;
     reset?: boolean | string;
-    customIcons?: {
+      customIcons?: {
       icon?: string;
       title?: string;
       index?: number;
       class?: string;
-      click?(chart?: any, options?: any, e?: any): any;
+        click?(chart?: unknown, options?: unknown, e?: Event): void;
     }[];
   };
   export?: {
@@ -43,7 +45,7 @@ interface ApexToolBar {
       columnDelimiter?: string;
       headerCategory?: string;
       headerValue?: string;
-      dateFormatter?(timestamp?: number): any;
+      dateFormatter?(timestamp?: number): string;
     };
     svg?: {
       filename?: string;
@@ -68,7 +70,7 @@ interface ApexDropShadow {
   standalone: false,
   template: ''
 })
-export abstract class CustomChartComponent implements OnInit {
+export abstract class CustomChartComponent extends KendoComponent implements OnInit {
 
   protected titleTextColor: string = "#000000"
   protected legendTextColor: string = "#000000"
@@ -77,12 +79,13 @@ export abstract class CustomChartComponent implements OnInit {
   protected darkMode: boolean;
 
   protected constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
+    super();
     this.darkMode = userSessionService.getNightMode();
   }
 
 
   ngOnInit(): void {
-    this.darkModeService.darkModeSwitched.subscribe((switched: boolean): void => {
+    this.darkModeService.darkModeSwitched.pipe(takeUntil(this.destroySubject)).subscribe((switched: boolean): void => {
       this.darkMode = switched;
       this.setFontColors(switched);
       this.setProperties();
@@ -104,7 +107,7 @@ export abstract class CustomChartComponent implements OnInit {
     return {
       fontFamily: 'Montserrat',
       width: width,
-      height: height ? height : width,
+      height: height ?? width,
       type: type,
       dropShadow: this.getShadow(shadow),
       toolbar: this.getToolbar(showToolbar),
@@ -263,7 +266,7 @@ export abstract class CustomChartComponent implements OnInit {
     const symbolQuantity = Math.floor(chartWidth / symbolWidth);
 
     for (let i = 0; i < rows; i++) {
-      newText.push(text.substr(symbolQuantity * i, symbolQuantity));
+      newText.push(text.substring(symbolQuantity * i, symbolQuantity * (i + 1)));
     }
     return newText;
   }

@@ -3,6 +3,8 @@ import {Participant} from "../../models/participant";
 import {FileService} from "../../services/file.service";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {ParticipantImage} from "../../models/participant-image.model";
+import {KendoComponent} from "../kendo-component";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -10,13 +12,13 @@ import {ParticipantImage} from "../../models/participant-image.model";
   templateUrl: './participant-picture.component.html',
   styleUrls: ['./participant-picture.component.scss']
 })
-export class ParticipantPictureComponent implements OnInit {
+export class ParticipantPictureComponent extends KendoComponent implements OnInit {
 
   @Input()
   participant: Participant | undefined;
 
   @Output()
-  onWindowOpened: EventEmitter<boolean> = new EventEmitter<boolean>();
+  windowOpened: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   participantPicture: string | undefined;
   participantInitials: string;
@@ -24,12 +26,13 @@ export class ParticipantPictureComponent implements OnInit {
   participantWindowOpened: boolean = false;
 
 
-  constructor(private fileService: FileService, private nameUtils: NameUtilsService) {
+  constructor(private readonly fileService: FileService, private readonly nameUtils: NameUtilsService) {
+    super();
   }
 
   ngOnInit(): void {
     if (this.participant?.hasAvatar) {
-      this.fileService.getParticipantPicture(this.participant).subscribe((_picture: ParticipantImage): void => {
+      this.fileService.getParticipantPicture(this.participant).pipe(takeUntil(this.destroySubject)).subscribe((_picture: ParticipantImage): void => {
         if (_picture) {
           this.participantPicture = _picture.base64;
         } else {
@@ -57,12 +60,12 @@ export class ParticipantPictureComponent implements OnInit {
     if (participant.id) {
       const seed = Math.abs(participant.id);
       const mainColor = seed % 135 + 120;
-      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 == 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
+      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 === 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
         (mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30);
-      const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 == 0 || seed > 230 ? -1 : 1));
-      color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);
+      const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 === 0 || seed > 230 ? -1 : 1));
+      color += (seed % 3 === 0 ? mainColor : seed % 3 === 1 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 === 1 ? mainColor : seed % 3 === 2 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 === 2 ? mainColor : seed % 3 === 0 ? secondaryColor : thirdColor);
     } else {
       color += "255, 255, 255";
     }
@@ -77,9 +80,9 @@ export class ParticipantPictureComponent implements OnInit {
       const mainColor = seed % 100;
       const secondaryColor = 100 - seed % 100;
       const thirdColor = mainColor > 10 ? mainColor - 10 + seed % 30 : mainColor + seed % 30;
-      color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);
+      color += (seed % 3 === 0 ? mainColor : seed % 3 === 1 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 === 1 ? mainColor : seed % 3 === 2 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 === 2 ? mainColor : seed % 3 === 0 ? secondaryColor : thirdColor);
     } else {
       color += "255, 255, 255";
     }
@@ -87,8 +90,8 @@ export class ParticipantPictureComponent implements OnInit {
     return color;
   }
 
-  openImage(opened: boolean) {
+  openImage(opened: boolean): void {
     this.participantWindowOpened = opened;
-    this.onWindowOpened.emit(opened);
+    this.windowOpened.emit(opened);
   }
 }

@@ -21,14 +21,42 @@ package com.softwaremagico.kt.core.tests.exceptions;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.*;
+import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
+import com.softwaremagico.kt.core.exceptions.CustomTournamentFightsException;
+import com.softwaremagico.kt.core.exceptions.DataInputException;
+import com.softwaremagico.kt.core.exceptions.DatabaseException;
+import com.softwaremagico.kt.core.exceptions.DuelNotFoundException;
+import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
+import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
+import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.exceptions.InvalidChallengeDistanceException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvRowException;
+import com.softwaremagico.kt.core.exceptions.InvalidExtraPropertyException;
+import com.softwaremagico.kt.core.exceptions.InvalidFightException;
+import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
+import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
+import com.softwaremagico.kt.core.exceptions.NameAlreadyInUseException;
+import com.softwaremagico.kt.core.exceptions.NoContentException;
+import com.softwaremagico.kt.core.exceptions.NotValidInputException;
+import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
+import com.softwaremagico.kt.core.exceptions.RoleNotFoundException;
+import com.softwaremagico.kt.core.exceptions.SenbatsuTournamentFightsException;
+import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
+import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
+import com.softwaremagico.kt.core.exceptions.TournamentInvalidException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
+import com.softwaremagico.kt.core.exceptions.UserNotFoundException;
+import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.logger.ExceptionType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("all")
 @Test
-public class CoreExceptionsTests {
+public class CoreExceptionsTest {
 
 	@Test
 	public void testNotValidInputExceptionWithBasicConstructor() {
@@ -42,7 +70,8 @@ public class CoreExceptionsTests {
 	@Test
 	public void testNotValidInputExceptionWithExceptionType() {
 		final String message = "Invalid input";
-		final NotValidInputException exception = new NotValidInputException(this.getClass(), message, ExceptionType.WARNING);
+		final NotValidInputException exception = new NotValidInputException(this.getClass(), message,
+				ExceptionType.WARNING);
 
 		Assert.assertNotNull(exception);
 		Assert.assertTrue(exception.getMessage().contains(message));
@@ -68,7 +97,8 @@ public class CoreExceptionsTests {
 	@Test
 	public void testTournamentInvalidExceptionWithExceptionType() {
 		final String message = "Invalid tournament";
-		final TournamentInvalidException exception = new TournamentInvalidException(this.getClass(), message, ExceptionType.SEVERE);
+		final TournamentInvalidException exception = new TournamentInvalidException(this.getClass(), message,
+				ExceptionType.SEVERE);
 
 		Assert.assertNotNull(exception);
 		Assert.assertTrue(exception.getMessage().contains(message));
@@ -106,7 +136,8 @@ public class CoreExceptionsTests {
 
 	@Test
 	public void testLevelNotFinishedException() {
-		final LevelNotFinishedException exception = new LevelNotFinishedException(this.getClass(), "Level not finished");
+		final LevelNotFinishedException exception = new LevelNotFinishedException(this.getClass(),
+				"Level not finished");
 
 		Assert.assertNotNull(exception);
 	}
@@ -121,7 +152,8 @@ public class CoreExceptionsTests {
 
 	@Test
 	public void testSenbatsuTournamentFightsException() {
-		final SenbatsuTournamentFightsException exception = new SenbatsuTournamentFightsException(this.getClass(), "Senbatsu error");
+		final SenbatsuTournamentFightsException exception = new SenbatsuTournamentFightsException(this.getClass(),
+				"Senbatsu error");
 
 		Assert.assertNotNull(exception);
 		Assert.assertFalse(exception.getMessage().isEmpty());
@@ -176,8 +208,10 @@ public class CoreExceptionsTests {
 	public void testExceptionWithDifferentExceptionTypes() {
 		final String message = "Test message";
 
-		final NotValidInputException warningException = new NotValidInputException(this.getClass(), message, ExceptionType.WARNING);
-		final NotValidInputException infoException = new NotValidInputException(this.getClass(), message, ExceptionType.INFO);
+		final NotValidInputException warningException = new NotValidInputException(this.getClass(), message,
+				ExceptionType.WARNING);
+		final NotValidInputException infoException = new NotValidInputException(this.getClass(), message,
+				ExceptionType.INFO);
 
 		Assert.assertNotNull(warningException);
 		Assert.assertNotNull(infoException);
@@ -187,7 +221,8 @@ public class CoreExceptionsTests {
 
 	@Test
 	public void testCsvExceptionsExposeSpecificFields() {
-		final InvalidCsvFieldException fieldException = new InvalidCsvFieldException(this.getClass(), "bad header", "name");
+		final InvalidCsvFieldException fieldException = new InvalidCsvFieldException(this.getClass(), "bad header",
+				"name");
 		final InvalidCsvRowException rowException = new InvalidCsvRowException(this.getClass(), "bad row", 7);
 
 		Assert.assertEquals(fieldException.getHeader(), "name");
@@ -199,8 +234,8 @@ public class CoreExceptionsTests {
 	@Test
 	public void testNoContentAndCustomFightExceptions() {
 		final NoContentException noContentException = new NoContentException("empty");
-		final CustomTournamentFightsException customTournamentFightsException =
-				new CustomTournamentFightsException(this.getClass(), "custom");
+		final CustomTournamentFightsException customTournamentFightsException = new CustomTournamentFightsException(
+				this.getClass(), "custom");
 		final DatabaseException databaseException = new DatabaseException(this.getClass(), "db");
 		final DataInputException dataInputException = new DataInputException(this.getClass(), "input");
 
@@ -232,16 +267,14 @@ public class CoreExceptionsTests {
 		Assert.assertNotNull(new ClubNotFoundException(this.getClass(), cause));
 		Assert.assertNotNull(new TeamNotFoundException(this.getClass(), cause));
 
-		final TournamentFinishedException tournamentFinishedException =
-				new TournamentFinishedException(this.getClass(), "finished");
+		final TournamentFinishedException tournamentFinishedException = new TournamentFinishedException(this.getClass(),
+				"finished");
 		final DuplicatedUserException duplicatedUserException = new DuplicatedUserException(this.getClass(), "dup");
-		final InvalidChallengeDistanceException invalidChallengeDistanceException =
-				new InvalidChallengeDistanceException(this.getClass(), "distance");
+		final InvalidChallengeDistanceException invalidChallengeDistanceException = new InvalidChallengeDistanceException(
+				this.getClass(), "distance");
 
 		Assert.assertTrue(tournamentFinishedException.getMessage().contains("finished"));
 		Assert.assertTrue(duplicatedUserException.getMessage().contains("dup"));
 		Assert.assertTrue(invalidChallengeDistanceException.getMessage().contains("distance"));
 	}
 }
-
-

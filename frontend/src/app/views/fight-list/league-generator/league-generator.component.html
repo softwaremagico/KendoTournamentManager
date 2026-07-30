@@ -26,8 +26,8 @@
       </div>
     </div>
     <div class="button-container">
-      @if ((tournament.type == TournamentType.KING_OF_THE_MOUNTAIN || tournament.type == TournamentType.LOOP || tournament.type == TournamentType.BUBBLE_SORT
-        || tournament.type == TournamentType.SENBATSU)
+      @if ((tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || tournament.type === TournamentType.LOOP || tournament.type === TournamentType.BUBBLE_SORT
+        || tournament.type === TournamentType.SENBATSU)
         && (RbacActivity.CREATE_FIGHT | hasPermission)) {
         <button biit-button secondary
           (click)="balancedTeams()"

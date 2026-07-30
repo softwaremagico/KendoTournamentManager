@@ -23,7 +23,7 @@
   }
   @if (showAvatar && !left) {
     <participant-picture [participant]="getParticipant()" [class.over]="over && !locked"
-      (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
+      (windowOpened)="isParticipantPhotoWindowVisible($event)"
     class="participant-picture"></participant-picture>
   }
   <user-name [fight]="fight" [class.over]="over && !locked"
@@ -38,7 +38,7 @@
   class="user-name"></user-name>
   @if (showAvatar && left) {
     <participant-picture [participant]="getParticipant()" [class.over]="over && !locked"
-      (onWindowOpened)="isParticipantPhotoWindowVisible($event)"
+      (windowOpened)="isParticipantPhotoWindowVisible($event)"
     class="participant-picture"></participant-picture>
   }
   @if (left && substitute) {

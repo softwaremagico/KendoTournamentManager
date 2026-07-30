@@ -14,6 +14,7 @@ import {ParticipantImage} from "../../models/participant-image.model";
 import {PictureUpdatedService} from "../../services/notifications/picture-updated.service";
 import {FileService} from "../../services/file.service";
 import {MessageService} from "../../services/message.service";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -34,7 +35,7 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   @Input() @Output()
   saved: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Input() @Output()
-  errorEvent: EventEmitter<any> = new EventEmitter<any>();
+  errorEvent: EventEmitter<unknown> = new EventEmitter<unknown>();
 
   participantPicture: string | undefined = undefined;
 
@@ -42,25 +43,25 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   protected readonly ParticipantFormValidationFields = ParticipantFormValidationFields;
   protected translatedClubs: { value: string, label: string, description: string }[] = [];
 
-  protected clubs: Club[];
+  protected clubs: Club[] = [];
   protected saving: boolean = false;
   protected addPhoto: boolean = false;
 
   constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly biitSnackbarService: BiitSnackbarService,
               private readonly participantService: ParticipantService, private readonly clubService: ClubService,
-              private readonly pictureUpdatedService: PictureUpdatedService, private readonly fileService: FileService,
-              public messageService: MessageService) {
+               private readonly pictureUpdatedService: PictureUpdatedService, private readonly fileService: FileService,
+               public readonly messageService: MessageService) {
     super(rbacService);
     this.loadClubs();
   }
 
   ngOnInit(): void {
     this.participantPicture = undefined;
-    this.pictureUpdatedService.isPictureUpdated.subscribe((_picture: string): void => {
+    this.pictureUpdatedService.isPictureUpdated.pipe(takeUntil(this.destroySubject)).subscribe((_picture: string): void => {
       this.participantPicture = _picture;
     });
     if (this.participant?.id) {
-      this.fileService.getParticipantPicture(this.participant).subscribe((_picture: ParticipantImage): void => {
+      this.fileService.getParticipantPicture(this.participant).pipe(takeUntil(this.destroySubject)).subscribe((_picture: ParticipantImage): void => {
         if (_picture) {
           this.participantPicture = _picture.base64;
         } else {
@@ -70,14 +71,15 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  private loadClubs() {
-    this.clubService.getAll().subscribe((_clubs: Club[]) => {
+  private loadClubs(): void {
+    this.clubService.getAll().pipe(takeUntil(this.destroySubject)).subscribe((_clubs: Club[]) => {
       this.clubs = _clubs;
+      this.translatedClubs = [];
       this.translateClubs(_clubs);
     });
   }
 
-  private translateClubs(_clubs: Club[]) {
+  private translateClubs(_clubs: Club[]): void {
     for (let club of _clubs) {
       this.translatedClubs.push({
         value: club.id + '', label: club.name, description: club.country + " (" + club.city + ")"
@@ -88,40 +90,32 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   protected validate(): boolean {
     this.errors = new Map<ParticipantFormValidationFields, string>();
     let verdict: boolean = true;
-    if (!this.participant.name || this.participant.name.length == 0) {
-      verdict = false;
-      this.errors.set(ParticipantFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    } else {
-      if (this.participant.name && this.participant.name.length < this.PARTICIPANT_NAME_MIN_LENGTH) {
-        verdict = false;
-        this.errors.set(ParticipantFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
-      }
-      if (this.participant.name && this.participant.name.length > this.PARTICIPANT_NAME_MAX_LENGTH) {
-        verdict = false;
-        this.errors.set(ParticipantFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
-      }
-    }
-    if (!this.participant.lastname || this.participant.lastname.length == 0) {
-      verdict = false;
-      this.errors.set(ParticipantFormValidationFields.LASTNAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
-    } else {
-      if (this.participant.lastname && this.participant.lastname.length < this.PARTICIPANT_LASTNAME_MIN_LENGTH) {
-        verdict = false;
-        this.errors.set(ParticipantFormValidationFields.LASTNAME_ERRORS, this.transloco.translate(`v.minLengthError`));
-      }
-      if (this.participant.lastname && this.participant.lastname.length > this.PARTICIPANT_LASTNAME_MAX_LENGTH) {
-        verdict = false;
-        this.errors.set(ParticipantFormValidationFields.LASTNAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
-      }
-    }
+    verdict = this.validateRequiredAndLength(this.participant.name, this.PARTICIPANT_NAME_MIN_LENGTH, this.PARTICIPANT_NAME_MAX_LENGTH, ParticipantFormValidationFields.NAME_ERRORS, verdict);
+    verdict = this.validateRequiredAndLength(this.participant.lastname, this.PARTICIPANT_LASTNAME_MIN_LENGTH, this.PARTICIPANT_LASTNAME_MAX_LENGTH, ParticipantFormValidationFields.LASTNAME_ERRORS, verdict);
     if (this.participant.idCard && this.participant.idCard.length > this.PARTICIPANT_ID_MAX_LENGTH) {
-      verdict = false;
       this.errors.set(ParticipantFormValidationFields.ID_CARD_ERRORS, this.transloco.translate(`v.maxLengthError`));
+      verdict = false;
     }
     return verdict;
   }
 
-  onSave() {
+  private validateRequiredAndLength(value: string | undefined, minLength: number, maxLength: number, field: ParticipantFormValidationFields, verdict: boolean): boolean {
+    if (!value || value.length === 0) {
+      this.errors.set(field, this.transloco.translate(`v.dataIsMandatory`));
+      return false;
+    }
+    if (value.length < minLength) {
+      this.errors.set(field, this.transloco.translate(`v.minLengthError`));
+      return false;
+    }
+    if (value.length > maxLength) {
+      this.errors.set(field, this.transloco.translate(`v.maxLengthError`));
+      return false;
+    }
+    return verdict;
+  }
+
+  onSave(): void {
     if (!this.validate()) {
       this.biitSnackbarService.showNotification(this.transloco.translate('v.validationFailed'), NotificationType.WARNING);
       return;
@@ -134,7 +128,7 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
         next: (participant: Participant): void => {
           this.saved.emit(participant);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });
@@ -143,19 +137,19 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
         next: (participant: Participant): void => {
           this.saved.emit(participant);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });
     }
   }
 
-  setClub(clubId: string) {
-    this.participant.club = this.clubs.filter(c => c.id + "" == clubId)![0];
+  setClub(clubId: string): void {
+    this.participant.club = this.clubs.find(c => String(c.id) === clubId)!;
   }
 
-  deletePicture() {
-    this.fileService.deleteParticipantPicture(this.participant).subscribe((): void => {
+  deletePicture(): void {
+    this.fileService.deleteParticipantPicture(this.participant).pipe(takeUntil(this.destroySubject)).subscribe((): void => {
       this.messageService.infoMessage("pictureDeleted");
       this.participantPicture = undefined;
     });

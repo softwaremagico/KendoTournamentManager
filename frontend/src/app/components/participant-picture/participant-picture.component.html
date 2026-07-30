@@ -13,7 +13,7 @@
 
 @if (participantWindowOpened && this.participantPicture) {
   <biit-popup id="participant-photo"
-    (onClosed)="openImage(false)" no-header
+      (closed)="openImage(false)" no-header
     >
     <picture-dialog-box
       [participantPicture]="this.participantPicture"

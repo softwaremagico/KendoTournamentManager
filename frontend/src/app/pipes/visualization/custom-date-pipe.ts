@@ -7,15 +7,12 @@ import {DatePipe} from "@angular/common";
 })
 export class CustomDatePipe implements PipeTransform {
 
-  constructor(private _datePipe: DatePipe) {
+  constructor(private readonly _datePipe: DatePipe) {
 
   }
 
-
-  transform(value: any): any {
-    if (!value) {
-      value = 0;
-    }
-    this._datePipe.transform(value, 'dd/MM/yyyy');
+  transform(value: number | string | Date | null | undefined): string | null {
+    const normalizedValue: number | string | Date = value ?? 0;
+    return this._datePipe.transform(normalizedValue, 'dd/MM/yyyy');
   }
 }

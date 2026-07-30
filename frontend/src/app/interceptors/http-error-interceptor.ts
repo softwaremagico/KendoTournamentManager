@@ -1,5 +1,5 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import {Observable} from "rxjs";
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
+import {Observable, throwError} from "rxjs";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {catchError} from "rxjs/operators";
@@ -9,38 +9,36 @@ import {EnvironmentService} from "../environment.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {TranslocoService} from "@jsverse/transloco";
 import {BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
+import {isAuthSessionErrorStatus, logoutAndRedirectToLogin} from "./auth-session-error";
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
-  constructor(public router: Router, private loginService: LoginService,
-              private messageService: MessageService, private environmentService: EnvironmentService,
-              protected transloco: TranslocoService,
-              private biitSnackbarService: BiitSnackbarService,) {
+  constructor(public router: Router, private readonly loginService: LoginService,
+              private readonly messageService: MessageService, private readonly environmentService: EnvironmentService,
+              protected readonly transloco: TranslocoService,
+              private readonly biitSnackbarService: BiitSnackbarService,) {
   }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
-      catchError((error) => {
-        if (error.error instanceof Error) {
+      catchError((error: unknown) => {
+        const httpError: { error?: unknown; ok: boolean; status?: number; url?: string } = error as { error?: unknown; ok: boolean; status?: number; url?: string };
+        if (httpError.error instanceof Error) {
           // A client-side or network error occurred. Handle it accordingly.
         } else {
           // Log error.
-          if (error.error && !error.ok) {
-            ErrorHandler.notify(error, this.transloco, this.biitSnackbarService);
-            //Set to 'ok' so it is not handled again by local error handler.
-            error.ok = true;
+          if (httpError.error && !httpError.ok) {
+            ErrorHandler.notify(error as never, this.transloco as never, this.biitSnackbarService);
           }
         }
-        if (error.status === 409 || error.status === 401 || error.status === 423) {
+        if (typeof httpError.status === 'number' && isAuthSessionErrorStatus(httpError.status)) {
           //Ensure errors only from Kendo Tournament (for future external calls).
-          if (error.url.startsWith(this.environmentService.getBackendUrl())) {
-            this.loginService.logout();
-            this.messageService.warningMessage("userLoggedOutMessage");
-            this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
+          if (httpError.url?.startsWith(this.environmentService.getBackendUrl())) {
+            logoutAndRedirectToLogin(this.router, this.loginService, this.messageService);
           }
         }
-        throw error;
+        return throwError(() => error);
       })
     )
   }

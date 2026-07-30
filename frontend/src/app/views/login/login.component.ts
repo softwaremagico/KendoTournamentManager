@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
       //Get last version and compare with current one.
       const headers = new HttpHeaders().set('x-skip-auth', "true");
       this.infoService.getLatestVersion().subscribe((_version: string): void => {
-        if (_version && this.appVersion != _version) {
+        if (_version && this.appVersion !== _version) {
           const parameters: object = {currentVersion: this.appVersion, newVersion: _version};
           this.messageService.warningMessage(this.translateService.translate('newVersionAvailable', parameters));
         }

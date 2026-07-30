@@ -13,6 +13,7 @@ import {TournamentImageType} from "../../../../models/tournament-image-type";
 import {TranslocoService} from '@jsverse/transloco';
 import {Participant} from "../../../../models/participant";
 import {TournamentService} from "../../../../services/tournament.service";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -23,7 +24,7 @@ import {TournamentService} from "../../../../services/tournament.service";
 export class TournamentImagesComponent extends RbacBasedComponent implements OnInit {
   @Input()
   tournament: Tournament;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
   protected readonly BiitProgressBarType = BiitProgressBarType;
   protected loading: boolean = false;
   protected diplomaImage: string | null;
@@ -37,7 +38,7 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
 
   constructor(rbacService: RbacService,
               public messageService: MessageService, public fileService: FileService, public transloco: TranslocoService,
-              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private tournamentService: TournamentService) {
+              private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private readonly tournamentService: TournamentService) {
     super(rbacService);
   }
 
@@ -57,15 +58,15 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
       } else {
         const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file.type);
         if (imageCompression) {
-          this.fileService.setTournamentFilePicture(file, this.tournament, tournamentImageType, imageCompression).subscribe(_picture => {
+          this.fileService.setTournamentFilePicture(file, this.tournament, tournamentImageType, imageCompression).pipe(takeUntil(this.destroySubject)).subscribe(_picture => {
             this.messageService.infoMessage('infoPictureStored');
-            if (tournamentImageType == TournamentImageType.ACCREDITATION) {
+            if (tournamentImageType === TournamentImageType.ACCREDITATION) {
               this.accreditationImage = _picture.base64;
-            } else if (tournamentImageType == TournamentImageType.BANNER) {
+            } else if (tournamentImageType === TournamentImageType.BANNER) {
               this.bannerImage = _picture.base64;
-            } else if (tournamentImageType == TournamentImageType.DIPLOMA) {
+            } else if (tournamentImageType === TournamentImageType.DIPLOMA) {
               this.diplomaImage = _picture.base64;
-            } else if (tournamentImageType == TournamentImageType.PHOTO) {
+            } else if (tournamentImageType === TournamentImageType.PHOTO) {
               this.defaultPhotoImage = _picture.base64;
             }
           });
@@ -77,10 +78,10 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
   }
 
   private refreshNameLine() {
-    this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT).subscribe(_tournamentProperty => {
+    this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT).pipe(takeUntil(this.destroySubject)).subscribe(_tournamentProperty => {
       if (_tournamentProperty) {
-        this.nameLine = parseFloat(_tournamentProperty.propertyValue) * 100;
-        if (this.nameLine == 0) {
+        this.nameLine = Number.parseFloat(_tournamentProperty.propertyValue) * 100;
+        if (this.nameLine === 0) {
           this.nameLine = this.componentHeight / 2;
         }
       } else {
@@ -90,28 +91,28 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
   }
 
   private refreshImages() {
-    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.DIPLOMA).subscribe(_picture => {
+    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.DIPLOMA).pipe(takeUntil(this.destroySubject)).subscribe(_picture => {
       if (_picture) {
         this.diplomaImage = _picture.base64;
       } else {
         this.diplomaImage = null;
       }
     });
-    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.BANNER).subscribe(_picture => {
+    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.BANNER).pipe(takeUntil(this.destroySubject)).subscribe(_picture => {
       if (_picture) {
         this.bannerImage = _picture.base64;
       } else {
         this.bannerImage = null;
       }
     });
-    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.PHOTO).subscribe(_picture => {
+    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.PHOTO).pipe(takeUntil(this.destroySubject)).subscribe(_picture => {
       if (_picture) {
         this.defaultPhotoImage = _picture.base64;
       } else {
         this.defaultPhotoImage = null;
       }
     });
-    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.ACCREDITATION).subscribe(_picture => {
+    this.fileService.getTournamentPicture(this.tournament, TournamentImageType.ACCREDITATION).pipe(takeUntil(this.destroySubject)).subscribe(_picture => {
       if (_picture) {
         this.accreditationImage = _picture.base64;
       } else {
@@ -155,13 +156,25 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = (this.nameLine / 100).toString();
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe();
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).pipe(takeUntil(this.destroySubject)).subscribe();
   }
 
   deletePicture(imageType: TournamentImageType) {
-    this.fileService.deleteTournamentPicture(this.tournament, imageType).subscribe(_picture => {
+    this.fileService.deleteTournamentPicture(this.tournament, imageType).pipe(takeUntil(this.destroySubject)).subscribe(_picture => {
       this.messageService.infoMessage('pictureDeleted');
       this.refreshImages();
+    });
+  }
+
+  private downloadPdfPreview(pdf$: import("rxjs").Observable<Blob>, fileName: string): void {
+    pdf$.pipe(takeUntil(this.destroySubject)).subscribe((html: Blob) => {
+      const blob: Blob = new Blob([html], {type: 'application/pdf'});
+      const downloadURL: string = window.URL.createObjectURL(blob);
+
+      const anchor: HTMLAnchorElement = document.createElement("a");
+      anchor.download = fileName;
+      anchor.href = downloadURL;
+      anchor.click();
     });
   }
 
@@ -175,25 +188,15 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
       participant.lastname = names[1];
 
       if (insertedTournamentImageType === TournamentImageType.DIPLOMA) {
-        this.tournamentService.getParticipantDiploma(this.tournament.id, participant).subscribe((html: Blob) => {
-          const blob = new Blob([html], {type: 'application/pdf'});
-          const downloadURL = window.URL.createObjectURL(blob);
-
-          const anchor = document.createElement("a");
-          anchor.download = insertedTournamentImageType + ".pdf";
-          anchor.href = downloadURL;
-          anchor.click();
-        });
+        this.downloadPdfPreview(
+          this.tournamentService.getParticipantDiploma(this.tournament.id, participant),
+          `${insertedTournamentImageType}.pdf`
+        );
       } else {
-        this.tournamentService.getParticipantAccreditation(this.tournament.id, participant, undefined).subscribe((html: Blob) => {
-          const blob = new Blob([html], {type: 'application/pdf'});
-          const downloadURL = window.URL.createObjectURL(blob);
-
-          const anchor = document.createElement("a");
-          anchor.download = insertedTournamentImageType + ".pdf";
-          anchor.href = downloadURL;
-          anchor.click();
-        });
+        this.downloadPdfPreview(
+          this.tournamentService.getParticipantAccreditation(this.tournament.id, participant, undefined),
+          `${insertedTournamentImageType}.pdf`
+        );
       }
     }
   }

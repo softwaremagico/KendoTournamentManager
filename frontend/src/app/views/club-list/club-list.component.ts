@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
@@ -39,20 +39,16 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   protected confirmDelete: boolean = false;
   protected showRanking: boolean = false;
 
-  constructor(private clubService: ClubService,
-              private transloco: TranslocoService, rbacService: RbacService, private _datePipe: DatePipe,
-              private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
-    super(rbacService);
-  }
+   constructor(private readonly clubService: ClubService,
+               private readonly transloco: TranslocoService, rbacService: RbacService, private readonly _datePipe: DatePipe,
+               private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,
+               private readonly cdr: ChangeDetectorRef) {
+     super(rbacService);
+   }
 
   datePipe() {
     return {
-      transform: (value: any) => {
-        if (!value) {
-          value = 0;
-        }
-        return this._datePipe.transform(value, Constants.FORMAT.DATE);
-      }
+      transform: (value: number | string | Date | null | undefined = 0) => this._datePipe.transform(value, Constants.FORMAT.DATE)
     }
   }
 
@@ -91,23 +87,23 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
     });
   }
 
-  loadData(): void {
-    this.loading = true;
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    this.clubService.getAll().subscribe({
-      next: (_clubs: Club[]): void => {
-        this.clubs = _clubs.map(_club => Club.clone(_club));
-      },
-      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
-    }).add(() => {
-      this.loading = false;
-      this.systemOverloadService.isTransactionalBusy.next(false);
-    });
-  }
+   loadData(): void {
+     this.loading = true;
+     this.systemOverloadService.isTransactionalBusy.next(true);
+     this.clubService.getAll().subscribe({
+       next: (_clubs: Club[]): void => {
+         this.clubs = _clubs.map(_club => Club.clone(_club));
+         this.cdr.markForCheck();
+       },
+       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+     }).add(() => {
+       this.loading = false;
+       this.systemOverloadService.isTransactionalBusy.next(false);
+     });
+   }
 
   addElement(): void {
-    const club: Club = new Club();
-    this.target = club;
+    this.target = new Club();
   }
 
   editElement(club: Club): void {
@@ -126,7 +122,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
           );
           this.confirmDelete = false;
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       });
     }
   }

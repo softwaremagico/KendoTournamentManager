@@ -6,7 +6,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
-import {combineLatest} from "rxjs";
+import {combineLatest, takeUntil} from "rxjs";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {InputLimits} from "../../utils/input-limits";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
@@ -39,7 +39,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   @Input() @Output()
   saved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Input() @Output()
-  errorEvent: EventEmitter<any> = new EventEmitter<any>();
+  errorEvent: EventEmitter<unknown> = new EventEmitter<unknown>();
   protected addPhoto: boolean = false;
 
   protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
@@ -73,16 +73,16 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     super(rbacService);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.translateTypes();
     this.translateScores();
     this.translateDuration();
     this.isTournamentStarted();
   }
 
-  private translateTypes() {
+  private translateTypes(): void {
     const typesTranslations = this.types.map(type => this.transloco.selectTranslate(`${TournamentType.toCamel(type)}`));
-    combineLatest(typesTranslations).subscribe((translations) => {
+    combineLatest(typesTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
       translations.forEach((label, index) => this.translatedTypes.push({
         value: this.types[index],
         label: label,
@@ -91,9 +91,9 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     });
   }
 
-  private translateScores() {
+  private translateScores(): void {
     const scoresTranslations = this.scores.map(score => this.transloco.selectTranslate(`${ScoreType.toCamel(score)}`));
-    combineLatest(scoresTranslations).subscribe((translations) => {
+    combineLatest(scoresTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
       translations.forEach((label, index) => this.translatedScores.push({
         value: this.scores[index],
         label: label,
@@ -102,7 +102,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     });
   }
 
-   private translateDuration() {
+   private translateDuration(): void {
      for (let number of this.TOURNAMENT_ALLOWED_DURATION) {
        this.translatedDuration.push({
          value: number, label: this.getMinutes(number) + " " + this.transloco.translate('minutes') + " "
@@ -125,7 +125,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
 
    private isTournamentStarted(): void {
     if (this.tournament.id) {
-      this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
+      this.fightService.getFromTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_fights: Fight[]): void => {
         this.tournamentWithTeams = _fights.length > 0;
       });
     } else {
@@ -144,7 +144,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
    protected validate(): boolean {
      this.errors = new Map<TournamentFormValidationFields, string>();
      let verdict: boolean = true;
-     if (!this.tournament.name || this.tournament.name.length == 0) {
+      if (!this.tournament.name || this.tournament.name.length === 0) {
        verdict = false;
        this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
      } else {
@@ -185,7 +185,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     return verdict;
   }
 
-  onSave() {
+  onSave(): void {
     if (!this.validate()) {
       this.biitSnackbarService.showNotification(this.transloco.translate('v.validationFailed'), NotificationType.WARNING);
       return;
@@ -198,7 +198,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
         next: (tournament: Tournament): void => {
           this.saved.emit(tournament);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });
@@ -207,7 +207,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
         next: (tournament: Tournament): void => {
           this.saved.emit(tournament);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       }).add(() => {
         this.saving = false;
       });

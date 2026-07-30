@@ -12,23 +12,23 @@ export class UserSessionService {
   private store: boolean;
   private readonly context: string = '';
 
-  constructor(private cookies: CookieService) {
+  constructor(private readonly cookies: CookieService) {
     const authToken: string | null = this.getAuthToken();
     const expires: number | null = this.getLocalAuthExpiration();
 
     const localUserData: string | null = this.getLocalUser();
-    let user: AuthenticatedUser | undefined = localUserData != null ? AuthenticatedUser.clone(
+    let user: AuthenticatedUser | undefined = localUserData !== null ? AuthenticatedUser.clone(
       JSON.parse(localUserData)) : undefined;
     if (!user) {
       const sessionUserData: string | null = this.getSessionUser();
       try {
-        user = sessionUserData != null || sessionUserData != undefined ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
+        user = sessionUserData !== null ? AuthenticatedUser.clone(JSON.parse(sessionUserData)) : undefined;
       } catch (e) {
 
       }
     }
     this.user = user;
-    if (!expires || Number.isNaN(Number(expires)) || expires < new Date().getTime()) {
+    if (!expires || Number.isNaN(Number(expires)) || expires < Date.now()) {
       localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
       localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
       localStorage.removeItem(`${this.context}.${Constants.SESSION_STORAGE.USER}`);
@@ -177,7 +177,7 @@ export class UserSessionService {
 
   isTokenExpired(): boolean {
     const expired: boolean = !sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`) ||
-      new Date().getTime() > +(this.getLocalAuthExpiration() || 0) || !this.getToken();
+      Date.now() > +(this.getLocalAuthExpiration() || 0) || !this.getToken();
     if (!expired) {
       this.loggedIn = true;
     }

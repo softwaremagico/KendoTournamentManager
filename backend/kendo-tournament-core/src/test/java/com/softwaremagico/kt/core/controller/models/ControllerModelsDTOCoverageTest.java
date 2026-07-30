@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("all")
-@Test
+@Test(groups = "controllerModelsCoverageTest")
 public class ControllerModelsDTOCoverageTest {
 
     @Test
@@ -53,7 +53,7 @@ public class ControllerModelsDTOCoverageTest {
                 .isEqualTo(same)
                 .hasSameHashCodeAs(same)
                 .isNotEqualTo(differentGrade)
-                
+
                 .hasToString(left.toString());
         assertThat(left.toString()).contains("Achievement").contains("achievementType");
     }
@@ -179,7 +179,7 @@ public class ControllerModelsDTOCoverageTest {
         final AchievementDTO base = this.createAchievementDTO(20, "Nao", "Ito", "Cup", AchievementType.TERMINATOR, AchievementGrade.GOLD);
 
         // this == o branch
-        
+
         // super.equals(o) == false branch (different createdAt/id in ElementDTO)
         final AchievementDTO differentSuper = this.createAchievementDTO(21, "Nao", "Ito", "Cup", AchievementType.TERMINATOR, AchievementGrade.GOLD);
         assertThat(base.equals(differentSuper)).isFalse();
@@ -202,7 +202,7 @@ public class ControllerModelsDTOCoverageTest {
         final RoleDTO base = this.createRoleDTO(30, "Akira", "Kato", RoleType.COMPETITOR);
 
         // this == o branch
-        
+
         // super.equals(o) == false branch
         final RoleDTO differentSuper = this.createRoleDTO(31, "Akira", "Kato", RoleType.COMPETITOR);
         assertThat(base.equals(differentSuper)).isFalse();
@@ -271,7 +271,7 @@ public class ControllerModelsDTOCoverageTest {
                 .isEqualTo(same)
                 .hasSameHashCodeAs(same)
                 .isNotEqualTo(differentCity)
-                
+
                 .hasToString("Dojo A");
 
         final ClubDTO nullName = this.createClubDTO("Dojo B", "ES", "Bilbao");
@@ -318,7 +318,7 @@ public class ControllerModelsDTOCoverageTest {
         final ParticipantDTO base = this.createParticipantDTO(90, "Haru", "Sato");
         base.setClub(this.createClubDTO("Club H", "JP", "Osaka"));
 
-        
+
         final ParticipantDTO anonymous = this.createParticipantDTO(91, "Tmp", "Tmp");
         anonymous.setName(null);
         assertThatThrownBy(anonymous::toString).isInstanceOf(NullPointerException.class);
@@ -375,7 +375,7 @@ public class ControllerModelsDTOCoverageTest {
                 .isEqualTo(same)
                 .hasSameHashCodeAs(same)
                 .isNotEqualTo(differentType)
-                
+
                 .hasToString("Finals");
         assertThat(base.isLocked()).isTrue();
         assertThat(base.getFightSize()).isEqualTo(3);

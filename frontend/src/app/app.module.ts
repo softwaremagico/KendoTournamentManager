@@ -102,9 +102,14 @@ import {
   DefaultFallbackStrategy,
   DefaultInterceptor,
   DefaultMissingHandler,
+  DefaultTranspiler,
+  TRANSLOCO_CONFIG,
   TRANSLOCO_FALLBACK_STRATEGY,
   TRANSLOCO_INTERCEPTOR,
-  TRANSLOCO_MISSING_HANDLER
+  TRANSLOCO_LOADER,
+  TRANSLOCO_MISSING_HANDLER,
+  TRANSLOCO_TRANSPILER,
+  translocoConfig
 } from "@jsverse/transloco";
 import {HasPermissionPipe} from "./pipes/has-permission.pipe";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
@@ -120,6 +125,8 @@ import {
   AuthenticatedUserRolePopupModule
 } from "./views/authenticated-user-list/authenticated-user-role-popup/authenticated-user-role-popup.module";
 import {UserScoreModule} from "./components/fight/duel/user-score/user-score.module";
+import {Environment} from "../environments/environment";
+import {TranslocoHttpLoader} from "./transloco-http.loader";
 
 
 registerLocaleData(localeES, "es");
@@ -240,8 +247,21 @@ registerLocaleData(localeFR, "fr");
             provide: RxStompService,
             useFactory: rxStompServiceFactory,
         },
+        {
+            provide: TRANSLOCO_CONFIG,
+            useValue: translocoConfig({
+                availableLangs: ['en', 'es', 'nl', 'de', 'it', 'ca', 'fr'],
+                defaultLang: 'en',
+                fallbackLang: 'en',
+                reRenderOnLangChange: true,
+                prodMode: Environment.production,
+                missingHandler: {useFallbackTranslation: true}
+            })
+        },
+        {provide: TRANSLOCO_LOADER, useClass: TranslocoHttpLoader},
         {provide: TRANSLOCO_MISSING_HANDLER, useClass: DefaultMissingHandler},
         {provide: TRANSLOCO_INTERCEPTOR, useClass: DefaultInterceptor},
+        {provide: TRANSLOCO_TRANSPILER, useClass: DefaultTranspiler},
         {provide: TRANSLOCO_FALLBACK_STRATEGY, useClass: DefaultFallbackStrategy},
         RedirectGuard,
         provideHttpClient(withInterceptorsFromDi())

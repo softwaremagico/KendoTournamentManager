@@ -28,7 +28,7 @@
             icon="minus">
           </button>
         }
-        @if ((numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)) {
+        @if ((numberOfWinners === 1) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)) {
           <button biit-icon
             [disabled]="groupsDisabled || (tournament && tournament.locked)"
             (click)="changeNumberOfWinners(2)"
@@ -36,7 +36,7 @@
             <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
           </button>
         }
-        @if ((numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)) {
+        @if ((numberOfWinners === 2) && (RbacActivity.EDIT_TOURNAMENT | hasPermission)) {
           <button biit-icon
             [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
             (click)="changeNumberOfWinners(1)"

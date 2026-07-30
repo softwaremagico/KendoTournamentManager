@@ -38,12 +38,16 @@ import com.softwaremagico.kt.core.converters.ScoreOfCompetitorConverter;
 import com.softwaremagico.kt.core.converters.ScoreOfTeamConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
+import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.BubbleSortTournamentHandler;
@@ -51,8 +55,10 @@ import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
@@ -66,6 +72,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -212,6 +219,281 @@ public class RankingControllerTest {
 		assertNull(controller.getCompetitorRanking(null));
 		assertFalse(controller.getTeamsByPosition(groupDTO).containsKey(0));
 		assertNull(controller.getCompetitor(groupDTO, 0));
+	}
+
+	@Test
+	public void shouldReturnSenbatsuTeamsRankingFromTournament() {
+		final Tournament tournament = tournament(1, TournamentType.SENBATSU);
+		final Team team1 = team(1, "One", tournament);
+		final Team team2 = team(2, "Two", tournament);
+		final ScoreOfTeamDTO dto1 = scoreOfTeamDTO(teamDTO(1, "One", tournamentDTO(1, TournamentType.SENBATSU)));
+		final ScoreOfTeamDTO dto2 = scoreOfTeamDTO(teamDTO(2, "Two", tournamentDTO(1, TournamentType.SENBATSU)));
+
+		when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+		when(rankingProvider.getTeamsScoreRankingFromTournament(1))
+				.thenReturn(List.of(mock(ScoreOfTeam.class), mock(ScoreOfTeam.class)));
+		when(scoreOfTeamConverter.convertAll(any())).thenReturn(List.of(dto1, dto2));
+		when(senbatsuTournamentHandler.getFinalRanking(tournament))
+				.thenReturn(new ArrayList<>(List.of(team1, team2)));
+
+		final List<ScoreOfTeamDTO> result = controller.getTeamsScoreRankingFromTournament(1);
+
+		assertEquals(result.size(), 2);
+		assertEquals(result.get(0).getTeam().getId(), Integer.valueOf(2));
+		assertEquals(result.get(1).getTeam().getId(), Integer.valueOf(1));
+	}
+
+	@Test
+	public void shouldReturnPlainRankingForOtherTournamentTypes() {
+		final Tournament tournament = tournament(1, TournamentType.LEAGUE);
+		final ScoreOfTeamDTO dto1 = scoreOfTeamDTO(teamDTO(1, "One", tournamentDTO(1, TournamentType.LEAGUE)));
+
+		when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+		when(rankingProvider.getTeamsScoreRankingFromTournament(1)).thenReturn(List.of(mock(ScoreOfTeam.class)));
+		when(scoreOfTeamConverter.convertAll(any())).thenReturn(List.of(dto1));
+
+		final List<ScoreOfTeamDTO> result = controller.getTeamsScoreRankingFromTournament(1);
+
+		assertEquals(result.size(), 1);
+		assertSame(result.get(0), dto1);
+	}
+
+	@Test(expectedExceptions = TournamentNotFoundException.class)
+	public void shouldThrowWhenTournamentNotFoundForScoreRankingFromTournament() {
+		when(tournamentProvider.get(99)).thenReturn(Optional.empty());
+		controller.getTeamsScoreRankingFromTournament(99);
+	}
+
+	@Test
+	public void shouldReturnTeamsRanking() {
+		final GroupDTO groupDTO = new GroupDTO();
+		final Group group = new Group();
+		final TeamDTO teamDTO = teamDTO(1, "A", tournamentDTO(1, TournamentType.LEAGUE));
+
+		when(groupConverter.reverse(groupDTO)).thenReturn(group);
+		when(rankingProvider.getTeamsRanking(group)).thenReturn(List.of(team(1, "A", tournament(1, TournamentType.LEAGUE))));
+		when(teamConverter.convertAll(any())).thenReturn(List.of(teamDTO));
+
+		final List<TeamDTO> result = controller.getTeamsRanking(groupDTO);
+
+		assertEquals(result, List.of(teamDTO));
+	}
+
+	@Test
+	public void shouldReturnTeamsScoreRankingFromGroup() {
+		final Group group = new Group();
+		final GroupDTO groupDTO = new GroupDTO();
+		groupDTO.setTournament(tournamentDTO(1, TournamentType.LEAGUE));
+		groupDTO.setTeams(new ArrayList<>());
+		groupDTO.setFights(new ArrayList<>());
+		groupDTO.setUnties(new ArrayList<>());
+
+		when(groupProvider.getGroup(5)).thenReturn(group);
+		when(groupConverter.convert(any())).thenReturn(groupDTO);
+		when(scoreOfTeamConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfTeamDTO> result = controller.getTeamsScoreRankingFromGroup(5);
+
+		assertNotNull(result);
+	}
+
+	@Test(expectedExceptions = GroupNotFoundException.class)
+	public void shouldThrowWhenGroupNotFoundForScoreRankingFromGroup() {
+		when(groupProvider.getGroup(5)).thenReturn(null);
+		controller.getTeamsScoreRankingFromGroup(5);
+	}
+
+	@Test
+	public void shouldReturnTeamsScoreRankingForSwissGroup() {
+		final GroupDTO groupDTO = new GroupDTO();
+		groupDTO.setTournament(tournamentDTO(1, TournamentType.SWISS));
+		final Group group = new Group();
+
+		when(groupConverter.reverse(groupDTO)).thenReturn(group);
+		when(rankingProvider.getTeamsScoreRanking(group)).thenReturn(List.of());
+		when(scoreOfTeamConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfTeamDTO> result = controller.getTeamsScoreRanking(groupDTO);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnTeamsScoreRankingForTournament() {
+		final TournamentDTO tournamentDTO = tournamentDTO(1, TournamentType.LEAGUE);
+		final Tournament tournament = tournament(1, TournamentType.LEAGUE);
+
+		when(tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+		when(rankingProvider.getTeamsScoreRanking(tournament)).thenReturn(List.of());
+		when(scoreOfTeamConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfTeamDTO> result = controller.getTeamsScoreRanking(tournamentDTO);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnCompetitorsScoreRankingFromGroup() {
+		final Group group = new Group();
+		final GroupDTO groupDTO = new GroupDTO();
+		groupDTO.setTournament(tournamentDTO(1, TournamentType.LEAGUE));
+		groupDTO.setTeams(new ArrayList<>());
+		groupDTO.setFights(new ArrayList<>());
+		groupDTO.setUnties(new ArrayList<>());
+
+		when(groupProvider.getGroup(6)).thenReturn(group);
+		when(groupConverter.convert(any())).thenReturn(groupDTO);
+		when(scoreOfCompetitorConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorsScoreRankingFromGroup(6);
+
+		assertNotNull(result);
+	}
+
+	@Test(expectedExceptions = GroupNotFoundException.class)
+	public void shouldThrowWhenGroupNotFoundForCompetitorsScoreRankingFromGroup() {
+		when(groupProvider.getGroup(6)).thenReturn(null);
+		controller.getCompetitorsScoreRankingFromGroup(6);
+	}
+
+	@Test
+	public void shouldReturnCompetitorsScoreRankingFromTournament() {
+		when(rankingProvider.getCompetitorsScoreRankingFromTournament(1)).thenReturn(List.of());
+		when(scoreOfCompetitorConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorsScoreRankingFromTournament(1);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnCompetitorsScoreRankingForTournament() {
+		final TournamentDTO tournamentDTO = tournamentDTO(1, TournamentType.LEAGUE);
+		final Tournament tournament = tournament(1, TournamentType.LEAGUE);
+
+		when(tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+		when(rankingProvider.getCompetitorsScoreRanking(tournament)).thenReturn(List.of());
+		when(scoreOfCompetitorConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorsScoreRanking(tournamentDTO);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnCompetitorsGlobalScoreRankingByClub() {
+		final Club club = club(1, "ClubA");
+		final Participant participant = participant(2, club);
+		final Role role = new Role();
+		role.setParticipant(participant);
+
+		when(clubProvider.get(1)).thenReturn(Optional.of(club));
+		when(participantProvider.get(club)).thenReturn(new ArrayList<>(List.of(participant)));
+		when(roleProvider.get(any(), eq(RoleType.COMPETITOR))).thenReturn(List.of(role));
+		when(clubConverter.convert(any())).thenReturn(clubDTO(1, "ClubA"));
+		when(participantConverter.convertAll(any())).thenReturn(List.of());
+		when(rankingProvider.getCompetitorsGlobalScoreRanking(any(), any(), any())).thenReturn(List.of());
+		when(scoreOfCompetitorConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorsGlobalScoreRankingByClub(1);
+
+		assertNotNull(result);
+	}
+
+	@Test(expectedExceptions = ClubNotFoundException.class)
+	public void shouldThrowWhenClubNotFoundForGlobalScoreRankingByClub() {
+		when(clubProvider.get(99)).thenReturn(Optional.empty());
+		controller.getCompetitorsGlobalScoreRankingByClub(99);
+	}
+
+	@Test
+	public void shouldReturnCompetitorsGlobalScoreRankingWithoutClub() {
+		final ParticipantDTO participantDTO = participantDTO(7, "Name", "Lastname", null);
+
+		when(rankingProvider.getCompetitorsGlobalScoreRanking(any(), eq(ScoreType.DEFAULT), eq(30))).thenReturn(List.of());
+		when(scoreOfCompetitorConverter.convertAll(any())).thenReturn(List.of());
+
+		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorsGlobalScoreRanking(List.of(participantDTO), 30);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnCompetitorGlobalRanking() {
+		when(rankingProvider.getCompetitorGlobalRanking(ScoreType.DEFAULT)).thenReturn(List.of());
+		when(scoreOfCompetitorConverter.convertAll(any(java.util.Set.class))).thenReturn(List.of());
+
+		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorGlobalRanking(ScoreType.DEFAULT);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnCompetitorRankingWhenParticipantPresent() {
+		final ParticipantDTO participantDTO = participantDTO(7, "Name", "Lastname", null);
+		final Participant participant = participant(7, null);
+		final CompetitorRanking ranking = new CompetitorRanking(1, 10);
+
+		when(participantConverter.reverse(participantDTO)).thenReturn(participant);
+		when(rankingProvider.getCompetitorRanking(participant)).thenReturn(ranking);
+
+		final CompetitorRanking result = controller.getCompetitorRanking(participantDTO);
+
+		assertSame(result, ranking);
+	}
+
+	@Test
+	public void shouldReturnScoreRanking() {
+		final GroupDTO groupDTO = new GroupDTO();
+		final Group group = new Group();
+		final ParticipantDTO competitorDTO = participantDTO(7, "Name", "Lastname", null);
+		final Participant competitor = participant(7, null);
+		final ScoreOfCompetitor score = new ScoreOfCompetitor();
+		final ScoreOfCompetitorDTO scoreDTO = new ScoreOfCompetitorDTO();
+
+		when(groupConverter.reverse(groupDTO)).thenReturn(group);
+		when(participantConverter.reverse(competitorDTO)).thenReturn(competitor);
+		when(rankingProvider.getScoreRanking(group, competitor)).thenReturn(score);
+		when(scoreOfCompetitorConverter.convert(any())).thenReturn(scoreDTO);
+
+		final ScoreOfCompetitorDTO result = controller.getScoreRanking(groupDTO, competitorDTO);
+
+		assertSame(result, scoreDTO);
+	}
+
+	@Test
+	public void shouldReturnScoreOfCompetitorByOrder() {
+		final GroupDTO groupDTO = new GroupDTO();
+		final Group group = new Group();
+		final ScoreOfCompetitor score = new ScoreOfCompetitor();
+		final ScoreOfCompetitorDTO scoreDTO = new ScoreOfCompetitorDTO();
+
+		when(groupConverter.reverse(groupDTO)).thenReturn(group);
+		when(rankingProvider.getScoreOfCompetitor(eq(group), anyInt())).thenReturn(score);
+		when(scoreOfCompetitorConverter.convert(any())).thenReturn(scoreDTO);
+
+		final ScoreOfCompetitorDTO result = controller.getScoreOfCompetitor(groupDTO, 0);
+
+		assertSame(result, scoreDTO);
+	}
+
+	@Test
+	public void shouldReturnOrderOfTeam() {
+		final GroupDTO groupDTO = new GroupDTO();
+		final TeamDTO teamDTO = teamDTO(1, "A", tournamentDTO(1, TournamentType.LEAGUE));
+		final Group group = new Group();
+		final Team team = team(1, "A", tournament(1, TournamentType.LEAGUE));
+
+		when(groupConverter.reverse(groupDTO)).thenReturn(group);
+		when(teamConverter.reverse(teamDTO)).thenReturn(team);
+		when(rankingProvider.getOrder(group, team)).thenReturn(3);
+
+		assertEquals(controller.getOrder(groupDTO, teamDTO), Integer.valueOf(3));
+	}
+
+	@Test
+	public void shouldRunScheduledCacheEvictWithoutError() {
+		controller.reportCacheEvict();
 	}
 
 	private Tournament tournament(int id, TournamentType type) {
