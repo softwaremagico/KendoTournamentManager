@@ -27,55 +27,55 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository<ENTITY, KEY>> {
+public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
 
-    private final REPOSITORY repository;
+    private final R repository;
 
-    protected CrudProvider(REPOSITORY repository) {
+    protected CrudProvider(R repository) {
         this.repository = repository;
     }
 
-    public REPOSITORY getRepository() {
+    public R getRepository() {
         return repository;
     }
 
-    public ENTITY save(ENTITY entity) {
+    public E save(E entity) {
         return repository.save(entity);
     }
 
-    public List<ENTITY> save(Collection<ENTITY> entities) {
+    public List<E> save(Collection<E> entities) {
         return repository.saveAll(entities);
     }
 
-    public List<ENTITY> saveAll(Collection<ENTITY> entity) {
+    public List<E> saveAll(Collection<E> entity) {
         return repository.saveAll(entity);
     }
 
-    public Optional<ENTITY> get(KEY id) {
+    public Optional<E> get(K id) {
         return repository.findById(id);
     }
 
-    public List<ENTITY> get(Collection<KEY> ids) {
+    public List<E> get(Collection<K> ids) {
         return repository.findAllById(ids);
     }
 
-    public List<ENTITY> getAll() {
+    public List<E> getAll() {
         return repository.findAll();
     }
 
-    public ENTITY update(ENTITY entity) {
+    public E update(E entity) {
         return repository.save(entity);
     }
 
-    public void delete(ENTITY entity) {
+    public void delete(E entity) {
         repository.delete(entity);
     }
 
-    public void delete(Collection<ENTITY> entities) {
+    public void delete(Collection<E> entities) {
         repository.deleteAll(entities);
     }
 
-    public void deleteById(KEY id) {
+    public void deleteById(K id) {
         repository.deleteById(id);
     }
 
@@ -83,7 +83,7 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         repository.deleteAll();
     }
 
-    public void deleteAll(Collection<ENTITY> entities) {
+    public void deleteAll(Collection<E> entities) {
         repository.deleteAll(entities);
     }
 
@@ -91,7 +91,7 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         return repository.count();
     }
 
-    public List<ENTITY> findByIdIn(Collection<KEY> ids) {
+    public List<E> findByIdIn(Collection<K> ids) {
         return getRepository().findAllById(ids);
     }
 }

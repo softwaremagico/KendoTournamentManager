@@ -30,12 +30,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class BasePool<ID, E> {
+public abstract class BasePool<I, E> {
     private static final String CACHE_PREFIX = "Cache: ";
 
     // Elements by id.
-    private Map<ID, Long> elementsTime; // id -> time.
-    private Map<ID, E> elementsById;
+    private Map<I, Long> elementsTime; // id -> time.
+    private Map<I, E> elementsById;
 
     protected BasePool() {
         reset();
@@ -47,7 +47,7 @@ public abstract class BasePool<ID, E> {
         elementsById = new ConcurrentHashMap<>();
     }
 
-    public synchronized void addElement(E element, ID key) {
+    public synchronized void addElement(E element, I key) {
         PoolLogger.debug(this.getClass(), "Adding element '" + element + "' with key '" + key + "'.");
         if (getExpirationTime() > 0) {
             elementsTime.put(key, System.currentTimeMillis());
@@ -61,18 +61,18 @@ public abstract class BasePool<ID, E> {
      * @param id element key for the pool.
      * @return the element that has the selected key.
      */
-    public synchronized E getElement(ID id) {
+    public synchronized E getElement(I id) {
         if (isInvalidCacheRequest(id)) {
             logCacheMissById(id);
             return null;
         }
 
         final long now = System.currentTimeMillis();
-        final Map<ID, Long> elementsByTimeChecked = getElementsTimeSnapshot();
+        final Map<I, Long> elementsByTimeChecked = getElementsTimeSnapshot();
         PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsByTimeChecked.size() + ".");
 
-        for (final Map.Entry<ID, Long> entry : elementsByTimeChecked.entrySet()) {
-            final ID storedObjectId = entry.getKey();
+        for (final Map.Entry<I, Long> entry : elementsByTimeChecked.entrySet()) {
+            final I storedObjectId = entry.getKey();
             final E cachedElement = getValidCachedElement(storedObjectId, entry.getValue(), now);
             if (cachedElement != null && Objects.equals(storedObjectId, id)) {
                 logStoreHit(cachedElement, id);
@@ -84,17 +84,17 @@ public abstract class BasePool<ID, E> {
         return null;
     }
 
-    public synchronized ID getKey(E element) {
+    public synchronized I getKey(E element) {
         if (isInvalidCacheRequest(element)) {
             logCacheMissByValue(element);
             return null;
         }
 
         final long now = System.currentTimeMillis();
-        final Map<ID, Long> elementsByTimeChecked = getElementsTimeSnapshot();
+        final Map<I, Long> elementsByTimeChecked = getElementsTimeSnapshot();
         PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsByTimeChecked.size() + ".");
-        for (final Map.Entry<ID, Long> entry : elementsByTimeChecked.entrySet()) {
-            final ID id = entry.getKey();
+        for (final Map.Entry<I, Long> entry : elementsByTimeChecked.entrySet()) {
+            final I id = entry.getKey();
             final E cachedElement = getValidCachedElement(id, entry.getValue(), now);
             if (Objects.equals(cachedElement, element)) {
                 logStoreHit(cachedElement, element);
@@ -110,11 +110,11 @@ public abstract class BasePool<ID, E> {
         return value == null || getExpirationTime() <= 0 || elementsTime.isEmpty();
     }
 
-    private Map<ID, Long> getElementsTimeSnapshot() {
+    private Map<I, Long> getElementsTimeSnapshot() {
         return new ConcurrentHashMap<>(elementsTime);
     }
 
-    private E getValidCachedElement(ID storedObjectId, Long timestamp, long now) {
+    private E getValidCachedElement(I storedObjectId, Long timestamp, long now) {
         if (removeIfExpired(storedObjectId, timestamp, now)) {
             return null;
         }
@@ -125,7 +125,7 @@ public abstract class BasePool<ID, E> {
         return cachedElement;
     }
 
-    private void logCacheMissById(ID id) {
+    private void logCacheMissById(I id) {
         PoolLogger.debug(this.getClass(), "Object with Id '" + id + "' - Cache Miss.");
     }
 
@@ -133,7 +133,7 @@ public abstract class BasePool<ID, E> {
         PoolLogger.debug(this.getClass(), "Object '" + element + "' - Cache Miss.");
     }
 
-    private boolean removeIfExpired(ID storedObjectId, Long timestamp, long now) {
+    private boolean removeIfExpired(I storedObjectId, Long timestamp, long now) {
         if (!isExpired(timestamp, now)) {
             return false;
         }
@@ -148,7 +148,7 @@ public abstract class BasePool<ID, E> {
         return timestamp != null && (now - timestamp) > getExpirationTime();
     }
 
-    private boolean removeIfDirty(ID storedObjectId, E cachedElement) {
+    private boolean removeIfDirty(I storedObjectId, E cachedElement) {
         if (cachedElement == null || !isDirty(cachedElement)) {
             return false;
         }
@@ -170,26 +170,26 @@ public abstract class BasePool<ID, E> {
     }
 
 
-    public Set<ID> getAllPooledKeys() {
+    public Set<I> getAllPooledKeys() {
         return new HashSet<>(elementsById.keySet());
     }
 
 
-    public Map<ID, E> getElementsById() {
+    public Map<I, E> getElementsById() {
         return elementsById;
     }
 
 
-    public Long getElementsTime(ID id) {
+    public Long getElementsTime(I id) {
         return elementsTime.get(id);
     }
 
-    public Map<ID, Long> getElementsTime() {
+    public Map<I, Long> getElementsTime() {
         return elementsTime;
     }
 
 
-    public synchronized E removeElement(ID id) {
+    public synchronized E removeElement(I id) {
         if (id != null) {
             PoolLogger.debug(this.getClass(), "Removing element '" + id + "'.");
             elementsTime.remove(id);
