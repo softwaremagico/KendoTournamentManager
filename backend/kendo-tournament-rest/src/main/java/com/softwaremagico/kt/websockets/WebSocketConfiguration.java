@@ -90,7 +90,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
             @Override
-            @Nullable
+            @Nullable //NOSONAR - Matches ChannelInterceptor#preSend contract, which is also @Nullable despite its @NonNullApi package.
             public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
