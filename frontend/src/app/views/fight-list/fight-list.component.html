@@ -11,13 +11,13 @@
               <mat-icon class="kendo-icon" svgIcon="arrow_back"></mat-icon>
             </button>
           }
-          @if (isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission) && !tournament.locked) {
-            <button biit-icon
-              (click)="confirmResetFights=true"
-              [title]="t('wizard')">
-              <mat-icon class="kendo-icon" svgIcon="wand"></mat-icon>
-            </button>
-          }
+           @if (isWizardEnabled && (RbacActivity.CREATE_FIGHT | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon
+               (click)="confirmResetFights=true"
+               [title]="t('wizard')">
+               <mat-icon class="kendo-icon" svgIcon="wand"></mat-icon>
+             </button>
+           }
           @if ((RbacActivity.CREATE_FIGHT | hasPermission) && tournament && tournament.type !== bubbleSortType && !tournament.locked) {
             <button id="button-plus" biit-icon class="add-button"
               (click)="addElement()"
@@ -46,87 +46,87 @@
             <mat-divider [vertical]="true" class="timer-divider"
             ></mat-divider>
           }
-          @if ((RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel.finished === false) && !tournament.locked) {
-            <button biit-icon
-              (click)="finishDuel()"
-              [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
-              [title]="t('finishFight')">
-              <mat-icon class="kendo-icon" svgIcon="check"></mat-icon>
-            </button>
-          }
-          @if ((RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished === true && !tournament.locked) {
-            <button biit-icon
-              (click)="unfinishDuel()"
-              [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
-              [title]="t('reopenFight')">
-              <mat-icon class="kendo-icon" svgIcon="uncheck"></mat-icon>
-            </button>
-          }
-          @if (!timer && (RbacActivity.SHOW_TIMER | hasPermission) && !tournament.locked) {
-            <button biit-icon class="timer-button"
-              (click)="showTimer(canStartFight(selectedDuel))"
-              [disabled]="selectedDuel===undefined || selectedDuel.substitute || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
-              [title]="t('chronometerOn')">
-              <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
-            </button>
-          }
-          @if (timer && (RbacActivity.EDIT_FIGHT | hasPermission) && !tournament.locked) {
-            <button biit-icon class="timer-button"
-              (click)="showTimer(false)"
-              [disabled]="selectedDuel===undefined || selectedDuel.substitute || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
-              [title]="t('chronometerOff')">
-              <mat-icon class="kendo-icon" svgIcon="timer_off"></mat-icon>
-            </button>
-          }
-          @if ((RbacActivity.PLAY_WHISTLE | hasPermission) && !tournament.locked) {
-            <button biit-icon class="whisper-button"
-              (mousedown)="playWhistle()"
-              (mouseup)="stopWhistle()"
-              [title]="t('playWhistle')">
-              <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
-            </button>
-          }
-          @if (((RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
-            || (RbacActivity.SWAP_FIGHTS | hasPermission)
-            || (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)) && !tournament.locked) {
-            <mat-divider [vertical]="true"
-            class="actions-divider"></mat-divider>
-          }
-          @if ((RbacActivity.CHANGE_FIGHT_COLORS | hasPermission) && !tournament.locked) {
-            <button biit-icon class="exchange-colors"
-              (click)="swapColors()"
-              [title]="t('swapColors')">
-              <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
-            </button>
-          }
-          @if ((RbacActivity.SWAP_FIGHTS | hasPermission) && !tournament.locked) {
-            <button biit-icon class="exchange-teams"
-              (click)="swapTeams()"
-              [title]="t('swapTeams')">
-              <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
-            </button>
-          }
-          @if (!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission) && !tournament.locked) {
-            <button biit-icon class="member-order"
-              [disabled]="this.tournament && this.tournament.teamSize > 1 && (tournament && tournament.locked)"
-              (click)="enableMemberOrder(true)"
-              [title]="t('membersOrder')">
-              <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
-            </button>
-          }
-          @if (membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission) && !tournament.locked) {
-            <button biit-icon class="member-order"
-              [disabled]="(tournament && tournament.locked)"
-              (click)="enableMemberOrder(false)"
-              [title]="t('membersOrder')">
-              <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
-            </button>
-          }
-          @if (((RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
-            (RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)) && !tournament.locked) {
-            <mat-divider [vertical]="true"
-            class="order-divider"></mat-divider>
-          }
+           @if ((RbacActivity.FINISH_FIGHT | hasPermission) && (!selectedDuel || selectedDuel.finished === false) && tournament && !tournament.locked) {
+             <button biit-icon
+               (click)="finishDuel()"
+               [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
+               [title]="t('finishFight')">
+               <mat-icon class="kendo-icon" svgIcon="check"></mat-icon>
+             </button>
+           }
+           @if ((RbacActivity.UNFINISH_FIGHT | hasPermission) && selectedDuel?.finished === true && tournament && !tournament.locked) {
+             <button biit-icon
+               (click)="unfinishDuel()"
+               [disabled]="!selectedDuel || (tournament && tournament.locked) || selectedDuel.substitute"
+               [title]="t('reopenFight')">
+               <mat-icon class="kendo-icon" svgIcon="uncheck"></mat-icon>
+             </button>
+           }
+           @if (!timer && (RbacActivity.SHOW_TIMER | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="timer-button"
+               (click)="showTimer(canStartFight(selectedDuel))"
+               [disabled]="selectedDuel===undefined || selectedDuel.substitute || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+               [title]="t('chronometerOn')">
+               <mat-icon class="kendo-icon" svgIcon="timer"></mat-icon>
+             </button>
+           }
+           @if (timer && (RbacActivity.EDIT_FIGHT | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="timer-button"
+               (click)="showTimer(false)"
+               [disabled]="selectedDuel===undefined || selectedDuel.substitute || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+               [title]="t('chronometerOff')">
+               <mat-icon class="kendo-icon" svgIcon="timer_off"></mat-icon>
+             </button>
+           }
+           @if ((RbacActivity.PLAY_WHISTLE | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="whisper-button"
+               (mousedown)="playWhistle()"
+               (mouseup)="stopWhistle()"
+               [title]="t('playWhistle')">
+               <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
+             </button>
+           }
+           @if (((RbacActivity.CHANGE_FIGHT_COLORS | hasPermission)
+             || (RbacActivity.SWAP_FIGHTS | hasPermission)
+             || (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission)) && tournament && !tournament.locked) {
+             <mat-divider [vertical]="true"
+             class="actions-divider"></mat-divider>
+           }
+           @if ((RbacActivity.CHANGE_FIGHT_COLORS | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="exchange-colors"
+               (click)="swapColors()"
+               [title]="t('swapColors')">
+               <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
+             </button>
+           }
+           @if ((RbacActivity.SWAP_FIGHTS | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="exchange-teams"
+               (click)="swapTeams()"
+               [title]="t('swapTeams')">
+               <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
+             </button>
+           }
+           @if (!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="member-order"
+               [disabled]="this.tournament && this.tournament.teamSize > 1 && (tournament && tournament.locked)"
+               (click)="enableMemberOrder(true)"
+               [title]="t('membersOrder')">
+               <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
+             </button>
+           }
+           @if (membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | hasPermission) && tournament && !tournament.locked) {
+             <button biit-icon class="member-order"
+               [disabled]="(tournament && tournament.locked)"
+               (click)="enableMemberOrder(false)"
+               [title]="t('membersOrder')">
+               <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
+             </button>
+           }
+           @if (((RbacActivity.READ_TEAMS_RANKINGS | hasPermission) ||
+             (RbacActivity.READ_COMPETITORS_RANKINGS | hasPermission)) && tournament && !tournament.locked) {
+             <mat-divider [vertical]="true"
+             class="order-divider"></mat-divider>
+           }
           @if (((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
             || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU)
             || (tournament && tournament.type === TournamentType.SWISS)) && (RbacActivity.READ_TEAMS_RANKINGS | hasPermission)) {
@@ -145,10 +145,10 @@
               <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
             </button>
           }
-          @if ((RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && !tournament.locked) {
-            <mat-divider [vertical]="true"
-            class="download-divider"></mat-divider>
-          }
+           @if ((RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission) && tournament && !tournament.locked) {
+             <mat-divider [vertical]="true"
+             class="download-divider"></mat-divider>
+           }
           @if ((RbacActivity.DOWNLOAD_ALL_FIGHTS | hasPermission)) {
             <button biit-icon class="download-button"
               [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length === 0"
@@ -248,16 +248,18 @@
     </div>
   </div>
 
-  <popup-timer (playPressed)="duelStarted($event[0])" (softTimerChanged)="updateDuelElapsedTime($event[0], false)"
-    (timerChanged)="updateDuelElapsedTime($event[0], true)" (timerFinished)="finishDuel()"
-    (timeDurationChanged)="updateDuelDuration($event[0])"
-    (timerClosed)="showTimer(false)"
-    [editable]="tournament && !tournament.locked" [hidden]="!timer"
-    [resetTimerPosition]="resetTimerPosition"
-    [startingMinutes]="getDuelDefaultMinutesDuration()"
-    [shown]="timer"
-    [startingSeconds]="getDuelDefaultSecondsDuration()"
-  [duelDuration]="this.tournament.duelsDuration"></popup-timer>
+  @if (tournament) {
+    <popup-timer (playPressed)="duelStarted($event[0])" (softTimerChanged)="updateDuelElapsedTime($event[0], false)"
+      (timerChanged)="updateDuelElapsedTime($event[0], true)" (timerFinished)="finishDuel()"
+      (timeDurationChanged)="updateDuelDuration($event[0])"
+      (timerClosed)="showTimer(false)"
+      [editable]="!tournament.locked" [hidden]="!timer"
+      [resetTimerPosition]="resetTimerPosition"
+      [startingMinutes]="getDuelDefaultMinutesDuration()"
+      [shown]="timer"
+      [startingSeconds]="getDuelDefaultSecondsDuration()"
+      [duelDuration]="tournament.duelsDuration"></popup-timer>
+  }
 
   @if (showCompetitorsRanking) {
     <biit-popup id="competitors-ranking-popup"
