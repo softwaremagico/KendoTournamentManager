@@ -102,9 +102,11 @@ import {
   DefaultFallbackStrategy,
   DefaultInterceptor,
   DefaultMissingHandler,
+  DefaultTranspiler,
   TRANSLOCO_FALLBACK_STRATEGY,
   TRANSLOCO_INTERCEPTOR,
-  TRANSLOCO_MISSING_HANDLER
+  TRANSLOCO_MISSING_HANDLER,
+  TRANSLOCO_TRANSPILER
 } from "@jsverse/transloco";
 import {HasPermissionPipe} from "./pipes/has-permission.pipe";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
@@ -242,6 +244,7 @@ registerLocaleData(localeFR, "fr");
         },
         {provide: TRANSLOCO_MISSING_HANDLER, useClass: DefaultMissingHandler},
         {provide: TRANSLOCO_INTERCEPTOR, useClass: DefaultInterceptor},
+        {provide: TRANSLOCO_TRANSPILER, useClass: DefaultTranspiler},
         {provide: TRANSLOCO_FALLBACK_STRATEGY, useClass: DefaultFallbackStrategy},
         RedirectGuard,
         provideHttpClient(withInterceptorsFromDi())
