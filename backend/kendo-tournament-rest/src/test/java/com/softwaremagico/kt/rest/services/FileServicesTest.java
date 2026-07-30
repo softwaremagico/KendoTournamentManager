@@ -36,9 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -72,7 +69,7 @@ public class FileServicesTest {
     public void upload_participantMultipart_expectDelegationWithAuthenticatedUser() {
         final MultipartFile file = new MockMultipartFile("file", new byte[]{1, 2, 3});
         final ParticipantImageDTO expected = new ParticipantImageDTO();
-        when(mockParticipantImageController.add(eq(file), eq(7), eq("tester"))).thenReturn(expected);
+        when(mockParticipantImageController.add(file, 7, "tester")).thenReturn(expected);
 
         final ParticipantImageDTO result = services.upload(file, 7, mockAuthentication, mockRequest);
 
@@ -121,8 +118,8 @@ public class FileServicesTest {
     public void uploadTournamentImageMultipart_expectDelegation() {
         final MultipartFile file = new MockMultipartFile("file", new byte[]{4, 5});
         final TournamentImageDTO expected = new TournamentImageDTO();
-        when(mockTournamentImageController.add(eq(file), eq(3), eq(TournamentImageType.BANNER),
-                eq(ImageCompression.PNG), eq("tester"))).thenReturn(expected);
+        when(mockTournamentImageController.add(file, 3, TournamentImageType.BANNER,
+                ImageCompression.PNG, "tester")).thenReturn(expected);
 
         final TournamentImageDTO result = services.uploadTournamentImage(file, 3, TournamentImageType.BANNER,
                 ImageCompression.PNG, mockAuthentication, mockRequest);

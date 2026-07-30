@@ -55,6 +55,7 @@ import java.util.Map;
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @Override
+    @Nullable //NOSONAR - Matches ResponseEntityExceptionHandler contract, which is also @Nullable despite its @NonNullApi package.
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
@@ -86,7 +87,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    @Nullable
+    @Nullable //NOSONAR - Matches ResponseEntityExceptionHandler contract, which is also @Nullable despite its @NonNullApi package.
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
@@ -95,7 +96,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    @Nullable
+    @Nullable //NOSONAR - Matches ResponseEntityExceptionHandler contract, which is also @Nullable despite its @NonNullApi package.
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
             HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
@@ -213,7 +214,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
 
     @Override
-    @Nullable //NOSONAR - Matches ResponseEntityExceptionHandler#handleMethodArgumentNotValid contract, which is also @Nullable despite its @NonNullApi package.
+    @Nullable //NOSONAR - Matches ResponseEntityExceptionHandler contract, which is also @Nullable despite its @NonNullApi package.
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             final MethodArgumentNotValidException ex, @NonNull final HttpHeaders headers, @NonNull final HttpStatusCode status,
             @NonNull final WebRequest request) {

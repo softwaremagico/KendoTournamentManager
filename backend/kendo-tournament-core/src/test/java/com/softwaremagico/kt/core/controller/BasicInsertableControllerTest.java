@@ -39,14 +39,15 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Exercises the generic CRUD behaviour of {@link BasicInsertableController}
@@ -75,8 +76,9 @@ public class BasicInsertableControllerTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-        this.controller = new TeamController(this.teamProvider, this.teamConverter, this.tournamentProvider, this.tournamentConverter,
-            this.participantConverter, this.groupRepository, this.senbatsuTournamentHandler);
+		this.controller = new TeamController(this.teamProvider, this.teamConverter, this.tournamentProvider,
+				this.tournamentConverter, this.participantConverter, this.groupRepository,
+				this.senbatsuTournamentHandler);
 	}
 
 	private Tournament tournament() {
@@ -99,7 +101,7 @@ public class BasicInsertableControllerTest {
 	@Test(expectedExceptions = NotFoundException.class)
 	public void shouldThrowWhenEntityByIdNotFound() {
 		when(this.teamProvider.get(99)).thenReturn(Optional.empty());
-        this.controller.get(99);
+		this.controller.get(99);
 	}
 
 	@Test
@@ -125,7 +127,7 @@ public class BasicInsertableControllerTest {
 	}
 
 	@Test
-	public void shouldUpdateAllEntitiesAndNotifyListeners() throws InterruptedException {
+	public void shouldUpdateAllEntitiesAndNotifyListeners() {
 		final TournamentDTO tournamentDTO = new TournamentDTO("T", 1, 1, TournamentType.LEAGUE);
 		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
 		final Team team = new Team("A", this.tournament());
@@ -140,12 +142,11 @@ public class BasicInsertableControllerTest {
 		final List<TeamDTO> result = this.controller.updateAll(List.of(teamDTO), "user", "session");
 
 		assertEquals(result, List.of(teamDTO));
-		Thread.sleep(200);
-		assertTrue(notified.get());
+		await().atMost(Duration.ofSeconds(2)).untilTrue(notified);
 	}
 
 	@Test
-	public void shouldNotifyElementCreatedListeners() throws InterruptedException {
+	public void shouldNotifyElementCreatedListeners() {
 		final TournamentDTO tournamentDTO = new TournamentDTO("T", 1, 1, TournamentType.LEAGUE);
 		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
 		final Team team = new Team("A", this.tournament());
@@ -159,12 +160,11 @@ public class BasicInsertableControllerTest {
 
         this.controller.create(teamDTO, "user", "session");
 
-		Thread.sleep(200);
-		assertTrue(notified.get());
+		await().atMost(Duration.ofSeconds(2)).untilTrue(notified);
 	}
 
 	@Test
-	public void shouldDeleteSingleEntityAndNotifyListeners() throws InterruptedException {
+	public void shouldDeleteSingleEntityAndNotifyListeners() {
 		final TournamentDTO tournamentDTO = new TournamentDTO("T", 1, 1, TournamentType.LEAGUE);
 		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
 		final Team team = new Team("A", this.tournament());
@@ -176,12 +176,11 @@ public class BasicInsertableControllerTest {
 
         this.controller.delete(teamDTO, "user", "session");
 
-		Thread.sleep(200);
-		assertTrue(notified.get());
+		await().atMost(Duration.ofSeconds(2)).untilTrue(notified);
 	}
 
 	@Test
-	public void shouldDeleteCollectionOfEntitiesAndNotifyListeners() throws InterruptedException {
+	public void shouldDeleteCollectionOfEntitiesAndNotifyListeners() {
 		final TournamentDTO tournamentDTO = new TournamentDTO("T", 1, 1, TournamentType.LEAGUE);
 		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
 		final Team team = new Team("A", this.tournament());
@@ -193,13 +192,12 @@ public class BasicInsertableControllerTest {
 
         this.controller.delete(List.of(teamDTO), "user", "session");
 
-		Thread.sleep(200);
-		assertTrue(notified.get());
+		await().atMost(Duration.ofSeconds(2)).untilTrue(notified);
 	}
 
 	@Test
 	public void shouldDeleteAllEntities() {
-        this.controller.deleteAll();
+		this.controller.deleteAll();
 	}
 
 	@Test

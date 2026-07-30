@@ -65,7 +65,7 @@ public class LoggableDispatcherServletTest {
 
     @Test
     public void shouldNotRewrapAlreadyWrappedRequest() throws Exception {
-        final ContentCachingRequestWrapper wrapped = new ContentCachingRequestWrapper(request);
+        final ContentCachingRequestWrapper wrapped = new ContentCachingRequestWrapper(request, 256 * 1024);
 
         final Method doDispatch = DispatcherServletTestSupport.doDispatchMethod();
         try {
