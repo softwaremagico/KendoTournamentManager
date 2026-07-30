@@ -39,20 +39,15 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   protected confirmDelete: boolean = false;
   protected showRanking: boolean = false;
 
-  constructor(private clubService: ClubService,
-              private transloco: TranslocoService, rbacService: RbacService, private _datePipe: DatePipe,
-              private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
+  constructor(private readonly clubService: ClubService,
+              private readonly transloco: TranslocoService, rbacService: RbacService, private readonly _datePipe: DatePipe,
+              private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,) {
     super(rbacService);
   }
 
   datePipe() {
     return {
-      transform: (value: any) => {
-        if (!value) {
-          value = 0;
-        }
-        return this._datePipe.transform(value, Constants.FORMAT.DATE);
-      }
+      transform: (value: number | string | Date | null | undefined = 0) => this._datePipe.transform(value, Constants.FORMAT.DATE)
     }
   }
 
@@ -98,7 +93,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
       next: (_clubs: Club[]): void => {
         this.clubs = _clubs.map(_club => Club.clone(_club));
       },
-      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
     }).add(() => {
       this.loading = false;
       this.systemOverloadService.isTransactionalBusy.next(false);
@@ -106,8 +101,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
   }
 
   addElement(): void {
-    const club: Club = new Club();
-    this.target = club;
+    this.target = new Club();
   }
 
   editElement(club: Club): void {
@@ -126,7 +120,7 @@ export class ClubListComponent extends RbacBasedComponent implements AfterViewIn
           );
           this.confirmDelete = false;
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       });
     }
   }

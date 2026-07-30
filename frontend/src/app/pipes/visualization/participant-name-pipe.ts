@@ -8,12 +8,12 @@ import {NameUtilsService} from "../../services/name-utils.service";
 })
 export class ParticipantNamePipe implements PipeTransform {
 
-  constructor(private nameUtilsService: NameUtilsService) {
+  constructor(private readonly nameUtilsService: NameUtilsService) {
 
   }
 
 
-  transform(value: Participant | undefined): any {
+  transform(value: Participant | undefined): string {
     if (value) {
       return this.nameUtilsService.getDisplayName(value);
     }

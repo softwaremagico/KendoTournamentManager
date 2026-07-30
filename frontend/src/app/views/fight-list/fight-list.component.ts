@@ -41,7 +41,7 @@ import {FileService} from "../../services/file.service";
 })
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
-  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+  private readonly websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   filteredFights: Map<number, Fight[]>;
   filteredUnties: Map<number, Duel[]>;
@@ -110,7 +110,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.filteredUnties = new Map<number, Duel[]>();
     this.filteredLevels = [];
     this.groups = [];
-    const state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.lastSuccessfulNavigation()?.extras.state;
     if (state) {
       //Send by previous view.
       if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
@@ -196,7 +196,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
           }
         }
         if (updatedFights) {
-          this.fightService.updateAll(this.getFights()).subscribe();
+          this.fightService.updateAll(this.getFights()).pipe(takeUntil(this.destroySubject)).subscribe();
         }
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
@@ -204,26 +204,26 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.topic == "Fight" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
+      if (messageContent.topic === "Fight" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         const fight: Fight = JSON.parse(messageContent.payload);
-        if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
+        if (!messageContent.type || messageContent.type.toLowerCase() === "updated") {
           this.replaceFight(fight);
           if (this.projectorMode) {
             //Remove any finished fight.
             this.resetFilter();
           }
-        } else if (messageContent.type.toLowerCase() == "created") {
+        } else if (messageContent.type.toLowerCase() === "created") {
           this.refreshFights();
         }
       }
     });
 
-    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/unties').subscribe((message: Message): void => {
+    this.topicSubscription.add(this.rxStompService.watch(this.websocketsPrefix + '/unties').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.topic == "Duel" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
+      if (messageContent.topic === "Duel" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         this.refreshFights();
       }
-    });
+    }));
   }
 
   updateTeamOrder(fight: Fight, fightReordered: Fight): boolean {
@@ -273,7 +273,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       //Corrected selected items
       if (this.selectedFight) {
         for (const _group of this.groups) {
-          if (_group.fights.indexOf(this.selectedFight) >= 0) {
+          if (_group.fights.includes(this.selectedFight)) {
             selectedFightIndex = _group.fights.indexOf(this.selectedFight);
           }
         }
@@ -289,7 +289,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       } else {
         this.selectFight(this.selectedFight);
       }
-      if (this.selectedFight && selectedDuelIndex != undefined && this.selectedFight?.duels[selectedDuelIndex]) {
+      if (this.selectedFight && selectedDuelIndex !== undefined && this.selectedFight?.duels[selectedDuelIndex]) {
         this.selectDuel(this.selectedFight.duels[selectedDuelIndex]);
       }
     }
@@ -334,11 +334,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   private getFightsByShiaijo(shiaijo: number): Fight[] {
-    return this.groups.filter(group => group.shiaijo == shiaijo || shiaijo == -1).flatMap((group: Group) => group.fights);
+    return this.groups.filter(group => group.shiaijo === shiaijo || shiaijo === -1).flatMap((group: Group) => group.fights);
   }
 
   private getUntiesByShiaijo(shiaijo: number): Duel[] {
-    return this.groups.filter(group => group.shiaijo == shiaijo || shiaijo == -1).flatMap((group: Group) => group.unties)
+    return this.groups.filter(group => group.shiaijo === shiaijo || shiaijo === -1).flatMap((group: Group) => group.unties)
   }
 
   private refreshFights(): void {
@@ -346,7 +346,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.isWizardEnabled = this.tournament.type !== TournamentType.CUSTOMIZED && this.tournament.type !== TournamentType.CHAMPIONSHIP;
       this.isBracketsEnabled = this.tournament.type === TournamentType.CHAMPIONSHIP;
       if (this.tournamentId) {
-        this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
+        this.groupService.getFromTournament(this.tournamentId).pipe(takeUntil(this.destroySubject)).subscribe((_groups: Group[]): void => {
           if (!_groups) {
             this.messageService.errorMessage('No groups on tournament!');
           } else {
@@ -393,8 +393,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (group.level >= showedLevel.length) {
         showedLevel.push(true);
         //Hide level label if it hasn't fights on any of its groups.
-        const groupsOfLevelWithFights: Group[] = sortedGroups.filter((group: Group) => group.level == showedLevel.length - 1 && group.fights.length > 0);
-        if (groupsOfLevelWithFights.length == 0) {
+        const groupsOfLevelWithFights: Group[] = sortedGroups.filter((group: Group) => group.level === showedLevel.length - 1 && group.fights.length > 0);
+        if (groupsOfLevelWithFights.length === 0) {
           showedLevel[showedLevel.length - 1] = false;
         }
       }
@@ -474,7 +474,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   addElement(): void {
     //Ensure that is selected on the typical case.
-    if (this.groups.length == 1) {
+    if (this.groups.length === 1) {
       this.selectedGroup = this.groups[0];
     }
     if (this.selectedGroup) {
@@ -575,7 +575,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   selectFight(fight: Fight | undefined): void {
     this.selectedFight = fight;
     if (fight) {
-      this.selectedGroup = this.groups.find(group => group.fights.indexOf(fight) >= 0);
+      this.selectedGroup = this.groups.find(group => group.fights.includes(fight));
     } else {
       this.selectedGroup = undefined;
     }
@@ -608,7 +608,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   downloadPDF(): void {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -630,32 +630,30 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   setIpponScores(duel: Duel): void {
     //Put default points.
-    if (duel.competitor1 !== null && duel.competitor2 == null) {
+    if (duel.competitor1 !== null && duel.competitor2 === null) {
       duel.competitor1Score = [];
-      duel.competitor1Score.push(Score.FUSEN_GACHI);
-      duel.competitor1Score.push(Score.FUSEN_GACHI);
-    } else if (duel.competitor2 !== null && duel.competitor1 == null) {
+      duel.competitor1Score.push(Score.FUSEN_GACHI, Score.FUSEN_GACHI);
+    } else if (duel.competitor2 !== null && duel.competitor1 === null) {
       duel.competitor2Score = [];
-      duel.competitor2Score.push(Score.FUSEN_GACHI);
-      duel.competitor2Score.push(Score.FUSEN_GACHI);
+      duel.competitor2Score.push(Score.FUSEN_GACHI, Score.FUSEN_GACHI);
     }
   }
 
   removeIpponScores(duel: Duel): void {
-    for (let i: number = 0; i < duel.competitor1Score.length; i++) {
-      if (duel.competitor1Score[i] == Score.FUSEN_GACHI) {
+    for (const score of duel.competitor1Score) {
+      if (score === Score.FUSEN_GACHI) {
         duel.competitor1Score = [];
       }
     }
-    for (let i: number = 0; i < duel.competitor2Score.length; i++) {
-      if (duel.competitor2Score[i] == Score.FUSEN_GACHI) {
+    for (const score of duel.competitor2Score) {
+      if (score === Score.FUSEN_GACHI) {
         duel.competitor2Score = [];
       }
     }
   }
 
   canStartFight(duel: Duel | undefined): boolean {
-    return duel != undefined && duel?.competitor1 !== null && duel?.competitor2 !== null;
+    return duel !== undefined && duel?.competitor1 !== null && duel?.competitor2 !== null;
   }
 
   finishDuel(): void {
@@ -665,9 +663,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
       this.selectedDuel.finished = true;
-      if (!this.selectedDuel.finishedAt) {
-        this.selectedDuel.finishedAt = new Date();
-      }
+      this.selectedDuel.finishedAt ??= new Date();
       this.duelService.update(this.selectedDuel).subscribe((): void => {
         this.messageService.infoMessage("infoDuelFinished");
         this.selectedGroup = this.getGroup(this.selectedDuel);
@@ -724,12 +720,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (const group of this.groups) {
       for (const fight of group.fights) {
         for (const duel of fight.duels) {
-          if (duel.id == selectedDuel!.id) {
+          if (duel.id === selectedDuel!.id) {
             return group;
           }
         }
         for (const duel of group.unties) {
-          if (duel.id == selectedDuel.id) {
+          if (duel.id === selectedDuel.id) {
             return group;
           }
         }
@@ -772,10 +768,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   finishTournament(date: Date | undefined): void {
     if (!this.tournament.finishedAt && date) {
       this.tournament.finishedAt = date;
-      this.tournamentService.update(this.tournament).subscribe();
+      this.tournamentService.update(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe();
     } else if (!date && this.tournament.finishedAt) {
       this.tournament.finishedAt = undefined
-      this.tournamentService.update(this.tournament).subscribe();
+      this.tournamentService.update(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe();
     }
   }
 
@@ -853,7 +849,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   updateDuelDuration(duelDuration: number): void {
     if (this.selectedDuel) {
       this.selectedDuel.totalDuration = duelDuration;
-      this.duelService.update(this.selectedDuel).subscribe();
+      this.duelService.update(this.selectedDuel).pipe(takeUntil(this.destroySubject)).subscribe();
     }
   }
 
@@ -861,7 +857,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.selectedDuel) {
       this.selectedDuel.duration = elapsedTime;
       if (updateBackend) {
-        this.duelService.update(this.selectedDuel).subscribe();
+        this.duelService.update(this.selectedDuel).pipe(takeUntil(this.destroySubject)).subscribe();
       }
     }
   }
@@ -870,12 +866,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.selectedDuel && !this.selectedDuel.duration && !this.selectedDuel.startedAt) {
       this.selectedDuel.duration = elapsedTime;
       this.selectedDuel.startedAt = new Date();
-      this.duelService.update(this.selectedDuel).subscribe();
+      this.duelService.update(this.selectedDuel).pipe(takeUntil(this.destroySubject)).subscribe();
     }
   }
 
   showSelectedRelatedButton(): boolean {
-    return !(this.selectedFight !== undefined || (this.selectedDuel !== undefined && this.selectedDuel.type === DuelType.UNDRAW));
+    return !(this.selectedFight !== undefined || this.selectedDuel?.type === DuelType.UNDRAW);
   }
 
   swapColors(): void {
@@ -903,7 +899,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (group.fights) {
         this.filteredFights.set(group.id!, group.fights.filter((_fight: Fight) =>
           _fight != null &&
-          (this.selectedShiaijo < 0 || _fight.shiaijo == this.selectedShiaijo) &&
+          (this.selectedShiaijo < 0 || _fight.shiaijo === this.selectedShiaijo) &&
           (!this.hideFinishedFights || !this.isFightOver(_fight)) &&
           ((_fight.team1 ? _fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
             (_fight.team2 ? _fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||

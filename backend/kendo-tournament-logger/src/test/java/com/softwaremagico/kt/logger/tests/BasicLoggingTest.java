@@ -22,9 +22,12 @@ package com.softwaremagico.kt.logger.tests;
  */
 
 import com.softwaremagico.kt.logger.BasicLogging;
+import ch.qos.logback.classic.Level;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -41,14 +44,22 @@ public class BasicLoggingTest {
     @Mock
     private ProceedingJoinPoint joinPoint;
 
+    @Mock
+    private Signature signature;
+
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         basicLogging = new BasicLogging();
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(BasicLogging.class)).setLevel(Level.DEBUG);
     }
 
     @Test(groups = "basicLoggingTests")
     public void shouldExecuteAroundAndReturnValue() throws Throwable {
+        when(joinPoint.getSignature()).thenReturn(signature);
+        when(signature.getName()).thenReturn("method");
+        when(joinPoint.getTarget()).thenReturn(this);
+        when(joinPoint.getArgs()).thenReturn(new Object[0]);
         when(joinPoint.proceed()).thenReturn("ok");
 
         Object result = basicLogging.logAround(joinPoint);
@@ -59,6 +70,10 @@ public class BasicLoggingTest {
 
     @Test(groups = "basicLoggingTests")
     public void shouldHandleNullReturnValue() throws Throwable {
+        when(joinPoint.getSignature()).thenReturn(signature);
+        when(signature.getName()).thenReturn("method");
+        when(joinPoint.getTarget()).thenReturn(this);
+        when(joinPoint.getArgs()).thenReturn(new Object[0]);
         when(joinPoint.proceed()).thenReturn(null);
 
         Object result = basicLogging.logAround(joinPoint);
@@ -66,6 +81,7 @@ public class BasicLoggingTest {
         assertNull(result);
         verify(joinPoint, times(1)).proceed();
     }
+
 
     @Test(groups = "basicLoggingTests")
     public void shouldAcceptBeforeAndAfterAdviceCalls() {

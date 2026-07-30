@@ -10,6 +10,7 @@ import {BiitIconService} from "@biit-solutions/wizardry-theme/icon";
 import {completeIconSet} from "@biit-solutions/biit-icons-collection";
 import {AuthenticatedUser} from "./models/authenticated-user";
 import {ActivityService} from "./services/rbac/activity.service";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -25,14 +26,14 @@ export class AppComponent extends RbacBasedComponent {
 
   constructor(public translocoService: TranslocoService, public loginService: LoginService, public loggedInService: LoggedInService,
               protected userSessionService: UserSessionService, rbacService: RbacService, biitIconService: BiitIconService,
-              projectModeChangedService: ProjectModeChangedService,
-              protected sessionService: UserSessionService, private activityService: ActivityService) {
+               projectModeChangedService: ProjectModeChangedService,
+               protected sessionService: UserSessionService, private readonly activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
     biitIconService.registerIcons(completeIconSet);
-    this.loggedInService.isUserLoggedIn.subscribe((value: boolean) => this.loggedIn = value);
+    this.loggedInService.isUserLoggedIn.pipe(takeUntil(this.destroySubject)).subscribe((value: boolean) => this.loggedIn = value);
     this.setPermissions();
-    projectModeChangedService.isProjectMode.subscribe((_mode: boolean): void => {
+    projectModeChangedService.isProjectMode.pipe(takeUntil(this.destroySubject)).subscribe((_mode: boolean): void => {
       this.hideMenu = _mode;
     });
   }
@@ -40,9 +41,10 @@ export class AppComponent extends RbacBasedComponent {
   private setLanguage(): void {
     const clientLanguages: ReadonlyArray<string> = navigator.languages;
     const languages: AvailableLangs = this.translocoService.getAvailableLangs();
-    if (this.userSessionService.getLanguage()) {
-      this.translocoService.setActiveLang(this.userSessionService.getLanguage());
-      this.selectedLanguage = this.userSessionService.getLanguage();
+    const storedLanguage: string | undefined = this.userSessionService.getLanguage();
+    if (storedLanguage) {
+      this.translocoService.setActiveLang(storedLanguage);
+      this.selectedLanguage = storedLanguage;
     } else {
       const language: string | undefined = clientLanguages.find(lang => languages.map(lang => lang.toString()).includes(lang));
       if (language) {

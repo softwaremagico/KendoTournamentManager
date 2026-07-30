@@ -12,7 +12,7 @@ export class ClubNamePipe implements PipeTransform {
   }
 
 
-  transform(value: Club): any {
+  transform(value: Club | undefined): string {
     if (value) {
       return value.name;
     }

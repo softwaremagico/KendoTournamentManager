@@ -10,22 +10,24 @@ package com.softwaremagico.kt.logger.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.logger.AbstractLogging;
+import ch.qos.logback.classic.Level;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -47,6 +49,7 @@ public class AbstractLoggingTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         logging = new ExposedLogging();
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ExposedLogging.class)).setLevel(Level.DEBUG);
     }
 
     @Test(groups = "abstractLoggingTests")
@@ -83,6 +86,20 @@ public class AbstractLoggingTest {
         logging.callTimedLog(25L, joinPoint);
     }
 
+    @Test(groups = "abstractLoggingTests")
+    public void shouldLogJoinPointWhenDebugEnabled() {
+        when(joinPoint.getSignature()).thenReturn(signature);
+        when(signature.getName()).thenReturn("method");
+        when(joinPoint.getTarget()).thenReturn(new LocalTarget());
+
+        logging.callLog(joinPoint, "one", 2);
+    }
+
+    @Test(groups = "abstractLoggingTests")
+    public void shouldLogTemplateMessage() {
+        logging.callLogTemplate("Value: {}", "sample");
+    }
+
     private static final class ExposedLogging extends AbstractLogging {
         public String callLogMessage(JoinPoint joinPoint, Object... args) {
             return logMessage(joinPoint, args);
@@ -94,6 +111,14 @@ public class AbstractLoggingTest {
 
         public void callTimedLog(long millis, JoinPoint joinPoint, Object... args) {
             log(millis, joinPoint, args);
+        }
+
+        public void callLog(JoinPoint joinPoint, Object... args) {
+            log(joinPoint, args);
+        }
+
+        public void callLogTemplate(String messageTemplate, Object... arguments) {
+            log(messageTemplate, arguments);
         }
     }
 

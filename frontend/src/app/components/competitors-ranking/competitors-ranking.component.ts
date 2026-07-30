@@ -9,6 +9,7 @@ import {Participant} from "../../models/participant";
 import {Club} from "../../models/club";
 import {ScoreType} from "../../models/score-type";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
+import {takeUntil} from "rxjs";
 
 @Component({
   standalone: false,
@@ -28,13 +29,13 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   @Input()
   showIndex: boolean | undefined;
   @Output()
-  onClosed: EventEmitter<void> = new EventEmitter<void>();
+  closed: EventEmitter<void> = new EventEmitter<void>();
   numberOfDays: number | undefined;
 
   protected readonly ScoreType = ScoreType;
   protected readonly Type = Type;
 
-  constructor(private rankingService: RankingService, public translateService: TranslocoService, rbacService: RbacService) {
+  constructor(private readonly rankingService: RankingService, public translateService: TranslocoService, rbacService: RbacService) {
     super(rbacService);
   }
 
@@ -44,15 +45,15 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
 
   getRanking(): void {
     if (this.club?.id) {
-      this.rankingService.getCompetitorsScoreRankingByClub(this.club.id).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
+      this.rankingService.getCompetitorsScoreRankingByClub(this.club.id).pipe(takeUntil(this.destroySubject)).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
       });
     } else if (this.tournament?.id) {
-      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournament.id).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
+      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournament.id).pipe(takeUntil(this.destroySubject)).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRanking(undefined, this.numberOfDays).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
+      this.rankingService.getCompetitorsGlobalScoreRanking(undefined, this.numberOfDays).pipe(takeUntil(this.destroySubject)).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
         //Timeout to scroll after the component is drawn.
         setTimeout((): void => {
@@ -63,12 +64,12 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   downloadPDF(): void {
     if (this.club?.id) {
-      this.rankingService.getCompetitorsScoreRankingByClubAsPdf(this.club.id).subscribe((pdf: Blob): void => {
+      this.rankingService.getCompetitorsScoreRankingByClubAsPdf(this.club.id).pipe(takeUntil(this.destroySubject)).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
@@ -78,7 +79,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
         anchor.click();
       });
     } else if (this.tournament?.id) {
-      this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
+      this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).pipe(takeUntil(this.destroySubject)).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
@@ -88,7 +89,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
         anchor.click();
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined, this.numberOfDays).subscribe((pdf: Blob): void => {
+      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined, this.numberOfDays).pipe(takeUntil(this.destroySubject)).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 

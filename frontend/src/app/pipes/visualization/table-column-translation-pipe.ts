@@ -11,7 +11,7 @@ export class TableColumnTranslationPipe implements PipeTransform {
 
   pipe: DatePipe;
 
-  constructor(private transloco: TranslocoService, private userSessionService: UserSessionService) {
+  constructor(private readonly transloco: TranslocoService, private readonly userSessionService: UserSessionService) {
     this.setLocale();
   }
 
@@ -29,29 +29,29 @@ export class TableColumnTranslationPipe implements PipeTransform {
     }
   }
 
-  transform(column: any): any {
+  transform(column: unknown): unknown {
     if (typeof column === 'number') {
       return column;
-    } else if (typeof column === 'boolean') {
-      return column ? this.transloco.translate('yes') : this.transloco.translate('no');
-      //Is it a date?
-    } else if (Number.isNaN(Number(column)) && !Number.isNaN(Date.parse(column)) && (column instanceof Date)) {
-      return this.pipe.transform(column, 'short');
-    } else if (column instanceof Object) {
-      return this.transloco.translate(column.toString());
-    } else {
-      if (column) {
-        const text: string = (column as string);
-        if (text.toUpperCase() === text) {
-          //probably is an enum
-          return this.transloco.translate(this.snakeToCamel(text.toLowerCase()));
-        } else {
-          return this.transloco.translate(text);
-        }
-      } else {
-        return "";
-      }
     }
+    if (typeof column === 'boolean') {
+      return column ? this.transloco.translate('yes') : this.transloco.translate('no');
+    }
+    if (column instanceof Date) {
+      return this.pipe.transform(column, 'short');
+    }
+    if (typeof column === 'string' && !Number.isNaN(Date.parse(column))) {
+      return this.pipe.transform(new Date(column), 'short');
+    }
+    if (column === null || column === undefined || column === '') {
+      return "";
+    }
+
+    const text: string = String(column);
+    if (text.toUpperCase() === text) {
+      // probably is an enum
+      return this.transloco.translate(this.snakeToCamel(text.toLowerCase()));
+    }
+    return this.transloco.translate(text);
   }
 
   snakeToCamel(string: string): string {

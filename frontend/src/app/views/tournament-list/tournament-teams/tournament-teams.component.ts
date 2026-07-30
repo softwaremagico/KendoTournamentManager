@@ -1,9 +1,9 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output,} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output,} from '@angular/core';
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
-import {forkJoin, Observable} from "rxjs";
+import {forkJoin, Observable, takeUntil} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from "@angular/cdk/drag-drop";
@@ -42,7 +42,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   @Input()
   tournament: Tournament;
-  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
@@ -54,13 +54,13 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   protected addingTeam: boolean = false;
   loadingGlobal: boolean = false;
 
-  constructor(private messageService: MessageService,
-              private loggerService: LoggerService, private teamService: TeamService, private roleService: RoleService,
-              public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
-              rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
-              private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
-              private filterResetService: FilterResetService, public csvService: CsvService,
-              private translateService: TranslocoService) {
+  constructor(private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, private readonly teamService: TeamService, private readonly roleService: RoleService,
+              public nameUtilsService: NameUtilsService, private readonly systemOverloadService: SystemOverloadService,
+              rbacService: RbacService, private readonly groupService: GroupService, private readonly fightService: FightService,
+              private readonly rankingService: RankingService, private readonly statisticsChangedService: StatisticsChangedService,
+              private readonly filterResetService: FilterResetService, public csvService: CsvService,
+              private readonly translateService: TranslocoService) {
     super(rbacService);
   }
 
@@ -71,10 +71,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   ngOnInit(): void {
     let teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
     let roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
-    forkJoin([teamsRequest, roleRequests]).subscribe(([teams, roles]): void => {
-      if (roles === undefined) {
-        roles = [];
-      }
+    forkJoin([teamsRequest, roleRequests]).pipe(takeUntil(this.destroySubject)).subscribe(([teams, roles]): void => {
+      roles ??= [];
       this.userListData.participants = roles.map((role: Role) => role.participant).sort(function (a: Participant, b: Participant) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
@@ -107,15 +105,16 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
     });
     //Get tournament groups
-    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
+    this.groupService.getFromTournament(this.tournament.id!).pipe(takeUntil(this.destroySubject)).subscribe((_groups: Group[]): void => {
         this.groups = _groups;
       }
     )
     //Prevent removing teams that are on fights
-    this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
-      let teamInFights: Team[] = [];
-      teamInFights.push(..._fights.map((fight: Fight) => fight.team1));
-      teamInFights.push(..._fights.map((fight: Fight) => fight.team2));
+    this.fightService.getFromTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_fights: Fight[]): void => {
+      let teamInFights: Team[] = [
+        ..._fights.map((fight: Fight) => fight.team1),
+        ..._fights.map((fight: Fight) => fight.team2)
+      ];
       //Remove duplicates.
       teamInFights = teamInFights.filter((team: Team, i: number, a: Team[]): boolean => i === a.indexOf(team));
       if (this.teams) {
@@ -124,22 +123,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
       }
     })
-  }
-
-  onClick(element: EventTarget | null): void {
-    if (!(element instanceof HTMLElement)) {
-      return;
-    }
-    if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
-      if (this.teams) {
-        for (let team of this.teams) {
-          if (team.editing) {
-            team.editing = false;
-            this.updateTeamName(team);
-          }
-        }
-      }
-    }
   }
 
   getMember(team: Team, index: number): Participant | undefined {
@@ -228,7 +211,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(event.item.data);
       if (sourceIndex || sourceIndex === 0) {
         // Moving to an empty space.
-        if (team.members[memberIndex] == undefined) {
+        if (team.members[memberIndex] === undefined) {
           team.members[memberIndex] = participant;
           team.members[sourceIndex] = undefined;
         } else {
@@ -284,7 +267,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>): Team | undefined {
     const participant: Participant = event.previousContainer.data[event.previousIndex];
-    for (let team of [...this.members.keys()]) {
+    for (let team of this.members.keys()) {
       if (this.getMembersContainer(team).includes(participant)) {
         return team;
       }
@@ -293,7 +276,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   dropListEnterPredicate(memberIndex: number, team: Team) {
-    return function (_item: CdkDrag<Participant>, dropList: CdkDropList): boolean {
+    return function (_item: CdkDrag<Participant>, _dropList: CdkDropList): boolean {
       if (team) {
         return !team.locked && (team.members[memberIndex] === undefined || team.members[memberIndex] === null);
       }
@@ -388,7 +371,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   balancedTeams(): void {
     let participants: Participant[];
-    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
 
     this.loadingGlobal = true;
     this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
@@ -420,7 +403,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   randomTeams(): void {
     let participants: Participant[];
-    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
     for (let team of this.teams) {
       team.members = [];
       for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
@@ -460,7 +443,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   assignTeamByParticipant(): void {
     this.teams = [];
     let participants: Participant[];
-    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
     this.loadingGlobal = true;
     this.members = new Map<Team, Participant[]>();
     for (const member of participants) {
@@ -507,11 +490,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     if (fileList) {
       const file: File | null = fileList.item(0);
       if (file) {
-        this.csvService.addTeams(file, this.tournament.id).subscribe(_teams => {
-          if (_teams.length == 0) {
+        this.csvService.addTeams(file, this.tournament.id).pipe(takeUntil(this.destroySubject)).subscribe(_teams => {
+          if (_teams.length === 0) {
             this.messageService.infoMessage('teamStored');
             //We cancel action or will be saved later again.
-            this.onClosed.emit();
+            this.closed.emit();
           } else {
             const parameters: object = {element: _teams[0].name};
             this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));

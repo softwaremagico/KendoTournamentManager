@@ -9,7 +9,7 @@ export class DropdownInterfacePipe implements PipeTransform {
 
   transform(value: string | undefined, data: { value: string, label: string }[]): { value: string, label: string } {
     if (value) {
-      const result: any | undefined = data.find(item => item.value == value);
+      const result: { value: string, label: string } | undefined = data.find(item => item.value === value);
       if (result) {
         return result;
       }

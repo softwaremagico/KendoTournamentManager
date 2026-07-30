@@ -7,14 +7,14 @@ import {LoggerService} from "../services/logger.service";
 @Injectable()
 export class LocalErrorHandler implements ErrorHandler {
 
-  constructor(private messageService: MessageService, private loggerService: LoggerService) {
+  constructor(private readonly messageService: MessageService, private readonly loggerService: LoggerService) {
   }
 
-  handleError(error: any): void {
+  handleError(error: Error | HttpErrorResponse): void {
     //These errors are already handled by HttpErrorInterceptor. If ok is set, already shown to the user.
     if (error instanceof HttpErrorResponse && !error.ok) {
       //Show error
-      this.messageService.errorMessage(`Error connecting to the backend service. ${error.url} failed: ${error ? error.message : ""}`);
+      this.messageService.errorMessage(`Error connecting to the backend service. ${error.url} failed: ${error.message}`);
     }
   }
 }

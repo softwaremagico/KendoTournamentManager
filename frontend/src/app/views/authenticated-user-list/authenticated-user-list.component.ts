@@ -41,20 +41,15 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
 
   protected loading: boolean = false;
 
-  constructor(private userService: UserService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private userSessionService: UserSessionService, private transloco: TranslocoService,
-              private biitSnackbarService: BiitSnackbarService, private _datePipe: DatePipe) {
+  constructor(private readonly userService: UserService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+               private readonly userSessionService: UserSessionService, private readonly transloco: TranslocoService,
+               private readonly biitSnackbarService: BiitSnackbarService, private readonly _datePipe: DatePipe) {
     super(rbacService);
   }
 
   datePipe() {
     return {
-      transform: (value: any) => {
-        if (!value) {
-          value = 0;
-        }
-        return this._datePipe.transform(value, Constants.FORMAT.DATE);
-      }
+      transform: (value: number | string | Date | null | undefined = 0) => this._datePipe.transform(value, Constants.FORMAT.DATE)
     }
   }
 
@@ -94,7 +89,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
       next: (_users: AuthenticatedUser[]): void => {
         this.users = _users.map(_user => AuthenticatedUser.clone(_user));
       },
-      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
     }).add(() => {
       this.loading = false;
       this.systemOverloadService.isTransactionalBusy.next(false);
@@ -129,7 +124,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
             }
           );
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       });
     }
   }

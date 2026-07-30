@@ -12,7 +12,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {BiitDatatableComponent, DatatableColumn} from "@biit-solutions/wizardry-theme/table";
-import {combineLatest} from "rxjs";
+import {combineLatest, takeUntil} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
@@ -39,8 +39,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected columns: DatatableColumn[] = [];
   protected pageSize: number = 10;
   protected pageSizes: number[] = [10, 25, 50, 100];
-  protected tournaments: Tournament[];
-  protected target: Tournament | null;
+  protected tournaments: Tournament[] = [];
+  protected target: Tournament | null = null;
   protected confirmDelete: boolean = false;
   protected confirmClone: boolean = false;
   protected showTournamentRoles: boolean = false;
@@ -59,22 +59,17 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   public lockedTournaments: (row: Tournament) => boolean = (row) => row.locked;
 
-  constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService,
-              private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private achievementsService: AchievementsService, private transloco: TranslocoService, private _datePipe: DatePipe,
-              private biitSnackbarService: BiitSnackbarService, private tableColumnTranslationPipe: TableColumnTranslationPipe) {
+  constructor(private readonly router: Router, private readonly userSessionService: UserSessionService, private readonly tournamentService: TournamentService,
+              private readonly rankingService: RankingService,
+              private readonly messageService: MessageService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+              private readonly achievementsService: AchievementsService, private readonly transloco: TranslocoService, private readonly _datePipe: DatePipe,
+              private readonly biitSnackbarService: BiitSnackbarService, private readonly tableColumnTranslationPipe: TableColumnTranslationPipe) {
     super(rbacService);
   }
 
-  datePipe() {
+  datePipe(): { transform: (value?: number | string | Date | null) => string | null } {
     return {
-      transform: (value: any) => {
-        if (!value) {
-          value = 0;
-        }
-        return this._datePipe.transform(value, Constants.FORMAT.DATE);
-      }
+      transform: (value: number | string | Date | null = 0) => this._datePipe.transform(value, Constants.FORMAT.DATE)
     }
   }
 
@@ -93,7 +88,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
         this.transloco.selectTranslate('updatedBy'),
         this.transloco.selectTranslate('updatedAt'),
       ]
-    ).subscribe(([id, name, type, scoreRules, locked, shiaijos, teamSize, createdBy, createdAt, updatedBy, updatedAt]) => {
+    ).pipe(takeUntil(this.destroySubject)).subscribe(([id, name, type, scoreRules, locked, shiaijos, teamSize, createdBy, createdAt, updatedBy, updatedAt]) => {
       this.columns = [
         new DatatableColumn(id, 'id', false, 80),
         new DatatableColumn(name, 'name'),
@@ -114,13 +109,13 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   loadData(tournament?: Tournament): void {
     this.loading = true;
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.tournamentService.getAll().subscribe({
+    this.tournamentService.getAll().pipe(takeUntil(this.destroySubject)).subscribe({
       next: (_tournaments: Tournament[]): void => {
         this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament)).sort((a: Tournament, b: Tournament): number => {
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
       },
-      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
     }).add(() => {
       this.loading = false;
       this.systemOverloadService.isTransactionalBusy.next(false);
@@ -144,17 +139,13 @@ export class TournamentListComponent extends RbacBasedComponent implements After
 
   deleteElements(tournaments: Tournament[]): void {
     if (tournaments) {
-      combineLatest(tournaments.map(tournament => this.tournamentService.delete(tournament))).subscribe({
+      combineLatest(tournaments.map(tournament => this.tournamentService.delete(tournament))).pipe(takeUntil(this.destroySubject)).subscribe({
         next: (): void => {
           this.loadData();
           this.confirmDelete = false;
-          this.transloco.selectTranslate('infoTournamentDeleted').subscribe(
-            translation => {
-              this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
-            }
-          );
+          this.biitSnackbarService.showNotification(this.transloco.translate('infoTournamentDeleted'), NotificationType.SUCCESS);
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+          error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       });
     }
   }
@@ -184,7 +175,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   }
 
   downloadAccreditations(data: { tournament: Tournament, roles: RoleType[], newOnes: boolean }): void {
-    if (data && data.tournament?.id) {
+    if (data?.tournament?.id) {
       this.tournamentService.getAccreditations(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob): void => {
         if (html !== null) {
           const blob: Blob = new Blob([html], {type: 'application/pdf'});
@@ -205,7 +196,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   }
 
   downloadDiplomas(data: { tournament: Tournament, roles: RoleType[], newOnes: boolean }): void {
-    if (data && data.tournament.id) {
+    if (data?.tournament?.id) {
       this.loadingGlobal = true;
       this.tournamentService.getDiplomas(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob) => {
         if (html !== null) {
@@ -233,12 +224,8 @@ export class TournamentListComponent extends RbacBasedComponent implements After
       tournament.locked = locked;
       if (locked) {
         this.achievementsService.regenerateTournamentAchievements(tournament?.id!).subscribe();
-        if (!tournament.lockedAt) {
-          tournament.lockedAt = new Date();
-        }
-        if (!tournament.finishedAt) {
-          tournament.finishedAt = new Date();
-        }
+        tournament.lockedAt ??= new Date();
+        tournament.finishedAt ??= new Date();
       }
       this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
           this.loadData();
@@ -308,7 +295,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
   selectTournaments(tournaments: Tournament[]) {
-    if (tournaments && tournaments.length == 1) {
+    if (tournaments?.length === 1) {
       this.userSessionService.setSelectedTournament(tournaments[0].id + "");
     } else {
       this.userSessionService.setSelectedTournament(undefined);

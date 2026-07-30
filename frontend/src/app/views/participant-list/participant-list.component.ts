@@ -11,7 +11,7 @@ import {UserSessionService} from "../../services/user-session.service";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {DatePipe} from "@angular/common";
 import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
-import {combineLatest} from "rxjs";
+import {combineLatest, takeUntil} from "rxjs";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
@@ -36,10 +36,10 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   protected columns: DatatableColumn[] = [];
   protected pageSize: number = 10;
   protected pageSizes: number[] = [10, 25, 50, 100];
-  protected participants: Participant[];
-  protected target: Participant | null;
+  protected participants: Participant[] = [];
+  protected target: Participant | null = null;
   protected confirmDelete: boolean = false;
-  clubs: Club[];
+  clubs: Club[] = [];
 
   protected loading: boolean = false;
   protected showQr: boolean = false;
@@ -48,21 +48,19 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
 
   protected readonly port: number = +globalThis.location.port;
 
-  constructor(private router: Router, private userSessionService: UserSessionService,
-              private participantService: ParticipantService,
-              private clubService: ClubService, private transloco: TranslocoService, rbacService: RbacService,
-              private _datePipe: DatePipe, private _clubNamePipe: ClubNamePipe,
-              private systemOverloadService: SystemOverloadService, private biitSnackbarService: BiitSnackbarService,) {
+  constructor(private readonly router: Router, private readonly userSessionService: UserSessionService,
+              private readonly participantService: ParticipantService,
+              private readonly clubService: ClubService, private readonly transloco: TranslocoService, rbacService: RbacService,
+              private readonly _datePipe: DatePipe, private readonly _clubNamePipe: ClubNamePipe,
+              private readonly systemOverloadService: SystemOverloadService, private readonly biitSnackbarService: BiitSnackbarService,) {
     super(rbacService);
   }
 
-  datePipe() {
+  datePipe(): { transform: (value: number | string | Date | null | undefined) => string | null } {
     return {
-      transform: (value: any) => {
-        if (!value) {
-          value = 0;
-        }
-        return this._datePipe.transform(value, Constants.FORMAT.DATE);
+      transform: (value: number | string | Date | null | undefined) => {
+        const normalizedValue: number | string | Date = value ?? 0;
+        return this._datePipe.transform(normalizedValue, Constants.FORMAT.DATE);
       }
     }
   }
@@ -80,7 +78,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
         this.transloco.selectTranslate('updatedBy'),
         this.transloco.selectTranslate('updatedAt'),
       ]
-    ).subscribe(([id, idCard, name, lastname, clubName, createdBy, createdAt, updatedBy, updatedAt]) => {
+    ).pipe(takeUntil(this.destroySubject)).subscribe(([id, idCard, name, lastname, clubName, createdBy, createdAt, updatedBy, updatedAt]) => {
       this.columns = [
         new DatatableColumn(id, 'id', false, 80),
         new DatatableColumn(idCard, 'idCard', false),
@@ -99,7 +97,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   loadData(): void {
     this.loading = true;
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.clubService.getAll().subscribe((_clubs: Club[]): void => {
+    this.clubService.getAll().pipe(takeUntil(this.destroySubject)).subscribe((_clubs: Club[]): void => {
       if (_clubs) {
         _clubs.sort(function (a: Club, b: Club) {
           return a.name.localeCompare(b.name);
@@ -107,11 +105,11 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
         this.clubs = _clubs
       }
     });
-    this.participantService.getAll().subscribe({
+    this.participantService.getAll().pipe(takeUntil(this.destroySubject)).subscribe({
       next: (_participants: Participant[]): void => {
         this.participants = _participants.map(_participant => Participant.clone(_participant));
       },
-      error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
     }).add(() => {
       this.loading = false;
       this.systemOverloadService.isTransactionalBusy.next(false);
@@ -128,17 +126,13 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
 
   deleteElements(participants: Participant[]): void {
     if (participants) {
-      combineLatest(participants.map(participant => this.participantService.delete(participant))).subscribe({
+      combineLatest(participants.map(participant => this.participantService.delete(participant))).pipe(takeUntil(this.destroySubject)).subscribe({
         next: (): void => {
           this.loadData();
-          this.transloco.selectTranslate('infoParticipantDeleted').subscribe(
-            translation => {
-              this.biitSnackbarService.showNotification(translation, NotificationType.SUCCESS);
-            }
-          );
+          this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantDeleted'), NotificationType.SUCCESS);
           this.confirmDelete = false;
         },
-        error: error => ErrorHandler.notify(error, this.transloco, this.biitSnackbarService)
+        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       });
     }
   }
@@ -150,7 +144,8 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
     }
   }
 
-  onSaved($event: Participant) {
+  onSaved(savedParticipant?: Participant): void {
+    void savedParticipant;
     this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantStored'), NotificationType.INFO);
     this.loadData();
     this.target = null;

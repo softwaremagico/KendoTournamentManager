@@ -32,7 +32,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings("unused")
-@Test
+@Test(groups = "cryptoConverters")
 class BCryptPasswordConverterTest {
 
     @Test

@@ -33,6 +33,8 @@
                 <include name="statisticsServices"/>
                 <include name="restSwissEndpoints"/>
                 <include name="authApiTests"/>
+                <include name="webSocketSecurityConfigTests"/>
+                <include name="loggableDispatcherServletTests"/>
             </run>
         </groups>
         <classes>
@@ -84,6 +86,8 @@
             <class name="com.softwaremagico.kt.rest.services.AchievementServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.TournamentExtraPropertiesServicesUnitTest"/>
             <class name="com.softwaremagico.kt.security.UserRegistrationTest"/>
+            <class name="com.softwaremagico.kt.rest.security.WebSocketSecurityConfigTest"/>
+            <class name="com.softwaremagico.kt.LoggableDispatcherServletTest"/>
         </classes>
     </test>
 </suite>
