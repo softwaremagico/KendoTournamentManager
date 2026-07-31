@@ -141,14 +141,14 @@ public class TournamentImageControllerTest {
     public void add_withMultipartFileAndTournamentId_expectDelegationToProviderAndConverter() throws Exception {
         final Tournament tournament = new Tournament();
         final TournamentDTO tournamentDTO = new TournamentDTO();
-        final MultipartFile file = org.mockito.Mockito.mock(MultipartFile.class);
+        final MultipartFile file = mock(MultipartFile.class);
         final TournamentImage tournamentImage = new TournamentImage();
         final TournamentImageDTO tournamentImageDTO = new TournamentImageDTO();
 
         when(mockTournamentProvider.get(TOURNAMENT_ID)).thenReturn(Optional.of(tournament));
         when(mockTournamentConverter.convert(any())).thenReturn(tournamentDTO);
         when(mockTournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
-        when(mockProvider.add(eq(file), eq(tournament), eq(TournamentImageType.BANNER), eq(ImageCompression.PNG), eq("user")))
+        when(mockProvider.add(file, tournament, TournamentImageType.BANNER, ImageCompression.PNG, "user"))
                 .thenReturn(tournamentImage);
         when(mockConverter.convert(any())).thenReturn(tournamentImageDTO);
 
