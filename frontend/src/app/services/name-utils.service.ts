@@ -101,7 +101,7 @@ export class NameUtilsService {
       .replace(/ (.)/g, function ($1) {
         return $1.toUpperCase();
       })
-      .replace(/ /g, '');
+      .replaceAll(' ', '');
   }
 
   /**

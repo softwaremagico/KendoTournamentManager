@@ -29,6 +29,6 @@ export namespace DrawResolution {
       .replace(/_(.)/g, function ($1) {
         return $1.toUpperCase();
       })
-      .replace(/_/g, '');
+      .replaceAll('_', '');
   }
 }

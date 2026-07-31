@@ -28,6 +28,6 @@ export class TypeValidations {
   }
 
   public static isWebPage(value: string): boolean {
-    return new RegExp('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?').test(value);
+    return /^(https?:\/\/)?[\da-z][\da-z-]*(?:\.[\da-z-]+)*\.[a-z]{2,6}(?:[/?#]\S*)?$/.test(value);
   }
 }

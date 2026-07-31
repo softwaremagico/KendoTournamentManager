@@ -169,9 +169,9 @@ export class TournamentBracketsComponent implements OnInit {
     for (let key of this.groupsByLevel.keys()) {
       shiaijosByLevel.set(key, []);
       if (!this.tournament.shiaijos || this.groupsByLevel.get(key)?.length! <= 1) {
-        shiaijosByLevel.set(key, [...Array(0).keys()]);
+        shiaijosByLevel.set(key, [...new Array(0).keys()]);
       } else {
-        shiaijosByLevel.set(key, [...Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(key)?.length! - 1))).keys()]);
+        shiaijosByLevel.set(key, [...new Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(key)?.length! - 1))).keys()]);
       }
     }
     return shiaijosByLevel;

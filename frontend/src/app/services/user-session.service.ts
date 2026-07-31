@@ -186,7 +186,7 @@ export class UserSessionService {
 
   getExpirationDate(): Date | null {
     const sessionExpiration: string | null = sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`);
-    if (!Number.isNaN(+(sessionExpiration || NaN))) {
+    if (!Number.isNaN(+(sessionExpiration || Number.NaN))) {
       return new Date(+(this.getSessionAuthExpiration() || 0));
     }
     return null;

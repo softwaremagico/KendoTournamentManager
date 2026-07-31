@@ -7,7 +7,7 @@ export class PasswordGenerator {
       + Constants.PASSWORDS.MIN_LENGTH;
     let password: string = '';
     while (password.length < randomSize) {
-      const result: string = String.fromCharCode(this.randomChar());
+      const result: string = String.fromCodePoint(this.randomChar());
       if (pattern.test(result)) {
         password += result;
       }

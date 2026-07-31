@@ -31,7 +31,7 @@ export namespace ScoreType {
       .replace(/_(.)/g, function ($1) {
         return $1.toUpperCase();
       })
-      .replace(/_/g, '');
+      .replaceAll('_', '');
   }
 
   export function getEnumKeyByEnumValue<T extends {

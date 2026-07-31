@@ -35,7 +35,7 @@ export namespace TournamentType {
       .replace(/_(.)/g, function ($1) {
         return $1.toUpperCase();
       })
-      .replace(/_/g, '');
+      .replaceAll('_', '');
   }
 
   export function canMaximizeFights(type: TournamentType | undefined): boolean {

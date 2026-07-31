@@ -85,6 +85,6 @@ export namespace Score {
       .replace(/_(.)/g, function ($1: string) {
         return $1.toUpperCase();
       })
-      .replace(/_/g, '');
+      .replaceAll('_', '');
   }
 }

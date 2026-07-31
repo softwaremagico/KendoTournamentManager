@@ -27,7 +27,7 @@ export class ImageService {
       const arrayBuffer: ArrayBuffer = new ArrayBuffer(byteString.length);
       const int8Array: Uint8Array = new Uint8Array(arrayBuffer);
       for (let i = 0; i < byteString.length; i++) {
-        int8Array[i] = byteString.charCodeAt(i);
+        int8Array[i] = byteString.codePointAt(i)!;
       }
       const blob = new Blob([int8Array], {type: `image/${extension}`});
       observer.next(blob);
