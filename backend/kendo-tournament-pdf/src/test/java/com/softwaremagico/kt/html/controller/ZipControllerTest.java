@@ -10,12 +10,12 @@ package com.softwaremagico.kt.html.controller;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,6 +25,7 @@ import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.html.lists.BlogExporter;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
+import com.softwaremagico.kt.pdf.InvalidXmlElementException;
 import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
 import com.softwaremagico.kt.pdf.lists.FightSummary;
@@ -130,5 +131,46 @@ public class ZipControllerTest {
             }
         }
     }
+
+    @Test(groups = {"blogTests"})
+    public void createZipData_withAllPdfGenerationsFailing_expectOnlyWordpressEntry() throws Exception {
+        final PdfController pdfController = mock(PdfController.class);
+        final HtmlController htmlController = mock(HtmlController.class);
+        final RankingController rankingController = mock(RankingController.class);
+        final TournamentDTO tournament = mock(TournamentDTO.class);
+        final RoleList roleList = mock(RoleList.class);
+        final TeamList teamList = mock(TeamList.class);
+        final FightSummary fightSummary = mock(FightSummary.class);
+        final TeamsScoreList teamsScoreList = mock(TeamsScoreList.class);
+        final CompetitorsScoreList competitorsScoreList = mock(CompetitorsScoreList.class);
+        final BlogExporter blogExporter = mock(BlogExporter.class);
+
+        when(tournament.getName()).thenReturn("Autumn Cup");
+        when(roleList.generate()).thenThrow(new EmptyPdfBodyException("role list error"));
+        when(teamList.generate()).thenThrow(new InvalidXmlElementException("team list error"));
+        when(fightSummary.generate()).thenThrow(new EmptyPdfBodyException("fight summary error"));
+        when(teamsScoreList.generate()).thenThrow(new InvalidXmlElementException("teams score error"));
+        when(competitorsScoreList.generate()).thenThrow(new EmptyPdfBodyException("competitors score error"));
+        when(blogExporter.getWordpressFormat()).thenReturn("blog");
+
+        when(pdfController.generateClubList(Locale.US, tournament)).thenReturn(roleList);
+        when(pdfController.generateTeamList(tournament)).thenReturn(teamList);
+        when(pdfController.generateFightsSummaryList(Locale.US, tournament)).thenReturn(fightSummary);
+        when(rankingController.getTeamsScoreRanking(tournament)).thenReturn(List.of());
+        when(pdfController.generateTeamsScoreList(Locale.US, tournament, List.of())).thenReturn(teamsScoreList);
+        when(rankingController.getCompetitorsScoreRanking(tournament)).thenReturn(List.of());
+        when(pdfController.generateCompetitorsScoreList(Locale.US, tournament, List.of())).thenReturn(competitorsScoreList);
+        when(htmlController.generateBlogCode(Locale.US, tournament)).thenReturn(blogExporter);
+
+        final ZipController zipController = new ZipController(pdfController, htmlController, rankingController);
+
+        final List<String> names = new ArrayList<>();
+        final List<String> values = new ArrayList<>();
+        readZip(zipController.createZipData(Locale.US, tournament), names, values);
+
+        assertEquals(names, List.of("Wordpress code - Autumn Cup.txt"));
+        assertEquals(values, List.of("blog"));
+    }
 }
+
 

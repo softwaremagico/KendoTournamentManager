@@ -43,6 +43,7 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import org.mockito.ArgumentMatchers;
 import org.springframework.context.MessageSource;
 import org.testng.annotations.Test;
 
@@ -50,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -117,7 +117,7 @@ public class PdfControllerTest {
         final RoleDTO role = new RoleDTO(tournament, participant, RoleType.COMPETITOR);
 
         when(roleController.getForAccreditations(eq(tournament), any(), any())).thenReturn(List.of(role));
-        when(participantImageController.get(anyList())).thenReturn(List.of());
+        when(participantImageController.get(ArgumentMatchers.<ParticipantDTO>anyList())).thenReturn(List.of());
 
         final TournamentImageDTO banner = new TournamentImageDTO();
         banner.setData(new byte[]{1});
@@ -142,7 +142,7 @@ public class PdfControllerTest {
         final RoleDTO role = new RoleDTO(tournament, participant, RoleType.COMPETITOR);
 
         when(roleController.getForAccreditations(eq(tournament), any(), any())).thenReturn(List.of(role));
-        when(participantImageController.get(anyList())).thenReturn(List.of());
+        when(participantImageController.get(ArgumentMatchers.<ParticipantDTO>anyList())).thenReturn(List.of());
         when(tournamentImageController.get(any(TournamentDTO.class), any())).thenReturn(null);
 
         assertNotNull(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, false, "user", "session", RoleType.COMPETITOR));
@@ -166,7 +166,7 @@ public class PdfControllerTest {
         final RoleDTO role = new RoleDTO(tournament, participant, RoleType.REFEREE);
         role.setId(10);
         when(tournamentImageController.get(any(TournamentDTO.class), any())).thenReturn(null);
-        when(participantImageController.get(anyList())).thenReturn(List.of());
+        when(participantImageController.get(ArgumentMatchers.<ParticipantDTO>anyList())).thenReturn(List.of());
 
         assertNotNull(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, participant, role, "user", "session"));
 
@@ -184,7 +184,7 @@ public class PdfControllerTest {
         assertNotNull(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, participant, role, "user", "session"));
 
         verify(roleController, never()).update(any(), any(), any());
-        verify(participantImageController, never()).get(anyList());
+        verify(participantImageController, never()).get(ArgumentMatchers.<ParticipantDTO>anyList());
     }
 
     @Test

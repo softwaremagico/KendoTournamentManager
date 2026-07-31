@@ -42,6 +42,7 @@
              <class name="com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCardsTest"/>
              <class name="com.softwaremagico.kt.html.lists.BlogExporterTest"/>
              <class name="com.softwaremagico.kt.pdf.controller.PdfControllerTest"/>
+             <class name="com.softwaremagico.kt.pdf.qr.TournamentQrTest"/>
          </classes>
      </test>
 </suite>

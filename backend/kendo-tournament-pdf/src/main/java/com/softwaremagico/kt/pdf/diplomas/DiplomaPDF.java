@@ -37,7 +37,6 @@ import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 public class DiplomaPDF extends PdfDocument {
@@ -48,11 +47,15 @@ public class DiplomaPDF extends PdfDocument {
 
     public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage, float nameHeight) {
         this.participants = participants;
-        try {
-            this.backgroundImage = Image.getInstance(backgroundImage);
-        } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass(), "No background image found: " + e.getMessage());
+        if (backgroundImage == null) {
             this.backgroundImage = null;
+        } else {
+            try {
+                this.backgroundImage = Image.getInstance(backgroundImage);
+            } catch (Exception e) {
+                KendoTournamentLogger.severe(this.getClass(), "No background image found: " + e.getMessage());
+                this.backgroundImage = null;
+            }
         }
         this.nameHeight = nameHeight;
     }
