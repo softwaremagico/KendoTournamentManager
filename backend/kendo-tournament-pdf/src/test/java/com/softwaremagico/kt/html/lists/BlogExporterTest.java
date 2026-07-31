@@ -45,7 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 @Test(groups = {"listsUnitTests"})
 public class BlogExporterTest {
@@ -80,7 +80,8 @@ public class BlogExporterTest {
         final TeamDTO team1 = new TeamDTO("Team1", tournament);
         final TeamDTO team2 = new TeamDTO("Team2", tournament);
 
-        // Duel 1: normal scores, one side with valid scoreTime, other side score out of range (null) and EMPTY.
+        // Duel 1: normal scores, one side with valid scoreTime, other side score out of
+        // range (null) and EMPTY.
         final DuelDTO duel1 = new DuelDTO(withRole, withoutRole, tournament, null);
         duel1.setCompetitor1Score(new ArrayList<>(List.of(Score.MEN)));
         duel1.setCompetitor1ScoreTime(new ArrayList<>(List.of(10)));
@@ -98,11 +99,11 @@ public class BlogExporterTest {
 
         final FightDTO fight1 = new FightDTO(tournament, team1, team2, 0, 0);
         fight1.setDuels(new ArrayList<>(List.of(duel1)));
-        final GroupDTO group1 = group(tournament, 0, 0, new ArrayList<>(List.of(fight1)));
+        final GroupDTO group1 = this.group(tournament, 0, 0, new ArrayList<>(List.of(fight1)));
 
         final FightDTO fight2 = new FightDTO(tournament, team2, team1, 1, 0);
         fight2.setDuels(new ArrayList<>(List.of(duel2)));
-        final GroupDTO group2 = group(tournament, 0, 1, new ArrayList<>(List.of(fight2)));
+        final GroupDTO group2 = this.group(tournament, 0, 1, new ArrayList<>(List.of(fight2)));
 
         final ScoreOfTeamDTO scoreOfTeam = new ScoreOfTeamDTO();
         scoreOfTeam.setTeam(team1);
@@ -117,10 +118,11 @@ public class BlogExporterTest {
         scoreOfCompetitor.setDrawDuels(0);
         scoreOfCompetitor.setHits(3);
 
-        final BlogExporter blogExporter = new BlogExporter(mockMessageSource(), Locale.getDefault(), tournament, roles,
-                List.of(group1, group2), List.of(withRole, withoutRole), List.of(scoreOfTeam), List.of(scoreOfCompetitor));
+        final BlogExporter blogExporter = new BlogExporter(this.mockMessageSource(), Locale.getDefault(), tournament,
+                roles, List.of(group1, group2), List.of(withRole, withoutRole), List.of(scoreOfTeam),
+                List.of(scoreOfCompetitor));
 
-        assertTrue(blogExporter.getWordpressFormat().length() > 0);
+        assertFalse(blogExporter.getWordpressFormat().isEmpty());
     }
 
     @Test
@@ -137,17 +139,17 @@ public class BlogExporterTest {
         final DuelDTO duel = new DuelDTO(competitor, competitor, tournament, null);
         final FightDTO fight = new FightDTO(tournament, team1, team2, 0, 0);
         fight.setDuels(new ArrayList<>(List.of(duel)));
-        final GroupDTO group = group(tournament, 0, 0, new ArrayList<>(List.of(fight)));
+        final GroupDTO group = this.group(tournament, 0, 0, new ArrayList<>(List.of(fight)));
 
         final ScoreOfCompetitorDTO scoreOfCompetitor = new ScoreOfCompetitorDTO(competitor, false);
         scoreOfCompetitor.setWonDuels(0);
         scoreOfCompetitor.setDrawDuels(0);
         scoreOfCompetitor.setHits(0);
 
-        final BlogExporter blogExporter = new BlogExporter(mockMessageSource(), Locale.getDefault(), tournament, roles,
-                List.of(group), List.of(competitor), List.of(), List.of(scoreOfCompetitor));
+        final BlogExporter blogExporter = new BlogExporter(this.mockMessageSource(), Locale.getDefault(), tournament,
+                roles, List.of(group), List.of(competitor), List.of(), List.of(scoreOfCompetitor));
 
-        assertTrue(blogExporter.getWordpressFormat().length() > 0);
+        assertFalse(blogExporter.getWordpressFormat().isEmpty());
     }
 
     @Test
@@ -158,10 +160,9 @@ public class BlogExporterTest {
         final List<RoleDTO> roles = new ArrayList<>(List.of(new RoleDTO(tournament, competitor, RoleType.COMPETITOR)));
 
         final BlogExporter.ScoreData scoreData = new BlogExporter.ScoreData(List.of(), List.of());
-        final BlogExporter blogExporter = new BlogExporter(mockMessageSource(), Locale.getDefault(), tournament, roles,
-                List.of(), List.of(competitor), scoreData);
+        final BlogExporter blogExporter = new BlogExporter(this.mockMessageSource(), Locale.getDefault(), tournament,
+                roles, List.of(), List.of(competitor), scoreData);
 
-        assertTrue(blogExporter.getWordpressFormat().length() > 0);
+        assertFalse(blogExporter.getWordpressFormat().isEmpty());
     }
 }
-
