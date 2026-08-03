@@ -36,7 +36,8 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
      * Note that this method will not work with encrypted databases. Use the username search based on Hash.
      *
      * @param username
-     * @return
+     *            the username to search for.
+     * @return the matching {@link AuthenticatedUser}, if any.
      */
     Optional<AuthenticatedUser> findByUsername(String username);
 

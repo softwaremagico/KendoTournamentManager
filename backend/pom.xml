@@ -298,6 +298,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <!-- Keep doclint checks for broken references, invalid HTML and malformed
+                         tags (e.g. missing @param/@return descriptions, empty tags), but do not
+                         warn about the mere absence of a javadoc comment on public members:
+                         requiring a doc comment on every getter/setter/constructor of this
+                         codebase would add noise without real documentation value. -->
+                    <doclint>all,-missing</doclint>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

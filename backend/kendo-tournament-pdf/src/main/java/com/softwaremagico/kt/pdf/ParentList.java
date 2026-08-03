@@ -56,12 +56,19 @@ public abstract class ParentList extends PdfDocument {
      * Creates the header of the document.
      *
      * @param document
+     *            the PDF document being generated.
      * @param mainTable
+     *            the main table where the header row is added.
      * @param width
+     *            the page width, in points.
      * @param height
+     *            the page height, in points.
      * @param writer
+     *            the writer used to render the PDF.
      * @param font
+     *            the font used for the header text.
      * @param fontSize
+     *            the font size used for the header text.
      */
     protected abstract void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
 
@@ -77,12 +84,21 @@ public abstract class ParentList extends PdfDocument {
      * Creates the body of the document.
      *
      * @param document
+     *            the PDF document being generated.
      * @param mainTable
+     *            the main table where the body rows are added.
      * @param width
+     *            the page width, in points.
      * @param height
+     *            the page height, in points.
      * @param writer
+     *            the writer used to render the PDF.
      * @param font
+     *            the font used for the body text.
      * @param fontSize
+     *            the font size used for the body text.
+     * @throws EmptyPdfBodyException
+     *             if there is no content to include in the body.
      */
     protected abstract void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize)
             throws EmptyPdfBodyException;
@@ -91,19 +107,26 @@ public abstract class ParentList extends PdfDocument {
      * Creates the footer of the document.
      *
      * @param document
+     *            the PDF document being generated.
      * @param mainTable
+     *            the main table where the footer row is added.
      * @param width
+     *            the page width, in points.
      * @param height
+     *            the page height, in points.
      * @param writer
+     *            the writer used to render the PDF.
      * @param font
+     *            the font used for the footer text.
      * @param fontSize
+     *            the font size used for the footer text.
      */
     protected abstract void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
 
     /**
      * Obtain the width of the main table of the document.
      *
-     * @return
+     * @return the relative width of each column of the main table.
      */
     public abstract float[] getTableWidths();
 
@@ -111,7 +134,7 @@ public abstract class ParentList extends PdfDocument {
      * Creates an empty row. It is formed by as many cells as the width of the
      * table.
      *
-     * @return
+     * @return an empty cell spanning the whole width of the table.
      */
     protected PdfPCell getEmptyRow() {
         return getEmptyCell(getTableWidths().length);
@@ -177,7 +200,7 @@ public abstract class ParentList extends PdfDocument {
      * @param border   Number of pixels of the border width.
      * @param align    Text alignment.
      * @param fontSize Size of the font.
-     * @return
+     * @return the resulting header cell.
      */
     public PdfPCell getHeader(String text, int border, int align, int fontSize) {
         final PdfPCell cell = getCell(text, border, getTableWidths().length, align, Color.WHITE, PdfTheme.getTitleFont(), fontSize, Font.BOLD);
@@ -190,7 +213,7 @@ public abstract class ParentList extends PdfDocument {
      *
      * @param text   Text to be putted in the cell.
      * @param border Number of pixels of the border width.
-     * @return
+     * @return the resulting section header cell.
      */
     public PdfPCell getHeader1(String text, int border) {
         return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + FONT_BIG_EXTRA_SIZE);
@@ -202,7 +225,7 @@ public abstract class ParentList extends PdfDocument {
      * @param text   Text to be putted in the cell.
      * @param border Number of pixels of the border width.
      * @param align  Text alignment.
-     * @return
+     * @return the resulting section header cell.
      */
     public PdfPCell getHeader1(String text, int border, int align) {
         return getHeader(text, border, align, PdfTheme.FONT_SIZE + FONT_BIG_EXTRA_SIZE);
@@ -213,7 +236,7 @@ public abstract class ParentList extends PdfDocument {
      *
      * @param text   Text to be putted in the cell.
      * @param border Number of pixels of the border width.
-     * @return
+     * @return the resulting subsection header cell.
      */
     public PdfPCell getHeader2(String text, int border) {
         return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + FONT_MEDIUM_EXTRA_SIZE);
@@ -225,7 +248,7 @@ public abstract class ParentList extends PdfDocument {
      * @param text   Text to be putted in the cell.
      * @param border Number of pixels of the border width.
      * @param align  Text alignment.
-     * @return
+     * @return the resulting subsection header cell.
      */
     public PdfPCell getHeader2(String text, int border, int align) {
         return getHeader(text, border, align, PdfTheme.FONT_SIZE + FONT_MEDIUM_EXTRA_SIZE);
@@ -236,7 +259,7 @@ public abstract class ParentList extends PdfDocument {
      *
      * @param text   Text to be putted in the cell.
      * @param border Number of pixels of the border width.
-     * @return
+     * @return the resulting subsubsection header cell.
      */
     public PdfPCell getHeader3(String text, int border) {
         return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + FONT_SMALL_EXTRA_SIZE);
@@ -247,7 +270,7 @@ public abstract class ParentList extends PdfDocument {
      *
      * @param text   Text to be putted in the cell.
      * @param border Number of pixels of the border width.
-     * @return
+     * @return the resulting subsubsection header cell.
      */
     public PdfPCell getHeader4(String text, int border) {
         return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + 2);
@@ -257,6 +280,7 @@ public abstract class ParentList extends PdfDocument {
      * Defines the properties of the main table of the document.
      *
      * @param mainTable
+     *            the main table whose properties will be configured.
      */
     public abstract void setTableProperties(PdfPTable mainTable);
 
@@ -264,6 +288,11 @@ public abstract class ParentList extends PdfDocument {
      * Creates the main table of the document.
      *
      * @param document
+     *            the PDF document being generated.
+     * @param writer
+     *            the writer used to render the PDF.
+     * @throws EmptyPdfBodyException
+     *             if there is no content to include in the body.
      */
     public void createContent(Document document, PdfWriter writer) throws EmptyPdfBodyException {
         final PdfPCell cellHeader;

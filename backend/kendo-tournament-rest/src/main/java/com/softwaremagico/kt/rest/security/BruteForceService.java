@@ -50,6 +50,13 @@ public class BruteForceService extends BasePool<String, Integer> {
     public static final int MAX_ATTEMPTS = 10;
 
     /**
+     * Creates a new brute-force tracking service.
+     */
+    public BruteForceService() {
+        super();
+    }
+
+    /**
      * Resets the failure counter for the given key after a successful login.
      *
      * @param key the IP address or username that authenticated successfully

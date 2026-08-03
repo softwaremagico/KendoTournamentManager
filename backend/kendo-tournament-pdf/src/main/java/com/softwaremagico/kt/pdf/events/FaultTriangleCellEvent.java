@@ -37,6 +37,12 @@ public class FaultTriangleCellEvent implements PdfPCellEvent {
     private static final int TRIANGLE_MARGIN = 6;
     private static final int BOTTOM_MARGIN = 4;
 
+    /**
+     * Creates a new fault triangle cell event.
+     */
+    public FaultTriangleCellEvent() {
+        // No state to initialize.
+    }
 
     @Override
     public void cellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvas) {

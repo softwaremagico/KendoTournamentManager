@@ -30,6 +30,13 @@ public class CreateUserRequest {
     private String password;
     private Set<String> roles;
 
+    /**
+     * Creates an empty user creation request.
+     */
+    public CreateUserRequest() {
+        // No state to initialize.
+    }
+
     public String getUsername() {
         if (username == null) {
             return null;

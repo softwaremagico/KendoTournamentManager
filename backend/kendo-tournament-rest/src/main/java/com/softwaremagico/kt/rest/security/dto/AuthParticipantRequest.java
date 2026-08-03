@@ -24,6 +24,13 @@ package com.softwaremagico.kt.rest.security.dto;
 public class AuthParticipantRequest {
     private String token;
 
+    /**
+     * Creates an empty participant authentication request.
+     */
+    public AuthParticipantRequest() {
+        // No state to initialize.
+    }
+
     public String getToken() {
         return token;
     }

@@ -24,6 +24,13 @@ package com.softwaremagico.kt.rest.security.dto;
 public class AuthGuestRequest {
     private Integer tournamentId;
 
+    /**
+     * Creates an empty guest authentication request.
+     */
+    public AuthGuestRequest() {
+        // No state to initialize.
+    }
+
     public Integer getTournamentId() {
         return tournamentId;
     }

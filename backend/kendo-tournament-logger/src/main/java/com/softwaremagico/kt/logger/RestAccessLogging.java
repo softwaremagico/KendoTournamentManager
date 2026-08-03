@@ -41,6 +41,13 @@ import org.springframework.util.StopWatch;
 public class RestAccessLogging extends AbstractLogging {
 
     /**
+     * Creates a new aspect that logs REST service invocations.
+     */
+    public RestAccessLogging() {
+        super();
+    }
+
+    /**
      * Following is the definition for a pointcut to select all the methods
      * available. So advice will be called for all the methods.
      */

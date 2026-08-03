@@ -105,7 +105,6 @@ public abstract class BasicLogger {
     /**
      * Events that have business meaning (i.e. creating category, deleting form,
      * ...). To follow user actions.
-     * <p>
      *
      * @param logger
      *            the Logger.
@@ -179,6 +178,8 @@ public abstract class BasicLogger {
      * To log any not expected error that can cause application malfunctions. I.e.
      * couldn't open database connection, etc..
      *
+     * @param logger
+     *            the Logger.
      * @param messageTemplate
      *            string with static text as template.
      * @param arguments

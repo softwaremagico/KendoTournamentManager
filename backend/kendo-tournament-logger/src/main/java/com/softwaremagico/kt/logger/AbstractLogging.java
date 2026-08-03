@@ -42,6 +42,13 @@ public abstract class AbstractLogging {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Creates a new logging aspect, initializing a logger scoped to the concrete subclass.
+     */
+    protected AbstractLogging() {
+        // Nothing to initialize besides the logger field above.
+    }
+
     protected Logger getLogger() {
         return logger;
     }

@@ -36,6 +36,13 @@ public class FooterEvent extends PdfPageEventHelper {
     private static final int BOTTOM_MARGIN = 0;
 
     /**
+     * Creates a new footer event.
+     */
+    public FooterEvent() {
+        super();
+    }
+
+    /**
      * Adds a footer to every page
      */
     @Override

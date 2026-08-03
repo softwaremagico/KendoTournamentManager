@@ -38,6 +38,8 @@ public @interface FindBugsSuppressWarnings {
      * The <a href="http://findbugs.sourceforge.net/bugDescriptions.html">FindBugs
      * Patterns</a> to suppress, such as {@code SE_TRANSIENT_FIELD_NOT_RESTORED}
      * or {@code Se}. Full, upper case names are preferred.
+     *
+     * @return the FindBugs pattern names to suppress.
      */
     String[] value();
 }

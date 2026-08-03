@@ -69,10 +69,10 @@ public abstract class PdfDocument {
     /**
      * Pdf as byte array. Be careful with big PDF files.
      *
-     * @return
-     * @throws EmptyPdfBodyException
-     * @throws DocumentException
-     * @throws InvalidXmlElementException
+     * @return the generated PDF content as a byte array.
+     * @throws EmptyPdfBodyException if the document has no content to render.
+     * @throws DocumentException if the underlying PDF library fails to generate the document.
+     * @throws InvalidXmlElementException if the document content contains an invalid XML element.
      */
     public final byte[] generate() throws EmptyPdfBodyException, DocumentException, InvalidXmlElementException {
         final Document document = new Document(this.getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN);

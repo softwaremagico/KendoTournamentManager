@@ -29,6 +29,13 @@ public class AuthRequest {
     @NotBlank
     private String password;
 
+    /**
+     * Creates an empty authentication request.
+     */
+    public AuthRequest() {
+        // No state to initialize.
+    }
+
     public String getUsername() {
         return username;
     }

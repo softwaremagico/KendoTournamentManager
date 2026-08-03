@@ -39,6 +39,13 @@ public class AchievementDTO extends ElementDTO {
 
     private TournamentDTO tournament;
 
+    /**
+     * Creates an empty achievement DTO.
+     */
+    public AchievementDTO() {
+        super();
+    }
+
     @NotNull
     private AchievementType achievementType;
 
