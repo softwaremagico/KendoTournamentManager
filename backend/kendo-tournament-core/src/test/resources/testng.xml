@@ -66,6 +66,7 @@
                 <include name="swissTournament10NoDrawsTest"/>
                 <include name="swissTournament15ByesTest"/>
                 <include name="swissTournament16Test"/>
+                <include name="swissTournament16ExtraRoundsTest"/>
                 <include name="swissTournament16TieBreakLevelByLevelTest"/>
                 <include name="swissTournament16TieBreakRulesTest"/>
                 <include name="swissTournament27ByesTest"/>
