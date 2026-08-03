@@ -148,10 +148,11 @@ public class FightStatisticsControllerTest {
 		final TeamDTO teamDTO = new TeamDTO("A", tournamentDTO);
 		final Team team = new Team("A", tournament);
 		final TournamentFightStatisticsDTO dto = new TournamentFightStatisticsDTO();
+		final TournamentFightStatistics loopStatistics = mock(TournamentFightStatistics.class);
 
 		when(tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
 		when(teamConverter.reverseAll(any())).thenReturn(List.of(team));
-		when(provider.estimateLoopStatistics(any(), anyInt(), any())).thenReturn(mock(TournamentFightStatistics.class));
+		when(provider.estimateLoopStatistics(any(), anyInt(), any())).thenReturn(loopStatistics);
 		when(converter.convert(any())).thenReturn(dto);
 
 		assertSame(controller.estimate(tournamentDTO, List.of(teamDTO, new TeamDTO("B", tournamentDTO))), dto);

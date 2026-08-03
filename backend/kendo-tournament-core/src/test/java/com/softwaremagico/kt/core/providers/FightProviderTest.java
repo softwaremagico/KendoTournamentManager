@@ -166,10 +166,12 @@ public class FightProviderTest {
         final Fight fight = mock(Fight.class);
         final Duel overDuel = mock(Duel.class);
         final Duel notOverDuel = mock(Duel.class);
+        final Team team1 = mock(Team.class);
+        final Team team2 = mock(Team.class);
 
         when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getTeam1()).thenReturn(mock(Team.class));
-        when(fight.getTeam2()).thenReturn(mock(Team.class));
+        when(fight.getTeam1()).thenReturn(team1);
+        when(fight.getTeam2()).thenReturn(team2);
         when(fight.getDuels()).thenReturn(List.of(overDuel, notOverDuel));
         when(overDuel.isOver()).thenReturn(true);
         when(notOverDuel.isOver()).thenReturn(false);
@@ -322,7 +324,8 @@ public class FightProviderTest {
         when(fight2.getId()).thenReturn(2);
 
         final Group group = mock(Group.class);
-        final List<Fight> groupFights = new ArrayList<>(List.of(fight1, fight2, mock(Fight.class)));
+        final Fight fight3 = mock(Fight.class);
+        final List<Fight> groupFights = new ArrayList<>(List.of(fight1, fight2, fight3));
         when(group.getFights()).thenReturn(groupFights);
         when(groupRepository.findDistinctByFightsIdIn(Set.of(1, 2))).thenReturn(List.of(group));
 
