@@ -62,60 +62,67 @@ public class WebsocketMessagesTest {
 
     @Test
     public void constructor_expectAchievementGeneratedListenerSendsMessage() {
-        new WebsocketMessages(mockAchievementController, mockDuelController, mockWebSocketController, mockAuthApi);
+        new WebsocketMessages(this.mockAchievementController, this.mockDuelController, this.mockWebSocketController,
+                this.mockAuthApi);
 
-        final ArgumentCaptor<AchievementController.AchievementsGeneratedListener> captor =
-                ArgumentCaptor.forClass(AchievementController.AchievementsGeneratedListener.class);
-        verify(mockAchievementController).addAchievementsGeneratedListener(captor.capture());
+        final ArgumentCaptor<AchievementController.AchievementsGeneratedListener> captor = ArgumentCaptor
+                .forClass(AchievementController.AchievementsGeneratedListener.class);
+        verify(this.mockAchievementController).addAchievementsGeneratedListener(captor.capture());
 
         final TournamentDTO tournament = new TournamentDTO();
         tournament.setName("tournament");
         captor.getValue().generated(List.of(new AchievementDTO()), tournament);
 
-        verify(mockWebSocketController, times(1)).sendMessage(eq("backendMessage.achievementGenerated"), eq(MessageContentType.INFO), any());
+        verify(this.mockWebSocketController, times(1)).sendMessage(eq("backendMessage.achievementGenerated"),
+                eq(MessageContentType.INFO), any());
     }
 
     @Test
     public void constructor_expectAchievementAllGeneratedListenerSendsMessage() {
-        new WebsocketMessages(mockAchievementController, mockDuelController, mockWebSocketController, mockAuthApi);
+        new WebsocketMessages(this.mockAchievementController, this.mockDuelController, this.mockWebSocketController,
+                this.mockAuthApi);
 
-        final ArgumentCaptor<AchievementController.AchievementsGeneratedAllTournamentsListener> captor =
-                ArgumentCaptor.forClass(AchievementController.AchievementsGeneratedAllTournamentsListener.class);
-        verify(mockAchievementController).addAchievementsGeneratedAllTournamentsListener(captor.capture());
+        final ArgumentCaptor<AchievementController.AchievementsGeneratedAllTournamentsListener> captor = ArgumentCaptor
+                .forClass(AchievementController.AchievementsGeneratedAllTournamentsListener.class);
+        verify(this.mockAchievementController).addAchievementsGeneratedAllTournamentsListener(captor.capture());
 
         final TournamentDTO tournament = new TournamentDTO();
         tournament.setName("tournament");
         captor.getValue().generated(List.of(new AchievementDTO()), List.of(tournament));
 
-        verify(mockWebSocketController, times(1)).sendMessage(eq("backendMessage.achievementAllGenerated"), eq(MessageContentType.INFO), any());
+        verify(this.mockWebSocketController, times(1)).sendMessage(eq("backendMessage.achievementAllGenerated"),
+                eq(MessageContentType.INFO), any());
     }
 
     @Test
     public void constructor_expectShiaijoFinishedListenerSendsMessage() {
-        new WebsocketMessages(mockAchievementController, mockDuelController, mockWebSocketController, mockAuthApi);
+        new WebsocketMessages(this.mockAchievementController, this.mockDuelController, this.mockWebSocketController,
+                this.mockAuthApi);
 
-        final ArgumentCaptor<DuelController.ShiaijoFinishedListener> captor =
-                ArgumentCaptor.forClass(DuelController.ShiaijoFinishedListener.class);
-        verify(mockDuelController).addShiaijoFinishedListener(captor.capture());
+        final ArgumentCaptor<DuelController.ShiaijoFinishedListener> captor = ArgumentCaptor
+                .forClass(DuelController.ShiaijoFinishedListener.class);
+        verify(this.mockDuelController).addShiaijoFinishedListener(captor.capture());
 
         final TournamentDTO tournament = new TournamentDTO();
         tournament.setName("tournament");
         captor.getValue().finished(tournament, 1);
 
-        verify(mockWebSocketController, times(1)).sendMessage(eq("backendMessage.shiaijoFinished"), eq(MessageContentType.INFO), any());
+        verify(this.mockWebSocketController, times(1)).sendMessage(eq("backendMessage.shiaijoFinished"),
+                eq(MessageContentType.INFO), any());
     }
 
     @Test
     public void constructor_expectUserAdminGeneratedListenerSendsMessage() {
-        new WebsocketMessages(mockAchievementController, mockDuelController, mockWebSocketController, mockAuthApi);
+        new WebsocketMessages(this.mockAchievementController, this.mockDuelController, this.mockWebSocketController,
+                this.mockAuthApi);
 
-        final ArgumentCaptor<AuthApi.UserAdminGeneratedListener> captor =
-                ArgumentCaptor.forClass(AuthApi.UserAdminGeneratedListener.class);
-        verify(mockAuthApi).addUserAdminGeneratedListeners(captor.capture());
+        final ArgumentCaptor<AuthApi.UserAdminGeneratedListener> captor = ArgumentCaptor
+                .forClass(AuthApi.UserAdminGeneratedListener.class);
+        verify(this.mockAuthApi).addUserAdminGeneratedListeners(captor.capture());
 
         captor.getValue().generated("admin");
 
-        verify(mockWebSocketController, times(1)).sendMessage(eq("backendMessage.userAdminGenerated"), eq(MessageContentType.INFO), any());
+        verify(this.mockWebSocketController, times(1)).sendMessage(eq("backendMessage.userAdminGenerated"),
+                eq(MessageContentType.INFO), any());
     }
 }
-

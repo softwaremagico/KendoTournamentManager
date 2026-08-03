@@ -63,7 +63,8 @@ public class TournamentStatisticsConverterTest {
         final TournamentFightStatisticsDTO fightStatisticsDTO = new TournamentFightStatisticsDTO();
         when(mockTournamentFightStatisticsConverter.convertElement(any())).thenReturn(fightStatisticsDTO);
 
-        final TournamentStatisticsDTO result = converter.convert(new TournamentStatisticsConverterRequest(tournamentStatistics));
+        final TournamentStatisticsDTO result = converter
+                .convert(new TournamentStatisticsConverterRequest(tournamentStatistics));
 
         assertSame(result.getTournamentFightStatistics(), fightStatisticsDTO);
     }
@@ -87,4 +88,3 @@ public class TournamentStatisticsConverterTest {
         assertSame(result.getFightStatistics(), fightStatistics);
     }
 }
-

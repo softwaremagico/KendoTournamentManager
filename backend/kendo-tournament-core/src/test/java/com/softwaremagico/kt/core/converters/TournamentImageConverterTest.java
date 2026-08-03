@@ -89,5 +89,3 @@ public class TournamentImageConverterTest {
         assertSame(result.getTournament(), tournament);
     }
 }
-
-

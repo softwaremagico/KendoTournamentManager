@@ -39,52 +39,54 @@ import static org.testng.Assert.*;
 @Test(groups = "scoreOfCompetitorConverter")
 public class ScoreOfCompetitorConverterTest {
 
-	@Mock
-	private ParticipantConverter mockParticipantConverter;
+    @Mock
+    private ParticipantConverter mockParticipantConverter;
 
-	@Mock
-	private ParticipantReducedConverter mockParticipantReducedConverter;
+    @Mock
+    private ParticipantReducedConverter mockParticipantReducedConverter;
 
-	private ScoreOfCompetitorConverter converter;
+    private ScoreOfCompetitorConverter converter;
 
-	@BeforeMethod(alwaysRun = true)
-	public void setUp() {
-		MockitoAnnotations.openMocks(this);
-        this.converter = new ScoreOfCompetitorConverter(this.mockParticipantConverter, this.mockParticipantReducedConverter);
-	}
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        this.converter = new ScoreOfCompetitorConverter(this.mockParticipantConverter,
+                this.mockParticipantReducedConverter);
+    }
 
-	@Test
-	public void convert_expectCompetitorConvertedWithReducedConverter() {
-		final Participant participant = new Participant();
-		final ScoreOfCompetitor scoreOfCompetitor = new ScoreOfCompetitor();
-		scoreOfCompetitor.setCompetitor(participant);
-		final ParticipantReducedDTO participantReducedDTO = new ParticipantReducedDTO();
+    @Test
+    public void convert_expectCompetitorConvertedWithReducedConverter() {
+        final Participant participant = new Participant();
+        final ScoreOfCompetitor scoreOfCompetitor = new ScoreOfCompetitor();
+        scoreOfCompetitor.setCompetitor(participant);
+        final ParticipantReducedDTO participantReducedDTO = new ParticipantReducedDTO();
 
-		when(this.mockParticipantReducedConverter.convert(any())).thenReturn(participantReducedDTO);
+        when(this.mockParticipantReducedConverter.convert(any())).thenReturn(participantReducedDTO);
 
-		final ScoreOfCompetitorDTO result = this.converter.convert(new ScoreOfCompetitorConverterRequest(scoreOfCompetitor));
+        final ScoreOfCompetitorDTO result = this.converter
+                .convert(new ScoreOfCompetitorConverterRequest(scoreOfCompetitor));
 
-		assertSame(result.getCompetitor(), participantReducedDTO);
-	}
+        assertSame(result.getCompetitor(), participantReducedDTO);
+    }
 
-	@Test
-	public void reverse_withNull_expectNull() {
-		assertNull(this.converter.reverse(null));
-	}
+    @Test
+    public void reverse_withNull_expectNull() {
+        assertNull(this.converter.reverse(null));
+    }
 
-	@Test
-	public void reverse_expectCompetitorConvertedAndCollectionsInitialized() {
-		final ScoreOfCompetitorDTO dto = new ScoreOfCompetitorDTO();
-		final ParticipantDTO participantDTO = new ParticipantDTO();
-		dto.setCompetitor(participantDTO);
-		final Participant participant = new Participant();
+    @Test
+    public void reverse_expectCompetitorConvertedAndCollectionsInitialized() {
+        final ScoreOfCompetitorDTO dto = new ScoreOfCompetitorDTO();
+        final ParticipantDTO participantDTO = new ParticipantDTO();
+        dto.setCompetitor(participantDTO);
+        final Participant participant = new Participant();
 
-		when(this.mockParticipantConverter.reverse(participantDTO)).thenReturn(participant);
+        when(this.mockParticipantConverter.reverse(participantDTO)).thenReturn(participant);
 
-		final var result = this.converter.reverse(dto);
+        final var result = this.converter.reverse(dto);
 
-		assertSame(result.getCompetitor(), participant);
-		assertTrue(result.getFights().isEmpty());
-		assertTrue(result.getUnties().isEmpty());
-	}
+        assertSame(result.getCompetitor(), participant);
+        assertTrue(result.getFights().isEmpty());
+        assertTrue(result.getUnties().isEmpty());
+    }
 }
