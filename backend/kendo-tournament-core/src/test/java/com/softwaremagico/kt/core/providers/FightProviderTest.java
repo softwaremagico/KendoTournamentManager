@@ -113,10 +113,14 @@ public class FightProviderTest {
         final Duel notOverDuel = mock(Duel.class);
 
         when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fightOver, fightNotOver));
-        when(fightOver.getTeam1()).thenReturn(mock(Team.class));
-        when(fightOver.getTeam2()).thenReturn(mock(Team.class));
-        when(fightNotOver.getTeam1()).thenReturn(mock(Team.class));
-        when(fightNotOver.getTeam2()).thenReturn(mock(Team.class));
+        final Team fightOverTeam1 = mock(Team.class);
+        final Team fightOverTeam2 = mock(Team.class);
+        final Team fightNotOverTeam1 = mock(Team.class);
+        final Team fightNotOverTeam2 = mock(Team.class);
+        when(fightOver.getTeam1()).thenReturn(fightOverTeam1);
+        when(fightOver.getTeam2()).thenReturn(fightOverTeam2);
+        when(fightNotOver.getTeam1()).thenReturn(fightNotOverTeam1);
+        when(fightNotOver.getTeam2()).thenReturn(fightNotOverTeam2);
         when(fightOver.getDuels()).thenReturn(List.of(overDuel));
         when(fightNotOver.getDuels()).thenReturn(List.of(notOverDuel));
         when(overDuel.isOver()).thenReturn(true);
@@ -134,8 +138,10 @@ public class FightProviderTest {
         final Duel duel = mock(Duel.class);
 
         when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getTeam1()).thenReturn(mock(Team.class));
-        when(fight.getTeam2()).thenReturn(mock(Team.class));
+        final Team allOverTeam1 = mock(Team.class);
+        final Team allOverTeam2 = mock(Team.class);
+        when(fight.getTeam1()).thenReturn(allOverTeam1);
+        when(fight.getTeam2()).thenReturn(allOverTeam2);
         when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.isOver()).thenReturn(true);
 
@@ -152,8 +158,10 @@ public class FightProviderTest {
         final Duel duel = mock(Duel.class);
 
         when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getTeam1()).thenReturn(mock(Team.class));
-        when(fight.getTeam2()).thenReturn(mock(Team.class));
+        final Team notOverTeam1 = mock(Team.class);
+        final Team notOverTeam2 = mock(Team.class);
+        when(fight.getTeam1()).thenReturn(notOverTeam1);
+        when(fight.getTeam2()).thenReturn(notOverTeam2);
         when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.isOver()).thenReturn(false);
 
@@ -366,14 +374,11 @@ public class FightProviderTest {
     @Test
     public void shouldReturnTrueWhenScoresGoFromNameToCenter() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
         final List<Score> competitor1Scores = new ArrayList<>(Arrays.asList(null, Score.MEN));
         final List<Score> competitor2Scores = List.of(Score.KOTE);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(competitor1Scores);
         when(duel.getCompetitor2Score()).thenReturn(competitor2Scores);
 
@@ -383,11 +388,8 @@ public class FightProviderTest {
     @Test
     public void shouldReturnFalseWhenScoresDoNotGoFromNameToCenter() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(List.of(Score.MEN));
         when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
 
@@ -407,11 +409,8 @@ public class FightProviderTest {
     @Test
     public void shouldReturnTrueWhenSecondCompetitorScoresGoFromNameToCenter() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(List.of(Score.MEN));
         when(duel.getCompetitor2Score()).thenReturn(new ArrayList<>(Arrays.asList(null, Score.KOTE)));
 
@@ -421,11 +420,8 @@ public class FightProviderTest {
     @Test
     public void shouldReturnFalseWhenScoreSecondElementIsNull() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>(Arrays.asList(null, null)));
         when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
 
@@ -435,11 +431,8 @@ public class FightProviderTest {
     @Test
     public void shouldReturnFalseWhenScoreSecondElementIsEmpty() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>(Arrays.asList(null, Score.EMPTY)));
         when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
 
@@ -449,11 +442,8 @@ public class FightProviderTest {
     @Test
     public void shouldReturnFalseWhenScoreStartsAtCompetitorNameColumn() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>(Arrays.asList(Score.MEN, Score.KOTE)));
         when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
 
@@ -463,15 +453,20 @@ public class FightProviderTest {
     @Test
     public void shouldReturnFalseWhenScoreListIsEmpty() {
         final Tournament tournament = tournament();
-        final Fight fight = mock(Fight.class);
-        final Duel duel = mock(Duel.class);
+        final Duel duel = mockFightWithDuel(tournament);
 
-        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
-        when(fight.getDuels()).thenReturn(List.of(duel));
         when(duel.getCompetitor1Score()).thenReturn(new ArrayList<>());
         when(duel.getCompetitor2Score()).thenReturn(List.of(Score.KOTE));
 
         assertFalse(provider.scoresGoesFromCompetitorsNameToCenter(tournament));
+    }
+
+    private Duel mockFightWithDuel(Tournament tournament) {
+        final Fight fight = mock(Fight.class);
+        final Duel duel = mock(Duel.class);
+        when(fightRepository.findByTournament(tournament)).thenReturn(List.of(fight));
+        when(fight.getDuels()).thenReturn(List.of(duel));
+        return duel;
     }
 
     private Tournament tournament() {
