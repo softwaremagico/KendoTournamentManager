@@ -1,3 +1,0 @@
-- For backend changes, run the reactor package validation in `mem:suggested_commands`; `mvn test` alone can fail before tests because the dependency copy execution runs before packaging.
-- For frontend changes, run both headless tests and production build. Current test suite can execute all specs successfully but exits non-zero for pre-existing per-file coverage thresholds; report this separately.
-- Before completion inspect `git -c safe.directory=/BiiT/workspace/KendoTournamentManager diff --check` and `status --short`.

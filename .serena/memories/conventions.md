@@ -1,5 +1,0 @@
-- Backend packages use `com.softwaremagico.kt`; source headers use the existing AGPL `/*- ... #L% */` Maven-license format.
-- Entities derive from `Element`; tenant-owned entities have an immutable non-null `tenant_id` and Hibernate `tenantFilter`.
-- Tenant identity is authoritative only from a signed JWT claim and is stored per request in `TenantContext`; never accept tenant selection from URL/query/local storage.
-- Tenant `1` is reserved for `Legacy organization`. Existing installations must run the corresponding manual 3.6.0 migration before boot; only truly empty installations bootstrap this tenant.
-- User-visible documentation uses English; avoid unsupported claims of MySQL DDL atomicity.

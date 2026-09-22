@@ -1,4 +1,0 @@
-- Backend validation (the dependency-copy plugin requires package phase): `source /etc/profile.d/developers.sh && "$M2_HOME/bin/mvn" package -pl kendo-tournament-rest -am -Dspotbugs.skip=true -Dcheckstyle.skip=true` from `backend/`.
-- Frontend test: `source /etc/profile.d/developers.sh && CHROME_BIN="$(command -v chromium)" npm run test:ci` from `frontend/`.
-- Frontend production build: `source /etc/profile.d/developers.sh && npm run build` from `frontend/`.
-- Git requires safe-directory override in this environment: `git -c safe.directory=/BiiT/workspace/KendoTournamentManager <command>`.
