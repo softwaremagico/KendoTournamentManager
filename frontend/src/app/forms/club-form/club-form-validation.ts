@@ -8,9 +8,9 @@ export function validateClubForm(club: Club, transloco: TranslocoService, errors
   return validateRequiredField(club.name, InputLimits.MIN_FIELD_LENGTH, InputLimits.MAX_NORMAL_FIELD_LENGTH, ClubFormValidationFields.NAME_ERRORS, transloco, errors)
     && validateRequiredField(club.country, InputLimits.MIN_FIELD_LENGTH, InputLimits.MAX_SMALL_FIELD_LENGTH, ClubFormValidationFields.COUNTRY_ERRORS, transloco, errors)
     && validateRequiredField(club.city, InputLimits.MIN_FIELD_LENGTH, InputLimits.MAX_SMALL_FIELD_LENGTH, ClubFormValidationFields.CITY_ERRORS, transloco, errors)
-    && validateOptionalField(club.email, TypeValidations.isEmail, InputLimits.MAX_NORMAL_FIELD_LENGTH, ClubFormValidationFields.EMAIL_ERRORS, transloco, errors)
-    && validateOptionalField(club.phone, TypeValidations.isPhoneNumber, InputLimits.MAX_SMALL_FIELD_LENGTH, ClubFormValidationFields.PHONE_ERRORS, transloco, errors, InputLimits.MIN_FIELD_LENGTH)
-    && validateOptionalField(club.web, TypeValidations.isWebPage, InputLimits.MAX_NORMAL_FIELD_LENGTH, ClubFormValidationFields.WEB_ERRORS, transloco, errors, InputLimits.MIN_FIELD_LENGTH);
+    && validateOptionalField(club.email, value => TypeValidations.isEmail(value), InputLimits.MAX_NORMAL_FIELD_LENGTH, ClubFormValidationFields.EMAIL_ERRORS, transloco, errors)
+    && validateOptionalField(club.phone, value => TypeValidations.isPhoneNumber(value), InputLimits.MAX_SMALL_FIELD_LENGTH, ClubFormValidationFields.PHONE_ERRORS, transloco, errors, InputLimits.MIN_FIELD_LENGTH)
+    && validateOptionalField(club.web, value => TypeValidations.isWebPage(value), InputLimits.MAX_NORMAL_FIELD_LENGTH, ClubFormValidationFields.WEB_ERRORS, transloco, errors, InputLimits.MIN_FIELD_LENGTH);
 }
 
 function validateRequiredField(value: string | undefined, minLength: number, maxLength: number, field: ClubFormValidationFields,
@@ -56,4 +56,3 @@ function validatePresentOptionalField(value: string, validator: (value: string) 
   }
   return true;
 }
-

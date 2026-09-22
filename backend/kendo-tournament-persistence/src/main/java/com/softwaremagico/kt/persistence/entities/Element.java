@@ -31,12 +31,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.springframework.data.annotation.Version;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -54,6 +66,8 @@ import java.util.Objects;
  * </p>
  */
 @MappedSuperclass
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Integer.class))
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public abstract class Element implements Serializable {
     protected static final int MAX_UNIQUE_COLUMN_LENGTH = 190;
 
@@ -97,6 +111,63 @@ public abstract class Element implements Serializable {
     /** Optimistic-locking version counter incremented by Hibernate on every update. */
     @Version
     private Integer version;
+
+    /** Private organization that owns this record. */
+    @Column(name = "tenant_id", nullable = false, updatable = false)
+    private Integer tenantId;
+
+    @PrePersist
+    protected void assignTenant() {
+        if (tenantId == null) {
+            tenantId = TenantContext.getRequiredTenantId();
+        }
+        validateRelatedTenants();
+    }
+
+    @PreUpdate
+    protected void validateRelatedTenantsOnUpdate() {
+        validateRelatedTenants();
+    }
+
+    /**
+     * Prevents a valid row from one tenant being linked to a row owned by
+     * another tenant. Associations that are new in the same cascade have no
+     * tenant yet and will receive the current context during their own insert.
+     */
+    private void validateRelatedTenants() {
+        for (Class<?> type = getClass(); type != null && type != Element.class; type = type.getSuperclass()) {
+            for (Field field : type.getDeclaredFields()) {
+                if (field.getAnnotation(ManyToOne.class) == null && field.getAnnotation(OneToOne.class) == null
+                        && field.getAnnotation(ManyToMany.class) == null) {
+                    continue;
+                }
+                try {
+                    field.setAccessible(true);
+                    validateRelatedTenant(field.get(this));
+                } catch (IllegalAccessException ex) {
+                    throw new IllegalStateException("Cannot validate tenant relationship '" + field.getName() + "'.", ex);
+                }
+            }
+        }
+    }
+
+    private void validateRelatedTenant(Object relation) {
+        if (relation instanceof Element relatedEntity) {
+            validateRelatedTenantId(relatedEntity.getTenantId());
+        } else if (relation instanceof Collection<?> relatedEntities) {
+            for (Object relatedEntity : relatedEntities) {
+                if (relatedEntity instanceof Element tenantScopedEntity) {
+                    validateRelatedTenantId(tenantScopedEntity.getTenantId());
+                }
+            }
+        }
+    }
+
+    private void validateRelatedTenantId(Integer relatedTenantId) {
+        if (relatedTenantId != null && tenantId != null && !tenantId.equals(relatedTenantId)) {
+            throw new IllegalStateException("Entities from different tenants cannot be related.");
+        }
+    }
 
     public Integer getId() {
         return id;
@@ -199,5 +270,13 @@ public abstract class Element implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }

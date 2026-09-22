@@ -40,10 +40,10 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -93,7 +93,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private WebSocketStompClient webSocketStompClient;
 
-    private WebSocketHttpHeaders headers;
+    private StompHeaders headers;
 
     private AuthenticatedUser authenticatedUser;
 
@@ -115,8 +115,8 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void authentication() {
         authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
-        headers = new WebSocketHttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken((IAuthenticatedUser) authenticatedUser, "127.0.0.1"));
+		headers = new StompHeaders();
+		headers.add("JWT-Token", jwtTokenUtil.generateAccessToken((IAuthenticatedUser) authenticatedUser, "127.0.0.1"));
     }
 
 
@@ -132,11 +132,12 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void fightUpdated() throws ExecutionException, InterruptedException, TimeoutException {
         BlockingQueue<FightDTO> blockingQueue = new ArrayBlockingQueue<>(1);
 
-        StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
+        StompSession session = webSocketStompClient.connectAsync(getWsPath(), new WebSocketHttpHeaders(), this.headers,
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
-        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.FIGHTS_MAPPING, new StompSessionHandlerAdapter() {
+        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/" + authenticatedUser.getTenantId()
+                + WebSocketController.FIGHTS_MAPPING, new StompSessionHandlerAdapter() {
 
             @Override
             public void afterConnected(StompSession session, StompHeaders connectedHeaders) {

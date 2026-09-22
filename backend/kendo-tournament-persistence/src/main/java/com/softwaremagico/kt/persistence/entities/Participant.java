@@ -37,6 +37,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
@@ -74,9 +75,10 @@ import java.util.Set;
  * </p>
  */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "participants",
+@Table(name = "participants", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "id_card"})},
         indexes = {
                 @Index(name = "ind_club", columnList = "club"),
                 @Index(name = "ind_token", columnList = "temporal_token"),
@@ -93,7 +95,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     private static final int TEMPORARY_PARTICIPANT_ACCOUNT_DURATION = 365;
     private static final int TOKEN_LENGTH = 15;
 
-    @Column(name = "id_card", unique = true)
+    @Column(name = "id_card")
     @Convert(converter = StringCryptoConverter.class)
     private String idCard;
 

@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import com.softwaremagico.kt.websockets.models.messages.MessageContentType;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -54,6 +55,7 @@ public class WebSocketControllerUnitTests {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
+		TenantContext.setTenantId(1);
         objectMapper = mock(ObjectMapper.class);
         messagingTemplate = mock(SimpMessagingTemplate.class);
         webSocketController = new WebSocketController(objectMapper, messagingTemplate);
@@ -68,9 +70,9 @@ public class WebSocketControllerUnitTests {
         webSocketController.elementUpdated(elementDTO, "actor", "session");
         webSocketController.elementDeleted(elementDTO, "actor", "session");
 
-        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.CREATING_MAPPING), isA(MessageContent.class));
-        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.UPDATING_MAPPING), isA(MessageContent.class));
-        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.DELETES_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.CREATING_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.UPDATING_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.DELETES_MAPPING), isA(MessageContent.class));
     }
 
     @Test
@@ -82,9 +84,9 @@ public class WebSocketControllerUnitTests {
         webSocketController.untieUpdated(new DuelDTO(), "actor", "session");
         webSocketController.groupsUpdated(new TournamentDTO(), "actor", "session");
 
-        verify(messagingTemplate, times(2)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.FIGHTS_MAPPING), isA(MessageContent.class));
-        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.UNTIES_MAPPING), isA(MessageContent.class));
-        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.GROUPS_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(2)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.FIGHTS_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.UNTIES_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(1)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.GROUPS_MAPPING), isA(MessageContent.class));
     }
 
     @Test
@@ -92,7 +94,7 @@ public class WebSocketControllerUnitTests {
         webSocketController.sendMessage("hello", MessageContentType.INFO);
         webSocketController.sendMessage("hello", MessageContentType.WARNING, "params");
 
-        verify(messagingTemplate, times(2)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.MESSAGES_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(2)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.MESSAGES_MAPPING), isA(MessageContent.class));
     }
 
     @Test
@@ -103,8 +105,8 @@ public class WebSocketControllerUnitTests {
         webSocketController.elementCreated(new ElementDTO(), "actor", "session");
         webSocketController.fightUpdated(new FightDTO(), "actor", "session");
 
-        verify(messagingTemplate, times(0)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.CREATING_MAPPING), isA(MessageContent.class));
-        verify(messagingTemplate, times(0)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.FIGHTS_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(0)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.CREATING_MAPPING), isA(MessageContent.class));
+        verify(messagingTemplate, times(0)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.FIGHTS_MAPPING), isA(MessageContent.class));
     }
 
     @Test
@@ -113,6 +115,5 @@ public class WebSocketControllerUnitTests {
         assertEquals(webSocketController.echo("payload"), "Echoing... payload");
     }
 }
-
 
 

@@ -22,6 +22,7 @@ package com.softwaremagico.kt.websockets;
  */
 
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -43,12 +44,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertThrows;
 
 @Test(groups = "webSocketConfiguration")
 public class WebSocketConfigurationTest {
 
     @Mock
     private JwtTokenUtil mockJwtTokenUtil;
+
+    @Mock
+    private TenantRepository tenantRepository;
 
     private WebSocketConfiguration configuration;
 
@@ -102,15 +107,14 @@ public class WebSocketConfigurationTest {
     }
 
     @Test
-    public void preSend_withConnectCommandAndNoJwtHeader_expectNoUserSet() {
+    public void preSend_withConnectCommandAndNoJwtHeader_expectInvalidJwt() {
         final ChannelInterceptor interceptor = captureInterceptor();
         final StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.CONNECT);
         accessor.setLeaveMutable(true);
         final var message = org.springframework.messaging.support.MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
 
-        interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class));
-
-        assertNull(accessor.getUser());
+		assertThrows(com.softwaremagico.kt.rest.exceptions.InvalidJwtException.class,
+				() -> interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class)));
     }
 
     @Test
@@ -122,6 +126,8 @@ public class WebSocketConfigurationTest {
         final var message = org.springframework.messaging.support.MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
 
         when(mockJwtTokenUtil.getUsername("some.jwt.token")).thenReturn("john");
+		when(mockJwtTokenUtil.getTenantId("some.jwt.token")).thenReturn(1);
+		when(mockJwtTokenUtil.validate("some.jwt.token")).thenReturn(true);
 
         interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class));
 
@@ -129,22 +135,39 @@ public class WebSocketConfigurationTest {
     }
 
     @Test
-    public void preSend_withJwtResolvingEmptyUsername_expectNoUserSet() {
+    public void preSend_withInactiveTenant_expectInvalidJwt() {
+        configuration = new WebSocketConfiguration(mockJwtTokenUtil, tenantRepository);
         final ChannelInterceptor interceptor = captureInterceptor();
-        final StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.SEND);
+        final StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.CONNECT);
+        accessor.setLeaveMutable(true);
+        accessor.addNativeHeader("JWT-Token", "inactive.tenant.token");
+        final var message = org.springframework.messaging.support.MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
+
+        when(mockJwtTokenUtil.getUsername("inactive.tenant.token")).thenReturn("john");
+        when(mockJwtTokenUtil.getTenantId("inactive.tenant.token")).thenReturn(7);
+        when(mockJwtTokenUtil.validate("inactive.tenant.token")).thenReturn(true);
+        when(tenantRepository.existsByIdAndActiveTrue(7)).thenReturn(false);
+
+        assertThrows(com.softwaremagico.kt.rest.exceptions.InvalidJwtException.class,
+                () -> interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class)));
+    }
+
+    @Test
+    public void preSend_withJwtResolvingEmptyUsername_expectInvalidJwt() {
+        final ChannelInterceptor interceptor = captureInterceptor();
+        final StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.CONNECT);
         accessor.setLeaveMutable(true);
         accessor.addNativeHeader("JWT-Token", "invalid.token");
         final var message = org.springframework.messaging.support.MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
 
         when(mockJwtTokenUtil.getUsername("invalid.token")).thenReturn("");
 
-        interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class));
-
-        assertNull(StompHeaderAccessor.wrap(message).getUser());
+		assertThrows(com.softwaremagico.kt.rest.exceptions.InvalidJwtException.class,
+				() -> interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class)));
     }
 
     @Test
-    public void preSend_withJwtTokenUtilThrowing_expectExceptionSwallowed() {
+    public void preSend_withJwtTokenUtilThrowing_expectInvalidJwt() {
         final ChannelInterceptor interceptor = captureInterceptor();
         final StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.CONNECT);
         accessor.setLeaveMutable(true);
@@ -153,9 +176,8 @@ public class WebSocketConfigurationTest {
 
         when(mockJwtTokenUtil.getUsername(any())).thenThrow(new RuntimeException("boom"));
 
-        interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class));
-
-        assertNull(StompHeaderAccessor.wrap(message).getUser());
+		assertThrows(com.softwaremagico.kt.rest.exceptions.InvalidJwtException.class,
+				() -> interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class)));
     }
 
     @Test
@@ -164,6 +186,3 @@ public class WebSocketConfigurationTest {
         assertEquals(principal.getName(), "someone");
     }
 }
-
-
-

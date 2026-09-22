@@ -1,4 +1,5 @@
 import {DatePipe} from '@angular/common';
+import {ChangeDetectorRef} from '@angular/core';
 import {of} from 'rxjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {AuthenticatedUserListComponent} from './authenticated-user-list.component';
@@ -52,7 +53,8 @@ describe('AuthenticatedUserListComponent', () => {
       userSessionServiceSpy,
       translocoServiceSpy,
       biitSnackbarServiceSpy,
-      new DatePipe('en-US')
+      new DatePipe('en-US'),
+      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetectorRef', ['markForCheck'])
     );
   });
 
@@ -158,5 +160,3 @@ describe('AuthenticatedUserListComponent', () => {
     expect((component as any).target).toBeNull();
   });
 });
-
-

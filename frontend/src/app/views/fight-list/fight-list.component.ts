@@ -111,7 +111,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.filteredUnties = new Map<number, Duel[]>();
     this.filteredLevels = [];
     this.groups = [];
-    const state = this.router.lastSuccessfulNavigation()?.extras.state;
+    const state = this.router.lastSuccessfulNavigation?.()?.extras.state;
     if (state) {
       //Send by previous view.
       if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
@@ -251,12 +251,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   private subscribeFightsTopics(): void {
-    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
+    const tenantTopic = this.websocketsPrefix + '/tenant/' + this.loginService.getTenantId();
+    this.topicSubscription = this.rxStompService.watch(tenantTopic + '/fights').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
       this.handleFightMessage(messageContent);
     });
 
-    this.topicSubscription.add(this.rxStompService.watch(this.websocketsPrefix + '/unties').subscribe((message: Message): void => {
+    this.topicSubscription.add(this.rxStompService.watch(tenantTopic + '/unties').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
       this.handleUntieMessage(messageContent);
     }));

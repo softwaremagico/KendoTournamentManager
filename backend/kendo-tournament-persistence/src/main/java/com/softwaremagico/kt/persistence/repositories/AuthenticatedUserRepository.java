@@ -42,4 +42,10 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
     Optional<AuthenticatedUser> findByUsername(String username);
 
     Optional<AuthenticatedUser> findByUsernameHash(String username);
+
+    Optional<AuthenticatedUser> findByUsernameHashAndTenantId(String username, Integer tenantId);
+
+    Optional<AuthenticatedUser> findByUsernameAndTenantId(String username, Integer tenantId);
+
+    boolean existsByRolesContaining(String role);
 }

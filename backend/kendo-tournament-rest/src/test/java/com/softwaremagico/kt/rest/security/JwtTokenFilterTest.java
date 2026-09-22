@@ -25,6 +25,8 @@ import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
+import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
 import jakarta.servlet.FilterChain;
@@ -64,6 +66,9 @@ public class JwtTokenFilterTest {
 
     @Mock
     private NetworkController networkController;
+
+    @Mock
+    private TenantRepository tenantRepository;
 
     @Mock
     private HttpServletRequest request;
@@ -128,10 +133,12 @@ public class JwtTokenFilterTest {
     public void shouldAuthenticateStandardUserWhenTokenIsValid() throws Exception {
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
         authenticatedUser.setRoles(Set.of("ROLE_ADMIN"));
+		authenticatedUser.setTenantId(1);
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer valid-token");
         when(jwtTokenUtil.validate("valid-token")).thenReturn(true);
         when(jwtTokenUtil.getUsername("valid-token")).thenReturn("admin");
+		when(jwtTokenUtil.getTenantId("valid-token")).thenReturn(1);
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
 
         filter.doFilterInternal(request, response, chain);
@@ -142,14 +149,29 @@ public class JwtTokenFilterTest {
     }
 
     @Test(groups = {"jwtTokenUtil"})
+    public void shouldRejectTokenForInactiveTenant() throws Exception {
+        final JwtTokenFilter tenantAwareFilter = new JwtTokenFilter("false", "false", jwtTokenUtil,
+                authenticatedUserProvider, participantProvider, networkController, tenantRepository);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer disabled-tenant-token");
+        when(jwtTokenUtil.validate("disabled-tenant-token")).thenReturn(true);
+        when(jwtTokenUtil.getTenantId("disabled-tenant-token")).thenReturn(9);
+        when(tenantRepository.existsByIdAndActiveTrue(9)).thenReturn(false);
+
+        assertThrows(InvalidJwtException.class, () -> tenantAwareFilter.doFilterInternal(request, response, chain));
+        verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
     public void shouldThrowInvalidIpWhenIpDoesNotMatchToken() {
         final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
+		authenticatedUser.setTenantId(1);
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer token-ip");
         when(jwtTokenUtil.validate("token-ip")).thenReturn(true);
         when(jwtTokenUtil.getUsername("token-ip")).thenReturn("admin");
+		when(jwtTokenUtil.getTenantId("token-ip")).thenReturn(1);
         when(jwtTokenUtil.getUserIp("token-ip")).thenReturn("10.10.10.10");
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
         when(request.getHeader("X-Forwarded-For")).thenReturn(null);
@@ -173,11 +195,13 @@ public class JwtTokenFilterTest {
         final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
+		authenticatedUser.setTenantId(1);
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer token-mac");
         when(request.getHeader("X-Forwarded-For")).thenReturn("10.10.10.10,10.10.10.11");
         when(jwtTokenUtil.validate("token-mac")).thenReturn(true);
         when(jwtTokenUtil.getUsername("token-mac")).thenReturn("admin");
+		when(jwtTokenUtil.getTenantId("token-mac")).thenReturn(1);
         when(jwtTokenUtil.getUserIp("token-mac")).thenReturn("10.10.10.10");
         when(jwtTokenUtil.getHostMac("token-mac")).thenReturn("AA-BB");
         when(networkController.getHostMac()).thenReturn("CC-DD");
@@ -195,9 +219,11 @@ public class JwtTokenFilterTest {
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer participant-token");
         when(jwtTokenUtil.validate("participant-token")).thenReturn(true);
         when(jwtTokenUtil.getUsername("participant-token")).thenReturn("participant-user");
+		when(jwtTokenUtil.getTenantId("participant-token")).thenReturn(1);
         when(jwtTokenUtil.getUserIp("participant-token")).thenReturn("11.11.11.11");
         when(authenticatedUserProvider.findByUsername("participant-user")).thenReturn(Optional.empty());
         when(participantProvider.findByTokenUsername("participant-user")).thenReturn(Optional.of(participant));
+		when(participant.getTenantId()).thenReturn(1);
 
         localFilter.doFilterInternal(request, response, chain);
 
@@ -206,4 +232,3 @@ public class JwtTokenFilterTest {
         assertSame(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), participant);
     }
 }
-

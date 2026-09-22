@@ -23,6 +23,8 @@ package com.softwaremagico.kt.persistence.entities;
 
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.expectThrows;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -34,6 +36,16 @@ import static org.testng.Assert.assertTrue;
 
 @Test(groups = "participantEntity")
 public class ParticipantTest {
+
+    @Test
+    public void shouldRejectRelationsAcrossTenants() {
+        final Club club = new Club("Club", "Country", "City");
+        club.setTenantId(2);
+        final Participant participant = new Participant("ID", "Name", "Lastname", club);
+        participant.setTenantId(1);
+
+        expectThrows(IllegalStateException.class, participant::validateRelatedTenantsOnUpdate);
+    }
 
     @Test
     public void constructor_expectIdCardNormalizedAndNameCased() {
@@ -188,4 +200,3 @@ public class ParticipantTest {
         assertNotEquals(p1, p2);
     }
 }
-

@@ -110,6 +110,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -131,6 +132,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword("zxc");
+        request.setTenant("Legacy organization");
 
         this.mockMvc
                 .perform(post("/auth/public/login")
@@ -147,6 +149,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -275,6 +278,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER2_NAME);
         request.setPassword(USER2_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -306,6 +310,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         request = new AuthRequest();
         request.setUsername(USER2_NAME);
         request.setPassword(USER2_PASSWORD);
+        request.setTenant("Legacy organization");
 
         createResult = this.mockMvc
                 .perform(post("/auth/public/login")

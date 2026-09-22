@@ -49,9 +49,9 @@ export class LoginService {
     }
   }
 
-  login(username: string, password: string): Observable<AuthenticatedUser> {
+  login(username: string, password: string, tenant: string): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/public/login`;
-    return this.http.post<AuthenticatedUser>(url, new AuthRequest(username, password), {
+    return this.http.post<AuthenticatedUser>(url, new AuthRequest(username, password, tenant), {
       headers: new HttpHeaders({'Content-Type': 'application/json'}),
       responseType: 'json',
       observe: 'response'
@@ -149,6 +149,22 @@ export class LoginService {
 
   public getJwtValue(): string | null {
     return this.userSessionService.getAuthToken();
+  }
+
+  /** The tenant shown in the UI is always derived from the server-signed JWT. */
+  getTenantId(): number | null {
+    const token = this.getJwtValue();
+    if (!token) {
+      return null;
+    }
+    try {
+      const payload = token.split('.')[1];
+      const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = JSON.parse(atob(normalizedPayload));
+      return typeof decoded.tenantId === 'number' ? decoded.tenantId : null;
+    } catch {
+      return null;
+    }
   }
 
   public getJwtExpirationValue(): number {

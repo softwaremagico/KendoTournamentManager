@@ -80,7 +80,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
               private readonly translateService: TranslocoService, private readonly achievementService: AchievementsService,
               private readonly tournamentService: TournamentService, private readonly environmentService: EnvironmentService) {
     super(rbacService);
-    const state = this.router.lastSuccessfulNavigation()?.extras.state;
+    const state = this.router.lastSuccessfulNavigation?.()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !Number.isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);

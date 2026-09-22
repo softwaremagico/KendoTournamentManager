@@ -45,6 +45,7 @@
                 <include name="roleServices"/>
                 <include name="csvServicesUnit"/>
                 <include name="authenticatedUserController"/>
+                <include name="tenantAdministration"/>
             </run>
         </groups>
         <classes>
@@ -105,6 +106,7 @@
             <class name="com.softwaremagico.kt.rest.services.RoleServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.CsvServicesUnitTest"/>
             <class name="com.softwaremagico.kt.rest.controllers.AuthenticatedUserControllerTest"/>
+            <class name="com.softwaremagico.kt.rest.security.TenantAdministrationSecurityTest"/>
             <class name="com.softwaremagico.kt.logger.LoggedHttpExceptionTest"/>
             <class name="com.softwaremagico.kt.websockets.WebSocketConfigurationTest"/>
             <class name="com.softwaremagico.kt.websockets.WebsocketMessagesTest"/>

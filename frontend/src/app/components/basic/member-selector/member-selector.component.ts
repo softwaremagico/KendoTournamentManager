@@ -55,10 +55,12 @@ export class MemberSelectorComponent implements OnChanges {
   }
 
   selectUser(participant: Participant) {
-    const isAlreadySelected = this.selectedMembers.some(selected => selected?.id === participant?.id);
+    const isAlreadySelected = this.selectedMembers.some(selected =>
+      selected === participant || (selected?.id != null && participant?.id != null && selected.id === participant.id));
     if (this.selections > 1) {
       if (isAlreadySelected) {
-        this.selectedMembers = this.selectedMembers.filter(selected => selected?.id !== participant?.id);
+        this.selectedMembers = this.selectedMembers.filter(selected =>
+          selected !== participant && !(selected?.id != null && participant?.id != null && selected.id === participant.id));
       } else {
         this.selectedMembers.push(participant);
       }
@@ -70,6 +72,7 @@ export class MemberSelectorComponent implements OnChanges {
   }
 
   isSelected(participant: Participant): boolean {
-    return this.selectedMembers.some(selected => selected?.id === participant?.id);
+    return this.selectedMembers.some(selected =>
+      selected === participant || (selected?.id != null && participant?.id != null && selected.id === participant.id));
   }
 }

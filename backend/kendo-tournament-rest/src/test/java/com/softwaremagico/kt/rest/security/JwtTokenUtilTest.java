@@ -21,7 +21,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.testng.annotations.BeforeMethod;
@@ -42,12 +42,13 @@ public class JwtTokenUtilTest {
     private static final String SECRET = "test-secret";
 
     private NetworkController networkController;
-    private IAuthenticatedUser user;
+    private AuthenticatedUser user;
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         this.networkController = new TestNetworkController();
-        this.user = new TestUser();
+        this.user = new AuthenticatedUser("user7", 1);
+        this.user.setId(7);
     }
 
     private SecretKey signingKey(String secret) {
@@ -269,52 +270,5 @@ class TestNetworkController extends NetworkController {
     @Override
     public String getHostMac() {
         return "AA-BB-CC-DD";
-    }
-}
-
-class TestUser implements IAuthenticatedUser {
-    @Override
-    public Integer getId() {
-        return 7;
-    }
-
-    @Override
-    public String getUsername() {
-        return "user7";
-    }
-
-    @Override
-    public String getName() {
-        return "name";
-    }
-
-    @Override
-    public String getLastname() {
-        return "lastname";
-    }
-
-    @Override
-    public java.util.Set<String> getRoles() {
-        return java.util.Set.of("ROLE_USER");
-    }
-
-    @Override
-    public String getCreatedBy() {
-        return "system";
-    }
-
-    @Override
-    public java.time.LocalDateTime getCreatedAt() {
-        return java.time.LocalDateTime.now();
-    }
-
-    @Override
-    public String getUpdatedBy() {
-        return "system";
-    }
-
-    @Override
-    public java.time.LocalDateTime getUpdatedAt() {
-        return java.time.LocalDateTime.now();
     }
 }

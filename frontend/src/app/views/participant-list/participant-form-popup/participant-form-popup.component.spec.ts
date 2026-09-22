@@ -16,10 +16,10 @@ describe('ParticipantFormPopupComponent', () => {
     sessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getUser']);
     csvServiceSpy = jasmine.createSpyObj('CsvService', ['addParticipants']);
     biitSnackbarServiceSpy = jasmine.createSpyObj('BiitSnackbarService', ['showNotification']);
-    translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['selectTranslate']);
+    translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['translate']);
 
     sessionServiceSpy.getUser.and.returnValue({ username: 'admin' } as any);
-    translocoServiceSpy.selectTranslate.and.returnValue(of('translated message'));
+    translocoServiceSpy.translate.and.returnValue('translated message');
 
     component = new ParticipantFormPopupComponent(
       sessionServiceSpy,
@@ -59,7 +59,7 @@ describe('ParticipantFormPopupComponent', () => {
     component.handleFileInput({ currentTarget: input } as unknown as Event);
 
     expect(csvServiceSpy.addParticipants).toHaveBeenCalledOnceWith(file);
-    expect(translocoServiceSpy.selectTranslate).toHaveBeenCalledWith('infoParticipantStored');
+    expect(translocoServiceSpy.translate).toHaveBeenCalledWith('infoParticipantStored');
     expect(biitSnackbarServiceSpy.showNotification).toHaveBeenCalledWith('translated message', NotificationType.SUCCESS);
     expect(component.saved.emit).toHaveBeenCalled();
   });
@@ -81,7 +81,7 @@ describe('ParticipantFormPopupComponent', () => {
 
     component.handleFileInput({ currentTarget: input } as unknown as Event);
 
-    expect(translocoServiceSpy.selectTranslate).toHaveBeenCalledWith(
+    expect(translocoServiceSpy.translate).toHaveBeenCalledWith(
       'failedOnCsvField',
       { element: 'Duplicated Participant' }
     );
@@ -100,4 +100,3 @@ describe('ParticipantFormPopupComponent', () => {
     expect(csvServiceSpy.addParticipants).not.toHaveBeenCalled();
   });
 });
-

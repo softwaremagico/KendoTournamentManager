@@ -26,11 +26,14 @@ import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.Tenant;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.GuestDisabledException;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.security.dto.AuthGuestRequest;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
+import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
 import com.softwaremagico.kt.security.AvailableRole;
@@ -76,6 +79,8 @@ public class AuthApiTest {
 	@Mock
 	private TournamentProvider tournamentProvider;
 	@Mock
+	private TenantRepository tenantRepository;
+	@Mock
 	private HttpServletRequest httpRequest;
 	@Mock
 	private Authentication authentication;
@@ -87,7 +92,10 @@ public class AuthApiTest {
 		MockitoAnnotations.openMocks(this);
 		this.authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil, this.authenticatedUserController,
 				this.bruteForceService, this.authenticatedUserProvider, this.participantController,
-				this.tournamentProvider, "false");
+				this.tournamentProvider, this.tenantRepository, "false");
+		final Tenant tenant = mock(Tenant.class);
+		when(tenant.getId()).thenReturn(1);
+		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.of(tenant));
 	}
 
 	// ========== Login Security Tests ==========
@@ -97,6 +105,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
+		authRequest.setTenant("Legacy organization");
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -116,9 +125,11 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password123");
+		authRequest.setTenant("Legacy organization");
 
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
+		user.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -145,6 +156,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("wrongpassword");
+		authRequest.setTenant("Legacy organization");
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -160,13 +172,15 @@ public class AuthApiTest {
 	}
 
 	@Test
-	public void testLoginCreateDefaultAdminWhenNoUsers() {
+    public void testLoginDoesNotCreateAdminWhenNoUsers() {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("admin");
 		authRequest.setPassword("initialpassword");
+		authRequest.setTenant("Legacy organization");
 
 		final AuthenticatedUser defaultAdmin = new AuthenticatedUser();
 		defaultAdmin.setUsername("admin");
+		defaultAdmin.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -181,9 +195,8 @@ public class AuthApiTest {
 
 		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-		verify(this.authenticatedUserController, times(1)).createUser(null, "admin", "Default", "Admin",
-				"initialpassword", AvailableRole.ADMIN);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        verify(this.authenticatedUserController, never()).createUser(any(), any(), any(), any(), any(), any(AvailableRole[].class));
 	}
 
 	@Test
@@ -191,6 +204,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
+		authRequest.setTenant("Legacy organization");
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1,10.0.0.2,10.0.0.3");
 		when(this.bruteForceService.isBlocked("10.0.0.1")).thenReturn(true);
@@ -203,10 +217,40 @@ public class AuthApiTest {
 	}
 
 	@Test
+    public void testGetActiveTenantNameWhenOnlyOneExists() {
+        final Tenant first = new Tenant("Alpha dojo");
+        when(this.tenantRepository.findAllByActiveTrueOrderByNameAsc()).thenReturn(List.of(first));
+
+        assertThat(this.authApi.getActiveTenantNames()).containsExactly("Alpha dojo");
+    }
+
+    @Test
+    public void testGetActiveTenantNamesDoesNotEnumerateMultipleTenants() {
+        when(this.tenantRepository.findAllByActiveTrueOrderByNameAsc())
+                .thenReturn(List.of(new Tenant("Alpha dojo"), new Tenant("Beta dojo")));
+
+        assertThat(this.authApi.getActiveTenantNames()).isEmpty();
+    }
+
+	@Test
+	public void testRegisterRejectsSuperAdminRole() {
+		final CreateUserRequest request = new CreateUserRequest();
+		request.setUsername("platform.admin");
+		request.setPassword("password");
+		request.setRoles(Set.of("SUPER_ADMIN"));
+
+		assertThatThrownBy(() -> this.authApi.register(request, this.authentication, this.httpRequest))
+				.isInstanceOf(InvalidRequestException.class)
+				.hasMessageContaining("SUPER_ADMIN");
+		verify(this.authenticatedUserController, never()).createUser(any(), any(CreateUserRequest.class));
+	}
+
+	@Test
 	public void testLoginWithUserNotFoundAfterAuthentication() {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
+		authRequest.setTenant("Legacy organization");
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -236,13 +280,17 @@ public class AuthApiTest {
 	public void testLoginAsGuestWithGuestUserNotFound() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
-				this.participantController, this.tournamentProvider, "true");
+				this.participantController, this.tournamentProvider, this.tenantRepository, "true");
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
+		final Tournament tournament = new Tournament();
+		tournament.setId(1);
+		tournament.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
 		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.empty());
 
@@ -254,13 +302,15 @@ public class AuthApiTest {
 	public void testLoginAsGuestWithLockedTournament() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
-				this.participantController, this.tournamentProvider, "true");
+				this.participantController, this.tournamentProvider, this.tenantRepository, "true");
 
 		final AuthenticatedUser guestUser = new AuthenticatedUser();
 		guestUser.setUsername(AuthenticatedUserProvider.GUEST_USER);
+		guestUser.setTenantId(1);
 
-		final Tournament lockedTournament = new Tournament();
-		lockedTournament.setId(1);
+        final Tournament lockedTournament = new Tournament();
+        lockedTournament.setId(1);
+        lockedTournament.setTenantId(1);
 		lockedTournament.setLocked(true);
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
@@ -280,13 +330,15 @@ public class AuthApiTest {
 	public void testLoginAsGuestWithUnlockedTournament() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
-				this.participantController, this.tournamentProvider, "true");
+				this.participantController, this.tournamentProvider, this.tenantRepository, "true");
 
 		final AuthenticatedUser guestUser = new AuthenticatedUser();
 		guestUser.setUsername(AuthenticatedUserProvider.GUEST_USER);
+		guestUser.setTenantId(1);
 
-		final Tournament unlockedTournament = new Tournament();
-		unlockedTournament.setId(1);
+        final Tournament unlockedTournament = new Tournament();
+        unlockedTournament.setId(1);
+        unlockedTournament.setTenantId(1);
 		unlockedTournament.setLocked(false);
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
@@ -426,6 +478,7 @@ public class AuthApiTest {
 	public void testRenewJWTToken() {
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
+		user.setTenantId(1);
 
 		when(this.authentication.getName()).thenReturn("testuser");
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
@@ -465,13 +518,15 @@ public class AuthApiTest {
 	}
 
 	@Test
-	public void testUserAdminGeneratedListenerInvoked() {
+    public void testUserAdminGeneratedListenerIsNotInvokedByLogin() {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("admin");
 		authRequest.setPassword("password");
+		authRequest.setTenant("Legacy organization");
 
 		final AuthenticatedUser newAdmin = new AuthenticatedUser();
 		newAdmin.setUsername("admin");
+		newAdmin.setTenantId(1);
 
 		final AuthApi.UserAdminGeneratedListener mockListener = mock(AuthApi.UserAdminGeneratedListener.class);
 		this.authApi.addUserAdminGeneratedListeners(mockListener);
@@ -489,7 +544,7 @@ public class AuthApiTest {
 
 		this.authApi.login(authRequest, this.httpRequest);
 
-		verify(mockListener, times(1)).generated("admin");
+        verify(mockListener, never()).generated(any());
 	}
 
 	// ========== Response Header Tests ==========
@@ -499,9 +554,11 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
+		authRequest.setTenant("Legacy organization");
 
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
+		user.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -526,9 +583,11 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
+		authRequest.setTenant("Legacy organization");
 
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
+		user.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");

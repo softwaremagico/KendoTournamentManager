@@ -269,8 +269,9 @@ spring.kendo.datasource.username=user
 spring.kendo.datasource.password=asd123
 ```
 
-Hibernate will automatically create and update the schema on startup (`ddl-auto=update`), so no manual migration
-scripts are needed on first run.
+Hibernate creates a schema for a new installation on startup (`ddl-auto=update`).
+Before upgrading an existing 3.5.x database to 3.6.0, stop the application and
+run the appropriate manual tenancy migration in [`../documents/UPDATING.md`](../documents/UPDATING.md).
 
 #### Using PostgreSQL
 

@@ -7,6 +7,8 @@ import {PasswordsComponent} from "./views/passwords/passwords.component";
 import {ParticipantStatisticsComponent} from "./views/participant-statistics/participant-statistics.component";
 import {ParticipantFightListComponent} from "./views/participant-fight-list/participant-fight-list.component";
 import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
+import {TenantListComponent} from './views/tenant-list/tenant-list.component';
+import {SuperAdminGuard} from './services/super-admin-guard.service';
 
 const routes: Routes = [
   {path: '', redirectTo: '/tournaments', pathMatch: 'full'},
@@ -26,6 +28,7 @@ const routes: Routes = [
     canActivate: [LoggedIn]
   },
   {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedIn]},
+  {path: 'administration/tenants', component: TenantListComponent, canActivate: [LoggedIn, SuperAdminGuard]},
   {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedIn]},
   {path: 'participants/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedIn]},
   {path: 'participants/fights', component: ParticipantFightListComponent, canActivate: [LoggedIn]},

@@ -127,6 +127,7 @@ import {
 import {UserScoreModule} from "./components/fight/duel/user-score/user-score.module";
 import {Environment} from "../environments/environment";
 import {TranslocoHttpLoader} from "./transloco-http.loader";
+import {TenantListComponent} from './views/tenant-list/tenant-list.component';
 
 
 registerLocaleData(localeES, "es");
@@ -142,7 +143,8 @@ registerLocaleData(localeFR, "fr");
         AuthenticatedUserListComponent,
         PasswordsComponent,
         TournamentStatisticsComponent,
-        ParticipantStatisticsComponent
+        ParticipantStatisticsComponent,
+        TenantListComponent
     ],
     bootstrap: [AppComponent], imports: [NavbarModule,
         BrowserModule,

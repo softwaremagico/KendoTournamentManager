@@ -23,6 +23,7 @@ export class Constants {
     public static readonly ADMINISTRATION = class {
       public static readonly ROOT: string = 'administration';
       public static readonly USERS: string = 'users';
+      public static readonly TENANTS: string = 'tenants';
     }
     public static readonly HELP = class {
       public static readonly ROOT: string = 'help';

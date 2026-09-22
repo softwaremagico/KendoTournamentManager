@@ -1,0 +1,4 @@
+- Angular application source is under `src/app`; services are in `src/app/services`, views in `src/app/views`, and WebSocket support in `src/app/websockets`.
+- Authentication state is supplied by `LoginService`; tenant ID is decoded from signed JWT token claim, never taken from browser-selected persistence.
+- Tenant administration is restricted by `SuperAdminGuard`; tenant-facing requests use the authenticated token.
+- `npm run build` copies Wizardry theme translation assets before Angular build.

@@ -18,6 +18,7 @@ import {Team} from '../../models/team';
 import {GroupLink} from '../../models/group-link.model';
 import {RbacActivity} from '../../services/rbac/rbac.activity';
 import {TournamentBracketsEditorComponent} from './tournament-brackets-editor.component';
+import {LoginService} from '../../services/login.service';
 
 describe('TournamentBracketsEditorComponent', () => {
   let component: TournamentBracketsEditorComponent;
@@ -34,6 +35,7 @@ describe('TournamentBracketsEditorComponent', () => {
   let csvServiceSpy: jasmine.SpyObj<CsvService>;
   let messageServiceSpy: jasmine.SpyObj<MessageService>;
   let translocoServiceSpy: jasmine.SpyObj<TranslocoService>;
+  let loginServiceSpy: jasmine.SpyObj<LoginService>;
 
   const createTeam = (id: number, name: string): Team => ({
     id,
@@ -81,8 +83,10 @@ describe('TournamentBracketsEditorComponent', () => {
     csvServiceSpy = jasmine.createSpyObj('CsvService', ['addGroupLinks']);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
     translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['translate']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', ['getTenantId']);
 
     environmentServiceSpy.getWebsocketPrefix.and.returnValue('/ws');
+    loginServiceSpy.getTenantId.and.returnValue(1);
     rxStompServiceSpy.watch.and.returnValue(of({ body: '{}' } as any));
 
     component = new TournamentBracketsEditorComponent(
@@ -98,7 +102,8 @@ describe('TournamentBracketsEditorComponent', () => {
       tournamentChangedServiceMock,
       csvServiceSpy,
       messageServiceSpy,
-      translocoServiceSpy
+      translocoServiceSpy,
+      loginServiceSpy
     );
 
     component.tournament = { id: 1, name: 'Tournament 1' } as any;
@@ -252,5 +257,4 @@ describe('TournamentBracketsEditorComponent', () => {
     expect(component.updateData).toHaveBeenCalledOnceWith(true, false);
   });
 });
-
 

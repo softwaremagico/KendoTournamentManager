@@ -26,6 +26,8 @@ import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
@@ -100,18 +102,27 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final ParticipantProvider participantProvider;
 
     private final NetworkController networkController;
+    private final TenantRepository tenantRepository;
 
     @Autowired
     public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, @Value("${enable.participant.access:false}") String participantAccess,
-                          JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
-                          ParticipantProvider participantProvider,
-                          NetworkController networkController) {
+                           JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
+                           ParticipantProvider participantProvider,
+                           NetworkController networkController, TenantRepository tenantRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.participantProvider = participantProvider;
         this.checkClientIp = Boolean.parseBoolean(ipCheck);
         this.participantAccess = Boolean.parseBoolean(participantAccess);
         this.networkController = networkController;
+        this.tenantRepository = tenantRepository;
+    }
+
+    /** Convenience constructor for isolated unit tests without persistence. */
+    public JwtTokenFilter(String ipCheck, String participantAccess, JwtTokenUtil jwtTokenUtil,
+                          AuthenticatedUserProvider authenticatedUserProvider, ParticipantProvider participantProvider,
+                          NetworkController networkController) {
+        this(ipCheck, participantAccess, jwtTokenUtil, authenticatedUserProvider, participantProvider, networkController, null);
     }
 
     @Override
@@ -122,7 +133,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // Get authorization header and validate
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (ObjectUtils.isEmpty(header) || !header.startsWith("Bearer ")) {
-            chain.doFilter(request, response);
+            try {
+                chain.doFilter(request, response);
+            } finally {
+                TenantContext.clear();
+            }
             logMissingBearerToken(request);
             return;
         }
@@ -130,7 +145,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // Get jwt token and validate
         final String token = header.substring("Bearer ".length()).trim();
         if (token.isEmpty()) {
-            chain.doFilter(request, response);
+            try {
+                chain.doFilter(request, response);
+            } finally {
+                TenantContext.clear();
+            }
             JwtFilterLogger.debug(this.getClass(), "Bearer token is blank");
             return;
         }
@@ -139,9 +158,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         logTokenDetails(token);
-        authenticate(request, token);
-
-        chain.doFilter(request, response);
+        try {
+            authenticate(request, token);
+            chain.doFilter(request, response);
+        } finally {
+            TenantContext.clear();
+        }
     }
 
     private void logMissingBearerToken(HttpServletRequest request) {
@@ -189,6 +211,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
      * Resolves the user identity, validates ip/mac binding and sets the authentication on the security context.
      */
     private void authenticate(HttpServletRequest request, String token) {
+        final Integer tenantId = this.jwtTokenUtil.getTenantId(token);
+        if (tenantId == null) {
+            throw new InvalidJwtException(this.getClass(), "JWT token does not define a tenant.");
+        }
+        if (tenantRepository != null && !tenantRepository.existsByIdAndActiveTrue(tenantId)) {
+            throw new InvalidJwtException(this.getClass(), "JWT token tenant is inactive.");
+        }
+        TenantContext.setTenantId(tenantId);
         // Get user identity and set it on the spring security context
         final IAuthenticatedUser user = this.authenticatedUserProvider.findByUsername(this.jwtTokenUtil.getUsername(token)).orElse(null);
 
@@ -201,6 +231,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } else {
             //It is a standard user
             userDetails = (UserDetails) user;
+        }
+
+        if (userDetails == null || !(userDetails instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser)
+                || !Objects.equals(tenantScopedUser.getTenantId(), tenantId)) {
+            throw new InvalidJwtException(this.getClass(), "JWT token tenant does not match the authenticated user.");
         }
 
         validateIpAndMac(request, token, participantUser);

@@ -23,8 +23,10 @@ package com.softwaremagico.kt;
 
 import com.softwaremagico.kt.websockets.WebSocketConfiguration;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.security.Principal;
 
 @Controller
 public class EchoWebSocketController {
@@ -32,9 +34,16 @@ public class EchoWebSocketController {
     public static final String ECHO_MAPPING = "/echo";
     public static final String ECHO_INBOUND_MAPPING = "/welcome";
 
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public EchoWebSocketController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
     @MessageMapping(ECHO_INBOUND_MAPPING)
-    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + ECHO_MAPPING)
-    public String echo(String payload) {
-        return payload;
+    public void echo(String payload, Principal principal) {
+        final String destination = WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/"
+                + ((WebSocketConfiguration.UserPrincipal) principal).getTenantId() + ECHO_MAPPING;
+        messagingTemplate.convertAndSend(destination, payload);
     }
 }

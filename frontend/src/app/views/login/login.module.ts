@@ -5,6 +5,9 @@ import {BiitLoginModule} from "@biit-solutions/wizardry-theme/login";
 import {BiitProgressBarModule} from "@biit-solutions/wizardry-theme/info";
 import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
 import {LoginRoutingModule} from "./login-routing.module";
+import {FormsModule} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 
 @NgModule({
@@ -19,7 +22,10 @@ import {LoginRoutingModule} from "./login-routing.module";
     CommonModule,
     BiitLoginModule,
     TranslocoRootModule,
-    BiitProgressBarModule
+        BiitProgressBarModule
+        ,FormsModule
+        ,MatFormFieldModule
+        ,MatInputModule
   ]
 })
 export class LoginModule {

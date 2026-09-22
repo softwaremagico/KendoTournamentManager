@@ -24,7 +24,9 @@ package com.softwaremagico.kt.websockets;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
@@ -64,10 +66,18 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public static final String SOCKETS_STOMP_URL = "/websockets";
 
     private final JwtTokenUtil jwtTokenUtil;
+    private final TenantRepository tenantRepository;
 
 
-    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil) {
+    @Autowired
+    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil, TenantRepository tenantRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
+        this.tenantRepository = tenantRepository;
+    }
+
+    /** Convenience constructor for isolated unit tests without persistence. */
+    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil) {
+        this(jwtTokenUtil, null);
     }
 
     @Override
@@ -103,25 +113,45 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     }
 
     private boolean requiresAuthentication(StompHeaderAccessor accessor) {
-        return StompCommand.CONNECT.equals(accessor.getCommand()) || StompCommand.SEND.equals(accessor.getCommand());
+        return StompCommand.CONNECT.equals(accessor.getCommand()) || StompCommand.SUBSCRIBE.equals(accessor.getCommand());
     }
 
     private void authenticateIfPossible(StompHeaderAccessor accessor) {
-        final List<String> jwtToken = getJwtToken(accessor);
-        if (jwtToken.isEmpty()) {
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            validateTenantDestination(accessor);
             return;
         }
+        final List<String> jwtToken = getJwtToken(accessor);
+        if (jwtToken.isEmpty()) {
+            throw new InvalidJwtException(this.getClass(), "A JWT token is required for websockets.");
+        }
         try {
-            final String username = jwtTokenUtil.getUsername(jwtToken.getFirst());
-            if (username != null && !username.isEmpty()) {
-                accessor.setUser(new UserPrincipal(username));
+            final String token = jwtToken.getFirst();
+            final String username = jwtTokenUtil.getUsername(token);
+            final Integer tenantId = jwtTokenUtil.getTenantId(token);
+            if (jwtTokenUtil.validate(token) && username != null && !username.isEmpty() && tenantId != null
+                    && (tenantRepository == null || tenantRepository.existsByIdAndActiveTrue(tenantId))) {
+                accessor.setUser(new UserPrincipal(username, tenantId));
                 WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
             } else {
                 throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
             }
         } catch (Exception ex) {
-            //Unauthorized.
             WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets ({})!", ex.getMessage());
+            throw new InvalidJwtException(this.getClass(), "Invalid JWT token for websockets.");
+        }
+    }
+
+    private void validateTenantDestination(StompHeaderAccessor accessor) {
+        if (!(accessor.getUser() instanceof UserPrincipal principal)) {
+            throw new InvalidJwtException(this.getClass(), "Websocket subscription is not authenticated.");
+        }
+        if (tenantRepository != null && !tenantRepository.existsByIdAndActiveTrue(principal.tenantId)) {
+            throw new InvalidJwtException(this.getClass(), "Websocket tenant is inactive.");
+        }
+        final String expectedPrefix = SOCKET_SEND_PREFIX + "/tenant/" + principal.tenantId + "/";
+        if (accessor.getDestination() == null || !accessor.getDestination().startsWith(expectedPrefix)) {
+            throw new InvalidJwtException(this.getClass(), "Websocket destination belongs to another tenant.");
         }
     }
 
@@ -136,17 +166,27 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         return jwtHeader == null ? List.of() : jwtHeader;
     }
 
-    static class UserPrincipal implements Principal {
+    public static class UserPrincipal implements Principal {
 
         private final String name;
+        private final Integer tenantId;
+
+        UserPrincipal(String userName, Integer tenantId) {
+            this.name = userName;
+            this.tenantId = tenantId;
+        }
 
         UserPrincipal(String userName) {
-            this.name = userName;
+            this(userName, 1);
         }
 
         @Override
         public String getName() {
             return name;
+        }
+
+        public Integer getTenantId() {
+            return tenantId;
         }
     }
 }

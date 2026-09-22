@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.softwaremagico</groupId>
     <artifactId>kendo-tournament-backend</artifactId>
-    <version>3.5.0</version>
+    <version>3.6.0</version>
     <name>Kendo Tournament Manager</name>
     <packaging>pom</packaging>
 
@@ -81,6 +81,8 @@
         <main.basedir>${project.basedir}</main.basedir>
         <java.version>25</java.version>
         <maven-scm-provider-gitexe.version>2.2.1</maven-scm-provider-gitexe.version>
+        <maven-scm-api.version>1.11.2</maven-scm-api.version>
+        <project.scm.id>git</project.scm.id>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-jar-plugin.version>3.4.0</maven-jar-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>

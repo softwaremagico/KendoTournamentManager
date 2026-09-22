@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}), indexes = {

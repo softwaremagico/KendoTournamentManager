@@ -41,7 +41,7 @@ export class AuthenticatedUserRolePopupComponent extends RbacBasedComponent impl
   }
 
   private translateRoles() {
-    for (let role of UserRoles.toArray()) {
+    for (let role of UserRoles.toArray().filter(role => role !== UserRoles.SUPER_ADMIN)) {
       this.translatedRoles.push({
         value: role,
         label: this.transloco.translate(role.toLowerCase()),

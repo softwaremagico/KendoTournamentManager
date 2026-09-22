@@ -10,6 +10,7 @@ import {TranslocoService} from '@jsverse/transloco';
 import {EnvironmentService} from '../../environment.service';
 import {UserSessionService} from '../../services/user-session.service';
 import {ActivityService} from '../../services/rbac/activity.service';
+import {TenantService} from '../../services/tenant.service';
 import {Constants} from '../../constants';
 
 describe('LoginComponent', () => {
@@ -23,6 +24,7 @@ describe('LoginComponent', () => {
   let environmentServiceSpy: jasmine.SpyObj<EnvironmentService>;
   let userSessionServiceSpy: jasmine.SpyObj<UserSessionService>;
   let activityServiceSpy: jasmine.SpyObj<ActivityService>;
+  let tenantServiceSpy: jasmine.SpyObj<TenantService>;
   let activatedRouteMock: ActivatedRoute;
   let queryParams$: Subject<any>;
 
@@ -39,7 +41,8 @@ describe('LoginComponent', () => {
       environmentServiceSpy,
       userSessionServiceSpy,
       activityServiceSpy,
-      translocoServiceSpy
+      translocoServiceSpy,
+      tenantServiceSpy
     );
   };
 
@@ -57,6 +60,7 @@ describe('LoginComponent', () => {
       'setUser'
     ]);
     activityServiceSpy = jasmine.createSpyObj('ActivityService', ['clear', 'setRoles']);
+    tenantServiceSpy = jasmine.createSpyObj('TenantService', ['getActiveNames']);
 
     queryParams$ = new Subject<any>();
     activatedRouteMock = {
@@ -71,6 +75,8 @@ describe('LoginComponent', () => {
     translocoServiceSpy.selectTranslate.and.returnValue(of('logout message'));
     translocoServiceSpy.translate.and.returnValue('translated warning');
     userSessionServiceSpy.isTokenExpired.and.returnValue(true);
+    localStorage.setItem('tenant', 'Legacy organization');
+    tenantServiceSpy.getActiveNames.and.returnValue(of(['Legacy organization']));
 
     createComponent();
   });
@@ -82,6 +88,22 @@ describe('LoginComponent', () => {
   it('should initialize login form with username and password controls', () => {
     expect(component.loginForm.contains('username')).toBeTrue();
     expect(component.loginForm.contains('password')).toBeTrue();
+  });
+
+  it('should select the only active tenant and hide the selector', () => {
+    component.ngOnInit();
+
+    expect(component.tenant).toBe('Legacy organization');
+    expect(component.showTenantSelector()).toBeFalse();
+  });
+
+  it('should show a manual tenant field when the active tenant is not public', () => {
+    tenantServiceSpy.getActiveNames.and.returnValue(of([]));
+    createComponent();
+    component.ngOnInit();
+
+    expect(component.showTenantSelector()).toBeTrue();
+    expect(component.tenants).toEqual([]);
   });
 
   it('should navigate to tournaments when token is not expired', () => {
@@ -134,6 +156,7 @@ describe('LoginComponent', () => {
 
   it('should login and navigate to returnUrl when provided', () => {
     (activatedRouteMock.snapshot as any).queryParams = { returnUrl: '/secure' };
+    component.tenant = 'Legacy organization';
     const authenticatedUser = { roles: ['admin'], username: 'john' } as any;
     loginServiceSpy.login.and.returnValue(of(authenticatedUser));
     spyOn(localStorage, 'setItem');
@@ -141,7 +164,7 @@ describe('LoginComponent', () => {
     component.loginForm.controls['username'].setValue('john@doe.com');
     component.login({ username: 'john@doe.com', password: 'Pass1234' } as any);
 
-    expect(loginServiceSpy.login).toHaveBeenCalledOnceWith('john@doe.com', 'Pass1234');
+    expect(loginServiceSpy.login).toHaveBeenCalledOnceWith('john@doe.com', 'Pass1234', 'Legacy organization');
     expect(loginServiceSpy.setAuthenticatedUser).toHaveBeenCalled();
     expect(activityServiceSpy.setRoles).toHaveBeenCalledWith(authenticatedUser.roles);
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/secure']);
@@ -152,7 +175,7 @@ describe('LoginComponent', () => {
   });
 
   it('should login and navigate to tournaments root when returnUrl is missing', () => {
-    (activatedRouteMock.snapshot as any).queryParams = {};
+    component.tenant = 'Legacy organization';
     const authenticatedUser = { roles: ['viewer'], username: 'john' } as any;
     loginServiceSpy.login.and.returnValue(of(authenticatedUser));
 
@@ -162,6 +185,7 @@ describe('LoginComponent', () => {
   });
 
   it('should show denied user error on 401', () => {
+    component.tenant = 'Legacy organization';
     loginServiceSpy.login.and.returnValue(throwError(() => ({ status: 401 })));
 
     component.login({ username: 'john@doe.com', password: 'Pass1234' } as any);
@@ -172,6 +196,7 @@ describe('LoginComponent', () => {
   });
 
   it('should show blocked user warning on 423', () => {
+    component.tenant = 'Legacy organization';
     loginServiceSpy.login.and.returnValue(throwError(() => ({ status: 423 })));
 
     component.login({ username: 'john@doe.com', password: 'Pass1234' } as any);
@@ -181,6 +206,7 @@ describe('LoginComponent', () => {
   });
 
   it('should show backend error on unknown status', () => {
+    component.tenant = 'Legacy organization';
     loginServiceSpy.login.and.returnValue(throwError(() => ({ status: 500 })));
 
     component.login({ username: 'john@doe.com', password: 'Pass1234' } as any);
@@ -188,4 +214,3 @@ describe('LoginComponent', () => {
     expect(messageServiceSpy.errorMessage).toHaveBeenCalledWith('backendError');
   });
 });
-

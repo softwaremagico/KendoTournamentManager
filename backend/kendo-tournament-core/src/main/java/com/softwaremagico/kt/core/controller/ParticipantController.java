@@ -82,6 +82,7 @@ public class ParticipantController extends BasicInsertableController<Participant
             }
             final Token token = new Token(this.getProvider().generateToken(participant));
             token.setParticipant(this.convert(participant));
+            token.setTenantId(participant.getTenantId());
             return token;
         } finally {
             //Remove token to avoid reuse.

@@ -41,9 +41,10 @@ import java.util.Locale;
  * statistics
  */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "clubs", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "city"})})
+@Table(name = "clubs", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "name", "city"})})
 @SuppressWarnings("java:S2160")
 public class Club extends Element implements Comparable<Club> {
 

@@ -1,0 +1,6 @@
+- Repository split into `backend/` and `frontend/`; upgrade scripts live in `documents/migrations/` and release upgrade notes in `documents/UPDATING.md`.
+- Backend module structure and module responsibilities: `mem:backend/core`.
+- Frontend Angular layout and conventions: `mem:frontend/core`.
+- Tooling and pinned runtime details: `mem:tech_stack`.
+- Common build, test, and validation commands: `mem:suggested_commands` and `mem:task_completion`.
+- Code conventions and tenancy invariants: `mem:conventions`.

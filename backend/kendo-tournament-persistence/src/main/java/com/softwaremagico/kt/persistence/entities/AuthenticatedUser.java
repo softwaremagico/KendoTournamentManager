@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
@@ -87,6 +88,12 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
     public AuthenticatedUser(String username) {
         this();
         setUsername(username);
+    }
+
+    /** Creates a transient guest principal scoped to the requested tenant. */
+    public AuthenticatedUser(String username, Integer tenantId) {
+        this(username);
+        setTenantId(tenantId);
     }
 
     @JsonIgnore

@@ -32,12 +32,17 @@ import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.Tenant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.GuestDisabledException;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.security.dto.AuthGuestRequest;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
+import com.softwaremagico.kt.rest.security.dto.CreateTenantRequest;
+import com.softwaremagico.kt.rest.security.dto.UpdateTenantRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
 import com.softwaremagico.kt.security.AvailableRole;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,6 +72,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -74,6 +80,7 @@ import java.time.Instant;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -92,6 +99,7 @@ public class AuthApi {
     private final ParticipantController participantController;
 
     private final TournamentProvider tournamentProvider;
+    private final TenantRepository tenantRepository;
 
     private final SecureRandom random = new SecureRandom();
 
@@ -107,8 +115,9 @@ public class AuthApi {
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,
-                   ParticipantController participantController, TournamentProvider tournamentProvider,
-                   @Value("${enable.guest.user:false}") String guestUsersEnabled) {
+                    ParticipantController participantController, TournamentProvider tournamentProvider,
+                    TenantRepository tenantRepository,
+                    @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserController = authenticatedUserController;
@@ -116,7 +125,18 @@ public class AuthApi {
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.participantController = participantController;
         this.tournamentProvider = tournamentProvider;
+        this.tenantRepository = tenantRepository;
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
+    }
+
+    /** Kept for unit tests that do not exercise tenant-aware login. */
+    public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
+                   AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
+                   AuthenticatedUserProvider authenticatedUserProvider,
+                   ParticipantController participantController, TournamentProvider tournamentProvider,
+                   String guestUsersEnabled) {
+        this(authenticationManager, jwtTokenUtil, authenticatedUserController, bruteForceService, authenticatedUserProvider,
+                participantController, tournamentProvider, null, guestUsersEnabled);
     }
 
     @SuppressWarnings("java:S2696")
@@ -132,6 +152,14 @@ public class AuthApi {
         if (bruteForceService.isBlocked(ip)) {
             return getLockedResponse(ip);
         }
+        if (tenantRepository == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        final Tenant tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
+        if (tenant == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        TenantContext.setTenantId(tenant.getId());
         try {
             //We verify the provided credentials using the authentication manager
             RestServerLogger.debug(this.getClass(), "Trying to log in with '" + request.getUsername() + "'.");
@@ -142,24 +170,10 @@ public class AuthApi {
             return getAuthenticatedLoginResponse(authenticate, ip);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
-            //Create a default user if no user exists. Needed when database is encrypted.
-            if (authenticatedUserController.countUsers() == 0) {
-                RestServerLogger.info(this.getClass(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
-                final AuthenticatedUser user = authenticatedUserController.createUser(
-                        null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ADMIN);
-                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
-                user.setPassword(jwtToken);
-                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
-                final HttpHeaders headers = new HttpHeaders();
-                headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
-                headers.add(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration));
-                userAdminGeneratedListeners.forEach(userAdminGeneratedListener
-                        -> userAdminGeneratedListener.generated(user.getUsername()));
-                return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
-            }
             bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } finally {
+            TenantContext.clear();
         }
     }
 
@@ -171,19 +185,19 @@ public class AuthApi {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
+            // Guests do not have a tenant yet. Derive it from the protected tournament,
+            // never from a URL or request-provided tenant identifier.
+            final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
+                    new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+            if (tournament.isLocked()) {
+                throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
+            }
+            TenantContext.setTenantId(tournament.getTenantId());
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                     .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                             String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));
             final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
             final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
-
-            //Guest user can only access to non-locked tournaments.
-            final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
-                    new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
-
-            if (tournament.isLocked()) {
-                throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
-            }
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
@@ -192,7 +206,60 @@ public class AuthApi {
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } finally {
+            TenantContext.clear();
         }
+    }
+
+    @Operation(summary = "Returns the active tenant only when this installation has exactly one.")
+    @GetMapping(path = "/public/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<String> getActiveTenantNames() {
+        final List<Tenant> activeTenants = tenantRepository.findAllByActiveTrueOrderByNameAsc();
+        return activeTenants.size() == 1 ? List.of(activeTenants.getFirst().getName()) : List.of();
+    }
+
+    @Transactional
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Creates a private organization and its first administrator.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/tenants", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<IAuthenticatedUser> createTenant(@Valid @RequestBody CreateTenantRequest request,
+                                                             HttpServletRequest httpRequest) {
+        if (tenantRepository.findByNameAndActiveTrue(request.getTenant()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        final Tenant tenant = tenantRepository.save(new Tenant(request.getTenant()));
+        TenantContext.setTenantId(tenant.getId());
+        try {
+            final AuthenticatedUser user = authenticatedUserController.createUser(null, request.getUsername(),
+                    request.getName() != null ? request.getName() : "", request.getLastname() != null ? request.getLastname() : "",
+                    request.getPassword(), AvailableRole.ADMIN);
+            final String jwtToken = jwtTokenUtil.generateAccessToken(user, getClientIP(httpRequest));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .headers(getLoginHeaders(jwtToken, jwtTokenUtil.getJwtExpirationTime(), jwtTokenUtil.getSession(jwtToken)))
+                    .body(user);
+        } finally {
+            TenantContext.clear();
+        }
+    }
+
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Lists all tenants.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<Tenant> getTenants() {
+        return tenantRepository.findAll();
+    }
+
+    @Transactional
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Updates tenant name or activation state.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(path = "/tenants/{tenantId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Tenant updateTenant(@PathVariable Integer tenantId, @Valid @RequestBody UpdateTenantRequest request) {
+        final Tenant tenant = tenantRepository.findById(tenantId).orElseThrow(() ->
+                new InvalidRequestException(this.getClass(), "Tenant not found."));
+        tenant.setName(request.getName());
+        tenant.setActive(request.getActive());
+        return tenantRepository.save(tenant);
     }
 
     private ResponseEntity<IAuthenticatedUser> getLockedResponse(String ip) {
@@ -233,6 +300,8 @@ public class AuthApi {
                                                        HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         final Token token = participantController.generateFromToken(temporalToken.getContent());
+        TenantContext.setTenantId(token.getTenantId());
+        try {
 
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();
@@ -243,6 +312,9 @@ public class AuthApi {
         return ResponseEntity.ok()
                 .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
                 .body(token.getParticipant());
+        } finally {
+            TenantContext.clear();
+        }
     }
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
@@ -263,6 +335,7 @@ public class AuthApi {
         if (httpRequest != null) {
             RestServerLogger.debug(this.getClass(), "User register requested from '{}'.", getClientIP(httpRequest));
         }
+        rejectPlatformRoles(request);
         return authenticatedUserController.createUser(authentication.getName(), request);
     }
 
@@ -273,6 +346,7 @@ public class AuthApi {
         if (httpRequest != null) {
             RestServerLogger.debug(this.getClass(), "User update requested from '{}'.", getClientIP(httpRequest));
         }
+        rejectPlatformRoles(request);
         return authenticatedUserController.updateUser(authentication.getName(), request);
     }
 
@@ -296,6 +370,13 @@ public class AuthApi {
             return httpRequest.getRemoteAddr();
         }
         return xfHeader.split(",")[0];
+    }
+
+    private void rejectPlatformRoles(CreateUserRequest request) {
+        if (request.getRoles() != null && request.getRoles().stream()
+                .anyMatch(role -> AvailableRole.SUPER_ADMIN.name().equalsIgnoreCase(role))) {
+            throw new InvalidRequestException(this.getClass(), "SUPER_ADMIN can only be provisioned during platform bootstrap.");
+        }
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")

@@ -37,6 +37,8 @@ public class Token {
     @NotNull
     private ParticipantDTO participant;
 
+    private Integer tenantId;
+
 
     public Token() {
         super();
@@ -71,5 +73,13 @@ public class Token {
 
     public void setParticipant(ParticipantDTO participant) {
         this.participant = participant;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }

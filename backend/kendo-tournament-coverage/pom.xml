@@ -10,7 +10,7 @@
     <parent>
         <artifactId>kendo-tournament-backend</artifactId>
         <groupId>com.softwaremagico</groupId>
-        <version>3.5.0</version>
+        <version>3.6.0</version>
     </parent>
 
     <properties>
@@ -75,4 +75,3 @@
         </plugins>
     </build>
 </project>
-

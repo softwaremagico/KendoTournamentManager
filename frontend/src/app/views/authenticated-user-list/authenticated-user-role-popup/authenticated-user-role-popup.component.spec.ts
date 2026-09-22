@@ -41,7 +41,7 @@ describe('AuthenticatedUserRolePopupComponent', () => {
 
     component.ngOnInit();
 
-    expect((component as any).translatedRoles.length).toBe(UserRoles.toArray().length);
+    expect((component as any).translatedRoles.length).toBe(UserRoles.toArray().length - 1);
     expect(component.selectedRole).toBe(UserRoles.EDITOR);
     expect(translocoServiceSpy.translate).toHaveBeenCalled();
   });
@@ -93,4 +93,3 @@ describe('AuthenticatedUserRolePopupComponent', () => {
     expect(userServiceSpy.update).not.toHaveBeenCalled();
   });
 });
-

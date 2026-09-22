@@ -1,6 +1,11 @@
 {
   "accept": "Aceptar",
   "account": "Cuenta",
+  "active": "Activo",
+  "administratorUsername": "Usuario administrador",
+  "createTenant": "Crear tenant",
+  "tenantAdministrationDenied": "No tienes permisos para administrar tenants.",
+  "tenantName": "Tenant",
   "accreditation": "Acreditación",
   "accreditationBad": "Ha ocurrido un problema cuando se intentaba generar la acreditación. ¿Existe algún otro programa intentando acceder al archivo?",
   "accreditationOK": "La acreditación ha sido creada en un archivo PDF.",

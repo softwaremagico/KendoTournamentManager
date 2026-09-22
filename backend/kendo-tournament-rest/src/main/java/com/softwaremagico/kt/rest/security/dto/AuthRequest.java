@@ -22,12 +22,16 @@ package com.softwaremagico.kt.rest.security.dto;
  */
 
 import jakarta.validation.constraints.NotBlank;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 public class AuthRequest {
     @NotBlank
     private String username;
     @NotBlank
     private String password;
+
+    @NotBlank
+    private String tenant = "Legacy organization";
 
     /**
      * Creates an empty authentication request.
@@ -50,5 +54,13 @@ public class AuthRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
     }
 }

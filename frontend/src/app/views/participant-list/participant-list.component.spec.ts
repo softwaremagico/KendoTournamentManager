@@ -1,4 +1,5 @@
 import {of} from 'rxjs';
+import {ChangeDetectorRef} from '@angular/core';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {ParticipantListComponent} from './participant-list.component';
 import {ParticipantService} from '../../services/participant.service';
@@ -77,7 +78,8 @@ describe('ParticipantListComponent', () => {
       datePipeSpy,
       clubNamePipeSpy,
       systemOverloadServiceSpy,
-      biitSnackbarServiceSpy
+      biitSnackbarServiceSpy,
+      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetectorRef', ['markForCheck'])
     );
   });
 
@@ -169,7 +171,7 @@ describe('ParticipantListComponent', () => {
     participantServiceSpy.getAll.and.returnValue(of([]));
     participantServiceSpy.delete.and.returnValues(of(testParticipant), of(testParticipant2));
     clubServiceSpy.getAll.and.returnValue(of([]));
-    translocoServiceSpy.selectTranslate.and.returnValue(of('Participants deleted'));
+    translocoServiceSpy.translate.and.returnValue('Participants deleted');
 
     component.ngAfterViewInit();
     (component as any).deleteElements([testParticipant, testParticipant2]);
@@ -239,6 +241,3 @@ describe('ParticipantListComponent', () => {
     expect(names).toBe('');
   });
 });
-
-
-

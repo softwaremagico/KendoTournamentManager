@@ -36,6 +36,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_scores")

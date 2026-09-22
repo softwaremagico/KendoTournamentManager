@@ -40,6 +40,10 @@ public class KendoSecurityService {
         return "ADMIN";
     }
 
+    public String getSuperAdminPrivilege() {
+        return "SUPER_ADMIN";
+    }
+
     public String getEditorPrivilege() {
         return "EDITOR";
     }

@@ -56,7 +56,7 @@ describe('TournamentGeneratorComponent', () => {
     } as NumberOfWinnersUpdatedService;
 
     rbacServiceSpy.isAllowed.and.returnValue(true);
-    routerSpy.getCurrentNavigation.and.returnValue({
+    (routerSpy as any).lastSuccessfulNavigation = () => ({
       extras: { state: { tournamentId: 5, editionDisabled: false } }
     } as any);
     tournamentServiceSpy.get.and.returnValue(of(buildTournament(TournamentType.CHAMPIONSHIP)));
@@ -97,7 +97,7 @@ describe('TournamentGeneratorComponent', () => {
   });
 
   it('should navigate back when state is missing', () => {
-    routerSpy.getCurrentNavigation.and.returnValue(null);
+    (routerSpy as any).lastSuccessfulNavigation = () => null;
 
     component = new TournamentGeneratorComponent(
       routerSpy,
@@ -223,5 +223,4 @@ describe('TournamentGeneratorComponent', () => {
     expect(anchor.click).toHaveBeenCalled();
   });
 });
-
 

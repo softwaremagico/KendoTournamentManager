@@ -15,6 +15,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentListComponent} from "../../../views/tournament-list/tournament-list.component";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserRoles} from '../../../services/rbac/user-roles';
 
 @Component({
   standalone: false,
@@ -106,7 +107,8 @@ export class NavbarComponent implements OnInit {
         canActivate: [AuthGuard],
         title: 'administration',
         data: {
-          hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
+            hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
+              && !this.user?.roles?.includes(UserRoles.SUPER_ADMIN)
         },
         children: [
           {
@@ -116,6 +118,14 @@ export class NavbarComponent implements OnInit {
             title: 'users',
             data: {
               hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
+            }
+          },
+          {
+            path: Constants.PATHS.ADMINISTRATION.TENANTS,
+            canActivate: [AuthGuard],
+            title: 'tenants',
+            data: {
+              hidden: !this.user?.roles?.includes(UserRoles.SUPER_ADMIN)
             }
           }]
       },
@@ -191,4 +201,3 @@ export class NavbarComponent implements OnInit {
     }
   }
 }
-

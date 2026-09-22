@@ -1,0 +1,5 @@
+- Backend: Java 25, Spring Boot 3.5.14, Maven multi-module build, Spring Data JPA/Hibernate; TestNG/Surefire. Root version is in `backend/pom.xml`.
+- Frontend: Angular 21, TypeScript 5.9, Angular Material, RxJS, Karma/Jasmine; npm lockfile.
+- Database support includes PostgreSQL and MySQL; manual release migration scripts are the deployment migration mechanism.
+- Maven environment is provisioned in `/etc/profile.d/developers.sh`; use `$M2_HOME/bin/mvn` after sourcing it.
+- Frontend headless CI needs `CHROME_BIN=$(command -v chromium)`.

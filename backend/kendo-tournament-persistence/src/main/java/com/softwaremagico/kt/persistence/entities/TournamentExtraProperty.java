@@ -42,6 +42,7 @@ import java.io.Serial;
 
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_extra_properties", uniqueConstraints = {@UniqueConstraint(columnNames = {"tournament", "property_key"})},

@@ -1,0 +1,4 @@
+- Maven reactor modules: logger, persistence, core, pdf, rest, coverage. REST depends on the preceding modules and is the Spring Boot application entry point.
+- Persistence owns entities/repositories and Hibernate setup; core provides domain providers; REST owns HTTP auth/JWT, WebSocket/STOMP, and endpoint security.
+- Tenancy uses `TenantContext`, signed JWT `tenantId`, Hibernate filtering, and entity relationship validation. Tenant activation is enforced when authenticating and connecting to WebSockets.
+- `SuperAdminBootstrap` optionally creates one platform admin only when both `bootstrap.super-admin.*` settings are supplied.

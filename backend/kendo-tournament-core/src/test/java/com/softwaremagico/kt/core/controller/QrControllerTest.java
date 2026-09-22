@@ -143,4 +143,3 @@ public class QrControllerTest {
         field.set(target, value);
     }
 }
-

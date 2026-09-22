@@ -31,6 +31,7 @@ import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import com.softwaremagico.kt.websockets.models.messages.MessageContentType;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -78,7 +79,9 @@ public class WebSocketController {
     private void sendToTopic(String actionLog, String mapping, MessageContentFactory messageFactory, Object... logArguments) {
         try {
             WebsocketsLogger.debug(this.getClass(), actionLog, logArguments);
-            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + mapping, messageFactory.create());
+            final int tenantId = TenantContext.getRequiredTenantId();
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/" + tenantId + mapping,
+                    messageFactory.create());
         } catch (JsonProcessingException | RuntimeException e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }

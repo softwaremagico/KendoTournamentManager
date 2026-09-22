@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.security;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -72,6 +73,7 @@ import java.util.UUID;
 @Component
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
+    private static final String TENANT_ID_CLAIM = "tenantId";
     /** Default token validity period in milliseconds (20 minutes). */
     private static final long JWT_EXPIRATION = 1200000;
     /** Index of the entity ID field within the pipe-separated token subject. */
@@ -261,11 +263,14 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime, String session) {
+        final Integer tenantId = user instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser
+                && tenantScopedUser.getTenantId() != null ? tenantScopedUser.getTenantId() : TenantContext.LEGACY_TENANT_ID;
         final Instant issuedAt = Instant.now();
         return Jwts.builder()
                 .subject(new TokenSubject(String.valueOf(user.getId()), user.getUsername(),
                         session != null ? session : UUID.randomUUID().toString(), userIp,
                         this.networkController.getHostMac()).value())
+                .claim(TENANT_ID_CLAIM, tenantId)
                 .issuer(JWT_ISSUER).issuedAt(toLegacyDate(issuedAt))
                 .expiration(toLegacyDate(issuedAt.plusMillis(expirationTime))).signWith(this.signingKey, Jwts.SIG.HS512)
                 .compact();
@@ -351,6 +356,15 @@ public class JwtTokenUtil {
         return username;
     }
 
+    /** Returns the signed tenant boundary assigned to this token. */
+    public Integer getTenantId(String token) {
+        final Object tenantId = this.getClaims(token).get(TENANT_ID_CLAIM);
+        if (tenantId instanceof Number number) {
+            return number.intValue();
+        }
+        return null;
+    }
+
     /**
      * Extracts the session identifier from the JWT token subject.
      *
@@ -421,8 +435,8 @@ public class JwtTokenUtil {
      */
     public boolean validate(String token) {
         try {
-            this.getClaims(token);
-            return true;
+            final Claims claims = this.getClaims(token);
+            return claims.get(TENANT_ID_CLAIM) instanceof Number;
         } catch (ExpiredJwtException _) {
             JwtFilterLogger.errorMessage(this.getClass(), "Expired JWT token");
         } catch (JwtException _) {

@@ -1,5 +1,6 @@
 package com.softwaremagico.kt.rest.security.dto;
 
+
 /*-
  * #%L
  * Kendo Tournament Manager (Rest)
@@ -38,4 +39,5 @@ public class AuthGuestRequest {
     public void setTournamentId(Integer tournamentId) {
         this.tournamentId = tournamentId;
     }
+
 }

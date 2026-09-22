@@ -39,6 +39,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -60,16 +61,17 @@ import java.time.LocalDateTime;
  * </p>
  */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournaments")
+@Table(name = "tournaments", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "name"})})
 @SuppressWarnings("java:S2160")
 public class Tournament extends Element implements IName {
     /** Default duel duration in seconds (3 minutes). */
     public static final int DEFAULT_DURATION = 180;
 
     /** Human-readable name of the tournament. Must be unique across the system. */
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 

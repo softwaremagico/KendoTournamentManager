@@ -1,4 +1,5 @@
 import {of} from 'rxjs';
+import {ChangeDetectorRef} from '@angular/core';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {ClubListComponent} from './club-list.component';
 import {ClubService} from '../../services/club.service';
@@ -60,7 +61,8 @@ describe('ClubListComponent', () => {
       rbacServiceSpy,
       datePipeSpy,
       systemOverloadServiceSpy,
-      biitSnackbarServiceSpy
+      biitSnackbarServiceSpy,
+      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetectorRef', ['markForCheck'])
     );
   });
 
@@ -187,4 +189,3 @@ describe('ClubListComponent', () => {
     expect(names).toBe('');
   });
 });
-

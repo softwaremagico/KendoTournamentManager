@@ -113,22 +113,22 @@ describe('ParticipantPictureComponent', () => {
     expect(component.circleStyle).toBe('');
   });
 
-  it('should emit onWindowOpened when openImage is called with true', () => {
-    spyOn(component.onWindowOpened, 'emit');
+  it('should emit windowOpened when openImage is called with true', () => {
+    spyOn(component.windowOpened, 'emit');
 
     component.openImage(true);
 
     expect(component.participantWindowOpened).toBeTrue();
-    expect(component.onWindowOpened.emit).toHaveBeenCalledOnceWith(true);
+    expect(component.windowOpened.emit).toHaveBeenCalledOnceWith(true);
   });
 
-  it('should emit onWindowOpened when openImage is called with false', () => {
-    spyOn(component.onWindowOpened, 'emit');
+  it('should emit windowOpened when openImage is called with false', () => {
+    spyOn(component.windowOpened, 'emit');
 
     component.openImage(false);
 
     expect(component.participantWindowOpened).toBeFalse();
-    expect(component.onWindowOpened.emit).toHaveBeenCalledOnceWith(false);
+    expect(component.windowOpened.emit).toHaveBeenCalledOnceWith(false);
   });
 
   it('should generate different colors for different participant IDs', () => {
@@ -144,4 +144,3 @@ describe('ParticipantPictureComponent', () => {
     expect(style1).not.toBe(style2);
   });
 });
-

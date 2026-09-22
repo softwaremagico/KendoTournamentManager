@@ -28,6 +28,7 @@ import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 import {CsvService} from "../../services/csv-service";
 import {MessageService} from "../../services/message.service";
 import {TranslocoService} from '@jsverse/transloco';
+import {LoginService} from '../../services/login.service';
 
 @Component({
   standalone: false,
@@ -86,7 +87,8 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
               private rxStompService: RxStompService, private environmentService: EnvironmentService,
               private tournamentChangedService: TournamentChangedService, private csvService: CsvService,
-              private messageService: MessageService, private translateService: TranslocoService) {
+               private messageService: MessageService, private translateService: TranslocoService,
+               private loginService: LoginService) {
   }
 
   ngOnInit(): void {
@@ -97,7 +99,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       this.numberOfWinnersFirstLevel = numberOfWinners;
       this.updateData(true, false);
     });
-    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + this.loginService.getTenantId() + '/groups').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
       if (messageContent.topic == "Group" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         this.updateData(false, messageContent.actor == localStorage.getItem('username'));

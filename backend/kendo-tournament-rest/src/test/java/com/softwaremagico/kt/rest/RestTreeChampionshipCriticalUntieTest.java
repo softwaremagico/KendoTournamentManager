@@ -167,6 +167,7 @@ public class RestTreeChampionshipCriticalUntieTest extends AbstractTestNGSpringC
 		final AuthRequest request = new AuthRequest();
 		request.setUsername(USER_NAME);
 		request.setPassword(USER_PASSWORD);
+		request.setTenant("Legacy organization");
 		final MvcResult loginResult = this.mockMvc
 				.perform(post("/auth/public/login").contentType(MediaType.APPLICATION_JSON)
 						.content(this.toJson(request)).with(csrf()))

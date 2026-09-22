@@ -70,3 +70,39 @@ alter table public.tournament_extra_properties
                (ARRAY [('MAXIMIZE_FIGHTS'::character varying)::text, ('AVOID_DUPLICATES'::character varying)::text, ('KING_INDEX'::character varying)::text, ('KING_DRAW_RESOLUTION'::character varying)::text, ('DIPLOMA_NAME_HEIGHT'::character varying)::text, ('NUMBER_OF_WINNERS'::character varying)::text, ('LEAGUE_FIGHTS_ORDER_GENERATION'::character varying)::text, ('ODD_FIGHTS_RESOLVED_ASAP'::character varying)::text, ('SENBATSU_CHALLENGE_DISTANCE'::character varying)::text]));
 
 ```
+
+# From version 3.5.0 to 3.6.0
+
+Version 3.6.0 introduces tenant isolation. Back up the database, stop the
+application, run exactly one platform-specific script, then start 3.6.0:
+
+| Database | Script |
+|----------|--------|
+| PostgreSQL 14+ | [`migrations/3.6.0-tenancy-postgresql.sql`](migrations/3.6.0-tenancy-postgresql.sql) |
+| MySQL 8+ | [`migrations/3.6.0-tenancy-mysql.sql`](migrations/3.6.0-tenancy-mysql.sql) |
+
+The migration creates `Legacy organization` with ID `1` and assigns all
+existing records to it. The PostgreSQL script aborts when that invariant cannot
+be established. MySQL prints the required ID check: stop immediately unless it
+returns `1`. MySQL removes its prior global unique indexes automatically before
+adding the tenant-local uniqueness constraints.
+
+The scripts are single-use migration scripts. MySQL DDL commits implicitly, so
+restore the verified backup rather than rerunning a partially completed script.
+
+On a new empty installation, the application creates `Legacy organization`
+automatically. On an installation that already has users, clubs or tournaments,
+startup fails until the manual 3.6.0 script has been executed.
+
+After the first start, create the platform administrator by supplying both
+properties once through the deployment environment, then remove them:
+
+```
+bootstrap.super-admin.username=platform-admin@example.com
+bootstrap.super-admin.password=<strong-unique-password>
+```
+
+Only `SUPER_ADMIN` users can create, edit, activate or deactivate tenants.
+Tenant `ADMIN` users manage only their own organization and cannot assign the
+platform role. Deactivating a tenant invalidates new logins, existing JWT
+requests and new WebSocket subscriptions for that tenant.

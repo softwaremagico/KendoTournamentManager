@@ -1,0 +1,23 @@
+<section class="tenant-list" *ngIf="isSuperAdmin(); else denied">
+  <h1>{{ 'tenants' | transloco }}</h1>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <form (ngSubmit)="create()" #tenantForm="ngForm">
+    <h2>{{ 'createTenant' | transloco }}</h2>
+    <mat-form-field><mat-label>{{ 'tenantName' | transloco }}</mat-label><input matInput name="tenant" [(ngModel)]="request.tenant" required></mat-form-field>
+    <mat-form-field><mat-label>{{ 'administratorUsername' | transloco }}</mat-label><input matInput name="username" [(ngModel)]="request.username" required></mat-form-field>
+    <mat-form-field><mat-label>{{ 'password' | transloco }}</mat-label><input matInput type="password" name="password" [(ngModel)]="request.password" required></mat-form-field>
+    <mat-form-field><mat-label>{{ 'name' | transloco }}</mat-label><input matInput name="name" [(ngModel)]="request.name"></mat-form-field>
+    <mat-form-field><mat-label>{{ 'lastname' | transloco }}</mat-label><input matInput name="lastname" [(ngModel)]="request.lastname"></mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="tenantForm.invalid">{{ 'createTenant' | transloco }}</button>
+  </form>
+
+  <table mat-table [dataSource]="tenants">
+    <ng-container matColumnDef="name"><th mat-header-cell *matHeaderCellDef>{{ 'tenantName' | transloco }}</th><td mat-cell *matCellDef="let tenant"><input matInput [(ngModel)]="tenant.name"></td></ng-container>
+    <ng-container matColumnDef="active"><th mat-header-cell *matHeaderCellDef>{{ 'active' | transloco }}</th><td mat-cell *matCellDef="let tenant"><mat-checkbox [(ngModel)]="tenant.active"></mat-checkbox></td></ng-container>
+    <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let tenant"><button mat-button (click)="save(tenant)">{{ 'save' | transloco }}</button></td></ng-container>
+    <tr mat-header-row *matHeaderRowDef="['name', 'active', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'active', 'actions'];"></tr>
+  </table>
+</section>
+<ng-template #denied><p class="error">{{ 'tenantAdministrationDenied' | transloco }}</p></ng-template>

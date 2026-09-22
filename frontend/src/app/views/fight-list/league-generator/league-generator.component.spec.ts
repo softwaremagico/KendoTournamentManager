@@ -83,20 +83,20 @@ describe('LeagueGeneratorComponent', () => {
   });
 
   it('should emit teamsOrder when acceptAction is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     component.teamsOrder = [buildTeam(1, 'Team A')];
 
     component.acceptAction();
 
-    expect(component.onClosed.emit).toHaveBeenCalledWith(component.teamsOrder);
+    expect(component.closed.emit).toHaveBeenCalledWith(component.teamsOrder);
   });
 
   it('should emit empty array when cancelDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.cancelDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalledWith([]);
+    expect(component.closed.emit).toHaveBeenCalledWith([]);
   });
 
   it('should sort teams alphabetically in sortedTeams', () => {
@@ -112,12 +112,12 @@ describe('LeagueGeneratorComponent', () => {
 
   it('should return and remove random team from list', () => {
     const teams = [buildTeam(1, 'A'), buildTeam(2, 'B')];
-    spyOn(Math, 'random').and.returnValue(0);
 
     const selected = component.getRandomTeam(teams);
 
-    expect(selected.name).toBe('A');
+    expect(['A', 'B']).toContain(selected.name);
     expect(teams.length).toBe(1);
+    expect(teams).not.toContain(selected);
   });
 
   it('should reverse teamsOrder in reverseTeams', () => {
@@ -195,4 +195,3 @@ describe('LeagueGeneratorComponent', () => {
     expect(component.teamsOrder[0].name).toBe('Team B');
   });
 });
-

@@ -1,4 +1,5 @@
 import {of} from 'rxjs';
+import {ChangeDetectorRef} from '@angular/core';
 import {Router} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
@@ -88,7 +89,8 @@ describe('TournamentListComponent', () => {
       translocoServiceSpy,
       datePipe,
       biitSnackbarServiceSpy,
-      tableColumnTranslationPipeSpy
+      tableColumnTranslationPipeSpy,
+      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetectorRef', ['markForCheck'])
     );
   });
 
@@ -132,7 +134,7 @@ describe('TournamentListComponent', () => {
     const t1 = buildTournament(1, '2024-01-01');
     const t2 = buildTournament(2, '2024-01-02');
     tournamentServiceSpy.delete.and.returnValues(of(t1), of(t2));
-    translocoServiceSpy.selectTranslate.and.returnValue(of('deleted'));
+    translocoServiceSpy.translate.and.returnValue('deleted');
     spyOn(component, 'loadData');
 
     component.deleteElements([t1, t2]);

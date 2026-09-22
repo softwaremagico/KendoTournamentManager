@@ -134,7 +134,7 @@ describe('FightListComponent', () => {
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     fileServiceSpy = jasmine.createSpyObj('FileService', ['getTournamentPicture']);
-    loginServiceSpy = jasmine.createSpyObj('LoginService', ['getJwtValue', 'setGuestUserSession']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', ['getJwtValue', 'getTenantId', 'setGuestUserSession']);
     audioServiceSpy = jasmine.createSpyObj('AudioService', ['playWhistle', 'stopWhistle']);
 
     timeChangedServiceMock = {
@@ -162,11 +162,12 @@ describe('FightListComponent', () => {
       isProjectMode: new BehaviorSubject<boolean>(false)
     } as ProjectModeChangedService;
 
-    routerSpy.getCurrentNavigation.and.returnValue({ extras: { state: { tournamentId: 9 } } } as any);
+    (routerSpy as any).lastSuccessfulNavigation = () => ({ extras: { state: { tournamentId: 9 } } } as any);
     environmentServiceSpy.getWebsocketPrefix.and.returnValue('/ws');
     userSessionServiceSpy.getSwappedColors.and.returnValue(false);
     userSessionServiceSpy.getSwappedTeams.and.returnValue(false);
     loginServiceSpy.getJwtValue.and.returnValue('jwt');
+    loginServiceSpy.getTenantId.and.returnValue(1);
     tournamentServiceSpy.update.and.returnValue(of({}) as any);
     duelServiceSpy.update.and.returnValue(of({}) as any);
     fightServiceSpy.create.and.returnValue(of([] as any));

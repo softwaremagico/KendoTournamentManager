@@ -82,6 +82,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
         request.setPassword("invalidPassword");
+        request.setTenant("Legacy organization");
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
 
@@ -99,6 +100,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         //Correct password, user blocked.
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,6 +119,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
         request.setPassword("invalidPassword");
+        request.setTenant("Legacy organization");
 
         // 3 attempts to block the user.
         this.mockMvc
@@ -139,6 +142,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         //Correct password, attempts reset.
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)

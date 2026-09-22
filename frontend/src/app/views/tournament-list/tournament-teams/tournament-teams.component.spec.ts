@@ -227,7 +227,7 @@ describe('TournamentTeamsComponent', () => {
 
   it('should handle file input and import CSV teams', () => {
     csvServiceSpy.addTeams.and.returnValue(of([]));
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     const file = new File(['team,name'], 'teams.csv', { type: 'text/csv' });
     const input = document.createElement('input');
@@ -239,7 +239,7 @@ describe('TournamentTeamsComponent', () => {
 
     expect(csvServiceSpy.addTeams).toHaveBeenCalledWith(file, 1);
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('teamStored');
-    expect(component.onClosed.emit).toHaveBeenCalled();
+    expect(component.closed.emit).toHaveBeenCalled();
   });
 
   it('should get members container for a team from the Map', () => {
@@ -252,4 +252,3 @@ describe('TournamentTeamsComponent', () => {
     expect(members).toEqual([p1]);
   });
 });
-

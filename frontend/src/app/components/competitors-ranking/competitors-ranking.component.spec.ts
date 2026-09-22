@@ -77,12 +77,12 @@ describe('CompetitorsRankingComponent', () => {
     jasmine.clock().uninstall();
   });
 
-  it('should emit onClosed when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+  it('should emit closed when closeDialog is called', () => {
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalledOnceWith();
+    expect(component.closed.emit).toHaveBeenCalledOnceWith();
   });
 
   it('should download pdf by club when club has id', () => {
@@ -151,4 +151,3 @@ describe('CompetitorsRankingComponent', () => {
     expect(component.getRanking).toHaveBeenCalled();
   });
 });
-

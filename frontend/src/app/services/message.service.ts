@@ -8,6 +8,7 @@ import {EnvironmentService} from "../environment.service";
 import {MessageContent} from "../websockets/message-content.model";
 import {TranslocoService} from '@jsverse/transloco';
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {LoginService} from './login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class MessageService implements OnDestroy {
 
   constructor(public readonly snackBar: BiitSnackbarService, private readonly translateService: TranslocoService,
               private readonly loggerService: LoggerService, private readonly rxStompService: RxStompService,
-              private readonly environmentService: EnvironmentService) {
+               private readonly environmentService: EnvironmentService, private readonly loginService: LoginService) {
     this.registerWebsocketsMessages();
   }
 
@@ -30,7 +31,7 @@ export class MessageService implements OnDestroy {
   }
 
   private registerWebsocketsMessages(): void {
-    this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/messages').subscribe((message: Message): void => {
+    this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + this.loginService.getTenantId() + '/messages').subscribe((message: Message): void => {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
         const res: string = this.translateService.translate(messageContent.payload, messageContent.parameters);

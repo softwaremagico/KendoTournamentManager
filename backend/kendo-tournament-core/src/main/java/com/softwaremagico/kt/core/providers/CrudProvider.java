@@ -22,6 +22,8 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.softwaremagico.kt.persistence.entities.Element;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -52,15 +54,15 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public Optional<E> get(K id) {
-        return repository.findById(id);
+        return repository.findById(id).filter(this::belongsToCurrentTenant);
     }
 
     public List<E> get(Collection<K> ids) {
-        return repository.findAllById(ids);
+        return repository.findAllById(ids).stream().filter(this::belongsToCurrentTenant).toList();
     }
 
     public List<E> getAll() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(this::belongsToCurrentTenant).toList();
     }
 
     public E update(E entity) {
@@ -92,6 +94,18 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public List<E> findByIdIn(Collection<K> ids) {
-        return getRepository().findAllById(ids);
+        return get(ids);
+    }
+
+    /**
+     * Repository methods remain generic for the statistics subsystem. Domain
+     * entities are additionally checked here so a missed repository predicate
+     * cannot expose a row from another active request tenant.
+     */
+    private boolean belongsToCurrentTenant(E entity) {
+        if (!(entity instanceof Element tenantScopedEntity) || TenantContext.getTenantId() == null) {
+            return true;
+        }
+        return TenantContext.getTenantId().equals(tenantScopedEntity.getTenantId());
     }
 }

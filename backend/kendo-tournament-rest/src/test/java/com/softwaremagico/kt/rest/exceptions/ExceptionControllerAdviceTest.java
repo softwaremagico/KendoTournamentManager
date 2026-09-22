@@ -165,9 +165,9 @@ public class ExceptionControllerAdviceTest {
     public void shouldHandleAccessDeniedException() {
         ResponseEntity<Object> response = advice.accessDeniedException(new AccessDeniedException("denied"));
 
-        assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        assertEquals(response.getStatusCode(), HttpStatus.FORBIDDEN);
         ErrorResponse body = (ErrorResponse) response.getBody();
-        assertEquals(body.getCode(), "invalid_credentials");
+        assertEquals(body.getCode(), "access_denied");
     }
 
     @Test(groups = "exceptionAdvice")
@@ -294,5 +294,4 @@ public class ExceptionControllerAdviceTest {
         }
     }
 }
-
 

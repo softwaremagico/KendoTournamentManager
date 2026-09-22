@@ -28,6 +28,8 @@ public enum AvailableRole {
 
     ADMIN,
 
+    SUPER_ADMIN,
+
     PARTICIPANT,
 
     GUEST;

@@ -108,8 +108,9 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> accessDeniedException(Exception ex) {
-        return errorResponse(ex, "INVALID CREDENTIALS", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Object> accessDeniedException(AccessDeniedException ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass(), ex);
+        return new ResponseEntity<>(new ErrorResponse("Access denied.", "access_denied"), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(NotFoundException.class)

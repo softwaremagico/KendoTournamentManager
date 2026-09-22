@@ -87,7 +87,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return this.getRepository().findAllUnties();
     }
 
-    @Cacheable(value = "duels-duration-average", key = "'average'")
+    @Cacheable(value = "duels-duration-average", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId().toString()")
     public Long getDurationAverage() {
         final Long duration = this.getRepository().getDurationAverage();
         return duration != null ? duration : -1;
