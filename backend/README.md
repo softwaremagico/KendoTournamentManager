@@ -223,6 +223,11 @@ enable.guest.user=true
 # Allow participants to view their own statistics via a long-lived personal QR code
 enable.participant.access=true
 
+# Enable multi-organization support. Set to false so the whole application uses a
+# single organization (the Legacy organization): login ignores the requested tenant,
+# the login selector disappears and tenant management endpoints return 404.
+enable.tenancy=true
+
 # Bind JWT token validation to the client's IP address (adds extra security,
 # but breaks access for users with dynamic IPs or VPNs)
 jwt.ip.check=false

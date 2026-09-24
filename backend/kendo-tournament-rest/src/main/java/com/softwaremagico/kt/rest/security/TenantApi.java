@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.providers.TenantDataCleanupProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
@@ -38,6 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -65,6 +67,9 @@ public class TenantApi {
     private final TenantRepository tenantRepository;
     private final TenantDataCleanupProvider tenantDataCleanupProvider;
 
+    @Value("${enable.tenancy:true}")
+    private boolean tenancyEnabled = true;
+
     @Autowired
     public TenantApi(JwtTokenUtil jwtTokenUtil, AuthenticatedUserController authenticatedUserController,
                      TenantRepository tenantRepository, TenantDataCleanupProvider tenantDataCleanupProvider) {
@@ -77,6 +82,10 @@ public class TenantApi {
     @Operation(summary = "Returns the active tenant only when this installation has exactly one.")
     @GetMapping(path = "/public/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<String> getActiveTenantNames() {
+        if (!tenancyEnabled) {
+            return tenantRepository.findById(TenantContext.LEGACY_TENANT_ID)
+                    .map(tenant -> List.of(tenant.getName())).orElseGet(List::of);
+        }
         final List<Tenant> activeTenants = tenantRepository.findAllByActiveTrueOrderByNameAsc();
         return activeTenants.size() == 1 ? List.of(activeTenants.getFirst().getName()) : List.of();
     }
@@ -87,6 +96,7 @@ public class TenantApi {
     @PostMapping(path = "/tenants", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<IAuthenticatedUser> createTenant(@Valid @RequestBody CreateTenantRequest request,
                                                              HttpServletRequest httpRequest) {
+        ensureTenancyEnabled();
         if (tenantRepository.findByNameAndActiveTrue(request.getTenant()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -109,6 +119,7 @@ public class TenantApi {
     @Operation(summary = "Lists all tenants.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<Tenant> getTenants() {
+        ensureTenancyEnabled();
         return tenantRepository.findAll();
     }
 
@@ -118,6 +129,7 @@ public class TenantApi {
     @PatchMapping(path = "/tenants/{tenantId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Tenant updateTenant(@PathVariable Integer tenantId, @Valid @RequestBody UpdateTenantRequest request) {
+        ensureTenancyEnabled();
         final Tenant tenant = tenantRepository.findById(tenantId).orElseThrow(() ->
                 new InvalidRequestException(this.getClass(), "Tenant not found."));
         tenant.setName(request.getName());
@@ -132,10 +144,17 @@ public class TenantApi {
     @DeleteMapping(path = "/tenants/{tenantId}/data")
     public void deleteTenantData(@Parameter(description = "Identifier of the tenant whose data must be removed",
             required = true) @PathVariable Integer tenantId) {
+        ensureTenancyEnabled();
         try {
             tenantDataCleanupProvider.deleteAllData(tenantId);
         } catch (IllegalArgumentException ex) {
             throw new InvalidRequestException(this.getClass(), ex.getMessage());
+        }
+    }
+
+    private void ensureTenancyEnabled() {
+        if (!tenancyEnabled) {
+            throw new NotFoundException(this.getClass(), "Tenancy is disabled. Only the Legacy organization is available.");
         }
     }
 

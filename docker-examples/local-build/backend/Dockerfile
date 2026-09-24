@@ -16,6 +16,7 @@ ARG jwt_ip_check
 ARG timezone
 ARG enable_guest_user
 ARG database_populate_default_data
+ARG enable_tenancy
 
 ENV project_name kendo-tournament-backend
 ENV EXTERNAL_CONFIG_FILE /opt/${project_name}/application.properties
@@ -59,6 +60,7 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     sed -i "s|server\.schema.*|server.schema=${protocol}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.servlet\.context-path.*|server.servlet.context-path=/${project_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|enable\.guest\.user.*|enable.guest.user=${enable_guest_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|enable\.tenancy.*|enable.tenancy=${enable_tenancy}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.sql\.init\.mode.*|spring.sql.init.mode=${database_populate_default_data}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     #Add the modified files to the jar again
     cd /opt/${project_name}/${project_name} && \

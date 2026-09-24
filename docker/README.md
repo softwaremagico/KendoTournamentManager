@@ -137,6 +137,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `jwt_guest_expiration` | `3600000` | Guest user token lifetime in milliseconds (default: 1 h) |
 | `jwt_ip_check` | `false` | Bind token validation to the client IP address |
 | `enable_guest_user` | `false` | Allow unauthenticated read-only access via QR codes |
+| `enable_tenancy` | `true` | Enable multi-organization support. Set to `false` so the whole installation uses a single organization (the `Legacy organization`): the login selector disappears, the tenant administration menu is hidden and all tenant management API endpoints return `404`. |
 | `database_populate_default_data` | `always` | `always` creates a default admin user on fresh install; `never` requires manual first-login creation |
 
 ### Backend — Database

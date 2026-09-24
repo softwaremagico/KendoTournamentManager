@@ -50,6 +50,7 @@
                 <include name="tenantDataCleanupProvider"/>
                 <include name="tenantApi"/>
                 <include name="superAdminBootstrap"/>
+                <include name="tenancyDisabled"/>
             </run>
         </groups>
         <classes>
@@ -116,6 +117,7 @@
             <class name="com.softwaremagico.kt.rest.providers.TenantDataCleanupProviderTest"/>
             <class name="com.softwaremagico.kt.rest.security.TenantApiTest"/>
             <class name="com.softwaremagico.kt.SuperAdminBootstrapTest"/>
+            <class name="com.softwaremagico.kt.rest.security.TenancyDisabledTest"/>
             <class name="com.softwaremagico.kt.logger.LoggedHttpExceptionTest"/>
             <class name="com.softwaremagico.kt.websockets.WebSocketConfigurationTest"/>
             <class name="com.softwaremagico.kt.websockets.WebsocketMessagesTest"/>

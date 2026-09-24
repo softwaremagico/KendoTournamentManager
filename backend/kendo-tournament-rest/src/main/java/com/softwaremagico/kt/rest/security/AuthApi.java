@@ -101,6 +101,9 @@ public class AuthApi {
 
     private final boolean guestEnabled;
 
+    @Value("${enable.tenancy:true}")
+    private boolean tenancyEnabled = true;
+
     private final Set<UserAdminGeneratedListener> userAdminGeneratedListeners = new HashSet<>();
 
     public interface UserAdminGeneratedListener {
@@ -151,7 +154,13 @@ public class AuthApi {
         if (tenantRepository == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        final Tenant tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
+        final Tenant tenant;
+        if (!tenancyEnabled) {
+            //Tenancy is disabled: every user belongs to the single Legacy organization.
+            tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
+        } else {
+            tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
+        }
         if (tenant == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
