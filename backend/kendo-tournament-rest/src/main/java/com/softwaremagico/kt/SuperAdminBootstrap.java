@@ -58,8 +58,9 @@ public class SuperAdminBootstrap implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        final String superAdminRole = AvailableRole.SUPER_ADMIN.name().toLowerCase();
         if (username.isBlank() || password.isBlank()
-                || authenticatedUserRepository.existsByRolesContaining(AvailableRole.SUPER_ADMIN.name())) {
+                || authenticatedUserRepository.existsByRolesContaining(superAdminRole)) {
             return;
         }
         final Tenant legacyTenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElseThrow(() ->

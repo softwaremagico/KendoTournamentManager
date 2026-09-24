@@ -276,7 +276,7 @@ Before going to production, verify the following:
 - [ ] `database_encryption_key` is set to a secret value known only to you
 - [ ] `database_password` has been changed from the default `mypass`
 - [ ] Traefik dashboard password has been changed from the default
-- [ ] `database_populate_default_data=always` has been reviewed — the default admin credentials (`admin@test.com` / `asd123`) must be changed immediately after first login
+- [ ] `database_populate_default_data=always` has been reviewed — the default admin (`admin@test.com` / `asd123`) is the platform `SUPER_ADMIN` and its credentials must be changed immediately after first login
 - [ ] Ports 80 and 443 are the only ports exposed to the internet; database port 5432 is internal only
 - [ ] Email is set correctly in `.env` for Let's Encrypt registration
 

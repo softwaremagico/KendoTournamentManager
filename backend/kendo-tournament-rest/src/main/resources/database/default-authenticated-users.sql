@@ -21,6 +21,7 @@
 INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (1, 'admin@test.com', '$2y$salt$redactedhash:19000:0:99999:7:::', 'Admin', 'User');
 INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (2, 'viewer@test.com', '$2y$salt$redactedhash:19000:0:99999:7:::', 'Viewer', 'User');
 INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (3, 'editor@test.com', '$2y$salt$redactedhash:19000:0:99999:7:::', 'Editor', 'User');
+INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'super_admin');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'admin');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'viewer');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (2, 'viewer');
