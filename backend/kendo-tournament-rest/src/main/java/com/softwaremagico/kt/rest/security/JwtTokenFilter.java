@@ -47,7 +47,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -106,9 +105,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, @Value("${enable.participant.access:false}") String participantAccess,
-                           JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
-                           ParticipantProvider participantProvider,
-                           NetworkController networkController, TenantRepository tenantRepository) {
+                          JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
+                          ParticipantProvider participantProvider,
+                          NetworkController networkController, TenantRepository tenantRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.participantProvider = participantProvider;
@@ -118,7 +117,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         this.tenantRepository = tenantRepository;
     }
 
-    /** Convenience constructor for isolated unit tests without persistence. */
+    /**
+     * Convenience constructor for isolated unit tests without persistence.
+     */
     public JwtTokenFilter(String ipCheck, String participantAccess, JwtTokenUtil jwtTokenUtil,
                           AuthenticatedUserProvider authenticatedUserProvider, ParticipantProvider participantProvider,
                           NetworkController networkController) {
@@ -194,14 +195,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private void logTokenDetails(String token) {
         if (JwtFilterLogger.isDebugEnabled()) {
             JwtFilterLogger.debug(this.getClass(), """
-                    JWT Obtained:
-                    Expiration date: '{}'
-                    User id: '{}'
-                    Username: '{}'
-                    Session: '{}'
-                    Ip: '{}'
-                    MAC: '{}'
-                    """,
+                            JWT Obtained:
+                            Expiration date: '{}'
+                            User id: '{}'
+                            Username: '{}'
+                            Session: '{}'
+                            Ip: '{}'
+                            MAC: '{}'
+                            """,
                     this.jwtTokenUtil.getExpirationDate(token), this.jwtTokenUtil.getUserId(token), this.jwtTokenUtil.getUsername(token),
                     this.jwtTokenUtil.getSession(token), this.jwtTokenUtil.getUserIp(token), this.jwtTokenUtil.getHostMac(token));
         }
@@ -243,7 +244,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null,
-                userDetails == null ? new ArrayList<>() : userDetails.getAuthorities()
+                userDetails.getAuthorities()
         );
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)

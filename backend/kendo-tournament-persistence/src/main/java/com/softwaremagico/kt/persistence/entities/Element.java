@@ -30,19 +30,17 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Version;
 
 import java.io.Serializable;
@@ -71,48 +69,66 @@ import java.util.Objects;
 public abstract class Element implements Serializable {
     protected static final int MAX_UNIQUE_COLUMN_LENGTH = 190;
 
-    /** Auto-generated surrogate primary key. */
+    /**
+     * Auto-generated surrogate primary key.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    /** Timestamp populated automatically by Hibernate when the row is first inserted. */
+    /**
+     * Timestamp populated automatically by Hibernate when the row is first inserted.
+     */
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    /** Username (encrypted at rest) of the user who created this record. */
+    /**
+     * Username (encrypted at rest) of the user who created this record.
+     */
     @Access(AccessType.PROPERTY)
     @Column(name = "created_by")
     @Convert(converter = StringCryptoConverter.class)
     private String createdBy;
 
-    /** SHA-512 hash of {@code createdBy}, stored in plain text for integrity verification. */
+    /**
+     * SHA-512 hash of {@code createdBy}, stored in plain text for integrity verification.
+     */
     @Column(name = "created_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
     @Convert(converter = SHA512HashGenerator.class)
     private String createdByHash;
 
-    /** Timestamp updated automatically by Hibernate on every flush. */
+    /**
+     * Timestamp updated automatically by Hibernate on every flush.
+     */
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    /** Username (encrypted at rest) of the user who last modified this record. */
+    /**
+     * Username (encrypted at rest) of the user who last modified this record.
+     */
     @Access(AccessType.PROPERTY)
     @Column(name = "updated_by")
     @Convert(converter = StringCryptoConverter.class)
     private String updatedBy;
 
-    /** SHA-512 hash of {@code updatedBy}, stored in plain text for integrity verification. */
+    /**
+     * SHA-512 hash of {@code updatedBy}, stored in plain text for integrity verification.
+     */
     @Column(name = "updated_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
     @Convert(converter = SHA512HashGenerator.class)
     private String updatedByHash;
 
-    /** Optimistic-locking version counter incremented by Hibernate on every update. */
+    /**
+     * Optimistic-locking version counter incremented by Hibernate on every update.
+     */
     @Version
     private Integer version;
 
-    /** Private organization that owns this record. */
+    /**
+     * Private organization that owns this record.
+     */
     @Column(name = "tenant_id", nullable = false, updatable = false)
     private Integer tenantId;
 

@@ -31,7 +31,6 @@ import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -85,7 +84,8 @@ public class QrController {
         this.participantProvider = participantProvider;
     }
 
-    @Cacheable(cacheNames = "qr-codes", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId() + ':' + #tournamentId + ':' + #port + ':' + #nightMode")
+    @Cacheable(cacheNames = "qr-codes", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId() "
+            + "+ ':' + #tournamentId + ':' + #port + ':' + #nightMode")
     public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port, boolean nightMode) {
         //Check that exists.
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
