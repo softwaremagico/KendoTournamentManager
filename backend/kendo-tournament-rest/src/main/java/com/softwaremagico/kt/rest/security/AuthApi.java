@@ -41,8 +41,6 @@ import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.security.dto.AuthGuestRequest;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
-import com.softwaremagico.kt.rest.security.dto.CreateTenantRequest;
-import com.softwaremagico.kt.rest.security.dto.UpdateTenantRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
 import com.softwaremagico.kt.security.AvailableRole;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,7 +70,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -80,7 +77,6 @@ import java.time.Instant;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -129,7 +125,7 @@ public class AuthApi {
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
-    /** Kept for unit tests that do not exercise tenant-aware login. */
+    /** Kept for unit tests that do not require a tenant repository. */
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,
@@ -209,57 +205,6 @@ public class AuthApi {
         } finally {
             TenantContext.clear();
         }
-    }
-
-    @Operation(summary = "Returns the active tenant only when this installation has exactly one.")
-    @GetMapping(path = "/public/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<String> getActiveTenantNames() {
-        final List<Tenant> activeTenants = tenantRepository.findAllByActiveTrueOrderByNameAsc();
-        return activeTenants.size() == 1 ? List.of(activeTenants.getFirst().getName()) : List.of();
-    }
-
-    @Transactional
-    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
-    @Operation(summary = "Creates a private organization and its first administrator.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(path = "/tenants", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<IAuthenticatedUser> createTenant(@Valid @RequestBody CreateTenantRequest request,
-                                                             HttpServletRequest httpRequest) {
-        if (tenantRepository.findByNameAndActiveTrue(request.getTenant()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        final Tenant tenant = tenantRepository.save(new Tenant(request.getTenant()));
-        TenantContext.setTenantId(tenant.getId());
-        try {
-            final AuthenticatedUser user = authenticatedUserController.createUser(null, request.getUsername(),
-                    request.getName() != null ? request.getName() : "", request.getLastname() != null ? request.getLastname() : "",
-                    request.getPassword(), AvailableRole.ADMIN);
-            final String jwtToken = jwtTokenUtil.generateAccessToken(user, getClientIP(httpRequest));
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .headers(getLoginHeaders(jwtToken, jwtTokenUtil.getJwtExpirationTime(), jwtTokenUtil.getSession(jwtToken)))
-                    .body(user);
-        } finally {
-            TenantContext.clear();
-        }
-    }
-
-    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
-    @Operation(summary = "Lists all tenants.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(path = "/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Tenant> getTenants() {
-        return tenantRepository.findAll();
-    }
-
-    @Transactional
-    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
-    @Operation(summary = "Updates tenant name or activation state.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping(path = "/tenants/{tenantId}", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public Tenant updateTenant(@PathVariable Integer tenantId, @Valid @RequestBody UpdateTenantRequest request) {
-        final Tenant tenant = tenantRepository.findById(tenantId).orElseThrow(() ->
-                new InvalidRequestException(this.getClass(), "Tenant not found."));
-        tenant.setName(request.getName());
-        tenant.setActive(request.getActive());
-        return tenantRepository.save(tenant);
     }
 
     private ResponseEntity<IAuthenticatedUser> getLockedResponse(String ip) {

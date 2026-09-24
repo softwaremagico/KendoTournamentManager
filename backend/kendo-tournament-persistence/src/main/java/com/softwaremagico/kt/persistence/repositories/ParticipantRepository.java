@@ -29,6 +29,7 @@ import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -100,4 +101,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     Optional<Participant> findByIdCard(String idCard);
 
     int deleteByClubIn(Collection<Club> clubs);
+
+    @Modifying
+    @Query("DELETE FROM Participant p WHERE p.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

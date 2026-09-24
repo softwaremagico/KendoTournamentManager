@@ -46,6 +46,9 @@
                 <include name="csvServicesUnit"/>
                 <include name="authenticatedUserController"/>
                 <include name="tenantAdministration"/>
+                <include name="tenantDataDeletion"/>
+                <include name="tenantDataCleanupProvider"/>
+                <include name="tenantApi"/>
             </run>
         </groups>
         <classes>
@@ -107,6 +110,9 @@
             <class name="com.softwaremagico.kt.rest.services.CsvServicesUnitTest"/>
             <class name="com.softwaremagico.kt.rest.controllers.AuthenticatedUserControllerTest"/>
             <class name="com.softwaremagico.kt.rest.security.TenantAdministrationSecurityTest"/>
+            <class name="com.softwaremagico.kt.rest.security.TenantDataDeletionTest"/>
+            <class name="com.softwaremagico.kt.rest.providers.TenantDataCleanupProviderTest"/>
+            <class name="com.softwaremagico.kt.rest.security.TenantApiTest"/>
             <class name="com.softwaremagico.kt.logger.LoggedHttpExceptionTest"/>
             <class name="com.softwaremagico.kt.websockets.WebSocketConfigurationTest"/>
             <class name="com.softwaremagico.kt.websockets.WebsocketMessagesTest"/>

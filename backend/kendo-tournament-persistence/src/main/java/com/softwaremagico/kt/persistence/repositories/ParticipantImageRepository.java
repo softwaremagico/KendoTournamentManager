@@ -25,6 +25,9 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -41,4 +44,7 @@ public interface ParticipantImageRepository extends JpaRepository<ParticipantIma
 
     int deleteByParticipant(Participant participant);
 
+    @Modifying
+    @Query("DELETE FROM ParticipantImage i WHERE i.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

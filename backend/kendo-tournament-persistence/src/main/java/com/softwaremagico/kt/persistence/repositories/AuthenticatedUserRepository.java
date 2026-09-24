@@ -24,6 +24,9 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -48,4 +51,8 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
     Optional<AuthenticatedUser> findByUsernameAndTenantId(String username, Integer tenantId);
 
     boolean existsByRolesContaining(String role);
+
+    @Modifying
+    @Query("DELETE FROM AuthenticatedUser u WHERE u.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }
