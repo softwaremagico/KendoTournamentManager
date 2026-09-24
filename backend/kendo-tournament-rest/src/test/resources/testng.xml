@@ -111,6 +111,7 @@
             <class name="com.softwaremagico.kt.rest.controllers.AuthenticatedUserControllerTest"/>
             <class name="com.softwaremagico.kt.rest.security.TenantAdministrationSecurityTest"/>
             <class name="com.softwaremagico.kt.rest.security.TenantDataDeletionTest"/>
+            <class name="com.softwaremagico.kt.rest.security.TenantTournamentIsolationAndWipeTest"/>
             <class name="com.softwaremagico.kt.rest.providers.TenantDataCleanupProviderTest"/>
             <class name="com.softwaremagico.kt.rest.security.TenantApiTest"/>
             <class name="com.softwaremagico.kt.logger.LoggedHttpExceptionTest"/>
