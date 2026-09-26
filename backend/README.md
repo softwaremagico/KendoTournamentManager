@@ -121,8 +121,52 @@ The easiest way to run the full stack is with Docker Compose. Official images ar
 
 - **Backend**: [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
 
+From the repository root:
+
+```bash
+cd docker
+cp .env.example .env 2>/dev/null || true
+# edit .env with your domain, database settings and secrets if needed
+
+docker compose up -d --build
+```
+
+Or, if you want to use the ready-made example from Docker Hub:
+
+```bash
+cd docker-examples/official-docker-image
+# edit .env and application.properties first
+
+docker compose up -d
+```
+
+This starts the database, backend, frontend and Traefik reverse proxy together. Once running, the app is usually reachable at:
+
+- `http://localhost` for the local frontend
+- `http://localhost:8080/kendo-tournament-backend` for the backend API
+- `http://localhost:8080/kendo-tournament-backend/swagger-ui/index.html` for Swagger UI
+
+If you only need the database locally while running the backend from the IDE, start just MySQL or PostgreSQL and keep the matching URL in `application.properties`.
+
 Refer to the [docker documentation](../docker/README.md) and the
 [docker-examples](../docker-examples/) folder for ready-to-use `docker-compose.yml` files.
+
+If you prefer to start only the MySQL database manually instead of using Docker Compose, run:
+
+```bash
+docker rm -f kendotournament-mysql
+
+docker run -d \
+  --name kendotournament-mysql \
+  -e MYSQL_DATABASE=kendotournament \
+  -e MYSQL_USER=user \
+  -e MYSQL_PASSWORD=asd123 \
+  -e MYSQL_ROOT_PASSWORD=<rootpass> \
+  -p 3306:3306 \
+  mysql:8
+```
+
+This creates the database expected by the default backend configuration (`jdbc:mysql://127.0.0.1:3306/kendotournament`).
 
 ---
 
