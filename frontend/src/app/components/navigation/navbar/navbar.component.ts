@@ -13,6 +13,7 @@ import {ParticipantListComponent} from "../../../views/participant-list/particip
 import {UserListComponent} from "../../basic/user-list/user-list.component";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentListComponent} from "../../../views/tournament-list/tournament-list.component";
+import {TenantListComponent} from "../../../views/tenant-list/tenant-list.component";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {InfoService} from "../../../services/info.service";
@@ -141,6 +142,7 @@ export class NavbarComponent implements OnInit {
           },
           {
             path: Constants.PATHS.ADMINISTRATION.TENANTS,
+            component: TenantListComponent,
             canActivate: [AuthGuard],
             title: 'tenants',
             data: {
