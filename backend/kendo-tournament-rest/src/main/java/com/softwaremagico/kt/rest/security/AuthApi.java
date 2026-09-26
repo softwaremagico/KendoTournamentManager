@@ -31,9 +31,10 @@ import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.Tenant;
 import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.GuestDisabledException;
@@ -71,10 +72,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.Instant;
-import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -96,6 +97,7 @@ public class AuthApi {
 
     private final TournamentProvider tournamentProvider;
     private final TenantRepository tenantRepository;
+    private final AuthenticatedUserRepository authenticatedUserRepository;
 
     private final SecureRandom random = new SecureRandom();
 
@@ -114,9 +116,9 @@ public class AuthApi {
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,
-                    ParticipantController participantController, TournamentProvider tournamentProvider,
-                    TenantRepository tenantRepository,
-                    @Value("${enable.guest.user:false}") String guestUsersEnabled) {
+                   ParticipantController participantController, TournamentProvider tournamentProvider,
+                   TenantRepository tenantRepository, AuthenticatedUserRepository authenticatedUserRepository,
+                   @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserController = authenticatedUserController;
@@ -125,17 +127,20 @@ public class AuthApi {
         this.participantController = participantController;
         this.tournamentProvider = tournamentProvider;
         this.tenantRepository = tenantRepository;
+        this.authenticatedUserRepository = authenticatedUserRepository;
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
-    /** Kept for unit tests that do not require a tenant repository. */
+    /**
+     * Kept for unit tests that do not require a tenant repository.
+     */
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,
                    ParticipantController participantController, TournamentProvider tournamentProvider,
                    String guestUsersEnabled) {
         this(authenticationManager, jwtTokenUtil, authenticatedUserController, bruteForceService, authenticatedUserProvider,
-                participantController, tournamentProvider, null, guestUsersEnabled);
+            participantController, tournamentProvider, null, null, guestUsersEnabled);
     }
 
     @SuppressWarnings("java:S2696")
@@ -143,6 +148,35 @@ public class AuthApi {
         userAdminGeneratedListeners.add(listener);
     }
 
+    private void createDefaultTenantAndUser(AuthRequest request) {
+        try {
+            // Create default tenant if it doesn't exist
+            Tenant tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
+            if (tenant == null) {
+                tenant = new Tenant("Legacy organization");
+                tenant = tenantRepository.save(tenant);
+                RestServerLogger.info(this.getClass(), "Default tenant created.");
+            }
+
+            // Set tenant context for user creation
+            TenantContext.setTenantId(tenant.getId());
+
+            try {
+                // Create user as admin
+                authenticatedUserController.createUser(null, request.getUsername(), request.getUsername(),
+                    "Administrator", request.getPassword(), AvailableRole.ADMIN);
+                RestServerLogger.info(this.getClass(), "Default admin user created: {}", request.getUsername());
+
+                // Notify listeners that admin was generated
+                userAdminGeneratedListeners.forEach(listener -> listener.generated(request.getUsername()));
+            } finally {
+                TenantContext.clear();
+            }
+        } catch (Exception e) {
+            RestServerLogger.warning(this.getClass(), "Error creating default tenant and user: {}", e.getMessage());
+            throw new RuntimeException("Failed to create default tenant and user", e);
+        }
+    }
 
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -154,13 +188,25 @@ public class AuthApi {
         if (tenantRepository == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        final Tenant tenant;
+        Tenant tenant;
         if (!tenancyEnabled) {
             //Tenancy is disabled: every user belongs to the single Legacy organization.
             tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
         } else {
             tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
         }
+
+        // If tenant doesn't exist and no users exist, create default tenant and user
+        if (tenant == null && authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
+            RestServerLogger.info(this.getClass(), "First login detected. Creating default tenant and user.");
+            createDefaultTenantAndUser(request);
+            if (!tenancyEnabled) {
+                tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
+            } else {
+                tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
+            }
+        }
+
         if (tenant == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -169,7 +215,7 @@ public class AuthApi {
             //We verify the provided credentials using the authentication manager
             RestServerLogger.debug(this.getClass(), "Trying to log in with '" + request.getUsername() + "'.");
             final Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             RestServerLogger.debug(this.getClass(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             return getAuthenticatedLoginResponse(authenticate, ip);
@@ -193,21 +239,21 @@ public class AuthApi {
             // Guests do not have a tenant yet. Derive it from the protected tournament,
             // never from a URL or request-provided tenant identifier.
             final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
-                    new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+                new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
             if (tournament.isLocked()) {
                 throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
             }
             TenantContext.setTenantId(tournament.getTenantId());
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
-                    .orElseThrow(() -> new GuestDisabledException(this.getClass(),
-                            String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));
+                .orElseThrow(() -> new GuestDisabledException(this.getClass(),
+                    String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));
             final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
             final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
-                    .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
-                    .body(user);
+                .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                .body(user);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -221,7 +267,7 @@ public class AuthApi {
             Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         } catch (InterruptedException ex) {
             RestServerLogger.warning(this.getClass(), "Interrupted wait while delaying locked response for '{}' ({}).", ip,
-                    ex.getMessage());
+                ex.getMessage());
             Thread.currentThread().interrupt();
         }
         RestServerLogger.warning(this.getClass(), "Too many attempts from IP '{}' .", ip);
@@ -233,15 +279,15 @@ public class AuthApi {
     private ResponseEntity<IAuthenticatedUser> getAuthenticatedLoginResponse(Authentication authenticate, String ip) {
         try {
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
-                    new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, authenticate.getName())));
+                new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, authenticate.getName())));
             final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
             final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
             bruteForceService.loginSucceeded(ip);
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
-                    .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
-                    .body(user);
+                .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                .body(user);
         } catch (UsernameNotFoundException ex) {
             RestServerLogger.warning(this.getClass(), "Bad credentials ({}) .", ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -257,13 +303,13 @@ public class AuthApi {
         TenantContext.setTenantId(token.getTenantId());
         try {
 
-        final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
-        final long milliseconds = zdt.toInstant().toEpochMilli();
+            final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
+            final long milliseconds = zdt.toInstant().toEpochMilli();
 
-        final long jwtExpiration = jwtTokenUtil.getJwtParticipantExpirationTime();
-        final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
+            final long jwtExpiration = jwtTokenUtil.getJwtParticipantExpirationTime();
+            final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
 
-        return ResponseEntity.ok()
+            return ResponseEntity.ok()
                 .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
                 .body(token.getParticipant());
         } finally {
@@ -328,7 +374,7 @@ public class AuthApi {
 
     private void rejectPlatformRoles(CreateUserRequest request) {
         if (request.getRoles() != null && request.getRoles().stream()
-                .anyMatch(role -> AvailableRole.SUPER_ADMIN.name().equalsIgnoreCase(role))) {
+            .anyMatch(role -> AvailableRole.SUPER_ADMIN.name().equalsIgnoreCase(role))) {
             throw new InvalidRequestException(this.getClass(), "SUPER_ADMIN can only be provisioned during platform bootstrap.");
         }
     }
@@ -338,7 +384,7 @@ public class AuthApi {
     @PostMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
-            throws InterruptedException {
+        throws InterruptedException {
         if (httpRequest != null) {
             RestServerLogger.debug(this.getClass(), "Password update requested from '{}'.", getClientIP(httpRequest));
         }
@@ -348,13 +394,13 @@ public class AuthApi {
 
     @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Updates a password by an admin user. Does not require to know the old password.",
-            security = @SecurityRequirement(name = "bearerAuth"))
+        security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updateUserPassword(@Parameter(description = "username", required = true)
                                    @PathVariable("username") String username,
                                    @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
-            throws InterruptedException {
+        throws InterruptedException {
         if (httpRequest != null) {
             RestServerLogger.debug(this.getClass(), "Admin password update requested from '{}'.", getClientIP(httpRequest));
         }
@@ -367,7 +413,7 @@ public class AuthApi {
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
-            + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
+        + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -379,23 +425,23 @@ public class AuthApi {
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
-            + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
+        + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
     @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest,
                                           @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
-                new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, authentication.getName())));
+            new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
         JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),
-                Instant.ofEpochMilli(jwtExpiration));
+            Instant.ofEpochMilli(jwtExpiration));
         final String accessToken = jwtTokenUtil.generateAccessToken(user, ip);
         final String session = jwtTokenUtil.getSession(accessToken);
         return ResponseEntity.ok()
-                .headers(getLoginHeaders(accessToken, jwtExpiration, session))
-                .build();
+            .headers(getLoginHeaders(accessToken, jwtExpiration, session))
+            .build();
     }
 
 

@@ -70,4 +70,9 @@ public class Tenant {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Tenant{" + "id=" + id + ", name='" + name + '\'' + ", active=" + active + '}';
+    }
 }

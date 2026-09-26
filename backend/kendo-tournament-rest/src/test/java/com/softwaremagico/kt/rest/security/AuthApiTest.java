@@ -27,13 +27,14 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.Tenant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.GuestDisabledException;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.security.dto.AuthGuestRequest;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
-import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
 import com.softwaremagico.kt.security.AvailableRole;
@@ -81,6 +82,8 @@ public class AuthApiTest {
 	@Mock
 	private TenantRepository tenantRepository;
 	@Mock
+	private AuthenticatedUserRepository authenticatedUserRepository;
+	@Mock
 	private HttpServletRequest httpRequest;
 	@Mock
 	private Authentication authentication;
@@ -92,10 +95,11 @@ public class AuthApiTest {
 		MockitoAnnotations.openMocks(this);
 		this.authApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil, this.authenticatedUserController,
 				this.bruteForceService, this.authenticatedUserProvider, this.participantController,
-				this.tournamentProvider, this.tenantRepository, "false");
+				this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "false");
 		final Tenant tenant = mock(Tenant.class);
 		when(tenant.getId()).thenReturn(1);
 		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.of(tenant));
+		when(this.authenticatedUserRepository.count()).thenReturn(1L);
 	}
 
 	// ========== Login Security Tests ==========
@@ -163,7 +167,6 @@ public class AuthApiTest {
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
-		when(this.authenticatedUserController.countUsers()).thenReturn(1L);
 
 		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
@@ -172,31 +175,101 @@ public class AuthApiTest {
 	}
 
 	@Test
-    public void testLoginDoesNotCreateAdminWhenNoUsers() {
+    public void testLoginCreatesAdminWhenNoUsers() {
+		// This test verifies that when tenant doesn't exist and no users exist,
+		// the system attempts to create them, but login fails due to bad credentials
 		final AuthRequest authRequest = new AuthRequest();
-		authRequest.setUsername("admin");
-		authRequest.setPassword("initialpassword");
+		authRequest.setUsername("testuser");
+		authRequest.setPassword("password");
 		authRequest.setTenant("Legacy organization");
-
-		final AuthenticatedUser defaultAdmin = new AuthenticatedUser();
-		defaultAdmin.setUsername("admin");
-		defaultAdmin.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		// Set tenant repository to return empty initially
+		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.empty());
+		// But when checking for legacy tenant, return a valid one
+		final Tenant tenant = mock(Tenant.class);
+		when(tenant.getId()).thenReturn(1);
+		when(this.tenantRepository.findById(1)).thenReturn(Optional.of(tenant));
+		// Set user count to 0 so it thinks no users exist
+		when(this.authenticatedUserRepository.count()).thenReturn(0L);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
-		when(this.authenticatedUserController.countUsers()).thenReturn(0L);
-		when(this.authenticatedUserController.createUser(null, "admin", "Default", "Admin", "initialpassword",
-				AvailableRole.ADMIN)).thenReturn(defaultAdmin);
-		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(this.jwtTokenUtil.generateAccessToken(defaultAdmin, "192.168.1.1")).thenReturn("admin-jwt");
 
 		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
+        // Login should fail because credentials are wrong
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        verify(this.authenticatedUserController, never()).createUser(any(), any(), any(), any(), any(), any(AvailableRole[].class));
+	}
+
+	@Test
+	public void testFirstLoginCreatesUserAndGeneratesToken() {
+		// This test verifies the complete flow:
+		// 1. First login attempt triggers user creation
+		// 2. Subsequent login succeeds and generates a token
+		final AuthRequest authRequest = new AuthRequest();
+		authRequest.setUsername("newadmin");
+		authRequest.setPassword("securepassword");
+		authRequest.setTenant("Legacy organization");
+
+		final AuthenticatedUser createdUser = new AuthenticatedUser();
+		createdUser.setUsername("newadmin");
+		createdUser.setTenantId(1);
+
+		final Tenant tenant = mock(Tenant.class);
+		when(tenant.getId()).thenReturn(1);
+
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+
+		// First login: tenant doesn't exist, no users exist
+		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.empty());
+		when(this.tenantRepository.findById(TenantContext.LEGACY_TENANT_ID)).thenReturn(Optional.of(tenant));
+		when(this.authenticatedUserRepository.count()).thenReturn(0L);
+
+		// Mock user creation
+		when(this.authenticatedUserController.createUser(null, "newadmin", "newadmin",
+				"Administrator", "securepassword", AvailableRole.ADMIN)).thenReturn(createdUser);
+
+		// First authentication attempt fails (user doesn't exist yet in auth system)
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenThrow(new BadCredentialsException("Bad credentials"));
+
+		// First login should fail and trigger user creation
+		ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+		// Verify user creation was called
+		verify(this.authenticatedUserController, times(1)).createUser(null, "newadmin", "newadmin",
+				"Administrator", "securepassword", AvailableRole.ADMIN);
+
+		// Second login: user now exists
+		// Reset mocks for the second login attempt
+		reset(this.authenticationManager);
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.of(tenant));
+		when(this.authenticatedUserRepository.count()).thenReturn(1L); // Now there's a user
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenReturn(this.authentication);
+		when(this.authentication.getName()).thenReturn("newadmin");
+		when(this.authenticatedUserProvider.findByUsername("newadmin")).thenReturn(Optional.of(createdUser));
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(createdUser, "192.168.1.1")).thenReturn("admin-jwt-token");
+		when(this.jwtTokenUtil.getSession("admin-jwt-token")).thenReturn("admin-session-123");
+
+		// Second login should succeed
+		response = this.authApi.login(authRequest, this.httpRequest);
+
+		// Verify successful login response
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("admin-jwt-token");
+		assertThat(response.getHeaders().get(AuthApi.SESSION_HEADER)).containsExactly("admin-session-123");
+		assertThat(response.getHeaders().get(HttpHeaders.EXPIRES)).containsExactly("3600000");
+		verify(this.bruteForceService, times(1)).loginSucceeded("192.168.1.1");
 	}
 
 	@Test
@@ -264,7 +337,7 @@ public class AuthApiTest {
 	public void testLoginAsGuestWithGuestUserNotFound() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
-				this.participantController, this.tournamentProvider, this.tenantRepository, "true");
+				this.participantController, this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "true");
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
@@ -286,7 +359,7 @@ public class AuthApiTest {
 	public void testLoginAsGuestWithLockedTournament() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
-				this.participantController, this.tournamentProvider, this.tenantRepository, "true");
+				this.participantController, this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "true");
 
 		final AuthenticatedUser guestUser = new AuthenticatedUser();
 		guestUser.setUsername(AuthenticatedUserProvider.GUEST_USER);
@@ -314,7 +387,7 @@ public class AuthApiTest {
 	public void testLoginAsGuestWithUnlockedTournament() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
-				this.participantController, this.tournamentProvider, this.tenantRepository, "true");
+				this.participantController, this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "true");
 
 		final AuthenticatedUser guestUser = new AuthenticatedUser();
 		guestUser.setUsername(AuthenticatedUserProvider.GUEST_USER);
@@ -518,10 +591,10 @@ public class AuthApiTest {
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
+		when(this.authenticatedUserRepository.count()).thenReturn(0L);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
-		when(this.authenticatedUserController.countUsers()).thenReturn(0L);
-		when(this.authenticatedUserController.createUser(null, "admin", "Default", "Admin", "password",
+		when(this.authenticatedUserController.createUser(null, "admin", "admin", "Administrator", "password",
 				AvailableRole.ADMIN)).thenReturn(newAdmin);
 		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
 		when(this.jwtTokenUtil.generateAccessToken(newAdmin, "192.168.1.1")).thenReturn("jwt-token");

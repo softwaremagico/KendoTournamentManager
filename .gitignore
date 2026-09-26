@@ -30,3 +30,4 @@ target/*
 application-raspdocker.properties
 *-raspdocker.properties
 .editorconfig
+.serena
