@@ -15,6 +15,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentListComponent} from "../../../views/tournament-list/tournament-list.component";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {InfoService} from "../../../services/info.service";
 import {UserRoles} from '../../../services/rbac/user-roles';
 
 @Component({
@@ -38,6 +39,7 @@ export class NavbarComponent implements OnInit {
   protected passwordPopup: boolean = false;
 
   nightModeEnabled: boolean = false;
+  protected tenancyEnabled: boolean = true;
   @HostBinding('class') className = '';
 
   constructor(protected router: Router,
@@ -48,6 +50,7 @@ export class NavbarComponent implements OnInit {
               protected userSessionService: UserSessionService,
               private overlay: OverlayContainer, private _renderer: Renderer2,
               private darkModeService: DarkModeService,
+              private infoService: InfoService,
               protected rbacService: RbacService) {
     this.nightModeEnabled = userSessionService.getNightMode();
   }
@@ -56,6 +59,22 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.sessionService.getUser();
+    this.infoService.getAppConfig().subscribe({
+      next: config => {
+        if (config && config['tenancyEnabled'] !== undefined) {
+          this.tenancyEnabled = config['tenancyEnabled'];
+        }
+        this.buildRoutes();
+      },
+      error: () => {
+        //Fall back to the default multi-organization mode if the configuration endpoint is unavailable.
+        this.tenancyEnabled = true;
+        this.buildRoutes();
+      }
+    });
+  }
+
+  private buildRoutes() {
     this.routes = [
       {
         path: Constants.PATHS.REGISTRY.ROOT,
@@ -125,7 +144,8 @@ export class NavbarComponent implements OnInit {
             canActivate: [AuthGuard],
             title: 'tenants',
             data: {
-              hidden: !this.user?.roles?.includes(UserRoles.SUPER_ADMIN)
+              hidden: !this.tenancyEnabled
+                || !this.user?.roles?.includes(UserRoles.SUPER_ADMIN)
             }
           }]
       },

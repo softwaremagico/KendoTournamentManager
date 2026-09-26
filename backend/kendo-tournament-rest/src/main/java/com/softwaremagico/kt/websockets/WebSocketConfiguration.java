@@ -21,6 +21,7 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.SuppressFBWarnings;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
@@ -76,6 +77,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     }
 
     /** Convenience constructor for isolated unit tests without persistence. */
+    @SuppressFBWarnings(value = {"NP_NONNULL_PARAM_VIOLATION"},
+            justification = "Test-only constructor; tenantRepository is null-checked in authenticateIfPossible and validateTenantDestination.")
     public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil) {
         this(jwtTokenUtil, null);
     }

@@ -21,20 +21,19 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Tenant;
+import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional
-public interface TenantRepository extends JpaRepository<Tenant, Integer> {
-    Optional<Tenant> findByNameAndActiveTrue(String name);
+public interface TournamentScoreRepository extends JpaRepository<TournamentScore, Integer> {
 
-    boolean existsByIdAndActiveTrue(Integer id);
-
-    List<Tenant> findAllByActiveTrueOrderByNameAsc();
+    @Modifying
+    @Query("DELETE FROM TournamentScore s WHERE s.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

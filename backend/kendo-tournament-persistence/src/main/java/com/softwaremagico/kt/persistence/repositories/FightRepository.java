@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -63,4 +64,8 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
     Optional<Fight> findByDuels(Duel duel);
 
     List<Fight> findByTournamentAndShiaijo(Tournament tournament, int shiaijo);
+
+    @Modifying
+    @Query("DELETE FROM Fight f WHERE f.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

@@ -79,6 +79,7 @@ services:
         - timezone
         - enable_guest_user
         - database_populate_default_data
+        - enable_tenancy
     image: kendo-tournament-backend
     restart: unless-stopped
     networks:

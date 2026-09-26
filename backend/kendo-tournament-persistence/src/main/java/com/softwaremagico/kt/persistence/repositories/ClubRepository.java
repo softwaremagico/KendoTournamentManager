@@ -24,6 +24,9 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Club;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -33,4 +36,8 @@ import java.util.Optional;
 public interface ClubRepository extends JpaRepository<Club, Integer> {
 
     Optional<Club> findByNameIgnoreCaseAndCityIgnoreCase(String name, String city);
+
+    @Modifying
+    @Query("DELETE FROM Club c WHERE c.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

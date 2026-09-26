@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.VersionController;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Map;
 
 
 @RestController
@@ -46,6 +48,9 @@ public class Info {
     private String latestVersion;
     private LocalDateTime checkedVersionAt;
 
+    @Value("${enable.tenancy:true}")
+    private boolean tenancyEnabled = true;
+
     public Info(VersionController versionController) {
         this.versionController = versionController;
     }
@@ -55,6 +60,12 @@ public class Info {
     @ResponseStatus(HttpStatus.OK)
     public void healthCheck(HttpServletRequest request) {
         //Not needed.
+    }
+
+    @Operation(summary = "Basic configuration values needed by the front-end.")
+    @GetMapping(value = "/app-config", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Boolean> getAppConfig() {
+        return Map.of("tenancyEnabled", tenancyEnabled);
     }
 
 

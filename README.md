@@ -320,6 +320,9 @@ For instructions on using the application, please visit
 the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
 There, you will find comprehensive examples for various types of tournaments and guidance on how to configure them.
 
+A list of all released versions with a short description of each one is available on
+the [Versions page](https://github.com/softwaremagico/KendoTournamentManager/wiki/Versions) of the wiki.
+
 ## Default credentials
 
 The first time you attempt to access the application, there will be no registered users. You can enter any username and

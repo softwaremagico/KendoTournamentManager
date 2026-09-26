@@ -22,7 +22,6 @@ package com.softwaremagico.kt.rest.security.dto;
  */
 
 import jakarta.validation.constraints.NotBlank;
-import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 public class AuthRequest {
     @NotBlank

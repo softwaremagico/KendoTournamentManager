@@ -267,6 +267,11 @@ enable.guest.user=true
 # Allow participants to view their own statistics via a long-lived personal QR code
 enable.participant.access=true
 
+# Enable multi-organization support. Set to false so the whole application uses a
+# single organization (the Legacy organization): login ignores the requested tenant,
+# the login selector disappears and tenant management endpoints return 404.
+enable.tenancy=true
+
 # Bind JWT token validation to the client's IP address (adds extra security,
 # but breaks access for users with dynamic IPs or VPNs)
 jwt.ip.check=false
@@ -291,12 +296,14 @@ variable of the same name):
 | Value | Effect |
 |-------|--------|
 | `always` | A default admin user (`admin@test.com` / `asd123`) is created on every fresh schema. **Not compatible with database encryption.** |
-| `never` | No default data is created. On first login attempt the application prompts you to create the first administrator account interactively. |
+| `never` | No default data is created. On first startup, provision a `SUPER_ADMIN` once with the `bootstrap.super-admin.username` and `bootstrap.super-admin.password` settings. |
 
-**Change the default credentials immediately** if you use `always`. Passwords are stored in **BCrypt** format.
-You can generate a BCrypt hash using an online tool such as [bcrypt-generator.com](https://bcrypt-generator.com/).
+The default admin (`admin@test.com`) is the platform administrator: it receives the `SUPER_ADMIN` role, so it can create
+and manage organizations from **Administration / Tenants**. See [Tenancy](../../wiki/Tenancy.md) for the tenant management
+procedure. **Change the default credentials immediately** if you use `always`. Passwords are stored in **BCrypt** format;
+you can generate a hash with a tool such as [bcrypt-generator.com](https://bcrypt-generator.com/).
 
-The default admin SQL script is located at:
+The default users SQL script is located at:
 ```
 kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sql
 ```

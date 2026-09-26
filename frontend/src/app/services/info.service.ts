@@ -20,4 +20,9 @@ export class InfoService {
     const url: string = `${this.baseUrl}/latest-version`;
     return this.http.get(url, {responseType: 'text'});
   }
+
+  getAppConfig(): Observable<Record<string, boolean>> {
+    const url: string = `${this.baseUrl}/app-config`;
+    return this.http.get<Record<string, boolean>>(url);
+  }
 }

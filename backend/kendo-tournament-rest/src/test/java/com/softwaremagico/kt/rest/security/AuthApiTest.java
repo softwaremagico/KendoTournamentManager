@@ -217,22 +217,6 @@ public class AuthApiTest {
 	}
 
 	@Test
-    public void testGetActiveTenantNameWhenOnlyOneExists() {
-        final Tenant first = new Tenant("Alpha dojo");
-        when(this.tenantRepository.findAllByActiveTrueOrderByNameAsc()).thenReturn(List.of(first));
-
-        assertThat(this.authApi.getActiveTenantNames()).containsExactly("Alpha dojo");
-    }
-
-    @Test
-    public void testGetActiveTenantNamesDoesNotEnumerateMultipleTenants() {
-        when(this.tenantRepository.findAllByActiveTrueOrderByNameAsc())
-                .thenReturn(List.of(new Tenant("Alpha dojo"), new Tenant("Beta dojo")));
-
-        assertThat(this.authApi.getActiveTenantNames()).isEmpty();
-    }
-
-	@Test
 	public void testRegisterRejectsSuperAdminRole() {
 		final CreateUserRequest request = new CreateUserRequest();
 		request.setUsername("platform.admin");

@@ -137,6 +137,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `jwt_guest_expiration` | `3600000` | Guest user token lifetime in milliseconds (default: 1 h) |
 | `jwt_ip_check` | `false` | Bind token validation to the client IP address |
 | `enable_guest_user` | `false` | Allow unauthenticated read-only access via QR codes |
+| `enable_tenancy` | `true` | Enable multi-organization support. Set to `false` so the whole installation uses a single organization (the `Legacy organization`): the login selector disappears, the tenant administration menu is hidden and all tenant management API endpoints return `404`. |
 | `database_populate_default_data` | `always` | `always` creates a default admin user on fresh install; `never` requires manual first-login creation |
 
 ### Backend — Database
@@ -276,7 +277,7 @@ Before going to production, verify the following:
 - [ ] `database_encryption_key` is set to a secret value known only to you
 - [ ] `database_password` has been changed from the default `mypass`
 - [ ] Traefik dashboard password has been changed from the default
-- [ ] `database_populate_default_data=always` has been reviewed — the default admin credentials (`admin@test.com` / `asd123`) must be changed immediately after first login
+- [ ] `database_populate_default_data=always` has been reviewed — the default admin (`admin@test.com` / `asd123`) is the platform `SUPER_ADMIN` and its credentials must be changed immediately after first login
 - [ ] Ports 80 and 443 are the only ports exposed to the internet; database port 5432 is internal only
 - [ ] Email is set correctly in `.env` for Let's Encrypt registration
 
