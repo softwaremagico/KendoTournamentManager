@@ -2,15 +2,15 @@
   <biit-progress-bar [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
 }
 @if (!waiting) {
-  <mat-form-field class="tenant-selector" *ngIf="showTenantSelector()">
-    <mat-label>{{ 'tenantName' | transloco }}</mat-label>
-    <input matInput name="tenant" [(ngModel)]="tenant" required>
-  </mat-form-field>
   <biit-login id="login"
     [allowResetPassword]="false"
     (onLogin)="login($event)"
     (onResetPassword)="onResetPassword($event)">
   </biit-login>
+  <mat-form-field class="tenant-selector" *ngIf="showTenantSelector()">
+    <mat-label>{{ 'tenantName' | transloco }}</mat-label>
+    <input matInput name="tenant" [(ngModel)]="tenant">
+  </mat-form-field>
 }
 <div class="app-version">
   v{{appVersion}}

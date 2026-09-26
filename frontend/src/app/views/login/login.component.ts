@@ -74,13 +74,14 @@ export class LoginComponent implements OnInit {
   }
 
   showTenantSelector(): boolean {
-    return this.tenants.length !== 1;
+    // Show the selector only when there are multiple tenants.
+    // Hide when there are 0 or 1 tenants.
+    return this.tenants.length > 1;
   }
 
   isLastVersion(): void {
     if (this.checkForNewVersion) {
       //Get last version and compare with current one.
-      const headers = new HttpHeaders().set('x-skip-auth', "true");
       this.infoService.getLatestVersion().subscribe((_version: string): void => {
         if (_version && this.appVersion !== _version) {
           const parameters: object = {currentVersion: this.appVersion, newVersion: _version};
@@ -108,15 +109,10 @@ export class LoginComponent implements OnInit {
   login(login: BiitLogin): void {
     this.waiting = true;
     const tenant: string = this.tenant;
-    if (!tenant) {
-      this.waiting = false;
-      this.messageService.errorMessage('tenantRequired');
-      return;
-    }
+    // Tenant is optional: call login even when tenant is empty
     this.loginService.login(login.username, login.password, tenant).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
-        this.loginService.setAuthenticatedUser(authenticatedUser, (jwt: string, expires: number): void => {
-        });
+        this.loginService.setAuthenticatedUser(authenticatedUser, (): void => {});
 
         this.activityService.setRoles(authenticatedUser.roles);
         const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
@@ -128,7 +124,12 @@ export class LoginComponent implements OnInit {
         this.messageService.infoMessage("userLoggedInMessage");
         this.userSessionService.setUser(AuthenticatedUser.clone(authenticatedUser))
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
-        localStorage.setItem('tenant', tenant);
+        // Store tenant only when provided, otherwise remove any previous value
+        if (tenant) {
+          localStorage.setItem('tenant', tenant);
+        } else {
+          localStorage.removeItem('tenant');
+        }
       },
       error: (error): void => {
         if (error.status === 401) {

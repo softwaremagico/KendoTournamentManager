@@ -29,6 +29,10 @@ public final class TenantContext {
      * Tenant reserved for installations and background work created before tenancy.
      */
     public static final int LEGACY_TENANT_ID = 1;
+    /**
+     * Name of the legacy/default tenant used for single-tenant installations and bootstrap.
+     */
+    public static final String LEGACY_TENANT_NAME = "Legacy organization";
     private static final ThreadLocal<Integer> TENANT_ID = new ThreadLocal<>();
 
     private TenantContext() {

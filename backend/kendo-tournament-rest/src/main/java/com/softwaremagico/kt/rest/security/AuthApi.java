@@ -153,9 +153,9 @@ public class AuthApi {
             // Create default tenant if it doesn't exist
             Tenant tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
             if (tenant == null) {
-                tenant = new Tenant("Legacy organization");
+                tenant = new Tenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
                 tenant = tenantRepository.save(tenant);
-                RestServerLogger.info(this.getClass(), "Default tenant created.");
+                RestServerLogger.info(this.getClass(), "Default tenant '{}' created.", tenant);
             }
 
             // Set tenant context for user creation
@@ -164,7 +164,7 @@ public class AuthApi {
             try {
                 // Create user as admin
                 authenticatedUserController.createUser(null, request.getUsername(), request.getUsername(),
-                    "Administrator", request.getPassword(), AvailableRole.ADMIN);
+                        "Administrator", request.getPassword(), AvailableRole.ADMIN);
                 RestServerLogger.info(this.getClass(), "Default admin user created: {}", request.getUsername());
 
                 // Notify listeners that admin was generated
@@ -200,10 +200,11 @@ public class AuthApi {
         if (tenant == null && authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
             RestServerLogger.info(this.getClass(), "First login detected. Creating default tenant and user.");
             createDefaultTenantAndUser(request);
-            if (!tenancyEnabled) {
+            // After creating the default tenant and user, try to resolve the tenant again.
+            // If the incoming request did not provide a tenant (null), fall back to the Legacy tenant id.
+            tenant = tenantRepository.findByNameAndActiveTrue(request == null ? null : request.getTenant()).orElse(null);
+            if (tenant == null) {
                 tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
-            } else {
-                tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
             }
         }
 

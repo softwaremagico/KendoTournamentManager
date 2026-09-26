@@ -98,7 +98,7 @@ public class AuthApiTest {
 				this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "false");
 		final Tenant tenant = mock(Tenant.class);
 		when(tenant.getId()).thenReturn(1);
-		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.of(tenant));
+		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.of(tenant));
 		when(this.authenticatedUserRepository.count()).thenReturn(1L);
 	}
 
@@ -109,7 +109,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -129,7 +129,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password123");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		final AuthenticatedUser user = new AuthenticatedUser();
 		user.setUsername("testuser");
@@ -160,7 +160,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("wrongpassword");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
@@ -181,13 +181,13 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
 		// Set tenant repository to return empty initially
-		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.empty());
+		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.empty());
 		// But when checking for legacy tenant, return a valid one
 		final Tenant tenant = mock(Tenant.class);
 		when(tenant.getId()).thenReturn(1);
@@ -211,7 +211,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("newadmin");
 		authRequest.setPassword("securepassword");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		final AuthenticatedUser createdUser = new AuthenticatedUser();
 		createdUser.setUsername("newadmin");
@@ -225,7 +225,7 @@ public class AuthApiTest {
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
 
 		// First login: tenant doesn't exist, no users exist
-		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.empty());
+		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.empty());
 		when(this.tenantRepository.findById(TenantContext.LEGACY_TENANT_ID)).thenReturn(Optional.of(tenant));
 		when(this.authenticatedUserRepository.count()).thenReturn(0L);
 
@@ -251,7 +251,7 @@ public class AuthApiTest {
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(this.tenantRepository.findByNameAndActiveTrue("Legacy organization")).thenReturn(Optional.of(tenant));
+		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.of(tenant));
 		when(this.authenticatedUserRepository.count()).thenReturn(1L); // Now there's a user
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenReturn(this.authentication);
@@ -277,7 +277,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1,10.0.0.2,10.0.0.3");
 		when(this.bruteForceService.isBlocked("10.0.0.1")).thenReturn(true);
@@ -307,7 +307,7 @@ public class AuthApiTest {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");

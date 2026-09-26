@@ -33,6 +33,7 @@
                 <include name="statisticsServices"/>
                 <include name="restSwissEndpoints"/>
                 <include name="authApiTests"/>
+                <include name="authFirstLoginIntegration"/>
                 <include name="webSocketSecurityConfigTests"/>
                 <include name="loggableDispatcherServletTests"/>
                 <include name="authApiUnitTests"/>
@@ -99,6 +100,7 @@
             <class name="com.softwaremagico.kt.logger.RestServerLoggerTest"/>
             <class name="com.softwaremagico.kt.rest.RestSwissEndpointsTest"/>
             <class name="com.softwaremagico.kt.rest.security.AuthApiTest"/>
+            <class name="com.softwaremagico.kt.rest.AuthFirstLoginIntegrationTest"/>
             <class name="com.softwaremagico.kt.rest.services.AchievementServicesTest"/>
             <class name="com.softwaremagico.kt.rest.services.TournamentExtraPropertiesServicesUnitTest"/>
             <class name="com.softwaremagico.kt.rest.security.WebSocketSecurityConfigTest"/>

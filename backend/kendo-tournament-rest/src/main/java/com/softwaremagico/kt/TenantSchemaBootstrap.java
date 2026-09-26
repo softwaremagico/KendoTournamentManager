@@ -22,6 +22,7 @@ package com.softwaremagico.kt;
  */
 
 import com.softwaremagico.kt.persistence.entities.Tenant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -56,6 +57,6 @@ public class TenantSchemaBootstrap implements ApplicationRunner {
         if (existingRecords != null && existingRecords > 0) {
             throw new IllegalStateException("Existing data detected. Run the 3.6.0 tenancy migration before starting the application.");
         }
-        tenantRepository.save(new Tenant("Legacy organization"));
+        tenantRepository.save(new Tenant(TenantContext.LEGACY_TENANT_NAME));
     }
 }

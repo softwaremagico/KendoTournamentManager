@@ -4,7 +4,6 @@ import {Observable} from "rxjs";
 import {map, tap} from "rxjs/operators";
 
 import {AuthenticatedUser} from "../models/authenticated-user";
-import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
 import {Router} from "@angular/router";
 import {ActivityService} from "./rbac/activity.service";
@@ -51,7 +50,15 @@ export class LoginService {
 
   login(username: string, password: string, tenant: string): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/public/login`;
-    return this.http.post<AuthenticatedUser>(url, new AuthRequest(username, password, tenant), {
+    // Build payload dynamically and omit tenant when empty so server receives no tenant property
+    const body: any = {
+      username: username,
+      password: password
+    };
+    if (tenant) {
+      body.tenant = tenant;
+    }
+    return this.http.post<AuthenticatedUser>(url, body, {
       headers: new HttpHeaders({'Content-Type': 'application/json'}),
       responseType: 'json',
       observe: 'response'

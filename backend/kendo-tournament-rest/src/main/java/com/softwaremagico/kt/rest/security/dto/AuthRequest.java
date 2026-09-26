@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.security.dto;
  */
 
 import jakarta.validation.constraints.NotBlank;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 public class AuthRequest {
     @NotBlank
@@ -30,7 +31,7 @@ public class AuthRequest {
     private String password;
 
     @NotBlank
-    private String tenant = "Legacy organization";
+    private String tenant = TenantContext.LEGACY_TENANT_NAME;
 
     /**
      * Creates an empty authentication request.
