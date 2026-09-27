@@ -11,6 +11,7 @@ export class AuthenticatedUser extends Element {
   public roles: UserRoles[];
   //Session is obtained from X-Session header when log-in.
   public session: string;
+  public tenantId: number;
 
   constructor() {
     super();
@@ -27,6 +28,7 @@ export class AuthenticatedUser extends Element {
     to.expires = from.expires;
     to.roles = from.roles;
     to.session = from.session;
+    to.tenantId = from.tenantId;
   }
 
   public static clone(from: AuthenticatedUser): AuthenticatedUser {

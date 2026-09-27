@@ -55,6 +55,9 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
 
     List<AuthenticatedUser> findAllByUsernameHash(String username);
 
+    @Query(value = "SELECT * FROM authenticated_users", nativeQuery = true)
+    List<AuthenticatedUser> findAllUnscoped();
+
     boolean existsByRolesContaining(String role);
 
     @Modifying
@@ -68,4 +71,8 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
     @Modifying
     @Query("UPDATE AuthenticatedUser u SET u.lastTenantId = NULL WHERE u.lastTenantId = :tenantId")
     int clearLastTenantId(@Param("tenantId") Integer tenantId);
+
+    @Modifying
+    @Query("DELETE FROM AuthenticatedUser u WHERE u.usernameHash = :username AND u.tenantId = :tenantId")
+    int deleteByUsernameHashAndTenantId(@Param("username") String username, @Param("tenantId") Integer tenantId);
 }

@@ -41,6 +41,20 @@ public class TenantHibernateFilter {
 
     @Around("execution(* com.softwaremagico.kt.persistence.repositories..*(..))")
     public Object scopeRepositoryAccess(ProceedingJoinPoint joinPoint) throws Throwable {
+        if ("findAllUnscoped".equals(joinPoint.getSignature().getName())) {
+            final Session session = entityManager.unwrap(Session.class);
+            final boolean tenantFilterEnabled = session.getEnabledFilter("tenantFilter") != null;
+            if (tenantFilterEnabled) {
+                session.disableFilter("tenantFilter");
+            }
+            try {
+                return joinPoint.proceed();
+            } finally {
+                if (tenantFilterEnabled) {
+                    session.enableFilter("tenantFilter").setParameter("tenantId", TenantContext.getRequiredTenantId());
+                }
+            }
+        }
         final Integer tenantId = TenantContext.getTenantId();
         if (tenantId != null) {
             entityManager.unwrap(Session.class).enableFilter("tenantFilter").setParameter("tenantId", tenantId);

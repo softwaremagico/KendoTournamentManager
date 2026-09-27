@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {EnvironmentService} from '../environment.service';
+import {AuthenticatedUser} from '../models/authenticated-user';
 
 export interface Tenant {
   id: number;
@@ -46,5 +47,17 @@ export class TenantService {
 
   delete(tenantId: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${tenantId}`);
+  }
+
+  getUsers(tenantId: number): Observable<AuthenticatedUser[]> {
+    return this.http.get<AuthenticatedUser[]>(`${this.url}/${tenantId}/users`);
+  }
+
+  assignUsers(tenantId: number, usernames: string[]): Observable<void> {
+    return this.http.post<void>(`${this.url}/${tenantId}/users`, {usernames});
+  }
+
+  unassignUsers(tenantId: number, usernames: string[]): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${tenantId}/users`, {body: {usernames}});
   }
 }

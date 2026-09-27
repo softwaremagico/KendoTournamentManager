@@ -31,6 +31,7 @@ import com.softwaremagico.kt.persistence.repositories.TenantRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.security.dto.CreateTenantRequest;
+import com.softwaremagico.kt.rest.security.dto.AssignTenantUsersRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdateTenantRequest;
 import com.softwaremagico.kt.security.AvailableRole;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,6 +59,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -161,6 +163,79 @@ public class TenantApi {
         final String jwtToken = jwtTokenUtil.generateAccessToken(user, getClientIP(httpRequest));
         return ResponseEntity.ok().headers(getLoginHeaders(jwtToken, jwtTokenUtil.getJwtExpirationTime(), jwtTokenUtil.getSession(jwtToken)))
                 .body(user);
+    }
+
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Lists all users and whether they belong to a tenant.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/tenants/{tenantId}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<AuthenticatedUser> getTenantUsers(@PathVariable Integer tenantId) {
+        ensureTenancyEnabled();
+        if (!tenantRepository.existsById(tenantId)) {
+            throw new InvalidRequestException(this.getClass(), "Tenant not found.");
+        }
+        return authenticatedUserController.findAllUnscoped();
+    }
+
+    @Transactional
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Assigns existing users to a tenant.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/tenants/{tenantId}/users", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void assignTenantUsers(@PathVariable Integer tenantId, @RequestBody AssignTenantUsersRequest request,
+                                  Authentication authentication) {
+        ensureTenancyEnabled();
+        if (!tenantRepository.existsByIdAndActiveTrue(tenantId)) {
+            throw new InvalidRequestException(this.getClass(), "Tenant not found or inactive.");
+        }
+        if (request.getUsernames() == null || request.getUsernames().isEmpty()) {
+            return;
+        }
+        final List<AuthenticatedUser> users = authenticatedUserController.findAllUnscoped();
+        final Integer previousTenantId = TenantContext.getTenantId();
+        TenantContext.setTenantId(tenantId);
+        try {
+            for (String username : request.getUsernames().stream().distinct().toList()) {
+                final AuthenticatedUser source = users.stream().filter(user -> Objects.equals(user.getUsername(), username))
+                        .findFirst().orElseThrow(() -> new InvalidRequestException(this.getClass(), "User not found."));
+                if (users.stream().anyMatch(user -> Objects.equals(user.getTenantId(), tenantId)
+                        && Objects.equals(user.getUsername(), username))) {
+                    continue;
+                }
+                final AuthenticatedUser assignedUser = new AuthenticatedUser();
+                assignedUser.setUsername(source.getUsername());
+                assignedUser.setPassword(source.getPassword());
+                assignedUser.setName(source.getName());
+                assignedUser.setLastname(source.getLastname());
+                assignedUser.setRoles(source.getRoles() == null ? null : new HashSet<>(source.getRoles()));
+                assignedUser.setLastTenantId(source.getLastTenantId());
+                assignedUser.setCreatedBy(authentication.getName());
+                authenticatedUserController.createAssignedUser(assignedUser);
+            }
+        } finally {
+            if (previousTenantId == null) {
+                TenantContext.clear();
+            } else {
+                TenantContext.setTenantId(previousTenantId);
+            }
+        }
+    }
+
+    @Transactional
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Removes users from a tenant.", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(path = "/tenants/{tenantId}/users", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void unassignTenantUsers(@PathVariable Integer tenantId, @RequestBody AssignTenantUsersRequest request) {
+        ensureTenancyEnabled();
+        if (request.getUsernames() == null || request.getUsernames().isEmpty()) {
+            return;
+        }
+        final List<AuthenticatedUser> users = authenticatedUserController.findAllUnscoped();
+        for (String username : request.getUsernames().stream().distinct().toList()) {
+            final long assignedTenants = users.stream().filter(user -> Objects.equals(user.getUsername(), username)).count();
+            if (assignedTenants <= 1) {
+                throw new InvalidRequestException(this.getClass(), "A user must belong to at least one tenant.");
+            }
+            authenticatedUserController.removeFromTenant(username, tenantId);
+        }
     }
 
     @Transactional

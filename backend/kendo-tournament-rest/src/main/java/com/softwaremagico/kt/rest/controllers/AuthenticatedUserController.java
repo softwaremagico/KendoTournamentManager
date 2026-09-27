@@ -149,8 +149,20 @@ public class AuthenticatedUserController {
         return authenticatedUserProvider.findAllByUsername(username);
     }
 
+    public List<AuthenticatedUser> findAllUnscoped() {
+        return authenticatedUserProvider.findAllUnscoped();
+    }
+
     public void updateLastTenant(String username, Integer tenantId) {
         authenticatedUserProvider.updateLastTenant(username, tenantId);
+    }
+
+    public AuthenticatedUser createAssignedUser(AuthenticatedUser user) {
+        return authenticatedUserProvider.save(user);
+    }
+
+    public void removeFromTenant(String username, Integer tenantId) {
+        authenticatedUserProvider.removeFromTenant(username, tenantId);
     }
 
     public void delete(AuthenticatedUser authenticatedUser) {

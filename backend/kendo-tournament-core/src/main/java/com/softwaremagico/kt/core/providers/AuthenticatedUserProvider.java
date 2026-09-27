@@ -106,8 +106,16 @@ public class AuthenticatedUserProvider {
         return authenticatedUserRepository.findAllByUsername(username);
     }
 
+    public List<AuthenticatedUser> findAllUnscoped() {
+        return authenticatedUserRepository.findAllUnscoped();
+    }
+
     public void updateLastTenant(String username, Integer tenantId) {
         authenticatedUserRepository.updateLastTenantIdByUsernameHash(username, tenantId);
+    }
+
+    public void removeFromTenant(String username, Integer tenantId) {
+        authenticatedUserRepository.deleteByUsernameHashAndTenantId(username, tenantId);
     }
 
     public long count() {
