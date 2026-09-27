@@ -53,12 +53,13 @@ public class AuthRequest {
     }
 
     /**
-     * @deprecated Kept for source compatibility with clients compiled before tenant selection
-     * was moved out of the login request. The value is intentionally ignored.
+     * Accepts legacy tenant input while tenancy selection is resolved from the
+     * authenticated account's persisted membership.
+     *
+     * @param tenant ignored legacy tenant name
      */
-    @Deprecated
     public void setTenant(String tenant) {
-        // Tenant selection is derived from the user's persisted preference.
+        // Tenant selection is not accepted from login requests.
     }
 
 }

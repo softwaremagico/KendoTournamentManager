@@ -99,7 +99,7 @@ public class AuthFirstLoginIntegrationTest extends AbstractTestNGSpringContextTe
         // Verify that the JWT token was generated
         jwtToken = firstLoginResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertNotNull(jwtToken, "JWT token should be generated on first login");
-        Assert.assertTrue(jwtToken.length() > 0, "JWT token should not be empty");
+        Assert.assertFalse(jwtToken.isEmpty(), "JWT token should not be empty");
 
         // Verify that the session header is present
         final String sessionHeader = firstLoginResult.getResponse().getHeader("X-Session");
@@ -127,7 +127,7 @@ public class AuthFirstLoginIntegrationTest extends AbstractTestNGSpringContextTe
         // Verify that the JWT token was generated for the second login
         final String secondJwtToken = secondLoginResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertNotNull(secondJwtToken, "JWT token should be generated on second login");
-        Assert.assertTrue(secondJwtToken.length() > 0, "JWT token should not be empty");
+        Assert.assertFalse(secondJwtToken.isEmpty(), "JWT token should not be empty");
 
         // Verify that no new tenant or user was created on second login
         Assert.assertEquals(tenantRepository.count(), 1L, "Only one tenant should exist after second login");
@@ -158,4 +158,3 @@ public class AuthFirstLoginIntegrationTest extends AbstractTestNGSpringContextTe
                 "The first user must be a super administrator");
     }
 }
-

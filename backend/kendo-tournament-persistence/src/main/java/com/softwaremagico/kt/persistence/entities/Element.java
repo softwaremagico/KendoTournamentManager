@@ -158,7 +158,7 @@ public abstract class Element implements Serializable {
                     continue;
                 }
                 try {
-                    if (!field.trySetAccessible()) {
+                    if (!field.trySetAccessible()) { // NOSONAR - Tenant validation must inspect JPA private association fields.
                         throw new IllegalStateException("Cannot access tenant relationship '" + field.getName() + "'.");
                     }
                     validateRelatedTenant(field.get(this));
