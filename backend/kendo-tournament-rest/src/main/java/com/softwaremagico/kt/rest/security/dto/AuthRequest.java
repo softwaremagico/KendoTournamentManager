@@ -22,16 +22,12 @@ package com.softwaremagico.kt.rest.security.dto;
  */
 
 import jakarta.validation.constraints.NotBlank;
-import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 public class AuthRequest {
     @NotBlank
     private String username;
     @NotBlank
     private String password;
-
-    @NotBlank
-    private String tenant = TenantContext.LEGACY_TENANT_NAME;
 
     /**
      * Creates an empty authentication request.
@@ -56,11 +52,13 @@ public class AuthRequest {
         this.password = password;
     }
 
-    public String getTenant() {
-        return tenant;
+    /**
+     * Kept for source compatibility with clients compiled before tenant selection
+     * was moved out of the login request. The value is intentionally ignored.
+     */
+    @Deprecated
+    public void setTenant(String tenant) {
+        // Tenant selection is derived from the user's persisted preference.
     }
 
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
 }

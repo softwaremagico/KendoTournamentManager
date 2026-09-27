@@ -99,6 +99,17 @@ public class AuthenticatedUserProvider {
         return Optional.empty();
     }
 
+    public List<AuthenticatedUser> findAllByUsername(String username) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
+            return authenticatedUserRepository.findAllByUsernameHash(username);
+        }
+        return authenticatedUserRepository.findAllByUsername(username);
+    }
+
+    public void updateLastTenant(String username, Integer tenantId) {
+        authenticatedUserRepository.updateLastTenantIdByUsernameHash(username, tenantId);
+    }
+
     public long count() {
         return authenticatedUserRepository.count();
     }
@@ -118,6 +129,7 @@ public class AuthenticatedUserProvider {
         authenticatedUser.setLastname(lastName);
         authenticatedUser.setPassword(password);
         authenticatedUser.setCreatedBy(creator);
+        authenticatedUser.setLastTenantId(TenantContext.getRequiredTenantId());
         if (roles != null) {
             authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
         }

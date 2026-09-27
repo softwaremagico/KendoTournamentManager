@@ -77,6 +77,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -150,8 +151,8 @@ public class AuthApi {
 
     private void createDefaultTenantAndUser(AuthRequest request) {
         try {
-            // Create default tenant if it doesn't exist
-            Tenant tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
+            // Reuse an existing tenant so the first platform administrator belongs to it.
+            Tenant tenant = tenantRepository.findAllByActiveTrueOrderByNameAsc().stream().findFirst().orElse(null);
             if (tenant == null) {
                 tenant = new Tenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
                 tenant = tenantRepository.save(tenant);
@@ -162,10 +163,10 @@ public class AuthApi {
             TenantContext.setTenantId(tenant.getId());
 
             try {
-                // Create user as admin
+                // The first account manages the platform, including tenants.
                 authenticatedUserController.createUser(null, request.getUsername(), request.getUsername(),
-                        "Administrator", request.getPassword(), AvailableRole.ADMIN);
-                RestServerLogger.info(this.getClass(), "Default admin user created: {}", request.getUsername());
+                        "Administrator", request.getPassword(), AvailableRole.SUPER_ADMIN);
+                RestServerLogger.info(this.getClass(), "Default super administrator created: {}", request.getUsername());
 
                 // Notify listeners that admin was generated
                 userAdminGeneratedListeners.forEach(listener -> listener.generated(request.getUsername()));
@@ -190,19 +191,17 @@ public class AuthApi {
         }
         Tenant tenant;
         if (!tenancyEnabled) {
-            //Tenancy is disabled: every user belongs to the single Legacy organization.
+            //Tenancy is disabled: every user belongs to the single Default tenant.
             tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
         } else {
-            tenant = tenantRepository.findByNameAndActiveTrue(request.getTenant()).orElse(null);
+            tenant = resolveLastTenant(request.getUsername());
         }
 
         // If tenant doesn't exist and no users exist, create default tenant and user
         if (tenant == null && authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
             RestServerLogger.info(this.getClass(), "First login detected. Creating default tenant and user.");
             createDefaultTenantAndUser(request);
-            // After creating the default tenant and user, try to resolve the tenant again.
-            // If the incoming request did not provide a tenant (null), fall back to the Legacy tenant id.
-            tenant = tenantRepository.findByNameAndActiveTrue(request == null ? null : request.getTenant()).orElse(null);
+            tenant = resolveLastTenant(request.getUsername());
             if (tenant == null) {
                 tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
             }
@@ -227,6 +226,25 @@ public class AuthApi {
         } finally {
             TenantContext.clear();
         }
+    }
+
+    private Tenant resolveLastTenant(String username) {
+        final List<AuthenticatedUser> users = authenticatedUserProvider.findAllByUsername(username);
+        return users.stream()
+                .map(AuthenticatedUser::getLastTenantId)
+                .filter(Objects::nonNull)
+                .map(tenantRepository::findById)
+                .flatMap(java.util.Optional::stream)
+                .filter(Tenant::isActive)
+                .findFirst()
+                .orElseGet(() -> users.stream()
+                        .map(AuthenticatedUser::getTenantId)
+                        .filter(Objects::nonNull)
+                        .map(tenantRepository::findById)
+                        .flatMap(java.util.Optional::stream)
+                        .filter(Tenant::isActive)
+                        .findFirst()
+                        .orElse(null));
     }
 
     @Operation(summary = "Gets a JWT Token for guest users.")
@@ -414,7 +432,7 @@ public class AuthApi {
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
-        + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
+        + "@securityService.superAdminPrivilege, @securityService.participantPrivilege, @securityService.guestPrivilege)")
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)

@@ -15,7 +15,6 @@ import {BiitLogin} from "@biit-solutions/wizardry-theme/models";
 import {UserSessionService} from "../../services/user-session.service";
 import {Constants} from "../../constants";
 import {ActivityService} from "../../services/rbac/activity.service";
-import {TenantService} from '../../services/tenant.service';
 import packageJson from '../../../../package.json';
 
 const appVersion: string = packageJson.version;
@@ -29,8 +28,6 @@ const appVersion: string = packageJson.version;
 export class LoginComponent implements OnInit {
   username: string;
   password: string;
-  tenant: string = '';
-  tenants: string[] = [];
   loginForm: UntypedFormGroup;
   appVersion: string;
   protected waiting: boolean = true;
@@ -42,8 +39,7 @@ export class LoginComponent implements OnInit {
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService,
               private formBuilder: UntypedFormBuilder, private messageService: MessageService, private loggerService: LoggerService,
               private infoService: InfoService, private translateService: TranslocoService, private environmentService: EnvironmentService,
-               private userSessionService: UserSessionService, private activityService: ActivityService, private translocoService: TranslocoService,
-               private tenantService: TenantService) {
+                private userSessionService: UserSessionService, private activityService: ActivityService, private translocoService: TranslocoService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
@@ -55,28 +51,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.isLastVersion();
     this.managePathQueries();
-    this.tenant = localStorage.getItem('tenant') ?? '';
-    this.tenantService.getActiveNames().subscribe({
-      next: tenants => {
-        this.tenants = tenants;
-        if (tenants.length === 1) {
-          this.tenant = tenants[0];
-        }
-      },
-      error: () => this.tenants = []
-    });
     if (!this.userSessionService.isTokenExpired()) {
       this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
     } else {
       this.waiting = false;
       this.userSessionService.clearToken();
     }
-  }
-
-  showTenantSelector(): boolean {
-    // Show the selector only when there are multiple tenants.
-    // Hide when there are 0 or 1 tenants.
-    return this.tenants.length > 1;
   }
 
   isLastVersion(): void {
@@ -108,9 +88,7 @@ export class LoginComponent implements OnInit {
 
   login(login: BiitLogin): void {
     this.waiting = true;
-    const tenant: string = this.tenant;
-    // Tenant is optional: call login even when tenant is empty
-    this.loginService.login(login.username, login.password, tenant).subscribe({
+    this.loginService.login(login.username, login.password).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.loginService.setAuthenticatedUser(authenticatedUser, (): void => {});
 
@@ -124,12 +102,6 @@ export class LoginComponent implements OnInit {
         this.messageService.infoMessage("userLoggedInMessage");
         this.userSessionService.setUser(AuthenticatedUser.clone(authenticatedUser))
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
-        // Store tenant only when provided, otherwise remove any previous value
-        if (tenant) {
-          localStorage.setItem('tenant', tenant);
-        } else {
-          localStorage.removeItem('tenant');
-        }
       },
       error: (error): void => {
         if (error.status === 401) {

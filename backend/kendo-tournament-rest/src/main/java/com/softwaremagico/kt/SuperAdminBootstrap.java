@@ -66,7 +66,7 @@ public class SuperAdminBootstrap implements ApplicationRunner {
         final Tenant legacyTenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElseThrow(() ->
                 new IllegalStateException("Run the 3.6.0 tenancy migration before bootstrapping a super administrator."));
         if (legacyTenant.getId() == null || legacyTenant.getId() != TenantContext.LEGACY_TENANT_ID) {
-            throw new IllegalStateException("Legacy organization must have tenant ID 1.");
+            throw new IllegalStateException("Default tenant must have tenant ID 1.");
         }
         TenantContext.setTenantId(legacyTenant.getId());
         try {

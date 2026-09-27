@@ -48,16 +48,12 @@ export class LoginService {
     }
   }
 
-  login(username: string, password: string, tenant: string): Observable<AuthenticatedUser> {
+  login(username: string, password: string): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/public/login`;
-    // Build payload dynamically and omit tenant when empty so server receives no tenant property
-    const body: any = {
+    const body = {
       username: username,
       password: password
     };
-    if (tenant) {
-      body.tenant = tenant;
-    }
     return this.http.post<AuthenticatedUser>(url, body, {
       headers: new HttpHeaders({'Content-Type': 'application/json'}),
       responseType: 'json',
@@ -78,6 +74,12 @@ export class LoginService {
         map((response: HttpResponse<AuthenticatedUser>) => this.withAuthHeaders(response)));
   }
 
+  selectTenant(tenantId: number): Observable<AuthenticatedUser> {
+    return this.http.post<AuthenticatedUser>(`${this.baseUrl}/tenants/${tenantId}/select`, {}, {
+      observe: 'response'
+    }).pipe(map((response: HttpResponse<AuthenticatedUser>) => this.withAuthHeaders(response)));
+  }
+
   loginAsParticipant(temporalToken: string): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/public/participant/token`;
     return this.http.post<AuthenticatedUser>(url, new TemporalToken(temporalToken), {
@@ -91,6 +93,7 @@ export class LoginService {
 
   private withAuthHeaders(response: HttpResponse<AuthenticatedUser>): AuthenticatedUser {
     const authenticatedUser: AuthenticatedUser = response.body as AuthenticatedUser;
+    authenticatedUser.roles = UserRoles.getByKeys(authenticatedUser.roles as unknown as string[]);
     authenticatedUser.jwt = response.headers.get('Authorization') ?? '';
     authenticatedUser.expires = Number(response.headers.get('Expires') ?? 0);
     authenticatedUser.session = response.headers.get('X-Session') ?? '';

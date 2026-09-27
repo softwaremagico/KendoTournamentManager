@@ -18,6 +18,18 @@
   </div>
 
   <context-menu #contextMenu dir="rtl" *transloco="let t">
+    @if (tenants.length > 1) {
+      <ng-template contextMenuItem>
+        <mat-form-field>
+          <mat-label>{{ 'tenantName' | transloco }}</mat-label>
+          <mat-select [ngModel]="selectedTenantId" (ngModelChange)="selectTenant($event)">
+            @for (tenant of tenants; track tenant.id) {
+              <mat-option [value]="tenant.id">{{ tenant.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </ng-template>
+    }
     @if (RbacActivity.CHANGE_LANGUAGE | hasPermission) {
       <ng-template contextMenuItem
         (execute)="languagePopup=true">

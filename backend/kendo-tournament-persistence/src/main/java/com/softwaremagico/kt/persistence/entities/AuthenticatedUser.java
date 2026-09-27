@@ -81,6 +81,9 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
     @Column(name = "roles")
     private Set<String> roles;
 
+    @Column(name = "last_tenant_id")
+    private Integer lastTenantId;
+
     public AuthenticatedUser() {
         super();
     }
@@ -177,6 +180,14 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
         this.roles = roles;
     }
 
+    public Integer getLastTenantId() {
+        return lastTenantId;
+    }
+
+    public void setLastTenantId(Integer lastTenantId) {
+        this.lastTenantId = lastTenantId;
+    }
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -187,6 +198,9 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
                     final AvailableRole availableRole = AvailableRole.get(authority);
                     if (availableRole != null) {
                         authorities.add(new SimpleGrantedAuthority(availableRole.name()));
+                        if (availableRole == AvailableRole.SUPER_ADMIN) {
+                            authorities.add(new SimpleGrantedAuthority(AvailableRole.ADMIN.name()));
+                        }
                     }
                 });
             }

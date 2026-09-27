@@ -18,6 +18,8 @@ import {OverlayContainer} from "@angular/cdk/overlay";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {InfoService} from "../../../services/info.service";
 import {UserRoles} from '../../../services/rbac/user-roles';
+import {Tenant, TenantService} from '../../../services/tenant.service';
+import {LoginService} from '../../../services/login.service';
 
 @Component({
   standalone: false,
@@ -38,6 +40,8 @@ export class NavbarComponent implements OnInit {
   protected logoutConfirmation: boolean = false;
   protected languagePopup: boolean = false;
   protected passwordPopup: boolean = false;
+  protected tenants: Tenant[] = [];
+  protected selectedTenantId: number | null = null;
 
   nightModeEnabled: boolean = false;
   protected tenancyEnabled: boolean = true;
@@ -50,9 +54,10 @@ export class NavbarComponent implements OnInit {
               private activityService: ActivityService,
               protected userSessionService: UserSessionService,
               private overlay: OverlayContainer, private _renderer: Renderer2,
-              private darkModeService: DarkModeService,
-              private infoService: InfoService,
-              protected rbacService: RbacService) {
+               private darkModeService: DarkModeService,
+               private infoService: InfoService,
+               protected rbacService: RbacService, private tenantService: TenantService,
+               private loginService: LoginService) {
     this.nightModeEnabled = userSessionService.getNightMode();
   }
 
@@ -60,6 +65,11 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.sessionService.getUser();
+    this.selectedTenantId = this.loginService.getTenantId();
+    this.tenantService.getAvailable().subscribe({
+      next: tenants => this.tenants = tenants,
+      error: () => this.tenants = []
+    });
     this.infoService.getAppConfig().subscribe({
       next: config => {
         if (config && config['tenancyEnabled'] !== undefined) {
@@ -208,6 +218,19 @@ export class NavbarComponent implements OnInit {
     this.userSessionService.setNightMode(this.nightModeEnabled);
     this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
     this.setDarkModeTheme();
+  }
+
+  protected selectTenant(tenantId: number): void {
+    if (tenantId === this.selectedTenantId) {
+      return;
+    }
+    this.loginService.selectTenant(tenantId).subscribe({
+      next: user => {
+        this.loginService.setAuthenticatedUser(user, (): void => {});
+        this.selectedTenantId = tenantId;
+        window.location.reload();
+      }
+    });
   }
 
   private setDarkModeTheme(): void {

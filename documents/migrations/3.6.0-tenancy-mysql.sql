@@ -14,18 +14,24 @@ CREATE TABLE IF NOT EXISTS tenants (
 );
 
 INSERT INTO tenants (name, active)
-SELECT 'Legacy organization', b'1'
-WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
+SELECT 'Default', b'1'
+WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default')
+  AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
 
-SET @legacy_tenant_id = (SELECT id FROM tenants WHERE name = 'Legacy organization');
+UPDATE tenants SET name = 'Default'
+WHERE id = 1 AND name = 'Legacy organization'
+  AND NOT EXISTS (SELECT 1 FROM (SELECT name FROM tenants WHERE name = 'Default') AS default_tenant);
+
+SET @legacy_tenant_id = (SELECT id FROM tenants WHERE name = 'Default');
 
 -- The application reserves tenant 1 for legacy/background data.
 -- Abort manually if this query does not return 1 before continuing:
-SELECT id AS legacy_tenant_id_must_be_1 FROM tenants WHERE name = 'Legacy organization';
+SELECT id AS legacy_tenant_id_must_be_1 FROM tenants WHERE name = 'Default';
 
 -- Add, backfill and protect every entity that inherits Element.
 ALTER TABLE achievements ADD COLUMN IF NOT EXISTS tenant_id INT NULL;
 ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS tenant_id INT NULL;
+ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS last_tenant_id INT NULL;
 ALTER TABLE clubs ADD COLUMN IF NOT EXISTS tenant_id INT NULL;
 ALTER TABLE duels ADD COLUMN IF NOT EXISTS tenant_id INT NULL;
 ALTER TABLE fights ADD COLUMN IF NOT EXISTS tenant_id INT NULL;
@@ -42,6 +48,7 @@ ALTER TABLE tournaments ADD COLUMN IF NOT EXISTS tenant_id INT NULL;
 
 UPDATE achievements SET tenant_id = @legacy_tenant_id WHERE tenant_id IS NULL;
 UPDATE authenticated_users SET tenant_id = @legacy_tenant_id WHERE tenant_id IS NULL;
+UPDATE authenticated_users SET last_tenant_id = tenant_id WHERE last_tenant_id IS NULL;
 UPDATE clubs SET tenant_id = @legacy_tenant_id WHERE tenant_id IS NULL;
 UPDATE duels SET tenant_id = @legacy_tenant_id WHERE tenant_id IS NULL;
 UPDATE fights SET tenant_id = @legacy_tenant_id WHERE tenant_id IS NULL;
@@ -124,6 +131,8 @@ CREATE INDEX tournament_scores_tenant_idx ON tournament_scores (tenant_id);
 
 ALTER TABLE achievements ADD CONSTRAINT achievements_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
 ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
+ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_last_tenant_fk FOREIGN KEY (last_tenant_id) REFERENCES tenants(id);
+CREATE INDEX authenticated_users_last_tenant_idx ON authenticated_users (last_tenant_id);
 ALTER TABLE clubs ADD CONSTRAINT clubs_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
 ALTER TABLE duels ADD CONSTRAINT duels_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
 ALTER TABLE fights ADD CONSTRAINT fights_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);

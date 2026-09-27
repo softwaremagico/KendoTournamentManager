@@ -168,6 +168,7 @@ public class TenantDataCleanupProvider {
             deleted += participantImageRepository.deleteByTenantId(tenantId);
             deleted += participantRepository.deleteByTenantId(tenantId);
             deleted += clubRepository.deleteByTenantId(tenantId);
+            authenticatedUserRepository.clearLastTenantId(tenantId);
             deleted += authenticatedUserRepository.deleteByTenantId(tenantId);
             deleted += tournamentExtraPropertyRepository.deleteByTenantId(tenantId);
             deleted += tournamentImageRepository.deleteByTenantId(tenantId);

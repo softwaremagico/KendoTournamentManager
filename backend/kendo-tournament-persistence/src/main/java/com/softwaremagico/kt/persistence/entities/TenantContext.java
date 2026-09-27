@@ -32,7 +32,7 @@ public final class TenantContext {
     /**
      * Name of the legacy/default tenant used for single-tenant installations and bootstrap.
      */
-    public static final String LEGACY_TENANT_NAME = "Legacy organization";
+    public static final String LEGACY_TENANT_NAME = "Default";
     private static final ThreadLocal<Integer> TENANT_ID = new ThreadLocal<>();
 
     private TenantContext() {

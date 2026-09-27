@@ -268,7 +268,7 @@ enable.guest.user=true
 enable.participant.access=true
 
 # Enable multi-organization support. Set to false so the whole application uses a
-# single organization (the Legacy organization): login ignores the requested tenant,
+# single organization (the Default tenant): login ignores the requested tenant,
 # the login selector disappears and tenant management endpoints return 404.
 enable.tenancy=true
 

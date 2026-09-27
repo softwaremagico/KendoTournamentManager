@@ -13,7 +13,7 @@ import {UserRoles} from "./user-roles";
  *   <li><b>GUEST</b> — read-only access to a single tournament via QR code</li>
  *   <li><b>VIEWER</b> — read-only access to all tournaments plus timer and PDF export</li>
  *   <li><b>EDITOR</b> — all VIEWER activities plus fight/score management and team editing</li>
- *   <li><b>ADMIN</b> — all activities including user management and tournament deletion</li>
+   *   <li><b>ADMIN / SUPER_ADMIN</b> — all activities including user management and tournament deletion</li>
  * </ul>
  *
  * Call {@link setRoles} whenever the authenticated user's roles change, then use
@@ -46,6 +46,7 @@ export class ActivityService {
     for (const role of roles) {
       switch (role.toLowerCase()) {
         case 'admin':
+        case 'super_admin':
           activities = activities.concat(this.getAdminActivities());
           break;
         case 'editor':

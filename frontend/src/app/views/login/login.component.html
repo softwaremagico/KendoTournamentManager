@@ -7,10 +7,6 @@
     (onLogin)="login($event)"
     (onResetPassword)="onResetPassword($event)">
   </biit-login>
-  <mat-form-field class="tenant-selector" *ngIf="showTenantSelector()">
-    <mat-label>{{ 'tenantName' | transloco }}</mat-label>
-    <input matInput name="tenant" [(ngModel)]="tenant">
-  </mat-form-field>
 }
 <div class="app-version">
   v{{appVersion}}

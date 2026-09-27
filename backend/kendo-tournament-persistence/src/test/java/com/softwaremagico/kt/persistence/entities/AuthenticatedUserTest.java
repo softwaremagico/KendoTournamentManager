@@ -69,6 +69,18 @@ public class AuthenticatedUserTest {
     }
 
     @Test
+    public void getAuthorities_withSuperAdminRole_expectAdminAuthority() {
+        final AuthenticatedUser user = new AuthenticatedUser("john");
+        user.setRoles(Set.of("SUPER_ADMIN"));
+
+        final Set<? extends GrantedAuthority> authorities = (Set<? extends GrantedAuthority>) user.getAuthorities();
+
+        assertEquals(authorities.size(), 2);
+        assertTrue(authorities.stream().anyMatch(authority -> "SUPER_ADMIN".equals(authority.getAuthority())));
+        assertTrue(authorities.stream().anyMatch(authority -> "ADMIN".equals(authority.getAuthority())));
+    }
+
+    @Test
     public void getAuthorities_withUnknownRole_expectEmptyAuthorities() {
         final AuthenticatedUser user = new AuthenticatedUser("john");
         user.setRoles(Set.of("NOT_A_ROLE"));
@@ -167,5 +179,4 @@ public class AuthenticatedUserTest {
         assertEquals(user, user);
     }
 }
-
 

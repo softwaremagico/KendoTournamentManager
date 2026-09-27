@@ -30,6 +30,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -50,9 +51,21 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
 
     Optional<AuthenticatedUser> findByUsernameAndTenantId(String username, Integer tenantId);
 
+    List<AuthenticatedUser> findAllByUsername(String username);
+
+    List<AuthenticatedUser> findAllByUsernameHash(String username);
+
     boolean existsByRolesContaining(String role);
 
     @Modifying
     @Query("DELETE FROM AuthenticatedUser u WHERE u.tenantId = :tenantId")
     long deleteByTenantId(@Param("tenantId") Integer tenantId);
+
+    @Modifying
+    @Query("UPDATE AuthenticatedUser u SET u.lastTenantId = :tenantId WHERE u.usernameHash = :username")
+    int updateLastTenantIdByUsernameHash(@Param("username") String username, @Param("tenantId") Integer tenantId);
+
+    @Modifying
+    @Query("UPDATE AuthenticatedUser u SET u.lastTenantId = NULL WHERE u.lastTenantId = :tenantId")
+    int clearLastTenantId(@Param("tenantId") Integer tenantId);
 }

@@ -81,7 +81,7 @@ application, run exactly one platform-specific script, then start 3.6.0:
 | PostgreSQL 14+ | [`migrations/3.6.0-tenancy-postgresql.sql`](migrations/3.6.0-tenancy-postgresql.sql) |
 | MySQL 8+ | [`migrations/3.6.0-tenancy-mysql.sql`](migrations/3.6.0-tenancy-mysql.sql) |
 
-The migration creates `Legacy organization` with ID `1` and assigns all
+The migration creates `Default` with ID `1` and assigns all
 existing records to it. The PostgreSQL script aborts when that invariant cannot
 be established. MySQL prints the required ID check: stop immediately unless it
 returns `1`. MySQL removes its prior global unique indexes automatically before
@@ -90,7 +90,7 @@ adding the tenant-local uniqueness constraints.
 The scripts are single-use migration scripts. MySQL DDL commits implicitly, so
 restore the verified backup rather than rerunning a partially completed script.
 
-On a new empty installation, the application creates `Legacy organization`
+On a new empty installation, the application creates `Default`
 automatically. On an installation that already has users, clubs or tournaments,
 startup fails until the manual 3.6.0 script has been executed.
 

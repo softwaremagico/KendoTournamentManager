@@ -14,6 +14,8 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TeamRankingModule} from "../../team-ranking/team-ranking.module";
 import {LanguageSelectorModule} from "../../language-selector/language-selector.module";
 import {ResetPasswordModule} from "../../reset-password/reset-password.module";
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [NavbarComponent],
@@ -33,6 +35,8 @@ import {ResetPasswordModule} from "../../reset-password/reset-password.module";
         TeamRankingModule,
         LanguageSelectorModule,
         ResetPasswordModule,
+        MatFormFieldModule,
+        MatSelectModule,
     ],
   exports: [NavbarComponent],
 })

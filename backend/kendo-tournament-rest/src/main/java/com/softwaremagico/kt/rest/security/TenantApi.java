@@ -45,6 +45,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -58,6 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -123,6 +125,44 @@ public class TenantApi {
         return tenantRepository.findAll();
     }
 
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, "
+            + "@securityService.adminPrivilege, @securityService.superAdminPrivilege)")
+    @Operation(summary = "Lists the active organizations available to the current user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/tenants/available", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<Tenant> getAvailableTenants(Authentication authentication) {
+        ensureTenancyEnabled();
+        if (authentication.getAuthorities().stream().anyMatch(authority -> AvailableRole.SUPER_ADMIN.name().equals(authority.getAuthority()))) {
+            return tenantRepository.findAllByActiveTrueOrderByNameAsc();
+        }
+        return authenticatedUserController.findAllByUsername(authentication.getName()).stream()
+                .map(AuthenticatedUser::getTenantId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .map(tenantRepository::findById)
+                .flatMap(java.util.Optional::stream)
+                .filter(Tenant::isActive)
+                .toList();
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, "
+            + "@securityService.adminPrivilege, @securityService.superAdminPrivilege)")
+    @Operation(summary = "Changes the current organization and remembers it for the user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/tenants/{tenantId}/select", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<IAuthenticatedUser> selectTenant(@PathVariable Integer tenantId, Authentication authentication,
+                                                             HttpServletRequest httpRequest) {
+        ensureTenancyEnabled();
+        final Tenant tenant = tenantRepository.findById(tenantId).filter(Tenant::isActive)
+                .orElseThrow(() -> new InvalidRequestException(this.getClass(), "Tenant not found or inactive."));
+        final AuthenticatedUser user = authenticatedUserController.findAllByUsername(authentication.getName()).stream()
+                .filter(candidate -> Objects.equals(candidate.getTenantId(), tenant.getId()))
+                .findFirst().orElseThrow(() -> new InvalidRequestException(this.getClass(), "User is not available in this tenant."));
+        authenticatedUserController.updateLastTenant(authentication.getName(), tenantId);
+        final String jwtToken = jwtTokenUtil.generateAccessToken(user, getClientIP(httpRequest));
+        return ResponseEntity.ok().headers(getLoginHeaders(jwtToken, jwtTokenUtil.getJwtExpirationTime(), jwtTokenUtil.getSession(jwtToken)))
+                .body(user);
+    }
+
     @Transactional
     @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
     @Operation(summary = "Updates tenant name or activation state.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -152,9 +192,20 @@ public class TenantApi {
         }
     }
 
+    @Transactional
+    @PreAuthorize("hasAuthority(@securityService.superAdminPrivilege)")
+    @Operation(summary = "Deletes a tenant and all its data.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(path = "/tenants/{tenantId}")
+    public void deleteTenant(@PathVariable Integer tenantId) {
+        ensureTenancyEnabled();
+        tenantDataCleanupProvider.deleteAllData(tenantId);
+        tenantRepository.deleteById(tenantId);
+    }
+
     private void ensureTenancyEnabled() {
         if (!tenancyEnabled) {
-            throw new NotFoundException(this.getClass(), "Tenancy is disabled. Only the Legacy organization is available.");
+            throw new NotFoundException(this.getClass(), "Tenancy is disabled. Only the Default tenant is available.");
         }
     }
 

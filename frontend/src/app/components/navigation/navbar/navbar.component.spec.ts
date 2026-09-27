@@ -9,6 +9,9 @@ import {UserSessionService} from '../../../services/user-session.service';
 import {DarkModeService} from '../../../services/notifications/dark-mode.service';
 import {RbacService} from '../../../services/rbac/rbac.service';
 import {NavbarComponent} from './navbar.component';
+import {TenantService} from '../../../services/tenant.service';
+import {LoginService} from '../../../services/login.service';
+import {InfoService} from '../../../services/info.service';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -21,6 +24,9 @@ describe('NavbarComponent', () => {
   let rendererSpy: jasmine.SpyObj<Renderer2>;
   let darkModeServiceMock: DarkModeService;
   let rbacServiceSpy: jasmine.SpyObj<RbacService>;
+  let tenantServiceSpy: jasmine.SpyObj<TenantService>;
+  let loginServiceSpy: jasmine.SpyObj<LoginService>;
+  let infoServiceSpy: jasmine.SpyObj<InfoService>;
 
   beforeEach(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -34,11 +40,17 @@ describe('NavbarComponent', () => {
       darkModeSwitched: new Subject<boolean>()
     } as DarkModeService;
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
+    tenantServiceSpy = jasmine.createSpyObj('TenantService', ['getAvailable']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', ['getTenantId', 'selectTenant', 'setAuthenticatedUser']);
+    infoServiceSpy = jasmine.createSpyObj('InfoService', ['getAppConfig']);
 
     userSessionServiceSpy.getNightMode.and.returnValue(false);
     userSessionServiceSpy.getUser.and.returnValue({email: 'john@doe.com'} as any);
     activityServiceSpy.isAllowed.and.returnValue(true);
     translocoServiceSpy.selectTranslate.and.returnValue(of('translated-title'));
+    tenantServiceSpy.getAvailable.and.returnValue(of([]));
+    loginServiceSpy.getTenantId.and.returnValue(1);
+    infoServiceSpy.getAppConfig.and.returnValue(of({tenancyEnabled: true}));
 
     const classListMock = {
       add: jasmine.createSpy('add'),
@@ -56,7 +68,10 @@ describe('NavbarComponent', () => {
       overlayContainerSpy,
       rendererSpy,
       darkModeServiceMock,
-      rbacServiceSpy
+      infoServiceSpy,
+      rbacServiceSpy,
+      tenantServiceSpy,
+      loginServiceSpy
     );
   });
 
@@ -155,4 +170,3 @@ describe('NavbarComponent', () => {
     expect(rendererSpy.removeClass).toHaveBeenCalledWith(document.body, 'dark-mode');
   });
 });
-

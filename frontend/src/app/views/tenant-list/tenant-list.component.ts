@@ -46,6 +46,13 @@ export class TenantListComponent implements OnInit {
     });
   }
 
+  delete(tenant: Tenant): void {
+    this.tenantService.delete(tenant.id).subscribe({
+      next: () => this.load(),
+      error: () => this.error = 'No se pudo eliminar el tenant.'
+    });
+  }
+
   isSuperAdmin(): boolean {
     return this.userSessionService.getUser()?.roles?.includes(UserRoles.SUPER_ADMIN) ?? false;
   }

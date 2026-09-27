@@ -145,6 +145,14 @@ public class AuthenticatedUserController {
         return authenticatedUserProvider.findAll();
     }
 
+    public List<AuthenticatedUser> findAllByUsername(String username) {
+        return authenticatedUserProvider.findAllByUsername(username);
+    }
+
+    public void updateLastTenant(String username, Integer tenantId) {
+        authenticatedUserProvider.updateLastTenant(username, tenantId);
+    }
+
     public void delete(AuthenticatedUser authenticatedUser) {
         authenticatedUserProvider.delete(authenticatedUser);
     }

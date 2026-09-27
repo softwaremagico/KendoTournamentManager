@@ -32,11 +32,19 @@ export class TenantService {
     return this.http.get<string[]>(this.environmentService.getBackendUrl() + '/auth/public/tenants');
   }
 
+  getAvailable(): Observable<Tenant[]> {
+    return this.http.get<Tenant[]>(`${this.url}/available`);
+  }
+
   create(request: CreateTenantRequest): Observable<Tenant> {
     return this.http.post<Tenant>(this.url, request);
   }
 
   update(tenant: Tenant): Observable<Tenant> {
     return this.http.patch<Tenant>(`${this.url}/${tenant.id}`, {name: tenant.name, active: tenant.active});
+  }
+
+  delete(tenantId: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${tenantId}`);
   }
 }

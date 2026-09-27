@@ -12,21 +12,27 @@ CREATE TABLE IF NOT EXISTS tenants (
 );
 
 INSERT INTO tenants (name, active)
-SELECT 'Legacy organization', TRUE
-WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
+SELECT 'Default', TRUE
+WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default')
+  AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
+
+UPDATE tenants SET name = 'Default'
+WHERE id = 1 AND name = 'Legacy organization'
+  AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default');
 
 -- The application reserves tenant 1 for legacy/background data. Do not continue
 -- against an installation where that invariant cannot be established.
 DO $$
 BEGIN
-    IF (SELECT id FROM tenants WHERE name = 'Legacy organization') <> 1 THEN
-        RAISE EXCEPTION 'Legacy organization must have tenant id 1; resolve existing tenant data before migration.';
+    IF (SELECT id FROM tenants WHERE name = 'Default') <> 1 THEN
+        RAISE EXCEPTION 'Default tenant must have tenant id 1; resolve existing tenant data before migration.';
     END IF;
 END $$;
 
 -- Add the ownership column to every entity that inherits Element.
 ALTER TABLE achievements ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
 ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS last_tenant_id INTEGER;
 ALTER TABLE clubs ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
 ALTER TABLE duels ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
 ALTER TABLE fights ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
@@ -47,7 +53,7 @@ DECLARE
     legacy_tenant_id INTEGER;
     table_name TEXT;
 BEGIN
-    SELECT id INTO legacy_tenant_id FROM tenants WHERE name = 'Legacy organization';
+    SELECT id INTO legacy_tenant_id FROM tenants WHERE name = 'Default';
     FOREACH table_name IN ARRAY ARRAY[
         'achievements', 'authenticated_users', 'clubs', 'duels', 'fights', 'groups_links',
         'participant_image', 'participants', 'roles', 'teams', 'tournament_extra_properties',
@@ -62,6 +68,16 @@ BEGIN
         EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON %I (tenant_id)', table_name || '_tenant_idx', table_name);
     END LOOP;
 END $$;
+
+UPDATE authenticated_users SET last_tenant_id = tenant_id WHERE last_tenant_id IS NULL;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'authenticated_users_last_tenant_fk') THEN
+        ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_last_tenant_fk
+            FOREIGN KEY (last_tenant_id) REFERENCES tenants(id);
+    END IF;
+END $$;
+CREATE INDEX IF NOT EXISTS authenticated_users_last_tenant_idx ON authenticated_users (last_tenant_id);
 
 -- Replace global business uniqueness with tenant-local uniqueness.
 DO $$
