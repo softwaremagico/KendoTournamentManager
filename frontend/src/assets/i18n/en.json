@@ -8,6 +8,8 @@
   "tenantName": "Tenant",
   "tenantUsersAssigned": "Users assigned successfully.",
   "tenantUsersUnassigned": "Users unassigned successfully.",
+  "tenantChanged": "Organization changed successfully.",
+  "tenantChangeFailed": "The organization could not be changed.",
   "accreditation": "Accreditation",
   "accreditationBad": "A problem has been found when generating the accreditation card. There is any other program accessing to the destination file?",
   "accreditationOK": "The accreditation has been created in a PDF file.",

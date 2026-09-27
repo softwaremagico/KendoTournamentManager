@@ -12,6 +12,8 @@ import {NavbarComponent} from './navbar.component';
 import {TenantService} from '../../../services/tenant.service';
 import {LoginService} from '../../../services/login.service';
 import {InfoService} from '../../../services/info.service';
+import {MessageService} from '../../../services/message.service';
+import {ChangeDetectorRef} from '@angular/core';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -27,6 +29,7 @@ describe('NavbarComponent', () => {
   let tenantServiceSpy: jasmine.SpyObj<TenantService>;
   let loginServiceSpy: jasmine.SpyObj<LoginService>;
   let infoServiceSpy: jasmine.SpyObj<InfoService>;
+  let messageServiceSpy: jasmine.SpyObj<MessageService>;
 
   beforeEach(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -43,6 +46,7 @@ describe('NavbarComponent', () => {
     tenantServiceSpy = jasmine.createSpyObj('TenantService', ['getAvailable']);
     loginServiceSpy = jasmine.createSpyObj('LoginService', ['getTenantId', 'selectTenant', 'setAuthenticatedUser']);
     infoServiceSpy = jasmine.createSpyObj('InfoService', ['getAppConfig']);
+    messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage']);
 
     userSessionServiceSpy.getNightMode.and.returnValue(false);
     userSessionServiceSpy.getUser.and.returnValue({email: 'john@doe.com'} as any);
@@ -71,7 +75,9 @@ describe('NavbarComponent', () => {
       infoServiceSpy,
       rbacServiceSpy,
       tenantServiceSpy,
-      loginServiceSpy
+      loginServiceSpy,
+      messageServiceSpy,
+      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetectorRef', ['detectChanges'])
     );
   });
 

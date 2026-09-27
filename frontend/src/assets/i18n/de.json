@@ -3,6 +3,8 @@
   "account": "Konto",
   "tenantUsersAssigned": "Benutzer wurden erfolgreich zugewiesen.",
   "tenantUsersUnassigned": "Benutzer wurden erfolgreich entfernt.",
+  "tenantChanged": "Organisation erfolgreich gewechselt.",
+  "tenantChangeFailed": "Die Organisation konnte nicht gewechselt werden.",
   "accreditation": "Akkreditierung",
   "accreditationBad": "Ein Problem beim erstellen der Akkreditierungskarten trat auf. Ein anderes Programm hat eventuell Zugriff auf die Datei?",
   "accreditationOK": "Die Akkreditierung wurde in einer PDF-Datei erstellt.",

@@ -29,6 +29,20 @@
   fill: var(--logo-color);
 }
 
+.tenant-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  min-width: min(26rem, 75vw);
+}
+
+.tenant-popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
 @media screen and (max-width: 1000px) {
   .logo {
     display: none !important;

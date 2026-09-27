@@ -14,8 +14,8 @@ import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TeamRankingModule} from "../../team-ranking/team-ranking.module";
 import {LanguageSelectorModule} from "../../language-selector/language-selector.module";
 import {ResetPasswordModule} from "../../reset-password/reset-password.module";
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
+import {BiitDropdownModule} from '@biit-solutions/wizardry-theme/inputs';
+import {DropdownInterfacePipeModule} from '../../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module';
 
 @NgModule({
   declarations: [NavbarComponent],
@@ -35,8 +35,8 @@ import {MatSelectModule} from '@angular/material/select';
         TeamRankingModule,
         LanguageSelectorModule,
         ResetPasswordModule,
-        MatFormFieldModule,
-        MatSelectModule,
+        BiitDropdownModule,
+        DropdownInterfacePipeModule,
     ],
   exports: [NavbarComponent],
 })

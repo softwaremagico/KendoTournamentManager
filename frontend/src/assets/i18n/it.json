@@ -3,6 +3,8 @@
   "account": "Account",
   "tenantUsersAssigned": "Utenti assegnati correttamente.",
   "tenantUsersUnassigned": "Utenti rimossi correttamente.",
+  "tenantChanged": "Organizzazione cambiata correttamente.",
+  "tenantChangeFailed": "Non è stato possibile cambiare organizzazione.",
   "accreditation": "Accreditamento",
   "accreditationBad": "Si è verificato un problema mentre si stava creando il badge. Esiste qualche altro programmo che sta accedendo al file?",
   "accreditationOK": "Il badge è stato creato in un file PDF",

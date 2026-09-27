@@ -24,8 +24,12 @@ export const frontendRxStompConfig: RxStompConfig = {
   beforeConnect: (stompClient: any): Promise<void> => {
     return new Promise<void>((resolve, reject): void => {
       const token: string | null = localStorage.getItem('jwt');
+      if (!token || token.split('.').length !== 3) {
+        reject(new Error('A valid JWT is required before connecting websockets.'));
+        return;
+      }
       stompClient._stompClient.connectHeaders = {
-        "JWT-Token" : token
+        "JWT-Token": token
       };
       resolve();
     });

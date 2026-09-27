@@ -132,9 +132,6 @@ public class TenantApi {
     @GetMapping(path = "/tenants/available", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<Tenant> getAvailableTenants(Authentication authentication) {
         ensureTenancyEnabled();
-        if (authentication.getAuthorities().stream().anyMatch(authority -> AvailableRole.SUPER_ADMIN.name().equals(authority.getAuthority()))) {
-            return tenantRepository.findAllByActiveTrueOrderByNameAsc();
-        }
         return authenticatedUserController.findAllByUsername(authentication.getName()).stream().findFirst().stream()
                 .flatMap(user -> authenticatedUserController.getTenantIds(user).stream())
                 .map(tenantRepository::findById)

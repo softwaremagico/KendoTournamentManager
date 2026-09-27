@@ -14,12 +14,12 @@ import {LoginService} from './login.service';
   providedIn: 'root'
 })
 export class MessageService implements OnDestroy {
-  private static readonly ERROR_DEDUPLICATION_MILLIS = 10000;
+  private static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
 
   private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   private messageSubscription: Subscription;
-  private readonly recentErrors: Map<string, number> = new Map<string, number>();
+  private readonly recentMessages: Map<string, number> = new Map<string, number>();
 
   constructor(public readonly snackBar: BiitSnackbarService, private readonly translateService: TranslocoService,
               private readonly loggerService: LoggerService, private readonly rxStompService: RxStompService,
@@ -60,22 +60,23 @@ export class MessageService implements OnDestroy {
   }
 
   private openSnackBar(message: string, type: NotificationType, duration: number, action?: string): void {
-    if (type === NotificationType.ERROR && this.wasRecentlyShown(message)) {
+    const translatedMessage = this.translateService.translate(message);
+    if (this.wasRecentlyShown(`${type}:${translatedMessage}`)) {
       return;
     }
-    this.snackBar.showNotification(this.translateService.translate(message), type, action, duration)
+    this.snackBar.showNotification(translatedMessage, type, action, duration)
   }
 
   private wasRecentlyShown(message: string): boolean {
     const now = Date.now();
-    const previous = this.recentErrors.get(message);
-    this.recentErrors.set(message, now);
-    for (const [error, timestamp] of this.recentErrors) {
-      if (now - timestamp > MessageService.ERROR_DEDUPLICATION_MILLIS) {
-        this.recentErrors.delete(error);
+    const previous = this.recentMessages.get(message);
+    this.recentMessages.set(message, now);
+    for (const [recentMessage, timestamp] of this.recentMessages) {
+      if (now - timestamp > MessageService.MESSAGE_DEDUPLICATION_MILLIS) {
+        this.recentMessages.delete(recentMessage);
       }
     }
-    return previous !== undefined && now - previous < MessageService.ERROR_DEDUPLICATION_MILLIS;
+    return previous !== undefined && now - previous < MessageService.MESSAGE_DEDUPLICATION_MILLIS;
   }
 
 

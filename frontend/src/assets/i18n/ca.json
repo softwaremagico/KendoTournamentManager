@@ -3,6 +3,8 @@
   "account": "Compte",
   "tenantUsersAssigned": "Usuaris assignats correctament.",
   "tenantUsersUnassigned": "Usuaris desassignats correctament.",
+  "tenantChanged": "Tenant canviat correctament.",
+  "tenantChangeFailed": "No s'ha pogut canviar el tenant.",
   "accreditation": "Acreditació",
   "accreditationBad": "Ha ocorregut un problema quan s'intentava generar l'acreditació. Existeix algun altre programa intentant accedir a l'arxiu?.",
   "accreditationOK": "L'acreditació ha sigut creada en un arxiu PDF.",

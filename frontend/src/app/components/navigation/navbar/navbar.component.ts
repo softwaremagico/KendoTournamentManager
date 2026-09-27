@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
 import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
@@ -20,6 +20,7 @@ import {InfoService} from "../../../services/info.service";
 import {UserRoles} from '../../../services/rbac/user-roles';
 import {Tenant, TenantService} from '../../../services/tenant.service';
 import {LoginService} from '../../../services/login.service';
+import {MessageService} from '../../../services/message.service';
 
 @Component({
   standalone: false,
@@ -39,9 +40,12 @@ export class NavbarComponent implements OnInit {
   protected readonly RbacActivity = RbacActivity;
   protected logoutConfirmation: boolean = false;
   protected languagePopup: boolean = false;
+  protected tenantPopup: boolean = false;
   protected passwordPopup: boolean = false;
   protected tenants: Tenant[] = [];
   protected selectedTenantId: number | null = null;
+  protected tenantOptions: { label: string, value: string }[] = [];
+  protected pendingTenantId: string | null = null;
 
   nightModeEnabled: boolean = false;
   protected tenancyEnabled: boolean = true;
@@ -57,7 +61,8 @@ export class NavbarComponent implements OnInit {
                private darkModeService: DarkModeService,
                private infoService: InfoService,
                protected rbacService: RbacService, private tenantService: TenantService,
-               private loginService: LoginService) {
+               private loginService: LoginService, private messageService: MessageService,
+               private readonly cdr: ChangeDetectorRef) {
     this.nightModeEnabled = userSessionService.getNightMode();
   }
 
@@ -67,7 +72,10 @@ export class NavbarComponent implements OnInit {
     this.user = this.sessionService.getUser();
     this.selectedTenantId = this.loginService.getTenantId();
     this.tenantService.getAvailable().subscribe({
-      next: tenants => this.tenants = tenants,
+      next: tenants => {
+        this.tenants = tenants;
+        this.tenantOptions = tenants.map(tenant => ({label: tenant.name, value: String(tenant.id)}));
+      },
       error: () => this.tenants = []
     });
     this.infoService.getAppConfig().subscribe({
@@ -220,17 +228,42 @@ export class NavbarComponent implements OnInit {
     this.setDarkModeTheme();
   }
 
-  protected selectTenant(tenantId: number): void {
+  protected selectTenant(): void {
+    if (this.pendingTenantId == null) {
+      return;
+    }
+    const tenantId = Number(this.pendingTenantId);
     if (tenantId === this.selectedTenantId) {
+      this.tenantPopup = false;
       return;
     }
     this.loginService.selectTenant(tenantId).subscribe({
       next: user => {
         this.loginService.setAuthenticatedUser(user, (): void => {});
         this.selectedTenantId = tenantId;
-        window.location.reload();
+        this.closeTenantPopup();
+        this.cdr.detectChanges();
+        this.messageService.infoMessage('tenantChanged');
+        const currentUrl = this.router.url;
+        setTimeout(() => {
+          this.router.navigateByUrl('/', {skipLocationChange: true})
+            .then(() => this.router.navigateByUrl(currentUrl));
+        }, 750);
+      },
+      error: () => {
+        this.messageService.warningMessage('tenantChangeFailed');
       }
     });
+  }
+
+  protected closeTenantPopup(): void {
+    this.pendingTenantId = this.selectedTenantId?.toString() ?? null;
+    this.tenantPopup = false;
+  }
+
+  protected openTenantPopup(): void {
+    this.pendingTenantId = this.selectedTenantId?.toString() ?? null;
+    this.tenantPopup = true;
   }
 
   private setDarkModeTheme(): void {

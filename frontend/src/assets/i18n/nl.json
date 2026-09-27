@@ -3,6 +3,8 @@
   "account": "Rekening",
   "tenantUsersAssigned": "Gebruikers zijn toegewezen.",
   "tenantUsersUnassigned": "Gebruikers zijn verwijderd.",
+  "tenantChanged": "Organisatie is gewijzigd.",
+  "tenantChangeFailed": "De organisatie kon niet worden gewijzigd.",
   "accreditation": "Bewijs van deelname",
   "accreditationBad": "Er is een probleem bij het creën van het deelnemersbewijs. Gebruikt een ander programma het bestand?",
   "accreditationOK": "Het bewijs van deelname is aangemaakt in PDF-bestand.",

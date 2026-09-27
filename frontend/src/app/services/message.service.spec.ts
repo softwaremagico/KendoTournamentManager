@@ -40,4 +40,11 @@ describe('MessageService', () => {
 
     expect(snackBar.showNotification).toHaveBeenCalledTimes(2);
   });
+
+  it('shows a repeated success message only once during the deduplication window', () => {
+    service.infoMessage('Saved successfully');
+    service.infoMessage('Saved successfully');
+
+    expect(snackBar.showNotification).toHaveBeenCalledTimes(1);
+  });
 });

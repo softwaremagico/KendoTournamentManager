@@ -19,15 +19,8 @@
 
   <context-menu #contextMenu dir="rtl" *transloco="let t">
     @if (tenants.length > 1) {
-      <ng-template contextMenuItem>
-        <mat-form-field>
-          <mat-label>{{ 'tenantName' | transloco }}</mat-label>
-          <mat-select [ngModel]="selectedTenantId" (ngModelChange)="selectTenant($event)">
-            @for (tenant of tenants; track tenant.id) {
-              <mat-option [value]="tenant.id">{{ tenant.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+      <ng-template contextMenuItem (execute)="openTenantPopup()">
+        <span id="tenant-option">{{ 'tenantName' | transloco }}</span>
       </ng-template>
     }
     @if (RbacActivity.CHANGE_LANGUAGE | hasPermission) {
@@ -95,6 +88,24 @@
     <biit-popup id="language-selector-popup" closable
       [title]="t('selectLanguage')" (onClosed)="languagePopup=false">
       <language-selector (closed)="languagePopup=false" style="width:100%"></language-selector>
+    </biit-popup>
+  }
+
+  @if (tenantPopup) {
+    <biit-popup id="tenant-selector-popup" closable
+      [title]="'tenantName' | transloco" (onClosed)="closeTenantPopup()">
+      <div class="tenant-popup-content">
+        <biit-dropdown id="tenant-selector"
+          [ngModel]="(pendingTenantId ?? undefined) | dropdownInterface: tenantOptions"
+          (ngModelChange)="pendingTenantId = $event.value"
+          [data]="tenantOptions" [label]="'label'" [value]="'value'"
+          [title]="'tenantName' | transloco">
+        </biit-dropdown>
+        <div class="tenant-popup-actions">
+          <button biit-button secondary (click)="closeTenantPopup()">{{ 'cancel' | transloco }}</button>
+          <button biit-button primary [disabled]="pendingTenantId === selectedTenantId?.toString()" (click)="selectTenant()">{{ 'accept' | transloco }}</button>
+        </div>
+      </div>
     </biit-popup>
   }
 
