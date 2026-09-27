@@ -28,9 +28,17 @@ jobs:
             sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
             sudo apt-get update
             sudo apt-get install -y google-chrome-stable
+      - restore_cache:
+          keys:
+            - v1-frontend-npm-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
-          command: npm install
+          command: npm ci --no-audit --no-fund --loglevel=verbose
+          no_output_timeout: 20m
+      - save_cache:
+          key: v1-frontend-npm-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
       - run:
           name: Run tests
           command: npm test -- --watch=false --browsers=ChromeHeadless
