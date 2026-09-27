@@ -33,7 +33,19 @@ jobs:
             - v1-frontend-npm-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
-          command: npm ci --no-audit --no-fund --loglevel=verbose
+          command: |
+            npm ci --no-audit --no-fund --foreground-scripts &
+            npm_pid=$!
+            while kill -0 "$npm_pid" 2>/dev/null; do
+              echo "npm ci still running..."
+              sleep 60
+            done &
+            heartbeat_pid=$!
+            wait "$npm_pid"
+            install_status=$?
+            kill "$heartbeat_pid" 2>/dev/null || true
+            wait "$heartbeat_pid" 2>/dev/null || true
+            exit "$install_status"
           no_output_timeout: 20m
       - save_cache:
           key: v1-frontend-npm-{{ checksum "package-lock.json" }}
