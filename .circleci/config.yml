@@ -30,7 +30,7 @@ jobs:
             sudo apt-get install -y google-chrome-stable
       - restore_cache:
           keys:
-            - v1-frontend-npm-{{ checksum "package-lock.json" }}
+            - v2-frontend-node-modules-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -48,9 +48,10 @@ jobs:
             exit "$install_status"
           no_output_timeout: 20m
       - save_cache:
-          key: v1-frontend-npm-{{ checksum "package-lock.json" }}
+          key: v2-frontend-node-modules-{{ checksum "package-lock.json" }}
           paths:
             - ~/.npm
+            - node_modules
       - run:
           name: Run tests
           command: npm test -- --watch=false --browsers=ChromeHeadless
