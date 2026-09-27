@@ -63,7 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = "tenancyDisabled")
 public class TenancyDisabledTest extends AbstractTestNGSpringContextTests {
-	private static final String LEGACY_TENANT = "Legacy organization";
+	private static final String LEGACY_TENANT = "Default";
 	private static final String PLATFORM_ADMIN = "platform.single.admin";
 	private static final String LEGACY_ADMIN = "legacy.single.admin";
 	private static final String PASSWORD = "secure-password";

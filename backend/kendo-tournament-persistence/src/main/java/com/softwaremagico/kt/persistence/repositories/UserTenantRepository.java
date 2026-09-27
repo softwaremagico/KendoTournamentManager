@@ -26,4 +26,7 @@ public interface UserTenantRepository extends JpaRepository<UserTenant, Integer>
     @Modifying
     @Query("DELETE FROM UserTenant u WHERE u.tenantId = :tenantId")
     long deleteByTenantId(@Param("tenantId") Integer tenantId);
+
+    @Query("SELECT u.authenticatedUserId FROM UserTenant u GROUP BY u.authenticatedUserId HAVING COUNT(u) = 1 AND MAX(u.tenantId) = :tenantId")
+    List<Integer> findUserIdsOnlyAssignedToTenant(@Param("tenantId") Integer tenantId);
 }

@@ -58,6 +58,8 @@ public class TenantHibernateFilter {
         final Integer tenantId = TenantContext.getTenantId();
         if (tenantId != null) {
             entityManager.unwrap(Session.class).enableFilter("tenantFilter").setParameter("tenantId", tenantId);
+        } else {
+            entityManager.unwrap(Session.class).disableFilter("tenantFilter");
         }
         return joinPoint.proceed();
     }

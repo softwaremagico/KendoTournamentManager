@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS tenants (
 INSERT INTO tenants (name, active)
 SELECT 'Default', TRUE
 WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default')
+  -- Supports installations created by the previous tenancy implementation.
   AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
 
 UPDATE tenants SET name = 'Default'
@@ -94,11 +95,13 @@ DO $$
 BEGIN
     IF EXISTS (
         SELECT 1 FROM authenticated_users
-        GROUP BY tenant_id, username_hash HAVING COUNT(*) > 1
+        GROUP BY username_hash HAVING COUNT(*) > 1
     ) THEN
-        RAISE EXCEPTION 'Duplicate usernames exist in the legacy tenant; resolve them before migration.';
+        RAISE EXCEPTION 'Duplicate usernames exist; resolve them before migration.';
     END IF;
 END $$;
+
+ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_username_hash_key UNIQUE (username_hash);
 
 ALTER TABLE clubs DROP CONSTRAINT IF EXISTS clubs_name_city_key;
 ALTER TABLE tournaments DROP CONSTRAINT IF EXISTS tournaments_name_key;

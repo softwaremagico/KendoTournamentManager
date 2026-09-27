@@ -78,8 +78,7 @@ public class TenantDataCleanupProvider {
             "DELETE FROM fights_by_group WHERE group_id IN (SELECT id FROM tournament_groups WHERE tenant_id = ?)",
             "DELETE FROM teams_by_group WHERE group_id IN (SELECT id FROM tournament_groups WHERE tenant_id = ?)",
             "DELETE FROM unties WHERE group_id IN (SELECT id FROM tournament_groups WHERE tenant_id = ?)",
-            "DELETE FROM members_of_team WHERE team_id IN (SELECT id FROM teams WHERE tenant_id = ?)",
-            "DELETE FROM authenticated_user_roles WHERE authenticated_user IN (SELECT id FROM authenticated_users WHERE tenant_id = ?)"
+            "DELETE FROM members_of_team WHERE team_id IN (SELECT id FROM teams WHERE tenant_id = ?)"
     );
 
     private final TenantRepository tenantRepository;
@@ -173,7 +172,9 @@ public class TenantDataCleanupProvider {
             deleted += participantRepository.deleteByTenantId(tenantId);
             deleted += clubRepository.deleteByTenantId(tenantId);
             authenticatedUserRepository.clearLastTenantId(tenantId);
+            final List<Integer> usersToDelete = userTenantRepository.findUserIdsOnlyAssignedToTenant(tenantId);
             deleted += userTenantRepository.deleteByTenantId(tenantId);
+            deleted += deleteOrphanedUsers(usersToDelete);
             deleted += tournamentExtraPropertyRepository.deleteByTenantId(tenantId);
             deleted += tournamentImageRepository.deleteByTenantId(tenantId);
             deleted += tournamentRepository.deleteByTenantId(tenantId);
@@ -193,5 +194,18 @@ public class TenantDataCleanupProvider {
             deleted += jdbcTemplate.update(statement, tenantId);
         }
         return deleted;
+    }
+
+    private long deleteOrphanedUsers(List<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return 0;
+        }
+        jdbcTemplate.update("DELETE FROM authenticated_user_roles WHERE authenticated_user IN ("
+                + placeholders(userIds.size()) + ")", userIds.toArray());
+        return authenticatedUserRepository.deleteAllByIdIn(userIds);
+    }
+
+    private String placeholders(int count) {
+        return String.join(", ", java.util.Collections.nCopies(count, "?"));
     }
 }

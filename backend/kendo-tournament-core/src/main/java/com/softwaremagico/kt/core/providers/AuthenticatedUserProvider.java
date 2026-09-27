@@ -151,7 +151,7 @@ public class AuthenticatedUserProvider {
     }
 
     public AuthenticatedUser save(String creator, String username, String firstName, String lastName, String password, String... roles) {
-        if (findByUsername(username).isPresent()) {
+        if (usernameExists(username)) {
             throw new DuplicatedUserException(this.getClass(), "Username exists!");
         }
 
@@ -167,6 +167,13 @@ public class AuthenticatedUserProvider {
         }
 
         return save(authenticatedUser);
+    }
+
+    private boolean usernameExists(String username) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
+            return authenticatedUserRepository.existsByUsernameHash(username);
+        }
+        return authenticatedUserRepository.findByUsername(username).isPresent();
     }
 
     public AuthenticatedUser save(AuthenticatedUser authenticatedUser) {

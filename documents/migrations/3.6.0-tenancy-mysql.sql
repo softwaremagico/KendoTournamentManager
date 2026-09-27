@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS tenants (
 INSERT INTO tenants (name, active)
 SELECT 'Default', b'1'
 WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default')
+  -- Supports installations created by the previous tenancy implementation.
   AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
 
 UPDATE tenants SET name = 'Default'
@@ -112,6 +113,7 @@ PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
 ALTER TABLE clubs ADD UNIQUE KEY clubs_tenant_name_city_key (tenant_id, name, city);
 ALTER TABLE tournaments ADD UNIQUE KEY tournaments_tenant_name_key (tenant_id, name);
 ALTER TABLE participants ADD UNIQUE KEY participants_tenant_id_card_key (tenant_id, id_card);
+ALTER TABLE authenticated_users ADD UNIQUE KEY authenticated_users_username_hash_key (username_hash);
 
 CREATE INDEX achievements_tenant_idx ON achievements (tenant_id);
 CREATE INDEX duels_tenant_idx ON duels (tenant_id);

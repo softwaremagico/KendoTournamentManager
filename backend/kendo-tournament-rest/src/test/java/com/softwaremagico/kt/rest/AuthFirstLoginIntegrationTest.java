@@ -107,7 +107,7 @@ public class AuthFirstLoginIntegrationTest extends AbstractTestNGSpringContextTe
 
         // Verify that tenant was created
         Assert.assertEquals(tenantRepository.count(), 1L, "Default tenant should be created");
-        Assert.assertNotNull(tenantRepository.findByNameAndActiveTrue(TENANT_NAME), "Default tenant 'Legacy organization' should exist");
+        Assert.assertNotNull(tenantRepository.findByNameAndActiveTrue(TENANT_NAME), "Default tenant should exist");
 
         // Verify that the user was created
         Assert.assertEquals(authenticatedUserRepository.count(), 1L, "Admin user should be created");
@@ -158,5 +158,4 @@ public class AuthFirstLoginIntegrationTest extends AbstractTestNGSpringContextTe
                 "The first user must be a super administrator");
     }
 }
-
 
