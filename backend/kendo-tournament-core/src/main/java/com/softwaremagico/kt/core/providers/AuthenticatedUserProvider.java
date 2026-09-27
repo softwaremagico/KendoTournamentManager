@@ -82,25 +82,24 @@ public class AuthenticatedUserProvider {
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
-            //Username is encrypted, use hash
-            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
-            if (authenticatedUser.isPresent()) {
-                authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
-                return scopedUser(authenticatedUser);
-            }
-        } else {
-            //Username is not encrypted, use username for compatibility with old databases.
-            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsername(username);
-            if (authenticatedUser.isPresent()) {
-                return scopedUser(authenticatedUser);
-            }
+        final Optional<AuthenticatedUser> authenticatedUser = findAuthenticatedUser(username);
+        if (authenticatedUser.isPresent()) {
+            return scopedUser(authenticatedUser);
         }
         final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
         if (participant.isPresent()) {
             return Optional.of(participant.get());
         }
         return Optional.empty();
+    }
+
+    private Optional<AuthenticatedUser> findAuthenticatedUser(String username) {
+        if (getDatabaseEncryptionKey() == null || getDatabaseEncryptionKey().isBlank()) {
+            return authenticatedUserRepository.findByUsername(username);
+        }
+        final Optional<AuthenticatedUser> user = authenticatedUserRepository.findByUsernameHash(username);
+        user.ifPresent(authenticatedUser -> authenticatedUser.setUsernameHash(authenticatedUser.getUsername()));
+        return user;
     }
 
     private Optional<IAuthenticatedUser> scopedUser(Optional<AuthenticatedUser> user) {

@@ -165,7 +165,6 @@ public class TenantDataDeletionTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "cannotDeleteUnknownTenantData")
     public void deletingTenantDataOnlyRemovesTargetTenantData() throws Exception {
-        final Map<String, Long> countsBeforeTenantA = countRowsPerTable(tenantA.getId());
         final Map<String, Long> countsBeforeTenantB = countRowsPerTable(tenantB.getId());
         final long tenantsBefore = tenantRepository.count();
 

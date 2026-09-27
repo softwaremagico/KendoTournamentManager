@@ -37,7 +37,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -72,9 +71,9 @@ public class SuperAdminBootstrapTest {
 	public void whenNoCredentialsConfiguredThenNoUserIsCreated() {
 		newBootstrap("", "").run(arguments);
 
-		verify(authenticatedUserRepository, never()).existsByRolesContaining(eq("super_admin"));
-		verify(authenticatedUserController, never()).createUser(eq(null), eq(USERNAME), eq("Platform"), eq("Administrator"),
-				eq(PASSWORD), eq(AvailableRole.SUPER_ADMIN));
+        verify(authenticatedUserRepository, never()).existsByRolesContaining("super_admin");
+        verify(authenticatedUserController, never()).createUser(null, USERNAME, "Platform", "Administrator",
+                PASSWORD, AvailableRole.SUPER_ADMIN);
 	}
 
 	@Test
@@ -86,8 +85,8 @@ public class SuperAdminBootstrapTest {
 
 		newBootstrap(USERNAME, PASSWORD).run(arguments);
 
-		verify(authenticatedUserController).createUser(eq(null), eq(USERNAME), eq("Platform"), eq("Administrator"),
-				eq(PASSWORD), eq(AvailableRole.SUPER_ADMIN));
+        verify(authenticatedUserController).createUser(null, USERNAME, "Platform", "Administrator",
+                PASSWORD, AvailableRole.SUPER_ADMIN);
 		assertThat(TenantContext.getTenantId()).isNull();
 	}
 
@@ -97,8 +96,8 @@ public class SuperAdminBootstrapTest {
 
 		newSuperAdmin().run(arguments);
 
-		verify(authenticatedUserController, never()).createUser(eq(null), eq(USERNAME), eq("Platform"),
-				eq("Administrator"), eq(PASSWORD), eq(AvailableRole.SUPER_ADMIN));
+        verify(authenticatedUserController, never()).createUser(null, USERNAME, "Platform",
+                "Administrator", PASSWORD, AvailableRole.SUPER_ADMIN);
 	}
 
 	@Test

@@ -114,6 +114,7 @@ public class AuthApi {
     }
 
     @Autowired
+    @SuppressWarnings("java:S107") // Security collaborators are explicit constructor dependencies.
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,

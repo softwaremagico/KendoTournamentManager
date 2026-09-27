@@ -212,8 +212,7 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 
 	@Test(dependsOnMethods = "statisticsAndRankingsRemainTenantScopedWithIdenticalBusinessData")
 	public void wipingTenantADataOnlyRemovesTenantARows() throws Exception {
-		final Map<String, Long> countsBeforeA = countRowsPerTable(tenantAId);
-		final Map<String, Long> countsBeforeB = countRowsPerTable(tenantBId);
+        final Map<String, Long> countsBeforeB = countRowsPerTable(tenantBId);
 		final long tenantsBefore = tenantRepository.count();
 
 		mockMvc.perform(delete("/auth/tenants/{tenantId}/data", tenantAId)

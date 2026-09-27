@@ -71,7 +71,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
 
     @Autowired
-    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil, TenantRepository tenantRepository) {
+    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil, @Nullable TenantRepository tenantRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.tenantRepository = tenantRepository;
     }

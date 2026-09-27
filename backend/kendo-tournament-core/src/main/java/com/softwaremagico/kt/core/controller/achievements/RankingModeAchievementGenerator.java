@@ -44,7 +44,7 @@ public class RankingModeAchievementGenerator extends AchievementGenerationSuppor
     }
 
     public List<Achievement> generateTheKingAchievement(Tournament tournament) {
-        if (tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN) {
+        if (tournament != null && tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN) {
             final List<ScoreOfCompetitor> scoreOfCompetitors = this.rankingProvider.getCompetitorsScoreRanking(tournament);
             if (!scoreOfCompetitors.isEmpty()) {
                 return generateAchievement(AchievementType.THE_KING, AchievementGrade.NORMAL,
@@ -59,7 +59,7 @@ public class RankingModeAchievementGenerator extends AchievementGenerationSuppor
     }
 
     public List<Achievement> generateMasterTheLoopAchievement(Tournament tournament) {
-        if (tournament.getType() == TournamentType.LOOP) {
+        if (tournament != null && tournament.getType() == TournamentType.LOOP) {
             final List<ScoreOfCompetitor> scoreOfCompetitors = this.rankingProvider.getCompetitorsScoreRanking(tournament);
             if (!scoreOfCompetitors.isEmpty()) {
                 return generateAchievement(AchievementType.MASTER_THE_LOOP, AchievementGrade.NORMAL,
@@ -73,4 +73,3 @@ public class RankingModeAchievementGenerator extends AchievementGenerationSuppor
         return generateGradeAchievementsByDays(tournament, AchievementType.MASTER_THE_LOOP, achievementGrade, amount, DAYS_WINDOW_YEAR);
     }
 }
-

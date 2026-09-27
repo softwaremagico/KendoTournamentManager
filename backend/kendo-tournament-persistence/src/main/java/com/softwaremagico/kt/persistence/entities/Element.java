@@ -158,7 +158,9 @@ public abstract class Element implements Serializable {
                     continue;
                 }
                 try {
-                    field.setAccessible(true);
+                    if (!field.trySetAccessible()) {
+                        throw new IllegalStateException("Cannot access tenant relationship '" + field.getName() + "'.");
+                    }
                     validateRelatedTenant(field.get(this));
                 } catch (IllegalAccessException ex) {
                     throw new IllegalStateException("Cannot validate tenant relationship '" + field.getName() + "'.", ex);
