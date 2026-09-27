@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, TemplateRef, ViewChildren} from '@angular/core';
 import {CreateTenantRequest, Tenant, TenantService} from '../../services/tenant.service';
 import {UserSessionService} from '../../services/user-session.service';
 import {UserRoles} from '../../services/rbac/user-roles';
@@ -6,6 +6,7 @@ import {DatatableColumn} from '@biit-solutions/wizardry-theme/table';
 import {TranslocoService} from '@jsverse/transloco';
 import {Type} from '@biit-solutions/wizardry-theme/inputs';
 import {AuthenticatedUser} from '../../models/authenticated-user';
+import {MessageService} from '../../services/message.service';
 
 type TenantUser = AuthenticatedUser & { assigned: boolean };
 
@@ -15,7 +16,7 @@ type TenantUser = AuthenticatedUser & { assigned: boolean };
   templateUrl: './tenant-list.component.html',
   styleUrls: ['./tenant-list.component.scss']
 })
-export class TenantListComponent implements OnInit {
+export class TenantListComponent implements OnInit, AfterViewInit {
   protected readonly Type = Type;
   tenants: Tenant[] = [];
   error = '';
@@ -28,9 +29,11 @@ export class TenantListComponent implements OnInit {
   target: Tenant | null = null;
   users: TenantUser[] = [];
   userColumns: DatatableColumn[] = [];
+  @ViewChildren('assignedCell') assignedCell: QueryList<TemplateRef<unknown>>;
 
   constructor(private readonly tenantService: TenantService, private readonly userSessionService: UserSessionService,
-              private readonly transloco: TranslocoService, private readonly cdr: ChangeDetectorRef) {
+              private readonly transloco: TranslocoService, private readonly cdr: ChangeDetectorRef,
+              private readonly messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -42,13 +45,22 @@ export class TenantListComponent implements OnInit {
       new DatatableColumn(this.transloco.translate('tenantName'), 'name'),
       new DatatableColumn(this.transloco.translate('active'), 'active')
     ];
+    this.load();
+  }
+
+  ngAfterViewInit(): void {
+    this.buildUserColumns();
+    this.cdr.detectChanges();
+  }
+
+  private buildUserColumns(): void {
     this.userColumns = [
       new DatatableColumn(this.transloco.translate('username'), 'username'),
       new DatatableColumn(this.transloco.translate('name'), 'name'),
       new DatatableColumn(this.transloco.translate('lastname'), 'lastname'),
-      new DatatableColumn(this.transloco.translate('assigned'), 'assigned')
+      new DatatableColumn(this.transloco.translate('assigned'), 'assigned', true, undefined, undefined, undefined,
+        this.assignedCell.first)
     ];
-    this.load();
   }
 
   create(): void {
@@ -106,6 +118,7 @@ export class TenantListComponent implements OnInit {
   openUsers(tenant: Tenant): void {
     this.target = tenant;
     this.users = [];
+    this.buildUserColumns();
     this.usersPopup = true;
     this.tenantService.getUsers(tenant.id).subscribe({
       next: users => {
@@ -136,6 +149,7 @@ export class TenantListComponent implements OnInit {
         unassignedUsers.forEach(user => user.assigned = true);
         this.users = [...this.users];
         this.cdr.markForCheck();
+        this.messageService.infoMessage('tenantUsersAssigned');
       },
       error: () => this.error = 'No se pudieron asignar los usuarios.'
     });
@@ -151,8 +165,9 @@ export class TenantListComponent implements OnInit {
         assignedUsers.forEach(user => user.assigned = false);
         this.users = [...this.users];
         this.cdr.markForCheck();
+        this.messageService.infoMessage('tenantUsersUnassigned');
       },
-      error: () => this.error = 'No se pudieron desasignar los usuarios.'
+      error: error => this.messageService.warningMessage(error.error?.message ?? 'No se pudieron desasignar los usuarios.')
     });
   }
 

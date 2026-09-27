@@ -26,7 +26,9 @@ import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.entities.UserTenant;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
+import com.softwaremagico.kt.persistence.repositories.UserTenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -50,46 +52,48 @@ public class AuthenticatedUserProvider {
     private final AuthenticatedUserRepository authenticatedUserRepository;
 
     private final ParticipantProvider participantProvider;
+    private final UserTenantRepository userTenantRepository;
 
 
     private final boolean guestEnabled;
 
     @Autowired
     public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     UserTenantRepository userTenantRepository,
                                      @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticatedUserRepository = authenticatedUserRepository;
         this.participantProvider = participantProvider;
+        this.userTenantRepository = userTenantRepository;
         guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
+    }
+
+    /** Kept for unit tests that do not exercise tenant membership. */
+    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     String guestUsersEnabled) {
+        this(authenticatedUserRepository, participantProvider, null, guestUsersEnabled);
     }
 
 
     public Optional<IAuthenticatedUser> findByUsername(String username) {
         //Create guest user on the fly
         if (Objects.equals(username, GUEST_USER) && guestEnabled) {
-            final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER, TenantContext.getRequiredTenantId());
+            final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER);
+            guest.setTenantId(TenantContext.getRequiredTenantId());
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
         if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
             //Username is encrypted, use hash
-            final Optional<AuthenticatedUser> authenticatedUser = TenantContext.getTenantId() == null
-                    ? authenticatedUserRepository.findByUsernameHash(username)
-                    : authenticatedUserRepository.findByUsernameHashAndTenantId(username, TenantContext.getRequiredTenantId());
+            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
             if (authenticatedUser.isPresent()) {
                 authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
-                return TenantContext.getTenantId() == null ? authenticatedUser.map(IAuthenticatedUser.class::cast)
-                        : authenticatedUser.filter(user -> Objects.equals(user.getTenantId(), TenantContext.getRequiredTenantId()))
-                        .map(IAuthenticatedUser.class::cast);
+                return scopedUser(authenticatedUser);
             }
         } else {
             //Username is not encrypted, use username for compatibility with old databases.
-            final Optional<AuthenticatedUser> authenticatedUser = TenantContext.getTenantId() == null
-                    ? authenticatedUserRepository.findByUsername(username)
-                    : authenticatedUserRepository.findByUsernameAndTenantId(username, TenantContext.getRequiredTenantId());
+            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsername(username);
             if (authenticatedUser.isPresent()) {
-                return TenantContext.getTenantId() == null ? authenticatedUser.map(IAuthenticatedUser.class::cast)
-                        : authenticatedUser.filter(user -> Objects.equals(user.getTenantId(), TenantContext.getRequiredTenantId()))
-                        .map(IAuthenticatedUser.class::cast);
+                return scopedUser(authenticatedUser);
             }
         }
         final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
@@ -97,6 +101,18 @@ public class AuthenticatedUserProvider {
             return Optional.of(participant.get());
         }
         return Optional.empty();
+    }
+
+    private Optional<IAuthenticatedUser> scopedUser(Optional<AuthenticatedUser> user) {
+        if (TenantContext.getTenantId() == null) {
+            return user.map(IAuthenticatedUser.class::cast);
+        }
+        return user.filter(candidate -> userTenantRepository.existsByAuthenticatedUserIdAndTenantId(candidate.getId(),
+                        TenantContext.getRequiredTenantId()))
+                .map(candidate -> {
+                    candidate.setTenantId(TenantContext.getRequiredTenantId());
+                    return (IAuthenticatedUser) candidate;
+                });
     }
 
     public List<AuthenticatedUser> findAllByUsername(String username) {
@@ -110,12 +126,20 @@ public class AuthenticatedUserProvider {
         return authenticatedUserRepository.findAllUnscoped();
     }
 
+    public boolean belongsToTenant(AuthenticatedUser user, Integer tenantId) {
+        return userTenantRepository.existsByAuthenticatedUserIdAndTenantId(user.getId(), tenantId);
+    }
+
+    public List<Integer> getTenantIds(AuthenticatedUser user) {
+        return userTenantRepository.findAllByAuthenticatedUserId(user.getId()).stream().map(UserTenant::getTenantId).toList();
+    }
+
     public void updateLastTenant(String username, Integer tenantId) {
         authenticatedUserRepository.updateLastTenantIdByUsernameHash(username, tenantId);
     }
 
     public void removeFromTenant(String username, Integer tenantId) {
-        authenticatedUserRepository.deleteByUsernameHashAndTenantId(username, tenantId);
+        findByUsername(username).ifPresent(user -> userTenantRepository.deleteByAuthenticatedUserIdAndTenantId(user.getId(), tenantId));
     }
 
     public long count() {
@@ -146,13 +170,13 @@ public class AuthenticatedUserProvider {
     }
 
     public AuthenticatedUser save(AuthenticatedUser authenticatedUser) {
-        if (authenticatedUser.getTenantId() == null) {
-            authenticatedUser.setTenantId(TenantContext.getRequiredTenantId());
+        final AuthenticatedUser saved = authenticatedUserRepository.save(authenticatedUser);
+        if (TenantContext.getTenantId() != null
+                && !userTenantRepository.existsByAuthenticatedUserIdAndTenantId(saved.getId(), TenantContext.getRequiredTenantId())) {
+            userTenantRepository.save(new UserTenant(saved.getId(), TenantContext.getRequiredTenantId()));
         }
-        if (!Objects.equals(authenticatedUser.getTenantId(), TenantContext.getRequiredTenantId())) {
-            throw new SecurityException("A user cannot be saved in another tenant.");
-        }
-        return authenticatedUserRepository.save(authenticatedUser);
+        saved.setTenantId(TenantContext.getTenantId());
+        return saved;
     }
 
     public AuthenticatedUser updateRoles(AuthenticatedUser authenticatedUser, Set<String> roles) {
@@ -165,7 +189,8 @@ public class AuthenticatedUserProvider {
             return authenticatedUserRepository.findAll();
         }
         return authenticatedUserRepository.findAll().stream()
-                .filter(user -> Objects.equals(user.getTenantId(), TenantContext.getRequiredTenantId())).toList();
+                .filter(user -> userTenantRepository.existsByAuthenticatedUserIdAndTenantId(user.getId(), TenantContext.getRequiredTenantId()))
+                .peek(user -> user.setTenantId(TenantContext.getRequiredTenantId())).toList();
     }
 
     public void delete(AuthenticatedUser authenticatedUser) {

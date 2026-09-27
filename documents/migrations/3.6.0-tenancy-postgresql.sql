@@ -31,7 +31,6 @@ END $$;
 
 -- Add the ownership column to every entity that inherits Element.
 ALTER TABLE achievements ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
-ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
 ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS last_tenant_id INTEGER;
 ALTER TABLE clubs ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
 ALTER TABLE duels ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
@@ -55,7 +54,7 @@ DECLARE
 BEGIN
     SELECT id INTO legacy_tenant_id FROM tenants WHERE name = 'Default';
     FOREACH table_name IN ARRAY ARRAY[
-        'achievements', 'authenticated_users', 'clubs', 'duels', 'fights', 'groups_links',
+        'achievements', 'clubs', 'duels', 'fights', 'groups_links',
         'participant_image', 'participants', 'roles', 'teams', 'tournament_extra_properties',
         'tournament_groups', 'tournament_image', 'tournament_scores', 'tournaments'
     ] LOOP
@@ -69,7 +68,16 @@ BEGIN
     END LOOP;
 END $$;
 
-UPDATE authenticated_users SET last_tenant_id = tenant_id WHERE last_tenant_id IS NULL;
+CREATE TABLE IF NOT EXISTS user_tenants (
+    id SERIAL PRIMARY KEY,
+    authenticated_user_id INTEGER NOT NULL REFERENCES authenticated_users(id),
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id),
+    CONSTRAINT user_tenants_user_tenant_key UNIQUE (authenticated_user_id, tenant_id)
+);
+INSERT INTO user_tenants (authenticated_user_id, tenant_id)
+SELECT id, (SELECT id FROM tenants WHERE name = 'Default') FROM authenticated_users
+ON CONFLICT (authenticated_user_id, tenant_id) DO NOTHING;
+UPDATE authenticated_users SET last_tenant_id = (SELECT id FROM tenants WHERE name = 'Default') WHERE last_tenant_id IS NULL;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'authenticated_users_last_tenant_fk') THEN
@@ -103,9 +111,6 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'participants_tenant_id_card_key') THEN
         ALTER TABLE participants ADD CONSTRAINT participants_tenant_id_card_key UNIQUE (tenant_id, id_card);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'authenticated_users_tenant_username_hash_key') THEN
-        ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_tenant_username_hash_key UNIQUE (tenant_id, username_hash);
     END IF;
 END $$;
 

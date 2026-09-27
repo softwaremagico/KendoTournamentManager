@@ -115,6 +115,7 @@ import {HasPermissionPipe} from "./pipes/has-permission.pipe";
 import {BiitDatatableModule} from "@biit-solutions/wizardry-theme/table";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {BiitInputTextModule, BiitToggleModule} from '@biit-solutions/wizardry-theme/inputs';
+import {BiitIconModule} from '@biit-solutions/wizardry-theme/icon';
 import {TournamentFormPopupModule} from "./views/tournament-list/tournament-form-popup/tournament-form-popup.module";
 import {
   AuthenticatedUserFormPopupModule
@@ -232,6 +233,7 @@ registerLocaleData(localeFR, "fr");
         BiitPopupModule,
         BiitInputTextModule,
         BiitToggleModule,
+        BiitIconModule,
         TournamentFormPopupModule,
         AuthenticatedUserFormPopupModule,
         ClubFormPopupModule,

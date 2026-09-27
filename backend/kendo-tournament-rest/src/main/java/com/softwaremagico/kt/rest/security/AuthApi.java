@@ -230,21 +230,14 @@ public class AuthApi {
 
     private Tenant resolveLastTenant(String username) {
         final List<AuthenticatedUser> users = authenticatedUserProvider.findAllByUsername(username);
-        return users.stream()
-                .map(AuthenticatedUser::getLastTenantId)
-                .filter(Objects::nonNull)
-                .map(tenantRepository::findById)
-                .flatMap(java.util.Optional::stream)
-                .filter(Tenant::isActive)
-                .findFirst()
-                .orElseGet(() -> users.stream()
-                        .map(AuthenticatedUser::getTenantId)
-                        .filter(Objects::nonNull)
-                        .map(tenantRepository::findById)
-                        .flatMap(java.util.Optional::stream)
-                        .filter(Tenant::isActive)
-                        .findFirst()
-                        .orElse(null));
+        if (users.isEmpty()) {
+            return null;
+        }
+        final AuthenticatedUser user = users.getFirst();
+        return java.util.stream.Stream.concat(java.util.stream.Stream.of(user.getLastTenantId()),
+                        authenticatedUserProvider.getTenantIds(user).stream())
+                .filter(Objects::nonNull).distinct().map(tenantRepository::findById)
+                .flatMap(java.util.Optional::stream).filter(Tenant::isActive).findFirst().orElse(null);
     }
 
     @Operation(summary = "Gets a JWT Token for guest users.")

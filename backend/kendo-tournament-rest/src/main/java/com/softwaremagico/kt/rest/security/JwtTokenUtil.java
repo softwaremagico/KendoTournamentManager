@@ -23,6 +23,7 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.TenantContext;
 import io.jsonwebtoken.Claims;
@@ -263,7 +264,8 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime, String session) {
-        final Integer tenantId = user instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser
+        final Integer tenantId = user instanceof AuthenticatedUser authenticatedUser && authenticatedUser.getTenantId() != null
+                ? authenticatedUser.getTenantId() : user instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser
                 && tenantScopedUser.getTenantId() != null ? tenantScopedUser.getTenantId() : TenantContext.LEGACY_TENANT_ID;
         final Instant issuedAt = Instant.now();
         return Jwts.builder()

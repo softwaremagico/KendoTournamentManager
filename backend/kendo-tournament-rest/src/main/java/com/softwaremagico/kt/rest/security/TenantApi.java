@@ -59,7 +59,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -136,10 +135,8 @@ public class TenantApi {
         if (authentication.getAuthorities().stream().anyMatch(authority -> AvailableRole.SUPER_ADMIN.name().equals(authority.getAuthority()))) {
             return tenantRepository.findAllByActiveTrueOrderByNameAsc();
         }
-        return authenticatedUserController.findAllByUsername(authentication.getName()).stream()
-                .map(AuthenticatedUser::getTenantId)
-                .filter(Objects::nonNull)
-                .distinct()
+        return authenticatedUserController.findAllByUsername(authentication.getName()).stream().findFirst().stream()
+                .flatMap(user -> authenticatedUserController.getTenantIds(user).stream())
                 .map(tenantRepository::findById)
                 .flatMap(java.util.Optional::stream)
                 .filter(Tenant::isActive)
@@ -157,8 +154,9 @@ public class TenantApi {
         final Tenant tenant = tenantRepository.findById(tenantId).filter(Tenant::isActive)
                 .orElseThrow(() -> new InvalidRequestException(this.getClass(), "Tenant not found or inactive."));
         final AuthenticatedUser user = authenticatedUserController.findAllByUsername(authentication.getName()).stream()
-                .filter(candidate -> Objects.equals(candidate.getTenantId(), tenant.getId()))
+                .filter(candidate -> authenticatedUserController.belongsToTenant(candidate, tenant.getId()))
                 .findFirst().orElseThrow(() -> new InvalidRequestException(this.getClass(), "User is not available in this tenant."));
+        user.setTenantId(tenantId);
         authenticatedUserController.updateLastTenant(authentication.getName(), tenantId);
         final String jwtToken = jwtTokenUtil.generateAccessToken(user, getClientIP(httpRequest));
         return ResponseEntity.ok().headers(getLoginHeaders(jwtToken, jwtTokenUtil.getJwtExpirationTime(), jwtTokenUtil.getSession(jwtToken)))
@@ -173,7 +171,11 @@ public class TenantApi {
         if (!tenantRepository.existsById(tenantId)) {
             throw new InvalidRequestException(this.getClass(), "Tenant not found.");
         }
-        return authenticatedUserController.findAllUnscoped();
+        return authenticatedUserController.findAllUnscoped().stream().peek(user -> {
+            if (authenticatedUserController.belongsToTenant(user, tenantId)) {
+                user.setTenantId(tenantId);
+            }
+        }).toList();
     }
 
     @Transactional
@@ -189,26 +191,16 @@ public class TenantApi {
         if (request.getUsernames() == null || request.getUsernames().isEmpty()) {
             return;
         }
-        final List<AuthenticatedUser> users = authenticatedUserController.findAllUnscoped();
         final Integer previousTenantId = TenantContext.getTenantId();
         TenantContext.setTenantId(tenantId);
         try {
             for (String username : request.getUsernames().stream().distinct().toList()) {
-                final AuthenticatedUser source = users.stream().filter(user -> Objects.equals(user.getUsername(), username))
-                        .findFirst().orElseThrow(() -> new InvalidRequestException(this.getClass(), "User not found."));
-                if (users.stream().anyMatch(user -> Objects.equals(user.getTenantId(), tenantId)
-                        && Objects.equals(user.getUsername(), username))) {
-                    continue;
+                final AuthenticatedUser user = authenticatedUserController.findAllUnscoped().stream()
+                        .filter(candidate -> Objects.equals(candidate.getUsername(), username)).findFirst()
+                        .orElseThrow(() -> new InvalidRequestException(this.getClass(), "User not found."));
+                if (!authenticatedUserController.belongsToTenant(user, tenantId)) {
+                    authenticatedUserController.createAssignedUser(user);
                 }
-                final AuthenticatedUser assignedUser = new AuthenticatedUser();
-                assignedUser.setUsername(source.getUsername());
-                assignedUser.setPassword(source.getPassword());
-                assignedUser.setName(source.getName());
-                assignedUser.setLastname(source.getLastname());
-                assignedUser.setRoles(source.getRoles() == null ? null : new HashSet<>(source.getRoles()));
-                assignedUser.setLastTenantId(source.getLastTenantId());
-                assignedUser.setCreatedBy(authentication.getName());
-                authenticatedUserController.createAssignedUser(assignedUser);
             }
         } finally {
             if (previousTenantId == null) {
@@ -228,13 +220,29 @@ public class TenantApi {
         if (request.getUsernames() == null || request.getUsernames().isEmpty()) {
             return;
         }
-        final List<AuthenticatedUser> users = authenticatedUserController.findAllUnscoped();
-        for (String username : request.getUsernames().stream().distinct().toList()) {
-            final long assignedTenants = users.stream().filter(user -> Objects.equals(user.getUsername(), username)).count();
-            if (assignedTenants <= 1) {
-                throw new InvalidRequestException(this.getClass(), "A user must belong to at least one tenant.");
+        final Integer previousTenantId = TenantContext.getTenantId();
+        TenantContext.setTenantId(tenantId);
+        try {
+            for (String username : request.getUsernames().stream().distinct().toList()) {
+                final AuthenticatedUser user = authenticatedUserController.findAllUnscoped().stream()
+                        .filter(candidate -> Objects.equals(candidate.getUsername(), username)).findFirst()
+                        .orElseThrow(() -> new InvalidRequestException(this.getClass(), "User not found."));
+                final List<Integer> userTenantIds = authenticatedUserController.getTenantIds(user);
+                if (userTenantIds.size() <= 1) {
+                    throw new InvalidRequestException(this.getClass(), "A user must belong to at least one tenant.");
+                }
+                authenticatedUserController.removeFromTenant(username, tenantId);
+                final Integer remainingTenantId = userTenantIds.stream()
+                        .filter(userTenantId -> !Objects.equals(userTenantId, tenantId))
+                        .findFirst().orElseThrow();
+                authenticatedUserController.updateLastTenant(username, remainingTenantId);
             }
-            authenticatedUserController.removeFromTenant(username, tenantId);
+        } finally {
+            if (previousTenantId == null) {
+                TenantContext.clear();
+            } else {
+                TenantContext.setTenantId(previousTenantId);
+            }
         }
     }
 

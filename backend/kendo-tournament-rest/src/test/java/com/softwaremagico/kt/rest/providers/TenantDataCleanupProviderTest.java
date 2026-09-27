@@ -36,6 +36,7 @@ import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
 import com.softwaremagico.kt.persistence.repositories.RoleRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
+import com.softwaremagico.kt.persistence.repositories.UserTenantRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentImageRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
@@ -67,6 +68,7 @@ public class TenantDataCleanupProviderTest {
     private Cache cache;
     private AchievementRepository achievementRepository;
     private AuthenticatedUserRepository authenticatedUserRepository;
+    private UserTenantRepository userTenantRepository;
     private ClubRepository clubRepository;
     private DuelRepository duelRepository;
     private FightRepository fightRepository;
@@ -91,6 +93,7 @@ public class TenantDataCleanupProviderTest {
         when(entityManagerFactory.getCache()).thenReturn(cache);
         achievementRepository = mock(AchievementRepository.class);
         authenticatedUserRepository = mock(AuthenticatedUserRepository.class);
+        userTenantRepository = mock(UserTenantRepository.class);
         clubRepository = mock(ClubRepository.class);
         duelRepository = mock(DuelRepository.class);
         fightRepository = mock(FightRepository.class);
@@ -105,7 +108,7 @@ public class TenantDataCleanupProviderTest {
         tournamentImageRepository = mock(TournamentImageRepository.class);
         tournamentScoreRepository = mock(TournamentScoreRepository.class);
         provider = new TenantDataCleanupProvider(tenantRepository, jdbcTemplate, entityManagerFactory,
-                achievementRepository, authenticatedUserRepository, clubRepository, duelRepository, fightRepository,
+                achievementRepository, authenticatedUserRepository, userTenantRepository, clubRepository, duelRepository, fightRepository,
                 groupRepository, groupLinkRepository, participantRepository, participantImageRepository, roleRepository,
                 teamRepository, tournamentRepository, tournamentExtraPropertyRepository, tournamentImageRepository,
                 tournamentScoreRepository);
@@ -140,7 +143,7 @@ public class TenantDataCleanupProviderTest {
         when(tenantRepository.count()).thenReturn(2L);
         when(jdbcTemplate.update(anyString(), anyInt())).thenReturn(1);
         when(achievementRepository.deleteByTenantId(TENANT_ID)).thenReturn(1L);
-        when(authenticatedUserRepository.deleteByTenantId(TENANT_ID)).thenReturn(1L);
+        when(userTenantRepository.deleteByTenantId(TENANT_ID)).thenReturn(1L);
         when(clubRepository.deleteByTenantId(TENANT_ID)).thenReturn(1L);
         when(duelRepository.deleteByTenantId(TENANT_ID)).thenReturn(1L);
         when(fightRepository.deleteByTenantId(TENANT_ID)).thenReturn(1L);

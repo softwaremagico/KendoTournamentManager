@@ -26,8 +26,6 @@ import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
 import com.softwaremagico.kt.persistence.encryption.SHA512HashGenerator;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
-import jakarta.persistence.Access;
-import jakarta.persistence.AccessType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -46,20 +44,34 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
-@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
 @SuppressWarnings("java:S2160")
-public class AuthenticatedUser extends Element implements UserDetails, IAuthenticatedUser {
+public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
+    @jakarta.persistence.Id
+    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @Column(name = "password")
     @Convert(converter = BCryptPasswordConverter.class)
     private String password;
 
-    @Access(AccessType.PROPERTY)
     @Column(name = "username")
     @Convert(converter = StringCryptoConverter.class)
     private String username;
@@ -84,6 +96,9 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
     @Column(name = "last_tenant_id")
     private Integer lastTenantId;
 
+    @jakarta.persistence.Transient
+    private Integer tenantId;
+
     public AuthenticatedUser() {
         super();
     }
@@ -93,7 +108,7 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
         setUsername(username);
     }
 
-    /** Creates a transient guest principal scoped to the requested tenant. */
+    /** Creates a transient principal for a known tenant, for token generation and tests. */
     public AuthenticatedUser(String username, Integer tenantId) {
         this(username);
         setTenantId(tenantId);
@@ -184,8 +199,48 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
         return lastTenantId;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
     public void setLastTenantId(Integer lastTenantId) {
         this.lastTenantId = lastTenantId;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override
@@ -227,9 +282,6 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
         final AuthenticatedUser that = (AuthenticatedUser) o;
         return Objects.equals(password, that.password)
                 && Objects.equals(username, that.username)
@@ -241,6 +293,6 @@ public class AuthenticatedUser extends Element implements UserDetails, IAuthenti
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), password, username, usernameHash, name, lastname, roles);
+        return Objects.hash(id, password, username, usernameHash, name, lastname, roles);
     }
 }

@@ -153,6 +153,14 @@ public class AuthenticatedUserController {
         return authenticatedUserProvider.findAllUnscoped();
     }
 
+    public boolean belongsToTenant(AuthenticatedUser user, Integer tenantId) {
+        return authenticatedUserProvider.belongsToTenant(user, tenantId);
+    }
+
+    public List<Integer> getTenantIds(AuthenticatedUser user) {
+        return authenticatedUserProvider.getTenantIds(user);
+    }
+
     public void updateLastTenant(String username, Integer tenantId) {
         authenticatedUserProvider.updateLastTenant(username, tenantId);
     }

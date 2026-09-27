@@ -1,6 +1,8 @@
 {
   "accept": "Accettare",
   "account": "Account",
+  "tenantUsersAssigned": "Utenti assegnati correttamente.",
+  "tenantUsersUnassigned": "Utenti rimossi correttamente.",
   "accreditation": "Accreditamento",
   "accreditationBad": "Si è verificato un problema mentre si stava creando il badge. Esiste qualche altro programmo che sta accedendo al file?",
   "accreditationOK": "Il badge è stato creato in un file PDF",

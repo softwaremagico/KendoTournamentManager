@@ -25,6 +25,7 @@ package com.softwaremagico.kt.rest.security;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
+import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
@@ -234,9 +235,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             userDetails = (UserDetails) user;
         }
 
-        if (userDetails == null || !(userDetails instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser)
-                || !Objects.equals(tenantScopedUser.getTenantId(), tenantId)) {
+        if (userDetails == null || user instanceof AuthenticatedUser authenticatedUser
+                && !authenticatedUserProvider.belongsToTenant(authenticatedUser, tenantId)) {
             throw new InvalidJwtException(this.getClass(), "JWT token tenant does not match the authenticated user.");
+        }
+        if (user instanceof AuthenticatedUser authenticatedUser) {
+            authenticatedUser.setTenantId(tenantId);
         }
 
         validateIpAndMac(request, token, participantUser);

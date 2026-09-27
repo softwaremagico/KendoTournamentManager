@@ -52,6 +52,10 @@
       </div>
     </biit-popup>
   }
+
+  <ng-template #assignedCell let-row="row" let-value="value" let-i="index">
+    @if (value) { <biit-icon [name]="'thick'" class="assigned-icon"></biit-icon> }
+  </ng-template>
 </section>
 <ng-template #denied><p class="error">{{ 'tenantAdministrationDenied' | transloco }}</p></ng-template>
 </ng-container>

@@ -1,6 +1,8 @@
 {
   "accept": "Accepter",
   "account": "Compte",
+  "tenantUsersAssigned": "Utilisateurs attribués avec succès.",
+  "tenantUsersUnassigned": "Utilisateurs retirés avec succès.",
   "accreditation": "Accréditation",
   "accreditationBad": "Un problème est survenu lors de la génération de l’accréditation. Un autre programme utilise-t-il le fichier ?",
   "accreditationOK": "L’accréditation a été créée dans un fichier PDF.",

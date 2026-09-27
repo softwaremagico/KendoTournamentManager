@@ -36,6 +36,7 @@ import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
 import com.softwaremagico.kt.persistence.repositories.RoleRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
+import com.softwaremagico.kt.persistence.repositories.UserTenantRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentImageRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
@@ -86,6 +87,7 @@ public class TenantDataCleanupProvider {
     private final EntityManagerFactory entityManagerFactory;
     private final AchievementRepository achievementRepository;
     private final AuthenticatedUserRepository authenticatedUserRepository;
+    private final UserTenantRepository userTenantRepository;
     private final ClubRepository clubRepository;
     private final DuelRepository duelRepository;
     private final FightRepository fightRepository;
@@ -104,6 +106,7 @@ public class TenantDataCleanupProvider {
                                      EntityManagerFactory entityManagerFactory,
                                      AchievementRepository achievementRepository,
                                      AuthenticatedUserRepository authenticatedUserRepository,
+                                     UserTenantRepository userTenantRepository,
                                      ClubRepository clubRepository, DuelRepository duelRepository,
                                      FightRepository fightRepository, GroupRepository groupRepository,
                                      GroupLinkRepository groupLinkRepository,
@@ -119,6 +122,7 @@ public class TenantDataCleanupProvider {
         this.entityManagerFactory = entityManagerFactory;
         this.achievementRepository = achievementRepository;
         this.authenticatedUserRepository = authenticatedUserRepository;
+        this.userTenantRepository = userTenantRepository;
         this.clubRepository = clubRepository;
         this.duelRepository = duelRepository;
         this.fightRepository = fightRepository;
@@ -169,7 +173,7 @@ public class TenantDataCleanupProvider {
             deleted += participantRepository.deleteByTenantId(tenantId);
             deleted += clubRepository.deleteByTenantId(tenantId);
             authenticatedUserRepository.clearLastTenantId(tenantId);
-            deleted += authenticatedUserRepository.deleteByTenantId(tenantId);
+            deleted += userTenantRepository.deleteByTenantId(tenantId);
             deleted += tournamentExtraPropertyRepository.deleteByTenantId(tenantId);
             deleted += tournamentImageRepository.deleteByTenantId(tenantId);
             deleted += tournamentRepository.deleteByTenantId(tenantId);
