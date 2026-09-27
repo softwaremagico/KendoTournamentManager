@@ -201,7 +201,12 @@ public class AuthenticatedUserProvider {
         }
         return authenticatedUserRepository.findAll().stream()
                 .filter(user -> userTenantRepository.existsByAuthenticatedUserIdAndTenantId(user.getId(), TenantContext.getRequiredTenantId()))
-                .peek(user -> user.setTenantId(TenantContext.getRequiredTenantId())).toList();
+                .map(user -> withTenant(user, TenantContext.getRequiredTenantId())).toList();
+    }
+
+    private AuthenticatedUser withTenant(AuthenticatedUser user, Integer tenantId) {
+        user.setTenantId(tenantId);
+        return user;
     }
 
     public void delete(AuthenticatedUser authenticatedUser) {

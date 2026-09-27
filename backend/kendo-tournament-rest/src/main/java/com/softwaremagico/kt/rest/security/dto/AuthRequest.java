@@ -53,7 +53,7 @@ public class AuthRequest {
     }
 
     /**
-     * Kept for source compatibility with clients compiled before tenant selection
+     * @deprecated Kept for source compatibility with clients compiled before tenant selection
      * was moved out of the login request. The value is intentionally ignored.
      */
     @Deprecated

@@ -70,4 +70,8 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
     @Query("DELETE FROM AuthenticatedUser u WHERE u.id IN :userIds")
     long deleteAllByIdIn(@Param("userIds") List<Integer> userIds);
 
+    @Modifying
+    @Query(value = "DELETE FROM authenticated_user_roles WHERE authenticated_user IN :userIds", nativeQuery = true)
+    int deleteRolesByUserIds(@Param("userIds") List<Integer> userIds);
+
 }

@@ -168,11 +168,15 @@ public class TenantApi {
         if (!tenantRepository.existsById(tenantId)) {
             throw new InvalidRequestException(this.getClass(), "Tenant not found.");
         }
-        return authenticatedUserController.findAllUnscoped().stream().peek(user -> {
-            if (authenticatedUserController.belongsToTenant(user, tenantId)) {
-                user.setTenantId(tenantId);
-            }
-        }).toList();
+        return authenticatedUserController.findAllUnscoped().stream()
+                .map(user -> withAssignment(user, tenantId)).toList();
+    }
+
+    private AuthenticatedUser withAssignment(AuthenticatedUser user, Integer tenantId) {
+        if (authenticatedUserController.belongsToTenant(user, tenantId)) {
+            user.setTenantId(tenantId);
+        }
+        return user;
     }
 
     @Transactional

@@ -264,9 +264,7 @@ public class JwtTokenUtil {
      * @return a signed JWT string
      */
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime, String session) {
-        final Integer tenantId = user instanceof AuthenticatedUser authenticatedUser && authenticatedUser.getTenantId() != null
-                ? authenticatedUser.getTenantId() : user instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser
-                && tenantScopedUser.getTenantId() != null ? tenantScopedUser.getTenantId() : TenantContext.LEGACY_TENANT_ID;
+        final Integer tenantId = getTenantId(user);
         final Instant issuedAt = Instant.now();
         return Jwts.builder()
                 .subject(new TokenSubject(String.valueOf(user.getId()), user.getUsername(),
@@ -276,6 +274,17 @@ public class JwtTokenUtil {
                 .issuer(JWT_ISSUER).issuedAt(toLegacyDate(issuedAt))
                 .expiration(toLegacyDate(issuedAt.plusMillis(expirationTime))).signWith(this.signingKey, Jwts.SIG.HS512)
                 .compact();
+    }
+
+    private Integer getTenantId(IAuthenticatedUser user) {
+        if (user instanceof AuthenticatedUser authenticatedUser && authenticatedUser.getTenantId() != null) {
+            return authenticatedUser.getTenantId();
+        }
+        if (user instanceof com.softwaremagico.kt.persistence.entities.Element tenantScopedUser
+                && tenantScopedUser.getTenantId() != null) {
+            return tenantScopedUser.getTenantId();
+        }
+        return TenantContext.LEGACY_TENANT_ID;
     }
 
     /**

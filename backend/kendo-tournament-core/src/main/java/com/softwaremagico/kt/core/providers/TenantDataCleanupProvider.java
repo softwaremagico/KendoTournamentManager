@@ -200,12 +200,7 @@ public class TenantDataCleanupProvider {
         if (userIds.isEmpty()) {
             return 0;
         }
-        jdbcTemplate.update("DELETE FROM authenticated_user_roles WHERE authenticated_user IN ("
-                + placeholders(userIds.size()) + ")", userIds.toArray());
+        authenticatedUserRepository.deleteRolesByUserIds(userIds);
         return authenticatedUserRepository.deleteAllByIdIn(userIds);
-    }
-
-    private String placeholders(int count) {
-        return String.join(", ", java.util.Collections.nCopies(count, "?"));
     }
 }

@@ -60,7 +60,7 @@ public class WebSocketConfigurationTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        configuration = new WebSocketConfiguration(mockJwtTokenUtil);
+        configuration = new WebSocketConfiguration(mockJwtTokenUtil, tenantRepository);
     }
 
     @Test
@@ -128,6 +128,7 @@ public class WebSocketConfigurationTest {
         when(mockJwtTokenUtil.getUsername("some.jwt.token")).thenReturn("john");
 		when(mockJwtTokenUtil.getTenantId("some.jwt.token")).thenReturn(1);
 		when(mockJwtTokenUtil.validate("some.jwt.token")).thenReturn(true);
+		when(tenantRepository.existsByIdAndActiveTrue(1)).thenReturn(true);
 
         interceptor.preSend(message, mock(org.springframework.messaging.MessageChannel.class));
 
