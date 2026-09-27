@@ -287,6 +287,9 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
             return false;
         }
         final AuthenticatedUser that = (AuthenticatedUser) o;
+        if (id == null || that.id == null) {
+            return false;
+        }
         return Objects.equals(password, that.password)
                 && Objects.equals(username, that.username)
                 && Objects.equals(usernameHash, that.usernameHash)
