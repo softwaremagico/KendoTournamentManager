@@ -231,7 +231,7 @@ public class AuthApiTest {
 
 		// Mock user creation
 		when(this.authenticatedUserController.createUser(null, "newadmin", "newadmin",
-				"Administrator", "securepassword", AvailableRole.ADMIN)).thenReturn(createdUser);
+                "Administrator", "securepassword", AvailableRole.SUPER_ADMIN)).thenReturn(createdUser);
 
 		// First authentication attempt fails (user doesn't exist yet in auth system)
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
@@ -243,7 +243,7 @@ public class AuthApiTest {
 
 		// Verify user creation was called
 		verify(this.authenticatedUserController, times(1)).createUser(null, "newadmin", "newadmin",
-				"Administrator", "securepassword", AvailableRole.ADMIN);
+                "Administrator", "securepassword", AvailableRole.SUPER_ADMIN);
 
 		// Second login: user now exists
 		// Reset mocks for the second login attempt
@@ -575,11 +575,11 @@ public class AuthApiTest {
 	}
 
 	@Test
-    public void testUserAdminGeneratedListenerIsNotInvokedByLogin() {
+    public void testUserAdminGeneratedListenerIsInvokedWhenFirstUserIsCreated() {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("admin");
 		authRequest.setPassword("password");
-		authRequest.setTenant("Legacy organization");
+		authRequest.setTenant("Default");
 
 		final AuthenticatedUser newAdmin = new AuthenticatedUser();
 		newAdmin.setUsername("admin");
@@ -594,14 +594,17 @@ public class AuthApiTest {
 		when(this.authenticatedUserRepository.count()).thenReturn(0L);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenThrow(new BadCredentialsException("Bad credentials"));
+		final Tenant tenant = mock(Tenant.class);
+		when(tenant.getId()).thenReturn(1);
+		when(this.tenantRepository.save(any(Tenant.class))).thenReturn(tenant);
 		when(this.authenticatedUserController.createUser(null, "admin", "admin", "Administrator", "password",
-				AvailableRole.ADMIN)).thenReturn(newAdmin);
+				AvailableRole.SUPER_ADMIN)).thenReturn(newAdmin);
 		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
 		when(this.jwtTokenUtil.generateAccessToken(newAdmin, "192.168.1.1")).thenReturn("jwt-token");
 
 		this.authApi.login(authRequest, this.httpRequest);
 
-        verify(mockListener, never()).generated(any());
+        verify(mockListener).generated("admin");
 	}
 
 	// ========== Response Header Tests ==========

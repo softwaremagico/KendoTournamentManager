@@ -138,8 +138,9 @@ public class JwtTokenFilterTest {
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer valid-token");
         when(jwtTokenUtil.validate("valid-token")).thenReturn(true);
         when(jwtTokenUtil.getUsername("valid-token")).thenReturn("admin");
-		when(jwtTokenUtil.getTenantId("valid-token")).thenReturn(1);
+        when(jwtTokenUtil.getTenantId("valid-token")).thenReturn(1);
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(authenticatedUserProvider.belongsToTenant(authenticatedUser, 1)).thenReturn(true);
 
         filter.doFilterInternal(request, response, chain);
 
@@ -174,6 +175,7 @@ public class JwtTokenFilterTest {
 		when(jwtTokenUtil.getTenantId("token-ip")).thenReturn(1);
         when(jwtTokenUtil.getUserIp("token-ip")).thenReturn("10.10.10.10");
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(authenticatedUserProvider.belongsToTenant(authenticatedUser, 1)).thenReturn(true);
         when(request.getHeader("X-Forwarded-For")).thenReturn(null);
         when(request.getHeader("Proxy-Client-IP")).thenReturn(null);
         when(request.getHeader("WL-Proxy-Client-IP")).thenReturn(null);
@@ -206,6 +208,7 @@ public class JwtTokenFilterTest {
         when(jwtTokenUtil.getHostMac("token-mac")).thenReturn("AA-BB");
         when(networkController.getHostMac()).thenReturn("CC-DD");
         when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(authenticatedUserProvider.belongsToTenant(authenticatedUser, 1)).thenReturn(true);
 
         assertThrows(InvalidMacException.class, () -> localFilter.doFilterInternal(request, response, chain));
     }

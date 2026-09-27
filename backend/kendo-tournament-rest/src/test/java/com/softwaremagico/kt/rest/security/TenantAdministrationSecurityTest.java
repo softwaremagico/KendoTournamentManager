@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = "tenantAdministration")
 public class TenantAdministrationSecurityTest extends AbstractTestNGSpringContextTests {
-    private static final String LEGACY_TENANT = "Legacy organization";
+    private static final String LEGACY_TENANT = "Default";
     private static final String PLATFORM_ADMIN = "platform.admin";
     private static final String TENANT_ADMIN = "tenant.admin";
     private static final String PASSWORD = "secure-password";
@@ -74,7 +74,9 @@ public class TenantAdministrationSecurityTest extends AbstractTestNGSpringContex
 
     @BeforeClass
     public void setUpUsers() throws Exception {
-        TenantContext.setTenantId(TenantContext.LEGACY_TENANT_ID);
+        final Tenant defaultTenant = tenantRepository.findByNameAndActiveTrue(LEGACY_TENANT)
+                .orElseGet(() -> tenantRepository.save(new Tenant(LEGACY_TENANT)));
+        TenantContext.setTenantId(defaultTenant.getId());
         try {
             authenticatedUserController.createUser(null, PLATFORM_ADMIN, "Platform", "Admin", PASSWORD,
                     AvailableRole.SUPER_ADMIN);

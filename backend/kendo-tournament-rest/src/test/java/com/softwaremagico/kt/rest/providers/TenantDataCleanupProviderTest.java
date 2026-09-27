@@ -60,7 +60,7 @@ import static org.mockito.Mockito.when;
 @Test(groups = "tenantDataCleanupProvider")
 public class TenantDataCleanupProviderTest {
     private static final int TENANT_ID = 42;
-    private static final int JOIN_TABLE_DELETES = 6;
+    private static final int JOIN_TABLE_DELETES = 5;
 
     private TenantRepository tenantRepository;
     private JdbcTemplate jdbcTemplate;

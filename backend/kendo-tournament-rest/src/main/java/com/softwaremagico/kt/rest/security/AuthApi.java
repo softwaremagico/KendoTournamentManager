@@ -152,7 +152,8 @@ public class AuthApi {
     private void createDefaultTenantAndUser(AuthRequest request) {
         try {
             // Reuse an existing tenant so the first platform administrator belongs to it.
-            Tenant tenant = tenantRepository.findAllByActiveTrueOrderByNameAsc().stream().findFirst().orElse(null);
+            Tenant tenant = tenantRepository.findAllByActiveTrueOrderByNameAsc().stream().findFirst()
+                    .orElseGet(() -> tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null));
             if (tenant == null) {
                 tenant = new Tenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
                 tenant = tenantRepository.save(tenant);
@@ -198,7 +199,7 @@ public class AuthApi {
         }
 
         // If tenant doesn't exist and no users exist, create default tenant and user
-        if (tenant == null && authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
+        if (authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
             RestServerLogger.info(this.getClass(), "First login detected. Creating default tenant and user.");
             createDefaultTenantAndUser(request);
             tenant = resolveLastTenant(request.getUsername());
@@ -231,10 +232,12 @@ public class AuthApi {
     private Tenant resolveLastTenant(String username) {
         final List<AuthenticatedUser> users = authenticatedUserProvider.findAllByUsername(username);
         if (users.isEmpty()) {
-            return null;
+            return tenantRepository.findById(TenantContext.LEGACY_TENANT_ID)
+                    .or(() -> tenantRepository.findByNameAndActiveTrue(TenantContext.LEGACY_TENANT_NAME))
+                    .orElse(null);
         }
         final AuthenticatedUser user = users.getFirst();
-        return java.util.stream.Stream.concat(java.util.stream.Stream.of(user.getLastTenantId()),
+        return java.util.stream.Stream.concat(java.util.stream.Stream.of(user.getLastTenantId(), user.getTenantId()),
                         authenticatedUserProvider.getTenantIds(user).stream())
                 .filter(Objects::nonNull).distinct().map(tenantRepository::findById)
                 .flatMap(java.util.Optional::stream).filter(Tenant::isActive).findFirst().orElse(null);

@@ -161,7 +161,7 @@ public class AuthenticatedUserProvider {
         authenticatedUser.setLastname(lastName);
         authenticatedUser.setPassword(password);
         authenticatedUser.setCreatedBy(creator);
-        authenticatedUser.setLastTenantId(TenantContext.getRequiredTenantId());
+        authenticatedUser.setLastTenantId(getEffectiveTenantId());
         if (roles != null) {
             authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
         }
@@ -178,12 +178,17 @@ public class AuthenticatedUserProvider {
 
     public AuthenticatedUser save(AuthenticatedUser authenticatedUser) {
         final AuthenticatedUser saved = authenticatedUserRepository.save(authenticatedUser);
-        if (TenantContext.getTenantId() != null
-                && !userTenantRepository.existsByAuthenticatedUserIdAndTenantId(saved.getId(), TenantContext.getRequiredTenantId())) {
-            userTenantRepository.save(new UserTenant(saved.getId(), TenantContext.getRequiredTenantId()));
+        final Integer tenantId = getEffectiveTenantId();
+        if (userTenantRepository != null
+                && !userTenantRepository.existsByAuthenticatedUserIdAndTenantId(saved.getId(), tenantId)) {
+            userTenantRepository.save(new UserTenant(saved.getId(), tenantId));
         }
-        saved.setTenantId(TenantContext.getTenantId());
+        saved.setTenantId(tenantId);
         return saved;
+    }
+
+    private Integer getEffectiveTenantId() {
+        return TenantContext.getTenantId() != null ? TenantContext.getRequiredTenantId() : TenantContext.LEGACY_TENANT_ID;
     }
 
     public AuthenticatedUser updateRoles(AuthenticatedUser authenticatedUser, Set<String> roles) {
