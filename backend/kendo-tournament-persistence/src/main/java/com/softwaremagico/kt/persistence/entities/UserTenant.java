@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_tenants", uniqueConstraints = @UniqueConstraint(columnNames = {"authenticated_user_id", "tenant_id"}))
@@ -20,6 +23,10 @@ public class UserTenant {
 
     @Column(name = "tenant_id", nullable = false)
     private Integer tenantId;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public UserTenant() {
     }
@@ -35,5 +42,9 @@ public class UserTenant {
 
     public Integer getTenantId() {
         return tenantId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

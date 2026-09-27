@@ -8,7 +8,8 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS tenants (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO tenants (name, active)
@@ -72,6 +73,7 @@ CREATE TABLE IF NOT EXISTS user_tenants (
     id SERIAL PRIMARY KEY,
     authenticated_user_id INTEGER NOT NULL REFERENCES authenticated_users(id),
     tenant_id INTEGER NOT NULL REFERENCES tenants(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT user_tenants_user_tenant_key UNIQUE (authenticated_user_id, tenant_id)
 );
 INSERT INTO user_tenants (authenticated_user_id, tenant_id)

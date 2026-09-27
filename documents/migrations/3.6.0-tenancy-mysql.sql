@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS tenants (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     active BIT NOT NULL DEFAULT b'1',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY tenants_name_key (name)
 );
@@ -131,6 +132,7 @@ CREATE TABLE IF NOT EXISTS user_tenants (
     id INT NOT NULL AUTO_INCREMENT,
     authenticated_user_id INT NOT NULL,
     tenant_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY user_tenants_user_tenant_key (authenticated_user_id, tenant_id),
     CONSTRAINT user_tenants_user_fk FOREIGN KEY (authenticated_user_id) REFERENCES authenticated_users(id),
