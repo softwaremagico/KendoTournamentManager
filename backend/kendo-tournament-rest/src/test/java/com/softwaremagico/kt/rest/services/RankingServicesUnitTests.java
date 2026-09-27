@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.TournamentController;
@@ -64,6 +65,7 @@ public class RankingServicesUnitTests {
     private RankingController rankingController;
     private TournamentController tournamentController;
     private ParticipantController participantController;
+    private ClubController clubController;
     private PdfController pdfController;
     private com.softwaremagico.kt.html.controller.HtmlController htmlController;
     private GroupController groupController;
@@ -76,13 +78,14 @@ public class RankingServicesUnitTests {
         rankingController = mock(RankingController.class);
         tournamentController = mock(TournamentController.class);
         participantController = mock(ParticipantController.class);
+        clubController = mock(ClubController.class);
         pdfController = mock(PdfController.class);
         htmlController = mock(com.softwaremagico.kt.html.controller.HtmlController.class);
         groupController = mock(GroupController.class);
         zipController = mock(com.softwaremagico.kt.html.controller.ZipController.class);
 
         rankingServices = new RankingServices(rankingController, pdfController, tournamentController,
-                participantController, htmlController, groupController, zipController);
+                participantController, clubController, htmlController, groupController, zipController);
     }
 
     @Test
@@ -277,4 +280,3 @@ public class RankingServicesUnitTests {
         verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
     }
 }
-

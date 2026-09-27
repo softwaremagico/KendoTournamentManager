@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.entities.Tenant;
@@ -96,7 +97,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = "tenantDataDeletion")
 public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringContextTests {
-	private static final String LEGACY_TENANT = "Legacy organization";
+	private static final String LEGACY_TENANT = "Default";
 	private static final String PLATFORM_ADMIN = "platform.admin";
 	private static final String PASSWORD = "secure-password";
 	private static final String TENANT_A = "Isolation Tournament Tenant A";
@@ -105,11 +106,13 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 	private static final String ADMIN_B = "isolation.tournament.admin.b";
 	private static final String PREFIX_A = "WipeA";
 	private static final String PREFIX_B = "WipeB";
+	private static final String SHARED_CLUB_NAME = "Shared Club";
+	private static final String SHARED_TOURNAMENT_NAME = "Shared Tournament";
 	private static final int TEAM_SIZE = 2;
 	private static final int TEAMS = 4;
 
 	private static final List<String> TENANT_SCOPED_TABLES = List.of(
-			"achievements", "authenticated_users", "clubs", "duels", "fights", "groups_links", "participants",
+			"achievements", "user_tenants", "clubs", "duels", "fights", "groups_links", "participants",
 			"participant_image", "roles", "teams", "tournament_extra_properties", "tournament_groups",
 			"tournament_image", "tournaments", "tournament_scores");
 
@@ -190,6 +193,24 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 	}
 
 	@Test(dependsOnMethods = "tenantUsersCannotAccessEachOthersResourcesById")
+	public void statisticsAndRankingsRemainTenantScopedWithIdenticalBusinessData() throws Exception {
+		assertStatisticsVisible(tenantAToken, tenantResourcesA);
+		assertStatisticsVisible(tenantBToken, tenantResourcesB);
+
+		assertNotFound(get("/statistics/tournaments/{id}/fights", tenantResourcesB.tournamentId), tenantAToken);
+		assertNotFound(get("/statistics/tournaments/{id}", tenantResourcesB.tournamentId), tenantAToken);
+		assertNotFound(get("/statistics/participants/{id}", tenantResourcesB.participantId), tenantAToken);
+		assertNotFound(get("/rankings/competitors/tournaments/{id}", tenantResourcesB.tournamentId), tenantAToken);
+		assertNotFound(get("/rankings/competitors/{id}", tenantResourcesB.participantId), tenantAToken);
+
+		assertNotFound(get("/statistics/tournaments/{id}/fights", tenantResourcesA.tournamentId), tenantBToken);
+		assertNotFound(get("/statistics/tournaments/{id}", tenantResourcesA.tournamentId), tenantBToken);
+		assertNotFound(get("/statistics/participants/{id}", tenantResourcesA.participantId), tenantBToken);
+		assertNotFound(get("/rankings/competitors/tournaments/{id}", tenantResourcesA.tournamentId), tenantBToken);
+		assertNotFound(get("/rankings/competitors/{id}", tenantResourcesA.participantId), tenantBToken);
+	}
+
+	@Test(dependsOnMethods = "statisticsAndRankingsRemainTenantScopedWithIdenticalBusinessData")
 	public void wipingTenantADataOnlyRemovesTenantARows() throws Exception {
 		final Map<String, Long> countsBeforeA = countRowsPerTable(tenantAId);
 		final Map<String, Long> countsBeforeB = countRowsPerTable(tenantBId);
@@ -231,7 +252,8 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 		final TournamentDTO[] tournaments = fromJson(get2xx("/tournaments", tenantBToken)
 				.getResponse().getContentAsString(), TournamentDTO[].class);
 		Assert.assertEquals(tournaments.length, 1, "Tenant B must still see its tournament");
-		Assert.assertEquals(tournaments[0].getName(), PREFIX_B + " Tournament");
+		Assert.assertEquals(tournaments[0].getId(), tournamentBId);
+		Assert.assertEquals(tournaments[0].getName(), SHARED_TOURNAMENT_NAME);
 		assertFightsWithPoints(tenantBToken, tournamentBId);
 		// And the wiped tenant's resources are no longer reachable.
 		assertNotFound(get("/tournaments/{id}", tournamentAId), tenantBToken);
@@ -255,19 +277,19 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 	 * participants, tournament, roles, teams, fights and duel scores.
 	 */
 	private TournamentDTO buildCompleteTournament(String token, String prefix) throws Exception {
-		final ClubDTO club = fromJson(post2xx("/clubs", token, new ClubDTO(prefix + " Club", "Bilbao"),
+		final ClubDTO club = fromJson(post2xx("/clubs", token, new ClubDTO(SHARED_CLUB_NAME, "Bilbao"),
 				new Object[0]).getResponse().getContentAsString(), ClubDTO.class);
 
 		final List<ParticipantDTO> participants = new ArrayList<>();
 		for (int i = 0; i < TEAM_SIZE * TEAMS; i++) {
 			participants.add(fromJson(post2xx("/participants", token,
-					new ParticipantDTO(String.format("%s.driver.%02d", prefix, i), String.format("%s.name%d", prefix, i),
-							String.format("%s.lastname%d", prefix, i), club),
+					new ParticipantDTO(String.format("shared.driver.%02d", i), String.format("Shared name %d", i),
+							String.format("Shared lastname %d", i), club),
 					new Object[0]).getResponse().getContentAsString(), ParticipantDTO.class));
 		}
 
 		final TournamentDTO tournament = fromJson(post2xx("/tournaments", token,
-				new TournamentDTO(prefix + " Tournament", 1, TEAM_SIZE, TournamentType.LEAGUE),
+				new TournamentDTO(SHARED_TOURNAMENT_NAME, 1, TEAM_SIZE, TournamentType.LEAGUE),
 				new Object[0]).getResponse().getContentAsString(), TournamentDTO.class);
 
 		for (ParticipantDTO participant : participants) {
@@ -295,7 +317,7 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 		for (ParticipantDTO participant : participants) {
 			if (team == null) {
 				teamIndex++;
-				team = new TeamDTO(prefix + "Team" + String.format("%02d", teamIndex), tournament);
+				team = new TeamDTO("Shared Team" + String.format("%02d", teamIndex), tournament);
 				teamMember = 0;
 			}
 			team.getMembers().add(participant);
@@ -338,6 +360,21 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 				"The tenant must keep its points (scored hits)");
 	}
 
+	private void assertStatisticsVisible(String token, TenantResourceIds ids) throws Exception {
+		final String tournamentStatistics = get2xx("/statistics/tournaments/{id}", token, ids.tournamentId)
+				.getResponse().getContentAsString();
+		Assert.assertTrue(objectMapper.readTree(tournamentStatistics).size() > 0,
+				"Tenant statistics must contain data for its own tournament");
+		final String participantStatistics = get2xx("/statistics/participants/{id}", token, ids.participantId)
+				.getResponse().getContentAsString();
+		Assert.assertTrue(objectMapper.readTree(participantStatistics).size() > 0,
+				"Tenant statistics must contain data for its own participant");
+		final ScoreOfCompetitorDTO[] ranking = fromJson(get2xx("/rankings/competitors/tournaments/{id}", token,
+				ids.tournamentId).getResponse().getContentAsString(), ScoreOfCompetitorDTO[].class);
+		Assert.assertTrue(Arrays.stream(ranking).mapToInt(ScoreOfCompetitorDTO::getHits).sum() > 0,
+				"Tenant ranking must contain only its own scored fights");
+	}
+
 	/**
 	 * Reads every resource the tenant owns through REST and checks that the list
 	 * endpoints only expose its own tenant data.
@@ -349,13 +386,13 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 
 		final ClubDTO[] clubs = fromJson(get2xx("/clubs", token).getResponse().getContentAsString(), ClubDTO[].class);
 		Assert.assertEquals(clubs.length, 1, "Tenant '" + prefix + "' must see exactly its own club");
-		Assert.assertTrue(clubs[0].getName().equalsIgnoreCase(prefix + " Club"));
+		Assert.assertTrue(clubs[0].getName().equalsIgnoreCase(SHARED_CLUB_NAME));
 		ids.clubId = clubs[0].getId();
 
 		final TournamentDTO[] tournaments = fromJson(get2xx("/tournaments", token).getResponse().getContentAsString(),
 				TournamentDTO[].class);
 		Assert.assertEquals(tournaments.length, 1, "Tenant '" + prefix + "' must see exactly its own tournament");
-		Assert.assertEquals(tournaments[0].getName(), prefix + " Tournament");
+		Assert.assertEquals(tournaments[0].getName(), SHARED_TOURNAMENT_NAME);
 		ids.tournamentId = tournaments[0].getId();
 
 		final ParticipantDTO[] participants = fromJson(get2xx("/participants", token).getResponse().getContentAsString(),
@@ -500,8 +537,6 @@ public class TenantTournamentIsolationAndWipeTest extends AbstractTestNGSpringCo
 				"SELECT COUNT(*) FROM members_of_team WHERE team_id IN (SELECT id FROM teams WHERE tenant_id = ?)", tenantId));
 		counts.put("unties", countJoinRows(
 				"SELECT COUNT(*) FROM unties WHERE group_id IN (SELECT id FROM tournament_groups WHERE tenant_id = ?)", tenantId));
-		counts.put("authenticated_user_roles", countJoinRows(
-				"SELECT COUNT(*) FROM authenticated_user_roles WHERE authenticated_user IN (SELECT id FROM authenticated_users WHERE tenant_id = ?)", tenantId));
 		return counts;
 	}
 

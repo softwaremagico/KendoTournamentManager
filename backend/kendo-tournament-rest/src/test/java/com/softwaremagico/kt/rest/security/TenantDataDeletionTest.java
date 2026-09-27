@@ -77,7 +77,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = "tenantDataDeletion")
 public class TenantDataDeletionTest extends AbstractTestNGSpringContextTests {
-    private static final String LEGACY_TENANT = "Legacy organization";
+    private static final String LEGACY_TENANT = "Default";
     private static final String PLATFORM_ADMIN = "platform.admin";
     private static final String TENANT_A_PREFIX = "tenantA";
     private static final String TENANT_B_PREFIX = "tenantB";
@@ -88,7 +88,7 @@ public class TenantDataDeletionTest extends AbstractTestNGSpringContextTests {
     private static final int TEAMS = 4;
 
     private static final List<String> TENANT_SCOPED_TABLES = List.of(
-            "achievements", "authenticated_users", "clubs", "duels", "fights", "groups_links", "participants",
+            "achievements", "user_tenants", "clubs", "duels", "fights", "groups_links", "participants",
             "participant_image", "roles", "teams", "tournament_extra_properties", "tournament_groups",
             "tournament_image", "tournaments", "tournament_scores");
 
@@ -264,8 +264,6 @@ public class TenantDataDeletionTest extends AbstractTestNGSpringContextTests {
                 "SELECT COUNT(*) FROM members_of_team WHERE team_id IN (SELECT id FROM teams WHERE tenant_id = ?)", tenantId));
         counts.put("unties", countJoinRows(
                 "SELECT COUNT(*) FROM unties WHERE group_id IN (SELECT id FROM tournament_groups WHERE tenant_id = ?)", tenantId));
-        counts.put("authenticated_user_roles", countJoinRows(
-                "SELECT COUNT(*) FROM authenticated_user_roles WHERE authenticated_user IN (SELECT id FROM authenticated_users WHERE tenant_id = ?)", tenantId));
         return counts;
     }
 

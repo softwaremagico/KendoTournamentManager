@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.TournamentController;
@@ -97,6 +98,8 @@ public class RankingServices {
 
     private final ParticipantController participantController;
 
+    private final ClubController clubController;
+
     private final PdfController pdfController;
 
     private final HtmlController htmlController;
@@ -106,12 +109,14 @@ public class RankingServices {
     private final ZipController zipController;
 
     public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
-                           ParticipantController participantController, HtmlController htmlController, GroupController groupController,
+                           ParticipantController participantController, ClubController clubController,
+                           HtmlController htmlController, GroupController groupController,
                            ZipController zipController) {
         this.rankingController = rankingController;
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
         this.participantController = participantController;
+        this.clubController = clubController;
         this.htmlController = htmlController;
         this.groupController = groupController;
         this.zipController = zipController;
@@ -122,8 +127,9 @@ public class RankingServices {
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingGroup(@Parameter(description = "Id of an existing group", required = true)
-                                                                      @PathVariable("groupId") Integer groupId,
-                                                                      HttpServletRequest request) {
+                                                                       @PathVariable("groupId") Integer groupId,
+                                                                       HttpServletRequest request) {
+        groupController.get(groupId);
         return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
     }
 
@@ -133,8 +139,9 @@ public class RankingServices {
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                                           @PathVariable("tournamentId") Integer tournamentId,
-                                                                           HttpServletRequest request) {
+                                                                            @PathVariable("tournamentId") Integer tournamentId,
+                                                                            HttpServletRequest request) {
+        tournamentController.get(tournamentId);
         return rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
     }
 
@@ -183,8 +190,9 @@ public class RankingServices {
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/clubs/{clubId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@Parameter(description = "Id of an existing club", required = true)
-                                                                       @PathVariable("clubId") Integer clubId,
-                                                                       HttpServletRequest request) {
+                                                                        @PathVariable("clubId") Integer clubId,
+                                                                        HttpServletRequest request) {
+        clubController.get(clubId);
         return rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
     }
 
