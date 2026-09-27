@@ -9,9 +9,9 @@ jobs:
       - checkout:
           method: blobless
           path: ~/KendoTournamentManager
-       - run:
-           name: Execute mvn tests
-           command: mvn test --file pom.xml -Dmdep.skip=true
+      - run:
+          name: Execute mvn tests
+          command: mvn test --file pom.xml -Dmdep.skip=true
 
   frontend-test:
     docker:
