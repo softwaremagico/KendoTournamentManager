@@ -51,6 +51,11 @@ public class Table {
         getRows().get(row).click();
     }
 
+    public void selectRowContaining(String text) {
+        getRows().stream().filter(row -> row.getText().contains(text)).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No table row contains '" + text + "'.")).click();
+    }
+
     public void clickAction(String actionId) {
         webDriverClient.waitUntilClickable(By.id(actionId)).click();
     }

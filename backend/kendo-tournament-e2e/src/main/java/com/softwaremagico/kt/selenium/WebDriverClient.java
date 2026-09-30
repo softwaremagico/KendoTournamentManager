@@ -24,6 +24,7 @@ package com.softwaremagico.kt.selenium;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -35,6 +36,8 @@ import java.util.List;
  */
 public class WebDriverClient {
     private static final Duration WAIT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration DRAG_START_DELAY = Duration.ofMillis(200);
+    private static final Duration DRAG_END_DELAY = Duration.ofMillis(400);
 
     private final WebDriver driver;
     private final WebDriverWait wait;
@@ -60,6 +63,10 @@ public class WebDriverClient {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
+    public void waitForAtLeast(By locator, int count) {
+        wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(locator, count - 1));
+    }
+
     public boolean isVisible(By locator) {
         return !driver.findElements(locator).isEmpty() && driver.findElement(locator).isDisplayed();
     }
@@ -70,5 +77,10 @@ public class WebDriverClient {
 
     public void open(String url) {
         driver.get(url);
+    }
+
+    public void dragAndDrop(WebElement source, WebElement target) {
+        new Actions(driver).moveToElement(source).pause(DRAG_START_DELAY).clickAndHold()
+                .moveToElement(target).pause(DRAG_END_DELAY).release().perform();
     }
 }
