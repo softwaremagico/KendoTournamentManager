@@ -32,7 +32,9 @@ import org.openqa.selenium.By;
  * Page object for tournament administration and its roles and teams dialogs.
  */
 public class TournamentPage {
-    private static final int LEAGUE_PARTICIPANT_COUNT = 6;
+    private static final int THREE_MEMBER_TEAM_SIZE = 3;
+    private static final int TWO_THREE_MEMBER_TEAMS = 2;
+    private static final int TWO_THREE_MEMBER_TEAM_PARTICIPANTS = 6;
 
     private final WebDriverClient webDriverClient;
     private final Table table;
@@ -48,11 +50,15 @@ public class TournamentPage {
     }
 
     public void createLeague(String name) {
+        createLeague(name, THREE_MEMBER_TEAM_SIZE);
+    }
+
+    public void createLeague(String name, int teamSize) {
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("League");
-        new InputField(webDriverClient, "tournament-team-size").setValue("3");
-        new InputField(webDriverClient, "tournament-fight-size").setValue("3");
+        new InputField(webDriverClient, "tournament-team-size").setValue(Integer.toString(teamSize));
+        new InputField(webDriverClient, "tournament-fight-size").setValue(Integer.toString(teamSize));
         webDriverClient.waitUntilClickable(By.id("tournament-button-save")).click();
         new Popup(webDriverClient, "tournament-popup").waitUntilClosed();
         table.search(name);
@@ -71,11 +77,16 @@ public class TournamentPage {
     }
 
     public void createTwoTeamsOfThree() {
+        createTeams(TWO_THREE_MEMBER_TEAMS, TWO_THREE_MEMBER_TEAM_PARTICIPANTS);
+    }
+
+    public void createTeams(int teamCount, int participantCount) {
         clickSelectedTournamentAction("team");
-        webDriverClient.waitUntilClickable(By.id("tournament-team-add")).click();
-        webDriverClient.waitUntilClickable(By.id("tournament-team-add")).click();
+        for (int index = 0; index < teamCount; index++) {
+            webDriverClient.waitUntilClickable(By.id("tournament-team-add")).click();
+        }
         webDriverClient.waitUntilClickable(By.cssSelector("tournament-teams button[biit-button][secondary]")).click();
-        webDriverClient.waitForAtLeast(By.cssSelector("tournament-teams .team .user-card"), LEAGUE_PARTICIPANT_COUNT);
+        webDriverClient.waitForAtLeast(By.cssSelector("tournament-teams .team .user-card"), participantCount);
         webDriverClient.waitUntilClickable(By.id("tournament-button-close")).click();
     }
 

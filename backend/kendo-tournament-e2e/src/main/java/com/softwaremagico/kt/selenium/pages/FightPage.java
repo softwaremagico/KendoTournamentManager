@@ -54,10 +54,20 @@ public class FightPage {
         }
     }
 
+    public int getFightCount() {
+        return webDriverClient.findAll(By.cssSelector("fight")).size();
+    }
+
     public String getWinner() {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='teams-classification']]")).click();
         return webDriverClient.findVisible(By.cssSelector("#teams-ranking-popup .team-ranking-table tbody tr:first-child .team-name"))
                 .getText();
+    }
+
+    public int getWinnerFightsWon() {
+        return Integer.parseInt(webDriverClient.findVisible(
+                By.cssSelector("#teams-ranking-popup .team-ranking-table tbody tr:first-child td:nth-child(3)"))
+                .getText());
     }
 
     private void scoreAndFinish(WebElement duel, boolean leftWins) {
