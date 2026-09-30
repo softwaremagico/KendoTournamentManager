@@ -31,6 +31,10 @@ import java.util.List;
  * Page object for generating and resolving tournament fights.
  */
 public class FightPage {
+    private static final int CHAMPIONSHIP_ADDITIONAL_GROUPS = 3;
+    private static final int EIGHT_TEAM_CHAMPIONSHIP_FIGHT_COUNT = 7;
+    private static final int EIGHT_TEAM_CHAMPIONSHIP_SEMIFINAL_FIGHT_COUNT = 6;
+
     private final WebDriverClient webDriverClient;
 
     public FightPage(WebDriverClient webDriverClient) {
@@ -42,6 +46,17 @@ public class FightPage {
         webDriverClient.waitUntilClickable(By.cssSelector("#league-generator-popup .sorted-button")).click();
         webDriverClient.waitUntilClickable(By.cssSelector("#league-generator-popup .fight-button")).click();
         webDriverClient.waitUntilInvisible(By.id("league-generator-popup"));
+        webDriverClient.findVisible(By.cssSelector("fight"));
+    }
+
+    public void generateChampionshipFights() {
+        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='brackets']]")).click();
+        for (int index = 0; index < CHAMPIONSHIP_ADDITIONAL_GROUPS; index++) {
+            webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='plus']]")).click();
+        }
+        webDriverClient.waitUntilClickable(By.cssSelector("tournament-brackets-editor button[biit-button][secondary]")).click();
+        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='wand']]")).click();
+        webDriverClient.waitUntilClickable(By.id("confirm-delete-accept-button")).click();
         webDriverClient.findVisible(By.cssSelector("fight"));
     }
 
@@ -58,6 +73,10 @@ public class FightPage {
         return webDriverClient.findAll(By.cssSelector("fight")).size();
     }
 
+    public boolean hasReachedFinal() {
+        return getFightCount() >= EIGHT_TEAM_CHAMPIONSHIP_FIGHT_COUNT;
+    }
+
     public String getWinner() {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='teams-classification']]")).click();
         return webDriverClient.findVisible(By.cssSelector("#teams-ranking-popup .team-ranking-table tbody tr:first-child .team-name"))
@@ -70,7 +89,18 @@ public class FightPage {
                 .getText());
     }
 
+    public void resolveChampionshipFor(String winningTeam) {
+        resolveAllFightsFor(winningTeam);
+        webDriverClient.waitForAtLeast(By.cssSelector("fight"), EIGHT_TEAM_CHAMPIONSHIP_SEMIFINAL_FIGHT_COUNT);
+        resolveAllFightsFor(winningTeam);
+        webDriverClient.waitForAtLeast(By.cssSelector("fight"), EIGHT_TEAM_CHAMPIONSHIP_FIGHT_COUNT);
+        resolveAllFightsFor(winningTeam);
+    }
+
     private void scoreAndFinish(WebElement duel, boolean leftWins) {
+        if (duel.getAttribute("class").contains("over")) {
+            return;
+        }
         final List<WebElement> userScores = duel.findElements(By.cssSelector("user-score"));
         final List<WebElement> scores = userScores.get(leftWins ? 0 : 1).findElements(By.cssSelector("score"));
         for (int scoreIndex = 0; scoreIndex < 2; scoreIndex++) {
@@ -79,5 +109,12 @@ public class FightPage {
         }
         duel.click();
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='check']]")).click();
+        closeRankingPopup();
+    }
+
+    private void closeRankingPopup() {
+        if (webDriverClient.isVisible(By.id("teams-ranking-popup"))) {
+            webDriverClient.waitUntilClickable(By.cssSelector("#teams-ranking-popup button[biit-button][primary]")).click();
+        }
     }
 }

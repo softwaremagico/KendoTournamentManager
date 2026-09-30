@@ -54,9 +54,17 @@ public class TournamentPage {
     }
 
     public void createLeague(String name, int teamSize) {
+        createTournament(name, "League", teamSize);
+    }
+
+    public void createChampionship(String name, int teamSize) {
+        createTournament(name, "Championship", teamSize);
+    }
+
+    private void createTournament(String name, String type, int teamSize) {
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
-        new Dropdown(webDriverClient, "tournament-type").select("League");
+        new Dropdown(webDriverClient, "tournament-type").select(type);
         new InputField(webDriverClient, "tournament-team-size").setValue(Integer.toString(teamSize));
         new InputField(webDriverClient, "tournament-fight-size").setValue(Integer.toString(teamSize));
         webDriverClient.waitUntilClickable(By.id("tournament-button-save")).click();
