@@ -125,6 +125,14 @@ public class TournamentPage {
         table.waitUntilContainsText(tournamentName);
     }
 
+    public void cloneTournament(String tournamentName) {
+        table.search(tournamentName);
+        table.selectRowContaining(tournamentName);
+        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='clone']]")).click();
+        webDriverClient.clickWizardryButton(By.id("clone-confirm-button"));
+        table.waitUntilContainsText("Copy of " + tournamentName);
+    }
+
     public boolean contains(String tournamentName) {
         table.search(tournamentName);
         return table.containsText(tournamentName);
