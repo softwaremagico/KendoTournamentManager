@@ -101,6 +101,10 @@ Set `E2E_KEEP_ENVIRONMENT=true` only while diagnosing a failed run. It keeps
 the temporary Compose project available for log inspection; clean it manually
 with the project name printed by Docker Compose when finished.
 
+The runner uses host ports `14200` and `18080`. It aborts before starting if a
+previous E2E environment is still using either port. Remove that environment
+with its printed Compose project name before starting another run.
+
 ### Authenticated workflows
 
 The runner provisions an administrator with every role required by the browser

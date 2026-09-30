@@ -59,6 +59,7 @@ public class TournamentPage {
 
     public void createLeagueWithScoreRule(String name, String scoreRule) {
         table.clickAction("button-plus");
+        webDriverClient.findVisible(By.id("tournament-popup"));
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("League");
         new Dropdown(webDriverClient, "tournament-score-rules").select(scoreRule);
@@ -77,6 +78,7 @@ public class TournamentPage {
 
     public void createSenbatsu(String name) {
         table.clickAction("button-plus");
+        webDriverClient.findVisible(By.id("tournament-popup"));
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("Senbatsu");
         webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
@@ -88,6 +90,7 @@ public class TournamentPage {
 
     private void createTournamentForm(String name, String type, int teamSize) {
         table.clickAction("button-plus");
+        webDriverClient.findVisible(By.id("tournament-popup"));
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select(type);
         new InputField(webDriverClient, "tournament-team-size").setValue(Integer.toString(teamSize));

@@ -47,6 +47,7 @@ public class ParticipantPage {
 
     public void create(String name, String lastname, String idCard, String clubName) {
         table.clickAction("button-plus");
+        webDriverClient.findVisible(By.id("participant-popup"));
         new InputField(webDriverClient, "participant-name").setValue(name);
         new InputField(webDriverClient, "participant-lastname").setValue(lastname);
         new InputField(webDriverClient, "participant-id-card").setValue(idCard);

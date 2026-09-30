@@ -26,6 +26,14 @@ cleanup() {
 }
 trap cleanup EXIT
 
+for port in 14200 18080; do
+  if [[ -z "$(ss -ltnH "sport = :${port}")" ]]; then
+    continue
+  fi
+  printf 'Port %s is already in use. Stop the previous E2E environment before starting a new one.\n' "${port}" >&2
+  exit 1
+done
+
 cd "${backend_directory}"
 mvn --projects kendo-tournament-rest --also-make package -DskipTests -Dgpg.skip=true
 npm --prefix "${workspace_directory}/frontend" run build

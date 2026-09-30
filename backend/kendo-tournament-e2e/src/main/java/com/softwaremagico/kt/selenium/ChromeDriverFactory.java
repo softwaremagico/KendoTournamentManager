@@ -25,10 +25,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.time.Duration;
+
 /**
  * Creates browsers with the same deterministic viewport in local and CI runs.
  */
 public final class ChromeDriverFactory {
+    private static final Duration PAGE_LOAD_TIMEOUT = Duration.ofSeconds(30);
 
     private ChromeDriverFactory() {
     }
@@ -41,10 +44,13 @@ public final class ChromeDriverFactory {
      */
     public static WebDriver create(boolean headless) {
         final ChromeOptions options = new ChromeOptions();
-        options.addArguments("--window-size=1920,1080", "--no-sandbox", "--disable-dev-shm-usage");
+        options.addArguments("--window-size=1920,1080", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu",
+                "--disable-renderer-backgrounding", "--disable-background-timer-throttling");
         if (headless) {
             options.addArguments("--headless=new");
         }
-        return new ChromeDriver(options);
+        final WebDriver driver = new ChromeDriver(options);
+        driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT);
+        return driver;
     }
 }

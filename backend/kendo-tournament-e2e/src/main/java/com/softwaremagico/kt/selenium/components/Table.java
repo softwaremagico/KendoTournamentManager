@@ -65,7 +65,7 @@ public class Table {
     }
 
     public void clickAction(String actionId) {
-        webDriverClient.waitUntilClickable(By.id(actionId)).click();
+        webDriverClient.clickFirstVisible(By.id(actionId));
     }
 
     public boolean containsText(String text) {

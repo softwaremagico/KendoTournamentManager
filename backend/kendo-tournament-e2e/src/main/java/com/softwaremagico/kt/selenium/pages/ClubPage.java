@@ -45,6 +45,7 @@ public class ClubPage {
 
     public void create(String name, String country, String city) {
         table.clickAction("button-plus");
+        webDriverClient.findVisible(org.openqa.selenium.By.id("club-popup"));
         new InputField(webDriverClient, "club-name").setValue(name);
         new InputField(webDriverClient, "club-country").setValue(country);
         new InputField(webDriverClient, "club-city").setValue(city);

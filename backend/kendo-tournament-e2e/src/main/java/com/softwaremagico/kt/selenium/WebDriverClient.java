@@ -80,6 +80,12 @@ public class WebDriverClient {
         return driver.findElements(locator);
     }
 
+    public void clickFirstVisible(By locator) {
+        wait.until(webDriver -> webDriver.findElements(locator).stream().anyMatch(WebElement::isDisplayed));
+        driver.findElements(locator).stream().filter(WebElement::isDisplayed).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No visible element found for '" + locator + "'.")).click();
+    }
+
     public void open(String url) {
         driver.get(url);
     }
