@@ -9,6 +9,14 @@ e2e_username="${E2E_USERNAME:-e2e-admin@test.local}"
 e2e_password="${E2E_PASSWORD:-E2e-password-123}"
 e2e_tests="${E2E_TESTS:-}"
 e2e_enable_tenancy="${E2E_ENABLE_TENANCY:-true}"
+e2e_headless="${E2E_HEADLESS:-true}"
+
+if [[ "${1:-}" == "--headed" ]]; then
+  e2e_headless=false
+elif [[ -n "${1:-}" ]]; then
+  printf 'Usage: %s [--headed]\n' "${BASH_SOURCE[0]}" >&2
+  exit 2
+fi
 
 cleanup() {
   if [[ "${E2E_KEEP_ENVIRONMENT:-false}" == "true" ]]; then
@@ -36,6 +44,7 @@ for attempt in $(seq 1 30); do
 done
 maven_arguments=(--projects kendo-tournament-e2e test
   -Dselenium.base-url=http://localhost:14200
+  -Dselenium.headless="${e2e_headless}"
   -Dselenium.username="${e2e_username}"
   -Dselenium.password="${e2e_password}"
   -Dgpg.skip=true)

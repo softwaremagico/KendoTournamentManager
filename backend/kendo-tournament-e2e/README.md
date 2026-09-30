@@ -32,7 +32,21 @@ successful.
 Tests run headlessly by default. To see the browser window, pass:
 
 ```bash
-E2E_TESTS=LoginTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --headed
+```
+
+The visible browser runs on the host machine while MySQL, backend, and frontend
+remain in the disposable Docker environment. To inspect one workflow:
+
+```bash
+E2E_TESTS=WebSocketScoreUpdateTest \
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --headed
+```
+
+The equivalent environment-variable form is:
+
+```bash
+E2E_HEADLESS=false bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
 
 ### Clean, ephemeral environment
