@@ -52,6 +52,18 @@ public class WebDriverClient {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    public void waitUntilInvisible(By locator) {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+    }
+
+    public WebElement waitUntilClickable(By locator) {
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    public boolean isVisible(By locator) {
+        return !driver.findElements(locator).isEmpty() && driver.findElement(locator).isDisplayed();
+    }
+
     public List<WebElement> findAll(By locator) {
         return driver.findElements(locator);
     }

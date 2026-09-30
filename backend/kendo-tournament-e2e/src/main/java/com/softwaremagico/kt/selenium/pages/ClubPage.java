@@ -23,43 +23,37 @@ package com.softwaremagico.kt.selenium.pages;
 
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import com.softwaremagico.kt.selenium.components.InputField;
-import org.openqa.selenium.By;
+import com.softwaremagico.kt.selenium.components.Popup;
+import com.softwaremagico.kt.selenium.components.Table;
 
 /**
- * Page object for the public login route.
+ * Page object for the club registry.
  */
-public class LoginPage {
+public class ClubPage {
     private final WebDriverClient webDriverClient;
-    private final InputField username;
-    private final InputField password;
+    private final Table table;
 
-    public LoginPage(WebDriverClient webDriverClient) {
+    public ClubPage(WebDriverClient webDriverClient) {
         this.webDriverClient = webDriverClient;
-        this.username = new InputField(webDriverClient, "login-username");
-        this.password = new InputField(webDriverClient, "login-password");
+        this.table = new Table(webDriverClient, "clubs-table");
     }
 
     public void open(String baseUrl) {
-        webDriverClient.open(baseUrl + "/login");
-        webDriverClient.findVisible(By.id("login"));
+        webDriverClient.open(baseUrl + "/registry/clubs");
+        table.getRowCount();
     }
 
-    public void setUsername(String usernameValue) {
-        username.setValue(usernameValue);
+    public void create(String name, String country, String city) {
+        table.clickAction("button-plus");
+        new InputField(webDriverClient, "club-name").setValue(name);
+        new InputField(webDriverClient, "club-country").setValue(country);
+        new InputField(webDriverClient, "club-city").setValue(city);
+        webDriverClient.waitUntilClickable(org.openqa.selenium.By.id("club-button-save")).click();
+        new Popup(webDriverClient, "club-popup").waitUntilClosed();
     }
 
-    public void login(String usernameValue, String passwordValue) {
-        setUsername(usernameValue);
-        password.setValue(passwordValue);
-        webDriverClient.findVisible(By.id("login-button")).click();
-        webDriverClient.waitUntilInvisible(By.id("login"));
-    }
-
-    public boolean isDisplayed() {
-        return !webDriverClient.findAll(By.id("login")).isEmpty();
-    }
-
-    public String getUsername() {
-        return username.getValue();
+    public boolean contains(String clubName) {
+        table.search(clubName);
+        return table.containsText(clubName);
     }
 }

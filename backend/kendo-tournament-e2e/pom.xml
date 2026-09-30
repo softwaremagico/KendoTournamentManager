@@ -17,6 +17,8 @@
         <main.basedir>${basedir}/..</main.basedir>
         <selenium.base-url>http://localhost:4200</selenium.base-url>
         <selenium.headless>true</selenium.headless>
+        <selenium.username></selenium.username>
+        <selenium.password></selenium.password>
     </properties>
 
     <dependencies>
@@ -43,6 +45,8 @@
                     <systemPropertyVariables>
                         <selenium.base-url>${selenium.base-url}</selenium.base-url>
                         <selenium.headless>${selenium.headless}</selenium.headless>
+                        <selenium.username>${selenium.username}</selenium.username>
+                        <selenium.password>${selenium.password}</selenium.password>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

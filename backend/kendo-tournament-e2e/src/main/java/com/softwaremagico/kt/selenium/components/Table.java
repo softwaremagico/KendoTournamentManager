@@ -23,6 +23,7 @@ package com.softwaremagico.kt.selenium.components;
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.Keys;
 
 import java.util.List;
 
@@ -48,6 +49,22 @@ public class Table {
 
     public void selectRow(int row) {
         getRows().get(row).click();
+    }
+
+    public void clickAction(String actionId) {
+        webDriverClient.waitUntilClickable(By.id(actionId)).click();
+    }
+
+    public boolean containsText(String text) {
+        return getRows().stream().anyMatch(row -> row.getText().contains(text));
+    }
+
+    public void search(String text) {
+        final WebElement search = webDriverClient.findVisible(tableLocator).findElement(By.id("search"))
+                .findElement(By.cssSelector("input"));
+        search.clear();
+        search.sendKeys(text);
+        search.sendKeys(Keys.ENTER);
     }
 
     private List<WebElement> getRows() {
