@@ -6,7 +6,7 @@
   >
   <club-form class="form-container"
     [club]="club"
-    (saved)="saved"
+    (saved)="saved.emit($event)"
     [saved]="saved"
     (errorEvent)="error"
   [errorEvent]="error"></club-form>

@@ -40,7 +40,7 @@ public class LoginPage {
     }
 
     public void open(String baseUrl) {
-        webDriverClient.open(baseUrl + "/login");
+        webDriverClient.open(baseUrl + "/#/login");
         webDriverClient.findVisible(By.id("login"));
     }
 
@@ -53,6 +53,7 @@ public class LoginPage {
         password.setValue(passwordValue);
         webDriverClient.findVisible(By.id("login-button")).click();
         webDriverClient.waitUntilInvisible(By.id("login"));
+        webDriverClient.findVisible(By.id("navbar"));
     }
 
     public boolean isDisplayed() {

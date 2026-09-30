@@ -39,4 +39,12 @@ public class Popup {
     public void waitUntilClosed() {
         webDriverClient.waitUntilInvisible(popupLocator);
     }
+
+    public void close() {
+        webDriverClient.waitUntilClickable(By.cssSelector("#" + popupId() + " #popup-x-button")).click();
+    }
+
+    private String popupId() {
+        return popupLocator.toString().replace("By.id: ", "");
+    }
 }

@@ -41,7 +41,7 @@ public class ParticipantPage {
     }
 
     public void open(String baseUrl) {
-        webDriverClient.open(baseUrl + "/registry/participants");
+        webDriverClient.open(baseUrl + "/#/registry/participants");
         table.getRowCount();
     }
 
@@ -51,8 +51,9 @@ public class ParticipantPage {
         new InputField(webDriverClient, "participant-lastname").setValue(lastname);
         new InputField(webDriverClient, "participant-id-card").setValue(idCard);
         new Dropdown(webDriverClient, "participant-club").select(clubName);
-        webDriverClient.waitUntilClickable(By.id("participant-button-save")).click();
-        new Popup(webDriverClient, "participant-popup").waitUntilClosed();
+        webDriverClient.clickWizardryButton(By.id("participant-button-save"));
+        table.waitUntilContainsText(name);
+        new Popup(webDriverClient, "participant-popup").close();
     }
 
     public boolean contains(String participantName) {

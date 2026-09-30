@@ -45,7 +45,7 @@ public class TournamentPage {
     }
 
     public void open(String baseUrl) {
-        webDriverClient.open(baseUrl + "/tournaments");
+        webDriverClient.open(baseUrl + "/#/tournaments");
         table.getRowCount();
     }
 
@@ -69,8 +69,9 @@ public class TournamentPage {
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("Senbatsu");
-        webDriverClient.waitUntilClickable(By.id("tournament-button-save")).click();
-        new Popup(webDriverClient, "tournament-popup").waitUntilClosed();
+        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        table.waitUntilContainsText(name);
+        new Popup(webDriverClient, "tournament-popup").close();
         table.search(name);
         table.selectRowContaining(name);
     }
@@ -81,8 +82,9 @@ public class TournamentPage {
         new Dropdown(webDriverClient, "tournament-type").select(type);
         new InputField(webDriverClient, "tournament-team-size").setValue(Integer.toString(teamSize));
         new InputField(webDriverClient, "tournament-fight-size").setValue(Integer.toString(teamSize));
-        webDriverClient.waitUntilClickable(By.id("tournament-button-save")).click();
-        new Popup(webDriverClient, "tournament-popup").waitUntilClosed();
+        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        table.waitUntilContainsText(name);
+        new Popup(webDriverClient, "tournament-popup").close();
         table.search(name);
         table.selectRowContaining(name);
     }

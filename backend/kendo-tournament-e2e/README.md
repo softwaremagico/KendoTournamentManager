@@ -31,6 +31,46 @@ Tests run headlessly by default. To see the browser window, add:
 -Dselenium.headless=false
 ```
 
+### Clean, ephemeral environment
+
+`run-e2e.sh` is the recommended way to run the authenticated suite. It builds
+the local backend and frontend, starts an isolated MySQL database, backend, and
+frontend with Docker Compose, runs the tests, and always removes the containers
+and database volume when it exits:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+The environment uses `http://localhost:14200` for the frontend and
+`http://localhost:18080` for the backend only while the script runs. It creates
+the `e2e-admin@test.local` bootstrap administrator inside the disposable
+database; these credentials are only for the local E2E environment. Override
+them for a run without storing secrets in the repository:
+
+```bash
+E2E_USERNAME="e2e-admin@example.test" \
+E2E_PASSWORD="a-local-random-password" \
+bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+The bootstrap properties are passed only to the temporary backend container.
+They are not present in the application's default configuration or release
+images, and the database volume is removed after every run. The temporary
+account receives `super_admin`, `admin`, `editor`, and `viewer` roles so it can
+exercise protected user workflows; normal bootstrap configuration defaults to
+the `super_admin` role only.
+
+To run one class while diagnosing a workflow, set `E2E_TESTS`:
+
+```bash
+E2E_TESTS=ClubParticipantTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+Set `E2E_KEEP_ENVIRONMENT=true` only while diagnosing a failed run. It keeps
+the temporary Compose project available for log inspection; clean it manually
+with the project name printed by Docker Compose when finished.
+
 ### Authenticated workflows
 
 The club and participant workflow requires a user with permissions to create
@@ -62,7 +102,7 @@ backend or credentials.
 
 | Test | Authentication | Coverage |
 | --- | --- | --- |
-| `LoginTest.loginFormRenders` | No | Opens `/login`, checks that the login form renders, and verifies that typing in the username field is retained by the WizardryTheme input. |
+| `LoginTest.loginFormRenders` | No | Opens `#/login`, checks that the login form renders, and verifies that typing in the username field is retained by the WizardryTheme input. |
 | `ClubParticipantTest.createsClubAndParticipantsFromForms` | Yes | Logs in, creates a club through the club form, verifies it in the clubs table, then creates and verifies two participants through the participant form and club dropdown. |
 | `LeagueTournamentTest.resolvesThreeMemberTeamLeagueAndRanksWinner` | Yes | Creates six participants, a league tournament with teams of three members, assigns competitors and teams through the UI, resolves its duels, and verifies `Team 1` leads the final ranking. |
 | `LargeIndividualLeagueTournamentTest.resolvesTwelveTeamIndividualLeagueAndRanksWinner` | Yes | Creates twelve individual teams, verifies that the generated league contains 66 fights, resolves them all, and checks that `Team 1` has eleven wins and leads the final ranking. |

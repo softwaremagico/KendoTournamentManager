@@ -39,7 +39,7 @@ public class ClubPage {
     }
 
     public void open(String baseUrl) {
-        webDriverClient.open(baseUrl + "/registry/clubs");
+        webDriverClient.open(baseUrl + "/#/registry/clubs");
         table.getRowCount();
     }
 
@@ -48,8 +48,9 @@ public class ClubPage {
         new InputField(webDriverClient, "club-name").setValue(name);
         new InputField(webDriverClient, "club-country").setValue(country);
         new InputField(webDriverClient, "club-city").setValue(city);
-        webDriverClient.waitUntilClickable(org.openqa.selenium.By.id("club-button-save")).click();
-        new Popup(webDriverClient, "club-popup").waitUntilClosed();
+        webDriverClient.clickWizardryButton(org.openqa.selenium.By.id("club-button-save"));
+        table.waitUntilContainsText(name);
+        new Popup(webDriverClient, "club-popup").close();
     }
 
     public boolean contains(String clubName) {

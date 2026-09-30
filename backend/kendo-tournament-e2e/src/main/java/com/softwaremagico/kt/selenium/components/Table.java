@@ -64,6 +64,10 @@ public class Table {
         return getRows().stream().anyMatch(row -> row.getText().contains(text));
     }
 
+    public void waitUntilContainsText(String text) {
+        webDriverClient.getWebDriverWait().until(driver -> containsText(text));
+    }
+
     public void search(String text) {
         final WebElement search = webDriverClient.findVisible(tableLocator).findElement(By.id("search"))
                 .findElement(By.cssSelector("input"));

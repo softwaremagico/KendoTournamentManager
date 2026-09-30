@@ -62,9 +62,9 @@ public class SuperAdminBootstrapTest {
 		MockitoAnnotations.openMocks(this);
 	}
 
-	private SuperAdminBootstrap newBootstrap(String username, String password) {
-		return new SuperAdminBootstrap(username, password, tenantRepository, authenticatedUserRepository,
-				authenticatedUserController);
+    private SuperAdminBootstrap newBootstrap(String username, String password) {
+        return new SuperAdminBootstrap(username, password, "super_admin", tenantRepository, authenticatedUserRepository,
+                authenticatedUserController);
 	}
 
 	@Test

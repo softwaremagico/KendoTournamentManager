@@ -22,6 +22,7 @@ package com.softwaremagico.kt.selenium;
  */
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -49,6 +50,10 @@ public class WebDriverClient {
 
     public WebDriver getDriver() {
         return driver;
+    }
+
+    public WebDriverWait getWebDriverWait() {
+        return wait;
     }
 
     public WebElement findVisible(By locator) {
@@ -82,5 +87,15 @@ public class WebDriverClient {
     public void dragAndDrop(WebElement source, WebElement target) {
         new Actions(driver).moveToElement(source).pause(DRAG_START_DELAY).clickAndHold()
                 .moveToElement(target).pause(DRAG_END_DELAY).release().perform();
+    }
+
+    public void clickWizardryButton(By locator) {
+        final WebElement button = findVisible(locator);
+        final List<WebElement> buttonBases = button.findElements(By.cssSelector(".button-base"));
+        if (buttonBases.isEmpty()) {
+            waitUntilClickable(locator).click();
+        } else {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", buttonBases.getFirst());
+        }
     }
 }

@@ -6,7 +6,7 @@
   >
   <participant-form class="form-container"
     [participant]="participant"
-    (saved)="saved"
+    (saved)="saved.emit($event)"
     [saved]="saved"
     (errorEvent)="errorEvent"
   [errorEvent]="errorEvent"></participant-form>
