@@ -54,8 +54,19 @@ public class FightPage {
     }
 
     public void generateChampionshipFights() {
+        generateChampionshipFights(CHAMPIONSHIP_ADDITIONAL_GROUPS, false);
+    }
+
+    public void generateChampionshipWithTwoFirstRoundWinners(int additionalGroups) {
+        generateChampionshipFights(additionalGroups, true);
+    }
+
+    private void generateChampionshipFights(int additionalGroups, boolean twoFirstRoundWinners) {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='brackets']]")).click();
-        for (int index = 0; index < CHAMPIONSHIP_ADDITIONAL_GROUPS; index++) {
+        if (twoFirstRoundWinners) {
+            webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='one-winner']]")).click();
+        }
+        for (int index = 0; index < additionalGroups; index++) {
             webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='plus']]")).click();
         }
         webDriverClient.waitUntilClickable(By.cssSelector("tournament-brackets-editor button[biit-button][secondary]")).click();
