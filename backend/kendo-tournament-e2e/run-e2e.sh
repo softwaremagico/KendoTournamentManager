@@ -8,7 +8,7 @@ project_name="kendo-tournament-e2e-$RANDOM"
 e2e_username="${E2E_USERNAME:-e2e-admin@test.local}"
 e2e_password="${E2E_PASSWORD:-E2e-password-123}"
 e2e_tests="${E2E_TESTS:-}"
-e2e_enable_tenancy="${E2E_ENABLE_TENANCY:-false}"
+e2e_enable_tenancy="${E2E_ENABLE_TENANCY:-true}"
 
 cleanup() {
   if [[ "${E2E_KEEP_ENVIRONMENT:-false}" == "true" ]]; then

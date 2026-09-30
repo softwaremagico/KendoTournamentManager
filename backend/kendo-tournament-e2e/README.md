@@ -71,11 +71,10 @@ To run one class while diagnosing a workflow, set `E2E_TESTS`:
 E2E_TESTS=ClubParticipantTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
 
-The tenant-isolation scenario requires multi-organization support in its
-temporary backend:
+Multi-organization support is enabled by default in the temporary backend, so
+the full run also executes the tenant-isolation scenario. To run it alone:
 
 ```bash
-E2E_ENABLE_TENANCY=true \
 E2E_TESTS=TenantIsolationTest \
 bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
@@ -130,6 +129,9 @@ mvn -pl kendo-tournament-e2e test \
 | `LockedTournamentTest.lockedTournamentDoesNotAllowScoreEdition` | Yes | Creates a minimal league, locks it from the tournament list, and verifies that its fight view no longer exposes editable score controls. |
 | `LockedTournamentGuestAccessTest.lockedTournamentRejectsGuestQrAccess` | Yes | Generates a guest QR link, locks the tournament, and verifies that a new guest browser session is redirected to login rather than accessing scores. |
 | `TournamentCloneTest.clonedTournamentCanGenerateFreshFights` | Yes | Creates and starts a minimal league, clones it from the tournament list, then verifies that the copied teams can generate a fresh fight without copying the original fights. |
+| `CsvImportTest.importsClubAndParticipantsAndRejectsInvalidParticipant` | Yes | Imports a club and participants through the CSV controls, then submits an invalid participant row and verifies it is not persisted. |
+| `ParticipantStatisticsE2ETest.scoredMenAppearsInWinnerParticipantStatistics` | Yes | Resolves a minimal league after recording a MEN and verifies that the winning participant statistics dashboard reflects the recorded hit. |
+| `TournamentScoreRulesTest.persistsEuropeanInternationalAndCustomScoreRules` | Yes | Creates leagues using European, International, and Custom scoring rules, verifies each persisted selector value, and opens the custom points editor. |
 
 The club workflow uses values inspired by the core CSV fixtures, including
 `Técnicos de Investigación Aeroterráquea`, `Mengano López`, and `Fulano

@@ -60,4 +60,22 @@ public class ParticipantPage {
         table.search(participantName);
         return table.containsText(participantName);
     }
+
+    public void importCsv(String filePath, String expectedParticipantName) {
+        table.clickAction("button-plus");
+        webDriverClient.findVisible(By.id("participant-csv-file-input")).sendKeys(filePath);
+        table.waitUntilContainsText(expectedParticipantName);
+    }
+
+    public void openStatistics(String participantName) {
+        table.search(participantName);
+        table.selectRowContaining(participantName);
+        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='bar_chart']]")).click();
+        webDriverClient.findVisible(By.cssSelector(".statistics-view .player .name"));
+    }
+
+    public boolean containsStatisticValue(String value) {
+        return webDriverClient.findAll(By.cssSelector(".statistics-view .right-column")).stream()
+                .anyMatch(column -> column.getText().equals(value));
+    }
 }

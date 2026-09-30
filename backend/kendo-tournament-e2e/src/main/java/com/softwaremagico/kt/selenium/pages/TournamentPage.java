@@ -57,6 +57,16 @@ public class TournamentPage {
         createTournament(name, "League", teamSize);
     }
 
+    public void createLeagueWithScoreRule(String name, String scoreRule) {
+        table.clickAction("button-plus");
+        new InputField(webDriverClient, "tournament-name").setValue(name);
+        new Dropdown(webDriverClient, "tournament-type").select("League");
+        new Dropdown(webDriverClient, "tournament-score-rules").select(scoreRule);
+        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        table.waitUntilContainsText(name);
+        new Popup(webDriverClient, "tournament-popup").close();
+    }
+
     public void createChampionship(String name, int teamSize) {
         createTournament(name, "Championship", teamSize);
     }
@@ -154,6 +164,18 @@ public class TournamentPage {
         table.selectRowContaining(tournamentName);
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='qr_code']]")).click();
         return webDriverClient.findVisible(By.cssSelector("#qr-code .link")).getAttribute("href");
+    }
+
+    public String getScoreRule(String tournamentName) {
+        table.search(tournamentName);
+        table.selectRowContaining(tournamentName);
+        table.clickAction("button-edit");
+        return webDriverClient.findVisible(By.id("tournament-score-rules")).findElement(By.cssSelector("input")).getAttribute("value");
+    }
+
+    public void openCustomScoreRules() {
+        webDriverClient.waitUntilClickable(By.id("edit-score-button")).click();
+        webDriverClient.findVisible(By.id("tournament-score-options"));
     }
 
     private void clickSelectedTournamentAction(String icon) {

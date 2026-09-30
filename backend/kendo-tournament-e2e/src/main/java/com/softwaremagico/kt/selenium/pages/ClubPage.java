@@ -57,4 +57,10 @@ public class ClubPage {
         table.search(clubName);
         return table.containsText(clubName);
     }
+
+    public void importCsv(String filePath, String expectedClubName) {
+        table.clickAction("button-plus");
+        webDriverClient.findVisible(org.openqa.selenium.By.id("club-csv-file-input")).sendKeys(filePath);
+        table.waitUntilContainsText(expectedClubName);
+    }
 }

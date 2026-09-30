@@ -31,7 +31,7 @@ services:
       - --spring.kendo.datasource.password=kendo_e2e_password
       - --spring.kendo.datasource.jpa.hibernate.ddl-auto=create-drop
       - --spring.sql.init.mode=never
-      - --enable.tenancy=${E2E_ENABLE_TENANCY:-false}
+      - --enable.tenancy=${E2E_ENABLE_TENANCY:-true}
       - --bootstrap.super-admin.username=${E2E_USERNAME:-e2e-admin@test.local}
       - --bootstrap.super-admin.password=${E2E_PASSWORD:-E2e-password-123}
       - --bootstrap.super-admin.roles=super_admin,admin,editor,viewer
