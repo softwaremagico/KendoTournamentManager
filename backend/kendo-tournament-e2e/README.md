@@ -49,6 +49,10 @@ The equivalent environment-variable form is:
 E2E_HEADLESS=false bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
 
+The browser scenarios execute sequentially. Several workflows deliberately use
+two simultaneous browser profiles to validate guest and WebSocket behavior, so
+running all classes in parallel would exhaust local Chromium resources.
+
 ### Clean, ephemeral environment
 
 `run-e2e.sh` is the recommended way to run the authenticated suite. It builds

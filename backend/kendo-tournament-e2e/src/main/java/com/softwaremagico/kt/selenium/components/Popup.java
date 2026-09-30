@@ -41,7 +41,10 @@ public class Popup {
     }
 
     public void close() {
-        webDriverClient.waitUntilClickable(By.cssSelector("#" + popupId() + " #popup-x-button")).click();
+        final By closeButton = By.cssSelector("#" + popupId() + " #popup-x-button");
+        if (webDriverClient.isVisible(closeButton)) {
+            webDriverClient.clickByScript(closeButton);
+        }
     }
 
     private String popupId() {

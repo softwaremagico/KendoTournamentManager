@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Kendo Tournament E2E" parallel="false" thread-count="1">
+    <listeners>
+        <listener class-name="com.softwaremagico.kt.selenium.TestListener"/>
+    </listeners>
+    <test name="Browser workflows">
+        <packages>
+            <package name="com.softwaremagico.kt.selenium"/>
+        </packages>
+    </test>
+</suite>

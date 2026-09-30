@@ -52,8 +52,16 @@ public class Table {
     }
 
     public void selectRowContaining(String text) {
-        getRows().stream().filter(row -> row.getText().contains(text)).findFirst()
-                .orElseThrow(() -> new IllegalStateException("No table row contains '" + text + "'.")).click();
+        webDriverClient.getWebDriverWait().until(driver -> {
+            final List<WebElement> rows = driver.findElement(tableLocator).findElements(By.cssSelector(".datatable-body-row"));
+            for (WebElement row : rows) {
+                if (row.getText().contains(text)) {
+                    row.click();
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     public void clickAction(String actionId) {
