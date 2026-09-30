@@ -15,10 +15,10 @@
 
     <properties>
         <main.basedir>${basedir}/..</main.basedir>
-        <selenium.base-url>http://localhost:4200</selenium.base-url>
+        <selenium.base-url>http://localhost:14200</selenium.base-url>
         <selenium.headless>true</selenium.headless>
-        <selenium.username></selenium.username>
-        <selenium.password></selenium.password>
+        <selenium.username>e2e-admin@test.local</selenium.username>
+        <selenium.password>E2e-password-123</selenium.password>
     </properties>
 
     <dependencies>

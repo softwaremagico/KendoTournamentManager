@@ -27,7 +27,6 @@ import com.softwaremagico.kt.selenium.pages.LoginPage;
 import com.softwaremagico.kt.selenium.pages.ParticipantPage;
 import com.softwaremagico.kt.selenium.pages.TournamentPage;
 import org.openqa.selenium.WebDriver;
-import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
@@ -46,11 +45,8 @@ public abstract class AbstractTournamentTypeTest {
 
     @BeforeClass
     public void setUp() {
-        final String username = System.getProperty("selenium.username", "");
-        final String password = System.getProperty("selenium.password", "");
-        if (username.isBlank() || password.isBlank()) {
-            throw new SkipException("Set selenium.username and selenium.password to run authenticated E2E tests.");
-        }
+        final String username = System.getProperty("selenium.username", "e2e-admin@test.local");
+        final String password = System.getProperty("selenium.password", "E2e-password-123");
         driver = ChromeDriverFactory.create(Boolean.parseBoolean(System.getProperty("selenium.headless", "true")));
         final WebDriverClient webDriverClient = new WebDriverClient(driver);
         final LoginPage loginPage = new LoginPage(webDriverClient);

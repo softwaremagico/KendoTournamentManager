@@ -16,19 +16,23 @@ Selenium Manager resolves the matching browser driver automatically.
 
 ## Running tests
 
-From the `backend` directory, execute the login smoke test against a running
-frontend:
+The supported entry point runs the full suite against the disposable Docker
+environment:
 
 ```bash
-mvn -pl kendo-tournament-e2e test \
-  -Dselenium.base-url=http://localhost:4200 \
-  -Dgpg.skip=true
+bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
 
-Tests run headlessly by default. To see the browser window, add:
+The module defaults target `http://localhost:14200` and the temporary bootstrap
+administrator. Tests are not skipped when credentials are absent: the runner
+creates the account in the fresh database. If the environment is unavailable,
+direct Maven execution fails rather than reporting an incomplete suite as
+successful.
+
+Tests run headlessly by default. To see the browser window, pass:
 
 ```bash
--Dselenium.headless=false
+E2E_TESTS=LoginTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
 
 ### Clean, ephemeral environment
@@ -82,9 +86,9 @@ with the project name printed by Docker Compose when finished.
 
 ### Authenticated workflows
 
-The club and participant workflow requires a user with permissions to create
-clubs and participants. No credentials are stored in the repository. Supply
-them at execution time:
+The runner provisions an administrator with every role required by the browser
+workflows. Its credentials are scoped to the disposable database and can be
+overridden at execution time:
 
 ```bash
 mvn -pl kendo-tournament-e2e test \
@@ -94,18 +98,15 @@ mvn -pl kendo-tournament-e2e test \
   -Dgpg.skip=true
 ```
 
-When `selenium.username` or `selenium.password` is absent, authenticated tests
-are reported as skipped. This lets the public login smoke test run without a
-backend or credentials.
 
 ## Configuration
 
 | Property | Default | Description |
 | --- | --- | --- |
-| `selenium.base-url` | `http://localhost:4200` | Frontend base URL. |
+| `selenium.base-url` | `http://localhost:14200` | Frontend URL of the disposable E2E environment. |
 | `selenium.headless` | `true` | Runs Chromium without a visible window. |
-| `selenium.username` | Empty | User for authenticated test flows. |
-| `selenium.password` | Empty | Password for authenticated test flows. |
+| `selenium.username` | `e2e-admin@test.local` | Temporary E2E administrator. |
+| `selenium.password` | `E2e-password-123` | Temporary E2E administrator password. |
 
 ## Implemented tests
 

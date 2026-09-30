@@ -30,7 +30,6 @@ import com.softwaremagico.kt.selenium.pages.FightPage;
 import com.softwaremagico.kt.selenium.pages.UserPage;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -57,11 +56,8 @@ public class TenantIsolationTest {
 
     @BeforeClass
     public void setUp() {
-        final String username = System.getProperty("selenium.username", "");
-        final String password = System.getProperty("selenium.password", "");
-        if (username.isBlank() || password.isBlank()) {
-            throw new SkipException("Set selenium.username and selenium.password to run tenant E2E tests.");
-        }
+        final String username = System.getProperty("selenium.username", "e2e-admin@test.local");
+        final String password = System.getProperty("selenium.password", "E2e-password-123");
         platformDriver = ChromeDriverFactory.create(Boolean.parseBoolean(System.getProperty("selenium.headless", "true")));
         final WebDriverClient platformClient = new WebDriverClient(platformDriver);
         final LoginPage platformLogin = new LoginPage(platformClient);
