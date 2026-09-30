@@ -128,6 +128,10 @@ public class FightPage {
         webDriverClient.getWebDriverWait().until(driver -> containsScore(score));
     }
 
+    public boolean hasEditableScoreControls() {
+        return !webDriverClient.findAll(By.cssSelector("duel score .score-area")).isEmpty();
+    }
+
     public boolean hasReachedFinal() {
         return getFightCount() >= EIGHT_TEAM_CHAMPIONSHIP_FIGHT_COUNT;
     }

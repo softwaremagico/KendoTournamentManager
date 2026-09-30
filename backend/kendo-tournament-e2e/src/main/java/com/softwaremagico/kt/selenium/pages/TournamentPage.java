@@ -118,6 +118,13 @@ public class TournamentPage {
         clickSelectedTournamentAction("fight");
     }
 
+    public void lock(String tournamentName) {
+        table.search(tournamentName);
+        table.selectRowContaining(tournamentName);
+        webDriverClient.waitUntilClickable(By.cssSelector("button[biit-icon][icon='lock']")).click();
+        table.waitUntilContainsText(tournamentName);
+    }
+
     public boolean contains(String tournamentName) {
         table.search(tournamentName);
         return table.containsText(tournamentName);
