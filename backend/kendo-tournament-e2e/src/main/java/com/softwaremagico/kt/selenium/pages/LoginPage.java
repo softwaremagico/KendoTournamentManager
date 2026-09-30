@@ -63,4 +63,9 @@ public class LoginPage {
     public String getUsername() {
         return username.getValue();
     }
+
+    public void logoutAndOpen(String baseUrl) {
+        webDriverClient.open(baseUrl + "/#/login?logout");
+        webDriverClient.findVisible(By.id("login"));
+    }
 }

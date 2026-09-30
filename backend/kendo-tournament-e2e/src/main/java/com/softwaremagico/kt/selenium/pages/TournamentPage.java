@@ -118,6 +118,22 @@ public class TournamentPage {
         clickSelectedTournamentAction("fight");
     }
 
+    public boolean contains(String tournamentName) {
+        table.search(tournamentName);
+        return table.containsText(tournamentName);
+    }
+
+    public void openStatistics(String tournamentName) {
+        table.search(tournamentName);
+        table.selectRowContaining(tournamentName);
+        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='bar_chart']]")).click();
+        webDriverClient.findVisible(By.cssSelector(".statistics-view .name"));
+    }
+
+    public String getStatisticsTournamentName() {
+        return webDriverClient.findVisible(By.cssSelector(".statistics-view .name")).getText();
+    }
+
     private void clickSelectedTournamentAction(String icon) {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='" + icon + "']]")).click();
     }

@@ -98,4 +98,8 @@ public class WebDriverClient {
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", buttonBases.getFirst());
         }
     }
+
+    public void clickByScript(By locator) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", findVisible(locator));
+    }
 }

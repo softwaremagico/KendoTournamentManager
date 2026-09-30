@@ -67,6 +67,15 @@ To run one class while diagnosing a workflow, set `E2E_TESTS`:
 E2E_TESTS=ClubParticipantTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
 ```
 
+The tenant-isolation scenario requires multi-organization support in its
+temporary backend:
+
+```bash
+E2E_ENABLE_TENANCY=true \
+E2E_TESTS=TenantIsolationTest \
+bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
 Set `E2E_KEEP_ENVIRONMENT=true` only while diagnosing a failed run. It keeps
 the temporary Compose project available for log inspection; clean it manually
 with the project name printed by Docker Compose when finished.
@@ -114,6 +123,7 @@ backend or credentials.
 | `SwissTournamentTest.createsInitialSwissPairings` | Yes | Creates four individual teams and verifies that the initial Swiss round contains two pairings. |
 | `CustomizedTournamentTest.opensManualFightCreatorForCustomizedTournament` | Yes | Creates a customized tournament and verifies access to its manual fight creator, because this format does not generate fights automatically. |
 | `SenbatsuTournamentTest.opensSenbatsuChallengeCreator` | Yes | Creates a three-team Senbatsu tournament and verifies access to the challenge-constrained fight creator. |
+| `TenantIsolationTest.tenantAdministratorsOnlySeeTheirOwnDataAndTournaments` | Yes, tenancy enabled | The super administrator creates two tenants and their administrators. Each tenant administrator creates a user, club, two participants, and resolves a league tournament. Both sessions verify rankings/statistics for their own tournament and that the other tenant's clubs, participants, and tournaments are absent. |
 
 The club workflow uses values inspired by the core CSV fixtures, including
 `Técnicos de Investigación Aeroterráquea`, `Mengano López`, and `Fulano
