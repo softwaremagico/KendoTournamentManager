@@ -53,4 +53,13 @@ public class UserPage {
         webDriverClient.clickWizardryButton(By.id("user-button-save"));
         table.waitUntilContainsText(username);
     }
+
+    public void setEditorRole(String username) {
+        table.search(username);
+        table.selectRowContaining(username);
+        table.clickAction("button-role");
+        new com.softwaremagico.kt.selenium.components.Dropdown(webDriverClient, "tournament-type").select("Editor");
+        webDriverClient.clickByScript(By.cssSelector("#user-role-popup button[biit-button][secondary] .button-base"));
+        table.waitUntilContainsText(username);
+    }
 }

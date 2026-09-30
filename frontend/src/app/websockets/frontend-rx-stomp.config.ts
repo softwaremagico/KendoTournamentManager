@@ -1,8 +1,10 @@
 import {RxStompConfig} from '@stomp/rx-stomp';
 import {Environment} from '../../environments/environment';
 
+declare const __config: { websocketsUrl?: string };
+
 export const frontendRxStompConfig: RxStompConfig = {
-  brokerURL: Environment.websocketsUrl,
+  brokerURL: __config.websocketsUrl ?? Environment.websocketsUrl,
 
   // How often to heartbeat?
   // Interval in milliseconds, set to 0 to disable
