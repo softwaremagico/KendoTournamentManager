@@ -61,7 +61,21 @@ public class TournamentPage {
         createTournament(name, "Championship", teamSize);
     }
 
-    private void createTournament(String name, String type, int teamSize) {
+    public void createTournament(String name, String type, int teamSize) {
+        createTournamentForm(name, type, teamSize);
+    }
+
+    public void createSenbatsu(String name) {
+        table.clickAction("button-plus");
+        new InputField(webDriverClient, "tournament-name").setValue(name);
+        new Dropdown(webDriverClient, "tournament-type").select("Senbatsu");
+        webDriverClient.waitUntilClickable(By.id("tournament-button-save")).click();
+        new Popup(webDriverClient, "tournament-popup").waitUntilClosed();
+        table.search(name);
+        table.selectRowContaining(name);
+    }
+
+    private void createTournamentForm(String name, String type, int teamSize) {
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select(type);

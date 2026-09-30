@@ -49,6 +49,10 @@ public class FightPage {
         webDriverClient.findVisible(By.cssSelector("fight"));
     }
 
+    public void generateOrderedFights() {
+        generateLeagueFights();
+    }
+
     public void generateChampionshipFights() {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='brackets']]")).click();
         for (int index = 0; index < CHAMPIONSHIP_ADDITIONAL_GROUPS; index++) {
@@ -71,6 +75,28 @@ public class FightPage {
 
     public int getFightCount() {
         return webDriverClient.findAll(By.cssSelector("fight")).size();
+    }
+
+    public void waitForFightCount(int count) {
+        webDriverClient.waitForAtLeast(By.cssSelector("fight"), count);
+    }
+
+    public void openCustomFightCreator() {
+        webDriverClient.waitUntilClickable(By.id("button-plus")).click();
+        webDriverClient.findVisible(By.id("fight-creator"));
+    }
+
+    public void openSenbatsuFightCreator() {
+        webDriverClient.waitUntilClickable(By.id("button-plus")).click();
+        webDriverClient.findVisible(By.id("senbatsu-fight-creator"));
+    }
+
+    public void resolveFirstFightFor(String winningTeam) {
+        final WebElement fight = webDriverClient.findVisible(By.cssSelector("fight"));
+        final boolean leftWins = fight.findElement(By.cssSelector(".left-team")).getText().equals(winningTeam);
+        for (WebElement duel : fight.findElements(By.cssSelector("duel"))) {
+            scoreAndFinish(duel, leftWins);
+        }
     }
 
     public boolean hasReachedFinal() {
