@@ -124,6 +124,7 @@ backend or credentials.
 | `CustomizedTournamentTest.opensManualFightCreatorForCustomizedTournament` | Yes | Creates a customized tournament and verifies access to its manual fight creator, because this format does not generate fights automatically. |
 | `SenbatsuTournamentTest.opensSenbatsuChallengeCreator` | Yes | Creates a three-team Senbatsu tournament and verifies access to the challenge-constrained fight creator. |
 | `TenantIsolationTest.tenantAdministratorsOnlySeeTheirOwnDataAndTournaments` | Yes, tenancy enabled | The super administrator creates two tenants and their administrators. Each tenant administrator creates a user, club, two participants, and resolves a league tournament. Both sessions verify rankings/statistics for their own tournament and that the other tenant's clubs, participants, and tournaments are absent. |
+| `TournamentGuestQrTest.guestQrLinkShowsLiveTournamentScoreUpdates` | Yes | Generates a tournament guest QR link, opens it in a separate guest browser session, updates a score as administrator, and verifies the guest view receives the updated score. |
 
 The club workflow uses values inspired by the core CSV fixtures, including
 `Técnicos de Investigación Aeroterráquea`, `Mengano López`, and `Fulano

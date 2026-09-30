@@ -110,6 +110,24 @@ public class FightPage {
         }
     }
 
+    public void scoreFirstDuelFor(String winningTeam) {
+        final WebElement fight = webDriverClient.findVisible(By.cssSelector("fight"));
+        final boolean leftWins = fight.findElement(By.cssSelector(".left-team")).getText().equals(winningTeam);
+        final WebElement duel = fight.findElement(By.cssSelector("duel"));
+        final List<WebElement> userScores = duel.findElements(By.cssSelector("user-score"));
+        userScores.get(leftWins ? 0 : 1).findElement(By.cssSelector("score .score-area")).click();
+        webDriverClient.waitUntilClickable(By.cssSelector(".mat-mdc-menu-panel button[mat-menu-item]")).click();
+    }
+
+    public boolean containsScore(String score) {
+        return webDriverClient.findAll(By.cssSelector("duel .point-value")).stream()
+                .anyMatch(point -> point.getText().equals(score));
+    }
+
+    public void waitUntilContainsScore(String score) {
+        webDriverClient.getWebDriverWait().until(driver -> containsScore(score));
+    }
+
     public boolean hasReachedFinal() {
         return getFightCount() >= EIGHT_TEAM_CHAMPIONSHIP_FIGHT_COUNT;
     }

@@ -134,6 +134,13 @@ public class TournamentPage {
         return webDriverClient.findVisible(By.cssSelector(".statistics-view .name")).getText();
     }
 
+    public String openGuestQrLink(String tournamentName) {
+        table.search(tournamentName);
+        table.selectRowContaining(tournamentName);
+        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='qr_code']]")).click();
+        return webDriverClient.findVisible(By.cssSelector("#qr-code .link")).getAttribute("href");
+    }
+
     private void clickSelectedTournamentAction(String icon) {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='" + icon + "']]")).click();
     }
