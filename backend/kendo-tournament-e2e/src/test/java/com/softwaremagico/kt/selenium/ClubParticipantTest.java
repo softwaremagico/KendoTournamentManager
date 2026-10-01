@@ -62,7 +62,7 @@ public class ClubParticipantTest {
     @Test
     public void createsClubAndParticipantsFromForms() {
         final String identifier = Long.toString(System.currentTimeMillis());
-        final String clubName = "Técnicos de Investigación Aeroterráquea " + identifier;
+        final String clubName = "E2e Club " + identifier;
 
         clubPage.open(BASE_URL);
         clubPage.create(clubName, "Spain", "Valéncia");

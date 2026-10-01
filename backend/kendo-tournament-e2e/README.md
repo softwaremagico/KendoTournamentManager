@@ -105,6 +105,12 @@ The runner uses host ports `14200` and `18080`. It aborts before starting if a
 previous E2E environment is still using either port. Remove that environment
 with its printed Compose project name before starting another run.
 
+To stop and remove any environments left by prior E2E runs, use:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --stop
+```
+
 ### Authenticated workflows
 
 The runner provisions an administrator with every role required by the browser

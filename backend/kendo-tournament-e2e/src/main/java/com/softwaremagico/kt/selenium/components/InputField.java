@@ -23,6 +23,7 @@ package com.softwaremagico.kt.selenium.components;
 
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -41,6 +42,7 @@ public class InputField {
         final WebElement input = getInput();
         input.clear();
         input.sendKeys(value);
+        input.sendKeys(Keys.TAB);
     }
 
     public String getValue() {
@@ -48,6 +50,9 @@ public class InputField {
     }
 
     private WebElement getInput() {
-        return webDriverClient.findVisible(componentLocator).findElement(By.cssSelector("input"));
+        webDriverClient.findVisible(componentLocator);
+        return webDriverClient.findAll(componentLocator).stream().filter(WebElement::isDisplayed).reduce((first, second) -> second)
+                .orElseThrow(() -> new IllegalStateException("No visible input component found for '" + componentLocator + "'."))
+                .findElement(By.cssSelector("input"));
     }
 }

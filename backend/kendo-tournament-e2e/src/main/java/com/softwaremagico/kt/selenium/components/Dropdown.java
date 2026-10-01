@@ -40,18 +40,14 @@ public class Dropdown {
     }
 
     public void select(String label) {
-        final WebElement component = webDriverClient.findVisible(componentLocator);
+        webDriverClient.findVisible(componentLocator);
+        final WebElement component = webDriverClient.findAll(componentLocator).stream().filter(WebElement::isDisplayed)
+                .reduce((first, second) -> second)
+                .orElseThrow(() -> new IllegalStateException("No visible dropdown component found for '" + componentLocator + "'."));
         final WebElement input = component.findElement(By.cssSelector("input"));
         input.click();
         input.sendKeys(label);
-        webDriverClient.waitUntilClickable(By.xpath("//biit-dropdown[@id='" + componentId + "']//a[normalize-space()="
-                + toXPathLiteral(label) + "]")).click();
+        input.sendKeys(org.openqa.selenium.Keys.ENTER);
     }
 
-    private String toXPathLiteral(String value) {
-        if (!value.contains("'")) {
-            return "'" + value + "'";
-        }
-        return "concat('" + value.replace("'", "', \"'\", '") + "')";
-    }
 }

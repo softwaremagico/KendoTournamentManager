@@ -47,12 +47,12 @@ public class ParticipantPage {
 
     public void create(String name, String lastname, String idCard, String clubName) {
         table.clickAction("button-plus");
-        webDriverClient.findVisible(By.id("participant-popup"));
         new InputField(webDriverClient, "participant-name").setValue(name);
         new InputField(webDriverClient, "participant-lastname").setValue(lastname);
         new InputField(webDriverClient, "participant-id-card").setValue(idCard);
         new Dropdown(webDriverClient, "participant-club").select(clubName);
         webDriverClient.clickWizardryButton(By.id("participant-button-save"));
+        webDriverClient.waitUntilInvisible(By.id("participant-popup"));
         table.waitUntilContainsText(name);
         new Popup(webDriverClient, "participant-popup").close();
     }

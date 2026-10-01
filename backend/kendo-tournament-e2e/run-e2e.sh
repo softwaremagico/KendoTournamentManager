@@ -11,12 +11,30 @@ e2e_tests="${E2E_TESTS:-}"
 e2e_enable_tenancy="${E2E_ENABLE_TENANCY:-true}"
 e2e_headless="${E2E_HEADLESS:-true}"
 
-if [[ "${1:-}" == "--headed" ]]; then
-  e2e_headless=false
-elif [[ -n "${1:-}" ]]; then
-  printf 'Usage: %s [--headed]\n' "${BASH_SOURCE[0]}" >&2
-  exit 2
-fi
+stop_previous_environments() {
+  local previous_project
+  while IFS= read -r previous_project; do
+    [[ -z "${previous_project}" ]] && continue
+    docker compose --project-name "${previous_project}" --file "${module_directory}/docker-compose.e2e.yml" \
+      down --volumes --remove-orphans
+  done < <(docker compose ls --all --format json | jq -r '.[].Name' | grep '^kendo-tournament-e2e-' || true)
+}
+
+case "${1:-}" in
+  --headed)
+    e2e_headless=false
+    ;;
+  --stop)
+    stop_previous_environments
+    exit 0
+    ;;
+  '')
+    ;;
+  *)
+    printf 'Usage: %s [--headed|--stop]\n' "${BASH_SOURCE[0]}" >&2
+    exit 2
+    ;;
+esac
 
 cleanup() {
   if [[ "${E2E_KEEP_ENVIRONMENT:-false}" == "true" ]]; then

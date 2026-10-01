@@ -53,7 +53,7 @@ public class Table {
 
     public void selectRowContaining(String text) {
         webDriverClient.getWebDriverWait().until(driver -> {
-            final List<WebElement> rows = driver.findElement(tableLocator).findElements(By.cssSelector(".datatable-body-row"));
+            final List<WebElement> rows = getTable().findElements(By.cssSelector(".datatable-body-row"));
             for (WebElement row : rows) {
                 if (row.getText().contains(text)) {
                     row.click();
@@ -69,7 +69,7 @@ public class Table {
     }
 
     public boolean containsText(String text) {
-        return getRows().stream().anyMatch(row -> row.getText().contains(text));
+        return webDriverClient.getDriver().getPageSource().contains(text);
     }
 
     public void waitUntilContainsText(String text) {
@@ -77,7 +77,7 @@ public class Table {
     }
 
     public void search(String text) {
-        final WebElement search = webDriverClient.findVisible(tableLocator).findElement(By.id("search"))
+        final WebElement search = getTable().findElement(By.id("search"))
                 .findElement(By.cssSelector("input"));
         search.clear();
         search.sendKeys(text);
@@ -85,6 +85,12 @@ public class Table {
     }
 
     private List<WebElement> getRows() {
-        return webDriverClient.findVisible(tableLocator).findElements(By.cssSelector(".datatable-body-row"));
+        return getTable().findElements(By.cssSelector(".datatable-body-row"));
+    }
+
+    private WebElement getTable() {
+        webDriverClient.findVisible(tableLocator);
+        return webDriverClient.findAll(tableLocator).stream().filter(WebElement::isDisplayed).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No visible table found for '" + tableLocator + "'."));
     }
 }

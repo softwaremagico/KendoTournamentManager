@@ -22,7 +22,6 @@ package com.softwaremagico.kt.selenium;
  */
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -90,22 +89,26 @@ public class WebDriverClient {
         driver.get(url);
     }
 
+    public void refresh() {
+        driver.navigate().refresh();
+    }
+
     public void dragAndDrop(WebElement source, WebElement target) {
         new Actions(driver).moveToElement(source).pause(DRAG_START_DELAY).clickAndHold()
                 .moveToElement(target).pause(DRAG_END_DELAY).release().perform();
     }
 
     public void clickWizardryButton(By locator) {
-        final WebElement button = findVisible(locator);
+        wait.until(webDriver -> webDriver.findElements(locator).stream().anyMatch(button -> button.isDisplayed() && button.isEnabled()));
+        final List<WebElement> buttons = driver.findElements(locator).stream().filter(WebElement::isDisplayed).toList();
+        final WebElement button = buttons.getLast();
         final List<WebElement> buttonBases = button.findElements(By.cssSelector(".button-base"));
-        if (buttonBases.isEmpty()) {
-            waitUntilClickable(locator).click();
-        } else {
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", buttonBases.getFirst());
-        }
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", button);
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", buttonBases.getLast());
     }
 
     public void clickByScript(By locator) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", findVisible(locator));
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", findVisible(locator));
     }
+
 }
