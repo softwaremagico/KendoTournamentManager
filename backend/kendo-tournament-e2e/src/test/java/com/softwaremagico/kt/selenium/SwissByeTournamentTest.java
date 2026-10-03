@@ -34,7 +34,7 @@ public class SwissByeTournamentTest extends AbstractTournamentTypeTest {
     @Test
     public void oddSwissFieldGeneratesPairingAndBye() {
         final String[] competitors = createIndividualTeams("SwissBye", TEAM_COUNT);
-        createTournamentWithIndividualTeams("SwissBye", "Swiss", competitors);
+        createTournamentWithIndividualTeams("SwissBye", "Swiss System", competitors);
 
         fightPage.generateOrderedFights();
         Assert.assertEquals(fightPage.getFightCount(), FIRST_ROUND_FIGHT_COUNT,

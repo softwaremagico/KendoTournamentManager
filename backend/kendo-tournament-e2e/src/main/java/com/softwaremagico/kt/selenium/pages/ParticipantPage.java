@@ -22,7 +22,6 @@ package com.softwaremagico.kt.selenium.pages;
  */
 
 import com.softwaremagico.kt.selenium.WebDriverClient;
-import com.softwaremagico.kt.selenium.components.Dropdown;
 import com.softwaremagico.kt.selenium.components.InputField;
 import com.softwaremagico.kt.selenium.components.Popup;
 import com.softwaremagico.kt.selenium.components.Table;
@@ -50,7 +49,6 @@ public class ParticipantPage {
         new InputField(webDriverClient, "participant-name").setValue(name);
         new InputField(webDriverClient, "participant-lastname").setValue(lastname);
         new InputField(webDriverClient, "participant-id-card").setValue(idCard);
-        new Dropdown(webDriverClient, "participant-club").select(clubName);
         webDriverClient.clickWizardryButton(By.id("participant-button-save"));
         webDriverClient.waitUntilInvisible(By.id("participant-popup"));
         table.waitUntilContainsText(name);

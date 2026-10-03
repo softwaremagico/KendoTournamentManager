@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
@@ -40,8 +40,8 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   constructor(public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService,
               rbacService: RbacService, private filterResetService: FilterResetService,
-              private statisticsChangedService: StatisticsChangedService,
-              private teamService: TeamService) {
+               private statisticsChangedService: StatisticsChangedService,
+               private teamService: TeamService, private cdr: ChangeDetectorRef) {
     super(rbacService);
   }
 
@@ -84,8 +84,9 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
           this.showAvatars = true;
         }
       }
-      this.userListData.participants = participants;
-      this.userListData.filteredParticipants = participants;
+       this.userListData.participants = participants;
+       this.userListData.filteredParticipants = [...participants];
+       this.cdr.detectChanges();
       //Prevent removing participants that are on teams already
       this.teamService.getFromTournament(this.tournament).subscribe((_teams: Team[]): void => {
         let teamMembers: Participant[] = [];
@@ -192,4 +193,3 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
 }
-

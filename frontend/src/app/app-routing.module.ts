@@ -1,14 +1,14 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {ClubListComponent} from "./views/club-list/club-list.component";
-import {LoggedIn} from './interceptors/logged-in.service';
+import {LoggedInService} from './interceptors/logged-in.service';
 import {AuthenticatedUserListComponent} from "./views/authenticated-user-list/authenticated-user-list.component";
 import {PasswordsComponent} from "./views/passwords/passwords.component";
 import {ParticipantStatisticsComponent} from "./views/participant-statistics/participant-statistics.component";
 import {ParticipantFightListComponent} from "./views/participant-fight-list/participant-fight-list.component";
 import {RedirectGuard} from "./components/navigation/redirect-guard/redirect.guard";
 import {TenantListComponent} from './views/tenant-list/tenant-list.component';
-import {SuperAdminGuard} from './services/super-admin-guard.service';
+import {SuperAdminGuardService} from './services/super-admin-guard.service';
 
 const routes: Routes = [
   {path: '', redirectTo: '/tournaments', pathMatch: 'full'},
@@ -16,22 +16,22 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./views/login/login.module').then(m => m.LoginModule),
   },
-  {path: 'registry/clubs', component: ClubListComponent, canActivate: [LoggedIn]},
+  {path: 'registry/clubs', component: ClubListComponent, canActivate: [LoggedInService]},
   {
     path: 'registry/participants',
     loadChildren: () => import('./views/participant-list/participant-list.module').then(m => m.ParticipantListModule),
-    canActivate: [LoggedIn]
+    canActivate: [LoggedInService]
   },
   {
     path: 'tournaments',
     loadChildren: () => import('./views/tournament-list/tournament-list.module').then(m => m.TournamentListModule),
-    canActivate: [LoggedIn]
+    canActivate: [LoggedInService]
   },
-  {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedIn]},
-  {path: 'administration/tenants', component: TenantListComponent, canActivate: [LoggedIn, SuperAdminGuard]},
-  {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedIn]},
-  {path: 'participants/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedIn]},
-  {path: 'participants/fights', component: ParticipantFightListComponent, canActivate: [LoggedIn]},
+  {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedInService]},
+  {path: 'administration/tenants', component: TenantListComponent, canActivate: [LoggedInService, SuperAdminGuardService]},
+  {path: 'passwords', component: PasswordsComponent, canActivate: [LoggedInService]},
+  {path: 'participants/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedInService]},
+  {path: 'participants/fights', component: ParticipantFightListComponent, canActivate: [LoggedInService]},
   {
     path: 'help/wiki',
     canActivate: [RedirectGuard],

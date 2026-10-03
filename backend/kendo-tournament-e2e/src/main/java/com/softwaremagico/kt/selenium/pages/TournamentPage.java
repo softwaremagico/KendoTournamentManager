@@ -101,9 +101,10 @@ public class TournamentPage {
 
     public void addCompetitors(String... participantNames) {
         clickSelectedTournamentAction("card");
+        webDriverClient.waitForAtLeast(By.cssSelector("tournament-roles user-list user-card"), participantNames.length);
         for (String participantName : participantNames) {
-            final By participant = By.xpath("//tournament-roles//user-card[contains(normalize-space(), "
-                    + toXPathLiteral(participantName) + ")]");
+            final By participant = By.xpath("//tournament-roles//user-list//user-card[contains(translate(normalize-space(), "
+                    + "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), " + toXPathLiteral(participantName.toLowerCase()) + ")]");
             webDriverClient.dragAndDrop(webDriverClient.findVisible(participant),
                     webDriverClient.findVisible(By.cssSelector("tournament-roles .role")));
         }
@@ -117,9 +118,9 @@ public class TournamentPage {
     public void createTeams(int teamCount, int participantCount) {
         clickSelectedTournamentAction("team");
         for (int index = 0; index < teamCount; index++) {
-            webDriverClient.waitUntilClickable(By.id("tournament-team-add")).click();
+            webDriverClient.clickWizardryButton(By.id("tournament-team-add"));
         }
-        webDriverClient.waitUntilClickable(By.cssSelector("tournament-teams button[biit-button][secondary]")).click();
+        webDriverClient.clickWizardryButton(By.cssSelector("tournament-teams button[biit-button][secondary]"));
         webDriverClient.waitForAtLeast(By.cssSelector("tournament-teams .team .user-card"), participantCount);
         webDriverClient.waitUntilClickable(By.id("tournament-button-close")).click();
     }

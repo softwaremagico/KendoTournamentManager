@@ -24,6 +24,7 @@ package com.softwaremagico.kt.selenium.pages;
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import com.softwaremagico.kt.selenium.components.InputField;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 
 /**
  * Page object for the public login route.
@@ -41,6 +42,8 @@ public class LoginPage {
 
     public void open(String baseUrl) {
         webDriverClient.open(baseUrl + "/#/login");
+        webDriverClient.getDriver().manage().addCookie(new Cookie("selectedLanguage", "en"));
+        webDriverClient.refresh();
         webDriverClient.findVisible(By.id("login"));
         closeCookieConsent();
     }

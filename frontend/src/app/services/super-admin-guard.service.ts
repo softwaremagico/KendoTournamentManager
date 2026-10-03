@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {CanActivateFn, Router} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
 import {UserSessionService} from './user-session.service';
 import {UserRoles} from './rbac/user-roles';
 import {Constants} from '../constants';
@@ -17,5 +17,3 @@ export class SuperAdminGuardService {
     return false;
   }
 }
-
-export const SuperAdminGuard: CanActivateFn = (): boolean => inject(SuperAdminGuardService).canActivate();

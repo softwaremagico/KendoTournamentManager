@@ -24,6 +24,7 @@ package com.softwaremagico.kt.selenium.components;
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Represents a WizardryTheme dropdown and its filterable options.
@@ -45,9 +46,19 @@ public class Dropdown {
                 .reduce((first, second) -> second)
                 .orElseThrow(() -> new IllegalStateException("No visible dropdown component found for '" + componentLocator + "'."));
         final WebElement input = component.findElement(By.cssSelector("input"));
-        input.click();
-        input.sendKeys(label);
-        input.sendKeys(org.openqa.selenium.Keys.ENTER);
+        new Actions(webDriverClient.getDriver()).moveToElement(input).click().perform();
+        webDriverClient.getWebDriverWait().until(driver -> component.findElement(By.cssSelector(".dropdown-list"))
+                .getAttribute("class").contains("dropdown-open"));
+        final By optionLocator = By.xpath("//button[@role='option'][contains(normalize-space(), "
+                + toXPathLiteral(label) + ")]");
+        webDriverClient.waitUntilClickable(optionLocator).click();
+    }
+
+    private String toXPathLiteral(String value) {
+        if (!value.contains("'")) {
+            return "'" + value + "'";
+        }
+        return "concat('" + value.replace("'", "', \"'\", '") + "')";
     }
 
 }

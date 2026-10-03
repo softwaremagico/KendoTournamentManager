@@ -34,7 +34,7 @@ public class SwissTournamentTest extends AbstractTournamentTypeTest {
     @Test
     public void createsInitialSwissPairings() {
         final String[] competitors = createIndividualTeams("Swiss", TEAM_COUNT);
-        createTournamentWithIndividualTeams("Swiss", "Swiss", competitors);
+        createTournamentWithIndividualTeams("Swiss", "Swiss System", competitors);
 
         fightPage.generateOrderedFights();
         Assert.assertEquals(fightPage.getFightCount(), FIRST_ROUND_FIGHT_COUNT);
