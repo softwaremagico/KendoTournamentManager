@@ -42,6 +42,7 @@ public class LoginPage {
     public void open(String baseUrl) {
         webDriverClient.open(baseUrl + "/#/login");
         webDriverClient.findVisible(By.id("login"));
+        closeCookieConsent();
     }
 
     public void setUsername(String usernameValue) {
@@ -58,6 +59,13 @@ public class LoginPage {
 
     public boolean isDisplayed() {
         return !webDriverClient.findAll(By.id("login")).isEmpty();
+    }
+
+    private void closeCookieConsent() {
+        if (webDriverClient.findAll(By.id("cookies-button")).stream().anyMatch(element -> element.isDisplayed())) {
+            webDriverClient.clickWizardryButton(By.id("cookies-button"));
+            webDriverClient.waitUntilInvisible(By.id("cookies-button"));
+        }
     }
 
     public String getUsername() {
