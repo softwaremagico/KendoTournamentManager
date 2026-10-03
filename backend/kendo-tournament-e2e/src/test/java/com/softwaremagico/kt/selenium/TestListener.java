@@ -22,6 +22,7 @@ package com.softwaremagico.kt.selenium;
  */
 
 import org.testng.ITestContext;
+import org.testng.IConfigurationListener;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * Reports lifecycle and duration information for each browser workflow.
  */
-public class TestListener implements ITestListener {
+public class TestListener implements ITestListener, IConfigurationListener {
     private static final Logger LOGGER = Logger.getLogger(TestListener.class.getName());
 
     @Override
@@ -51,7 +52,14 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        LOGGER.warning(() -> "### Test skipped '" + testName(result) + "'.");
+        LOGGER.warning(() -> "### Test skipped '" + testName(result) + "'. Cause: "
+                + (result.getThrowable() == null ? "configuration failure" : result.getThrowable().getMessage()));
+    }
+
+    @Override
+    public void onConfigurationFailure(ITestResult result) {
+        LOGGER.severe(() -> "### Configuration failed '" + testName(result) + "'. Cause: "
+                + (result.getThrowable() == null ? "unknown" : result.getThrowable().getMessage()));
     }
 
     @Override

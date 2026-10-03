@@ -44,7 +44,10 @@ public final class ChromeDriverFactory {
      */
     public static WebDriver create(boolean headless) {
         final ChromeOptions options = new ChromeOptions();
-        options.setBinary(System.getProperty("selenium.chrome.binary", "/snap/bin/chromium"));
+        final String chromeBinary = System.getProperty("selenium.chrome.binary");
+        if (chromeBinary != null && !chromeBinary.isBlank()) {
+            options.setBinary(chromeBinary);
+        }
         options.addArguments("--window-size=1920,1080", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu",
                 "--disable-renderer-backgrounding", "--disable-background-timer-throttling", "--disable-features=CalculateNativeWinOcclusion");
         if (headless) {
