@@ -48,6 +48,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   protected translatedTypes: { value: string, label: string, description: string }[] = [];
   protected scores = ScoreType.toArray();
   protected translatedScores: { value: string, label: string, description: string }[] = [];
+  private swissScores: { value: string, label: string, description: string }[] = [];
   protected translatedDuration: { value: number, label: string }[] = [];
   selectedType: TournamentType | undefined;
 
@@ -83,7 +84,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   private translateTypes(): void {
     const typesTranslations = this.types.map(type => this.transloco.selectTranslate(`${TournamentType.toCamel(type)}`));
     combineLatest(typesTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
-      translations.forEach((label, index) => this.translatedTypes.push({
+      this.translatedTypes = translations.map((label, index) => ({
         value: this.types[index],
         label: label,
         description: this.transloco.translate(TournamentType.toCamel(this.types[index]) + "Hint")
@@ -94,11 +95,12 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   private translateScores(): void {
     const scoresTranslations = this.scores.map(score => this.transloco.selectTranslate(`${ScoreType.toCamel(score)}`));
     combineLatest(scoresTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
-      translations.forEach((label, index) => this.translatedScores.push({
+      this.translatedScores = translations.map((label, index) => ({
         value: this.scores[index],
         label: label,
         description: this.transloco.translate(ScoreType.toCamel(this.scores[index]) + "Hint")
       }));
+      this.swissScores = this.translatedScores.filter(score => score.value === ScoreType.CUSTOM);
     });
   }
 
@@ -118,7 +120,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
     */
    protected getAvailableScores(): { value: string, label: string, description: string }[] {
      if (this.tournament?.type === TournamentType.SWISS) {
-       return this.translatedScores.filter(score => score.value === ScoreType.CUSTOM);
+       return this.swissScores;
      }
      return this.translatedScores;
    }

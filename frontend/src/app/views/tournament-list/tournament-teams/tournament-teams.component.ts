@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output,} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,} from '@angular/core';
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
@@ -60,7 +60,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               rbacService: RbacService, private readonly groupService: GroupService, private readonly fightService: FightService,
               private readonly rankingService: RankingService, private readonly statisticsChangedService: StatisticsChangedService,
               private readonly filterResetService: FilterResetService, public csvService: CsvService,
-              private readonly translateService: TranslocoService) {
+               private readonly translateService: TranslocoService, private readonly cdr: ChangeDetectorRef) {
     super(rbacService);
   }
 
@@ -117,6 +117,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       this.removeAssignedParticipantsFromAvailableList(this.teams);
       this.userListData.filteredParticipants = this.userListData.participants;
       this.buildTeamSize();
+      this.cdr.markForCheck();
     });
   }
 
@@ -482,10 +483,17 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
     this.loadingGlobal = true;
     this.members = new Map<Team, Participant[]>();
+    const usedNames = new Set<string>();
     for (const member of participants) {
       const team: Team = new Team();
       team.tournament = this.tournament;
       team.name = this.nameUtilsService.getLastnameNameNoSpaces(member);
+      const baseName = team.name;
+      let suffix = 2;
+      while (usedNames.has(team.name.toLocaleLowerCase())) {
+        team.name = `${baseName} (${suffix++})`;
+      }
+      usedNames.add(team.name.toLocaleLowerCase());
       team.members = [];
       team.members[0] = member;
       this.teams.push(team);
@@ -500,6 +508,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
       this.systemOverloadService.isBusy.next(false);
       this.statisticsChangedService.areStatisticsChanged.next(true);
+      this.cdr.markForCheck();
     }).add(() => this.loadingGlobal = false);
   }
 

@@ -7,7 +7,7 @@
       <div (cdkDropListDropped)="removeRole($event)" [cdkDropListData]="userListData.filteredParticipants"
         cdkDropList
         class="users-container">
-        <user-list [showAvatars]="showAvatars" [userListData]="userListData"></user-list>
+        <user-list [showAvatars]="showAvatars" [userListData]="userListData" (userSelected)="addCompetitor($event)"></user-list>
       </div>
       <div class="right-panel">
         <fight-statistics-panel [teams]="false" [tournament]="tournament"></fight-statistics-panel>

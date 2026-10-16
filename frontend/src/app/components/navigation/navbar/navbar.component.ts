@@ -71,13 +71,15 @@ export class NavbarComponent implements OnInit {
   ngOnInit() {
     this.user = this.sessionService.getUser();
     this.selectedTenantId = this.loginService.getTenantId();
-    this.tenantService.getAvailable().subscribe({
+    if (this.user?.roles?.some(role => ['admin', 'super_admin', 'editor', 'viewer'].includes(role.toLowerCase()))) {
+      this.tenantService.getAvailable().subscribe({
       next: tenants => {
         this.tenants = tenants;
         this.tenantOptions = tenants.map(tenant => ({label: tenant.name, value: String(tenant.id)}));
       },
       error: () => this.tenants = []
-    });
+      });
+    }
     this.infoService.getAppConfig().subscribe({
       next: config => {
         if (config && config['tenancyEnabled'] !== undefined) {

@@ -25,7 +25,6 @@ const routes: Routes = [
   {
     path: 'tournaments',
     loadChildren: () => import('./views/tournament-list/tournament-list.module').then(m => m.TournamentListModule),
-    canActivate: [LoggedInService]
   },
   {path: 'administration/users', component: AuthenticatedUserListComponent, canActivate: [LoggedInService]},
   {path: 'administration/tenants', component: TenantListComponent, canActivate: [LoggedInService, SuperAdminGuardService]},

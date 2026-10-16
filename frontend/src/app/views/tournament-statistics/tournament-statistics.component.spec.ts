@@ -75,7 +75,7 @@ describe('TournamentStatisticsComponent', () => {
     translocoServiceSpy.translate.and.returnValue('translated');
     environmentServiceSpy.isAchievementsEnabled.and.returnValue(false);
 
-    (routerSpy as any).lastSuccessfulNavigation = () => ({
+    (routerSpy as any).currentNavigation = () => ({
       extras: { state: { tournamentId: 5 } }
     } as any);
 
@@ -103,7 +103,8 @@ describe('TournamentStatisticsComponent', () => {
   });
 
   it('should navigate back to tournaments when state is null', () => {
-    (routerSpy as any).lastSuccessfulNavigation = () => null;
+    (routerSpy as any).currentNavigation = () => null;
+    spyOnProperty(history, 'state', 'get').and.returnValue(null);
 
     component = new TournamentStatisticsComponent(
       routerSpy,
@@ -289,7 +290,6 @@ describe('TournamentStatisticsComponent', () => {
     expect(count).toBe(12);
   });
 });
-
 
 
 

@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {UserListData} from "./user-list-data";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
+import {Participant} from "../../../models/participant";
 
 @Component({
   standalone: false,
@@ -15,6 +16,9 @@ export class UserListComponent implements OnInit {
 
   @Input()
   showAvatars: boolean = false;
+
+  @Output()
+  userSelected: EventEmitter<Participant> = new EventEmitter();
 
   constructor(private filterResetService: FilterResetService) {
   }

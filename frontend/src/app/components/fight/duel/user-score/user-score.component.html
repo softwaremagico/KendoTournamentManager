@@ -1,4 +1,5 @@
 <div [class.left]="left" [class.right]="!left" class="user-score"
+     [attr.data-participant-name]="getParticipant() ? getParticipant()?.lastname + ', ' + getParticipant()?.name : ''"
   [class.highlightParticipant]="highlightedParticipantId!=undefined"
   [class.fightSelected]="isSelected"
   [class.showAvatar]="participantWindowOpened">

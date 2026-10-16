@@ -602,6 +602,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId && teams && teams.length > 0) {
       this.groupService.setTeams(teams).subscribe((_group: Group): void => {
         this.selectedGroup = _group;
+        if (this.tournament.type === TournamentType.SENBATSU) {
+          this.refreshFights();
+          return;
+        }
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
             this.resetFilter();
@@ -1035,7 +1039,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   loadTournamentBanner() {
-    if (this.tournament) {
+    if (this.tournament && this.rbacService.isAllowed(this.RbacActivity.SEE_PICTURE)) {
       this.fileService.getTournamentPicture(this.tournament, TournamentImageType.BANNER).subscribe(_picture => {
         if (_picture && !_picture.defaultImage) {
           this.bannerImage = _picture.base64;

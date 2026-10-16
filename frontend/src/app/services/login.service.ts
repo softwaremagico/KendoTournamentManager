@@ -12,6 +12,7 @@ import {TemporalToken} from "./models/temporal-token";
 import {UserRoles} from "./rbac/user-roles";
 import {UserSessionService} from "./user-session.service";
 import {RbacService} from "./rbac/rbac.service";
+import {RxStompService} from '../websockets/rx-stomp.service';
 
 /**
  * Angular service that manages authentication state for the Kendo Tournament Manager.
@@ -40,7 +41,8 @@ export class LoginService {
   private interval: ReturnType<typeof setInterval> | null;
 
   constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
-              private readonly activityService: ActivityService, private readonly router: Router, private readonly userSessionService: UserSessionService) {
+               private readonly activityService: ActivityService, private readonly router: Router, private readonly userSessionService: UserSessionService,
+               private readonly rxStompService: RxStompService) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
       this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - Date.now()) - LoginService.JWT_RENEW_MARGIN,
         (): void => {
@@ -134,6 +136,7 @@ export class LoginService {
     this.userSessionService.setLocalUser(authenticatedUser);
     localStorage.setItem('username', authenticatedUser.username);
     localStorage.setItem('session', authenticatedUser.session);
+    this.rxStompService.activate();
     callback(authenticatedUser.jwt, authenticatedUser.expires);
   }
 
@@ -146,6 +149,7 @@ export class LoginService {
   }
 
   logout(): void {
+    this.rxStompService.deactivate();
     this.userSessionService.clearToken();
     this.activityService.setRoles([]);
     localStorage.removeItem('account');

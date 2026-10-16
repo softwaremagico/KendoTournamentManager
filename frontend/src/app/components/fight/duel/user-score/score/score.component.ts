@@ -42,6 +42,7 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
   over: boolean = false;
 
   scoreRepresentation: string;
+  saving: boolean = false;
 
   timeRepresentation: string | undefined;
 
@@ -149,11 +150,12 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
 
   updateScore(score: Score): void {
     if (this.updateDuel(score)) {
+      this.saving = true;
       this.duel.finishedAt = undefined;
       this.duelService.update(this.duel).pipe(takeUntil(this.destroySubject)).subscribe((duel: Duel): Duel => {
         this.messageService.infoMessage('infoScoreUpdated');
         return duel;
-      });
+      }).add(() => this.saving = false);
     }
   }
 

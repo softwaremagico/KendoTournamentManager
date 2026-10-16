@@ -17,7 +17,7 @@
         @if (!droppingDisabled) {
           <div class="button-container">
             @if ((RbacActivity.EDIT_GROUP | hasPermission)) {
-              <button biit-button secondary (click)="sortedGroups()"
+              <button biit-button secondary id="brackets-sort-teams" (click)="sortedGroups()"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)">
                 {{ 'sorted' | transloco }}
               </button>
