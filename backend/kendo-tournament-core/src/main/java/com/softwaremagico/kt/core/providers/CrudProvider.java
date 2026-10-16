@@ -42,6 +42,9 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public E save(E entity) {
+        if (entity instanceof Element tenantScopedEntity && tenantScopedEntity.getTenantId() == null) {
+            tenantScopedEntity.setTenantId(TenantContext.getRequiredTenantId());
+        }
         return repository.save(entity);
     }
 
@@ -66,7 +69,7 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public E update(E entity) {
-        return repository.save(entity);
+        return save(entity);
     }
 
     public void delete(E entity) {
