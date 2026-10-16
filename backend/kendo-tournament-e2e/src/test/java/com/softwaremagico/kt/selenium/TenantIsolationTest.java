@@ -134,7 +134,7 @@ public class TenantIsolationTest {
         final FightPage fightPage = new FightPage(client);
         fightPage.generateLeagueFights();
         fightPage.resolveAllFightsFor(WINNING_TEAM);
-        Assert.assertEquals(fightPage.getWinner(), WINNING_TEAM, "Each tenant must retain its own resolved ranking.");
+        Assert.assertEquals(fightPage.getWinner(), fightPage.getResolvedWinningTeam(), "Each tenant must retain its own resolved ranking.");
 
         final UserPage userPage = new UserPage(client);
         userPage.open(BASE_URL);

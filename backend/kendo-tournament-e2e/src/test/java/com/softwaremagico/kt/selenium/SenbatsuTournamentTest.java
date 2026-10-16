@@ -38,7 +38,7 @@ public class SenbatsuTournamentTest extends AbstractTournamentTypeTest {
         tournamentPage.addCompetitors(competitors);
         tournamentPage.createTeams(TEAM_COUNT, TEAM_COUNT);
         tournamentPage.openFights();
-
+        fightPage.initializeSenbatsu();
         fightPage.openSenbatsuFightCreator();
     }
 }

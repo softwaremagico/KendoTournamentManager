@@ -64,7 +64,7 @@ public class TournamentCloneTest {
         final String firstParticipant = "CloneFirst" + identifier;
         final String secondParticipant = "CloneSecond" + identifier;
         final String tournamentName = "Clone Tournament " + identifier;
-        final String clonedTournamentName = "Copy of " + tournamentName;
+        final String clonedTournamentName = tournamentName + " - Copy";
         final WebDriverClient client = new WebDriverClient(driver);
 
         final ClubPage clubPage = new ClubPage(client);

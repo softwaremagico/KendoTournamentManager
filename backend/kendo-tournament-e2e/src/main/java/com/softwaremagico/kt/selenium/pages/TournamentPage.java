@@ -38,6 +38,7 @@ public class TournamentPage {
 
     private final WebDriverClient webDriverClient;
     private final Table table;
+    private String selectedTournamentName;
 
     public TournamentPage(WebDriverClient webDriverClient) {
         this.webDriverClient = webDriverClient;
@@ -58,6 +59,7 @@ public class TournamentPage {
     }
 
     public void createLeagueWithScoreRule(String name, String scoreRule) {
+        selectedTournamentName = name;
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("League");
@@ -76,6 +78,7 @@ public class TournamentPage {
     }
 
     public void createSenbatsu(String name) {
+        selectedTournamentName = name;
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("Senbatsu");
@@ -87,6 +90,7 @@ public class TournamentPage {
     }
 
     private void createTournamentForm(String name, String type, int teamSize) {
+        selectedTournamentName = name;
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select(type);
@@ -105,9 +109,9 @@ public class TournamentPage {
         for (String participantName : participantNames) {
             final By participant = By.xpath("//tournament-roles//user-list//user-card[contains(translate(normalize-space(), "
                     + "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), " + toXPathLiteral(participantName.toLowerCase()) + ")]");
-            webDriverClient.dragAndDrop(webDriverClient.findVisible(participant),
-                    webDriverClient.findVisible(By.cssSelector("tournament-roles .role")));
+            webDriverClient.waitUntilClickable(participant).click();
         }
+        webDriverClient.waitForAtLeast(By.cssSelector("tournament-roles .role user-card"), participantNames.length);
         webDriverClient.waitUntilClickable(By.id("tournament-button-close")).click();
     }
 
@@ -117,10 +121,16 @@ public class TournamentPage {
 
     public void createTeams(int teamCount, int participantCount) {
         clickSelectedTournamentAction("team");
-        for (int index = 0; index < teamCount; index++) {
-            webDriverClient.clickWizardryButton(By.id("tournament-team-add"));
+        final boolean individualTeams = teamCount == participantCount;
+        if (!individualTeams) {
+            webDriverClient.findVisible(By.cssSelector("tournament-teams .team"));
+            final int existingTeams = webDriverClient.findAll(By.cssSelector("tournament-teams .team")).size();
+            for (int index = existingTeams; index < teamCount; index++) {
+                webDriverClient.clickWizardryButton(By.id("tournament-team-add"));
+            }
         }
-        webDriverClient.clickWizardryButton(By.cssSelector("tournament-teams button[biit-button][secondary]"));
+        webDriverClient.waitForAtLeast(By.cssSelector("tournament-teams user-list user-card"), participantCount);
+        webDriverClient.clickWizardryButton(By.id("tournament-teams-generate"));
         webDriverClient.waitForAtLeast(By.cssSelector("tournament-teams .team .user-card"), participantCount);
         webDriverClient.waitUntilClickable(By.id("tournament-button-close")).click();
     }
@@ -129,11 +139,22 @@ public class TournamentPage {
         clickSelectedTournamentAction("fight");
     }
 
+    public void select(String tournamentName) {
+        selectedTournamentName = tournamentName;
+        table.search(tournamentName);
+        table.selectRowContaining(tournamentName);
+    }
+
     public void lock(String tournamentName) {
+        if (webDriverClient.isVisible(By.id("tournament-qr-close"))) {
+            webDriverClient.clickWizardryButton(By.id("tournament-qr-close"));
+            webDriverClient.waitUntilInvisible(By.id("qr-code"));
+        }
         table.search(tournamentName);
         table.selectRowContaining(tournamentName);
         webDriverClient.waitUntilClickable(By.cssSelector("button[biit-icon][icon='lock']")).click();
         table.waitUntilContainsText(tournamentName);
+        table.selectRowContaining(tournamentName);
     }
 
     public void cloneTournament(String tournamentName) {
@@ -141,7 +162,10 @@ public class TournamentPage {
         table.selectRowContaining(tournamentName);
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='clone']]")).click();
         webDriverClient.clickWizardryButton(By.id("clone-confirm-button"));
-        table.waitUntilContainsText("Copy of " + tournamentName);
+        table.search("");
+        table.search(tournamentName + " - Copy");
+        table.waitUntilContainsText(tournamentName + " - Copy");
+        selectedTournamentName = tournamentName + " - Copy";
     }
 
     public boolean contains(String tournamentName) {
@@ -152,8 +176,10 @@ public class TournamentPage {
     public void openStatistics(String tournamentName) {
         table.search(tournamentName);
         table.selectRowContaining(tournamentName);
-        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='bar_chart']]")).click();
-        webDriverClient.findVisible(By.cssSelector(".statistics-view .name"));
+        webDriverClient.clickFirstVisible(By.xpath("//button[.//mat-icon[@svgIcon='bar_chart']]"));
+        webDriverClient.getWebDriverWait().withMessage(() -> "Statistics URL: " + webDriverClient.getDriver().getCurrentUrl()
+                + "; body: " + webDriverClient.getDriver().findElement(By.tagName("body")).getText())
+                .until(driver -> !driver.findElements(By.cssSelector(".statistics-view .name")).isEmpty());
     }
 
     public String getStatisticsTournamentName() {
@@ -164,23 +190,34 @@ public class TournamentPage {
         table.search(tournamentName);
         table.selectRowContaining(tournamentName);
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='qr_code']]")).click();
-        return webDriverClient.findVisible(By.cssSelector("#qr-code .link")).getAttribute("href");
+        final String link = webDriverClient.findVisible(By.cssSelector("#qr-code .link")).getAttribute("href");
+        webDriverClient.clickWizardryButton(By.id("tournament-qr-close"));
+        webDriverClient.waitUntilInvisible(By.id("qr-code"));
+        return link;
     }
 
     public String getScoreRule(String tournamentName) {
         table.search(tournamentName);
         table.selectRowContaining(tournamentName);
         table.clickAction("button-edit");
-        return webDriverClient.findVisible(By.id("tournament-score-rules")).findElement(By.cssSelector("input")).getAttribute("value");
+        final String scoreRule = webDriverClient.findVisible(By.id("tournament-score-rules"))
+                .findElement(By.cssSelector("input")).getAttribute("value");
+        new Popup(webDriverClient, "tournament-popup").close();
+        return scoreRule;
     }
 
     public void openCustomScoreRules() {
+        select(selectedTournamentName);
+        table.clickAction("button-edit");
         webDriverClient.waitUntilClickable(By.id("edit-score-button")).click();
-        webDriverClient.findVisible(By.id("tournament-score-options"));
+        webDriverClient.findVisible(By.id("score-rules-popup"));
     }
 
     private void clickSelectedTournamentAction(String icon) {
-        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='" + icon + "']]")).click();
+        if (selectedTournamentName != null) {
+            select(selectedTournamentName);
+        }
+        webDriverClient.clickFirstVisible(By.xpath("//button[.//mat-icon[@svgIcon='" + icon + "']]"));
     }
 
     private String toXPathLiteral(String value) {

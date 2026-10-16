@@ -45,6 +45,7 @@ public class WebDriverClient {
     public WebDriverClient(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, WAIT_TIMEOUT);
+        this.wait.ignoring(org.openqa.selenium.StaleElementReferenceException.class);
     }
 
     public WebDriver getDriver() {
@@ -80,9 +81,20 @@ public class WebDriverClient {
     }
 
     public void clickFirstVisible(By locator) {
-        wait.until(webDriver -> webDriver.findElements(locator).stream().anyMatch(WebElement::isDisplayed));
-        driver.findElements(locator).stream().filter(WebElement::isDisplayed).findFirst()
-                .orElseThrow(() -> new IllegalStateException("No visible element found for '" + locator + "'.")).click();
+        wait.until(webDriver -> {
+            dismissSuccessNotifications();
+            for (WebElement element : webDriver.findElements(locator)) {
+                if (element.isDisplayed() && element.isEnabled()) {
+                    try {
+                        element.click();
+                        return true;
+                    } catch (org.openqa.selenium.ElementClickInterceptedException exception) {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        });
     }
 
     public void open(String url) {
@@ -109,6 +121,18 @@ public class WebDriverClient {
 
     public void clickByScript(By locator) {
         ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", findVisible(locator));
+    }
+
+    public void dismissSuccessNotifications() {
+        for (WebElement notification : driver.findElements(By.cssSelector("#biit-notification.regular"))) {
+            try {
+                if (notification.isDisplayed()) {
+                    ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", notification);
+                }
+            } catch (org.openqa.selenium.StaleElementReferenceException exception) {
+                // A notification can expire while the next one is being dismissed.
+            }
+        }
     }
 
 }

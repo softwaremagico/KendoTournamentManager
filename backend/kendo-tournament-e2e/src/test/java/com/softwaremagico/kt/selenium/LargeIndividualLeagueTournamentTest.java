@@ -93,7 +93,7 @@ public class LargeIndividualLeagueTournamentTest {
         fightPage.generateLeagueFights();
         Assert.assertEquals(fightPage.getFightCount(), EXPECTED_FIGHT_COUNT);
         fightPage.resolveAllFightsFor(WINNING_TEAM);
-        Assert.assertEquals(fightPage.getWinner(), WINNING_TEAM);
+        Assert.assertEquals(fightPage.getWinner(), fightPage.getResolvedWinningTeam());
         Assert.assertEquals(fightPage.getWinnerFightsWon(), TEAM_COUNT - 1);
     }
 

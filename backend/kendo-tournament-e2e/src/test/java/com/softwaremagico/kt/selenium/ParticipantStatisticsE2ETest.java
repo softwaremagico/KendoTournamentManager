@@ -85,12 +85,12 @@ public class ParticipantStatisticsE2ETest {
 
         final FightPage fightPage = new FightPage(client);
         fightPage.generateLeagueFights();
-        fightPage.scoreFirstDuelFor(WINNING_TEAM);
-        fightPage.resolveFirstFightFor(WINNING_TEAM);
+        fightPage.scoreFirstDuelFor(winner);
+        fightPage.resolveFirstFightFor(winner);
 
         participantPage.open(BASE_URL);
         participantPage.openStatistics(winner);
-        Assert.assertTrue(participantPage.containsStatisticValue("1"),
+        Assert.assertTrue(participantPage.containsStatisticValue("2"),
                 "The winner participant statistics must include the scored MEN hit.");
     }
 }

@@ -36,6 +36,9 @@ public class FightPage {
     private static final int EIGHT_TEAM_CHAMPIONSHIP_SEMIFINAL_FIGHT_COUNT = 6;
 
     private final WebDriverClient webDriverClient;
+    private String resolvedWinningTeam;
+    private String resolvedWinningParticipant;
+    private boolean individualRanking;
 
     public FightPage(WebDriverClient webDriverClient) {
         this.webDriverClient = webDriverClient;
@@ -43,14 +46,23 @@ public class FightPage {
 
     public void generateLeagueFights() {
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='wand']]")).click();
-        webDriverClient.waitUntilClickable(By.cssSelector("#league-generator-popup .sorted-button")).click();
-        webDriverClient.waitUntilClickable(By.cssSelector("#league-generator-popup .fight-button")).click();
+        webDriverClient.clickWizardryButton(By.id("confirm-recreate-accept-button"));
+        webDriverClient.clickWizardryButton(By.cssSelector("#league-generator-popup .sorted-button"));
+        webDriverClient.clickWizardryButton(By.cssSelector("#league-generator-popup .fight-button"));
         webDriverClient.waitUntilInvisible(By.id("league-generator-popup"));
         webDriverClient.findVisible(By.cssSelector("fight"));
     }
 
     public void generateOrderedFights() {
         generateLeagueFights();
+    }
+
+    public void initializeSenbatsu() {
+        webDriverClient.clickFirstVisible(By.xpath("//button[.//mat-icon[@svgIcon='wand']]"));
+        webDriverClient.clickWizardryButton(By.id("confirm-recreate-accept-button"));
+        webDriverClient.clickWizardryButton(By.cssSelector("#league-generator-popup .sorted-button"));
+        webDriverClient.clickWizardryButton(By.cssSelector("#league-generator-popup .fight-button"));
+        webDriverClient.waitUntilInvisible(By.id("league-generator-popup"));
     }
 
     public void generateChampionshipFights() {
@@ -67,19 +79,36 @@ public class FightPage {
             webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='one-winner']]")).click();
         }
         for (int index = 0; index < additionalGroups; index++) {
-            webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='plus']]")).click();
+            final By addGroup = By.cssSelector("app-tournament-generator button[biit-icon][icon='plus']");
+            if (!webDriverClient.findVisible(addGroup).isEnabled()) {
+                break;
+            }
+            webDriverClient.clickFirstVisible(addGroup);
         }
-        webDriverClient.waitUntilClickable(By.cssSelector("tournament-brackets-editor button[biit-button][secondary]")).click();
-        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='wand']]")).click();
-        webDriverClient.waitUntilClickable(By.id("confirm-delete-accept-button")).click();
+        webDriverClient.clickWizardryButton(By.id("brackets-sort-teams"));
+        if (webDriverClient.isVisible(By.id("confirmation-delete-teams"))) {
+            webDriverClient.clickWizardryButton(By.id("confirm-delete-accept-button"));
+            webDriverClient.waitUntilInvisible(By.id("confirmation-delete-teams"));
+        }
+        webDriverClient.clickFirstVisible(By.xpath("//button[.//mat-icon[@svgIcon='wand']]"));
+        webDriverClient.clickWizardryButton(By.id("confirm-delete-accept-button"));
         webDriverClient.findVisible(By.cssSelector("fight"));
     }
 
     public void resolveAllFightsFor(String winningTeam) {
-        for (WebElement fight : webDriverClient.findAll(By.cssSelector("fight"))) {
-            final boolean leftWins = fight.findElement(By.cssSelector(".left-team")).getText().equals(winningTeam);
-            for (WebElement duel : fight.findElements(By.cssSelector("duel"))) {
-                scoreAndFinish(duel, leftWins);
+        final int fightCount = getFightCount();
+        for (int fightIndex = 0; fightIndex < fightCount; fightIndex++) {
+            final int currentFight = fightIndex;
+            final int duelCount = webDriverClient.findAll(By.cssSelector("fight")).get(currentFight)
+                    .findElements(By.cssSelector("duel")).size();
+            for (int duelIndex = 0; duelIndex < duelCount; duelIndex++) {
+                final int currentDuel = duelIndex;
+                webDriverClient.getWebDriverWait().until(driver -> {
+                    final WebElement fight = driver.findElements(By.cssSelector("fight")).get(currentFight);
+                    final WebElement duel = fight.findElements(By.cssSelector("duel")).get(currentDuel);
+                    scoreAndFinish(duel, leftTeamWins(fight, winningTeam));
+                    return true;
+                });
             }
         }
     }
@@ -104,23 +133,24 @@ public class FightPage {
 
     public void resolveFirstFightFor(String winningTeam) {
         final WebElement fight = webDriverClient.findVisible(By.cssSelector("fight"));
-        final boolean leftWins = fight.findElement(By.cssSelector(".left-team")).getText().equals(winningTeam);
+        final boolean leftWins = leftTeamWins(fight, winningTeam);
         for (WebElement duel : fight.findElements(By.cssSelector("duel"))) {
             scoreAndFinish(duel, leftWins);
         }
     }
 
     public void scoreFirstDuelFor(String winningTeam) {
+        webDriverClient.dismissSuccessNotifications();
         final WebElement fight = webDriverClient.findVisible(By.cssSelector("fight"));
-        final boolean leftWins = fight.findElement(By.cssSelector(".left-team")).getText().equals(winningTeam);
+        final boolean leftWins = leftTeamWins(fight, winningTeam);
         final WebElement duel = fight.findElement(By.cssSelector("duel"));
         final List<WebElement> userScores = duel.findElements(By.cssSelector("user-score"));
         userScores.get(leftWins ? 0 : 1).findElement(By.cssSelector("score .score-area")).click();
-        webDriverClient.waitUntilClickable(By.cssSelector(".mat-mdc-menu-panel button[mat-menu-item]")).click();
+        clickMenScore();
     }
 
     public boolean containsScore(String score) {
-        return webDriverClient.findAll(By.cssSelector("duel .point-value")).stream()
+        return webDriverClient.findAll(By.cssSelector("duel .point-value, duel .point")).stream()
                 .anyMatch(point -> point.getText().equals(score));
     }
 
@@ -137,15 +167,49 @@ public class FightPage {
     }
 
     public String getWinner() {
-        webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='teams-classification']]")).click();
-        return webDriverClient.findVisible(By.cssSelector("#teams-ranking-popup .team-ranking-table tbody tr:first-child .team-name"))
-                .getText();
+        closeRankingPopup();
+        final By teamsButton = By.xpath("//button[.//mat-icon[@svgIcon='teams-classification']]");
+        individualRanking = webDriverClient.findAll(teamsButton).stream().noneMatch(WebElement::isDisplayed);
+        if (individualRanking) {
+            if (webDriverClient.isVisible(By.id("competitors-ranking-popup"))) {
+                return webDriverClient.findVisible(By.cssSelector("#competitors-ranking-popup .competitor-name")).getText()
+                        .replaceAll("\\s*,\\s*", ", ");
+            }
+            openParticipantRanking();
+            return webDriverClient.findVisible(By.cssSelector("#competitors-ranking-popup .competitor-name")).getText()
+                    .replaceAll("\\s*,\\s*", ", ");
+        }
+        webDriverClient.getWebDriverWait().until(driver -> {
+            if (webDriverClient.isVisible(By.id("teams-ranking-popup"))) {
+                return true;
+            }
+            if (webDriverClient.isVisible(By.id("competitors-ranking-popup"))) {
+                webDriverClient.clickWizardryButton(By.cssSelector("#competitors-ranking-popup .button-container > button:last-child"));
+                return false;
+            }
+            try {
+                webDriverClient.dismissSuccessNotifications();
+                driver.findElement(By.xpath("//button[.//mat-icon[@svgIcon='teams-classification']]")).click();
+            } catch (org.openqa.selenium.ElementClickInterceptedException exception) {
+                return false;
+            }
+            return webDriverClient.isVisible(By.id("teams-ranking-popup"));
+        });
+        return webDriverClient.findVisible(By.cssSelector("#teams-ranking-popup .team-ranking-table tr .team-name")).getText();
     }
 
     public int getWinnerFightsWon() {
+        if (individualRanking) {
+            return Integer.parseInt(webDriverClient.findVisible(By.cssSelector(
+                    "#competitors-ranking-popup tr:has(.competitor-name) td:nth-child(3)")).getText());
+        }
         return Integer.parseInt(webDriverClient.findVisible(
-                By.cssSelector("#teams-ranking-popup .team-ranking-table tbody tr:first-child td:nth-child(3)"))
+                By.cssSelector("#teams-ranking-popup .team-ranking-table tr:has(.team-name) td:nth-child(3)"))
                 .getText());
+    }
+
+    public String getResolvedWinningTeam() {
+        return individualRanking ? resolvedWinningParticipant : resolvedWinningTeam;
     }
 
     public void resolveChampionshipFor(String winningTeam) {
@@ -157,23 +221,103 @@ public class FightPage {
     }
 
     private void scoreAndFinish(WebElement duel, boolean leftWins) {
+        closeRankingPopup();
+        webDriverClient.dismissSuccessNotifications();
         if (duel.getAttribute("class").contains("over")) {
             return;
         }
         final List<WebElement> userScores = duel.findElements(By.cssSelector("user-score"));
         final List<WebElement> scores = userScores.get(leftWins ? 0 : 1).findElements(By.cssSelector("score"));
-        for (int scoreIndex = 0; scoreIndex < 2; scoreIndex++) {
-            scores.get(scoreIndex).findElement(By.cssSelector(".score-area")).click();
-            webDriverClient.waitUntilClickable(By.cssSelector(".mat-mdc-menu-panel button[mat-menu-item]")).click();
+        final boolean bye = userScores.stream().anyMatch(side -> side.findElement(By.cssSelector(".user-score"))
+                .getAttribute("data-participant-name").isBlank());
+        if (!bye) {
+            for (int scoreIndex = 0; scoreIndex < 2; scoreIndex++) {
+                if (scores.get(scoreIndex).getText().contains("M")) {
+                    continue;
+                }
+                scores.get(scoreIndex).findElement(By.cssSelector(".score-area")).click();
+                clickMenScore();
+            }
         }
+        webDriverClient.dismissSuccessNotifications();
         duel.click();
         webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='check']]")).click();
+        webDriverClient.getWebDriverWait().until(driver -> duel.getAttribute("class").contains("over"));
         closeRankingPopup();
+    }
+
+    private boolean leftTeamWins(WebElement fight, String winningTeam) {
+        final WebElement container = fight.findElement(By.cssSelector(".fight-container"));
+        final String left = container.getAttribute("data-left-team");
+        final String right = container.getAttribute("data-right-team");
+        final List<WebElement> participantSides = fight.findElements(By.cssSelector("user-score > .user-score"));
+        if (!participantSides.isEmpty()) {
+            final String leftParticipant = participantSides.get(0).getAttribute("data-participant-name");
+            final String rightParticipant = participantSides.get(1).getAttribute("data-participant-name");
+            if (leftParticipant.toLowerCase(java.util.Locale.ROOT).contains(winningTeam.toLowerCase(java.util.Locale.ROOT))) {
+                return true;
+            }
+            if (rightParticipant.toLowerCase(java.util.Locale.ROOT).contains(winningTeam.toLowerCase(java.util.Locale.ROOT))) {
+                return false;
+            }
+        }
+        if (left.equalsIgnoreCase(winningTeam)) {
+            resolvedWinningTeam = left;
+            return true;
+        }
+        if (right.equalsIgnoreCase(winningTeam)) {
+            resolvedWinningTeam = right;
+            return false;
+        }
+        if (winningTeam.equals("Team 1")) {
+            if (resolvedWinningTeam == null) {
+                resolvedWinningTeam = left.compareToIgnoreCase(right) < 0 ? left : right;
+                final List<WebElement> sides = fight.findElements(By.cssSelector("user-score > .user-score"));
+                resolvedWinningParticipant = sides.get(left.equals(resolvedWinningTeam) ? 0 : 1).getAttribute("data-participant-name");
+            }
+            return left.equalsIgnoreCase(resolvedWinningTeam);
+        }
+        return false;
+    }
+
+    private void clickMenScore() {
+        webDriverClient.dismissSuccessNotifications();
+        final By men = By.xpath("//div[contains(@class, 'mat-mdc-menu-panel')]//button[@mat-menu-item]"
+                + "[normalize-space()='Men' or contains(normalize-space(), 'Fusen')]");
+        webDriverClient.getWebDriverWait().until(driver -> {
+            final List<WebElement> options = driver.findElements(men).stream().filter(WebElement::isDisplayed).toList();
+            if (options.isEmpty()) {
+                return false;
+            }
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", options.getFirst());
+            return true;
+        });
+        webDriverClient.waitUntilInvisible(By.cssSelector(".mat-mdc-menu-panel"));
+        webDriverClient.getWebDriverWait().until(driver -> driver.findElements(By.cssSelector("score .score-area[data-saving='true']")).isEmpty());
     }
 
     private void closeRankingPopup() {
         if (webDriverClient.isVisible(By.id("teams-ranking-popup"))) {
-            webDriverClient.waitUntilClickable(By.cssSelector("#teams-ranking-popup button[biit-button][primary]")).click();
+            webDriverClient.clickWizardryButton(By.id("teams-ranking-close"));
+            webDriverClient.waitUntilInvisible(By.id("teams-ranking-popup"));
         }
+        if (webDriverClient.isVisible(By.id("competitors-ranking-popup"))) {
+            webDriverClient.clickWizardryButton(By.id("competitors-ranking-close"));
+            webDriverClient.waitUntilInvisible(By.id("competitors-ranking-popup"));
+        }
+    }
+
+    public void openParticipantRanking() {
+        webDriverClient.getWebDriverWait().until(driver -> {
+            if (webDriverClient.isVisible(By.id("competitors-ranking-popup"))) {
+                return true;
+            }
+            try {
+                driver.findElement(By.xpath("//button[.//mat-icon[@svgIcon='competitors-classification']]")).click();
+            } catch (org.openqa.selenium.ElementClickInterceptedException exception) {
+                return false;
+            }
+            return webDriverClient.isVisible(By.id("competitors-ranking-popup"));
+        });
     }
 }

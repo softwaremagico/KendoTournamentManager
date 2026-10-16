@@ -42,9 +42,14 @@ public class Popup {
 
     public void close() {
         final By closeButton = By.cssSelector("#" + popupId() + " #popup-x-button");
-        if (webDriverClient.isVisible(closeButton)) {
-            webDriverClient.clickByScript(closeButton);
-        }
+        webDriverClient.getWebDriverWait().until(driver -> {
+            final var buttons = driver.findElements(closeButton);
+            if (buttons.isEmpty() || !buttons.getFirst().isDisplayed()) {
+                return true;
+            }
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", buttons.getFirst());
+            return true;
+        });
     }
 
     private String popupId() {

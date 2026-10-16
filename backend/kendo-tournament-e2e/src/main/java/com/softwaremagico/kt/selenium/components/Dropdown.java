@@ -49,8 +49,9 @@ public class Dropdown {
         new Actions(webDriverClient.getDriver()).moveToElement(input).click().perform();
         webDriverClient.getWebDriverWait().until(driver -> component.findElement(By.cssSelector(".dropdown-list"))
                 .getAttribute("class").contains("dropdown-open"));
-        final By optionLocator = By.xpath("//button[@role='option'][contains(normalize-space(), "
-                + toXPathLiteral(label) + ")]");
+        final By optionLocator = By.xpath("//biit-dropdown[@id='" + componentId + "']//button[@role='option']"
+                + "[contains(translate(normalize-space(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "
+                + toXPathLiteral(label.toLowerCase(java.util.Locale.ROOT)) + ")]");
         webDriverClient.waitUntilClickable(optionLocator).click();
     }
 

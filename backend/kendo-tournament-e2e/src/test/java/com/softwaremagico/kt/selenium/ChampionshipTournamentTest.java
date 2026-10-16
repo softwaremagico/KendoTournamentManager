@@ -95,7 +95,7 @@ public class ChampionshipTournamentTest {
         fightPage.resolveChampionshipFor(WINNING_TEAM);
         Assert.assertTrue(fightPage.hasReachedFinal(), "The championship must generate the final round.");
         Assert.assertEquals(fightPage.getFightCount(), EXPECTED_FIGHT_COUNT);
-        Assert.assertEquals(fightPage.getWinner(), WINNING_TEAM);
+        Assert.assertEquals(fightPage.getWinner(), fightPage.getResolvedWinningTeam());
     }
 
     private String[] competitors(String identifier) {

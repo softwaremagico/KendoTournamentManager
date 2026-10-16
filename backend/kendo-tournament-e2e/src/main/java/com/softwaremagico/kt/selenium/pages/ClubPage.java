@@ -50,6 +50,7 @@ public class ClubPage {
         new InputField(webDriverClient, "club-city").setValue(city);
         webDriverClient.clickWizardryButton(org.openqa.selenium.By.id("club-button-save"));
         webDriverClient.waitUntilInvisible(org.openqa.selenium.By.id("club-popup"));
+        table.search(name);
         table.waitUntilContainsText(name);
         new Popup(webDriverClient, "club-popup").close();
     }
@@ -61,7 +62,9 @@ public class ClubPage {
 
     public void importCsv(String filePath, String expectedClubName) {
         table.clickAction("button-plus");
-        webDriverClient.findVisible(org.openqa.selenium.By.id("club-csv-file-input")).sendKeys(filePath);
+        webDriverClient.getWebDriverWait().until(org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated(
+                org.openqa.selenium.By.id("club-csv-file-input"))).sendKeys(filePath);
+        table.search(expectedClubName);
         table.waitUntilContainsText(expectedClubName);
     }
 }

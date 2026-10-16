@@ -24,6 +24,8 @@ import com.softwaremagico.kt.selenium.WebDriverClient;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.StaleElementReferenceException;
 
 import java.util.List;
 
@@ -53,14 +55,23 @@ public class Table {
 
     public void selectRowContaining(String text) {
         webDriverClient.getWebDriverWait().until(driver -> {
-            final List<WebElement> rows = getTable().findElements(By.cssSelector(".datatable-body-row"));
-            for (WebElement row : rows) {
-                if (row.getText().contains(text)) {
-                    row.click();
-                    return true;
+            try {
+                for (WebElement notification : driver.findElements(By.cssSelector("#biit-notification.regular"))) {
+                    if (notification.isDisplayed()) {
+                        notification.click();
+                    }
                 }
+                final List<WebElement> rows = getTable().findElements(By.cssSelector(".datatable-body-row"));
+                for (WebElement row : rows) {
+                    if (row.getText().toLowerCase(java.util.Locale.ROOT).contains(text.toLowerCase(java.util.Locale.ROOT))) {
+                        row.click();
+                        return true;
+                    }
+                }
+                return false;
+            } catch (ElementClickInterceptedException | StaleElementReferenceException exception) {
+                return false;
             }
-            return false;
         });
     }
 
@@ -69,7 +80,8 @@ public class Table {
     }
 
     public boolean containsText(String text) {
-        return webDriverClient.getDriver().getPageSource().contains(text);
+        return getRows().stream().anyMatch(row -> row.getText().toLowerCase(java.util.Locale.ROOT)
+                .contains(text.toLowerCase(java.util.Locale.ROOT)));
     }
 
     public void waitUntilContainsText(String text) {
@@ -82,6 +94,8 @@ public class Table {
         search.clear();
         search.sendKeys(text);
         search.sendKeys(Keys.ENTER);
+        webDriverClient.getWebDriverWait().until(driver -> getRows().stream().allMatch(row ->
+                row.getText().toLowerCase(java.util.Locale.ROOT).contains(text.toLowerCase(java.util.Locale.ROOT))));
     }
 
     private List<WebElement> getRows() {

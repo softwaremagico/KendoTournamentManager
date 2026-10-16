@@ -74,7 +74,7 @@ public class CsvImportTest {
         participantPage.importCsv(resourcePath("csv/e2e-participants.csv"), VALID_PARTICIPANT);
         Assert.assertTrue(participantPage.contains(VALID_PARTICIPANT));
 
-        participantPage.importCsv(resourcePath("csv/e2e-invalid-participants.csv"), VALID_PARTICIPANT);
+        participantPage.importCsv(resourcePath("csv/e2e-invalid-participants.csv"), VALID_PARTICIPANT, true);
         Assert.assertFalse(participantPage.contains(INVALID_PARTICIPANT), "Invalid CSV rows must not create participants.");
     }
 

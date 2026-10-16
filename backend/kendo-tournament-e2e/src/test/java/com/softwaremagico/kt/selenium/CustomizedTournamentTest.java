@@ -32,7 +32,7 @@ public class CustomizedTournamentTest extends AbstractTournamentTypeTest {
     @Test
     public void opensManualFightCreatorForCustomizedTournament() {
         final String[] competitors = createIndividualTeams("Custom", TEAM_COUNT);
-        createTournamentWithIndividualTeams("Custom", "Customized", competitors);
+        createTournamentWithIndividualTeams("Custom", "Custom", competitors);
 
         fightPage.openCustomFightCreator();
     }

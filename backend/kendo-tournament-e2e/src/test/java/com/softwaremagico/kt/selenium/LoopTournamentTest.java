@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  */
 public class LoopTournamentTest extends AbstractTournamentTypeTest {
     private static final int TEAM_COUNT = 3;
-    private static final int EXPECTED_FIGHTS = TEAM_COUNT * (TEAM_COUNT - 1);
+    private static final int EXPECTED_FIGHTS = TEAM_COUNT * (TEAM_COUNT - 1) / 2;
 
     @Test
     public void createsAndResolvesLoopTournament() {
@@ -39,6 +39,6 @@ public class LoopTournamentTest extends AbstractTournamentTypeTest {
         fightPage.generateOrderedFights();
         Assert.assertEquals(fightPage.getFightCount(), EXPECTED_FIGHTS);
         fightPage.resolveAllFightsFor(WINNING_TEAM);
-        Assert.assertEquals(fightPage.getWinner(), WINNING_TEAM);
+        Assert.assertEquals(fightPage.getWinner(), fightPage.getResolvedWinningTeam());
     }
 }

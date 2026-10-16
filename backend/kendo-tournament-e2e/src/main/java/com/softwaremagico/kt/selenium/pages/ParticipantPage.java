@@ -23,6 +23,7 @@ package com.softwaremagico.kt.selenium.pages;
 
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import com.softwaremagico.kt.selenium.components.InputField;
+import com.softwaremagico.kt.selenium.components.Dropdown;
 import com.softwaremagico.kt.selenium.components.Popup;
 import com.softwaremagico.kt.selenium.components.Table;
 import org.openqa.selenium.By;
@@ -49,8 +50,10 @@ public class ParticipantPage {
         new InputField(webDriverClient, "participant-name").setValue(name);
         new InputField(webDriverClient, "participant-lastname").setValue(lastname);
         new InputField(webDriverClient, "participant-id-card").setValue(idCard);
+        new Dropdown(webDriverClient, "participant-club").select(clubName);
         webDriverClient.clickWizardryButton(By.id("participant-button-save"));
         webDriverClient.waitUntilInvisible(By.id("participant-popup"));
+        table.search(name);
         table.waitUntilContainsText(name);
         new Popup(webDriverClient, "participant-popup").close();
     }
@@ -61,8 +64,20 @@ public class ParticipantPage {
     }
 
     public void importCsv(String filePath, String expectedParticipantName) {
+        importCsv(filePath, expectedParticipantName, false);
+    }
+
+    public void importCsv(String filePath, String expectedParticipantName, boolean invalid) {
         table.clickAction("button-plus");
-        webDriverClient.findVisible(By.id("participant-csv-file-input")).sendKeys(filePath);
+        webDriverClient.dismissSuccessNotifications();
+        webDriverClient.getWebDriverWait().until(org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated(
+                By.id("participant-csv-file-input"))).sendKeys(filePath);
+        if (invalid) {
+            webDriverClient.findVisible(By.cssSelector("#biit-notification.error"));
+            new Popup(webDriverClient, "participant-popup").close();
+        }
+        webDriverClient.waitUntilInvisible(By.id("participant-popup"));
+        table.search(expectedParticipantName);
         table.waitUntilContainsText(expectedParticipantName);
     }
 
@@ -74,7 +89,7 @@ public class ParticipantPage {
     }
 
     public boolean containsStatisticValue(String value) {
-        return webDriverClient.findAll(By.cssSelector(".statistics-view .right-column")).stream()
-                .anyMatch(column -> column.getText().equals(value));
+        return webDriverClient.getWebDriverWait().until(driver ->
+                driver.findElement(By.id("participant-men-count")).getText().equals(value));
     }
 }

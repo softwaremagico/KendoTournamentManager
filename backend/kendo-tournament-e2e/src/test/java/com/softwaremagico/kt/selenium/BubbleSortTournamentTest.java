@@ -35,7 +35,7 @@ public class BubbleSortTournamentTest extends AbstractTournamentTypeTest {
     @Test
     public void createsNextBubbleSortFightAfterResult() {
         final String[] competitors = createIndividualTeams("Bubble", TEAM_COUNT);
-        createTournamentWithIndividualTeams("Bubble", "Bubble Sort", competitors);
+        createTournamentWithIndividualTeams("Bubble", "Dethrone the King Tournament", competitors);
 
         fightPage.generateOrderedFights();
         Assert.assertEquals(fightPage.getFightCount(), FIRST_FIGHT_COUNT);

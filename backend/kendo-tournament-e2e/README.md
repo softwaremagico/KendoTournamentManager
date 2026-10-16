@@ -8,7 +8,7 @@ frontend through the same WizardryTheme components used by operators.
 
 - Java 25 and Maven.
 - Chromium or Google Chrome available on the machine executing the tests.
-- A running frontend instance. The default URL is `http://localhost:4200`.
+- Docker with Compose for the disposable frontend, backend, and database.
 - A running backend and a user with club and participant management permissions
   for authenticated workflows.
 
@@ -142,11 +142,11 @@ mvn -pl kendo-tournament-e2e test \
 | `LoginTest.loginFormRenders` | No | Opens `#/login`, checks that the login form renders, and verifies that typing in the username field is retained by the WizardryTheme input. |
 | `ClubParticipantTest.createsClubAndParticipantsFromForms` | Yes | Logs in, creates a club through the club form, verifies it in the clubs table, then creates and verifies two participants through the participant form and club dropdown. |
 | `LeagueTournamentTest.resolvesThreeMemberTeamLeagueAndRanksWinner` | Yes | Creates six participants, a league tournament with teams of three members, assigns competitors and teams through the UI, resolves its duels, and verifies `Team 1` leads the final ranking. |
-| `LargeIndividualLeagueTournamentTest.resolvesTwelveTeamIndividualLeagueAndRanksWinner` | Yes | Creates twelve individual teams, verifies that the generated league contains 66 fights, resolves them all, and checks that `Team 1` has eleven wins and leads the final ranking. |
+| `LargeIndividualLeagueTournamentTest.resolvesTwelveTeamIndividualLeagueAndRanksWinner` | Yes | Creates twelve individual teams, verifies 66 fights, resolves them all for a selected competitor, and checks that competitor leads the ranking with eleven wins. |
 | `ChampionshipTournamentTest.resolvesEightTeamsChampionshipAndRanksWinner` | Yes | Creates eight teams of three participants, generates the championship bracket, resolves every round through the final, and verifies the seven-fight bracket and final team ranking. |
 | `FifteenTeamTwoWinnersChampionshipTest.generatesChampionshipWithTwoFirstRoundWinners` | Yes | Creates fifteen individual teams, configures two winners from each first-round group, creates five initial groups, and verifies that first-round fights are generated. |
 | `TwoTeamTwoWinnersChampionshipTest.twoTeamsWithTwoWinnersStillGenerateFinalFight` | Yes | Configures the minimum two-team championship with two first-round qualifiers and verifies that its only final fight remains generated. |
-| `LoopTournamentTest.createsAndResolvesLoopTournament` | Yes | Creates a three-team loop, verifies its home-and-away fixture count, resolves the fights, and validates the leading team. |
+| `LoopTournamentTest.createsAndResolvesLoopTournament` | Yes | Creates a three-team loop, verifies the initial three-fight round, resolves the fights, and validates the leading team. |
 | `KingOfTheMountainTournamentTest.createsNextFightAfterKingWins` | Yes | Creates a king-of-the-mountain tournament, resolves the first fight, and verifies that a new challenger fight is generated. |
 | `BubbleSortTournamentTest.createsNextBubbleSortFightAfterResult` | Yes | Creates a bubble-sort tournament, resolves its first fight, and verifies that the next comparison is generated. |
 | `SwissTournamentTest.createsInitialSwissPairings` | Yes | Creates four individual teams and verifies that the initial Swiss round contains two pairings. |
@@ -182,3 +182,43 @@ Reusable component wrappers live under
 
 Page objects in `src/main/java/com/softwaremagico/kt/selenium/pages` compose
 these wrappers for individual application screens.
+
+## Synchronization and diagnostics
+
+Participant role cards can be clicked to assign an available competitor; drag and
+drop remains available for choosing other roles. Assignments respect edit
+permissions and locks, wait for persistence, and retain failed assignments for retry.
+Individual automatic teams disambiguate repeated abbreviated names with numeric suffixes.
+
+The Angular application explicitly enables Zone.js change detection because its
+timer-driven UI requires it. Dropdown option arrays use immutable replacements so
+pure conversion pipes refresh only when their inputs change. Fight helpers wait
+for pending score saves and finished-duel state before advancing; transient
+notifications are not a persistence signal because repeated messages are deduplicated.
+
+For backend diagnostics while preserving an environment:
+
+```bash
+docker compose --project-name <printed-e2e-project> \
+  --file backend/kendo-tournament-e2e/docker-compose.e2e.yml logs backend
+```
+
+The invalid CSV and locked guest scenarios intentionally produce rejection logs.
+Unexpected JWT, authorization, database, or frontend errors still require investigation.
+Start a fresh runner environment for the full suite: the CSV fixtures contain fixed
+identifiers and are not repeatable against a previously populated database.
+
+## Next coverage priorities
+
+1. Complete Custom and Senbatsu flows: create a manual challenge, reject an
+   out-of-range challenge, finish it, and verify the resulting ranking.
+2. Swiss progression: finish multiple rounds, verify no repeated opponents and
+   correct bye allocation, and check final points and tie-break ordering.
+3. Authorization matrix: viewer read-only controls, editor restrictions, guest
+   navigation, and rejected cross-tenant API access using known foreign IDs.
+4. Score corrections: reopen a finished duel, remove or change ippon and faults,
+   then verify rankings/statistics and updates in a second browser.
+5. Session lifecycle: logout/login as another tenant, token renewal, and WebSocket
+   reconnect without receiving events from the previous session.
+6. Team editing and outputs: substitutions and reordered members, duplicate
+   abbreviations, CSV round trips, and non-empty PDF diplomas/accreditations.

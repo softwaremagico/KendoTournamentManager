@@ -101,6 +101,7 @@ public class WebSocketScoreUpdateTest {
         editorLogin.login(editorUsername, EDITOR_PASSWORD);
         final TournamentPage editorTournamentPage = new TournamentPage(editorClient);
         editorTournamentPage.open(BASE_URL);
+        editorTournamentPage.select(tournamentName);
         editorTournamentPage.openFights();
         final FightPage editorFightPage = new FightPage(editorClient);
         editorFightPage.waitForFightCount(1);
