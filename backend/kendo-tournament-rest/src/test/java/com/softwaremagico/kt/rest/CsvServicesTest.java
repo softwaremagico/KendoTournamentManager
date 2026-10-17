@@ -57,6 +57,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "csvServices")
 public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 
+	private static void logExpectedException(String context) {
+		System.out.println("Expected exception: " + context);
+	}
+
 	private static final String USER_FIRST_NAME = "Test";
 	private static final String USER_LAST_NAME = "User";
 
@@ -134,10 +138,14 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 				.readAllBytes(Paths.get(this.getClass().getClassLoader().getResource(CLUBS_CSV_FILE_PATH).toURI()));
 
 		System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-		this.mockMvc.perform(multipart("/csv/clubs").file("file", bytes)
-				.header("Authorization", "Bearer " + this.jwtToken).with(csrf()))
+		logExpectedException("uploadInvalidClubs");
+		try {
+			this.mockMvc.perform(multipart("/csv/clubs").file("file", bytes)
+					.header("Authorization", "Bearer " + this.jwtToken).with(csrf()))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
-		System.out.println("------------------------- End Expected Logged Exception -------------------------");
+		} finally {
+			System.out.println("------------------------- End Expected Logged Exception -------------------------");
+		}
 	}
 
 	@AfterClass(alwaysRun = true)

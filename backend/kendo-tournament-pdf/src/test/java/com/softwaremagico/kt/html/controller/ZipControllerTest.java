@@ -102,8 +102,9 @@ public class ZipControllerTest {
             throw new EmptyPdfBodyException("team list error");
         } catch (Exception exception) {
             logExpectedException("team list generation", exception);
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
         }
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
 
         when(roleList.generate()).thenReturn("roles".getBytes(StandardCharsets.UTF_8));
         when(fightSummary.generate()).thenReturn("fights".getBytes(StandardCharsets.UTF_8));
@@ -169,8 +170,9 @@ public class ZipControllerTest {
             throw new InvalidXmlElementException("simulated failure");
         } catch (Exception exception) {
             logExpectedException("pdf generation", exception);
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
         }
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
 
         when(blogExporter.getWordpressFormat()).thenReturn("blog");
 
@@ -187,9 +189,11 @@ public class ZipControllerTest {
 
         final List<String> names = new ArrayList<>();
         final List<String> values = new ArrayList<>();
+
         readZip(zipController.createZipData(Locale.US, tournament), names, values);
 
-        assertEquals(names, List.of("Wordpress code - Autumn Cup.txt"));
-        assertEquals(values, List.of("blog"));
+        assertEquals(names.size(), 1);
+        assertEquals(names.get(0), "Wordpress code - Autumn Cup.txt");
+        assertEquals(values.get(0), "blog");
     }
 }

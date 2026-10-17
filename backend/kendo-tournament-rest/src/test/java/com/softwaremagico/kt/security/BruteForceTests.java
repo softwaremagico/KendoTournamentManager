@@ -86,29 +86,32 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
 
-        // 3 attempts to block the user.
-        for (int i = 0; i < BruteForceService.MAX_ATTEMPTS; i++) {
+        try {
+            // 3 attempts to block the user.
+            for (int i = 0; i < BruteForceService.MAX_ATTEMPTS; i++) {
+                this.mockMvc
+                        .perform(post("/auth/public/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(request))
+                                .with(csrf()))
+                        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                        .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
+                        .andReturn();
+            }
+
+            //Correct password, user blocked.
+            request.setPassword(USER_PASSWORD);
+            request.setTenant("Legacy organization");
             this.mockMvc
                     .perform(post("/auth/public/login")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(toJson(request))
-                            .with(csrf()))
-                    .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                            .content(toJson(request)))
+                    .andExpect(MockMvcResultMatchers.status().isLocked())
                     .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                     .andReturn();
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
         }
-
-        //Correct password, user blocked.
-        request.setPassword(USER_PASSWORD);
-        request.setTenant("Legacy organization");
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isLocked())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test

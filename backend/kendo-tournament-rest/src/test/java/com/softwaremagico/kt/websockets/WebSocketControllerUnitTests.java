@@ -49,6 +49,10 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "restServicesUnit")
 public class WebSocketControllerUnitTests {
 
+    private static void logExpectedException(String context, Exception exception) {
+        System.out.println("Expected exception: " + context + " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage());
+    }
+
     private ObjectMapper objectMapper;
     private SimpMessagingTemplate messagingTemplate;
     private WebSocketController webSocketController;
@@ -99,11 +103,15 @@ public class WebSocketControllerUnitTests {
 
     @Test
     public void shouldHandleSerializationErrorsWithoutThrowing() throws Exception {
-        doThrow(new JsonProcessingException("boom") {
-        }).when(objectMapper).writeValueAsString(any());
+        final JsonProcessingException exception = new JsonProcessingException("boom") {
+        };
+        doThrow(exception).when(objectMapper).writeValueAsString(any());
 
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        logExpectedException("WebSocketController serialization failure", exception);
         webSocketController.elementCreated(new ElementDTO(), "actor", "session");
         webSocketController.fightUpdated(new FightDTO(), "actor", "session");
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
 
         verify(messagingTemplate, times(0)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.CREATING_MAPPING), isA(MessageContent.class));
         verify(messagingTemplate, times(0)).convertAndSend(eq(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/1" + WebSocketController.FIGHTS_MAPPING), isA(MessageContent.class));
@@ -115,5 +123,4 @@ public class WebSocketControllerUnitTests {
         assertEquals(webSocketController.echo("payload"), "Echoing... payload");
     }
 }
-
 

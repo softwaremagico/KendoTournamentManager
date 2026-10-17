@@ -195,9 +195,12 @@ public class RankingServicesUnitTests {
         when(competitorsScoreList.generate()).thenThrow(new EmptyPdfBodyException("empty"));
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        expectThrows(BadRequestException.class, () -> rankingServices.getCompetitorsGlobalScoreRankingAsPdf(Optional.empty(), Set.of(), Locale.ENGLISH,
-                mock(HttpServletResponse.class), mock(HttpServletRequest.class)));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            expectThrows(BadRequestException.class, () -> rankingServices.getCompetitorsGlobalScoreRankingAsPdf(Optional.empty(), Set.of(), Locale.ENGLISH,
+                    mock(HttpServletResponse.class), mock(HttpServletRequest.class)));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test

@@ -45,29 +45,38 @@ public class TableBackgroundEventTest {
     public void nullResource_expectNoBackgroundAndNoException() {
         final TableBackgroundEvent event = new TableBackgroundEvent((String) null);
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        logExpectedException("null background resource");
-        event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("null background resource");
+            event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test
     public void nonExistingResource_expectNoBackgroundAndNoException() {
         final TableBackgroundEvent event = new TableBackgroundEvent("/does-not-exist-image.png");
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        logExpectedException("missing background resource");
-        event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("missing background resource");
+            event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test
     public void existingResourceWithoutDocument_expectCaughtExceptionAndCachedResult() {
         final TableBackgroundEvent event = new TableBackgroundEvent("/kendo-tournament-manager-logo.png");
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        logExpectedException("missing document while initializing background image");
-        // First call initializes (and fails due to missing document), second call reuses the cached value.
-        event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
-        event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("missing document while initializing background image");
+            // First call initializes (and fails due to missing document), second call reuses the cached value.
+            event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+            event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test
@@ -92,8 +101,11 @@ public class TableBackgroundEventTest {
         final Document document = new Document(PageSize.A4);
         final TableBackgroundEvent event = new TableBackgroundEvent(null, document);
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        logExpectedException("null canvas while drawing background");
-        event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("null canvas while drawing background");
+            event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 }

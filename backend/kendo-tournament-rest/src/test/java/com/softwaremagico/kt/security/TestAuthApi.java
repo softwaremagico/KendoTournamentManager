@@ -235,14 +235,17 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
 
-        this.mockMvc
-                .perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            this.mockMvc
+                    .perform(post("/auth/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + jwtToken)
+                            .content(toJson(request))
+                            .with(csrf()))
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test(dependsOnMethods = "testJwt")

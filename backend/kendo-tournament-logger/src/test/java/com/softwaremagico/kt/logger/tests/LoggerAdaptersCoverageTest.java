@@ -30,7 +30,11 @@ import org.testng.annotations.Test;
 @Test(groups = "loggerAdaptersTests")
 public class LoggerAdaptersCoverageTest {
 
-    @Test
+    private static void logExpectedException(String context) {
+        System.out.println("Expected exception: " + context);
+    }
+
+    @Test(groups = "loggerAdaptersTests")
     public void shouldInvokeAllLoggerAdaptersWithoutErrors() {
         CacheControllerLogger.info(getClass(), "info {}", 1);
         CacheControllerLogger.debug(getClass(), "debug {}", 3);
@@ -39,31 +43,54 @@ public class LoggerAdaptersCoverageTest {
         JwtFilterLogger.warning(getClass(), "warn {}", 2);
         JwtFilterLogger.debug(getClass(), "debug {}", 3);
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        JwtFilterLogger.errorMessage(getClass(), new RuntimeException("jwt"));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("JwtFilterLogger.errorMessage(Class<?>, RuntimeException)");
+            JwtFilterLogger.errorMessage(getClass(), new RuntimeException("jwt"));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
         JwtFilterLogger.errorMessage(getClass(), "error {}", 5);
         JwtFilterLogger.errorMessage(getClass(), "error2 {}", 6);
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        JwtFilterLogger.errorMessage(this.getClass(), new RuntimeException("jwt-obj"));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("JwtFilterLogger.errorMessage(Class<?>, RuntimeException) second call");
+            JwtFilterLogger.errorMessage(this.getClass(), new RuntimeException("jwt-obj"));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
         JwtFilterLogger.isDebugEnabled();
 
         PdfExporterLog.severe(getClass(), "severe {}", 4);
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        PdfExporterLog.errorMessage(getClass(), new RuntimeException("pdf"));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("PdfExporterLog.errorMessage(Class<?>, RuntimeException)");
+            PdfExporterLog.errorMessage(getClass(), new RuntimeException("pdf"));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        PdfExporterLog.errorMessage(this.getClass(), new RuntimeException("pdf-obj"));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("PdfExporterLog.errorMessage(Class<?>, RuntimeException) second call");
+            PdfExporterLog.errorMessage(this.getClass(), new RuntimeException("pdf-obj"));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
 
         WebsocketsLogger.warning(getClass(), "warn {}", 2);
         WebsocketsLogger.debug(getClass(), "debug {}", 3);
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        WebsocketsLogger.errorMessage(getClass(), new RuntimeException("ws"));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("WebsocketsLogger.errorMessage(Class<?>, RuntimeException)");
+            WebsocketsLogger.errorMessage(getClass(), new RuntimeException("ws"));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        WebsocketsLogger.errorMessage(this.getClass(), new RuntimeException("ws-obj"));
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        try {
+            logExpectedException("WebsocketsLogger.errorMessage(Class<?>, RuntimeException) second call");
+            WebsocketsLogger.errorMessage(this.getClass(), new RuntimeException("ws-obj"));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 }
-
