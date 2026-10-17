@@ -228,3 +228,33 @@ ALTER TABLE tournaments
     'BUBBLE_SORT'
   ));
 
+-- Update the tournament extra properties property key check constraint to include SWISS.
+SET @drop_property_key_check = (
+    SELECT CONSTRAINT_NAME
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'tournament_extra_properties'
+      AND CONSTRAINT_NAME = 'tournament_extra_properties_property_key_check'
+    LIMIT 1
+);
+SET @sql = IF(@drop_property_key_check IS NOT NULL,
+    'ALTER TABLE tournament_extra_properties DROP CHECK tournament_extra_properties_property_key_check',
+    'SELECT 1');
+PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
+
+ALTER TABLE tournament_extra_properties
+  ADD CONSTRAINT tournament_extra_properties_property_key_check
+  CHECK (property_key IN (
+    'MAXIMIZE_FIGHTS',
+    'AVOID_DUPLICATES',
+    'KING_INDEX',
+    'KING_DRAW_RESOLUTION',
+    'DIPLOMA_NAME_HEIGHT',
+    'NUMBER_OF_WINNERS',
+    'LEAGUE_FIGHTS_ORDER_GENERATION',
+    'ODD_FIGHTS_RESOLVED_ASAP',
+    'SENBATSU_CHALLENGE_DISTANCE',
+    'SWISS_ROUNDS',
+    'SWISS_TIE_BREAK_RULE',
+    'SWISS_AVOID_REPEATED_PAIRINGS'
+  ));

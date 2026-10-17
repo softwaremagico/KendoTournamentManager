@@ -206,4 +206,25 @@ ALTER TABLE tournaments
             ]
         ));
 
+-- Update the tournament extra properties property key check constraint to include SWISS.
+ALTER TABLE tournament_extra_properties DROP CONSTRAINT IF EXISTS tournament_extra_properties_property_key_check;
+ALTER TABLE tournament_extra_properties
+    ADD CONSTRAINT tournament_extra_properties_property_key_check
+        CHECK ((property_key)::text = ANY (
+            ARRAY [
+                'MAXIMIZE_FIGHTS'::character varying,
+                'AVOID_DUPLICATES'::character varying,
+                'KING_INDEX'::character varying,
+                'KING_DRAW_RESOLUTION'::character varying,
+                'DIPLOMA_NAME_HEIGHT'::character varying,
+                'NUMBER_OF_WINNERS'::character varying,
+                'LEAGUE_FIGHTS_ORDER_GENERATION'::character varying,
+                'ODD_FIGHTS_RESOLVED_ASAP'::character varying,
+                'SENBATSU_CHALLENGE_DISTANCE'::character varying,
+                'SWISS_ROUNDS'::character varying,
+                'SWISS_TIE_BREAK_RULE'::character varying,
+                'SWISS_AVOID_REPEATED_PAIRINGS'::character varying
+            ]
+        ));
+
 COMMIT;
