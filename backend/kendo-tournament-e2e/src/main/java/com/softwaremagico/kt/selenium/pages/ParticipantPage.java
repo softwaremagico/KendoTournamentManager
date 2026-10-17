@@ -88,6 +88,17 @@ public class ParticipantPage {
         webDriverClient.findVisible(By.cssSelector(".statistics-view .player .name"));
     }
 
+    public String getQrLink(String participantName) {
+        table.search(participantName);
+        table.selectRowContaining(participantName);
+        webDriverClient.clickFirstVisible(By.xpath("//button[.//mat-icon[@svgIcon='qr_code']]"));
+        webDriverClient.findVisible(By.cssSelector("#qr-code-popup img.qr-code"));
+        final String link = webDriverClient.findVisible(By.cssSelector("#qr-code-popup a.link")).getAttribute("href");
+        webDriverClient.clickWizardryButton(By.id("participant-qr-close"));
+        webDriverClient.waitUntilInvisible(By.id("qr-code-popup"));
+        return link;
+    }
+
     public boolean containsStatisticValue(String value) {
         return webDriverClient.getWebDriverWait().until(driver ->
                 driver.findElement(By.id("participant-men-count")).getText().equals(value));

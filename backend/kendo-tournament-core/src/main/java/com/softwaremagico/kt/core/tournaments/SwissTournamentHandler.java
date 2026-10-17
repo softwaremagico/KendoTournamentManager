@@ -171,10 +171,8 @@ public class SwissTournamentHandler extends LeagueHandler {
                 previousFights, this.avoidRepeatedPairings(tournament));
 
         final List<List<Team>> teamsByScoreGroup = this.groupTeamsByScore(initialGroup.getTeams(), pointsByTeam);
-        this.persistRoundGroups(tournament, level, teamsByScoreGroup, generatedFights, pointsByTeam, byeTeam,
+        return this.persistRoundGroups(tournament, level, teamsByScoreGroup, generatedFights, pointsByTeam, byeTeam,
                 createdBy);
-
-        return generatedFights;
     }
 
     @Override
@@ -210,7 +208,7 @@ public class SwissTournamentHandler extends LeagueHandler {
                 .toList();
     }
 
-    private void persistRoundGroups(Tournament tournament, Integer level, List<List<Team>> teamsByScoreGroup,
+    private List<Fight> persistRoundGroups(Tournament tournament, Integer level, List<List<Team>> teamsByScoreGroup,
             List<Fight> generatedFights, Map<Team, Integer> pointsByTeam, Team byeTeam, String createdBy) {
         final Map<Integer, Integer> scoreToGroupIndex = new HashMap<>();
         final Map<Integer, Group> groupsByIndex = new HashMap<>();
@@ -242,9 +240,17 @@ public class SwissTournamentHandler extends LeagueHandler {
             }
         }
 
-        groupsByIndex.values().forEach(group -> this.groupProvider.addGroup(tournament, group));
+        final List<Fight> persistedFights = new ArrayList<>();
+        groupsByIndex.values().forEach(group -> {
+            final Group persisted = this.groupProvider.addGroup(tournament, group);
+            // Merge cascades assign identities to copies: return the managed fights, not the transient originals.
+            if (persisted != null) {
+                persistedFights.addAll(persisted.getFights());
+            }
+        });
 
         this.removeObsoleteGroupsInRound(tournament, level, teamsByScoreGroup.size());
+        return persistedFights;
     }
 
     private Group getOrCreateRoundGroup(Tournament tournament, Integer level, Integer index, String createdBy) {

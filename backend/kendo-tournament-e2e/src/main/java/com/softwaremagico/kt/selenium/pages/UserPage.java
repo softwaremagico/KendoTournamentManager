@@ -51,14 +51,22 @@ public class UserPage {
         new InputField(webDriverClient, "password").setValue(password);
         new InputField(webDriverClient, "repeat-password").setValue(password);
         webDriverClient.clickWizardryButton(By.id("user-button-save"));
+        webDriverClient.waitUntilInvisible(By.id("user-popup"));
+        webDriverClient.refresh();
+        webDriverClient.findVisible(By.id("users-table"));
+        table.search(username);
         table.waitUntilContainsText(username);
     }
 
     public void setEditorRole(String username) {
+        setRole(username, "Editor");
+    }
+
+    public void setRole(String username, String role) {
         table.search(username);
         table.selectRowContaining(username);
         table.clickAction("button-role");
-        new com.softwaremagico.kt.selenium.components.Dropdown(webDriverClient, "tournament-type").select("Editor");
+        new com.softwaremagico.kt.selenium.components.Dropdown(webDriverClient, "tournament-type").select(role);
         webDriverClient.clickByScript(By.cssSelector("#user-role-popup button[biit-button][secondary] .button-base"));
         table.waitUntilContainsText(username);
     }

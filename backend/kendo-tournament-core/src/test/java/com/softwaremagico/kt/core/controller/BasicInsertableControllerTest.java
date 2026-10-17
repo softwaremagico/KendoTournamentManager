@@ -31,6 +31,7 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -198,6 +199,23 @@ public class BasicInsertableControllerTest {
 	@Test
 	public void shouldDeleteAllEntities() {
 		this.controller.deleteAll();
+	}
+
+	@Test
+	public void shouldRejectForeignTenantWritesBeforePersistence() {
+		final TeamDTO foreign = new TeamDTO("Foreign", new TournamentDTO("T", 1, 1, TournamentType.LEAGUE));
+		foreign.setId(99);
+		when(this.teamProvider.get(99)).thenReturn(Optional.empty());
+		TenantContext.setTenantId(7);
+		try {
+			org.testng.Assert.assertThrows(NotFoundException.class, () -> this.controller.updateAll(List.of(foreign), "user", "session"));
+			org.testng.Assert.assertThrows(NotFoundException.class, () -> this.controller.deleteById(99, "user", "session"));
+			org.testng.Assert.assertThrows(NotFoundException.class, () -> this.controller.delete(List.of(foreign), "user", "session"));
+			org.mockito.Mockito.verify(this.teamProvider, org.mockito.Mockito.never()).save(any(Team.class));
+			org.mockito.Mockito.verify(this.teamProvider, org.mockito.Mockito.never()).deleteById(any());
+		} finally {
+			TenantContext.clear();
+		}
 	}
 
 	@Test

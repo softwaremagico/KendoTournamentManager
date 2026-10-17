@@ -62,6 +62,9 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
         }
         final Tournament tournament = new Tournament();
         BeanUtils.copyProperties(to, tournament, ConverterUtils.getNullPropertyNames(to));
+        if (tournament.getTenantId() == null && com.softwaremagico.kt.persistence.entities.TenantContext.getTenantId() != null) {
+            tournament.setTenantId(com.softwaremagico.kt.persistence.entities.TenantContext.getRequiredTenantId());
+        }
         tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScore()));
         return tournament;
     }

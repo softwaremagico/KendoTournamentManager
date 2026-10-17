@@ -78,12 +78,15 @@ public class FightPage {
         if (twoFirstRoundWinners) {
             webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='one-winner']]")).click();
         }
+        webDriverClient.findVisible(By.cssSelector("tournament-brackets .level-0 group-container"));
         for (int index = 0; index < additionalGroups; index++) {
             final By addGroup = By.cssSelector("app-tournament-generator button[biit-icon][icon='plus']");
             if (!webDriverClient.findVisible(addGroup).isEnabled()) {
                 break;
             }
+            final int previousGroups = webDriverClient.findAll(By.cssSelector("tournament-brackets .level-0 group-container")).size();
             webDriverClient.clickFirstVisible(addGroup);
+            webDriverClient.waitForAtLeast(By.cssSelector("tournament-brackets .level-0 group-container"), previousGroups + 1);
         }
         webDriverClient.clickWizardryButton(By.id("brackets-sort-teams"));
         if (webDriverClient.isVisible(By.id("confirmation-delete-teams"))) {
@@ -282,8 +285,29 @@ public class FightPage {
 
     private void clickMenScore() {
         webDriverClient.dismissSuccessNotifications();
+        final org.openqa.selenium.JavascriptExecutor scripts = (org.openqa.selenium.JavascriptExecutor) webDriverClient.getDriver();
+        scripts.executeScript("""
+                if (!window.e2eScoreTracking) {
+                  window.e2eScoreTracking = true;
+                  window.e2eScoreRequests = 0;
+                  const send = XMLHttpRequest.prototype.send;
+                  XMLHttpRequest.prototype.send = function(...args) {
+                    this.addEventListener('loadend', () => {
+                      if (this.responseURL.includes('/duels') && this.status >= 200 && this.status < 300) window.e2eScoreRequests++;
+                    });
+                    return send.apply(this, args);
+                  };
+                  const originalFetch = window.fetch;
+                  window.fetch = async function(...args) {
+                    const response = await originalFetch.apply(this, args);
+                    if (response.url.includes('/duels') && response.ok) window.e2eScoreRequests++;
+                    return response;
+                  };
+                }
+                window.e2eScoreRequestBaseline = window.e2eScoreRequests;
+                """);
         final By men = By.xpath("//div[contains(@class, 'mat-mdc-menu-panel')]//button[@mat-menu-item]"
-                + "[normalize-space()='Men' or contains(normalize-space(), 'Fusen')]");
+                + "[normalize-space()='Men']");
         webDriverClient.getWebDriverWait().until(driver -> {
             final List<WebElement> options = driver.findElements(men).stream().filter(WebElement::isDisplayed).toList();
             if (options.isEmpty()) {
@@ -293,6 +317,8 @@ public class FightPage {
             return true;
         });
         webDriverClient.waitUntilInvisible(By.cssSelector(".mat-mdc-menu-panel"));
+        webDriverClient.getWebDriverWait().until(driver -> Boolean.TRUE.equals(scripts.executeScript(
+                "return window.e2eScoreRequests > window.e2eScoreRequestBaseline;")));
         webDriverClient.getWebDriverWait().until(driver -> driver.findElements(By.cssSelector("score .score-area[data-saving='true']")).isEmpty());
     }
 

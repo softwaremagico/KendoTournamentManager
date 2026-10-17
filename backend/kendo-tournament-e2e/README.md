@@ -161,6 +161,7 @@ mvn -pl kendo-tournament-e2e test \
 | `TournamentCloneTest.clonedTournamentCanGenerateFreshFights` | Yes | Creates and starts a minimal league, clones it from the tournament list, then verifies that the copied teams can generate a fresh fight without copying the original fights. |
 | `CsvImportTest.importsClubAndParticipantsAndRejectsInvalidParticipant` | Yes | Imports a club and participants through the CSV controls, then submits an invalid participant row and verifies it is not persisted. |
 | `ParticipantStatisticsE2ETest.scoredMenAppearsInWinnerParticipantStatistics` | Yes | Resolves a minimal league after recording a MEN and verifies that the winning participant statistics dashboard reflects the recorded hit. |
+| `ParticipantQrAccessTest.personalQrAuthenticatesParticipantAndShowsOwnPersistedStatistics` | Administrator creates data; participant enters independently | Generates the personal participant QR through the registry, opens its destination in a fresh browser, verifies participant authentication and the correct identity with two persisted MEN, then reloads to check continued access. |
 | `TournamentScoreRulesTest.persistsEuropeanInternationalAndCustomScoreRules` | Yes | Creates leagues using European, International, and Custom scoring rules, verifies each persisted selector value, and opens the custom points editor. |
 
 The club workflow uses values inspired by the core CSV fixtures, including
@@ -185,6 +186,65 @@ these wrappers for individual application screens.
 
 ## Synchronization and diagnostics
 
+### Requested feature coverage
+
+- **Projector:** `ScoringPanelTest` opens a second editor session, checks read-only
+  score projection, live updates, the finished-event empty state, and Escape exit.
+- **Member reordering:** a three-team, two-member league finishes its first fight,
+  swaps members repeatedly on both sides, reloads to verify persistence, and
+  completes the league with distinct MEN/KOTE scores. Every participant's scored
+  and received MEN/KOTE totals are checked, along with the unchanged finished fight.
+- **Club ranking:** `GeneratedExportsTest` checks only club members appear, with
+  the actual number of duels and hits after a resolved team league.
+- **Exports:** browser actions generate role/team/fight lists, team/competitor
+  rankings, tournament QR, diplomas, accreditations, championship group lists and
+  visual bracket PDFs. Tests parse real PDF bytes/pages/text (or drawing content
+  for the visual bracket). ZIP exports must include every expected report.
+- **WordPress:** the locked tournament export must contain its title, participants,
+  both teams and HTML tables. Download Blobs are captured in-browser without
+  mocking HTTP responses or invoking generation APIs instead of UI controls.
+
+- **Tenancy:** `TenantIsolationTest` creates two organizations and administrators,
+  verifies isolated clubs/participants/tournaments, and checks their rankings and statistics.
+- **Tournament formats:** all eight active `TournamentType` values have scenarios:
+  Championship, League, Loop, King of the Mountain, Bubble Sort, Customized,
+   Senbatsu, and Swiss. `ManualTournamentProgressionTest` completes Custom and
+   Senbatsu; `SwissProgressionTest` completes three rounds with even and odd fields.
+- **Personal participant QR:** `ParticipantQrAccessTest` follows the actual link
+  encoded by the generated QR in an independent browser. This covers token-based
+  entry, not physical camera scanning, and is distinct from tournament guest QR access.
+- **Participant statistics:** `ParticipantStatisticsE2ETest` checks the administrator
+  dashboard; `ParticipantQrAccessTest` checks the same persisted scores as the participant.
+
+### Negative workflows
+
+`NegativeWorkflowsTest` adds nine independent browser scenarios (each with a fresh
+browser session):
+
+- Wrong password: rejected login creates no JWT; a valid retry succeeds.
+- Anonymous registry deep link: redirects to login without exposing the table.
+- Missing participant surname: field validation, no persisted row after reload,
+  and exactly one row after correcting and submitting valid data.
+- Cancelled participant edit: a full reload retrieves the original persisted values.
+- Cancelled participant deletion: the record remains present and editable after reload.
+- Mismatched account passwords: no account persists; correction allows login.
+- Viewer score mutation attempt: no score menu or finish action, and the existing
+  score remains unchanged after reloading.
+- Editor tenant-administration deep link: redirects to tournaments and does not
+  render the super-administrator form.
+- Logged-out session deep link: no JWT or protected registry; login restores access.
+
+Run these cases alone with:
+
+```bash
+E2E_TESTS=NegativeWorkflowsTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+Together with the existing invalid CSV and locked-tournament/guest scenarios,
+these exercise rejection and recovery without changing application business logic.
+Navigation to the same hash route can retain component state; persistence checks
+explicitly reload the browser rather than relying on reopening the route.
+
 Participant role cards can be clicked to assign an available competitor; drag and
 drop remains available for choosing other roles. Assignments respect edit
 permissions and locks, wait for persistence, and retain failed assignments for retry.
@@ -208,17 +268,30 @@ Unexpected JWT, authorization, database, or frontend errors still require invest
 Start a fresh runner environment for the full suite: the CSV fixtures contain fixed
 identifiers and are not repeatable against a previously populated database.
 
-## Next coverage priorities
+## Advanced progression and recovery
 
-1. Complete Custom and Senbatsu flows: create a manual challenge, reject an
-   out-of-range challenge, finish it, and verify the resulting ranking.
-2. Swiss progression: finish multiple rounds, verify no repeated opponents and
-   correct bye allocation, and check final points and tie-break ordering.
-3. Authorization matrix: viewer read-only controls, editor restrictions, guest
-   navigation, and rejected cross-tenant API access using known foreign IDs.
-4. Score corrections: reopen a finished duel, remove or change ippon and faults,
-   then verify rankings/statistics and updates in a second browser.
-5. Session lifecycle: logout/login as another tenant, token renewal, and WebSocket
-   reconnect without receiving events from the previous session.
-6. Team editing and outputs: substitutions and reordered members, duplicate
-   abbreviations, CSV round trips, and non-empty PDF diplomas/accreditations.
+The suite contains **50 browser scenarios**. The advanced scenarios use real UI
+actions plus authenticated browser HTTP requests for precise persisted-state
+assertions. `AdvancedBrowserTest` provides isolated browser setup and those reads;
+it does not mock backend responses.
+
+| Class | Coverage |
+| --- | --- |
+| `SwissProgressionTest` | Three rounds with eight teams; independent match-point and Buchholz calculations; no repeated opponents; configured round limit. Five-team variant verifies distinct byes and no fabricated MEN statistics. Scoring is explicitly configured to 3/1. |
+| `ManualTournamentProgressionTest` | Manual Custom fight and ranking; rejected out-of-range Senbatsu drag, four completed challenges, and one surviving team. |
+| `ResultCorrectionTest` | Reopen a completed duel, remove MEN and replace with opponent KOTE; verify ranking, both participants' statistics, and a second session. Create a team tie, select representatives, resolve daihyōsen, and check the deciding hit. |
+| `TenantDirectAccessTest` | Known foreign participant/club/tournament IDs: read, update, delete, statistics and export rejection; original data preserved; logout and login into another organization; token-renewal request. |
+| `WebSocketReconnectTest` | Close actual browser WebSockets, observe a new open connection, and verify subsequent live score delivery without reloading the page. |
+| `SubstitutionTest` | Swap a reserve into a future fight, reload the persisted order, preserve the completed fight, and attribute later KOTE to the replacement. |
+| `TimerAndShiaijoTest` | Start/pause/resume/finish with real elapsed time, persisted duration and participant totals; two independent sessions on courts A/B, score isolation and court-specific projection. Court fixtures are allocated through authenticated fight/group endpoints. |
+
+These tests exposed and now guard fixes for transient Swiss fight identities being
+saved twice, unlinked manual-fight drafts, lost tenant context during tournament
+and duel conversion, and unchecked cross-tenant update/delete IDs. Expected
+negative-test logs include foreign-resource 404s, invalid credentials, invalid CSV
+and locked guest access.
+
+Latest clean validation: **50 E2E passed, 0 failures/errors/skips**;
+**866 frontend unit tests passed**; **59 focused backend regressions passed**.
+The subsequent full backend run through Core also passed: **1,356 Core**, **421
+Persistence**, and **44 Logger** tests, with no failures or skips.

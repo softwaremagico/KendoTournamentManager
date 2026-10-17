@@ -53,11 +53,15 @@ public class LoginPage {
     }
 
     public void login(String usernameValue, String passwordValue) {
+        submitCredentials(usernameValue, passwordValue);
+        webDriverClient.waitUntilInvisible(By.id("login"));
+        webDriverClient.findVisible(By.id("navbar"));
+    }
+
+    public void submitCredentials(String usernameValue, String passwordValue) {
         setUsername(usernameValue);
         password.setValue(passwordValue);
         webDriverClient.findVisible(By.id("login-button")).click();
-        webDriverClient.waitUntilInvisible(By.id("login"));
-        webDriverClient.findVisible(By.id("navbar"));
     }
 
     public boolean isDisplayed() {
