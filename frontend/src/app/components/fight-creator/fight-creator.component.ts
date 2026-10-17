@@ -97,6 +97,11 @@ export class FightCreator implements OnInit {
       }
 
       this.groupServices.update(this.group).subscribe((_group: Group): void => {
+        // The draft fight was persisted by generateDuels; group update replaces it with a new identity.
+        // Remove the unlinked draft rather than leaving it in tournament rankings/statistics.
+        if (_fight.id && !_group.fights.some(fight => fight.id === _fight.id)) {
+          this.fightService.deleteById(_fight.id).subscribe();
+        }
         this.messageService.infoMessage("addFightMessage");
         this.groupUpdatedService.isGroupUpdated.next(_group);
         this.closeDialog();

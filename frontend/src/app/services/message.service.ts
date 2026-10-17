@@ -9,6 +9,8 @@ import {MessageContent} from "../websockets/message-content.model";
 import {TranslocoService} from '@jsverse/transloco';
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {LoginService} from './login.service';
+import {switchMap} from 'rxjs/operators';
+import {EMPTY} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,10 @@ export class MessageService implements OnDestroy {
   }
 
   private registerWebsocketsMessages(): void {
-    this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + this.loginService.getTenantId() + '/messages').subscribe((message: Message): void => {
+    this.messageSubscription = this.rxStompService.connected$.pipe(switchMap(() => {
+      const tenantId = this.loginService.getTenantId();
+      return tenantId == null ? EMPTY : this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + tenantId + '/messages');
+    })).subscribe((message: Message): void => {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
         const res: string = this.translateService.translate(messageContent.payload, messageContent.parameters);

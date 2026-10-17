@@ -85,6 +85,9 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
         }
         final Duel duel = new Duel();
         BeanUtils.copyProperties(to, duel, ConverterUtils.getNullPropertyNames(to));
+        if (duel.getTenantId() == null && com.softwaremagico.kt.persistence.entities.TenantContext.getTenantId() != null) {
+            duel.setTenantId(com.softwaremagico.kt.persistence.entities.TenantContext.getRequiredTenantId());
+        }
         duel.setCompetitor1(this.participantConverter.reverse(to.getCompetitor1()));
         duel.setCompetitor2(this.participantConverter.reverse(to.getCompetitor2()));
         duel.setTournament(this.tournamentConverter.reverse(to.getTournament()));

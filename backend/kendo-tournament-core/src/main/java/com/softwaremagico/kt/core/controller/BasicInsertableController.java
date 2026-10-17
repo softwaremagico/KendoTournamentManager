@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.CrudProvider;
 import com.softwaremagico.kt.logger.ExceptionType;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -152,6 +153,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
      */
     @Transactional
     public D update(D dto, String username, String session) {
+        if (dto.getId() != null && TenantContext.getTenantId() != null) {
+            get(dto.getId());
+        }
         dto.setUpdatedBy(username);
         validate(dto);
         final D updatedDTO = convert(super.getProvider().save(reverse(dto)));
@@ -179,6 +183,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
     public List<D> updateAll(List<D> dtos, String username, String session) {
         final List<D> refreshedData = new ArrayList<>();
         dtos.forEach(dto -> {
+            if (dto.getId() != null && TenantContext.getTenantId() != null) {
+                get(dto.getId());
+            }
             dto.setUpdatedBy(username);
             refreshedData.add(convert(super.getProvider().save(reverse(dto))));
         });
@@ -259,6 +266,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
      * @param session  the client session identifier for WebSocket notifications
      */
     public void delete(D entity, String username, String session) {
+        if (entity.getId() != null && TenantContext.getTenantId() != null) {
+            get(entity.getId());
+        }
         try {
             getProvider().delete(reverse(entity));
         } finally {
@@ -267,6 +277,11 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
                     elementDeletedListeners.forEach(elementDeletedListener ->
                             elementDeletedListener.deleted(entity, username, session))).start();
         }
+    }
+
+    @Override
+    public void deleteById(Integer id, String username, String session) {
+        delete(get(id), username, session);
     }
 
     /**
@@ -278,6 +293,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
      * @param session  the client session identifier for WebSocket notifications
      */
     public void delete(Collection<D> entities, String username, String session) {
+        if (TenantContext.getTenantId() != null) {
+            entities.forEach(entity -> get(entity.getId()));
+        }
         try {
             getProvider().delete(reverseAll(entities));
         } finally {

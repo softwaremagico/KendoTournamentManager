@@ -67,6 +67,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
+		when(this.groupProvider.addGroup(any(), any())).thenAnswer(invocation -> invocation.getArgument(1));
 		this.swissTournamentHandler = new SwissTournamentHandler(this.groupProvider, this.teamProvider,
 				this.rankingProvider, this.tournamentExtraPropertyProvider);
 	}
@@ -235,7 +236,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
-		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
+		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
 
 		final List<Fight> result = this.swissTournamentHandler.generateNextFights(tournament, "tester");
 
@@ -279,7 +280,7 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(eq(tournament),
 				eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
-		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
+		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
 
 		this.swissTournamentHandler.createFights(tournament, null, 0, "tester");
 
@@ -308,5 +309,3 @@ public class SwissTournamentHandlerBranchCoverageTest {
 		return team;
 	}
 }
-
-

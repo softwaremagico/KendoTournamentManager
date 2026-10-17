@@ -64,6 +64,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -179,6 +180,9 @@ public class CsvControllerTest {
     public void shouldAddNewParticipantWhenIdCardNotExists() {
         final Participant participant = new Participant();
         participant.setIdCard("ABC");
+        participant.setName("Alice");
+        participant.setLastname("Smith");
+        participant.setClub(new Club("ClubA", "ES", "Madrid"));
         when(participantCsv.readCSV("csv")).thenReturn(List.of(participant));
         when(participantProvider.findByIdCard("ABC")).thenReturn(Optional.empty());
 
@@ -192,6 +196,9 @@ public class CsvControllerTest {
     public void shouldReturnFailedParticipantWhenAlreadyExists() {
         final Participant participant = new Participant();
         participant.setIdCard("ABC");
+        participant.setName("Alice");
+        participant.setLastname("Smith");
+        participant.setClub(new Club("ClubA", "ES", "Madrid"));
         final ParticipantDTO converted = new ParticipantDTO();
         when(participantCsv.readCSV("csv")).thenReturn(List.of(participant));
         when(participantProvider.findByIdCard("ABC")).thenReturn(Optional.of(new Participant()));
@@ -201,6 +208,26 @@ public class CsvControllerTest {
 
         assertEquals(failed.size(), 1);
         assertEquals(failed.get(0), converted);
+    }
+
+    @Test
+    public void shouldRejectParticipantsWithMissingRequiredFields() {
+        final Participant missingName = new Participant();
+        missingName.setLastname("Smith");
+        missingName.setClub(new Club("ClubA", "ES", "Madrid"));
+        final Participant missingLastname = new Participant();
+        missingLastname.setName("Alice");
+        missingLastname.setLastname(" ");
+        missingLastname.setClub(new Club("ClubA", "ES", "Madrid"));
+        final Participant missingClub = new Participant();
+        missingClub.setName("Alice");
+        missingClub.setLastname("Smith");
+        when(participantCsv.readCSV("csv")).thenReturn(List.of(missingName, missingLastname, missingClub));
+
+        assertEquals(controller.addParticipants("csv", "uploader").size(), 3);
+
+        verify(participantProvider, never()).save(any(Participant.class));
+        verify(participantProvider, never()).findByIdCard(any());
     }
 
     @Test
@@ -309,5 +336,3 @@ public class CsvControllerTest {
         assertEquals(failed.get(0), converted);
     }
 }
-
-

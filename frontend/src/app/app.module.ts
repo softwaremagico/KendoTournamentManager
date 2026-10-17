@@ -1,4 +1,4 @@
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule, provideZoneChangeDetection} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
@@ -91,6 +91,7 @@ import {
 import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator/tournament-generator.module";
 import {RxStompService} from "./websockets/rx-stomp.service";
 import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
+import {UserSessionService} from './services/user-session.service';
 import {TournamentQrCodeModule} from './components/tournament-qr-code/tournament-qr-code.module';
 import {ParticipantQrCodeModule} from './components/participant-qr-code/participant-qr-code.module';
 import {ParticipantFightListModule} from './views/participant-fight-list/participant-fight-list.module';
@@ -253,6 +254,7 @@ registerLocaleData(localeFR, "fr");
         }, {
             provide: RxStompService,
             useFactory: rxStompServiceFactory,
+            deps: [UserSessionService],
         },
         {
             provide: TRANSLOCO_CONFIG,
@@ -271,6 +273,7 @@ registerLocaleData(localeFR, "fr");
         {provide: TRANSLOCO_TRANSPILER, useClass: DefaultTranspiler},
         {provide: TRANSLOCO_FALLBACK_STRATEGY, useClass: DefaultFallbackStrategy},
         RedirectGuard,
+        provideZoneChangeDetection(),
         provideHttpClient(withInterceptorsFromDi())
     ]
 })

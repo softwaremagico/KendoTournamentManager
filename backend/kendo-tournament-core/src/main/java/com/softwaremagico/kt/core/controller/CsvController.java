@@ -141,6 +141,11 @@ public class CsvController {
         final List<Participant> participants = this.participantCsv.readCSV(csvContent);
         final List<ParticipantDTO> failedParticipants = new ArrayList<>();
         for (final Participant participant : participants) {
+            if (participant.getName() == null || participant.getName().isBlank()
+                    || participant.getLastname() == null || participant.getLastname().isBlank() || participant.getClub() == null) {
+                failedParticipants.add(this.participantConverter.convert(new ParticipantConverterRequest(participant)));
+                continue;
+            }
             try {
                 if (this.participantProvider.findByIdCard(participant.getIdCard()).isPresent()) {
                     KendoTournamentLogger.severe(this.getClass(),

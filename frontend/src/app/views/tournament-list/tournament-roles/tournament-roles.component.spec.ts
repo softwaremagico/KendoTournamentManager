@@ -1,4 +1,4 @@
-import {of} from 'rxjs';
+import {of, Subject, throwError} from 'rxjs';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {TournamentRolesComponent} from './tournament-roles.component';
 import {ParticipantService} from '../../../services/participant.service';
@@ -73,7 +73,8 @@ describe('TournamentRolesComponent', () => {
       rbacServiceSpy,
       filterResetServiceMock,
       statisticsChangedServiceMock,
-      teamServiceSpy
+      teamServiceSpy,
+      jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges'])
     );
 
     component.tournament = {
@@ -179,6 +180,69 @@ describe('TournamentRolesComponent', () => {
     expect(component.userListData.filteredParticipants).toContain(participant);
   });
 
+  it('should restore both available lists when a dragged role cannot be saved', () => {
+    const participant = createParticipant(1, 'John', 'Doe');
+    component.userListData.participants = [participant];
+    component.userListData.filteredParticipants = [participant];
+    const target: Participant[] = [];
+    roleServiceSpy.add.and.returnValue(throwError(() => new Error('HTTP failure')));
+    component.dropParticipant({
+      previousContainer: {data: component.userListData.filteredParticipants},
+      container: {data: target}, previousIndex: 0, currentIndex: 0
+    } as unknown as CdkDragDrop<Participant[], any>, RoleType.COMPETITOR);
+
+    expect(target).toEqual([]);
+    expect(component.userListData.participants).toEqual([participant]);
+    expect(component.userListData.filteredParticipants).toEqual([participant]);
+    expect(messageServiceSpy.infoMessage).not.toHaveBeenCalled();
+  });
+
+  it('should assign a clicked competitor only once while the request is pending', () => {
+    const participant = createParticipant(1, 'John', 'Doe');
+    const request = new Subject<Role>();
+    component.userListData.participants = [participant];
+    component.userListData.filteredParticipants = [participant];
+    rbacServiceSpy.isAllowed.and.returnValue(true);
+    roleServiceSpy.add.and.returnValue(request);
+
+    component.addCompetitor(participant);
+    component.addCompetitor(participant);
+    expect(roleServiceSpy.add).toHaveBeenCalledTimes(1);
+    expect(component.userListData.participants).toContain(participant);
+    request.next(createRole(participant, RoleType.COMPETITOR));
+    request.complete();
+
+    expect(component.getParticipantsContainer(RoleType.COMPETITOR)).toEqual([participant]);
+    expect(component.userListData.participants).toEqual([]);
+    expect(statisticsChangedServiceMock.areStatisticsChanged.next).toHaveBeenCalledWith(true);
+  });
+
+  it('should preserve available participants after a failed click assignment and allow retry', () => {
+    const participant = createParticipant(1, 'John', 'Doe');
+    component.userListData.participants = [participant];
+    component.userListData.filteredParticipants = [participant];
+    rbacServiceSpy.isAllowed.and.returnValue(true);
+    roleServiceSpy.add.and.returnValue(throwError(() => new Error('HTTP failure')));
+
+    component.addCompetitor(participant);
+    expect(component.getParticipantsContainer(RoleType.COMPETITOR)).toEqual([]);
+    expect(component.userListData.filteredParticipants).toEqual([participant]);
+    roleServiceSpy.add.and.returnValue(of(createRole(participant, RoleType.COMPETITOR)));
+    component.addCompetitor(participant);
+    expect(component.getParticipantsContainer(RoleType.COMPETITOR)).toEqual([participant]);
+  });
+
+  it('should prevent click assignment without edit permission or in a locked tournament', () => {
+    const participant = createParticipant(1, 'John', 'Doe');
+    component.userListData.participants = [participant];
+    rbacServiceSpy.isAllowed.and.returnValue(false);
+    component.addCompetitor(participant);
+    rbacServiceSpy.isAllowed.and.returnValue(true);
+    component.tournament.locked = true;
+    component.addCompetitor(participant);
+    expect(roleServiceSpy.add).not.toHaveBeenCalled();
+  });
+
   it('should download roles pdf and disable loading flag at the end', () => {
     const blob = new Blob(['pdf-content'], { type: 'application/pdf' });
     const anchorMock = {
@@ -207,4 +271,3 @@ describe('TournamentRolesComponent', () => {
     expect(component.countRole(RoleType.PRESS)).toBe(0);
   });
 });
-

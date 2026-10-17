@@ -33,6 +33,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+
 /**
  * Creates the one platform administrator only when explicit bootstrap credentials are configured.
  */
@@ -40,16 +42,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class SuperAdminBootstrap implements ApplicationRunner {
     private final String username;
     private final String password;
+    private final String roles;
     private final TenantRepository tenantRepository;
     private final AuthenticatedUserRepository authenticatedUserRepository;
     private final AuthenticatedUserController authenticatedUserController;
 
     public SuperAdminBootstrap(@Value("${bootstrap.super-admin.username:}") String username,
-                               @Value("${bootstrap.super-admin.password:}") String password,
-                               TenantRepository tenantRepository, AuthenticatedUserRepository authenticatedUserRepository,
-                               AuthenticatedUserController authenticatedUserController) {
+                                @Value("${bootstrap.super-admin.password:}") String password,
+                                @Value("${bootstrap.super-admin.roles:super_admin}") String roles,
+                                TenantRepository tenantRepository, AuthenticatedUserRepository authenticatedUserRepository,
+                                AuthenticatedUserController authenticatedUserController) {
         this.username = username;
         this.password = password;
+        this.roles = roles;
         this.tenantRepository = tenantRepository;
         this.authenticatedUserRepository = authenticatedUserRepository;
         this.authenticatedUserController = authenticatedUserController;
@@ -71,7 +76,8 @@ public class SuperAdminBootstrap implements ApplicationRunner {
         TenantContext.setTenantId(legacyTenant.getId());
         try {
             authenticatedUserController.createUser(null, username, "Platform", "Administrator", password,
-                    AvailableRole.SUPER_ADMIN);
+                    Arrays.stream(roles.split(",")).map(String::trim).map(AvailableRole::get)
+                            .filter(java.util.Objects::nonNull).toArray(AvailableRole[]::new));
         } finally {
             TenantContext.clear();
         }

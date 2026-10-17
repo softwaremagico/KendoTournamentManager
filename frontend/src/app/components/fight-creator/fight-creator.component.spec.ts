@@ -29,7 +29,8 @@ describe('FightCreator', () => {
 
   beforeEach(() => {
     teamServiceSpy = jasmine.createSpyObj('TeamService', ['getRemainingFromTournament']);
-    fightServiceSpy = jasmine.createSpyObj('FightService', ['generateDuels']);
+    fightServiceSpy = jasmine.createSpyObj('FightService', ['generateDuels', 'deleteById']);
+    fightServiceSpy.deleteById.and.returnValue(of(1));
     groupServiceSpy = jasmine.createSpyObj('GroupService', ['update']);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage']);
     groupUpdatedServiceMock = {
@@ -170,6 +171,17 @@ describe('FightCreator', () => {
 
     expect(component.group.fights).toEqual([generated]);
   });
-});
 
+  it('should remove the unlinked draft when group persistence replaces its identity', () => {
+    const draft = createFight(40, createTeam('A'), createTeam('B'));
+    component.selectedTeam1 = [draft.team1];
+    component.selectedTeam2 = [draft.team2];
+    fightServiceSpy.generateDuels.and.returnValue(of(draft));
+    groupServiceSpy.update.and.returnValue(of({id: 10, fights: [createFight(41)]} as Group));
+
+    component.addFights();
+
+    expect(fightServiceSpy.deleteById).toHaveBeenCalledOnceWith(40);
+  });
+});
 

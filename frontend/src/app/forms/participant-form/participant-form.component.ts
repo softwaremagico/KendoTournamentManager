@@ -74,17 +74,21 @@ export class ParticipantFormComponent extends RbacBasedComponent implements OnIn
   private loadClubs(): void {
     this.clubService.getAll().pipe(takeUntil(this.destroySubject)).subscribe((_clubs: Club[]) => {
       this.clubs = _clubs;
-      this.translatedClubs = [];
+      if (this.participant && !this.participant.club && this.clubs.length > 0) {
+        this.participant.club = this.clubs[0];
+      }
       this.translateClubs(_clubs);
     });
   }
 
   private translateClubs(_clubs: Club[]): void {
+    const translatedClubs: { value: string, label: string, description: string }[] = [];
     for (let club of _clubs) {
-      this.translatedClubs.push({
+      translatedClubs.push({
         value: club.id + '', label: club.name, description: club.country + " (" + club.city + ")"
       });
     }
+    this.translatedClubs = translatedClubs;
   }
 
   protected validate(): boolean {

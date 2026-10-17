@@ -163,6 +163,37 @@ public class JwtTokenFilterTest {
     }
 
     @Test(groups = {"jwtTokenUtil"})
+    public void shouldAuthenticateVirtualGuestWithoutTenantMembership() throws Exception {
+        final AuthenticatedUser guest = new AuthenticatedUser(AuthenticatedUserProvider.GUEST_USER);
+        guest.setRoles(Set.of("ROLE_GUEST"));
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer guest-token");
+        when(jwtTokenUtil.validate("guest-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("guest-token")).thenReturn(AuthenticatedUserProvider.GUEST_USER);
+        when(jwtTokenUtil.getTenantId("guest-token")).thenReturn(7);
+        when(authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)).thenReturn(Optional.of(guest));
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(authenticatedUserProvider, never()).belongsToTenant(any(), any());
+        assertSame(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), guest);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldRejectStandardUserWithoutTenantMembership() throws Exception {
+        final AuthenticatedUser user = new AuthenticatedUser("admin");
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer foreign-token");
+        when(jwtTokenUtil.validate("foreign-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("foreign-token")).thenReturn("admin");
+        when(jwtTokenUtil.getTenantId("foreign-token")).thenReturn(7);
+        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(user));
+        when(authenticatedUserProvider.belongsToTenant(user, 7)).thenReturn(false);
+
+        assertThrows(InvalidJwtException.class, () -> filter.doFilterInternal(request, response, chain));
+        verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
     public void shouldThrowInvalidIpWhenIpDoesNotMatchToken() {
         final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
                 participantProvider, networkController);

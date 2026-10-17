@@ -55,6 +55,9 @@ export class ParticipantFormPopupComponent implements OnInit {
         const parameters: object = {element: _participants[0].name};
         this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', parameters), NotificationType.ERROR);
       }
+    }, error => {
+      this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', {element: file.name}), NotificationType.ERROR);
+      this.errorEvent.emit(error);
     });
   }
 }

@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from "@angular/router";
+import {Injectable} from '@angular/core';
+import {Router} from "@angular/router";
 import {Constants} from "../constants";
 import {UserSessionService} from "./user-session.service";
 
@@ -20,8 +20,4 @@ export class AuthGuardService {
     this.router.navigate([`/login`], {queryParams: queryParams});
     return false;
   }
-}
-
-export const AuthGuard: CanActivateFn = (next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
-  return inject(AuthGuardService).canActivate();
 }

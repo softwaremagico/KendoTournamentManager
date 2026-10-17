@@ -3,7 +3,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 @Pipe({
   standalone: false,
   name: 'numberDropdownInterface',
-  pure: false,
+  pure: true,
 })
 export class NumberDropdownInterfacePipe implements PipeTransform {
 

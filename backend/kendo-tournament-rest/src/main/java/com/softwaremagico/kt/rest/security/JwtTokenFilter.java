@@ -236,6 +236,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         if (userDetails == null || user instanceof AuthenticatedUser authenticatedUser
+                && !AuthenticatedUserProvider.GUEST_USER.equals(authenticatedUser.getUsername())
                 && !authenticatedUserProvider.belongsToTenant(authenticatedUser, tenantId)) {
             throw new InvalidJwtException(this.getClass(), "JWT token tenant does not match the authenticated user.");
         }

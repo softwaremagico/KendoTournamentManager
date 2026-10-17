@@ -128,7 +128,7 @@ describe('FightListComponent', () => {
     tournamentServiceSpy = jasmine.createSpyObj('TournamentService', ['get', 'update']);
     fightServiceSpy = jasmine.createSpyObj('FightService', ['create', 'update', 'delete', 'getFightSummaryPDf']);
     environmentServiceSpy = jasmine.createSpyObj('EnvironmentService', ['getWebsocketPrefix']);
-    groupServiceSpy = jasmine.createSpyObj('GroupService', ['getFromTournament']);
+    groupServiceSpy = jasmine.createSpyObj('GroupService', ['getFromTournament', 'setTeams']);
     duelServiceSpy = jasmine.createSpyObj('DuelService', ['update']);
     userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getSwappedColors', 'getSwappedTeams', 'setSwappedColors', 'setSwappedTeams']);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
@@ -209,6 +209,28 @@ describe('FightListComponent', () => {
 
   it('should create the component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize Senbatsu groups without requesting automatic fights', () => {
+    component.tournament = {id: 9, type: TournamentType.SENBATSU} as Tournament;
+    (component as any).tournamentId = 9;
+    const group = {id: 1, teams: [], fights: []} as unknown as Group;
+    groupServiceSpy.setTeams.and.returnValue(of(group));
+    const refresh = spyOn<any>(component, 'refreshFights');
+
+    component.createGroupFight([{} as Team]);
+
+    expect(fightServiceSpy.create).not.toHaveBeenCalled();
+    expect(refresh).toHaveBeenCalled();
+  });
+
+  it('should not request a protected banner without picture permission', () => {
+    component.tournament = {id: 9} as Tournament;
+    rbacServiceSpy.isAllowed.and.returnValue(false);
+
+    component.loadTournamentBanner();
+
+    expect(fileServiceSpy.getTournamentPicture).not.toHaveBeenCalled();
   });
 
   it('should select fight and infer selected group', () => {

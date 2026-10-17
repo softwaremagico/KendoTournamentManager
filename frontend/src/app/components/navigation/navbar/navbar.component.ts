@@ -5,7 +5,7 @@ import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-conte
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";
 import {Constants} from "../../../constants";
-import {AuthGuard} from "../../../services/auth-guard.service";
+import {AuthGuardService} from "../../../services/auth-guard.service";
 import {ActivityService} from "../../../services/rbac/activity.service";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {ClubListComponent} from "../../../views/club-list/club-list.component";
@@ -71,13 +71,15 @@ export class NavbarComponent implements OnInit {
   ngOnInit() {
     this.user = this.sessionService.getUser();
     this.selectedTenantId = this.loginService.getTenantId();
-    this.tenantService.getAvailable().subscribe({
+    if (this.user?.roles?.some(role => ['admin', 'super_admin', 'editor', 'viewer'].includes(role.toLowerCase()))) {
+      this.tenantService.getAvailable().subscribe({
       next: tenants => {
         this.tenants = tenants;
         this.tenantOptions = tenants.map(tenant => ({label: tenant.name, value: String(tenant.id)}));
       },
       error: () => this.tenants = []
-    });
+      });
+    }
     this.infoService.getAppConfig().subscribe({
       next: config => {
         if (config && config['tenancyEnabled'] !== undefined) {
@@ -97,7 +99,7 @@ export class NavbarComponent implements OnInit {
     this.routes = [
       {
         path: Constants.PATHS.REGISTRY.ROOT,
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardService],
         title: 'registry',
         data: {
           hidden: !this.activityService.isAllowed(RbacActivity.REGISTER_ELEMENTS)
@@ -106,7 +108,7 @@ export class NavbarComponent implements OnInit {
           {
             path: Constants.PATHS.REGISTRY.CLUBS,
             component: ClubListComponent,
-            canActivate: [AuthGuard],
+            canActivate: [AuthGuardService],
             title: 'clubs',
             data: {
               hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_CLUBS)
@@ -115,7 +117,7 @@ export class NavbarComponent implements OnInit {
           {
             path: Constants.PATHS.REGISTRY.PARTICIPANTS,
             component: ParticipantListComponent,
-            canActivate: [AuthGuard],
+            canActivate: [AuthGuardService],
             title: 'participants',
             data: {
               hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_PARTICIPANTS)
@@ -124,7 +126,7 @@ export class NavbarComponent implements OnInit {
       },
       {
         path: Constants.PATHS.TOURNAMENTS.ROOT,
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardService],
         title: 'competitions',
         data: {
           hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_TOURNAMENTS)
@@ -133,7 +135,7 @@ export class NavbarComponent implements OnInit {
           {
             path: Constants.PATHS.TOURNAMENTS.LIST,
             component: TournamentListComponent,
-            canActivate: [AuthGuard],
+            canActivate: [AuthGuardService],
             title: 'list',
             data: {
               hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_TOURNAMENTS)
@@ -142,7 +144,7 @@ export class NavbarComponent implements OnInit {
       },
       {
         path: Constants.PATHS.ADMINISTRATION.ROOT,
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardService],
         title: 'administration',
         data: {
             hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
@@ -152,7 +154,7 @@ export class NavbarComponent implements OnInit {
           {
             path: Constants.PATHS.ADMINISTRATION.USERS,
             component: UserListComponent,
-            canActivate: [AuthGuard],
+            canActivate: [AuthGuardService],
             title: 'users',
             data: {
               hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
@@ -161,7 +163,7 @@ export class NavbarComponent implements OnInit {
           {
             path: Constants.PATHS.ADMINISTRATION.TENANTS,
             component: TenantListComponent,
-            canActivate: [AuthGuard],
+            canActivate: [AuthGuardService],
             title: 'tenants',
             data: {
               hidden: !this.tenancyEnabled

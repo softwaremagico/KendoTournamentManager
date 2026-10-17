@@ -67,6 +67,7 @@ public class SwissTournamentHandlerTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
+		when(this.groupProvider.addGroup(any(), any())).thenAnswer(invocation -> invocation.getArgument(1));
 		this.swissTournamentHandler = new SwissTournamentHandler(this.groupProvider, this.teamProvider,
 				this.rankingProvider, this.tournamentExtraPropertyProvider);
 	}
@@ -154,7 +155,7 @@ public class SwissTournamentHandlerTest {
 				eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament,
 						TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
-		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
+		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
 
 		final List<com.softwaremagico.kt.persistence.entities.Fight> fights = this.swissTournamentHandler
 				.createFights(tournament, null, 2, "tester");
@@ -179,7 +180,7 @@ public class SwissTournamentHandlerTest {
 				eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament,
 						TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
-		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
+		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
 
 		final List<com.softwaremagico.kt.persistence.entities.Fight> fights = this.swissTournamentHandler
 				.generateNextFights(tournament, "tester");
@@ -208,7 +209,7 @@ public class SwissTournamentHandlerTest {
 				eq(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS), any()))
 				.thenReturn(new TournamentExtraProperty(tournament,
 						TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, "true"));
-		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenReturn(group);
+		when(this.groupProvider.addGroup(eq(tournament), any(Group.class))).thenAnswer(invocation -> invocation.getArgument(1));
 
 		final List<com.softwaremagico.kt.persistence.entities.Fight> fights = this.swissTournamentHandler
 				.generateNextFights(tournament, "tester");

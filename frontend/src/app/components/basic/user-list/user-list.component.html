@@ -2,7 +2,7 @@
 @if (userListData.filteredParticipants) {
   <div class="user-list">
     @for (user of userListData.filteredParticipants; track user) {
-      <user-card [dragDisabled]="user.locked"
+      <user-card [dragDisabled]="user.locked" (clickEvent)="userSelected.emit($event)"
         [showAvatar]="showAvatars"
       [user]="user"></user-card>
     }

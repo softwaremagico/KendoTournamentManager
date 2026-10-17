@@ -93,8 +93,7 @@ export class ParticipantService {
           next: (newParticipant: Participant) => this.loggerService.info(`adding participant ${newParticipant}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Participant>(`adding ${participant}`))
+        })
       );
   }
 

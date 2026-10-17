@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.softwaremagico</groupId>
+        <artifactId>kendo-tournament-backend</artifactId>
+        <version>3.7.0</version>
+    </parent>
+
+    <artifactId>kendo-tournament-e2e</artifactId>
+    <name>Kendo Tournament Manager (End-to-End Tests)</name>
+
+    <properties>
+        <main.basedir>${basedir}/..</main.basedir>
+        <selenium.base-url>http://localhost:14200</selenium.base-url>
+        <selenium.headless>true</selenium.headless>
+        <selenium.username>e2e-admin@test.local</selenium.username>
+        <selenium.password>E2e-password-123</selenium.password>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.30</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${org.testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <systemPropertyVariables>
+                        <selenium.base-url>${selenium.base-url}</selenium.base-url>
+                        <selenium.headless>${selenium.headless}</selenium.headless>
+                        <selenium.username>${selenium.username}</selenium.username>
+                        <selenium.password>${selenium.password}</selenium.password>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

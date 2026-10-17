@@ -6,10 +6,8 @@
   >
   <participant-form class="form-container"
     [participant]="participant"
-    (saved)="saved"
-    [saved]="saved"
-    (errorEvent)="errorEvent"
-  [errorEvent]="errorEvent"></participant-form>
+    (saved)="saved.emit($event)"
+    [errorEvent]="errorEvent"></participant-form>
 
   <biit-action-button class="floating-menu" position="top-right">
     @if ((RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)) {

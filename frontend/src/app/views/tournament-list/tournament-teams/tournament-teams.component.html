@@ -105,7 +105,7 @@
     </div>
     <div class="buttons-row">
       @if ((RbacActivity.CREATE_TEAM | hasPermission)) {
-        <button biit-button secondary
+        <button biit-button secondary id="tournament-teams-generate"
           (click)="generateTeams()">
           {{ t('auto') }}
         </button>

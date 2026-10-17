@@ -24,9 +24,11 @@ package com.softwaremagico.kt.core.providers;
 import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
 import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -49,10 +51,43 @@ public class ClubProviderTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
+        TenantContext.clear();
         clubRepository = mock(ClubRepository.class);
         participantRepository = mock(ParticipantRepository.class);
         clubProvider = new ClubProvider(clubRepository, participantRepository);
         KeyProperty.configure(null, null, null);
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void clearTenantContext() {
+        TenantContext.clear();
+    }
+
+    @Test
+    public void shouldRestoreTenantOnUpdateAndKeepEntityVisibleOnlyToItsTenant() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        club.setTenantId(null);
+        TenantContext.setTenantId(7);
+        when(clubRepository.findById(1)).thenReturn(Optional.of(club));
+
+        clubProvider.update(club);
+
+        assertEquals(club.getTenantId(), Integer.valueOf(7));
+        assertTrue(clubProvider.get(1).isPresent());
+        TenantContext.setTenantId(8);
+        assertTrue(clubProvider.get(1).isEmpty());
+        verify(clubRepository).save(club);
+    }
+
+    @Test
+    public void shouldPreserveExistingTenantWhenSaving() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        club.setTenantId(7);
+        TenantContext.setTenantId(8);
+
+        clubProvider.save(club);
+
+        assertEquals(club.getTenantId(), Integer.valueOf(7));
     }
 
     @Test
@@ -124,5 +159,4 @@ public class ClubProviderTest {
         clubProvider.deleteById(99);
     }
 }
-
 

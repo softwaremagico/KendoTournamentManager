@@ -146,6 +146,40 @@ Alternatively, for practical illustrations, you can directly check out a few des
 For a complete list of features and usage examples, visit the
 [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
 
+## End-to-end tests
+
+The Selenium end-to-end suite builds the local frontend and backend, then runs
+against an isolated Docker environment with a disposable MySQL database:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+The temporary frontend and backend listen on ports `14200` and `18080` while
+the suite runs. To observe the browser workflow, use:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --headed
+```
+
+To run a single TestNG class during diagnosis:
+
+```bash
+E2E_TESTS=ClubParticipantTest \
+  bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+The runner removes its containers and database volume when it exits. If a
+previous diagnostic run kept an environment running, remove all E2E Docker
+environments before starting another one:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --stop
+```
+
+See [`backend/kendo-tournament-e2e/README.md`](./backend/kendo-tournament-e2e/README.md)
+for credentials, supported variables, and the complete scenario catalogue.
+
 ## Architecture
 
 The application follows a standard three-tier architecture deployed as Docker containers:

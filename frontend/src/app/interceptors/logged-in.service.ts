@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {LoginService} from "../services/login.service";
 import {BehaviorSubject} from "rxjs";
 import {TournamentService} from "../services/tournament.service";
@@ -47,8 +47,4 @@ export class LoggedInService {
     }
     return this.whiteListedPages.includes(context);
   }
-}
-
-export const LoggedIn: CanActivateFn = (next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
-  return inject(LoggedInService).canActivate(next, state);
 }

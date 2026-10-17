@@ -1,6 +1,6 @@
 @if (!locked &&
   (RbacActivity.EDIT_DUEL | hasPermission)) {
-  <div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" class="score-area" [class.over]="over && !locked">
+  <div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" [attr.data-saving]="saving" class="score-area" [class.over]="over && !locked">
     <mat-menu #menu="matMenu">
       @for (score of possibleScores(); track score) {
         <button [disabled]="duel.finished" (click)="updateScore(score)"
@@ -50,4 +50,3 @@
     }
   </div>
 }
-

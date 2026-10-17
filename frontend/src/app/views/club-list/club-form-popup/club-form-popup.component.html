@@ -6,10 +6,8 @@
   >
   <club-form class="form-container"
     [club]="club"
-    (saved)="saved"
-    [saved]="saved"
-    (errorEvent)="error"
-  [errorEvent]="error"></club-form>
+    (saved)="saved.emit($event)"
+    [errorEvent]="error"></club-form>
 
   <biit-action-button position="top-right">
     @if ((RbacActivity.CREATE_PARTICIPANT_CSV | hasPermission)) {

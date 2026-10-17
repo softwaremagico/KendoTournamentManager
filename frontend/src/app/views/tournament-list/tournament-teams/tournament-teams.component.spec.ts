@@ -107,7 +107,8 @@ describe('TournamentTeamsComponent', () => {
       statisticsChangedServiceSpy,
       filterResetServiceSpy,
       csvServiceSpy,
-      translocoServiceSpy
+      translocoServiceSpy,
+      jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges'])
     );
     component.tournament = buildTournament();
   });

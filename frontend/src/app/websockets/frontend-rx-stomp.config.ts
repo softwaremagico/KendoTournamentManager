@@ -1,8 +1,10 @@
 import {RxStompConfig} from '@stomp/rx-stomp';
 import {Environment} from '../../environments/environment';
 
+declare const __config: { websocketsUrl?: string };
+
 export const frontendRxStompConfig: RxStompConfig = {
-  brokerURL: Environment.websocketsUrl,
+  brokerURL: __config.websocketsUrl ?? Environment.websocketsUrl,
 
   // How often to heartbeat?
   // Interval in milliseconds, set to 0 to disable
@@ -22,10 +24,11 @@ export const frontendRxStompConfig: RxStompConfig = {
   },
 
   beforeConnect: (stompClient: any): Promise<void> => {
-    return new Promise<void>((resolve, reject): void => {
-      const token: string | null = localStorage.getItem('jwt');
+    return new Promise<void>((resolve): void => {
+      const token: string | null = localStorage.getItem('.jwt');
       if (!token || token.split('.').length !== 3) {
-        reject(new Error('A valid JWT is required before connecting websockets.'));
+        stompClient.deactivate();
+        resolve();
         return;
       }
       stompClient._stompClient.connectHeaders = {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
@@ -8,7 +8,7 @@ import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
-import {forkJoin} from "rxjs";
+import {finalize, forkJoin} from "rxjs";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
@@ -36,12 +36,13 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
   loadingGlobal: boolean = false;
+  private pendingCompetitors: Set<Participant> = new Set<Participant>();
 
   constructor(public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService,
               rbacService: RbacService, private filterResetService: FilterResetService,
-              private statisticsChangedService: StatisticsChangedService,
-              private teamService: TeamService) {
+               private statisticsChangedService: StatisticsChangedService,
+               private teamService: TeamService, private cdr: ChangeDetectorRef) {
     super(rbacService);
   }
 
@@ -84,8 +85,9 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
           this.showAvatars = true;
         }
       }
-      this.userListData.participants = participants;
-      this.userListData.filteredParticipants = participants;
+       this.userListData.participants = participants;
+       this.userListData.filteredParticipants = [...participants];
+       this.cdr.detectChanges();
       //Prevent removing participants that are on teams already
       this.teamService.getFromTournament(this.tournament).subscribe((_teams: Team[]): void => {
         let teamMembers: Participant[] = [];
@@ -139,6 +141,8 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType): void {
+    const availableParticipants = [...this.userListData.participants];
+    const filteredParticipants = [...this.userListData.filteredParticipants];
     const participant: Participant | undefined = this.transferCard(event);
     if (!participant) {
       return;
@@ -147,18 +151,57 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     role.tournament = this.tournament;
     role.participant = participant;
     role.roleType = roleName;
+    this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
+    this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
+    this.shortRoles();
+    const rollback = (): void => {
+      const index = event.container.data.indexOf(participant);
+      if (index >= 0) {
+        event.container.data.splice(index, 1);
+      }
+      event.previousContainer.data.splice(event.previousIndex, 0, participant);
+      this.userListData.participants = availableParticipants;
+      this.userListData.filteredParticipants = filteredParticipants;
+      this.cdr.detectChanges();
+    };
     this.roleService.add(role).subscribe((_role: Role): void => {
+      if (!_role) {
+        rollback();
+        return;
+      }
       this.messageService.infoMessage("infoRoleStored");
       this.filterResetService.resetFilter.next(true);
       this.statisticsChangedService.areStatisticsChanged.next(true);
+      this.cdr.detectChanges();
+    }, rollback);
+  }
+
+  addCompetitor(participant: Participant): void {
+    if (participant.locked || this.tournament.locked || !this.rbacService.isAllowed(this.RbacActivity.EDIT_ROLE)
+      || this.pendingCompetitors.has(participant) || !this.userListData.participants.includes(participant)) {
+      return;
+    }
+    const role: Role = new Role();
+    role.tournament = this.tournament;
+    role.participant = participant;
+    role.roleType = RoleType.COMPETITOR;
+    this.pendingCompetitors.add(participant);
+    this.roleService.add(role).pipe(finalize(() => this.pendingCompetitors.delete(participant))).subscribe((savedRole) => {
+      if (!savedRole) {
+        return;
+      }
+      this.getParticipantsContainer(RoleType.COMPETITOR).push(participant);
+      this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
+      this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
+      this.shortRoles();
+      this.messageService.infoMessage("infoRoleStored");
+      this.filterResetService.resetFilter.next(true);
+      this.statisticsChangedService.areStatisticsChanged.next(true);
+      this.cdr.detectChanges();
+    }, () => {
+      // The HTTP error interceptor reports the failure; keep the participant available for retry.
+      this.cdr.detectChanges();
     });
-    if (this.userListData.participants.includes(participant)) {
-      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
-    }
-    if (this.userListData.filteredParticipants.includes(participant)) {
-      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
-    }
-    this.shortRoles();
   }
 
   private shortRoles(): void {
@@ -192,4 +235,3 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
 }
-
