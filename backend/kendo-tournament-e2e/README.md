@@ -134,12 +134,18 @@ bash ./backend/kendo-tournament-e2e/run-e2e.sh --stop
 
 ### Authenticated workflows
 
+E2E tests are skipped by default, including during `mvn clean install` from the
+backend root. `run-e2e.sh` explicitly enables them with `-DskipE2E=false`, while
+the other modules' tests continue to run normally. When invoking Maven directly,
+pass the same property to enable the browser tests.
+
 The runner provisions an administrator with every role required by the browser
 workflows. Its credentials are scoped to the disposable database and can be
 overridden at execution time:
 
 ```bash
 mvn -pl kendo-tournament-e2e test \
+  -DskipE2E=false \
   -Dselenium.base-url=http://localhost:4200 \
   -Dselenium.username="operator@example.test" \
   -Dselenium.password="replace-with-a-secret" \
@@ -151,6 +157,7 @@ mvn -pl kendo-tournament-e2e test \
 
 | Property | Default | Description |
 | --- | --- | --- |
+| `skipE2E` | `true` | Skips E2E tests unless explicitly set to `false`; the runner sets it automatically. |
 | `selenium.base-url` | `http://localhost:14200` | Frontend URL of the disposable E2E environment. |
 | `selenium.headless` | `true` | Runs Chromium without a visible window. |
 | `selenium.username` | `e2e-admin@test.local` | Temporary E2E administrator. |

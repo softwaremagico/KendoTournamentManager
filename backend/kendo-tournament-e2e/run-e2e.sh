@@ -69,6 +69,7 @@ for attempt in $(seq 1 30); do
   sleep 2
 done
 maven_arguments=(--projects kendo-tournament-e2e test
+  -DskipE2E=false
   -Dselenium.base-url=http://localhost:14200
   -Dselenium.headless="${e2e_headless}"
   -Dselenium.username="${e2e_username}"

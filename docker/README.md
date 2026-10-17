@@ -41,7 +41,7 @@ Three pre-built images are published on Docker Hub and updated with every releas
 | Frontend | `softwaremagico/kendo-tournament-manager-frontend` | [View →](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
 | Reverse proxy | `softwaremagico/kendo-tournament-manager-rproxy` | [View →](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
 
-Use a specific version tag (e.g., `v3.5.0`) for production deployments instead of `latest` to ensure
+Use a specific version tag (e.g., `v3.6.0`) for production deployments instead of `latest` to ensure
 reproducibility.
 
 ---
@@ -116,7 +116,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `machine_domain` | `localhost` | Domain name (or `localhost`) for the deployment |
 | `email` | `myemail@domain.com` | Email used for Let's Encrypt TLS certificate registration |
 | `timezone` | `Europe/Madrid` | Server timezone (used in logs and date handling) |
-| `version` | `v3.5.0` | Application version tag |
+| `version` | `v3.6.0` | Application version tag |
 | `release` | `${version}` | Release label (usually the same as `version`) |
 
 ### Frontend
@@ -352,7 +352,7 @@ machine_domain=localhost
 [...]
 #Frontend
 protocol=http
-``` 
+```
 
 And deploy the application using `docker-compose` command as usual. Ignore any information about SSL certificates as
 they are not available for localhost domain.
@@ -368,7 +368,7 @@ machine_domain=mydomain.com
 [...]
 #Frontend
 protocol=https
-``` 
+```
 
 Parameter `protocol` is assuming that you have also an SSL certificate. If is not the case, please change to `http`.
 
@@ -432,7 +432,7 @@ obtained from the value obtained on the previous step:
   - "traefik.http.middlewares.auth.basicauth.users=admin:<<put here your hashed password>>"
 ```
 
-Regenerate the docker container with a `docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy` and the new password will be used. 
+Regenerate the docker container with a `docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy` and the new password will be used.
 
 ## Disable the REVERSE PROXY
 
@@ -458,4 +458,4 @@ Uncomment to
 ```
 
 And the container will not be started automatically. Remember to configure your reverse proxy to include the `backend`
-and `frontend` of this application or will not work properly. 
+and `frontend` of this application or will not work properly.

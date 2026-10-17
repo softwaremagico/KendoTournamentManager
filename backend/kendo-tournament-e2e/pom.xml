@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.softwaremagico</groupId>
         <artifactId>kendo-tournament-backend</artifactId>
-        <version>3.7.0</version>
+        <version>3.6.0</version>
     </parent>
 
     <artifactId>kendo-tournament-e2e</artifactId>
@@ -15,6 +15,7 @@
 
     <properties>
         <main.basedir>${basedir}/..</main.basedir>
+        <skipE2E>true</skipE2E>
         <selenium.base-url>http://localhost:14200</selenium.base-url>
         <selenium.headless>true</selenium.headless>
         <selenium.username>e2e-admin@test.local</selenium.username>
@@ -48,6 +49,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <skipTests>${skipE2E}</skipTests>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
