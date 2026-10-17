@@ -16,6 +16,27 @@ Selenium Manager resolves the matching browser driver automatically.
 
 ## Running tests
 
+### GitHub Actions (Gitflow branches)
+
+The **E2E Browser Tests** workflow (`.github/workflows/e2e.yml`) runs automatically
+on changes to `backend/` or `frontend/` in pull requests and pushes to `main`,
+`master`, `develop`, `feature/**`, `release/**`, and `hotfix/**`.
+
+It installs Java 25 and Node.js 22, uses Chrome on the Ubuntu runner, installs the
+locked frontend dependencies with `npm ci`, and executes `run-e2e.sh` headlessly
+against its disposable Docker environment. No application credentials or database
+secrets need to be configured in GitHub: the runner creates its temporary account.
+
+You can also select **Actions → E2E Browser Tests → Run workflow**, choose a branch,
+and optionally enter a Surefire class filter such as `SwissProgressionTest`.
+Leave the filter empty to run all scenarios. The manual workflow becomes available
+in the Actions list once its definition exists on the default branch.
+
+Each run uploads Surefire/TestNG reports, the runner output, and Docker logs as
+an artifact retained for 14 days, including failed runs. Cleanup runs regardless
+of test outcome. A newer run on the same branch/PR cancels the older run.
+The job has a 45-minute timeout.
+
 The supported entry point runs the full suite against the disposable Docker
 environment:
 
