@@ -61,6 +61,9 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     sed -i "s|enable\.guest\.user.*|enable.guest.user=${enable_guest_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|enable\.tenancy.*|enable.tenancy=${enable_tenancy}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.sql\.init\.mode.*|spring.sql.init.mode=${database_populate_default_data}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|spring\.kendo\.datasource\.hibernate\.dialect.*|spring.kendo.datasource.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|spring\.kendo\.datasource\.driver-class-name.*|spring.kendo.datasource.driver-class-name=org.postgresql.Driver|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|spring\.kendo\.datasource\.platform.*|spring.kendo.datasource.platform=${database_type}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     #Add the modified files to the jar again
     cd /opt/${project_name}/${project_name} && \
     zip /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/classes/application.properties && \
