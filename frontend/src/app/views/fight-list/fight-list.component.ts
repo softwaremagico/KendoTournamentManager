@@ -293,6 +293,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   override ngOnDestroy(): void { // NOSONAR
     super.ngOnDestroy();
+    this.changeProjectMode(false);
     this.topicSubscription?.unsubscribe();
   }
 
