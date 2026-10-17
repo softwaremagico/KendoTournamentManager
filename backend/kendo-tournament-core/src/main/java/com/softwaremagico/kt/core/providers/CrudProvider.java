@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
@@ -42,6 +43,9 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public E save(E entity) {
+        if (entity == null) {
+            return null;
+        }
         if (entity instanceof Element tenantScopedEntity && tenantScopedEntity.getTenantId() == null) {
             tenantScopedEntity.setTenantId(TenantContext.getRequiredTenantId());
         }
@@ -49,19 +53,41 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public List<E> save(Collection<E> entities) {
-        return repository.saveAll(entities);
+        if (entities == null || entities.isEmpty()) {
+            return List.of();
+        }
+        final List<E> validEntities = entities.stream().filter(Objects::nonNull).toList();
+        if (validEntities.isEmpty()) {
+            return List.of();
+        }
+        validEntities.forEach(entity -> {
+            if (entity instanceof Element tenantScopedEntity && tenantScopedEntity.getTenantId() == null) {
+                tenantScopedEntity.setTenantId(TenantContext.getRequiredTenantId());
+            }
+        });
+        return repository.saveAll(validEntities);
     }
 
     public List<E> saveAll(Collection<E> entity) {
-        return repository.saveAll(entity);
+        return save(entity);
     }
 
     public Optional<E> get(K id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return repository.findById(id).filter(this::belongsToCurrentTenant);
     }
 
     public List<E> get(Collection<K> ids) {
-        return repository.findAllById(ids).stream().filter(this::belongsToCurrentTenant).toList();
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        final List<K> validIds = ids.stream().filter(Objects::nonNull).distinct().toList();
+        if (validIds.isEmpty()) {
+            return List.of();
+        }
+        return repository.findAllById(validIds).stream().filter(this::belongsToCurrentTenant).toList();
     }
 
     public List<E> getAll() {
@@ -73,14 +99,27 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public void delete(E entity) {
+        if (entity == null || !belongsToCurrentTenant(entity)) {
+            return;
+        }
         repository.delete(entity);
     }
 
     public void delete(Collection<E> entities) {
-        repository.deleteAll(entities);
+        if (entities == null || entities.isEmpty()) {
+            return;
+        }
+        final List<E> validEntities = entities.stream().filter(Objects::nonNull).filter(this::belongsToCurrentTenant).toList();
+        if (validEntities.isEmpty()) {
+            return;
+        }
+        repository.deleteAll(validEntities);
     }
 
     public void deleteById(K id) {
+        if (id == null) {
+            return;
+        }
         repository.deleteById(id);
     }
 
@@ -89,7 +128,14 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
     }
 
     public void deleteAll(Collection<E> entities) {
-        repository.deleteAll(entities);
+        if (entities == null || entities.isEmpty()) {
+            return;
+        }
+        final List<E> validEntities = entities.stream().filter(Objects::nonNull).filter(this::belongsToCurrentTenant).toList();
+        if (validEntities.isEmpty()) {
+            return;
+        }
+        repository.deleteAll(validEntities);
     }
 
     public long count() {

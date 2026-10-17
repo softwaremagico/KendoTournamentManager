@@ -96,12 +96,23 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
-        final List<Participant> databaseParticipants = getRepository().findAllById(ids);
-        //JPA 'in' does not maintain the order. We need to sort them by the source list.
-        final Map<Integer, Participant> participantsById = databaseParticipants.stream().collect(Collectors.toMap(Participant::getId, Function.identity()));
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final List<Integer> validIds = ids.stream().filter(Objects::nonNull).distinct().toList();
+        if (validIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final List<Participant> databaseParticipants = getRepository().findAllById(validIds);
+        final Map<Integer, Participant> participantsById = databaseParticipants.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Participant::getId, Function.identity(), (existing, replacement) -> existing));
         final List<Participant> sortedParticipants = new ArrayList<>();
-        for (final Integer id : ids) {
-            sortedParticipants.add(participantsById.get(id));
+        for (final Integer id : validIds) {
+            final Participant participant = participantsById.get(id);
+            if (participant != null) {
+                sortedParticipants.add(participant);
+            }
         }
         return sortedParticipants;
     }

@@ -60,6 +60,9 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
 
     public List<Team> createDefaultTeams(Tournament tournament, String createdBy) {
         final List<Team> newTeams = new ArrayList<>();
+        if (tournament == null || tournament.getTeamSize() == null || tournament.getTeamSize() <= 0) {
+            return new ArrayList<>(getRepository().saveAll(newTeams));
+        }
         final long competitors = roleProvider.count(tournament, RoleType.COMPETITOR);
         if (tournament.getTeamSize() > 0) {
             for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
