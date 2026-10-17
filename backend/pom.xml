@@ -283,6 +283,7 @@
                     <organizationName>SoftwareMagico</organizationName>
                     <inceptionYear>2021</inceptionYear>
                     <licenseName>agpl_v3</licenseName>
+                    <trimHeaderLine>true</trimHeaderLine>
                     <excludes>
                         <exclude>**/*.properties</exclude>
                         <exclude>**/*.xml</exclude>
