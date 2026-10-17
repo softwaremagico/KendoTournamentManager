@@ -94,6 +94,9 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
         }
         final Fight fight = new Fight();
         BeanUtils.copyProperties(to, fight, ConverterUtils.getNullPropertyNames(to));
+        if (fight.getTenantId() == null && com.softwaremagico.kt.persistence.entities.TenantContext.getTenantId() != null) {
+            fight.setTenantId(com.softwaremagico.kt.persistence.entities.TenantContext.getRequiredTenantId());
+        }
         fight.setTeam1(teamConverter.reverse(to.getTeam1()));
         fight.setTeam2(teamConverter.reverse(to.getTeam2()));
         fight.setTournament(tournamentConverter.reverse(to.getTournament()));

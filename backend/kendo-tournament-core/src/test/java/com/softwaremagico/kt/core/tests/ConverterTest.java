@@ -47,6 +47,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -348,9 +349,27 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
+    public void checkFightConverterRetainsActiveTenantForDeletion() {
+        final Integer previousTenant = TenantContext.getTenantId();
+        try {
+            TenantContext.setTenantId(42);
+            final Fight fight = fightConverter.reverse(fightConverter.convert(new FightConverterRequest(createFight())));
+
+            Assert.assertEquals(fight.getTenantId(), Integer.valueOf(42),
+                    "Converted fights must belong to the active tenant so tenant-scoped deletion can remove them.");
+            checkFight(fight);
+        } finally {
+            if (previousTenant == null) {
+                TenantContext.clear();
+            } else {
+                TenantContext.setTenantId(previousTenant);
+            }
+        }
+    }
+
+    @Test
     public void checkGroupConverter() {
         checkGroup(groupConverter.reverse(groupConverter.convert(new GroupConverterRequest(createGroup()))));
     }
 }
-
 
