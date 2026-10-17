@@ -187,4 +187,23 @@ BEGIN
     END IF;
 END $$;
 
+-- Update the tournament type check constraint to include SWISS.
+ALTER TABLE tournaments DROP CONSTRAINT IF EXISTS tournaments_tournament_type_check;
+ALTER TABLE tournaments
+    ADD CONSTRAINT tournaments_tournament_type_check
+        CHECK ((tournament_type)::text = ANY (
+            ARRAY [
+                'CHAMPIONSHIP'::character varying,
+                'TREE'::character varying,
+                'LEAGUE'::character varying,
+                'LOOP'::character varying,
+                'CUSTOM_CHAMPIONSHIP'::character varying,
+                'KING_OF_THE_MOUNTAIN'::character varying,
+                'CUSTOMIZED'::character varying,
+                'SENBATSU'::character varying,
+                'SWISS'::character varying,
+                'BUBBLE_SORT'::character varying
+            ]
+        ));
+
 COMMIT;

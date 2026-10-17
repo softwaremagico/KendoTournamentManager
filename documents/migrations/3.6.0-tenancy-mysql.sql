@@ -198,3 +198,33 @@ SET @sql = IF(@legacy_duel_fk_3 IS NOT NULL, 'ALTER TABLE competitor_1_score_tim
 PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
 SET @sql = IF(@legacy_duel_fk_4 IS NOT NULL, 'ALTER TABLE competitor_2_score_time CHANGE duel_id duels_id BIGINT NOT NULL', 'SELECT 1');
 PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
+
+-- Update the tournament type check constraint to include SWISS.
+SET @drop_tournament_type_check = (
+    SELECT CONSTRAINT_NAME
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'tournaments'
+      AND CONSTRAINT_NAME = 'tournaments_tournament_type_check'
+    LIMIT 1
+);
+SET @sql = IF(@drop_tournament_type_check IS NOT NULL,
+    'ALTER TABLE tournaments DROP CHECK tournaments_tournament_type_check',
+    'SELECT 1');
+PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
+
+ALTER TABLE tournaments
+  ADD CONSTRAINT tournaments_tournament_type_check
+  CHECK (tournament_type IN (
+    'CHAMPIONSHIP',
+    'TREE',
+    'LEAGUE',
+    'LOOP',
+    'CUSTOM_CHAMPIONSHIP',
+    'KING_OF_THE_MOUNTAIN',
+    'CUSTOMIZED',
+    'SENBATSU',
+    'SWISS',
+    'BUBBLE_SORT'
+  ));
+
