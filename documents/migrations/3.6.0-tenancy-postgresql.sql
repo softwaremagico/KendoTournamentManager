@@ -119,4 +119,72 @@ BEGIN
     END IF;
 END $$;
 
+-- Compatibility for legacy schema versions that still use duels_id instead of duel_id.
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_1_score RENAME COLUMN duel_id TO duels_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_2_score RENAME COLUMN duel_id TO duels_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score_time'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score_time'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_1_score_time RENAME COLUMN duel_id TO duels_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score_time'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score_time'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_2_score_time RENAME COLUMN duel_id TO duels_id;
+    END IF;
+END $$;
+
 COMMIT;

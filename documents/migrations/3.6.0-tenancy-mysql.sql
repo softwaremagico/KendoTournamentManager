@@ -155,3 +155,46 @@ ALTER TABLE tournament_groups ADD CONSTRAINT tournament_groups_tenant_fk FOREIGN
 ALTER TABLE tournament_image ADD CONSTRAINT tournament_image_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
 ALTER TABLE tournament_scores ADD CONSTRAINT tournament_scores_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
 ALTER TABLE tournaments ADD CONSTRAINT tournaments_tenant_fk FOREIGN KEY (tenant_id) REFERENCES tenants(id);
+
+-- Compatibility for legacy schema versions that still use duels_id instead of duel_id.
+SET @legacy_duel_fk_1 = (
+    SELECT COLUMN_NAME
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'competitor_1_score'
+      AND column_name = 'duel_id'
+    LIMIT 1
+);
+SET @legacy_duel_fk_2 = (
+    SELECT COLUMN_NAME
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'competitor_2_score'
+      AND column_name = 'duel_id'
+    LIMIT 1
+);
+SET @legacy_duel_fk_3 = (
+    SELECT COLUMN_NAME
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'competitor_1_score_time'
+      AND column_name = 'duel_id'
+    LIMIT 1
+);
+SET @legacy_duel_fk_4 = (
+    SELECT COLUMN_NAME
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'competitor_2_score_time'
+      AND column_name = 'duel_id'
+    LIMIT 1
+);
+
+SET @sql = IF(@legacy_duel_fk_1 IS NOT NULL, 'ALTER TABLE competitor_1_score CHANGE duel_id duels_id BIGINT NOT NULL', 'SELECT 1');
+PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
+SET @sql = IF(@legacy_duel_fk_2 IS NOT NULL, 'ALTER TABLE competitor_2_score CHANGE duel_id duels_id BIGINT NOT NULL', 'SELECT 1');
+PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
+SET @sql = IF(@legacy_duel_fk_3 IS NOT NULL, 'ALTER TABLE competitor_1_score_time CHANGE duel_id duels_id BIGINT NOT NULL', 'SELECT 1');
+PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
+SET @sql = IF(@legacy_duel_fk_4 IS NOT NULL, 'ALTER TABLE competitor_2_score_time CHANGE duel_id duels_id BIGINT NOT NULL', 'SELECT 1');
+PREPARE statement FROM @sql; EXECUTE statement; DEALLOCATE PREPARE statement;
