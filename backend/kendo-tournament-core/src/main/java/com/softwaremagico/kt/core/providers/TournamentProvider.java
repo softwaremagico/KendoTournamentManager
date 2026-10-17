@@ -159,10 +159,15 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         if (tournament == null || tournament.getCreatedAt() == null) {
             return new ArrayList<>();
         }
-        // Due to LocalDateTime encryption countByGreaterThan is not working very well.
         final List<Tournament> tournaments = getRepository().findAll();
         tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-        return tournaments.subList(tournaments.indexOf(tournament) + 1, Math.min(tournaments.indexOf(tournament) + 1 + elementsToRetrieve, tournaments.size()));
+        final int tournamentIndex = tournaments.indexOf(tournament);
+        if (tournamentIndex < 0) {
+            return new ArrayList<>();
+        }
+        final int startIndex = tournamentIndex + 1;
+        final int endIndex = Math.min(startIndex + Math.max(elementsToRetrieve, 0), tournaments.size());
+        return tournaments.subList(startIndex, endIndex);
     }
 
     public List<Tournament> getPreviousTo(Tournament tournament) {
@@ -171,7 +176,11 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         }
         final List<Tournament> tournaments = getRepository().findAll();
         tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-        return tournaments.subList(tournaments.indexOf(tournament) + 1, tournaments.size());
+        final int tournamentIndex = tournaments.indexOf(tournament);
+        if (tournamentIndex < 0) {
+            return new ArrayList<>();
+        }
+        return tournaments.subList(tournamentIndex + 1, tournaments.size());
     }
 
     public long countTournamentsAfter(LocalDateTime createdAfter) {

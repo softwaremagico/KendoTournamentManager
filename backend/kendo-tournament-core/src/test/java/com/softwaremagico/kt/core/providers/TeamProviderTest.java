@@ -238,6 +238,23 @@ public class TeamProviderTest {
     }
 
     @Test
+    public void testDeleteByTournamentAndParticipantDoesNothingWhenMemberNotInTeam() {
+        final Tournament tournament = tournament("Autumn Cup", 3);
+        final Participant member = participant("P1");
+        final Participant otherMember = participant("P2");
+        final Team team = team("Team 1", tournament);
+        team.setMembers(new ArrayList<>(List.of(otherMember)));
+
+        when(teamRepository.findByTournamentAndMembers(tournament, member)).thenReturn(Optional.of(team));
+
+        final Optional<Team> result = provider.delete(tournament, member);
+
+        assertThat(result).contains(team);
+        assertThat(result.get().getMembers()).containsExactly(otherMember);
+        verify(teamRepository, never()).save(any(Team.class));
+    }
+
+    @Test
     public void testGetNextDefaultNameSkipsExistingTeamNames() {
         final Tournament tournament = tournament("Autumn Cup", 3);
         final Team team1 = team("Team 1", tournament);
@@ -284,4 +301,3 @@ public class TeamProviderTest {
         return team;
     }
 }
-

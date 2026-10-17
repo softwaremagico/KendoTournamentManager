@@ -60,6 +60,9 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
 
     public List<Team> createDefaultTeams(Tournament tournament, String createdBy) {
         final List<Team> newTeams = new ArrayList<>();
+        if (tournament == null || tournament.getTeamSize() == null || tournament.getTeamSize() <= 0) {
+            return new ArrayList<>(getRepository().saveAll(newTeams));
+        }
         final long competitors = roleProvider.count(tournament, RoleType.COMPETITOR);
         if (tournament.getTeamSize() > 0) {
             for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
@@ -102,12 +105,17 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
     public Optional<Team> delete(Tournament tournament, Participant member) {
         Optional<Team> optionalTeam = get(tournament, member);
         if (optionalTeam.isPresent()) {
-            //Setting tournament for updating.
-            optionalTeam.get().setTournament(tournament);
-            optionalTeam.get().getMembers().set(optionalTeam.get().getMembers().indexOf(member), null);
-            optionalTeam = Optional.of(update(optionalTeam.get()));
-            //setting tournament for returning element.
-            optionalTeam.get().setTournament(tournament);
+            final Team team = optionalTeam.get();
+            team.setTournament(tournament);
+            final List<Participant> members = team.getMembers();
+            if (members != null) {
+                final int memberIndex = members.indexOf(member);
+                if (memberIndex >= 0) {
+                    members.set(memberIndex, null);
+                    optionalTeam = Optional.of(update(team));
+                    optionalTeam.get().setTournament(tournament);
+                }
+            }
         }
         return optionalTeam;
     }

@@ -127,6 +127,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
      * @throws com.softwaremagico.kt.core.exceptions.NotFoundException if no entity with the given ID exists
      */
     public D get(Integer id) {
+        if (id == null) {
+            throw new NotFoundException(getClass(), "Entity id cannot be null.", ExceptionType.INFO);
+        }
         final E entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
                 ExceptionType.INFO));
         return convert(entity);
