@@ -30,6 +30,11 @@ import static org.testng.Assert.assertSame;
 @Test(groups = "loggedHttpException")
 public class LoggedHttpExceptionTest {
 
+    private static void logExpectedException(String context, Throwable throwable) {
+        System.out.println("Expected exception: " + context + " - " + throwable.getClass().getSimpleName()
+                + ": " + throwable.getMessage());
+    }
+
     private static final class TestLoggedHttpException extends LoggedHttpException {
         TestLoggedHttpException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
             super(clazz, message, type, status);
@@ -56,6 +61,7 @@ public class LoggedHttpExceptionTest {
     public void constructor_withMessageAndInfoType_expectStatusSet() {
         final TestLoggedHttpException exception =
                 new TestLoggedHttpException(getClass(), "info message", ExceptionType.INFO, HttpStatus.OK);
+        logExpectedException("constructor_withMessageAndInfoType_expectStatusSet", exception);
         assertEquals(exception.getStatus(), HttpStatus.OK);
         assertEquals(exception.getMessage(), "info message");
     }
@@ -64,6 +70,7 @@ public class LoggedHttpExceptionTest {
     public void constructor_withMessageAndWarningType_expectStatusSet() {
         final TestLoggedHttpException exception =
                 new TestLoggedHttpException(getClass(), "warning message", ExceptionType.WARNING, HttpStatus.BAD_REQUEST);
+        logExpectedException("constructor_withMessageAndWarningType_expectStatusSet", exception);
         assertEquals(exception.getStatus(), HttpStatus.BAD_REQUEST);
     }
 
@@ -71,6 +78,7 @@ public class LoggedHttpExceptionTest {
     public void constructor_withMessageAndSevereType_expectStatusSet() {
         final TestLoggedHttpException exception =
                 new TestLoggedHttpException(getClass(), "severe message", ExceptionType.SEVERE, HttpStatus.INTERNAL_SERVER_ERROR);
+        logExpectedException("constructor_withMessageAndSevereType_expectStatusSet", exception);
         assertEquals(exception.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -78,6 +86,7 @@ public class LoggedHttpExceptionTest {
     public void constructor_withMessageAndDebugType_expectStatusSet() {
         final TestLoggedHttpException exception =
                 new TestLoggedHttpException(getClass(), "debug message", ExceptionType.DEBUG, HttpStatus.NOT_FOUND);
+        logExpectedException("constructor_withMessageAndDebugType_expectStatusSet", exception);
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
     }
 
@@ -85,6 +94,7 @@ public class LoggedHttpExceptionTest {
     public void constructor_withThrowableAndStatus_expectStatusSetAndCauseWrapped() {
         final RuntimeException cause = new RuntimeException("cause");
         final TestLoggedHttpException exception = new TestLoggedHttpException(getClass(), cause, HttpStatus.CONFLICT);
+        logExpectedException("constructor_withThrowableAndStatus_expectStatusSetAndCauseWrapped", exception);
         assertEquals(exception.getStatus(), HttpStatus.CONFLICT);
         assertSame(exception.getCause(), cause);
     }
@@ -94,6 +104,7 @@ public class LoggedHttpExceptionTest {
         final RuntimeException cause = new RuntimeException("cause");
         final TestLoggedHttpException exception =
                 new TestLoggedHttpException(getClass(), "wrapping message", cause, HttpStatus.FORBIDDEN);
+        logExpectedException("constructor_withMessageThrowableAndStatus_expectStatusSetAndCauseWrapped", exception);
         assertEquals(exception.getStatus(), HttpStatus.FORBIDDEN);
         assertEquals(exception.getMessage(), "wrapping message");
         assertSame(exception.getCause(), cause);
@@ -103,6 +114,7 @@ public class LoggedHttpExceptionTest {
     public void constructor_withThrowableOnly_expectInternalServerErrorStatus() {
         final RuntimeException cause = new RuntimeException("cause");
         final TestLoggedHttpException exception = new TestLoggedHttpException(getClass(), cause);
+        logExpectedException("constructor_withThrowableOnly_expectInternalServerErrorStatus", exception);
         assertEquals(exception.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
         assertSame(exception.getCause(), cause);
     }
@@ -111,9 +123,9 @@ public class LoggedHttpExceptionTest {
     public void constructor_withMessageAndThrowableOnly_expectInternalServerErrorStatus() {
         final RuntimeException cause = new RuntimeException("cause");
         final TestLoggedHttpException exception = new TestLoggedHttpException(getClass(), "message", cause);
+        logExpectedException("constructor_withMessageAndThrowableOnly_expectInternalServerErrorStatus", exception);
         assertEquals(exception.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
         assertEquals(exception.getMessage(), "message");
         assertSame(exception.getCause(), cause);
     }
 }
-

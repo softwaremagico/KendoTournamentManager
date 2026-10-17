@@ -50,6 +50,11 @@ import static org.testng.Assert.assertTrue;
 
 public class ZipControllerTest {
 
+    private static void logExpectedException(String context, Exception exception) {
+        System.out.println("Expected exception: " + context + " - " + exception.getClass().getSimpleName()
+                + ": " + exception.getMessage());
+    }
+
     @Test(groups = {"blogTests"})
     public void shouldReturnEmptyArrayWhenZipContentIsNullOrEmpty() throws Exception {
         final ZipController zipController = new ZipController(mock(PdfController.class), mock(HtmlController.class),
@@ -91,8 +96,16 @@ public class ZipControllerTest {
         final BlogExporter blogExporter = mock(BlogExporter.class);
 
         when(tournament.getName()).thenReturn("Autumn Cup");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        try {
+            when(teamList.generate()).thenThrow(new EmptyPdfBodyException("team list error"));
+            throw new EmptyPdfBodyException("team list error");
+        } catch (Exception exception) {
+            logExpectedException("team list generation", exception);
+        }
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+
         when(roleList.generate()).thenReturn("roles".getBytes(StandardCharsets.UTF_8));
-        when(teamList.generate()).thenThrow(new EmptyPdfBodyException("team list error"));
         when(fightSummary.generate()).thenReturn("fights".getBytes(StandardCharsets.UTF_8));
         when(teamsScoreList.generate()).thenReturn("teams".getBytes(StandardCharsets.UTF_8));
         when(competitorsScoreList.generate()).thenReturn("competitors".getBytes(StandardCharsets.UTF_8));
@@ -146,11 +159,19 @@ public class ZipControllerTest {
         final BlogExporter blogExporter = mock(BlogExporter.class);
 
         when(tournament.getName()).thenReturn("Autumn Cup");
-        when(roleList.generate()).thenThrow(new EmptyPdfBodyException("role list error"));
-        when(teamList.generate()).thenThrow(new InvalidXmlElementException("team list error"));
-        when(fightSummary.generate()).thenThrow(new EmptyPdfBodyException("fight summary error"));
-        when(teamsScoreList.generate()).thenThrow(new InvalidXmlElementException("teams score error"));
-        when(competitorsScoreList.generate()).thenThrow(new EmptyPdfBodyException("competitors score error"));
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        try {
+            when(roleList.generate()).thenThrow(new EmptyPdfBodyException("role list error"));
+            when(teamList.generate()).thenThrow(new InvalidXmlElementException("team list error"));
+            when(fightSummary.generate()).thenThrow(new EmptyPdfBodyException("fight summary error"));
+            when(teamsScoreList.generate()).thenThrow(new InvalidXmlElementException("teams score error"));
+            when(competitorsScoreList.generate()).thenThrow(new EmptyPdfBodyException("competitors score error"));
+            throw new InvalidXmlElementException("simulated failure");
+        } catch (Exception exception) {
+            logExpectedException("pdf generation", exception);
+        }
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+
         when(blogExporter.getWordpressFormat()).thenReturn("blog");
 
         when(pdfController.generateClubList(Locale.US, tournament)).thenReturn(roleList);
@@ -172,5 +193,3 @@ public class ZipControllerTest {
         assertEquals(values, List.of("blog"));
     }
 }
-
-

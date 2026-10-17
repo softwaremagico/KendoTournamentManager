@@ -34,27 +34,40 @@ import java.io.ByteArrayOutputStream;
 @Test(groups = {"listsUnitTests"})
 public class TableBackgroundEventTest {
 
+    private static void logExpectedException(String context) {
+        System.out.println("Expected exception: " + context);
+    }
+
     private static final float[][] WIDTHS = {{0f, 100f}};
     private static final float[] HEIGHTS = {100f, 0f};
 
     @Test
     public void nullResource_expectNoBackgroundAndNoException() {
         final TableBackgroundEvent event = new TableBackgroundEvent((String) null);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        logExpectedException("null background resource");
         event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test
     public void nonExistingResource_expectNoBackgroundAndNoException() {
         final TableBackgroundEvent event = new TableBackgroundEvent("/does-not-exist-image.png");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        logExpectedException("missing background resource");
         event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test
     public void existingResourceWithoutDocument_expectCaughtExceptionAndCachedResult() {
         final TableBackgroundEvent event = new TableBackgroundEvent("/kendo-tournament-manager-logo.png");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        logExpectedException("missing document while initializing background image");
         // First call initializes (and fails due to missing document), second call reuses the cached value.
         event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
         event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test
@@ -78,8 +91,9 @@ public class TableBackgroundEventTest {
     public void withBackgroundImageAndNullCanvas_expectCaughtException() {
         final Document document = new Document(PageSize.A4);
         final TableBackgroundEvent event = new TableBackgroundEvent(null, document);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        logExpectedException("null canvas while drawing background");
         event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, null);
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 }
-
-
