@@ -298,7 +298,7 @@ identifiers and are not repeatable against a previously populated database.
 
 ## Advanced progression and recovery
 
-The suite contains **50 browser scenarios**. The advanced scenarios use real UI
+The suite contains **51 browser scenarios**. The advanced scenarios use real UI
 actions plus authenticated browser HTTP requests for precise persisted-state
 assertions. `AdvancedBrowserTest` provides isolated browser setup and those reads;
 it does not mock backend responses.
@@ -307,7 +307,7 @@ it does not mock backend responses.
 | --- | --- |
 | `SwissProgressionTest` | Three rounds with eight teams; independent match-point and Buchholz calculations; no repeated opponents; configured round limit. Five-team variant verifies distinct byes and no fabricated MEN statistics. Scoring is explicitly configured to 3/1. |
 | `ManualTournamentProgressionTest` | Manual Custom fight and ranking; rejected out-of-range Senbatsu drag, four completed challenges, and one surviving team. |
-| `ResultCorrectionTest` | Reopen a completed duel, remove MEN and replace with opponent KOTE; verify ranking, both participants' statistics, and a second session. Create a team tie, select representatives, resolve daihyōsen, and check the deciding hit. |
+| `ResultCorrectionTest` | Reopen a completed duel, remove MEN and replace with opponent KOTE; verify ranking, both participants' statistics, and a second session. League tie: verify shared position and draw counters, select representatives, resolve daihyōsen, and check the winner and deciding hit after reload. Championship tie: verify automatic daihyōsen, blocked final while pending, correct winner progression, and final classification without duplicate fights. |
 | `TenantDirectAccessTest` | Known foreign participant/club/tournament IDs: read, update, delete, statistics and export rejection; original data preserved; logout and login into another organization; token-renewal request. |
 | `WebSocketReconnectTest` | Close actual browser WebSockets, observe a new open connection, and verify subsequent live score delivery without reloading the page. |
 | `SubstitutionTest` | Swap a reserve into a future fight, reload the persisted order, preserve the completed fight, and attribute later KOTE to the replacement. |
