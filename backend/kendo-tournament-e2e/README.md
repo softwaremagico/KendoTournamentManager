@@ -165,6 +165,23 @@ mvn -pl kendo-tournament-e2e test \
 
 ## Implemented tests
 
+### Draw resolution
+
+- `ResultCorrectionTest.tiedTeamLeagueCreatesDaihyosenAndAttributesDecidingHitToRepresentative`
+  completes a tied league, selects representatives, resolves the deciding duel,
+  and checks the ranking and participant's MEN statistic.
+- `ChampionshipDrawTest.tiedChampionshipFinalRequiresDaihyosenAndRanksItsWinner`
+  finishes a two-member championship final with one 2–0 victory per team (MEN
+  versus KOTE), verifies equal ranking before the tiebreak, selects representatives
+  through the UI, and checks the deciding MEN, final winner/runner-up ordering,
+  persistence after reload, and absence of a duplicated final.
+
+Run both draw regressions with:
+
+```bash
+E2E_TESTS=ResultCorrectionTest,ChampionshipDrawTest bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
 | Test | Authentication | Coverage |
 | --- | --- | --- |
 | `LoginTest.loginFormRenders` | No | Opens `#/login`, checks that the login form renders, and verifies that typing in the username field is retained by the WizardryTheme input. |
@@ -298,7 +315,7 @@ identifiers and are not repeatable against a previously populated database.
 
 ## Advanced progression and recovery
 
-The suite contains **51 browser scenarios**. The advanced scenarios use real UI
+The suite contains **52 browser scenarios**. The advanced scenarios use real UI
 actions plus authenticated browser HTTP requests for precise persisted-state
 assertions. `AdvancedBrowserTest` provides isolated browser setup and those reads;
 it does not mock backend responses.
