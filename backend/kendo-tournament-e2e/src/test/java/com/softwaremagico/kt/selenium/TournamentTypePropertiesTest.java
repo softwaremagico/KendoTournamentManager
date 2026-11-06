@@ -89,6 +89,24 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
                     "Unexpected visibility of " + fieldId + " for tournament type " + type);
         }
 
+        final String propertyDropdown = List.of(
+                        "tournament-draw-resolutions",
+                        "tournament-rung",
+                        "tournament-swiss-tie-break"
+                ).stream()
+                .filter(visibleFields::contains)
+                .findFirst()
+                .orElse(null);
+        if (propertyDropdown != null) {
+            final org.openqa.selenium.JavascriptExecutor script = (org.openqa.selenium.JavascriptExecutor) driver;
+            final Number propertyWidth = (Number) script.executeScript(
+                    "return document.getElementById(arguments[0]).getBoundingClientRect().width", propertyDropdown);
+            final Number durationWidth = (Number) script.executeScript(
+                    "return document.getElementById('tournament-duration').getBoundingClientRect().width");
+            Assert.assertEquals(Math.round(propertyWidth.doubleValue()), Math.round(durationWidth.doubleValue()),
+                    "Tournament property dropdown should align with the main form for " + type);
+        }
+
         client.clickWizardryButton(By.id("tournament-button-save"));
         client.getWebDriverWait()
                 .withMessage(() -> driver.findElement(By.id("tournament-popup")).getText())
