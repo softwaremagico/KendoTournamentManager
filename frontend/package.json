@@ -42,8 +42,8 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "21.2.26",
-    "@angular/cli": "21.2.26",
+    "@angular-devkit/build-angular": "21.2.29",
+    "@angular/cli": "21.2.29",
     "@angular/compiler-cli": "21.2.26",
     "@types/dom-to-image": "^2.6.4",
     "@types/jasmine": "^5.1.15",
