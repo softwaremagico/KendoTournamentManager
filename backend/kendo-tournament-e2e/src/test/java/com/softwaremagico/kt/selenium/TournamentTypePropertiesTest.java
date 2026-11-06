@@ -125,6 +125,15 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
                         Math.round(((Number) gaps.getFirst()).doubleValue()),
                         "Tournament property spacing should match the existing form rows for " + type);
             }
+            final Map<?, ?> tooltipBounds = (Map<?, ?>) script.executeScript("""
+                    const description = document.querySelector('#tournament-swiss-avoid-repeated-pairings .toggle-description')
+                      .getBoundingClientRect();
+                    const popup = document.getElementById('tournament-popup').getBoundingClientRect();
+                    return {descriptionBottom: description.bottom, popupBottom: popup.bottom};
+                    """);
+            Assert.assertTrue(((Number) tooltipBounds.get("descriptionBottom")).doubleValue()
+                            <= ((Number) tooltipBounds.get("popupBottom")).doubleValue(),
+                    "Swiss toggle description should remain inside the tournament popup");
         }
 
         client.clickWizardryButton(By.id("tournament-button-save"));
