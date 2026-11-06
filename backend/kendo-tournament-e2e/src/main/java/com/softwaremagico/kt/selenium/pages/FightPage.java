@@ -23,11 +23,7 @@ package com.softwaremagico.kt.selenium.pages;
 
 import com.softwaremagico.kt.selenium.WebDriverClient;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.TimeoutException;
 
 import java.util.List;
 
@@ -82,18 +78,7 @@ public class FightPage {
         if (twoFirstRoundWinners) {
             webDriverClient.waitUntilClickable(By.xpath("//button[.//mat-icon[@svgIcon='one-winner']]")).click();
         }
-        try {
-            webDriverClient.findVisible(By.cssSelector("tournament-brackets .level-0 group-container"));
-        } catch (TimeoutException exception) {
-            final org.openqa.selenium.WebDriver driver = webDriverClient.getDriver();
-            System.err.println("Championship group container did not render. URL: " + driver.getCurrentUrl());
-            System.err.println("Tournament bracket DOM: " + ((JavascriptExecutor) driver).executeScript(
-                    "return document.querySelector('tournament-brackets')?.outerHTML ?? 'missing tournament-brackets';"));
-            for (LogEntry entry : driver.manage().logs().get(LogType.BROWSER)) {
-                System.err.println("Browser console: " + entry.getMessage());
-            }
-            throw exception;
-        }
+        webDriverClient.findVisible(By.cssSelector("tournament-brackets .level-0 group-container"));
         for (int index = 0; index < additionalGroups; index++) {
             final By addGroup = By.cssSelector("app-tournament-generator button[biit-icon][icon='plus']");
             if (!webDriverClient.findVisible(addGroup).isEnabled()) {

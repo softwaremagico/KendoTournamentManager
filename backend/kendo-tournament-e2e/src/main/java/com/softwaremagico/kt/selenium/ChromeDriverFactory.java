@@ -24,11 +24,7 @@ package com.softwaremagico.kt.selenium;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-
 import java.time.Duration;
-import java.util.logging.Level;
 
 /**
  * Creates browsers with the same deterministic viewport in local and CI runs.
@@ -56,9 +52,6 @@ public final class ChromeDriverFactory {
         if (headless) {
             options.addArguments("--headless=new");
         }
-        final LoggingPreferences loggingPreferences = new LoggingPreferences();
-        loggingPreferences.enable(LogType.BROWSER, Level.ALL);
-        options.setCapability("goog:loggingPrefs", loggingPreferences);
         final WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT);
         return driver;
