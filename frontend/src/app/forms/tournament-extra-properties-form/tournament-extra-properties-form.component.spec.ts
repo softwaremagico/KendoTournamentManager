@@ -1,4 +1,4 @@
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {TournamentExtraPropertiesFormComponent} from './tournament-extra-properties-form.component';
 import {RbacService} from '../../services/rbac/rbac.service';
 import {TranslocoService} from '@jsverse/transloco';
@@ -110,6 +110,29 @@ describe('TournamentExtraPropertiesFormComponent', () => {
     expect(component.avoidDuplicatedFights).toBeFalse();
     expect(component.resolveOddFightsAsap).toBeFalse();
     expect(component.challengeDistance).toBe(4);
+    expect(component.propertiesLoaded).toBeTrue();
+  });
+
+  it('should wait for existing tournament properties to load before allowing a save', () => {
+    const properties = new Subject<any[]>();
+    tournamentExtendedPropertiesServiceSpy.getByTournament.and.returnValue(properties);
+
+    component.ngOnInit();
+
+    expect(component.propertiesLoaded).toBeFalse();
+    properties.next([]);
+    expect(component.propertiesLoaded).toBeTrue();
+    properties.complete();
+  });
+
+  it('should allow a new tournament form to save without loading persisted properties', () => {
+    component.tournament = buildTournament();
+    component.tournament.id = undefined;
+
+    component.ngOnInit();
+
+    expect(component.propertiesLoaded).toBeTrue();
+    expect(tournamentExtendedPropertiesServiceSpy.getByTournament).not.toHaveBeenCalled();
   });
 
   it('should use default challengeDistance when persisted value is not a number', () => {
@@ -122,26 +145,62 @@ describe('TournamentExtraPropertiesFormComponent', () => {
     expect(component.challengeDistance).toBe(3);
   });
 
-  it('should convert league fights order true to FIFO on save', () => {
-    component.onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, 'true');
+  it('should update visible property groups immediately when the tournament type changes', () => {
+    component.tournament = buildTournament(TournamentType.CHAMPIONSHIP);
+    expect(component.canMaximizeFights).toBeTrue();
+    expect(component.canConfigureSwiss).toBeFalse();
 
-    const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-    expect(updateArg.propertyValue).toBe(LeagueFightsOrder.FIFO);
+    component.tournament.type = TournamentType.SWISS;
+
+    expect(component.canMaximizeFights).toBeFalse();
+    expect(component.canConfigureSwiss).toBeTrue();
   });
 
-  it('should convert league fights order false to LIFO on save', () => {
-    component.onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, 'false');
+  it('should save league fights order as FIFO or LIFO with the main form', () => {
+    component.tournament = buildTournament(TournamentType.LEAGUE);
+    component.firstInFirstOut = true;
+    component.saveProperties(component.tournament).subscribe();
+    expect(tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0].propertyValue)
+      .toBe(LeagueFightsOrder.FIFO);
 
-    const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-    expect(updateArg.propertyValue).toBe(LeagueFightsOrder.LIFO);
+    tournamentExtendedPropertiesServiceSpy.update.calls.reset();
+    component.firstInFirstOut = false;
+    component.saveProperties(component.tournament).subscribe();
+    expect(tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0].propertyValue)
+      .toBe(LeagueFightsOrder.LIFO);
   });
 
-  it('should persist plain property values without conversion on save', () => {
-    component.onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, 'true');
+  it('should save properties for the active tournament type only', () => {
+    component.tournament = buildTournament(TournamentType.SWISS);
+    component.saveProperties(component.tournament).subscribe();
 
-    const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-    expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
-    expect(updateArg.propertyValue).toBe('true');
+    const savedKeys = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+      .map(([property]) => property.propertyKey);
+    expect(savedKeys).toEqual([
+      TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS,
+      TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE
+    ]);
+  });
+
+  it('should save plain property values with the main form', () => {
+    component.tournament = buildTournament(TournamentType.CHAMPIONSHIP);
+    component.areFightsMaximized = true;
+    component.saveProperties(component.tournament).subscribe();
+
+    const property = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+      .map(([item]) => item)
+      .find(item => item.propertyKey === TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
+    expect(property?.propertyValue).toBe('true');
+  });
+
+  it('should surface a failed property save instead of completing successfully', () => {
+    component.tournament = buildTournament(TournamentType.SWISS);
+    tournamentExtendedPropertiesServiceSpy.update.and.returnValue(of(undefined) as any);
+    const errorSpy = jasmine.createSpy('error');
+
+    component.saveProperties(component.tournament).subscribe({error: errorSpy});
+
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   // ─── Swiss ───────────────────────────────────────────────────────────────────
@@ -216,36 +275,51 @@ describe('TournamentExtraPropertiesFormComponent', () => {
     });
 
     it('should persist SWISS_TIE_BREAK_RULE on save', () => {
-      component.onSave(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.MEDIAN_BUCHHOLZ);
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.swissTieBreakRule = SwissTieBreakRule.MEDIAN_BUCHHOLZ;
+      component.saveProperties(component.tournament).subscribe();
 
-      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
-      expect(updateArg.propertyValue).toBe(SwissTieBreakRule.MEDIAN_BUCHHOLZ);
+      const property = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+        .map(([item]) => item)
+        .find(item => item.propertyKey === TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE);
+      expect(property?.propertyValue).toBe(SwissTieBreakRule.MEDIAN_BUCHHOLZ);
     });
 
     it('should persist SWISS_AVOID_REPEATED_PAIRINGS on save', () => {
-      component.onSave(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, 'false');
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.swissAvoidRepeatedPairings = false;
+      component.saveProperties(component.tournament).subscribe();
 
-      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS);
-      expect(updateArg.propertyValue).toBe('false');
+      const property = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+        .map(([item]) => item)
+        .find(item => item.propertyKey === TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS);
+      expect(property?.propertyValue).toBe('false');
     });
 
     it('should persist SWISS_ROUNDS on save', () => {
-      component.onSave(TournamentExtraPropertyKey.SWISS_ROUNDS, '7');
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.swissRounds = 7;
+      component.saveProperties(component.tournament).subscribe();
 
-      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_ROUNDS);
-      expect(updateArg.propertyValue).toBe('7');
+      const property = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+        .map(([item]) => item)
+        .find(item => item.propertyKey === TournamentExtraPropertyKey.SWISS_ROUNDS);
+      expect(property?.propertyValue).toBe('7');
     });
 
-    it('should persist SWISS_ROUNDS as undefined when empty string is passed (model ignores falsy values)', () => {
-      component.onSave(TournamentExtraPropertyKey.SWISS_ROUNDS, '');
+    it('should clear SWISS_ROUNDS when left empty', () => {
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.swissRounds = 5;
+      component.saveProperties(component.tournament).subscribe();
+      tournamentExtendedPropertiesServiceSpy.update.calls.reset();
 
-      const updateArg = tournamentExtendedPropertiesServiceSpy.update.calls.mostRecent().args[0];
-      expect(updateArg.propertyKey).toBe(TournamentExtraPropertyKey.SWISS_ROUNDS);
-      // TournamentExtendedProperty constructor skips falsy values, so propertyValue stays undefined
-      expect(updateArg.propertyValue).toBeUndefined();
+      component.swissRounds = null;
+      component.saveProperties(component.tournament).subscribe();
+
+      const property = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+        .map(([item]) => item)
+        .find(item => item.propertyKey === TournamentExtraPropertyKey.SWISS_ROUNDS);
+      expect(property?.propertyValue).toBe('');
     });
 
     it('should not set other tournament type flags when SWISS', () => {
@@ -273,4 +347,3 @@ describe('TournamentExtraPropertiesFormComponent', () => {
 
   });
 });
-

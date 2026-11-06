@@ -677,6 +677,9 @@ public class TournamentProviderTest {
             final TournamentExtraProperty prop1 = new TournamentExtraProperty(sourceTournament,
                     TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "3", "otherUser");
             prop1.setId(1);
+            final TournamentExtraProperty incompatibleProperty = new TournamentExtraProperty(sourceTournament,
+                    TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "true", "otherUser");
+            incompatibleProperty.setId(2);
 
           when(tournamentRepository.save(any(Tournament.class))).thenAnswer(invocation -> {
               Tournament t = invocation.getArgument(0);
@@ -684,7 +687,7 @@ public class TournamentProviderTest {
               return t;
           });
           when(tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc("user"))
-                  .thenReturn(new ArrayList<>(List.of(prop1)));
+                  .thenReturn(new ArrayList<>(List.of(prop1, incompatibleProperty)));
 
           final Tournament result = provider.save(tournament);
           final ArgumentCaptor<List<TournamentExtraProperty>> propertiesCaptor = ArgumentCaptor.forClass(List.class);
@@ -1010,6 +1013,7 @@ public class TournamentProviderTest {
           final TournamentExtraProperty prop = new TournamentExtraProperty();
           prop.setId(1);
           prop.setTournament(new Tournament("OldT", 1, 3, TournamentType.LEAGUE, "user"));
+          prop.setPropertyKey(TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
 
           when(tournamentRepository.save(any(Tournament.class))).thenAnswer(invocation -> {
               Tournament t = invocation.getArgument(0);
@@ -1032,4 +1036,3 @@ public class TournamentProviderTest {
         return tournament;
     }
 }
-

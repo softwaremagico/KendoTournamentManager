@@ -7,7 +7,7 @@
         error="{{errors | mapGet: TournamentFormValidationFields.NAME_ERRORS}}"
       ></biit-input-text>
     </div>
-    <div class="row row-with-button">
+    <div class="row">
       <biit-dropdown id="tournament-type"
         [ngModel]="tournament.type | dropdownInterface: translatedTypes"
         (ngModelChange)="tournament.type = $event.value"
@@ -18,13 +18,6 @@
         [descriptionLabel]="'description'"
         [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
       ></biit-dropdown>
-      @if ((RbacActivity.EDIT_TOURNAMENT | hasPermission)) {
-        <button id="edit-options-button" biit-icon icon="column_selection"
-          class="edit-score-button"
-          (click)="openExtraProperties=true"
-          [disabled]="tournament.id==undefined || tournament.type == typeCustom">
-        </button>
-      }
     </div>
     <div class="row">
       <biit-input-text id="tournament-shiaijos" [(ngModel)]="tournament.shiaijos"
@@ -101,6 +94,7 @@
         [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
       ></biit-dropdown>
     </div>
+    <tournament-extra-properties-form #extraProperties [tournament]="tournament"></tournament-extra-properties-form>
     <div class="buttons-row">
       @if (tournament.id) {
         <button biit-button secondary id="tournament-images" (click)="addPhoto=true"
@@ -109,7 +103,7 @@
         </button>
       }
       <button biit-button id="tournament-button-save" (click)="onSave()"
-        [disabled]="saving || !(RbacActivity.EDIT_TOURNAMENT | hasPermission)">
+        [disabled]="saving || !extraProperties.propertiesLoaded || !(RbacActivity.EDIT_TOURNAMENT | hasPermission)">
         {{ t('saveButton') }}
       </button>
     </div>
@@ -121,17 +115,6 @@
       <tournament-images
         [tournament]="tournament"
       (onClosed)="addPhoto=false"></tournament-images>
-    </biit-popup>
-  }
-
-  @if (openExtraProperties) {
-    <biit-popup id="custom-properties-popup"
-      [title]="t('t.tournamentProperties')"
-      >
-      <tournament-extra-properties-form
-        [tournament]="tournament"
-        (closed)="openExtraProperties=false">
-      </tournament-extra-properties-form>
     </biit-popup>
   }
 
