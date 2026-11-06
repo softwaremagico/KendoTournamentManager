@@ -106,6 +106,26 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
             Assert.assertEquals(Math.round(propertyWidth.doubleValue()), Math.round(durationWidth.doubleValue()),
                     "Tournament property dropdown should align with the main form for " + type);
         }
+        if (type.equals("Swiss System")) {
+            final org.openqa.selenium.JavascriptExecutor script = (org.openqa.selenium.JavascriptExecutor) driver;
+            final List<?> gaps = (List<?>) script.executeScript("""
+                    const scoreRow = document.getElementById('tournament-score-rules').parentElement.getBoundingClientRect();
+                    const durationRow = document.getElementById('tournament-duration').parentElement.getBoundingClientRect();
+                    const propertyRows = Array.from(document.querySelectorAll('tournament-extra-properties-form .canvas .row'))
+                      .map(row => row.getBoundingClientRect());
+                    return [
+                      durationRow.top - scoreRow.bottom,
+                      propertyRows[0].top - durationRow.bottom,
+                      propertyRows[1].top - propertyRows[0].bottom,
+                      propertyRows[2].top - propertyRows[1].bottom
+                    ];
+                    """);
+            for (int index = 1; index < gaps.size(); index++) {
+                Assert.assertEquals(Math.round(((Number) gaps.get(index)).doubleValue()),
+                        Math.round(((Number) gaps.getFirst()).doubleValue()),
+                        "Tournament property spacing should match the existing form rows for " + type);
+            }
+        }
 
         client.clickWizardryButton(By.id("tournament-button-save"));
         client.getWebDriverWait()
