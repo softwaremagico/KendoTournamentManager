@@ -4,9 +4,8 @@
       <div class="row">
         @if (canMaximizeFights) {
           <biit-toggle
+            id="tournament-maximize-fights"
             [(ngModel)]="areFightsMaximized"
-            (click)="onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, !areFightsMaximized+'')"
-            (keydown)="onSave(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, !areFightsMaximized+'')"
             [description]="t('maximizeFightsHint')">
             {{ t('maximizeFights') }}
           </biit-toggle>
@@ -17,9 +16,8 @@
       <div class="row">
         @if (canAvoidDuplicatedFights) {
           <biit-toggle
+            id="tournament-avoid-duplicate-fights"
             [(ngModel)]="avoidDuplicatedFights"
-            (click)="onSave(TournamentExtraPropertyKey.AVOID_DUPLICATES, !avoidDuplicatedFights+'')"
-            (keydown)="onSave(TournamentExtraPropertyKey.AVOID_DUPLICATES, !avoidDuplicatedFights+'')"
             [description]="t('avoidDuplicateFightsHint')">
             {{ t('avoidDuplicateFights') }}
           </biit-toggle>
@@ -30,9 +28,8 @@
       <div class="row">
         @if (needsFifoWinner) {
           <biit-toggle
+            id="tournament-league-fifo"
             [(ngModel)]="firstInFirstOut"
-            (click)="onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, !firstInFirstOut+'')"
-            (keydown)="onSave(TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, !firstInFirstOut+'')"
             [description]="t('leagueFifoHint')">
             {{ t('leagueFifo') }}
           </biit-toggle>
@@ -43,9 +40,8 @@
       <div class="row">
         @if (canResolveOddFightsAsap) {
           <biit-toggle
+            id="tournament-resolve-odd-fights-asap"
             [(ngModel)]="resolveOddFightsAsap"
-            (click)="onSave(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, !resolveOddFightsAsap+'')"
-            (keydown)="onSave(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, !resolveOddFightsAsap+'')"
             [description]="t('oddFightsResolvedAsapHint')">
             {{ t('oddFightsResolvedAsap') }}
           </biit-toggle>
@@ -56,7 +52,7 @@
       <div class="row">
         <biit-dropdown id="tournament-draw-resolutions"
           [ngModel]="(selectedDrawResolution+'') | dropdownInterface: drawResolutionValues"
-          (ngModelChange)="onSave(TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, $event.value)"
+          (ngModelChange)="selectedDrawResolution = $event.value"
           [data]="drawResolutionValues"
           [label]="'label'"
           [value]="'value'"
@@ -70,7 +66,7 @@
       <div class="row">
         <biit-dropdown id="tournament-rung"
           [ngModel]="(challengeDistance+'') | dropdownInterface: senbatsuChallengeDistance"
-          (ngModelChange)="onSave(TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE, $event.value)"
+          (ngModelChange)="challengeDistance = $event.value"
           [data]="senbatsuChallengeDistance"
           [label]="'label'"
           [value]="'value'"
@@ -83,9 +79,8 @@
     @if (canConfigureSwiss) {
       <div class="row">
         <biit-toggle
+          id="tournament-swiss-avoid-repeated-pairings"
           [(ngModel)]="swissAvoidRepeatedPairings"
-          (click)="onSave(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, !swissAvoidRepeatedPairings+'')"
-          (keydown)="onSave(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, !swissAvoidRepeatedPairings+'')"
           [description]="t('swissAvoidRepeatedPairingsHint')">
           {{ t('swissAvoidRepeatedPairings') }}
         </biit-toggle>
@@ -93,7 +88,7 @@
       <div class="row">
         <biit-dropdown id="tournament-swiss-tie-break"
           [ngModel]="(swissTieBreakRule+'') | dropdownInterface: swissTieBreakRuleValues"
-          (ngModelChange)="onSave(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, $event.value)"
+          (ngModelChange)="swissTieBreakRule = $event.value"
           [data]="swissTieBreakRuleValues"
           [label]="'label'"
           [value]="'value'"
@@ -109,15 +104,9 @@
           [type]="Type.NUMBER"
           [min]="1"
           [placeholder]="t('swissRounds')"
-          (ngModelChange)="onSave(TournamentExtraPropertyKey.SWISS_ROUNDS, $event != null ? $event+'' : '')"
           [disabled]="!(RbacActivity.EDIT_TOURNAMENT | hasPermission)"
         ></biit-input-text>
       </div>
     }
-    <div class="buttons-row">
-      <button biit-button id="tournament-button-close" (click)="closed.emit()" primary>
-        {{ t('close') }}
-      </button>
-    </div>
   </div>
 </ng-container>

@@ -5,7 +5,6 @@ import {MatSpinnerOverlayModule} from "../../components/mat-spinner-overlay/mat-
 import {TranslocoModule} from "@jsverse/transloco";
 import {BiitDropdownModule, BiitInputTextModule, BiitToggleModule} from "@biit-solutions/wizardry-theme/inputs";
 import {FormsModule} from "@angular/forms";
-import {BiitButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
 
@@ -23,7 +22,6 @@ import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/d
     TranslocoModule,
     BiitToggleModule,
     FormsModule,
-    BiitButtonModule,
     HasPermissionPipe,
     BiitDropdownModule,
     BiitInputTextModule,

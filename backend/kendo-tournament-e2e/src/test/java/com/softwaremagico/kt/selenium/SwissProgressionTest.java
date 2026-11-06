@@ -21,8 +21,6 @@ package com.softwaremagico.kt.selenium;
  * #L%
  */
 
-import com.softwaremagico.kt.selenium.components.InputField;
-import com.softwaremagico.kt.selenium.components.Dropdown;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -37,15 +35,18 @@ public class SwissProgressionTest extends AdvancedBrowserTest {
     public void oddSwissFieldRotatesByesWithoutInventingParticipantHits() { runSwiss(5, 3); }
 
     private void runSwiss(int count, int rounds) {
-        seed("Swiss System", count, 1);
+        seed("Swiss System", count, 1, rounds, "Buchholz");
+        final List<Map<String,Object>> properties = list(api("GET", "/tournaments/properties/tournaments/" + tournamentId, null));
+        final Map<String,Object> roundsProperty = properties.stream()
+                .filter(property -> "SWISS_ROUNDS".equals(property.get("propertyKey"))).findFirst().orElseThrow();
+        final Map<String,Object> tieBreakProperty = properties.stream()
+                .filter(property -> "SWISS_TIE_BREAK_RULE".equals(property.get("propertyKey"))).findFirst().orElseThrow();
+        Assert.assertEquals(roundsProperty.get("propertyValue"), Integer.toString(rounds));
+        Assert.assertEquals(tieBreakProperty.get("propertyValue"), "BUCHHOLZ");
         final Map<String,Object> definition=map(api("GET","/tournaments/"+tournamentId,null));
         final Map<String,Object> scoring=map(definition.get("tournamentScore"));
         scoring.put("pointsByVictory",3);scoring.put("pointsByDraw",1);
         Assert.assertEquals(number(request(driver,"PUT","/tournaments",definition),"status"),200);
-        options();
-        new InputField(client, "swiss-rounds").setValue(Integer.toString(rounds));
-        new Dropdown(client, "tournament-swiss-tie-break").select("Buchholz");
-        closeOptions();
         fights.generateLeagueFights();
         final Set<String> pairings = new HashSet<>();
         final Set<Integer> previousByes = new HashSet<>();

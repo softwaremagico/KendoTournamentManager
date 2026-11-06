@@ -1,4 +1,4 @@
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {TournamentFormComponent} from './tournament-form.component';
 import {RbacService} from '../../services/rbac/rbac.service';
@@ -17,6 +17,7 @@ describe('TournamentFormComponent', () => {
   let biitSnackbarServiceSpy: jasmine.SpyObj<BiitSnackbarService>;
   let tournamentServiceSpy: jasmine.SpyObj<TournamentService>;
   let fightServiceSpy: jasmine.SpyObj<FightService>;
+  let extraPropertiesFormSpy: jasmine.SpyObj<{ saveProperties: (tournament: Tournament) => any }>;
 
   const buildTournament = (id?: number): Tournament => {
     const t = new Tournament();
@@ -37,11 +38,13 @@ describe('TournamentFormComponent', () => {
     biitSnackbarServiceSpy = jasmine.createSpyObj('BiitSnackbarService', ['showNotification']);
     tournamentServiceSpy = jasmine.createSpyObj('TournamentService', ['add', 'update']);
     fightServiceSpy = jasmine.createSpyObj('FightService', ['getFromTournament']);
+    extraPropertiesFormSpy = jasmine.createSpyObj('TournamentExtraPropertiesFormComponent', ['saveProperties']);
 
     rbacServiceSpy.isAllowed.and.returnValue(true);
     translocoServiceSpy.selectTranslate.and.returnValue(of('translated'));
     translocoServiceSpy.translate.and.returnValue('translated');
     fightServiceSpy.getFromTournament.and.returnValue(of([]));
+    extraPropertiesFormSpy.saveProperties.and.returnValue(of(undefined));
 
     component = new TournamentFormComponent(
       rbacServiceSpy,
@@ -52,6 +55,7 @@ describe('TournamentFormComponent', () => {
     );
 
     component.tournament = buildTournament(1);
+    (component as any).extraPropertiesForm = extraPropertiesFormSpy;
   });
 
   it('should create the component', () => {
@@ -131,18 +135,68 @@ describe('TournamentFormComponent', () => {
     component.onSave();
 
     expect(tournamentServiceSpy.update).toHaveBeenCalledWith(component.tournament);
+    expect(extraPropertiesFormSpy.saveProperties).toHaveBeenCalledWith(component.tournament);
     expect(component.saved.emit).toHaveBeenCalled();
   });
 
   it('should call add on save for new tournament', () => {
     component.tournament = buildTournament(undefined);
-    tournamentServiceSpy.add.and.returnValue(of(component.tournament));
+    const savedTournament = buildTournament(2);
+    tournamentServiceSpy.add.and.returnValue(of(savedTournament));
     spyOn(component.saved, 'emit');
 
     component.onSave();
 
     expect(tournamentServiceSpy.add).toHaveBeenCalledWith(component.tournament);
+    expect(component.tournament.id).toBe(2);
+    expect(extraPropertiesFormSpy.saveProperties).toHaveBeenCalledWith(savedTournament);
     expect(component.saved.emit).toHaveBeenCalled();
+  });
+
+  it('should save tournament properties only after the tournament has been saved', () => {
+    const calls: string[] = [];
+    const savedTournament = buildTournament(2);
+    tournamentServiceSpy.add.and.callFake(tournament => {
+      calls.push('tournament');
+      return of(savedTournament);
+    });
+    extraPropertiesFormSpy.saveProperties.and.callFake(() => {
+      calls.push('properties');
+      return of(undefined);
+    });
+    component.tournament = buildTournament(undefined);
+
+    component.onSave();
+
+    expect(calls).toEqual(['tournament', 'properties']);
+  });
+
+  it('should not save tournament properties if saving the tournament fails', () => {
+    tournamentServiceSpy.add.and.returnValue(throwError(() => new Error('save failed')));
+    component.tournament = buildTournament(undefined);
+
+    component.onSave();
+
+    expect(extraPropertiesFormSpy.saveProperties).not.toHaveBeenCalled();
+  });
+
+  it('should retain the created tournament id if saving its properties fails', () => {
+    const savedTournament = buildTournament(42);
+    component.tournament = buildTournament(undefined);
+    tournamentServiceSpy.add.and.returnValue(of(savedTournament));
+    extraPropertiesFormSpy.saveProperties.and.returnValue(throwError(() => new Error('property save failed')));
+    spyOn(component.saved, 'emit');
+
+    component.onSave();
+
+    expect(component.tournament.id).toBe(42);
+    expect(component.saved.emit).not.toHaveBeenCalled();
+    tournamentServiceSpy.update.and.returnValue(of(component.tournament));
+    extraPropertiesFormSpy.saveProperties.and.returnValue(of(undefined));
+    component.onSave();
+
+    expect(tournamentServiceSpy.add).toHaveBeenCalledTimes(1);
+    expect(tournamentServiceSpy.update).toHaveBeenCalledWith(component.tournament);
   });
 
   it('should show warning and stop save when validation fails', () => {
@@ -155,4 +209,3 @@ describe('TournamentFormComponent', () => {
     expect(tournamentServiceSpy.update).not.toHaveBeenCalled();
   });
 });
-

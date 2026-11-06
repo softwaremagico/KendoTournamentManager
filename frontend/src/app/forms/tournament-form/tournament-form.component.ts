@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentFormValidationFields} from "./tournament-form-validation-fields";
 import {ScoreType} from "../../models/score-type";
@@ -6,7 +6,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
-import {combineLatest, takeUntil} from "rxjs";
+import {combineLatest, map, switchMap, takeUntil} from "rxjs";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {InputLimits} from "../../utils/input-limits";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
@@ -14,6 +14,7 @@ import {TournamentService} from "../../services/tournament.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
+import {TournamentExtraPropertiesFormComponent} from "../tournament-extra-properties-form/tournament-extra-properties-form.component";
 
 @Component({
   standalone: false,
@@ -40,6 +41,8 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   saved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
   @Input() @Output()
   errorEvent: EventEmitter<unknown> = new EventEmitter<unknown>();
+  @ViewChild(TournamentExtraPropertiesFormComponent)
+  protected extraPropertiesForm: TournamentExtraPropertiesFormComponent;
   protected addPhoto: boolean = false;
 
   protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
@@ -63,7 +66,6 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
 
   protected saving: boolean = false;
-  protected openExtraProperties: boolean = false;
   protected openScoreRules: boolean = false;
 
   tournamentWithTeams: boolean = false;
@@ -195,25 +197,24 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
 
     this.saving = true;
 
-    if (this.tournament.id) {
-      this.tournamentService.update(this.tournament).subscribe({
-        next: (tournament: Tournament): void => {
-          this.saved.emit(tournament);
-        },
-        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
-      }).add(() => {
-        this.saving = false;
-      });
-    } else {
-      this.tournamentService.add(this.tournament).subscribe({
-        next: (tournament: Tournament): void => {
-          this.saved.emit(tournament);
-        },
-        error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
-      }).add(() => {
-        this.saving = false;
-      });
-    }
+    const saveTournament = this.tournament.id
+      ? this.tournamentService.update(this.tournament)
+      : this.tournamentService.add(this.tournament);
+
+    saveTournament.pipe(
+      switchMap(tournament => {
+        if (!tournament || tournament.id == null) {
+          throw new Error('Could not save tournament');
+        }
+        this.tournament.id = tournament.id;
+        return this.extraPropertiesForm.saveProperties(tournament).pipe(map(() => tournament));
+      })
+    ).subscribe({
+      next: (tournament: Tournament): void => this.saved.emit(tournament),
+      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+    }).add(() => {
+      this.saving = false;
+    });
   }
 
 }

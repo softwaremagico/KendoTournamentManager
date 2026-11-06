@@ -21,9 +21,6 @@ package com.softwaremagico.kt.selenium;
  * #L%
  */
 
-import com.softwaremagico.kt.selenium.components.InputField;
-import com.softwaremagico.kt.selenium.components.Popup;
-import com.softwaremagico.kt.selenium.components.Table;
 import com.softwaremagico.kt.selenium.pages.ClubPage;
 import com.softwaremagico.kt.selenium.pages.FightPage;
 import com.softwaremagico.kt.selenium.pages.LoginPage;
@@ -80,6 +77,10 @@ public abstract class AdvancedBrowserTest {
     }
 
     protected void seed(String type, int teams, int size) {
+        seed(type, teams, size, null, null);
+    }
+
+    protected void seed(String type, int teams, int size, Integer swissRounds, String swissTieBreakRule) {
         final String id = Long.toString(System.currentTimeMillis());
         club = "Advanced Club " + id;
         tournament = "Advanced " + type + " " + id;
@@ -95,6 +96,7 @@ public abstract class AdvancedBrowserTest {
         }
         tournaments.open(URL);
         if (type.equals("Senbatsu")) { tournaments.createSenbatsu(tournament); }
+        else if (swissRounds != null) { tournaments.createSwissTournament(tournament, size, swissRounds, swissTieBreakRule); }
         else { tournaments.createTournament(tournament, type, size); }
         tournaments.addCompetitors(names);
         tournaments.createTeams(teams, names.length);
@@ -121,20 +123,6 @@ public abstract class AdvancedBrowserTest {
                 return true;
             });
         }
-    }
-
-    protected void options() {
-        tournaments.open(URL);
-        tournaments.select(tournament);
-        new Table(client, "tournaments-table").clickAction("button-edit");
-        client.clickFirstVisible(By.id("edit-options-button"));
-        client.findVisible(By.id("custom-properties-popup"));
-    }
-
-    protected void closeOptions() {
-        client.clickWizardryButton(By.cssSelector("#custom-properties-popup #tournament-button-close"));
-        new Popup(client, "tournament-popup").close();
-        tournaments.openFights();
     }
 
     protected WebElement duel(int index) {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DrawResolution} from "../../models/draw-resolution";
 import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
@@ -12,7 +12,7 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {LeagueFightsOrder} from "../../models/league-fights-order";
 import {Tournament} from "../../models/tournament";
 import {TournamentType} from "../../models/tournament-type";
-import {combineLatest, takeUntil} from "rxjs";
+import {combineLatest, concatMap, from, map, Observable, takeUntil, toArray} from "rxjs";
 
 @Component({
   standalone: false,
@@ -24,18 +24,37 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
 
   @Input()
   tournament: Tournament;
-  @Output()
-  closed: EventEmitter<void> = new EventEmitter<void>();
+  propertiesLoaded = false;
 
   drawResolution: DrawResolution[];
 
-  //Enable
-  canMaximizeFights: boolean;
-  needsDrawResolution: boolean;
-  canSelectChallengeDistance: boolean;
-  needsFifoWinner: boolean;
-  canResolveOddFightsAsap: boolean;
-  canAvoidDuplicatedFights: boolean;
+  get canMaximizeFights(): boolean {
+    return TournamentType.canMaximizeFights(this.tournament?.type);
+  }
+
+  get needsDrawResolution(): boolean {
+    return TournamentType.needsDrawResolution(this.tournament?.type);
+  }
+
+  get canSelectChallengeDistance(): boolean {
+    return TournamentType.canSelectChallengeDistance(this.tournament?.type);
+  }
+
+  get needsFifoWinner(): boolean {
+    return TournamentType.needsFifoWinner(this.tournament?.type);
+  }
+
+  get canResolveOddFightsAsap(): boolean {
+    return TournamentType.resolveOddFightsAsap(this.tournament?.type);
+  }
+
+  get canAvoidDuplicatedFights(): boolean {
+    return TournamentType.avoidsDuplicatedFights(this.tournament?.type);
+  }
+
+  get canConfigureSwiss(): boolean {
+    return TournamentType.isSwiss(this.tournament?.type);
+  }
 
   //Values
   areFightsMaximized: boolean;
@@ -49,14 +68,12 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
   protected senbatsuChallengeDistance: { value: string, label: string }[] = [];
   protected SENBATSU_ALLOWED_DISTANCE: number[] = [2, 3, 4, 5];
 
-  // Swiss
-  canConfigureSwiss: boolean;
   swissRounds: number | null;
   swissTieBreakRule: SwissTieBreakRule;
   swissAvoidRepeatedPairings: boolean;
+  private persistedPropertyKeys = new Set<TournamentExtraPropertyKey>();
   protected swissTieBreakRules = SwissTieBreakRule.toArray();
   protected swissTieBreakRuleValues: { value: string, label: string, description: string }[] = [];
-  protected readonly TournamentExtraPropertyKey = TournamentExtraPropertyKey;
   protected readonly Type = Type;
 
   constructor(rbacService: RbacService, public transloco: TranslocoService,
@@ -72,13 +89,10 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
   }
 
   ngOnInit(): void {
-    this.canMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
-    this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
-    this.canSelectChallengeDistance = TournamentType.canSelectChallengeDistance(this.tournament.type);
-    this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
-    this.canAvoidDuplicatedFights = TournamentType.avoidsDuplicatedFights(this.tournament.type);
-    this.canResolveOddFightsAsap = TournamentType.resolveOddFightsAsap(this.tournament.type)
-    this.canConfigureSwiss = TournamentType.isSwiss(this.tournament.type);
+    if (!this.tournament.id) {
+      this.propertiesLoaded = true;
+      return;
+    }
 
     this.tournamentExtendedPropertiesService.getByTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
       if (_tournamentSelection) {
@@ -86,10 +100,12 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
           this.applyTournamentProperty(_tournamentProperty);
         }
       }
+      this.propertiesLoaded = true;
     });
   }
 
   private applyTournamentProperty(property: TournamentExtendedProperty): void {
+    this.persistedPropertyKeys.add(property.propertyKey);
     switch (property.propertyKey) {
       case TournamentExtraPropertyKey.KING_DRAW_RESOLUTION:
         this.selectedDrawResolution = DrawResolution.getByKey(property.propertyValue);
@@ -172,16 +188,54 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
     });
   }
 
-  onSave(tournamentExtraProperty: TournamentExtraPropertyKey, propertyValue: string) {
-    if (tournamentExtraProperty === TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-      if (propertyValue === "true") {
-        propertyValue = LeagueFightsOrder.FIFO;
-      } else {
-        propertyValue = LeagueFightsOrder.LIFO;
+  saveProperties(tournament: Tournament): Observable<void> {
+    const properties: TournamentExtendedProperty[] = [];
+    const tournamentType = tournament.type;
+    const addProperty = (key: TournamentExtraPropertyKey, value: string): void => {
+      const property = new TournamentExtendedProperty(tournament, key, value);
+      property.propertyValue = value;
+      properties.push(property);
+    };
+
+    if (TournamentType.canMaximizeFights(tournamentType)) {
+      addProperty(TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, String(this.areFightsMaximized));
+      addProperty(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, String(this.resolveOddFightsAsap));
+    }
+    if (TournamentType.avoidsDuplicatedFights(tournamentType)) {
+      addProperty(TournamentExtraPropertyKey.AVOID_DUPLICATES, String(this.avoidDuplicatedFights));
+    }
+    if (TournamentType.needsFifoWinner(tournamentType)) {
+      addProperty(
+        TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION,
+        this.firstInFirstOut ? LeagueFightsOrder.FIFO : LeagueFightsOrder.LIFO
+      );
+    }
+    if (TournamentType.needsDrawResolution(tournamentType)) {
+      addProperty(TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, this.selectedDrawResolution);
+    }
+    if (TournamentType.canSelectChallengeDistance(tournamentType)) {
+      addProperty(TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE, String(this.challengeDistance));
+    }
+    if (TournamentType.isSwiss(tournamentType)) {
+      addProperty(TournamentExtraPropertyKey.SWISS_AVOID_REPEATED_PAIRINGS, String(this.swissAvoidRepeatedPairings));
+      addProperty(TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, this.swissTieBreakRule);
+      if (this.swissRounds != null || this.persistedPropertyKeys.has(TournamentExtraPropertyKey.SWISS_ROUNDS)) {
+        addProperty(TournamentExtraPropertyKey.SWISS_ROUNDS, this.swissRounds == null ? '' : String(this.swissRounds));
       }
     }
-    this.tournamentExtendedPropertiesService.update(
-      new TournamentExtendedProperty(this.tournament, tournamentExtraProperty, propertyValue)
-    ).subscribe().add();
+
+    return from(properties).pipe(
+      concatMap(property => this.tournamentExtendedPropertiesService.update(property).pipe(
+        map(updatedProperty => {
+          if (!updatedProperty) {
+            throw new Error(`Could not save tournament property ${property.propertyKey}`);
+          }
+          this.persistedPropertyKeys.add(property.propertyKey);
+          return updatedProperty;
+        })
+      )),
+      toArray(),
+      map(() => undefined)
+    );
   }
 }

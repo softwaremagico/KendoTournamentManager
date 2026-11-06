@@ -1,16 +1,18 @@
-$space: 1em;
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
 
 .canvas {
   width: 100%;
-  min-width: 40vw;
-  height: 100%;
-  overflow-y: auto;
+  min-width: 0;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4.5rem;
-  padding: 4.5rem 2.5rem 3rem;
-  background: var(--body-background);
+  padding: 0;
 
   .row {
     display: flex;
@@ -27,14 +29,7 @@ $space: 1em;
     biit-toggle {
       display: flex;
       align-items: center;
+      position: relative;
     }
   }
-}
-
-.buttons-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 1rem;
-  gap: $space;
 }

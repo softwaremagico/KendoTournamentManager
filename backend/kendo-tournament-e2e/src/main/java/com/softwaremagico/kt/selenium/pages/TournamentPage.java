@@ -64,7 +64,7 @@ public class TournamentPage {
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("League");
         new Dropdown(webDriverClient, "tournament-score-rules").select(scoreRule);
-        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        saveCurrentTournament();
         table.waitUntilContainsText(name);
         new Popup(webDriverClient, "tournament-popup").close();
     }
@@ -77,12 +77,16 @@ public class TournamentPage {
         createTournamentForm(name, type, teamSize);
     }
 
+    public void createSwissTournament(String name, int teamSize, int rounds, String tieBreakRule) {
+        createTournamentForm(name, "Swiss System", teamSize, rounds, tieBreakRule);
+    }
+
     public void createSenbatsu(String name) {
         selectedTournamentName = name;
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
         new Dropdown(webDriverClient, "tournament-type").select("Senbatsu");
-        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        saveCurrentTournament();
         table.waitUntilContainsText(name);
         new Popup(webDriverClient, "tournament-popup").close();
         table.search(name);
@@ -90,13 +94,24 @@ public class TournamentPage {
     }
 
     private void createTournamentForm(String name, String type, int teamSize) {
+        createTournamentForm(name, type, teamSize, null, null);
+    }
+
+    private void createTournamentForm(String name, String type, int teamSize, Integer swissRounds, String swissTieBreakRule) {
         selectedTournamentName = name;
         table.clickAction("button-plus");
         new InputField(webDriverClient, "tournament-name").setValue(name);
+        if (swissRounds != null && !webDriverClient.getDriver().findElements(By.id("swiss-rounds")).isEmpty()) {
+            throw new AssertionError("Swiss-specific fields must be hidden until Swiss is selected.");
+        }
         new Dropdown(webDriverClient, "tournament-type").select(type);
         new InputField(webDriverClient, "tournament-team-size").setValue(Integer.toString(teamSize));
         new InputField(webDriverClient, "tournament-fight-size").setValue(Integer.toString(teamSize));
-        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        if (swissRounds != null) {
+            new InputField(webDriverClient, "swiss-rounds").setValue(Integer.toString(swissRounds));
+            new Dropdown(webDriverClient, "tournament-swiss-tie-break").select(swissTieBreakRule);
+        }
+        saveCurrentTournament();
         table.waitUntilContainsText(name);
         new Popup(webDriverClient, "tournament-popup").close();
         table.search(name);
@@ -211,6 +226,11 @@ public class TournamentPage {
         table.clickAction("button-edit");
         webDriverClient.waitUntilClickable(By.id("edit-score-button")).click();
         webDriverClient.findVisible(By.id("score-rules-popup"));
+    }
+
+    public void saveCurrentTournament() {
+        webDriverClient.clickWizardryButton(By.id("tournament-button-save"));
+        webDriverClient.waitUntilInvisible(By.id("tournament-popup"));
     }
 
     private void clickSelectedTournamentAction(String icon) {

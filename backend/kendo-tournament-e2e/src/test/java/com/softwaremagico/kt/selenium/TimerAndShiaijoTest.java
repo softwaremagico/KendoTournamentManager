@@ -73,7 +73,7 @@ public class TimerAndShiaijoTest extends AdvancedBrowserTest {
         tournaments.open(URL); tournaments.select(tournament);
         new Table(client,"tournaments-table").clickAction("button-edit");
         new InputField(client,"tournament-shiaijos").setValue("2");
-        client.clickWizardryButton(By.id("tournament-button-save"));
+        tournaments.saveCurrentTournament();
         new Popup(client,"tournament-popup").close(); tournaments.openFights();
         final List<Map<String,Object>> teams = list(api("GET","/teams/tournaments/"+tournamentId,null));
         // Court allocation uses the same authenticated REST contract as the fight creator.
