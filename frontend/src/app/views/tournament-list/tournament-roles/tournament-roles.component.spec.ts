@@ -96,6 +96,7 @@ describe('TournamentRolesComponent', () => {
   });
 
   it('should load participants and roles on ngOnInit, set avatars flag and lock competitors in teams', () => {
+    const initialUserListData = component.userListData;
     const competitorWithRole = createParticipant(1, 'John', 'Competitor');
     const participantA = createParticipant(2, 'Ana', 'Alpha');
     const participantB = createParticipant(3, 'Zoe', 'Zulu', true);
@@ -119,6 +120,7 @@ describe('TournamentRolesComponent', () => {
     expect(component.participants.get(RoleType.COMPETITOR)?.[0].locked).toBeTrue();
     expect(component.userListData.participants.map(p => p.lastname)).toEqual(['Alpha', 'Zulu']);
     expect(component.showAvatars).toBeTrue();
+    expect(component.userListData).not.toBe(initialUserListData);
   });
 
   it('should return undefined in transferCard when source and destination are equal', () => {

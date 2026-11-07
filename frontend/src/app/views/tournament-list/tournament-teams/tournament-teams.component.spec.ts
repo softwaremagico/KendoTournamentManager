@@ -1,4 +1,4 @@
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {TournamentTeamsComponent} from './tournament-teams.component';
 import {MessageService} from '../../../services/message.service';
 import {LoggerService} from '../../../services/logger.service';
@@ -19,6 +19,7 @@ import {Team} from '../../../models/team';
 import {Participant} from '../../../models/participant';
 import {Role} from '../../../models/role';
 import {TournamentScore} from '../../../models/tournament-score.model';
+import {Group} from '../../../models/group';
 
 describe('TournamentTeamsComponent', () => {
   let component: TournamentTeamsComponent;
@@ -118,6 +119,7 @@ describe('TournamentTeamsComponent', () => {
   });
 
   it('should initialize teams and participants in ngOnInit', () => {
+    const initialUserListData = component.userListData;
     const p1 = buildParticipant(1, 'Alice', 'Smith');
     const p2 = buildParticipant(2, 'Bob', 'Jones');
     const team1 = buildTeam(1, 'Team A', [p1]);
@@ -131,6 +133,22 @@ describe('TournamentTeamsComponent', () => {
     expect(teamServiceSpy.getFromTournament).toHaveBeenCalled();
     expect(roleServiceSpy.getFromTournamentAndType).toHaveBeenCalled();
     expect(component.teams.length).toBe(1);
+    expect(component.userListData).not.toBe(initialUserListData);
+    expect(component.groupsLoaded).toBeTrue();
+  });
+
+  it('should wait for groups to load before enabling team creation', () => {
+    const groups = new Subject<Group[]>();
+    groupServiceSpy.getFromTournament.and.returnValue(groups);
+    teamServiceSpy.getFromTournament.and.returnValue(of([]));
+    roleServiceSpy.getFromTournamentAndType.and.returnValue(of([]));
+
+    component.ngOnInit();
+
+    expect(component.groupsLoaded).toBeFalse();
+    groups.next([]);
+    groups.complete();
+    expect(component.groupsLoaded).toBeTrue();
   });
 
   it('should get card title as lastname + name when member exists', () => {
