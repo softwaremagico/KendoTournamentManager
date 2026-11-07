@@ -439,6 +439,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       //Remaining one on left column.
       this.userListData.participants = sortedParticipants;
       this.userListData.filteredParticipants = this.userListData.participants;
+      this.cdr.markForCheck();
     });
   }
 

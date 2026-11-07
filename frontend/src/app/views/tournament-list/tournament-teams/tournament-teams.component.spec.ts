@@ -20,6 +20,8 @@ import {Participant} from '../../../models/participant';
 import {Role} from '../../../models/role';
 import {TournamentScore} from '../../../models/tournament-score.model';
 import {Group} from '../../../models/group';
+import {ChangeDetectorRef} from '@angular/core';
+import {ScoreOfCompetitor} from '../../../models/score-of-competitor';
 
 describe('TournamentTeamsComponent', () => {
   let component: TournamentTeamsComponent;
@@ -37,6 +39,7 @@ describe('TournamentTeamsComponent', () => {
   let filterResetServiceSpy: jasmine.SpyObj<FilterResetService>;
   let csvServiceSpy: jasmine.SpyObj<CsvService>;
   let translocoServiceSpy: jasmine.SpyObj<TranslocoService>;
+  let changeDetectorRefSpy: jasmine.SpyObj<ChangeDetectorRef>;
 
   const buildTournament = (): Tournament => {
     const t = new Tournament();
@@ -88,6 +91,7 @@ describe('TournamentTeamsComponent', () => {
     });
     csvServiceSpy = jasmine.createSpyObj('CsvService', ['addTeams']);
     translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['translate']);
+    changeDetectorRefSpy = jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges']);
 
     rbacServiceSpy.isAllowed.and.returnValue(true);
     fightServiceSpy.getFromTournament.and.returnValue(of([]));
@@ -109,7 +113,7 @@ describe('TournamentTeamsComponent', () => {
       filterResetServiceSpy,
       csvServiceSpy,
       translocoServiceSpy,
-      jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges'])
+      changeDetectorRefSpy
     );
     component.tournament = buildTournament();
   });
@@ -149,6 +153,33 @@ describe('TournamentTeamsComponent', () => {
     groups.next([]);
     groups.complete();
     expect(component.groupsLoaded).toBeTrue();
+  });
+
+  it('should mark the view for check after balancing teams asynchronously', () => {
+    const participants = [
+      buildParticipant(1, 'Alice', 'Smith'),
+      buildParticipant(2, 'Bob', 'Jones'),
+      buildParticipant(3, 'Carol', 'Brown')
+    ];
+    const team = buildTeam(1, 'Team A', []);
+    const ranking = participants.map((participant: Participant): ScoreOfCompetitor => {
+      const score = new ScoreOfCompetitor();
+      score.competitor = participant;
+      return score;
+    });
+    component.teams = [team];
+    component.members.set(team, []);
+    component.userListData.participants = participants;
+    component.userListData.filteredParticipants = participants;
+    const rankingResponse = new Subject<ScoreOfCompetitor[]>();
+    rankingServiceSpy.getCompetitorsGlobalScoreRanking.and.returnValue(rankingResponse);
+    teamServiceSpy.update.and.returnValue(of(team));
+
+    component.balancedTeams();
+    expect(changeDetectorRefSpy.markForCheck).not.toHaveBeenCalled();
+    rankingResponse.next(ranking);
+
+    expect(changeDetectorRefSpy.markForCheck).toHaveBeenCalled();
   });
 
   it('should get card title as lastname + name when member exists', () => {
