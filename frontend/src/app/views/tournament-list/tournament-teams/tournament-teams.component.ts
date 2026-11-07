@@ -49,7 +49,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   userListData: UserListData = new UserListData();
   teams: Team[];
   members: Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
-  groups: Group[];
+  groups: Group[] = [];
+  groupsLoaded: boolean = false;
   teamSize: number[];
   protected addingTeam: boolean = false;
   loadingGlobal: boolean = false;
@@ -106,6 +107,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     const roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
     forkJoin([teamsRequest, roleRequests]).pipe(takeUntil(this.destroySubject)).subscribe(([teams, roles]): void => {
       roles ??= [];
+      this.userListData = new UserListData();
       this.userListData.participants = roles.map((role: Role) => role.participant).sort((a: Participant, b: Participant): number => {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
@@ -124,6 +126,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   private loadGroups(): void {
     this.groupService.getFromTournament(this.tournament.id!).pipe(takeUntil(this.destroySubject)).subscribe((_groups: Group[]): void => {
       this.groups = _groups;
+      this.groupsLoaded = true;
+      this.cdr.markForCheck();
     });
   }
 
@@ -435,6 +439,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       //Remaining one on left column.
       this.userListData.participants = sortedParticipants;
       this.userListData.filteredParticipants = this.userListData.participants;
+      this.cdr.markForCheck();
     });
   }
 
