@@ -22,14 +22,12 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.ScoreTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,8 +48,7 @@ public class TournamentScore extends Element {
     public static final int SWISS_DEFAULT_DRAW_POINTS = 1;
 
     @Column(name = "score_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Convert(converter = StringCryptoConverter.class)
+    @Convert(converter = ScoreTypeCryptoConverter.class)
     private ScoreType scoreType;
 
     @Column(name = "points_by_victory")

@@ -65,7 +65,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.16</version>
+        <version>4.1.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -85,31 +85,35 @@
         <maven-scm-api.version>1.11.2</maven-scm-api.version>
         <project.scm.id>git</project.scm.id>
         <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
-        <maven-jar-plugin.version>3.4.0</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
+        <!-- Surefire 3.6.x replaced the TestNG provider with the JUnit Platform
+             provider, which cannot read TestNG suite XML files. This project
+             drives its tests through src/test/resources/testng.xml, so the
+             3.5.x line is the last compatible one. -->
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-sources.version>3.4.0</maven-sources.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-        <maven-deploy.version>0.9.0</maven-deploy.version>
+        <maven-deploy.version>0.12.0</maven-deploy.version>
         <checkstyle.version>3.6.0</checkstyle.version>
         <checkstyle.core.version>14.4.0</checkstyle.core.version>
         <spotbugs.version>4.10.5.0</spotbugs.version>
         <org.testng.version>7.12.0</org.testng.version>
         <selenium.version>4.52.0</selenium.version>
-        <springdoc-openapi.version>2.8.17</springdoc-openapi.version>
+        <springdoc-openapi.version>3.2.0</springdoc-openapi.version>
         <license-maven-plugin.version>2.8.0</license-maven-plugin.version>
         <modelmapper.version>3.2.8</modelmapper.version>
         <jakarta.interceptor.version>2.2.0</jakarta.interceptor.version>
         <jjwt.version>0.13.0</jjwt.version>
-        <openpdf.version>1.4.2</openpdf.version>
+        <openpdf.version>3.0.5</openpdf.version>
         <!-- mysql.version removed: using Spring Boot BOM 9.7.0 (fixes CVE-2023-22102, CVE-2024-21272) -->
         <ehcache.version>3.12.0</ehcache.version>
         <jakarta.xml.bind-api.version>4.0.5</jakarta.xml.bind-api.version>
         <jaxb-runtime.version>4.0.9</jaxb-runtime.version>
         <javassist.version>3.33.0-GA</javassist.version>
         <qr-code.version>0.6.0</qr-code.version>
-        <apache-batik.version>1.19</apache-batik.version>
+        <apache-batik.version>1.20</apache-batik.version>
         <pitest-maven.version>1.30.2</pitest-maven.version>
         <jacoco.version>0.8.16</jacoco.version>
         <mockito.version>5.24.0</mockito.version>
@@ -134,20 +138,11 @@
                 <version>${commons-io.version}</version>
             </dependency>
             <!-- Force jaxb-core and txw2 to the same version as jaxb-runtime.
-                 Spring Boot 3.5.x BOM pins jaxb-core/txw2 to 4.0.6, but
+                 Spring Boot 4.x BOM already aligns jaxb-core/txw2/jaxb-runtime on
+                 glassfish-jaxb.version (4.0.9), so no explicit override is needed.
                  jaxb-runtime 4.0.9 requires jaxb-core >= 4.0.7
-                 (XmlFactory.createTransformerFactory(boolean,boolean) was added there).
-                 Without this override the classpath mismatch causes NoSuchMethodError at runtime. -->
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>${jaxb-runtime.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>txw2</artifactId>
-                <version>${jaxb-runtime.version}</version>
-            </dependency>
+                 (XmlFactory.createTransformerFactory(boolean,boolean) was added there);
+                 a classpath mismatch would cause NoSuchMethodError at runtime. -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>

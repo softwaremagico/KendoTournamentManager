@@ -21,11 +21,14 @@ package com.softwaremagico.kt;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.dialect.KendoH2Dialect;
+import com.softwaremagico.kt.persistence.dialect.KendoMySQLDialect;
+import com.softwaremagico.kt.persistence.dialect.KendoPostgreSQLDialect;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -63,7 +66,40 @@ public class DatabaseConfiguration {
                                                                       @Qualifier("kendoDataSource") DataSource dataSource) {
         final HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.hbm2ddl.auto", environment.getProperty("spring.kendo.datasource.jpa.hibernate.ddl-auto"));
+        final String dialect = resolveDialect();
+        if (dialect != null) {
+            properties.put("hibernate.dialect", dialect);
+        }
         return builder.dataSource(dataSource).properties(properties).packages(PACKAGE).build();
+    }
+
+    /**
+     * Resolves the Hibernate dialect to use.
+     * <p>
+     * The dialect can be set explicitly with {@code spring.kendo.datasource.hibernate.dialect}.
+     * When it is not set, it is derived from {@code spring.kendo.datasource.platform} so that
+     * the deployments only have to declare the database they use. When neither of them is
+     * available, Hibernate resolves the dialect from the JDBC connection.
+     * </p>
+     *
+     * @return the fully qualified name of the dialect or null when it has to be resolved by
+     * Hibernate.
+     */
+    private String resolveDialect() {
+        final String configuredDialect = environment.getProperty("spring.kendo.datasource.hibernate.dialect");
+        if (configuredDialect != null && !configuredDialect.isBlank()) {
+            return configuredDialect;
+        }
+        final String platform = environment.getProperty("spring.kendo.datasource.platform");
+        if (platform == null) {
+            return null;
+        }
+        return switch (platform.toLowerCase()) {
+            case "mysql", "mariadb" -> KendoMySQLDialect.class.getName();
+            case "postgresql", "postgres" -> KendoPostgreSQLDialect.class.getName();
+            case "h2" -> KendoH2Dialect.class.getName();
+            default -> null;
+        };
     }
 
     @Bean

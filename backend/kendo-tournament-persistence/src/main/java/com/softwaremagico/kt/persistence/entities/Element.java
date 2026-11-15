@@ -36,16 +36,15 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Version;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -77,9 +76,14 @@ public abstract class Element implements Serializable {
     private Integer id;
 
     /**
-     * Timestamp populated automatically by Hibernate when the row is first inserted.
+     * Timestamp populated automatically when the row is first inserted.
+     * <p>
+     * The value is assigned by {@link #assignTimestamps()} instead of by
+     * {@code @CreationTimestamp}. Hibernate 7 no longer writes a
+     * {@code @CreationTimestamp} column when the application changes it, and the
+     * creation date of imported or migrated records has to be preserved.
+     * </p>
      */
-    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -99,9 +103,12 @@ public abstract class Element implements Serializable {
     private String createdByHash;
 
     /**
-     * Timestamp updated automatically by Hibernate on every flush.
+     * Timestamp updated automatically every time the record is modified.
+     * <p>
+     * The value is assigned by {@link #validateRelatedTenantsOnUpdate()} instead of by
+     * {@code @UpdateTimestamp}, so that it keeps the same precision as the stored one.
+     * </p>
      */
-    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -134,6 +141,7 @@ public abstract class Element implements Serializable {
 
     @PrePersist
     protected void assignTenant() {
+        assignTimestamps();
         if (tenantId == null) {
             tenantId = TenantContext.getRequiredTenantId();
         }
@@ -143,6 +151,24 @@ public abstract class Element implements Serializable {
     @PreUpdate
     protected void validateRelatedTenantsOnUpdate() {
         validateRelatedTenants();
+        updatedAt = truncate(LocalDateTime.now());
+    }
+
+    /**
+     * Assigns the creation and update timestamps of a new record.
+     * <p>
+     * A creation date provided by the application is kept, so imported records keep
+     * their original date.
+     * </p>
+     */
+    private void assignTimestamps() {
+        final LocalDateTime now = truncate(LocalDateTime.now());
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        if (updatedAt == null) {
+            updatedAt = now;
+        }
     }
 
     /**
@@ -200,7 +226,7 @@ public abstract class Element implements Serializable {
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = truncate(createdAt);
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -208,7 +234,22 @@ public abstract class Element implements Serializable {
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+        this.updatedAt = truncate(updatedAt);
+    }
+
+    /**
+     * Truncates a timestamp to the precision that the databases support.
+     * <p>
+     * MySQL, PostgreSQL and H2 store the timestamps with a precision of microseconds, so
+     * a value with nanoseconds would be silently rounded when it is stored. Truncating it
+     * keeps the value held in memory exactly the same as the stored one.
+     * </p>
+     *
+     * @param dateTime the timestamp to truncate.
+     * @return the truncated timestamp or null when there is no timestamp.
+     */
+    private static LocalDateTime truncate(LocalDateTime dateTime) {
+        return dateTime == null ? null : dateTime.truncatedTo(ChronoUnit.MICROS);
     }
 
     public String getCreatedBy() {

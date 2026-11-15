@@ -21,12 +21,12 @@ package com.softwaremagico.kt.pdf.events;
  * #L%
  */
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Image;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.pdf.PdfContentByte;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -86,7 +86,7 @@ public class TableBackgroundEventTest {
         final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
         document.open();
         final PdfContentByte content = writer.getDirectContent();
-        document.add(new com.lowagie.text.Paragraph(" "));
+        document.add(new org.openpdf.text.Paragraph(" "));
         document.close();
 
         final Image image = Image.getInstance(getClass().getResourceAsStream("/kendo-tournament-manager-logo.png").readAllBytes());

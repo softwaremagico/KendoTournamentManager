@@ -116,7 +116,7 @@ public class ExceptionControllerAdviceTest {
 
     @Test(groups = "exceptionAdvice")
     public void shouldHandleHttpMessageNotReadable() {
-        HttpMessageNotReadableException exception = new HttpMessageNotReadableException("malformed");
+        HttpMessageNotReadableException exception = new HttpMessageNotReadableException("malformed", null);
 
         ResponseEntity<Object> response = advice.callHandleHttpMessageNotReadable(exception, HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST, null);
 

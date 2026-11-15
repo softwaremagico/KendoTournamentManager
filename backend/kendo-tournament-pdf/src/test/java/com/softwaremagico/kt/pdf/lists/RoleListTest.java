@@ -21,7 +21,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-import com.lowagie.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfPTable;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;

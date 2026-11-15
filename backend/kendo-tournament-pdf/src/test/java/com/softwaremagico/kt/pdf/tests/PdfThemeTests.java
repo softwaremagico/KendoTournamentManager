@@ -22,7 +22,7 @@ package com.softwaremagico.kt.pdf.tests;
  */
 
 import com.softwaremagico.kt.pdf.PdfTheme;
-import com.lowagie.text.pdf.BaseFont;
+import org.openpdf.text.pdf.BaseFont;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

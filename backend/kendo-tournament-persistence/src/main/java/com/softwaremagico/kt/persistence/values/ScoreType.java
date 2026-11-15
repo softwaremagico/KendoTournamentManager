@@ -50,6 +50,21 @@ public enum ScoreType {
         return DEFAULT;
     }
 
+    /**
+     * Resolves a score type by its enum name, ignoring the case.
+     *
+     * @param name the enum name.
+     * @return the matching score type or null when there is none.
+     */
+    public static ScoreType getType(String name) {
+        for (final ScoreType scoreType : ScoreType.values()) {
+            if (scoreType.name().equalsIgnoreCase(name)) {
+                return scoreType;
+            }
+        }
+        return null;
+    }
+
     public String getTag() {
         return tag;
     }

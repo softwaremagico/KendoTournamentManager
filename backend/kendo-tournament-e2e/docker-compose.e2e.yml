@@ -25,7 +25,7 @@ services:
       - /application/kendo-tournament-backend.jar
       - --spring.kendo.datasource.platform=mysql
       - --spring.kendo.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-      - --spring.kendo.datasource.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+      - --spring.kendo.datasource.hibernate.dialect=com.softwaremagico.kt.persistence.dialect.KendoMySQLDialect
       - --spring.kendo.datasource.jdbc-url=jdbc:mysql://database:3306/kendo_e2e?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - --spring.kendo.datasource.username=kendo_e2e
       - --spring.kendo.datasource.password=kendo_e2e_password

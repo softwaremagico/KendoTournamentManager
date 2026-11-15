@@ -29,8 +29,6 @@ import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
@@ -57,7 +55,6 @@ public class ParticipantImage extends Element {
     private byte[] data;
 
     @Column(name = "format", nullable = false)
-    @Enumerated(EnumType.STRING)
     @Convert(converter = ImageFormatCryptoConverter.class)
     private ImageFormat imageFormat;
 

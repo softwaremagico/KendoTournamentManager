@@ -21,8 +21,8 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
@@ -103,7 +103,7 @@ public class WebSocketControllerUnitTests {
 
     @Test
     public void shouldHandleSerializationErrorsWithoutThrowing() throws Exception {
-        final JsonProcessingException exception = new JsonProcessingException("boom") {
+        final JacksonException exception = new JacksonException("boom") {
         };
         doThrow(exception).when(objectMapper).writeValueAsString(any());
 

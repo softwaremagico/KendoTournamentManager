@@ -33,8 +33,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -101,7 +99,6 @@ public class Tournament extends Element implements IName {
      * etc.).
      */
     @Column(name = "tournament_type", nullable = false)
-    @Enumerated(EnumType.STRING)
     @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
