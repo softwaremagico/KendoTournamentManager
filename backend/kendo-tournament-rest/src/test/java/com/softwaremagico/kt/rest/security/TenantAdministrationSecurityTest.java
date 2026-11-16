@@ -21,7 +21,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.persistence.entities.Tenant;
 import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.repositories.TenantRepository;
@@ -32,7 +32,7 @@ import com.softwaremagico.kt.rest.security.dto.CreateTenantRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdateTenantRequest;
 import com.softwaremagico.kt.security.AvailableRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

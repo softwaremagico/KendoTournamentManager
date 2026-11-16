@@ -73,7 +73,7 @@ public class TournamentExtraPropertyControllerTest {
     }
 
     @Test(groups = "tournamentExtraProperties")
-    public void update_shouldReuseExistingPropertyIdAndDeleteGroupsForOddFightsFlag() {
+    public void update_shouldReuseExistingPropertyIdAndDeleteGroupsWhenOddFightsFlagChanges() {
         Tournament tournament = new Tournament();
         TournamentDTO tournamentDTO = new TournamentDTO();
         tournamentDTO.setName("Tournament");
@@ -85,6 +85,7 @@ public class TournamentExtraPropertyControllerTest {
 
         TournamentExtraProperty existing = new TournamentExtraProperty();
         existing.setId(77);
+        existing.setPropertyValue("false");
 
         TournamentExtraProperty mapped = new TournamentExtraProperty();
         TournamentExtraProperty saved = new TournamentExtraProperty();
@@ -101,6 +102,51 @@ public class TournamentExtraPropertyControllerTest {
         assertEquals(dto.getId(), Integer.valueOf(77));
         assertEquals(result, savedDTO);
         verify(groupProvider).delete(tournament);
+    }
+
+    @Test(groups = "tournamentExtraProperties")
+    public void update_shouldNotDeleteGroupsWhenCreatingOddFightsFlag() {
+        Tournament tournament = new Tournament();
+        TournamentDTO tournamentDTO = new TournamentDTO();
+        TournamentExtraPropertyDTO dto = new TournamentExtraPropertyDTO();
+        dto.setTournament(tournamentDTO);
+        dto.setPropertyKey(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP);
+        dto.setPropertyValue("true");
+
+        TournamentExtraProperty mapped = new TournamentExtraProperty();
+        when(tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+        when(provider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP)).thenReturn(null);
+        when(converter.reverse(dto)).thenReturn(mapped);
+        when(provider.save(mapped)).thenReturn(new TournamentExtraProperty());
+        when(converter.convert(any())).thenReturn(new TournamentExtraPropertyDTO());
+
+        controller.update(dto, "tester", "session");
+
+        verify(groupProvider, never()).delete(tournament);
+    }
+
+    @Test(groups = "tournamentExtraProperties")
+    public void update_shouldNotDeleteGroupsWhenOddFightsFlagIsUnchanged() {
+        Tournament tournament = new Tournament();
+        TournamentDTO tournamentDTO = new TournamentDTO();
+        TournamentExtraPropertyDTO dto = new TournamentExtraPropertyDTO();
+        dto.setTournament(tournamentDTO);
+        dto.setPropertyKey(TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP);
+        dto.setPropertyValue("true");
+
+        TournamentExtraProperty existing = new TournamentExtraProperty();
+        existing.setId(77);
+        existing.setPropertyValue("true");
+        TournamentExtraProperty mapped = new TournamentExtraProperty();
+        when(tournamentConverter.reverse(tournamentDTO)).thenReturn(tournament);
+        when(provider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP)).thenReturn(existing);
+        when(converter.reverse(dto)).thenReturn(mapped);
+        when(provider.save(mapped)).thenReturn(new TournamentExtraProperty());
+        when(converter.convert(any())).thenReturn(new TournamentExtraPropertyDTO());
+
+        controller.update(dto, "tester", "session");
+
+        verify(groupProvider, never()).delete(tournament);
     }
 
     @Test(groups = "tournamentExtraProperties")
@@ -152,5 +198,4 @@ public class TournamentExtraPropertyControllerTest {
         controller.getByTournamentId(999);
     }
 }
-
 

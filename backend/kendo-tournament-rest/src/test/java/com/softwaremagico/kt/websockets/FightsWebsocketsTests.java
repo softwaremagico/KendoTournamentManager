@@ -21,8 +21,8 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
@@ -31,7 +31,7 @@ import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -100,7 +100,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     private <T> T fromJson(String payload, Class<T> clazz) {
         try {
             return objectMapper.readValue(payload, clazz);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             Assert.fail("Cannot convert JSON", e);
             return null;
         }

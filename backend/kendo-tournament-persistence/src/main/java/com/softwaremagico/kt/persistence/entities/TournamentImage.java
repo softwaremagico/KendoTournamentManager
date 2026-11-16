@@ -68,7 +68,6 @@ public class TournamentImage extends Element {
     private TournamentImageType imageType;
 
     @Column(name = "image_format", nullable = false)
-    @Enumerated(EnumType.STRING)
     @Convert(converter = ImageCompressionCryptoConverter.class)
     private ImageCompression imageCompression;
 

@@ -21,13 +21,13 @@ package com.softwaremagico.kt.pdf.events;
  * #L%
  */
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfPTableEvent;
+import org.openpdf.text.BadElementException;
+import org.openpdf.text.Document;
+import org.openpdf.text.Image;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.PdfContentByte;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfPTableEvent;
 import com.softwaremagico.kt.logger.PdfExporterLog;
 
 import java.io.IOException;

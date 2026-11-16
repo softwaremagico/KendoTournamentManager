@@ -21,8 +21,8 @@ package com.softwaremagico.kt.rest;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
@@ -70,7 +70,7 @@ public class DataValidationTest extends AbstractTestNGSpringContextTests {
 
 	private String jwtToken;
 
-	private <T> String toJson(T object) throws JsonProcessingException {
+	private <T> String toJson(T object) throws JacksonException {
 		return this.objectMapper.writeValueAsString(object);
 	}
 

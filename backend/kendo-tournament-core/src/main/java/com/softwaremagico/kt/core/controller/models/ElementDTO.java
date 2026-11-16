@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class ElementDTO implements Serializable {
@@ -62,7 +63,22 @@ public class ElementDTO implements Serializable {
 
 
     public void setCreatedAt(LocalDateTime tournamentCreatedAt) {
-        this.createdAt = tournamentCreatedAt;
+        this.createdAt = truncate(tournamentCreatedAt);
+    }
+
+    /**
+     * Truncates a timestamp to the precision that the databases support.
+     * <p>
+     * MySQL, PostgreSQL and H2 store the timestamps with a precision of microseconds, so
+     * a value with nanoseconds would be silently rounded when it is stored. Truncating it
+     * keeps the value held in memory exactly the same as the stored one.
+     * </p>
+     *
+     * @param dateTime the timestamp to truncate.
+     * @return the truncated timestamp or null when there is no timestamp.
+     */
+    private static LocalDateTime truncate(LocalDateTime dateTime) {
+        return dateTime == null ? null : dateTime.truncatedTo(ChronoUnit.MICROS);
     }
 
     public String getCreatedBy() {
@@ -86,7 +102,7 @@ public class ElementDTO implements Serializable {
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+        this.updatedAt = truncate(updatedAt);
     }
 
     public Integer getVersion() {

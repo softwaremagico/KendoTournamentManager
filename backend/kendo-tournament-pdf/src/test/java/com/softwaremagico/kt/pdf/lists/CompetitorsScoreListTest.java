@@ -21,7 +21,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-import com.lowagie.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfPTable;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
@@ -97,7 +97,7 @@ public class CompetitorsScoreListTest {
         final PdfPTable table = new PdfPTable(competitorsScoreList.getTableWidths());
         competitorsScoreList.setTableProperties(table);
         competitorsScoreList.createFooterRow(null, table, 0, 0, null, null, 0);
-        assertEquals(competitorsScoreList.getPageSize(), com.lowagie.text.PageSize.A4);
+        assertEquals(competitorsScoreList.getPageSize(), org.openpdf.text.PageSize.A4);
     }
 }
 

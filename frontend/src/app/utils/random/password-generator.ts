@@ -17,7 +17,7 @@ export class PasswordGenerator {
 
   private static randomChar(): number {
     if (globalThis.crypto && globalThis.crypto.getRandomValues) {
-      const buffer: Uint8Array = new Uint8Array(1);
+      const buffer = new Uint8Array(new ArrayBuffer(1));
       globalThis.crypto.getRandomValues(buffer);
       return buffer[0];
     } else {

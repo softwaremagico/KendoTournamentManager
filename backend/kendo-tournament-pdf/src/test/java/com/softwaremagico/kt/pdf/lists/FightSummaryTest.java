@@ -21,7 +21,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-import com.lowagie.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfPTable;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
@@ -210,7 +210,7 @@ public class FightSummaryTest {
         final PdfPTable table = new PdfPTable(fightSummary.getTableWidths());
         fightSummary.setTableProperties(table);
         fightSummary.createFooterRow(null, table, 0, 0, null, null, 0);
-        assertEquals(fightSummary.getPageSize(), com.lowagie.text.PageSize.A4);
+        assertEquals(fightSummary.getPageSize(), org.openpdf.text.PageSize.A4);
     }
 }
 

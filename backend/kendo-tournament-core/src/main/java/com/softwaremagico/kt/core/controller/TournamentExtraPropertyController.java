@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class TournamentExtraPropertyController extends BasicInsertableController<TournamentExtraProperty, TournamentExtraPropertyDTO,
@@ -70,8 +71,10 @@ public class TournamentExtraPropertyController extends BasicInsertableController
         if (tournamentExtraProperty != null) {
             dto.setId(tournamentExtraProperty.getId());
         }
-        //Remove any existing group if changed.
-        if (dto.getPropertyKey() == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
+        // Changing this setting invalidates the bracket, but saving its initial or unchanged value does not.
+        if (dto.getPropertyKey() == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP
+                && tournamentExtraProperty != null
+                && !Objects.equals(tournamentExtraProperty.getPropertyValue(), dto.getPropertyValue())) {
             groupProvider.delete(tournamentConverter.reverse(dto.getTournament()));
         }
         return super.update(dto, username, session);

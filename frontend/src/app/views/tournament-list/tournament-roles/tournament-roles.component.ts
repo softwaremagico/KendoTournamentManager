@@ -85,6 +85,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
           this.showAvatars = true;
         }
       }
+      this.userListData = new UserListData();
        this.userListData.participants = participants;
        this.userListData.filteredParticipants = [...participants];
        this.cdr.detectChanges();
