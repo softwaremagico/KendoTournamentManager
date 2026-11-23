@@ -58,6 +58,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   tournament: Tournament;
   timer: boolean = false;
   private readonly tournamentId: number | undefined;
+  private guestTicket: string | undefined;
   groups: Group[];
   swappedColors: boolean = false;
   swappedTeams: boolean = false;
@@ -112,6 +113,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.filteredUnties = new Map<number, Duel[]>();
     this.filteredLevels = [];
     this.groups = [];
+    this.guestTicket = this.activatedRoute.snapshot.queryParamMap.get('ticket') ?? undefined;
     const state = this.router.lastSuccessfulNavigation?.()?.extras.state;
     if (state) {
       //Send by previous view.
@@ -284,7 +286,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.loginService.getJwtValue()) {
       this.initializeData();
     } else if (this.tournamentId) {
-      this.loginService.setGuestUserSession(this.tournamentId, (): void => {
+      this.loginService.setGuestUserSession(this.tournamentId, this.guestTicket, (): void => {
         this.initializeData();
       });
     } else {

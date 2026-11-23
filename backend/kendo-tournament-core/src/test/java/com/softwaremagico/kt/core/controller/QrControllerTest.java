@@ -70,7 +70,8 @@ public class QrControllerTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        controller = new QrController(qrProvider, tournamentProvider, participantProvider);
+        controller = new QrController(qrProvider, tournamentProvider, participantProvider,
+                (tournamentId, tenantId) -> "signed-ticket");
         setField(controller, "schema", "https");
         setField(controller, "machineDomain", "kt.local");
     }
@@ -85,7 +86,8 @@ public class QrControllerTest {
 
         final QrCodeDTO qrCodeDTO = controller.generateGuestQrCodeForTournamentFights(7, 8080, true);
 
-        assertEquals(qrCodeDTO.getContent(), "https://kt.local:8080/#/tournaments/fights?tournamentId=7&user=guest");
+        assertEquals(qrCodeDTO.getContent(),
+                "https://kt.local:8080/#/tournaments/fights?tournamentId=7&user=guest&ticket=signed-ticket");
         assertFalse(qrCodeDTO.getData().length == 0);
         verify(qrProvider).getQr(anyString(), anyInt(), any(Color.class), anyString(), any(Color.class));
     }
