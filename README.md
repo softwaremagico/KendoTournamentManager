@@ -180,6 +180,34 @@ bash ./backend/kendo-tournament-e2e/run-e2e.sh --stop
 See [`backend/kendo-tournament-e2e/README.md`](./backend/kendo-tournament-e2e/README.md)
 for credentials, supported variables, and the complete scenario catalogue.
 
+## Run locally for manual testing
+
+To build and start the application in a disposable Docker environment without
+running automated tests, use the companion script:
+
+```bash
+cd backend/kendo-tournament-e2e
+./run-app.sh
+```
+
+The script builds the backend JAR and the frontend bundle, starts MySQL, the
+backend, and the frontend, waits for readiness, and prints the access URLs.
+By default the frontend is available at `http://localhost:14200` and the API at
+`http://localhost:18080/kendo-tournament-backend`, with bootstrap credentials
+`admin@test.local` / `Admin-password-123`.
+
+Useful options:
+
+```bash
+./run-app.sh --no-build  # start using an existing JAR and frontend bundle
+./run-app.sh --logs      # follow container logs
+./run-app.sh --stop      # stop containers but keep the database volume
+./run-app.sh --reset     # stop containers and delete the database volume
+```
+
+Environment variables: `APP_FRONTEND_PORT`, `APP_BACKEND_PORT`, `APP_USERNAME`,
+`APP_PASSWORD`, `APP_ENABLE_TENANCY`, `APP_PROJECT_NAME`.
+
 ## Architecture
 
 The application follows a standard three-tier architecture deployed as Docker containers:
