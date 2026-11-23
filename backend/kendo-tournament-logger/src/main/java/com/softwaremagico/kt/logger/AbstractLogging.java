@@ -152,7 +152,9 @@ public abstract class AbstractLogging {
     }
 
     protected void log(String messageTemplate, Object... arguments) {
-        logger.debug(sanitize(messageTemplate), sanitizeArguments(arguments));
+        if (logger.isDebugEnabled()) {
+            logger.debug(sanitize(messageTemplate), sanitizeArguments(arguments));
+        }
     }
 
     /**

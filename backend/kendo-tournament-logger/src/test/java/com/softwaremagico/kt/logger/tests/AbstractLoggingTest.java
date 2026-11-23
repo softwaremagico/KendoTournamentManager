@@ -23,6 +23,8 @@ package com.softwaremagico.kt.logger.tests;
 
 import com.softwaremagico.kt.logger.AbstractLogging;
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.mockito.Mock;
@@ -32,6 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -98,6 +101,30 @@ public class AbstractLoggingTest {
     @Test(groups = "abstractLoggingTests")
     public void shouldLogTemplateMessage() {
         logging.callLogTemplate("Value: {}", "sample");
+    }
+
+    @Test(groups = "abstractLoggingTests")
+    public void shouldSanitizeNullTemplateAndArguments() {
+        logging.callLogTemplate(null, (Object[]) null);
+        logging.callLogTemplate(null, "value", null);
+    }
+
+    @Test(groups = "abstractLoggingTests")
+    public void shouldReplaceControlCharactersInTemplateAndArguments() {
+        final ch.qos.logback.classic.Logger logger =
+                (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ExposedLogging.class);
+        final ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        logger.addAppender(appender);
+        try {
+            logging.callLogTemplate("line:\n{}", "a\tb");
+        } finally {
+            logger.detachAppender(appender);
+            appender.stop();
+        }
+
+        assertEquals(appender.list.size(), 1);
+        assertEquals(appender.list.get(0).getFormattedMessage(), "line:_a_b");
     }
 
     private static final class ExposedLogging extends AbstractLogging {
