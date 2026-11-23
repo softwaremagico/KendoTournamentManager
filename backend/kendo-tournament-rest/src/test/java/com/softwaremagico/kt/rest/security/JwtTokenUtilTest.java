@@ -290,6 +290,15 @@ public class JwtTokenUtilTest {
     }
 
     @Test(groups = "jwtTokenUtil")
+    public void shouldExposeConfiguredExpirationDurations() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "3000", "4000", this.networkController);
+
+        assertEquals(util.getJwtExpirationDuration(), 1_200_000L);
+        assertEquals(util.getJwtGuestExpirationDuration(), 3_000L);
+        assertEquals(util.getJwtParticipantExpirationDuration(), 4_000L);
+    }
+
+    @Test(groups = "jwtTokenUtil")
     public void shouldCreateAndValidateGuestTicket() {
         final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
 
@@ -357,3 +366,5 @@ class TestNetworkController extends NetworkController {
         return "AA-BB-CC-DD";
     }
 }
+
+// Re-trigger backend Sonar analysis after adding expiration accessor tests.
