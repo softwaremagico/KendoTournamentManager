@@ -1,6 +1,7 @@
-Please ensure that you update the domain, email, and passwords in the `.env` file.
-Additionally, set the same passwords in the `application.properties` file and update the machine domain accordingly.
-The machine domain must also be configured in the `config.js` file.
+Generate unique values for `jwt_secret`, `database_password`, `database_encryption_key` and
+`TRAEFIK_BASIC_AUTH_USERS` (see the comments in `.env`). Secrets are injected into the backend container at runtime;
+do not write them into `application.properties` or commit the filled `.env` file. Update the machine domain in
+`.env`, `application.properties` and `config.js`.
 
 Subsequently, execute the following command:
 

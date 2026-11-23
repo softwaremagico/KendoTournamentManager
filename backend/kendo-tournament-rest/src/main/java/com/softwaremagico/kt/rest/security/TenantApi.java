@@ -294,11 +294,10 @@ public class TenantApi {
     }
 
     private String getClientIP(HttpServletRequest httpRequest) {
-        final String xfHeader = httpRequest.getHeader("X-Forwarded-For");
-        if (xfHeader == null) {
-            return httpRequest.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
+        // Keep tenant JWTs consistent with AuthApi/JwtTokenFilter: only the
+        // verified socket peer is trusted. Forwarded headers can be spoofed by
+        // an anonymous caller and must never end up in a signed token.
+        return httpRequest.getRemoteAddr();
     }
 
     private HttpHeaders getLoginHeaders(String jwtToken, long expirationTime, String session) {

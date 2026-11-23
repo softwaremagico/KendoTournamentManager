@@ -72,4 +72,9 @@
         <heap>10</heap>
     </cache>
 
+    <cache alias="qr-codes" uses-template="short-time-cache-template">
+        <key-type>java.lang.String</key-type>
+        <value-type>com.softwaremagico.kt.core.controller.models.QrCodeDTO</value-type>
+    </cache>
+
 </config>

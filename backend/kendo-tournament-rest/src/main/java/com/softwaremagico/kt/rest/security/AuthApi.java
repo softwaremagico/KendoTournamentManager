@@ -150,37 +150,6 @@ public class AuthApi {
         userAdminGeneratedListeners.add(listener);
     }
 
-    private void createDefaultTenantAndUser(AuthRequest request) {
-        try {
-            // Reuse an existing tenant so the first platform administrator belongs to it.
-            Tenant tenant = tenantRepository.findAllByActiveTrueOrderByNameAsc().stream().findFirst()
-                    .orElseGet(() -> tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null));
-            if (tenant == null) {
-                tenant = new Tenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
-                tenant = tenantRepository.save(tenant);
-                RestServerLogger.info(this.getClass(), "Default tenant '{}' created.", tenant);
-            }
-
-            // Set tenant context for user creation
-            TenantContext.setTenantId(tenant.getId());
-
-            try {
-                // The first account manages the platform, including tenants.
-                authenticatedUserController.createUser(null, request.getUsername(), request.getUsername(),
-                        "Administrator", request.getPassword(), AvailableRole.SUPER_ADMIN);
-                RestServerLogger.info(this.getClass(), "Default super administrator created: {}", request.getUsername());
-
-                // Notify listeners that admin was generated
-                userAdminGeneratedListeners.forEach(listener -> listener.generated(request.getUsername()));
-            } finally {
-                TenantContext.clear();
-            }
-        } catch (Exception e) {
-            RestServerLogger.warning(this.getClass(), "Error creating default tenant and user: {}", e.getMessage());
-            throw new RuntimeException("Failed to create default tenant and user", e);
-        }
-    }
-
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
@@ -191,22 +160,18 @@ public class AuthApi {
         if (tenantRepository == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Tenant tenant;
-        if (!tenancyEnabled) {
-            //Tenancy is disabled: every user belongs to the single Default tenant.
-            tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
-        } else {
-            tenant = resolveLastTenant(request.getUsername());
-        }
+        // Tenancy disabled means every user belongs to the single Default tenant.
+        final Tenant tenant = !tenancyEnabled
+                ? tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null)
+                : resolveLastTenant(request.getUsername());
 
-        // If tenant doesn't exist and no users exist, create default tenant and user
+        // An unauthenticated caller must never be able to create the first
+        // SUPER_ADMIN. Bootstrap the platform administrator only through the
+        // explicitly configured bootstrap.super-admin.* credentials.
         if (authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
-            RestServerLogger.info(this.getClass(), "First login detected. Creating default tenant and user.");
-            createDefaultTenantAndUser(request);
-            tenant = resolveLastTenant(request.getUsername());
-            if (tenant == null) {
-                tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
-            }
+            RestServerLogger.severe(this.getClass(),
+                    "No users exist. Configure bootstrap.super-admin.username/password before starting the application.");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
         if (tenant == null) {
