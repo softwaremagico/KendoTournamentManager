@@ -41,6 +41,7 @@ seed_participants_csv="${APP_SEED_PARTICIPANTS_CSV:-${backend_directory}/kendo-t
 build_images=true
 api_base_url=""
 auth_header=""
+seed_files_available=true
 temporary_files=()
 
 cleanup() {
@@ -49,6 +50,10 @@ cleanup() {
   fi
 }
 trap cleanup EXIT
+
+seed_warning() {
+  printf 'WARNING: %s\n' "$1" >&2
+}
 
 compose() {
   docker compose --project-name "${project_name}" --file "${compose_file}" "$@"
@@ -70,7 +75,13 @@ json_escape() {
 }
 
 authenticate() {
-  local body_file headers_file status escaped_username escaped_password
+  local body_file headers_file status escaped_username escaped_password token
+
+  if ! command -v mktemp >/dev/null 2>&1; then
+    seed_warning "mktemp is not available; demo data will not be imported."
+    return 1
+  fi
+
   body_file="$(new_temp_file)"
   temporary_files+=("${body_file}")
   headers_file="$(new_temp_file)"
@@ -79,24 +90,25 @@ authenticate() {
   escaped_username="$(json_escape "${app_username}")"
   escaped_password="$(json_escape "${app_password}")"
 
-  status="$(curl --silent --show-error --max-time 30 \
+  if ! status="$(curl --silent --max-time 30 \
     -o "${body_file}" -D "${headers_file}" -w '%{http_code}' \
     -X POST "${api_base_url}/auth/public/login" \
     -H 'Content-Type: application/json' \
-    --data "{\"username\":\"${escaped_username}\",\"password\":\"${escaped_password}\"}")"
-
-  if [[ "${status}" != "200" ]]; then
-    printf 'Could not authenticate as %s (HTTP %s).\n' "${app_username}" "${status}" >&2
-    cat "${body_file}" >&2
-    exit 1
+    --data "{\"username\":\"${escaped_username}\",\"password\":\"${escaped_password}\"}" 2>/dev/null)"; then
+    seed_warning "Could not reach the login endpoint; demo data will not be imported."
+    return 1
   fi
 
-  local token
+  if [[ "${status}" != "200" ]]; then
+    seed_warning "Could not authenticate as ${app_username} (HTTP ${status}); demo data will not be imported."
+    return 1
+  fi
+
   token="$(awk 'tolower($1)=="authorization:" { sub(/^[^:]*:[[:space:]]*/, ""); print }' \
     "${headers_file}" | tr -d '\r' | tail -n 1)"
   if [[ -z "${token}" ]]; then
-    printf 'The login response did not include an Authorization header.\n' >&2
-    exit 1
+    seed_warning "The login response did not include an Authorization token; demo data will not be imported."
+    return 1
   fi
   if [[ "${token,,}" == bearer\ * ]]; then
     auth_header="${token}"
@@ -110,24 +122,28 @@ api_get() {
   body_file="$(new_temp_file)"
   temporary_files+=("${body_file}")
 
-  status="$(curl --silent --show-error --max-time 30 \
+  if ! status="$(curl --silent --max-time 30 \
     -o "${body_file}" -w '%{http_code}' \
-    -H "Authorization: ${auth_header}" "${api_base_url}${path}")"
+    -H "Authorization: ${auth_header}" "${api_base_url}${path}" 2>/dev/null)"; then
+    seed_warning "GET ${path} could not be completed; demo data will not be imported."
+    return 1
+  fi
 
   if [[ "${status}" != "200" ]]; then
-    printf 'GET %s failed (HTTP %s).\n' "${path}" "${status}" >&2
-    cat "${body_file}" >&2
-    exit 1
+    seed_warning "GET ${path} failed (HTTP ${status}); demo data will not be imported."
+    return 1
   fi
   cat "${body_file}"
 }
 
 entity_count() {
   local value
-  value="$(api_get "$1")"
+  if ! value="$(api_get "$1")"; then
+    return 1
+  fi
   if [[ ! "${value}" =~ ^[0-9]+$ ]]; then
-    printf 'Unexpected count from %s: %s\n' "$1" "${value}" >&2
-    exit 1
+    seed_warning "Unexpected count from $1: ${value}. Demo data will not be imported."
+    return 1
   fi
   printf '%s' "${value}"
 }
@@ -138,44 +154,50 @@ import_csv() {
   body_file="$(new_temp_file)"
   temporary_files+=("${body_file}")
 
-  status="$(curl --silent --show-error --max-time 120 \
+  if ! status="$(curl --silent --max-time 120 \
     -o "${body_file}" -w '%{http_code}' \
     -H "Authorization: ${auth_header}" \
-    -F "file=@${file}" "${api_base_url}${path}")"
+    -F "file=@${file}" "${api_base_url}${path}" 2>/dev/null)"; then
+    seed_warning "Could not import ${label}; demo data will not be imported."
+    return 1
+  fi
 
   if [[ "${status}" != "200" && "${status}" != "201" && "${status}" != "204" ]]; then
-    printf 'Could not import %s (HTTP %s).\n' "${label}" "${status}" >&2
-    cat "${body_file}" >&2
-    exit 1
+    seed_warning "Could not import ${label} (HTTP ${status}); demo data will not be imported."
+    return 1
   fi
 }
 
 seed_database() {
-  if [[ "${seed_mode}" == "never" ]]; then
-    return
+  if [[ "${seed_mode}" == "never" || "${seed_files_available}" == "false" ]]; then
+    return 0
   fi
 
   printf 'Seeding demo data (%s)...\n' "${seed_mode}"
-  authenticate
+  authenticate || return 1
 
   if [[ "${seed_mode}" == "if-empty" ]]; then
     local clubs_count participants_count
-    clubs_count="$(entity_count "/clubs/count")"
+    if ! clubs_count="$(entity_count "/clubs/count")"; then
+      return 1
+    fi
     if [[ "${clubs_count}" -gt 0 ]]; then
       printf 'Skipping clubs: %s already present.\n' "${clubs_count}"
     else
-      import_csv "clubs" "/csv/clubs" "${seed_clubs_csv}"
+      import_csv "clubs" "/csv/clubs" "${seed_clubs_csv}" || return 1
     fi
 
-    participants_count="$(entity_count "/participants/count")"
+    if ! participants_count="$(entity_count "/participants/count")"; then
+      return 1
+    fi
     if [[ "${participants_count}" -gt 0 ]]; then
       printf 'Skipping participants: %s already present.\n' "${participants_count}"
     else
-      import_csv "participants" "/csv/participants" "${seed_participants_csv}"
+      import_csv "participants" "/csv/participants" "${seed_participants_csv}" || return 1
     fi
   else
-    import_csv "clubs" "/csv/clubs" "${seed_clubs_csv}"
-    import_csv "participants" "/csv/participants" "${seed_participants_csv}"
+    import_csv "clubs" "/csv/clubs" "${seed_clubs_csv}" || return 1
+    import_csv "participants" "/csv/participants" "${seed_participants_csv}" || return 1
   fi
 
   printf 'Demo data seeding finished.\n'
@@ -224,13 +246,13 @@ esac
 if [[ "${seed_mode}" != "never" ]]; then
   for seed_file in "${seed_clubs_csv}" "${seed_participants_csv}"; do
     if [[ ! -f "${seed_file}" ]]; then
-      printf 'Seed CSV not found: %s\n' "${seed_file}" >&2
-      exit 1
+      seed_warning "Seed CSV not found: ${seed_file}. Demo data will not be imported."
+      seed_files_available=false
     fi
   done
 fi
 
-for command in docker curl ss mktemp; do
+for command in docker curl ss; do
   if ! command -v "${command}" >/dev/null 2>&1; then
     printf 'Required command not found: %s\n' "${command}" >&2
     exit 1
@@ -314,7 +336,9 @@ for attempt in $(seq 1 120); do
   sleep 2
 done
 
-seed_database
+if ! seed_database; then
+  printf 'Continuing without demo data. The application can still be used normally.\n' >&2
+fi
 
 cat <<EOF
 

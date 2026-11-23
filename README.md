@@ -210,6 +210,11 @@ The seeding flow is:
 3. Import clubs first (`POST /csv/clubs`), then participants
    (`POST /csv/participants`), so participants can resolve their club.
 
+Seeding is best-effort. If the login fails, no JWT is returned, an API call
+fails or a CSV file is missing, the script prints a `WARNING` and continues
+starting the application without the demo data. A seeding problem never aborts
+`run-app.sh`; the app remains usable normally.
+
 The default mode is `if-empty`, so a club or participant CSV is imported only
 when that resource is empty. This makes restarts with an existing database
 safe. Use `APP_SEED_DATA=never` to skip seeding, or `APP_SEED_DATA=always` to
@@ -220,8 +225,9 @@ before the containers are started.
 
 With a fresh database this imports **8 clubs** and **18 participants**. On a
 restart with `if-empty`, both imports are skipped instead of duplicating data.
-`bash -n run-app.sh`, a clean-database import, an idempotent restart and the
-`never` mode have all been verified.
+`bash -n run-app.sh`, a clean-database import, an idempotent restart, the
+`never` mode, a failed login (HTTP 401) and a missing CSV path have all been
+verified.
 
 Useful options:
 
