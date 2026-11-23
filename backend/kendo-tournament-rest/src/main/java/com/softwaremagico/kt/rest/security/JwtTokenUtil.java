@@ -75,6 +75,7 @@ import java.util.UUID;
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
     private static final String TENANT_ID_CLAIM = "tenantId";
+    private static final String ROLES_CLAIM = "roles";
     /** Default token validity period in milliseconds (20 minutes). */
     private static final long JWT_EXPIRATION = 1200000;
     /** Index of the entity ID field within the pipe-separated token subject. */
@@ -271,6 +272,7 @@ public class JwtTokenUtil {
                         session != null ? session : UUID.randomUUID().toString(), userIp,
                         this.networkController.getHostMac()).value())
                 .claim(TENANT_ID_CLAIM, tenantId)
+                .claim(ROLES_CLAIM, user.getRoles() == null ? "" : String.join(",", user.getRoles()))
                 .issuer(JWT_ISSUER).issuedAt(toLegacyDate(issuedAt))
                 .expiration(toLegacyDate(issuedAt.plusMillis(expirationTime))).signWith(this.signingKey, Jwts.SIG.HS512)
                 .compact();
@@ -375,6 +377,18 @@ public class JwtTokenUtil {
             return number.intValue();
         }
         return null;
+    }
+
+    /** Returns the roles granted to this token, or an empty set for older tokens. */
+    public java.util.Set<String> getRoles(String token) {
+        final Object roles = this.getClaims(token).get(ROLES_CLAIM);
+        if (roles instanceof String value && !value.isBlank()) {
+            return java.util.Arrays.stream(value.split(","))
+                    .map(String::trim)
+                    .filter(role -> !role.isEmpty())
+                    .collect(java.util.stream.Collectors.toSet());
+        }
+        return java.util.Collections.emptySet();
     }
 
     /**
