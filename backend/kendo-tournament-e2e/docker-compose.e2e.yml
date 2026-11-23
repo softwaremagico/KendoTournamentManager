@@ -36,6 +36,8 @@ services:
       - --bootstrap.super-admin.password=${E2E_PASSWORD:-E2e-password-123}
       - --bootstrap.super-admin.roles=super_admin,admin,editor,viewer
       - --jwt.ip.check=false
+    environment:
+      SERVER_CORS_DOMAINS: ${E2E_CORS_DOMAINS:-http://localhost:14200}
     ports:
       - "18080:8080"
     healthcheck:
