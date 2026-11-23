@@ -67,7 +67,7 @@ other modules.
 |------|----------------|
 | Java (JDK) | 25 |
 | Maven | 3.8 |
-| Database server | MySQL 9.7 LTS (default) or any Hibernate-compatible engine |
+| Database server | MySQL 8 (default) or any Hibernate-compatible engine |
 
 ---
 
@@ -160,10 +160,10 @@ docker run -d \
   --name kendotournament-mysql \
   -e MYSQL_DATABASE=kendotournament \
   -e MYSQL_USER=user \
-  -e MYSQL_PASSWORD=asd123 \
+  -e MYSQL_PASSWORD=<strong-password> \
   -e MYSQL_ROOT_PASSWORD=<rootpass> \
   -p 3306:3306 \
-  mysql:9.7.4
+  mysql:8
 ```
 
 This creates the database expected by the default backend configuration (`jdbc:mysql://127.0.0.1:3306/kendotournament`).
@@ -235,7 +235,7 @@ Token expiration values (milliseconds):
 ```properties
 jwt.expiration=1200000          # Standard authenticated user (20 min)
 jwt.guest.expiration=14400000   # Guest user (4 h)
-jwt.participant.expiration=317098000000  # Participant access (≈ 10 years)
+jwt.participant.expiration=317098000000  # Participant access (≈ 10 years; issued tokens are capped to the participant account expiry)
 ```
 
 #### Database encryption key
@@ -256,7 +256,11 @@ Restrict cross-origin requests to specific domains (comma-separated list):
 server.cors.domains=https://my.tournament.site
 ```
 
-In development you can use `*` to allow all origins.
+Wildcards are ignored; leave the property empty for same-origin only. If the application is served behind a reverse proxy, set this to the exact public frontend origin(s).
+
+#### Forwarded headers
+
+The default `server.forward-headers-strategy=none` prevents clients from forging `X-Forwarded-For` to evade brute-force limits or JWT IP binding. If you need per-client IP addresses behind a reverse proxy, set `SERVER_FORWARD_HEADERS_STRATEGY` to a supported strategy only when the proxy overwrites (not appends to) those headers.
 
 #### Optional access features
 
@@ -295,18 +299,18 @@ variable of the same name):
 
 | Value | Effect |
 |-------|--------|
-| `always` | A default admin user (`admin@test.com` / `asd123`) is created on every fresh schema. **Not compatible with database encryption.** |
-| `never` | No default data is created. On first startup, provision a `SUPER_ADMIN` once with the `bootstrap.super-admin.username` and `bootstrap.super-admin.password` settings. |
+| `always` | Initializes schema/reference data. It never creates an administrator from the public login endpoint. |
+| `never` | No default data is created. Provision a `SUPER_ADMIN` once with the `bootstrap.super-admin.username` and `bootstrap.super-admin.password` settings. |
 
-The default admin (`admin@test.com`) is the platform administrator: it receives the `SUPER_ADMIN` role, so it can create
-and manage organizations from **Administration / Tenants**. See [Tenancy](../../wiki/Tenancy.md) for the tenant management
-procedure. **Change the default credentials immediately** if you use `always`. Passwords are stored in **BCrypt** format;
-you can generate a hash with a tool such as [bcrypt-generator.com](https://bcrypt-generator.com/).
+The platform administrator receives the `SUPER_ADMIN` role and can create and manage organizations from
+**Administration / Tenants**. See [Tenancy](../../wiki/Tenancy.md) for the tenant management procedure. Supply the
+bootstrap credentials only for the first startup and remove them afterwards.
 
-The default users SQL script is located at:
+The legacy test-users SQL script remains at:
 ```
 kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sql
 ```
+Its initialization is commented out; do not enable it in production.
 
 ### Database
 
@@ -317,7 +321,7 @@ providers. The default setup targets **MySQL 9.7 LTS**:
 spring.kendo.datasource.platform=mysql
 spring.kendo.datasource.jdbc-url=jdbc:mysql://localhost:3306/kendotournament?useSSL=false&autoReconnect=true
 spring.kendo.datasource.username=user
-spring.kendo.datasource.password=asd123
+spring.kendo.datasource.password=${DATABASE_PASSWORD:}
 ```
 
 Hibernate creates a schema for a new installation on startup (`ddl-auto=update`).

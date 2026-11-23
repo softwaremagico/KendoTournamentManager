@@ -175,39 +175,33 @@ public class AuthApiTest {
 	}
 
 	@Test
-    public void testLoginCreatesAdminWhenNoUsers() {
-		// This test verifies that when tenant doesn't exist and no users exist,
-		// the system attempts to create them, but login fails due to bad credentials
+    public void testLoginWhenNoUsersReturnsServiceUnavailable() {
+		// Anonymous callers must never be able to provision the first SUPER_ADMIN.
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
 		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
-		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		// Set tenant repository to return empty initially
-		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.empty());
-		// But when checking for legacy tenant, return a valid one
+		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME))
+				.thenReturn(Optional.empty());
 		final Tenant tenant = mock(Tenant.class);
 		when(tenant.getId()).thenReturn(1);
 		when(this.tenantRepository.findById(1)).thenReturn(Optional.of(tenant));
-		// Set user count to 0 so it thinks no users exist
 		when(this.authenticatedUserRepository.count()).thenReturn(0L);
-		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenThrow(new BadCredentialsException("Bad credentials"));
 
 		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
-        // Login should fail because credentials are wrong
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+		verify(this.authenticatedUserController, never()).createUser(any(), anyString(), anyString(), anyString(),
+				anyString(), any(AvailableRole.class));
+		verifyNoInteractions(this.authenticationManager);
 	}
 
 	@Test
-	public void testFirstLoginCreatesUserAndGeneratesToken() {
-		// This test verifies the complete flow:
-		// 1. First login attempt triggers user creation
-		// 2. Subsequent login succeeds and generates a token
+	public void testLoginAfterBootstrapGeneratesToken() {
+		// The administrator is provisioned out of band; login only authenticates.
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("newadmin");
 		authRequest.setPassword("securepassword");
@@ -220,39 +214,11 @@ public class AuthApiTest {
 		final Tenant tenant = mock(Tenant.class);
 		when(tenant.getId()).thenReturn(1);
 
-		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-
-		// First login: tenant doesn't exist, no users exist
-		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.empty());
-		when(this.tenantRepository.findById(TenantContext.LEGACY_TENANT_ID)).thenReturn(Optional.of(tenant));
-		when(this.authenticatedUserRepository.count()).thenReturn(0L);
-
-		// Mock user creation
-		when(this.authenticatedUserController.createUser(null, "newadmin", "newadmin",
-                "Administrator", "securepassword", AvailableRole.SUPER_ADMIN)).thenReturn(createdUser);
-
-		// First authentication attempt fails (user doesn't exist yet in auth system)
-		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenThrow(new BadCredentialsException("Bad credentials"));
-
-		// First login should fail and trigger user creation
-		ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-
-		// Verify user creation was called
-		verify(this.authenticatedUserController, times(1)).createUser(null, "newadmin", "newadmin",
-                "Administrator", "securepassword", AvailableRole.SUPER_ADMIN);
-
-		// Second login: user now exists
-		// Reset mocks for the second login attempt
-		reset(this.authenticationManager);
-		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
-		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
-		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME)).thenReturn(Optional.of(tenant));
-		when(this.authenticatedUserRepository.count()).thenReturn(1L); // Now there's a user
+		when(this.tenantRepository.findByNameAndActiveTrue(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME))
+				.thenReturn(Optional.of(tenant));
+		when(this.authenticatedUserRepository.count()).thenReturn(1L);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 				.thenReturn(this.authentication);
 		when(this.authentication.getName()).thenReturn("newadmin");
@@ -261,10 +227,8 @@ public class AuthApiTest {
 		when(this.jwtTokenUtil.generateAccessToken(createdUser, "192.168.1.1")).thenReturn("admin-jwt-token");
 		when(this.jwtTokenUtil.getSession("admin-jwt-token")).thenReturn("admin-session-123");
 
-		// Second login should succeed
-		response = this.authApi.login(authRequest, this.httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
-		// Verify successful login response
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("admin-jwt-token");
 		assertThat(response.getHeaders().get(AuthApi.SESSION_HEADER)).containsExactly("admin-session-123");
@@ -575,36 +539,26 @@ public class AuthApiTest {
 	}
 
 	@Test
-    public void testUserAdminGeneratedListenerIsInvokedWhenFirstUserIsCreated() {
+    public void testUnauthenticatedFirstLoginIsRejected() {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("admin");
 		authRequest.setPassword("password");
 		authRequest.setTenant("Default");
 
-		final AuthenticatedUser newAdmin = new AuthenticatedUser();
-		newAdmin.setUsername("admin");
-		newAdmin.setTenantId(1);
-
 		final AuthApi.UserAdminGeneratedListener mockListener = mock(AuthApi.UserAdminGeneratedListener.class);
 		this.authApi.addUserAdminGeneratedListeners(mockListener);
 
-		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.bruteForceService.isBlocked("192.168.1.1")).thenReturn(false);
 		when(this.authenticatedUserRepository.count()).thenReturn(0L);
-		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-				.thenThrow(new BadCredentialsException("Bad credentials"));
-		final Tenant tenant = mock(Tenant.class);
-		when(tenant.getId()).thenReturn(1);
-		when(this.tenantRepository.save(any(Tenant.class))).thenReturn(tenant);
-		when(this.authenticatedUserController.createUser(null, "admin", "admin", "Administrator", "password",
-				AvailableRole.SUPER_ADMIN)).thenReturn(newAdmin);
-		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
-		when(this.jwtTokenUtil.generateAccessToken(newAdmin, "192.168.1.1")).thenReturn("jwt-token");
 
-		this.authApi.login(authRequest, this.httpRequest);
+		final ResponseEntity<?> response = this.authApi.login(authRequest, this.httpRequest);
 
-        verify(mockListener).generated("admin");
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+		verify(mockListener, never()).generated(anyString());
+		verify(this.authenticatedUserController, never()).createUser(any(), anyString(), anyString(), anyString(),
+				anyString(), any(AvailableRole[].class));
+		verify(this.tenantRepository, never()).save(any(Tenant.class));
 	}
 
 	// ========== Response Header Tests ==========

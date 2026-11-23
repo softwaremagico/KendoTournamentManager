@@ -55,9 +55,9 @@ The fastest way to get up and running. See the
 self-contained example that pulls all three images from Docker Hub.
 
 1. Copy the example directory to a working location.
-2. Edit the `.env` file with your domain, passwords, and email.
-3. Edit `application.properties` with your database and JWT settings.
-4. Edit `config.js` with your backend URL.
+2. Generate secrets (`openssl rand -hex 32` for each secret, `htpasswd -nB -C 12 admin` for the proxy) and put them in `.env`.
+3. Edit `.env` with your domain and email, and `application.properties` / `config.js` with non-secret settings.
+4. Never commit the filled `.env`; the stack refuses to start while required secrets are empty.
 5. Run:
 
 ```bash
@@ -132,13 +132,14 @@ All runtime settings live in the `.env` file. The table below describes every va
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `jwt_secret` | *(empty)* | Secret used to sign JWT tokens. Leave empty to auto-generate a random secret on each startup (more secure, but all sessions expire on restart) |
+| `jwt_secret` | *(required)* | JWT signing secret. Generate with `openssl rand -hex 32`. There is no default; startup fails if it is empty |
 | `jwt_expiration` | `1200000` | Standard user token lifetime in milliseconds (default: 20 min) |
 | `jwt_guest_expiration` | `3600000` | Guest user token lifetime in milliseconds (default: 1 h) |
-| `jwt_ip_check` | `false` | Bind token validation to the client IP address |
+| `jwt_ip_check` | `false` | Bind token validation to the verified remote address |
 | `enable_guest_user` | `false` | Allow unauthenticated read-only access via QR codes |
 | `enable_tenancy` | `true` | Enable multi-organization support. Set to `false` so the whole installation uses a single organization (the `Legacy organization`): the login selector disappears, the tenant administration menu is hidden and all tenant management API endpoints return `404`. |
-| `database_populate_default_data` | `always` | `always` creates a default admin user on fresh install; `never` requires manual first-login creation |
+| `server_cors_domains` | *(empty)* | Exact frontend origin(s) allowed for CORS/WebSockets. Empty means same-origin only |
+| `database_populate_default_data` | `always` | Controls SQL data initialization. The platform admin is created only from configured `bootstrap.super-admin.*` credentials, never by the first anonymous login |
 
 ### Backend — Database
 
@@ -147,9 +148,9 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `database_type` | `postgresql` | Database driver: `postgresql`, `mysql`, `h2`, `hsqldb`, `oracle`, … |
 | `database_name` | `postgres` | Database / schema name |
 | `database_user` | `myuser` | Database username |
-| `database_password` | `mypass` | Database password — **change this** |
+| `database_password` | *(required)* | Database password. Generate with `openssl rand -hex 32`; startup fails if empty |
 | `database_port` | `5432` | Database port |
-| `database_encryption_key` | *(empty)* | Key for field-level encryption of PII at rest. Leave empty to disable encryption. **Change before production use** |
+| `database_encryption_key` | *(required)* | Master key for field-level encryption of PII at rest. Generate with `openssl rand -hex 32` and keep it stable across restarts |
 
 ---
 
@@ -224,34 +225,24 @@ container restarts and upgrades. **Back up this volume** before performing major
 
 Since version `2.13.7`, the reverse proxy is **Traefik**. It handles:
 
-- HTTP → HTTPS redirection
-- Automatic TLS certificate issuance and renewal via Let's Encrypt
-- Routing requests to the correct backend/frontend container
-- Basic-auth protection of the Swagger UI and the Traefik dashboard
 
 ### Traefik dashboard
 
-The Traefik dashboard is accessible at `https://<your-domain>/dashboard/` and is protected by HTTP Basic Auth.
-
-**Default credentials:** `admin` / `0b186336d5` — **change these immediately.**
-
-To generate a new password hash:
+The Traefik dashboard and Swagger UI are accessible behind HTTP Basic Auth. There are **no default credentials**:
+the stack refuses to start until you generate your own hash and set `TRAEFIK_BASIC_AUTH_USERS` in `.env`.
 
 ```bash
-echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+htpasswd -nB admin
+# Copy the whole "admin:$2y$..." output into .env as TRAEFIK_BASIC_AUTH_USERS=...
 ```
 
-The `sed` step is required because Docker Compose needs every `$` character doubled to `$$`.
-
-Update `docker-compose.yml` with the output by replacing the line:
-
-```yaml
-- "traefik.http.middlewares.auth.basicauth.users=admin:<<put here your hashed password>>"
-```
-
-Then rebuild and restart the proxy:
+Use a high cost factor (`-C 12` or higher) and a unique password. To rotate the credential, update `.env` and restart:
 
 ```bash
+docker-compose up -d kendo-tournament-rproxy
+```
+
+### Disabling the reverse proxy
 docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy
 ```
 
@@ -271,17 +262,19 @@ Configure your external proxy to forward:
 - `/<any path>/` → `kendo-tournament-frontend:4200`
 - `/kendo-tournament-backend/` → `kendo-tournament-backend:8080`
 
----
-
-## Security checklist
-
 Before going to production, verify the following:
 
-- [ ] `jwt_secret` is set to a strong random value (or left empty for auto-generation)
-- [ ] `database_encryption_key` is set to a secret value known only to you
-- [ ] `database_password` has been changed from the default `mypass`
-- [ ] Traefik dashboard password has been changed from the default
-- [ ] `database_populate_default_data=always` has been reviewed — the default admin (`admin@test.com` / `asd123`) is the platform `SUPER_ADMIN` and its credentials must be changed immediately after first login
+- [ ] `jwt_secret` is set to a strong random value (`openssl rand -hex 32`)
+- [ ] `database_encryption_key` is set to a long random secret known only to you and is backed up
+- [ ] `database_password` is a strong random value, not a default from an example
+- [ ] `TRAEFIK_BASIC_AUTH_USERS` contains a freshly generated htpasswd hash
+- [ ] `bootstrap.super-admin.*` credentials were used only for initial setup and then removed
+- [ ] No secrets were passed as Docker build arguments or committed in `.env`/image layers
+- [ ] Ports 80 and 443 are the only ports exposed to the internet; the database is not published on the host
+- [ ] `SERVER_FORWARD_HEADERS_STRATEGY` remains `none` unless the reverse proxy sanitises `X-Forwarded-*`
+- [ ] Email is set correctly in `.env` for Let's Encrypt registration
+
+---
 - [ ] Ports 80 and 443 are the only ports exposed to the internet; database port 5432 is internal only
 - [ ] Email is set correctly in `.env` for Let's Encrypt registration
 
@@ -319,12 +312,12 @@ cd KendoTournamentManager
 ```
 
 The script:
+- The database container is not yet healthy when the backend tries to connect. The `depends_on` + `healthcheck` in
+  `docker-compose.yml` should handle this, but some systems need a longer `start_period`.
+- Incorrect database credentials in `.env`.
+- A Java version mismatch (the backend requires Java 25+).
 
-1. stops the application services,
-2. dumps the old database with compatible dump tools (PostgreSQL uses the 19 toolchain),
-3. saves a physical backup of the old volume as `*.volume.tar.gz`,
-4. recreates the volume with the new image, restores the dump and checks the table count,
-5. leaves the application stopped so you can start it with `docker compose up -d`.
+### Let's Encrypt certificate not issued
 
 Backups are written to `.db-backups/` by default (use `--backup-dir` to change it). Use `--source-image`,
 `--source-volume` and `--yes` to override autodetection or skip confirmation.
@@ -377,26 +370,29 @@ Common causes:
 You can deploy the application in your desktop computer for testing it. It is not recommended for a real environment but
 is an easy way to check the state of the art of this application and if it fits to your needs or not.
 
-On `docker/.env` set:
-
 ```
-machine_domain=localhost
-[...]
-#Frontend
-protocol=http
+database_type=postgresql  (hsqldb, h2, oracle, mysql, postgresql, ...)
+database_name=database
+database_user=myuser
+database_port=5432
+# database_password must be generated and kept only in .env
 ```
 
-And deploy the application using `docker-compose` command as usual. Ignore any information about SSL certificates as
-they are not available for localhost domain.
+## Security passwords
 
-### Using a custom domain
+Variable `jwt_secret` signs the JWT tokens used by the REST API. Set it to a long random value
+(`openssl rand -hex 32`). The Compose stack requires it to be non-empty; the application can otherwise generate a
+random secret on each start, which invalidates all sessions on restart. Never use a short, guessable value.
 
-By default, I am assuming that you are deploying this application as a docker container on a server on the cloud. That
-means that probably you already have a domain that you must set on the application. Please, update `machine_domain`
-variable on `docker/.env` to match your existing domain.
+Variable `database_encryption_key` encrypts sensitive fields (participant names, IDs, etc.) at rest. Set it to a long
+random value that only you know and keep it stable across restarts or the stored data will no longer be readable.
+Leaving it blank stores those fields unencrypted — only do this for local development.
 
-```
-machine_domain=mydomain.com
+The backend only accepts cross-origin requests from the exact origins listed in `server_cors_domains` /
+`SERVER_CORS_DOMAINS`. Keep it empty when the frontend is served from the same domain by the reverse proxy.
+
+# Using REVERSE PROXY and SSL certificates generation
+
 [...]
 #Frontend
 protocol=https
@@ -411,31 +407,21 @@ in `backend/libraries`. Configure these specific variables in the `.env` file:
 
 ```
 database_type=postgresql  (hsqldb, h2, oracle, mysql, postgresql, ...)
-database_name=database
-database_password=mypass
-database_user=myuser
-database_port=5432
-```
 
-## Security passwords
+## Traefik Dashboard
 
-Variable `jwt_secret` is used for encrypting JWT token related to the REST API authorization. Please change it and avoid
-using the default one. If `jwt_secret` is left empty, the system will generate a random one on start. Random is more
-secure, but any user will be forced to log in into the system again if the server is restarted.
-
-Variable `database_encryption_key` will encrypt the database content, to ensure a higher level of privacy. If you want
-to check the content of your database using any other external software, please leave this variable with a blank value.
-Otherwise, change the default value to any other that only you know.
-
-# Using REVERSE PROXY and SSL certificates generation
-
-Since version 2.13.7, the reverse proxy engine has been changed from Nginx to Traefik. Traefik is more automated than
-Nginx, and it will handle all _Let's encrypt_ certificate generation automatically.
-
-Remember to change `email` value on the `docker/.env` file as it is used for the certificates' registration:
+Traefik comes with a dashboard where information about the services is shown. It is protected by HTTP Basic Auth, but
+there is no committed default password: set `TRAEFIK_BASIC_AUTH_USERS` in `.env` to a hash you generate yourself:
 
 ```
-email=myemail@domain.com
+htpasswd -nB admin -C 12
+# TRAEFIK_BASIC_AUTH_USERS=admin:$2y$12$...
+```
+
+Restart the proxy with `docker-compose up -d kendo-tournament-rproxy` after changing it.
+
+## Disable the REVERSE PROXY
+
 ```
 
 Regenerate again the proxy if needed with the next command:
