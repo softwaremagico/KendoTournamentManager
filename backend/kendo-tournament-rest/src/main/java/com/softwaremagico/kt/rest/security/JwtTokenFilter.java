@@ -72,8 +72,8 @@ import java.util.Objects;
  * obtain and use JWT tokens with reduced privileges (VIEWER role).
  * </p>
  * <p>
- * The filter inspects a list of proxy headers ({@link #HEADERS_TO_TRY}) to obtain
- * the real client IP when the server is behind a reverse proxy.
+ * The client IP is taken exclusively from {@code HttpServletRequest#getRemoteAddr()}.
+ * Proxy headers are ignored so they cannot be spoofed by an anonymous caller.
  * </p>
  */
 @Component
