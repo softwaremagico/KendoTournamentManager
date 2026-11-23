@@ -397,11 +397,10 @@ public class AuthApi {
     }
 
     private String getClientIP(HttpServletRequest httpRequest) {
-        final String xfHeader = httpRequest.getHeader("X-Forwarded-For");
-        if (xfHeader == null) {
-            return httpRequest.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
+        // Forwarded headers are client-controlled unless a trusted proxy sanitises
+        // them. With the default forward-headers-strategy=none, getRemoteAddr() is
+        // the socket peer and cannot be forged by the caller.
+        return httpRequest.getRemoteAddr();
     }
 
     private void rejectPlatformRoles(CreateUserRequest request) {

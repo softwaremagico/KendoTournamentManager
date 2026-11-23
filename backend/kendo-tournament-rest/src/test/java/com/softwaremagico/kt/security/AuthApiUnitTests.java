@@ -124,9 +124,10 @@ public class AuthApiUnitTests {
 
 		final HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getHeader("X-Forwarded-For")).thenReturn("1.2.3.4, 10.0.0.1");
+		when(request.getRemoteAddr()).thenReturn("10.0.0.1");
 
 		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(99999L);
-		when(this.jwtTokenUtil.generateAccessToken(authenticatedUser, "1.2.3.4")).thenReturn("jwt-token");
+		when(this.jwtTokenUtil.generateAccessToken(authenticatedUser, "10.0.0.1")).thenReturn("jwt-token");
 		when(this.jwtTokenUtil.getSession("jwt-token")).thenReturn("session-id");
 
 		final ResponseEntity<Void> response = authApi.getNewJWT(authentication, request, "old-token");

@@ -273,20 +273,26 @@ public class AuthApiTest {
 	}
 
 	@Test
-	public void testLoginWithXForwardedForHeader() {
+	public void testLoginIgnoresXForwardedForHeader() {
 		final AuthRequest authRequest = new AuthRequest();
 		authRequest.setUsername("testuser");
 		authRequest.setPassword("password");
 		authRequest.setTenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1,10.0.0.2,10.0.0.3");
-		when(this.bruteForceService.isBlocked("10.0.0.1")).thenReturn(true);
-		when(this.bruteForceService.getElementsTime("10.0.0.1")).thenReturn(5L);
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.50");
+		when(this.bruteForceService.isBlocked("192.168.1.50")).thenReturn(false);
+		when(this.bruteForceService.getElementsTime("192.168.1.50")).thenReturn(5L);
 		when(this.bruteForceService.getExpirationTime()).thenReturn(100L);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenReturn(this.authentication);
+		when(this.authentication.getName()).thenReturn("testuser");
+		when(this.authenticatedUserProvider.findByUsername("testuser")).thenReturn(Optional.of(new AuthenticatedUser("testuser")));
 
 		this.authApi.login(authRequest, this.httpRequest);
 
-		verify(this.bruteForceService, times(1)).isBlocked("10.0.0.1");
+		verify(this.bruteForceService, times(1)).isBlocked("192.168.1.50");
+		verify(this.bruteForceService, never()).isBlocked("10.0.0.1");
 	}
 
 	@Test
