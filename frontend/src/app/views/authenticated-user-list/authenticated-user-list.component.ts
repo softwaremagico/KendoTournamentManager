@@ -1,11 +1,11 @@
-import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {UserService} from "../../services/user.service";
 import {UserRoles} from "../../services/rbac/user-roles";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {DatatableColumn} from "../../models/datatable-column";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
@@ -15,6 +15,7 @@ import {DatePipe} from "@angular/common";
 import {Constants} from "../../constants";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-authenticated-user-list',
   templateUrl: './authenticated-user-list.component.html',

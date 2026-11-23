@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {FileService} from "../../services/file.service";
 import {NameUtilsService} from "../../services/name-utils.service";
@@ -7,6 +7,7 @@ import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'participant-picture',
   templateUrl: './participant-picture.component.html',

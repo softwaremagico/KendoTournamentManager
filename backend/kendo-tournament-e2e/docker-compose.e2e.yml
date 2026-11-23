@@ -38,6 +38,19 @@ services:
       - --jwt.ip.check=false
     ports:
       - "18080:8080"
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/8080;
+          printf 'GET /kendo-tournament-backend/info/health-check HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3;
+          head -1 <&3 | grep -q ' 200 '
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
     volumes:
       - ../kendo-tournament-rest/target/kendo-tournament-backend.jar:/application/kendo-tournament-backend.jar:ro
 
@@ -45,7 +58,7 @@ services:
     image: nginx:1.25.5-alpine
     depends_on:
       backend:
-        condition: service_started
+        condition: service_healthy
     command:
       - /bin/sh
       - -ec

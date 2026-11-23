@@ -86,7 +86,17 @@ public class Table {
     }
 
     public void waitUntilContainsText(String text) {
-        webDriverClient.getWebDriverWait().until(driver -> containsText(text));
+        webDriverClient.getWebDriverWait()
+                .withMessage(() -> {
+                    try {
+                        return "Table '" + tableLocator + "' does not contain '" + text + "'. url="
+                                + webDriverClient.getDriver().getCurrentUrl() + " rows="
+                                + getRows().stream().map(WebElement::getText).toList();
+                    } catch (RuntimeException exception) {
+                        return "Table '" + tableLocator + "' does not contain '" + text + "'. " + exception.getMessage();
+                    }
+                })
+                .until(driver -> containsText(text));
     }
 
     public void search(String text) {

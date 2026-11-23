@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexPlotOptions, ApexTitleSubtitle, ApexTooltip, ChartComponent} from "ng-apexcharts";
 import {Colors} from "../colors";
 import {GaugeChartData} from "./gauge-chart-data";
@@ -20,6 +20,7 @@ export type GaugeChartOptions = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-gauge-chart',
   templateUrl: './gauge-chart.component.html',

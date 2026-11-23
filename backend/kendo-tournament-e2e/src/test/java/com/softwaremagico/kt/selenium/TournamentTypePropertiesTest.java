@@ -153,7 +153,16 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
                         property -> (String) property.get("propertyValue")
                 ));
 
-        Assert.assertEquals(actualProperties, expectedProperties,
-                "Saved properties for tournament type " + type);
+        // New tournaments inherit the last configured properties from the backend. SWISS_ROUNDS
+        // is optional in the form (empty means "calculate automatically"), so a value inherited
+        // from an earlier Swiss tournament can be present even though this form did not set it.
+        final Map<String, String> formProperties = new java.util.HashMap<>(actualProperties);
+        if (type.equals("Swiss System")) {
+            formProperties.remove("SWISS_ROUNDS");
+        }
+
+        Assert.assertEquals(formProperties, expectedProperties,
+                "Saved properties for tournament type " + type
+                        + "; expected=" + expectedProperties + "; actual=" + actualProperties);
     }
 }

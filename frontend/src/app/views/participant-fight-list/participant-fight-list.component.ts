@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -12,6 +12,7 @@ import {Participant} from "../../models/participant";
 import {DuelService} from "../../services/duel.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'participant-fight-list',
   templateUrl: './participant-fight-list.component.html',

@@ -1,8 +1,8 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, TemplateRef, ViewChildren} from '@angular/core';
+import {ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, TemplateRef, ViewChildren} from '@angular/core';
 import {CreateTenantRequest, Tenant, TenantService} from '../../services/tenant.service';
 import {UserSessionService} from '../../services/user-session.service';
 import {UserRoles} from '../../services/rbac/user-roles';
-import {DatatableColumn} from '@biit-solutions/wizardry-theme/table';
+import {DatatableColumn} from "../../models/datatable-column";
 import {TranslocoService} from '@jsverse/transloco';
 import {Type} from '@biit-solutions/wizardry-theme/inputs';
 import {AuthenticatedUser} from '../../models/authenticated-user';
@@ -11,6 +11,7 @@ import {MessageService} from '../../services/message.service';
 type TenantUser = AuthenticatedUser & { assigned: boolean };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-tenant-list',
   templateUrl: './tenant-list.component.html',

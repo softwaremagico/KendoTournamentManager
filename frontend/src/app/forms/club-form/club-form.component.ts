@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {InputLimits} from "../../utils/input-limits";
 import {Club} from "../../models/club";
 import {ClubFormValidationFields} from "./club-form-validation-fields";
@@ -11,6 +11,7 @@ import {ClubService} from "../../services/club.service";
 import {validateClubForm} from "./club-form-validation";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'club-form',
   templateUrl: './club-form.component.html',

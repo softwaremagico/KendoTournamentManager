@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {InputLimits} from "../../utils/input-limits";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Participant} from "../../models/participant";
@@ -17,6 +17,7 @@ import {MessageService} from "../../services/message.service";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'participant-form',
   templateUrl: './participant-form.component.html',

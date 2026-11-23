@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {TeamListData} from "../basic/team-list/team-list-data";
 import {TeamService} from "../../services/team.service";
@@ -12,6 +12,7 @@ import {FightService} from "../../services/fight.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'fight-creator',
   templateUrl: './fight-creator.component.html',

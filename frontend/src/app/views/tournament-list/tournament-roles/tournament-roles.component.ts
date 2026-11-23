@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
@@ -18,6 +18,7 @@ import {Team} from "../../../models/team";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-roles',
   templateUrl: './tournament-roles.component.html',

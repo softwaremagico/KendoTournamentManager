@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../../../models/tournament";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 import {TournamentExtendedProperty} from "../../../../models/tournament-extended-property.model";
@@ -16,6 +16,7 @@ import {TournamentService} from "../../../../services/tournament.service";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-images',
   templateUrl: './tournament-images.component.html',

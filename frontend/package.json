@@ -24,7 +24,7 @@
     "@angular/platform-browser-dynamic": "22.2.6",
     "@angular/router": "22.2.6",
     "@biit-solutions/biit-icons-collection": "1.2.0",
-    "@biit-solutions/wizardry-theme": "1.26.0",
+    "@biit-solutions/wizardry-theme": "1.27.1",
     "@jsverse/transloco": "^8.4.0",
     "@jsverse/transloco-locale": "^8.4.0",
     "@stomp/rx-stomp": "^2.0.0",

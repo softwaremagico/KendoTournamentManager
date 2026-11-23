@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/notifications/duel-changed.service";
@@ -10,6 +10,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'fight',
   templateUrl: './fight.component.html',

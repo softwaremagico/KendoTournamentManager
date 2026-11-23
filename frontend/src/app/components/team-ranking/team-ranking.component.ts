@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
 import {Tournament} from "../../models/tournament";
@@ -20,6 +20,7 @@ import {Duel} from "../../models/duel";
 import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'team-ranking',
   templateUrl: './team-ranking.component.html',

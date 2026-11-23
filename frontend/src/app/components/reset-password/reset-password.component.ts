@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 import {InputLimits} from "../../utils/input-limits";
 import {PasswordFormValidationFields} from "./password-form-validation-fields";
@@ -12,6 +12,7 @@ import {MessageService} from "../../services/message.service";
 import {BiitProgressBarType, BiitSnackbarService} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'reset-password',
   templateUrl: './reset-password.component.html',

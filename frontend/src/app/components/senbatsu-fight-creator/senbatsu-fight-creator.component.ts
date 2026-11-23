@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {FightCreator} from "../fight-creator/fight-creator.component";
 import {Team} from "../../models/team";
 import {TeamService} from "../../services/team.service";
@@ -13,6 +13,7 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'senbatsu-fight-creator',
   templateUrl: './senbatsu-fight-creator.component.html',

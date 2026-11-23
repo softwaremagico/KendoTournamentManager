@@ -47,6 +47,9 @@ public class TournamentPage {
 
     public void open(String baseUrl) {
         webDriverClient.open(baseUrl + "/#/tournaments");
+        // Hash-only navigations reuse the previous component state (search filters,
+        // pagination), so force a reload to start from a clean tournament list.
+        webDriverClient.refresh();
         table.getRowCount();
     }
 

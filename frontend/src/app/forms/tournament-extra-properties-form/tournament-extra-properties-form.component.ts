@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {DrawResolution} from "../../models/draw-resolution";
 import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
@@ -15,6 +15,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {combineLatest, concatMap, from, map, Observable, takeUntil, toArray} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-extra-properties-form',
   templateUrl: './tournament-extra-properties-form.component.html',

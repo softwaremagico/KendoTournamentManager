@@ -57,17 +57,66 @@ mvn --projects kendo-tournament-rest --also-make package -DskipTests -Dgpg.skip=
 npm --prefix "${workspace_directory}/frontend" run build
 
 docker compose --project-name "${project_name}" --file "${module_directory}/docker-compose.e2e.yml" up --detach --wait
-for attempt in $(seq 1 30); do
-  if curl --silent --show-error --fail --max-time 2 "http://localhost:18080/kendo-tournament-backend/info/health-check" >/dev/null \
-    && curl --silent --show-error --fail --max-time 2 "http://localhost:14200/" >/dev/null; then
+for port in 14200 18080; do
+  if [[ -z "$(ss -ltnH "sport = :${port}")" ]]; then
+    printf 'Port %s is not available after docker compose up.\n' "${port}" >&2
+    exit 1
+  fi
+done
+
+# Wait for MySQL to be ready (the client lives inside the container, not on the host)
+e2e_db_ready=false
+for attempt in $(seq 1 90); do
+  if docker compose --project-name "${project_name}" --file "${module_directory}/docker-compose.e2e.yml" \
+    exec -T database mysqladmin ping -h localhost -pkendo_e2e_root_password >/dev/null 2>&1; then
+    e2e_db_ready=true
     break
   fi
-  if [[ "${attempt}" -eq 30 ]]; then
-    docker compose --project-name "${project_name}" --file "${module_directory}/docker-compose.e2e.yml" logs
+  if [[ "${attempt}" -eq 90 ]]; then
+    printf 'MySQL did not become ready within 180 seconds.\n' >&2
+    docker compose --project-name "${project_name}" --file "${module_directory}/docker-compose.e2e.yml" logs >&2
     exit 1
   fi
   sleep 2
 done
+
+printf 'MySQL ready.\n'
+
+# Wait for backend health check with extended timeout
+e2e_backend_ready=false
+for attempt in $(seq 1 120); do
+  if curl --silent --show-error --fail --max-time 5 "http://localhost:18080/kendo-tournament-backend/info/health-check" >/dev/null 2>&1; then
+    e2e_backend_ready=true
+    break
+  fi
+  if [[ "${attempt}" -eq 120 ]]; then
+    printf 'Backend did not become ready within 300 seconds.\n' >&2
+    docker compose --project-name "${project_name}" --file "${module_directory}/docker-compose.e2e.yml" logs >&2
+    exit 1
+  fi
+  sleep 2
+done
+
+# Wait for frontend with extended timeout  
+e2e_frontend_ready=false
+for attempt in $(seq 1 120); do
+  if curl --silent --show-error --fail --max-time 5 "http://localhost:14200/" >/dev/null 2>&1; then
+    # Also check if the login page is accessible
+    if curl --silent --show-error --fail --max-time 3 "http://localhost:14200/#/login" >/dev/null 2>&1; then
+      e2e_frontend_ready=true
+      break
+    fi
+  fi
+  if [[ "${attempt}" -eq 120 ]]; then
+    printf 'Frontend did not become ready within 300 seconds.\n' >&2
+    docker compose --project-name "${project_name}" --file "${module_directory}/docker-compose.e2e.yml" logs >&2
+    exit 1
+  fi
+  sleep 2
+done
+
+printf 'Backend and Frontend ready.\n'
+
 maven_arguments=(--projects kendo-tournament-e2e test
   -DskipE2E=false
   -Dselenium.base-url=http://localhost:14200

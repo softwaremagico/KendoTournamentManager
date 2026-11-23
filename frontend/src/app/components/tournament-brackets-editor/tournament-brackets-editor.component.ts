@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -31,6 +31,7 @@ import {TranslocoService} from '@jsverse/transloco';
 import {LoginService} from '../../services/login.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',

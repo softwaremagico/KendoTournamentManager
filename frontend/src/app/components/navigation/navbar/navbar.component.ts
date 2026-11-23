@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
 import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
@@ -23,6 +23,7 @@ import {LoginService} from '../../../services/login.service';
 import {MessageService} from '../../../services/message.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'navbar',
   templateUrl: './navbar.component.html',

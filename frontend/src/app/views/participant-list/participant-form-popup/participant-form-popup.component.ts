@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {UserSessionService} from "../../../services/user-session.service";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@jsverse/transloco";
@@ -9,6 +9,7 @@ import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-th
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'participant-form-popup',
   templateUrl: './participant-form-popup.component.html',

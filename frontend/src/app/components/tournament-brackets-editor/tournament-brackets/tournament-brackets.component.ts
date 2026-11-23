@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Group} from "../../../models/group";
 import {GroupsUpdatedService} from "./groups-updated.service";
 import {Tournament} from "../../../models/tournament";
 import {BracketsMeasures} from "./brackets-measures";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-brackets',
   templateUrl: './tournament-brackets.component.html',

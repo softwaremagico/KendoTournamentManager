@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {QrService} from "../../services/qr.service";
 import {QrCode} from "../../models/qr-code.model";
@@ -7,6 +7,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-qr-code',
   templateUrl: './tournament-qr-code.component.html',

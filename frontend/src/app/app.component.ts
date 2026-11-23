@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./interceptors/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
@@ -13,6 +13,7 @@ import {ActivityService} from "./services/rbac/activity.service";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',

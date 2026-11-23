@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -7,6 +7,7 @@ import {TournamentFormValidationFields} from "../tournament-form/tournament-form
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-custom-scores-form',
   templateUrl: './tournament-custom-scores-form.component.html',

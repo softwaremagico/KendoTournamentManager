@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Action} from "../../../action";
 import {Tournament} from "../../../models/tournament";
 import {TeamListData} from "../../../components/basic/team-list/team-list-data";
@@ -24,6 +24,7 @@ import {takeUntil} from "rxjs";
 import {random} from "../../../utils/random/random";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'league-generator',
   templateUrl: './league-generator.component.html',

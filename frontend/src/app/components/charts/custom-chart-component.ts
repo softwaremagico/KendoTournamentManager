@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {ChangeDetectionStrategy, Component, OnInit} from "@angular/core";
 import {DarkModeService} from "../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../services/user-session.service";
 import {
@@ -67,6 +67,7 @@ interface ApexDropShadow {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   template: ''
 })

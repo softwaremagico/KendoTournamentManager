@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {Team} from "../../models/team";
 import {NameUtilsService} from "../../services/name-utils.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'team-card',
   templateUrl: './team-card.component.html',

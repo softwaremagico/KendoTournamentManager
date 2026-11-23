@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
@@ -25,6 +25,7 @@ import {EnvironmentService} from "../../environment.service";
 import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-participant-statistics',
   templateUrl: './participant-statistics.component.html',

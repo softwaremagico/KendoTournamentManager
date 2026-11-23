@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {ParticipantService} from "../../services/participant.service";
 import {ClubService} from "../../services/club.service";
@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
 import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
 import {DatePipe} from "@angular/common";
-import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {DatatableColumn} from "../../models/datatable-column";
 import {combineLatest, forkJoin, takeUntil} from "rxjs";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
@@ -19,6 +19,7 @@ import {Constants} from "../../constants";
 import {ClubNamePipe} from "../../pipes/visualization/club-name-pipe";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-participant-list',
   templateUrl: './participant-list.component.html',

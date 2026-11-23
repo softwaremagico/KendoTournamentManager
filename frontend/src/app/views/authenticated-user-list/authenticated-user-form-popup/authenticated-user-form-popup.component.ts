@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {
@@ -6,6 +6,7 @@ import {
 } from "../../../forms/authenticated-user-form/authenticated-user-form-validation-fields";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'authenticated-user-form-popup',
   templateUrl: './authenticated-user-form-popup.component.html',
