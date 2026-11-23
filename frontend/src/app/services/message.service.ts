@@ -37,7 +37,12 @@ export class MessageService implements OnDestroy {
   private registerWebsocketsMessages(): void {
     this.messageSubscription = this.rxStompService.connected$.pipe(switchMap(() => {
       const tenantId = this.loginService.getTenantId();
-      return tenantId == null ? EMPTY : this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + tenantId + '/messages');
+      const roles = this.loginService.getJwtRoles().map((role: string): string => role.toUpperCase());
+      const readOnlySession = roles.includes('GUEST') || roles.includes('PARTICIPANT');
+      if (tenantId == null || readOnlySession) {
+        return EMPTY;
+      }
+      return this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + tenantId + '/messages');
     })).subscribe((message: Message): void => {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
