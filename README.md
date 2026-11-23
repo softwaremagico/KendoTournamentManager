@@ -197,17 +197,31 @@ By default the frontend is available at `http://localhost:14200` and the API at
 `admin@test.local` / `Admin-password-123`.
 
 Before printing the URLs, the script seeds the database through the REST API
-using the existing test CSVs:
+using the existing test CSVs directly (they are not copied anywhere):
 
 - `backend/kendo-tournament-core/src/test/resources/csv/clubs.csv`
 - `backend/kendo-tournament-core/src/test/resources/csv/participants.csv`
+
+The seeding flow is:
+
+1. Log in with `APP_USERNAME` / `APP_PASSWORD` and read the JWT from the
+   `Authorization` response header.
+2. Send it as `Authorization: Bearer <jwt>` to the REST API.
+3. Import clubs first (`POST /csv/clubs`), then participants
+   (`POST /csv/participants`), so participants can resolve their club.
 
 The default mode is `if-empty`, so a club or participant CSV is imported only
 when that resource is empty. This makes restarts with an existing database
 safe. Use `APP_SEED_DATA=never` to skip seeding, or `APP_SEED_DATA=always` to
 force the import (participants with an existing `idCard` are rejected by the
 backend importer). `APP_SEED_CLUBS_CSV` and `APP_SEED_PARTICIPANTS_CSV` can be
-used to point to other CSV files.
+used to point to other CSV files. Invalid `APP_SEED_DATA` values are rejected
+before the containers are started.
+
+With a fresh database this imports **8 clubs** and **18 participants**. On a
+restart with `if-empty`, both imports are skipped instead of duplicating data.
+`bash -n run-app.sh`, a clean-database import, an idempotent restart and the
+`never` mode have all been verified.
 
 Useful options:
 
