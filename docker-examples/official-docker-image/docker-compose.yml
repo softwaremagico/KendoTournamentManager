@@ -99,6 +99,8 @@ services:
       - "kendo-tournament-database"
     environment:
       - EXTERNAL_CONFIG_FILE=/opt/kendo-tournament-backend/application.properties
+      # Same origin as the URLs in config.js (https, no port) and WebSocket origin.
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-https://${machine_domain}}
     labels:
       - "traefik.enable=true"
       - "traefik.backend=kendo-tournament-backend"

@@ -88,6 +88,10 @@ services:
       - external
     ports:
       - "8080:8080"
+    environment:
+      # The frontend is opened directly on port 4200 in this example, so the
+      # browser origin differs from the backend origin (:8080).
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-${protocol}://localhost:4200}
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend

@@ -134,6 +134,11 @@ services:
       - containers
     ports:
       - "8080"
+    environment:
+      # Frontend and backend share http://<machine_domain> through Traefik, but
+      # setting the origin explicitly also keeps WebSockets working if the
+      # backend stops trusting X-Forwarded-* headers.
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-${protocol}://${machine_domain}}
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend

@@ -87,6 +87,10 @@ services:
       - external
     ports:
       - "8080:8080"
+    environment:
+      # Frontend:4200 -> backend:8080 is a cross-origin setup. The QR codes and
+      # WebSocket URL are built from machine_domain, which must include :8080.
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-${protocol}://localhost:4200}
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend
