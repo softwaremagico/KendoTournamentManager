@@ -65,9 +65,9 @@ import java.util.List;
  * </ul>
  * <p>
  * CORS is configured through {@link #generateCorsConfigurationSource()} and accepts
- * explicit origins supplied via the {@code server.cors.domains} property. When the
- * property is set to {@code null} (default) CORS is unrestricted, which is
- * appropriate for local development.
+ * only the explicit origins supplied via the {@code server.cors.domains} property.
+ * When no origins are configured, cross-origin requests are rejected (same-origin
+ * only), which is the safe default for production deployments behind a reverse proxy.
  * </p>
  * <p>
  * Passwords are encoded with BCrypt (work-factor 10).
@@ -94,7 +94,7 @@ public class WebSecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
 
-    @Value("${server.cors.domains:null}")
+    @Value("${server.cors.domains:}")
     private List<String> serverCorsDomains;
 
     @Autowired
@@ -147,12 +147,16 @@ public class WebSecurityConfig {
 
     private CorsConfigurationSource generateCorsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        if (serverCorsDomains == null || serverCorsDomains.contains("*")) {
-            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-        } else {
-            configuration.setAllowedOrigins(serverCorsDomains);
-            configuration.setAllowCredentials(true);
-        }
+        // Only register origins that were explicitly configured. An empty list means
+        // no cross-origin request is allowed; a wildcard is never accepted.
+        final List<String> allowedOrigins = serverCorsDomains == null
+                ? Collections.emptyList()
+                : serverCorsDomains.stream()
+                        .filter(origin -> origin != null && !origin.isBlank() && !origin.contains("*"))
+                        .toList();
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedOriginPatterns(Collections.emptyList());
+        configuration.setAllowCredentials(!allowedOrigins.isEmpty());
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
