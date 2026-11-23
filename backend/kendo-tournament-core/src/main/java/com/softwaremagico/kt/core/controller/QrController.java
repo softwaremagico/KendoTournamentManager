@@ -34,7 +34,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -81,24 +81,18 @@ public class QrController {
 
     private final ParticipantProvider participantProvider;
 
-    /** Optional in the core-only test context; injected from the REST module in production. */
-    @Autowired(required = false)
-    private GuestTicketProvider guestTicketProvider;
+    private final GuestTicketProvider guestTicketProvider;
 
+    /**
+     * The provider is optional in the core-only test context, where no signing bean exists.
+     * ObjectProvider keeps this an explicit constructor dependency without requiring a bean.
+     */
     public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
-                        GuestTicketProvider guestTicketProvider) {
+                        ObjectProvider<GuestTicketProvider> guestTicketProvider) {
         this.qrProvider = qrProvider;
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
-        this.guestTicketProvider = guestTicketProvider;
-    }
-
-    /** Constructor used by Spring and by unit tests that do not need signed guest links. */
-    @Autowired
-    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider) {
-        this.qrProvider = qrProvider;
-        this.tournamentProvider = tournamentProvider;
-        this.participantProvider = participantProvider;
+        this.guestTicketProvider = guestTicketProvider.getIfAvailable();
     }
 
     @Cacheable(cacheNames = "qr-codes", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId() "

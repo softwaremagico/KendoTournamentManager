@@ -9,7 +9,7 @@
 
 services:
   database:
-    image: mysql:9.7
+    image: mysql:9.7.4
     environment:
       MYSQL_DATABASE: kendo_app
       MYSQL_USER: kendo_app

@@ -118,6 +118,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `timezone` | `Europe/Madrid` | Server timezone (used in logs and date handling) |
 | `version` | `v3.6.0` | Application version tag |
 | `release` | `${version}` | Release label (usually the same as `version`) |
+| `SERVER_CORS_DOMAINS` | `${protocol}://${machine_domain}` | Optional override. Exact browser origin(s) allowed by the backend CORS policy and by the WebSocket handshake. Comma-separated list supported. It is derived automatically in the bundled Traefik setups; override it when the frontend is opened from a different origin (for example `http://localhost:4200` in the no-reverse-proxy examples). Wildcards such as `*` are ignored. |
 
 ### Frontend
 
@@ -139,7 +140,6 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `SERVER_FORWARD_HEADERS_STRATEGY` | `none` | Forwarded-header handling. Use `framework` only when the proxy overwrites `X-Forwarded-*`; changing it invalidates active tokens when `jwt_ip_check=true` |
 | `enable_guest_user` | `false` | Allow unauthenticated read-only access via QR codes |
 | `enable_tenancy` | `true` | Enable multi-organization support. Set to `false` so the whole installation uses a single organization (the `Legacy organization`): the login selector disappears, the tenant administration menu is hidden and all tenant management API endpoints return `404`. |
-| `server_cors_domains` | *(empty)* | Exact frontend origin(s) allowed for CORS/WebSockets. Empty means same-origin only |
 | `database_populate_default_data` | `always` | Controls SQL data initialization. The platform admin is created only from configured `bootstrap.super-admin.*` credentials, never by the first anonymous login |
 
 ### Backend — Database
@@ -193,23 +193,33 @@ websocket_protocol=https
 Make sure port 80 and port 443 are open in your server's firewall and that your DNS A record points to the server's
 public IP before starting the stack for the first time.
 
+With `machine_domain=mydomain.com` and `protocol=https`, `SERVER_CORS_DOMAINS` is automatically set to
+`https://mydomain.com` in the backend container. This is the exact origin the browser sends in `Origin` headers, so
+both REST calls and WebSocket handshakes keep working even when the backend does not trust `X-Forwarded-*` headers.
+If you terminate TLS in a different proxy or serve the frontend from another origin, set `SERVER_CORS_DOMAINS`
+explicitly to that browser origin (including scheme and port, without a trailing slash).
+
 ---
 
 ## Database options
 
-The default database is **PostgreSQL 14**, included in the Compose stack as a service named
-`kendo-tournament-database`.
+The default database is **PostgreSQL 19**, included in the Compose stack as a service named
+`kendo-tournament-database`. The examples that use official images ship **MySQL 9.7 LTS**.
 
 To use a different engine, update the `database_type`, and `database_port` variables in `.env`
 and replace the `kendo-tournament-database` service image in `docker-compose.yml`.
 
 | Engine | `database_type` | `database_port` |
 |--------|-----------------|-----------------|
-| PostgreSQL 14 (default) | `postgresql` | `5432` |
-| MySQL 8 | `mysql` | `3306` |
+| PostgreSQL 19 (default) | `postgresql` | `5432` |
+| MySQL 9.7 LTS | `mysql` | `3306` |
 
-The backend images ship with JDBC drivers for both PostgreSQL and MySQL. For other engines, you will need to add the
-appropriate driver JAR to the image.
+The backend images ship with JDBC drivers for both PostgreSQL (`42.7.14`) and MySQL (managed by Spring Boot 4.1).
+For other engines, you will need to add the appropriate driver JAR to the image.
+
+> **PostgreSQL 18+ note:** the official image stores data in `/var/lib/postgresql/19/docker` and declares the volume at
+> `/var/lib/postgresql` (older versions used `/var/lib/postgresql/data`). All Compose files in this repository already
+> use the new mount point. Do not point a 19 image at a volume created by 14 without migrating it first.
 
 ### Persistent data
 
@@ -297,6 +307,34 @@ wiki page for manual migration scripts.
 
 > **Tip:** Back up the database volume before any upgrade.
 
+### Database major-version upgrade
+
+Changing the image tag alone does **not** upgrade a database major version. PostgreSQL stores its data in a different
+format on every major release, and MySQL 8.0 cannot jump directly to 9.7 LTS. For an existing deployment upgrading
+from PostgreSQL 14 or MySQL 8.4 (8.0 is staged through 8.4 automatically), use the migration script:
+
+```bash
+cd KendoTournamentManager
+./docker/scripts/migrate-database.sh \
+  --compose-file docker/docker-compose.yml \
+  --env-file docker/.env
+```
+
+The script:
+
+1. stops the application services,
+2. dumps the old database with compatible dump tools (PostgreSQL uses the 19 toolchain),
+3. saves a physical backup of the old volume as `*.volume.tar.gz`,
+4. recreates the volume with the new image, restores the dump and checks the table count,
+5. leaves the application stopped so you can start it with `docker compose up -d`.
+
+Backups are written to `.db-backups/` by default (use `--backup-dir` to change it). Use `--source-image`,
+`--source-volume` and `--yes` to override autodetection or skip confirmation.
+
+If the migration fails, the old volume is still recoverable from the `*.volume.tar.gz` backup: remove the new volume,
+recreate it, extract the tar into it, restore the old Compose file and start the stack again. Do not delete the backups
+until you have verified the application.
+
 ---
 
 ## Troubleshooting
@@ -332,6 +370,9 @@ Common causes:
 - Verify that `protocol` and `websocket_protocol` are both set correctly in `.env`.
 - For HTTPS deployments, ensure `websocket_protocol=https` (not `http`).
 - In `docker-examples/official-docker-image/config.js`, make sure `websocketsUrl` uses the correct scheme and domain.
+- If the frontend is opened from a different origin than the backend (for example `http://localhost:4200` against
+  `http://localhost:8080`), set `SERVER_CORS_DOMAINS` to that exact browser origin; otherwise both CORS requests and
+  WebSocket handshakes are rejected.
 
 
 ## Domain
@@ -391,8 +432,8 @@ Variable `database_encryption_key` encrypts sensitive fields (participant names,
 random value that only you know and keep it stable across restarts or the stored data will no longer be readable.
 Leaving it blank stores those fields unencrypted — only do this for local development.
 
-The backend only accepts cross-origin requests from the exact origins listed in `server_cors_domains` /
-`SERVER_CORS_DOMAINS`. Keep it empty when the frontend is served from the same domain by the reverse proxy.
+The backend only accepts cross-origin requests from the exact origins listed in `SERVER_CORS_DOMAINS`.
+It is derived automatically in the bundled setups; override it when the frontend is served from a different origin.
 
 # Using REVERSE PROXY and SSL certificates generation
 

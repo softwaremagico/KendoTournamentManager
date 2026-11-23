@@ -9,7 +9,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-929h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-931h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -276,7 +276,7 @@ The application follows a standard three-tier architecture deployed as Docker co
 | Frontend | Angular 22, served via Nginx | [`softwaremagico/kendo-tournament-manager-frontend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
 | Backend | Java 25, Spring Boot 4, REST + WebSockets | [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend) |
 | Reverse proxy | Traefik (automatic Let's Encrypt TLS) | [`softwaremagico/kendo-tournament-manager-rproxy`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
-| Database | PostgreSQL 14 (default) or MySQL 8 | official image |
+| Database | PostgreSQL 19 (Docker default) or MySQL 9.7 LTS (standalone default) | official image |
 
 ---
 

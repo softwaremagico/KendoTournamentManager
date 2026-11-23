@@ -130,6 +130,11 @@ services:
       - containers
     ports:
       - "8080"
+    environment:
+      # Frontend and backend share http://<machine_domain> through Traefik, but
+      # setting the origin explicitly also keeps WebSockets working if the
+      # backend stops trusting X-Forwarded-* headers.
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-${protocol}://${machine_domain}}
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend
@@ -141,7 +146,6 @@ services:
       - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
       - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
       - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
-      - SERVER_CORS_DOMAINS=${server_cors_domains:-}
       - SERVER_FORWARD_HEADERS_STRATEGY=${SERVER_FORWARD_HEADERS_STRATEGY:-none}
     depends_on:
       - "kendo-tournament-database"
@@ -174,12 +178,12 @@ services:
 
 
   kendo-tournament-database:
-    image: postgres:14
+    image: postgres:19.0
     restart: always
     networks:
       - containers
     volumes:
-      - kendo-tournament-database:/var/lib/postgresql/data
+      - kendo-tournament-database:/var/lib/postgresql
     container_name: kendo-tournament-database
     hostname: kendo-tournament-database
     environment:

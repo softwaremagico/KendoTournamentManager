@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Set;
 
 import static org.testng.Assert.*;
 
@@ -264,6 +265,99 @@ public class JwtTokenUtilTest {
         assertNotNull(token);
         assertTrue(util.validate(token));
     }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldEmbedAndReadRolesInToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        this.user.setRoles(Set.of("VIEWER", "ADMIN"));
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertEquals(util.getRoles(token), Set.of("VIEWER", "ADMIN"));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnEmptyRolesForTokenWithoutRoleClaim() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        this.user.setRoles(null);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+        final String legacyToken = Jwts.builder().subject("7,user7,session-1,10.0.0.1,AA-BB")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertEquals(util.getRoles(token), java.util.Collections.emptySet());
+        assertEquals(util.getRoles(legacyToken), java.util.Collections.emptySet());
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldExposeConfiguredExpirationDurations() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "3000", "4000", this.networkController);
+
+        assertEquals(util.getJwtExpirationDuration(), 1_200_000L);
+        assertEquals(util.getJwtGuestExpirationDuration(), 3_000L);
+        assertEquals(util.getJwtParticipantExpirationDuration(), 4_000L);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldCreateAndValidateGuestTicket() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String ticket = util.createGuestTicket(7, 3);
+
+        assertNotNull(ticket);
+        assertEquals(util.validateGuestTicket(ticket, 7), Integer.valueOf(3));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketCreationWithoutTournamentOrTenant() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertThrows(IllegalArgumentException.class, () -> util.createGuestTicket(null, 3));
+        assertThrows(IllegalArgumentException.class, () -> util.createGuestTicket(7, null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketValidationWithMissingArguments() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertNull(util.validateGuestTicket(null, 7));
+        assertNull(util.validateGuestTicket("   ", 7));
+        assertNull(util.validateGuestTicket("ticket", null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketIssuedForAnotherTournament() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String ticket = util.createGuestTicket(7, 3);
+
+        assertNull(util.validateGuestTicket(ticket, 8));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketWithWrongSignature() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String foreignTicket = Jwts.builder().subject("guest:7:3")
+                .signWith(signingKey("different-secret"), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateGuestTicket(foreignTicket, 7));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectMalformedGuestTicketSubjects() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String regularToken = util.generateAccessToken(this.user, "10.0.0.1");
+        final String tokenWithoutSubject = Jwts.builder().issuer(JwtTokenUtilTest.class.getName())
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+        final String ticketWithoutTenant = Jwts.builder().subject("guest:7")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+        final String ticketWithNonNumericTenant = Jwts.builder().subject("guest:7:abc")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateGuestTicket(regularToken, 7));
+        assertNull(util.validateGuestTicket(tokenWithoutSubject, 7));
+        assertNull(util.validateGuestTicket(ticketWithoutTenant, 7));
+        assertNull(util.validateGuestTicket(ticketWithNonNumericTenant, 7));
+    }
 }
 
 class TestNetworkController extends NetworkController {
@@ -272,3 +366,5 @@ class TestNetworkController extends NetworkController {
         return "AA-BB-CC-DD";
     }
 }
+
+// Re-trigger backend Sonar analysis after adding expiration accessor tests.

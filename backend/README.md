@@ -67,7 +67,7 @@ other modules.
 |------|----------------|
 | Java (JDK) | 25 |
 | Maven | 3.8 |
-| Database server | MySQL 8 (default) or any Hibernate-compatible engine |
+| Database server | MySQL 9.7 LTS (standalone default) or any Hibernate-compatible engine |
 
 ---
 
@@ -163,7 +163,7 @@ docker run -d \
   -e MYSQL_PASSWORD=<strong-password> \
   -e MYSQL_ROOT_PASSWORD=<rootpass> \
   -p 3306:3306 \
-  mysql:8
+  mysql:9.7.4
 ```
 
 This creates the database expected by the default backend configuration (`jdbc:mysql://127.0.0.1:3306/kendotournament`).
@@ -256,7 +256,7 @@ Restrict cross-origin requests to specific domains (comma-separated list):
 server.cors.domains=https://my.tournament.site
 ```
 
-Wildcards are ignored; leave the property empty for same-origin only. If the application is served behind a reverse proxy, set this to the exact public frontend origin(s).
+Wildcards are ignored; leave the property empty for same-origin only. If the application is served behind a reverse proxy, set this to the exact public frontend origin(s). In the Docker examples this property is supplied as `SERVER_CORS_DOMAINS`.
 
 #### Forwarded headers
 
@@ -319,7 +319,7 @@ Its initialization is commented out; do not enable it in production.
 ### Database
 
 The project uses Hibernate for managing database connections, allowing easy interchange between different database
-providers. The default setup targets **MySQL 8**:
+providers. The default setup targets **MySQL 9.7 LTS**:
 
 ```properties
 spring.kendo.datasource.platform=mysql

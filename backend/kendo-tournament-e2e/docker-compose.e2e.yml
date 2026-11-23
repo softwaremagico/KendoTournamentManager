@@ -1,6 +1,6 @@
 services:
   database:
-    image: mysql:9.7
+    image: mysql:9.7.4
     environment:
       MYSQL_DATABASE: kendo_e2e
       MYSQL_USER: kendo_e2e

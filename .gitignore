@@ -31,3 +31,4 @@ application-raspdocker.properties
 *-raspdocker.properties
 .editorconfig
 .serena
+.db-backups/

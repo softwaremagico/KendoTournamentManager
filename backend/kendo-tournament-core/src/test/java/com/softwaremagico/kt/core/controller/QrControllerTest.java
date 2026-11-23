@@ -28,12 +28,14 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.security.GuestTicketProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.ObjectProvider;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -49,6 +51,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -70,8 +73,9 @@ public class QrControllerTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        controller = new QrController(qrProvider, tournamentProvider, participantProvider,
-                (tournamentId, tenantId) -> "signed-ticket");
+        final ObjectProvider<GuestTicketProvider> ticketProvider = mock(ObjectProvider.class);
+        when(ticketProvider.getIfAvailable()).thenReturn((tournamentId, tenantId) -> "signed-ticket");
+        controller = new QrController(qrProvider, tournamentProvider, participantProvider, ticketProvider);
         setField(controller, "schema", "https");
         setField(controller, "machineDomain", "kt.local");
     }

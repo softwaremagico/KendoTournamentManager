@@ -270,4 +270,26 @@ public class JwtTokenFilterTest {
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         assertSame(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), participant);
     }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldRejectDisabledParticipantAccount() throws Exception {
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        final Participant participant = mock(Participant.class);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer disabled-token");
+        when(jwtTokenUtil.validate("disabled-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("disabled-token")).thenReturn("disabled-user");
+        when(jwtTokenUtil.getTenantId("disabled-token")).thenReturn(1);
+        when(authenticatedUserProvider.findByUsername("disabled-user")).thenReturn(Optional.empty());
+        when(participantProvider.findByTokenUsername("disabled-user")).thenReturn(Optional.of(participant));
+        when(participant.getTenantId()).thenReturn(1);
+        when(participant.isAccountNonExpired()).thenReturn(true);
+        when(participant.isAccountNonLocked()).thenReturn(true);
+        when(participant.isCredentialsNonExpired()).thenReturn(true);
+        when(participant.isEnabled()).thenReturn(false);
+
+        assertThrows(InvalidJwtException.class, () -> localFilter.doFilterInternal(request, response, chain));
+        verify(chain, never()).doFilter(request, response);
+    }
 }

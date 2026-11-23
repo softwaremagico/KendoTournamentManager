@@ -36,6 +36,7 @@
                 <include name="authFirstLoginIntegration"/>
                 <include name="guestQrAccess"/>
                 <include name="webSocketSecurityConfigTests"/>
+                <include name="webSocketConfiguration"/>
                 <include name="loggableDispatcherServletTests"/>
                 <include name="authApiUnitTests"/>
                 <include name="kendoUserDetailsServiceTests"/>

@@ -201,7 +201,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
      * Revalidates the account on every STOMP CONNECT so tenant removal, disabling
      * and role changes take effect immediately instead of relying on stale JWT claims.
      */
-    private Set<String> resolveCurrentRoles(String token, String username, Integer tenantId) {
+    private Set<String> resolveCurrentRoles(String token, @Nullable String username, @Nullable Integer tenantId) {
         // Unit tests construct this configuration without database providers.
         if (authenticatedUserProvider == null || participantProvider == null || username == null || tenantId == null) {
             return jwtTokenUtil.getRoles(token);
@@ -277,7 +277,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         private final Integer tenantId;
         private final Set<String> roles;
 
-        UserPrincipal(String userName, Integer tenantId, Set<String> roles) {
+        UserPrincipal(String userName, Integer tenantId, @Nullable Set<String> roles) {
             this.name = userName;
             this.tenantId = tenantId;
             this.roles = roles == null ? Set.of() : roles.stream()
