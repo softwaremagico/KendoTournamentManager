@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.encryption;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.EncryptorLogger;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -53,13 +52,7 @@ public class ScoreTypeCryptoConverter extends AbstractCryptoConverter<ScoreType>
 
     @Override
     protected ScoreType stringToEntityAttribute(String dbData) {
-        try {
-            return (dbData == null || dbData.isEmpty()) ? null : ScoreType.getType(dbData);
-        } catch (NumberFormatException ex) {
-            EncryptorLogger.errorMessage(this.getClass(), "Invalid score type value '{}' in database. Cause: {}", dbData,
-                    ex.getMessage());
-            return null;
-        }
+        return (dbData == null || dbData.isEmpty()) ? null : ScoreType.getType(dbData);
     }
 
     @Override
