@@ -240,6 +240,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 && !authenticatedUserProvider.belongsToTenant(authenticatedUser, tenantId)) {
             throw new InvalidJwtException(this.getClass(), "JWT token tenant does not match the authenticated user.");
         }
+        if (!userDetails.isAccountNonExpired() || !userDetails.isAccountNonLocked()
+                || !userDetails.isCredentialsNonExpired() || !userDetails.isEnabled()) {
+            throw new InvalidJwtException(this.getClass(), "JWT token belongs to a disabled or expired account.");
+        }
         if (user instanceof AuthenticatedUser authenticatedUser) {
             authenticatedUser.setTenantId(tenantId);
         }
