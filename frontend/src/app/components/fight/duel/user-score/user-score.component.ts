@@ -1,10 +1,11 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Duel} from "../../../../models/duel";
 import {DuelType} from "../../../../models/duel-type";
 import {Participant} from "../../../../models/participant";
 import {Fight} from "../../../../models/fight";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'user-score',
   templateUrl: './user-score.component.html',

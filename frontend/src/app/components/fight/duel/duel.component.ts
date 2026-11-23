@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Duel} from "../../../models/duel";
 import {DuelChangedService} from "../../../services/notifications/duel-changed.service";
 import {CdkDrag, CdkDragDrop, CdkDropList} from "@angular/cdk/drag-drop";
@@ -9,6 +9,7 @@ import {takeUntil} from "rxjs";
 import {KendoComponent} from "../../kendo-component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'duel',
   templateUrl: './duel.component.html',

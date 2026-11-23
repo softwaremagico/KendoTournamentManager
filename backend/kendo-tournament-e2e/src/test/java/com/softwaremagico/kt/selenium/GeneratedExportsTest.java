@@ -21,8 +21,8 @@ package com.softwaremagico.kt.selenium;
  * #L%
  */
 
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.parser.PdfTextExtractor;
+import org.openpdf.text.pdf.PdfReader;
+import org.openpdf.text.pdf.parser.PdfTextExtractor;
 import com.softwaremagico.kt.selenium.pages.ClubPage;
 import com.softwaremagico.kt.selenium.pages.FightPage;
 import com.softwaremagico.kt.selenium.pages.LoginPage;

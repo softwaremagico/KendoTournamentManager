@@ -1,8 +1,9 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {TeamListData} from "./team-list-data";
 import {Team} from "../../../models/team";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'team-list',
   templateUrl: './team-list.component.html',

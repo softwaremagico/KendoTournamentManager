@@ -26,8 +26,13 @@ import com.softwaremagico.kt.selenium.pages.TournamentPage;
 import com.softwaremagico.kt.selenium.pages.UserPage;
 import com.softwaremagico.kt.selenium.pages.LoginPage;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.Command;
+import org.openqa.selenium.devtools.DevTools;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class WebSocketReconnectTest extends AdvancedBrowserTest {
     @Test
@@ -37,15 +42,19 @@ public class WebSocketReconnectTest extends AdvancedBrowserTest {
         final UserPage users=new UserPage(client); users.open(URL);users.create(editor,PASSWORD);users.setEditorRole(editor);
         tournaments.open(URL);tournaments.select(tournament);tournaments.openFights();
         other=browser();
-        final LoginPage login=new LoginPage(new WebDriverClient(other)); login.open(URL);
-        ((JavascriptExecutor)other).executeScript("""
+        final DevTools devTools=((ChromeDriver)other).getDevTools();
+        devTools.createSession();
+        devTools.send(new Command<>("Page.enable", Map.of()));
+        // Selenium navigations reload the page, so the socket monitor must be reinstalled by the
+        // browser itself on every new document instead of only once from the test script.
+        devTools.send(new Command<>("Page.addScriptToEvaluateOnNewDocument", Map.of("source", """
             window.e2eSockets=[];
             const NativeSocket=window.WebSocket;
             window.WebSocket=class extends NativeSocket {
               constructor(...args) {super(...args);window.e2eSockets.push(this)}
             };
-            """);
-        // LoginPage refreshes to apply language; install monitoring again on the authenticated fight document.
+            """)));
+        final LoginPage login=new LoginPage(new WebDriverClient(other)); login.open(URL);
         login.login(editor,PASSWORD);
         final WebDriverClient remote=new WebDriverClient(other);
         final TournamentPage remoteTournaments=new TournamentPage(remote);

@@ -78,6 +78,13 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
 
     private void assertProperties(String suffix, String type, List<String> visibleFields, Map<String, String> expectedProperties) {
         final String name = "P " + type + " " + suffix;
+        final String inheritedSwissRounds = type.equals("Swiss System")
+                ? list(api("GET", "/tournaments/properties/latest", null)).stream()
+                        .filter(property -> "SWISS_ROUNDS".equals(property.get("propertyKey")))
+                        .map(property -> property.get("propertyValue") == null
+                                ? "" : property.get("propertyValue").toString())
+                        .findFirst().orElse(null)
+                : null;
         client.clickFirstVisible(By.id("button-plus"));
         new InputField(client, "tournament-name").setValue(name);
         new Dropdown(client, "tournament-type").select(type);
@@ -87,6 +94,14 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
             final boolean isVisible = fields.stream().anyMatch(WebElement::isDisplayed);
             Assert.assertEquals(isVisible, visibleFields.contains(fieldId),
                     "Unexpected visibility of " + fieldId + " for tournament type " + type);
+        }
+
+        if (inheritedSwissRounds != null) {
+            client.getWebDriverWait()
+                    .withMessage(() -> "Swiss rounds input should show the inherited value '"
+                            + inheritedSwissRounds + "'")
+                    .until(browser -> inheritedSwissRounds.equals(java.util.Objects.toString(
+                            new InputField(client, "swiss-rounds").getValue(), "")));
         }
 
         final String propertyDropdown = List.of(
@@ -153,7 +168,15 @@ public class TournamentTypePropertiesTest extends AdvancedBrowserTest {
                         property -> (String) property.get("propertyValue")
                 ));
 
-        Assert.assertEquals(actualProperties, expectedProperties,
-                "Saved properties for tournament type " + type);
+        // SWISS_ROUNDS is prefilled with the inherited value; if the user does not edit it, the
+        // form saves that same value back. Include it in the expectation when it exists.
+        final Map<String, String> propertiesIncludingInherited = new java.util.HashMap<>(expectedProperties);
+        if (inheritedSwissRounds != null) {
+            propertiesIncludingInherited.put("SWISS_ROUNDS", inheritedSwissRounds);
+        }
+
+        Assert.assertEquals(actualProperties, propertiesIncludingInherited,
+                "Saved properties for tournament type " + type
+                        + "; expected=" + propertiesIncludingInherited + "; actual=" + actualProperties);
     }
 }

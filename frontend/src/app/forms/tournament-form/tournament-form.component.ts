@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentFormValidationFields} from "./tournament-form-validation-fields";
 import {ScoreType} from "../../models/score-type";
@@ -17,6 +17,7 @@ import {Fight} from "../../models/fight";
 import {TournamentExtraPropertiesFormComponent} from "../tournament-extra-properties-form/tournament-extra-properties-form.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-form',
   templateUrl: './tournament-form.component.html',

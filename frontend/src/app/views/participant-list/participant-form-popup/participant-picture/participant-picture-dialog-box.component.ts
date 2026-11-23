@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {RbacService} from "../../../../services/rbac/rbac.service";
 import {WebcamImage, WebcamInitError} from "ngx-webcam";
@@ -12,6 +12,7 @@ import {TranslocoService} from "@jsverse/transloco";
 import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'participant-picture',
   templateUrl: './participant-picture-dialog-box.component.html',

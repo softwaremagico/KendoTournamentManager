@@ -1,4 +1,4 @@
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {TournamentTeamsComponent} from './tournament-teams.component';
 import {MessageService} from '../../../services/message.service';
 import {LoggerService} from '../../../services/logger.service';
@@ -19,6 +19,9 @@ import {Team} from '../../../models/team';
 import {Participant} from '../../../models/participant';
 import {Role} from '../../../models/role';
 import {TournamentScore} from '../../../models/tournament-score.model';
+import {Group} from '../../../models/group';
+import {ChangeDetectorRef} from '@angular/core';
+import {ScoreOfCompetitor} from '../../../models/score-of-competitor';
 
 describe('TournamentTeamsComponent', () => {
   let component: TournamentTeamsComponent;
@@ -36,6 +39,7 @@ describe('TournamentTeamsComponent', () => {
   let filterResetServiceSpy: jasmine.SpyObj<FilterResetService>;
   let csvServiceSpy: jasmine.SpyObj<CsvService>;
   let translocoServiceSpy: jasmine.SpyObj<TranslocoService>;
+  let changeDetectorRefSpy: jasmine.SpyObj<ChangeDetectorRef>;
 
   const buildTournament = (): Tournament => {
     const t = new Tournament();
@@ -87,6 +91,7 @@ describe('TournamentTeamsComponent', () => {
     });
     csvServiceSpy = jasmine.createSpyObj('CsvService', ['addTeams']);
     translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['translate']);
+    changeDetectorRefSpy = jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges']);
 
     rbacServiceSpy.isAllowed.and.returnValue(true);
     fightServiceSpy.getFromTournament.and.returnValue(of([]));
@@ -108,7 +113,7 @@ describe('TournamentTeamsComponent', () => {
       filterResetServiceSpy,
       csvServiceSpy,
       translocoServiceSpy,
-      jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges'])
+      changeDetectorRefSpy
     );
     component.tournament = buildTournament();
   });
@@ -118,6 +123,7 @@ describe('TournamentTeamsComponent', () => {
   });
 
   it('should initialize teams and participants in ngOnInit', () => {
+    const initialUserListData = component.userListData;
     const p1 = buildParticipant(1, 'Alice', 'Smith');
     const p2 = buildParticipant(2, 'Bob', 'Jones');
     const team1 = buildTeam(1, 'Team A', [p1]);
@@ -131,6 +137,49 @@ describe('TournamentTeamsComponent', () => {
     expect(teamServiceSpy.getFromTournament).toHaveBeenCalled();
     expect(roleServiceSpy.getFromTournamentAndType).toHaveBeenCalled();
     expect(component.teams.length).toBe(1);
+    expect(component.userListData).not.toBe(initialUserListData);
+    expect(component.groupsLoaded).toBeTrue();
+  });
+
+  it('should wait for groups to load before enabling team creation', () => {
+    const groups = new Subject<Group[]>();
+    groupServiceSpy.getFromTournament.and.returnValue(groups);
+    teamServiceSpy.getFromTournament.and.returnValue(of([]));
+    roleServiceSpy.getFromTournamentAndType.and.returnValue(of([]));
+
+    component.ngOnInit();
+
+    expect(component.groupsLoaded).toBeFalse();
+    groups.next([]);
+    groups.complete();
+    expect(component.groupsLoaded).toBeTrue();
+  });
+
+  it('should mark the view for check after balancing teams asynchronously', () => {
+    const participants = [
+      buildParticipant(1, 'Alice', 'Smith'),
+      buildParticipant(2, 'Bob', 'Jones'),
+      buildParticipant(3, 'Carol', 'Brown')
+    ];
+    const team = buildTeam(1, 'Team A', []);
+    const ranking = participants.map((participant: Participant): ScoreOfCompetitor => {
+      const score = new ScoreOfCompetitor();
+      score.competitor = participant;
+      return score;
+    });
+    component.teams = [team];
+    component.members.set(team, []);
+    component.userListData.participants = participants;
+    component.userListData.filteredParticipants = participants;
+    const rankingResponse = new Subject<ScoreOfCompetitor[]>();
+    rankingServiceSpy.getCompetitorsGlobalScoreRanking.and.returnValue(rankingResponse);
+    teamServiceSpy.update.and.returnValue(of(team));
+
+    component.balancedTeams();
+    expect(changeDetectorRefSpy.markForCheck).not.toHaveBeenCalled();
+    rankingResponse.next(ranking);
+
+    expect(changeDetectorRefSpy.markForCheck).toHaveBeenCalled();
   });
 
   it('should get card title as lastname + name when member exists', () => {

@@ -159,6 +159,12 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
         if (dto.getId() != null && TenantContext.getTenantId() != null) {
             get(dto.getId());
         }
+        // A property created through the "update" endpoint has no id yet. Keep its creator aligned
+        // with the authenticated user so "/properties/latest" returns the same values that are
+        // copied into newly created tournaments.
+        if (dto.getId() == null && (dto.getCreatedBy() == null || dto.getCreatedBy().isBlank()) && username != null) {
+            dto.setCreatedBy(username);
+        }
         dto.setUpdatedBy(username);
         validate(dto);
         final D updatedDTO = convert(super.getProvider().save(reverse(dto)));
@@ -214,7 +220,7 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
      */
     @Transactional
     public D create(D dto, String username, String session) {
-        if (dto.getCreatedBy() == null && username != null) {
+        if ((dto.getCreatedBy() == null || dto.getCreatedBy().isBlank()) && username != null) {
             dto.setCreatedBy(username);
         }
         validate(dto);
@@ -242,7 +248,7 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
     @Transactional
     public List<D> create(Collection<D> dtos, String username, String session) {
         dtos.forEach(dto -> {
-            if (dto.getCreatedBy() == null && username != null) {
+            if ((dto.getCreatedBy() == null || dto.getCreatedBy().isBlank()) && username != null) {
                 dto.setCreatedBy(username);
             }
         });

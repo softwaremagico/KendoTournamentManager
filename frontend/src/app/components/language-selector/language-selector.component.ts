@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
 import {TranslocoService} from '@jsverse/transloco';
 import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'language-selector',
   templateUrl: './language-selector.component.html',

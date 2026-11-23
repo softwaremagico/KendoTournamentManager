@@ -1,10 +1,11 @@
-import {Component, Injectable} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'redirect-guard',
   standalone: true,
   templateUrl: './redirect-guard.html'

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../../models/team";
 import {Group} from "../../../../models/group";
@@ -8,6 +8,7 @@ import {Tournament} from "../../../../models/tournament";
 import {BracketsMeasures} from "../brackets-measures";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'group-container',
   templateUrl: './group-container.component.html',

@@ -21,7 +21,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-import com.lowagie.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfPTable;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
@@ -177,7 +177,7 @@ public class TeamsScoreListTest {
         teamsScoreList.createHeaderRow(null, table, 0, 0, null,
                 com.softwaremagico.kt.pdf.PdfTheme.getBasicFont(), 12);
         teamsScoreList.createFooterRow(null, table, 0, 0, null, null, 0);
-        assertEquals(teamsScoreList.getPageSize(), com.lowagie.text.PageSize.A4);
+        assertEquals(teamsScoreList.getPageSize(), org.openpdf.text.PageSize.A4);
     }
 }
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -32,6 +32,7 @@ import {TournamentService} from "../../services/tournament.service";
 import {EnvironmentService} from "../../environment.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-tournament-statistics',
   templateUrl: './tournament-statistics.component.html',

@@ -9,6 +9,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {AppComponent} from './app.component';
+import {SnackbarComponent} from "./components/snackbar/snackbar.component";
 import {AppRoutingModule} from './app-routing.module';
 import {ClubListComponent} from './views/club-list/club-list.component';
 import {MatTableModule} from "@angular/material/table";
@@ -142,6 +143,7 @@ registerLocaleData(localeFR, "fr");
 
 @NgModule({ declarations: [
         AppComponent,
+        SnackbarComponent,
         ClubListComponent,
         AuthenticatedUserListComponent,
         PasswordsComponent,

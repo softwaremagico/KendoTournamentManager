@@ -62,14 +62,14 @@ public class KeyProperty {
     }
 
     public static String getDatabaseEncryptionKey() {
-        return instance.databaseEncryptionKey;
+        return instance == null ? null : instance.databaseEncryptionKey;
     }
 
     public static String getDatabasePublicKey() {
-        return instance.databasePublicKey;
+        return instance == null ? null : instance.databasePublicKey;
     }
 
     public static String getDatabasePrivateKey() {
-        return instance.databasePrivateKey;
+        return instance == null ? null : instance.databasePrivateKey;
     }
 }

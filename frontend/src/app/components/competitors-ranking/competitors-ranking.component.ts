@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RankingService} from "../../services/ranking.service";
 import {ScoreOfCompetitor} from "../../models/score-of-competitor";
@@ -12,6 +12,7 @@ import {Type} from "@biit-solutions/wizardry-theme/inputs";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'competitors-ranking',
   templateUrl: './competitors-ranking.component.html',

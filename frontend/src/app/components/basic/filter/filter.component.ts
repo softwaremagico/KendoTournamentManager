@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {FilterFocusService} from "../../../services/notifications/filter-focus.service";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'filter',
   templateUrl: './filter.component.html',

@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
 import {debounceTime, fromEvent, Subscription, takeUntil} from "rxjs";
 import {NameUtilsService} from "../../../../../services/name-utils.service";
@@ -9,6 +9,7 @@ import {Router} from "@angular/router";
 import {Fight} from "../../../../../models/fight";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'user-name',
   templateUrl: './user-name.component.html',

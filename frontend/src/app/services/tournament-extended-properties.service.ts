@@ -50,6 +50,19 @@ export class TournamentExtendedPropertiesService {
       );
   }
 
+  getLatest(): Observable<TournamentExtendedProperty[]> {
+    const url: string = `${this.baseUrl}/latest`;
+    return this.http.get<TournamentExtendedProperty[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info('fetched latest tournament properties'),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<TournamentExtendedProperty[]>('getting latest tournament properties'))
+      );
+  }
+
   add(tournamentExtendedProperty: TournamentExtendedProperty): Observable<TournamentExtendedProperty> {
     const url: string = `${this.baseUrl}`;
     return this.http.post<TournamentExtendedProperty>(url, tournamentExtendedProperty)

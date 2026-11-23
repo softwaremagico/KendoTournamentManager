@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'picture-dialog-box',
   templateUrl: './picture-dialog-box.component.html',

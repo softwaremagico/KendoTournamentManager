@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
 import {Subject, takeUntil} from "rxjs";
@@ -9,6 +9,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {FilterFocusService} from "../../services/notifications/filter-focus.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'popup-timer',
   templateUrl: './timer.component.html',

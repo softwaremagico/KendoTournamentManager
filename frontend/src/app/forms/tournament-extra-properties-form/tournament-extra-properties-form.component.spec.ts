@@ -31,13 +31,14 @@ describe('TournamentExtraPropertiesFormComponent', () => {
   beforeEach(() => {
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['selectTranslate', 'translate']);
-    tournamentExtendedPropertiesServiceSpy = jasmine.createSpyObj('TournamentExtendedPropertiesService', ['getByTournament', 'update']);
+    tournamentExtendedPropertiesServiceSpy = jasmine.createSpyObj('TournamentExtendedPropertiesService', ['getByTournament', 'getLatest', 'update']);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
 
     rbacServiceSpy.isAllowed.and.returnValue(true);
     translocoServiceSpy.selectTranslate.and.returnValue(of('translated'));
     translocoServiceSpy.translate.and.returnValue('translated hint');
     tournamentExtendedPropertiesServiceSpy.getByTournament.and.returnValue(of([]));
+    tournamentExtendedPropertiesServiceSpy.getLatest.and.returnValue(of([]));
     tournamentExtendedPropertiesServiceSpy.update.and.returnValue(of({}) as any);
 
     component = new TournamentExtraPropertiesFormComponent(
@@ -125,14 +126,19 @@ describe('TournamentExtraPropertiesFormComponent', () => {
     properties.complete();
   });
 
-  it('should allow a new tournament form to save without loading persisted properties', () => {
+  it('should wait for inherited properties before allowing a new tournament to be saved', () => {
     component.tournament = buildTournament();
     component.tournament.id = undefined;
+    const properties = new Subject<any[]>();
+    tournamentExtendedPropertiesServiceSpy.getLatest.and.returnValue(properties);
 
     component.ngOnInit();
 
-    expect(component.propertiesLoaded).toBeTrue();
+    expect(component.propertiesLoaded).toBeFalse();
     expect(tournamentExtendedPropertiesServiceSpy.getByTournament).not.toHaveBeenCalled();
+    properties.next([]);
+    expect(component.propertiesLoaded).toBeTrue();
+    properties.complete();
   });
 
   it('should use default challengeDistance when persisted value is not a number', () => {
@@ -235,6 +241,48 @@ describe('TournamentExtraPropertiesFormComponent', () => {
       expect(values).toContain(SwissTieBreakRule.SONNEBORN_BERGER);
       expect(values).toContain(SwissTieBreakRule.DIRECT_ENCOUNTER);
       expect(values).toContain(SwissTieBreakRule.POINT_DIFFERENTIAL);
+    });
+
+    it('should prefill inherited SWISS_ROUNDS for a new tournament', () => {
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.tournament.id = undefined;
+      tournamentExtendedPropertiesServiceSpy.getLatest.and.returnValue(of([
+        { propertyKey: TournamentExtraPropertyKey.SWISS_ROUNDS, propertyValue: '4' } as any
+      ]));
+
+      component.ngOnInit();
+
+      expect(component.swissRounds).toBe(4);
+      expect(component.propertiesLoaded).toBeTrue();
+    });
+
+    it('should save a changed inherited SWISS_ROUNDS value', () => {
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.tournament.id = undefined;
+      tournamentExtendedPropertiesServiceSpy.getLatest.and.returnValue(of([
+        { propertyKey: TournamentExtraPropertyKey.SWISS_ROUNDS, propertyValue: '4' } as any
+      ]));
+      component.ngOnInit();
+
+      component.swissRounds = 6;
+      component.saveProperties(component.tournament).subscribe();
+
+      const savedRounds = tournamentExtendedPropertiesServiceSpy.update.calls.allArgs()
+        .map(([property]) => property)
+        .find(property => property.propertyKey === TournamentExtraPropertyKey.SWISS_ROUNDS);
+      expect(savedRounds?.propertyValue).toBe('6');
+    });
+
+    it('should keep SWISS_ROUNDS blank when the inherited value is empty', () => {
+      component.tournament = buildTournament(TournamentType.SWISS);
+      component.tournament.id = undefined;
+      tournamentExtendedPropertiesServiceSpy.getLatest.and.returnValue(of([
+        { propertyKey: TournamentExtraPropertyKey.SWISS_ROUNDS, propertyValue: '' } as any
+      ]));
+
+      component.ngOnInit();
+
+      expect(component.swissRounds).toBeNull();
     });
 
     it('should load persisted Swiss properties in ngOnInit', () => {

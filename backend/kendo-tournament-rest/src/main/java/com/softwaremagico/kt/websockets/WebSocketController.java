@@ -21,8 +21,8 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
@@ -49,7 +49,7 @@ public class WebSocketController {
 
     @FunctionalInterface
     private interface MessageContentFactory {
-        MessageContent create() throws JsonProcessingException;
+        MessageContent create() throws JacksonException;
     }
 
     public static final String FIGHTS_MAPPING = "/fights";
@@ -72,7 +72,7 @@ public class WebSocketController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    private <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JacksonException {
         return objectMapper.writeValueAsString(object);
     }
 
@@ -82,7 +82,7 @@ public class WebSocketController {
             final int tenantId = TenantContext.getRequiredTenantId();
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/" + tenantId + mapping,
                     messageFactory.create());
-        } catch (JsonProcessingException | RuntimeException e) {
+        } catch (RuntimeException e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
     }

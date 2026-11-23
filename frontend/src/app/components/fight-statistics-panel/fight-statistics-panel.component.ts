@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {TournamentFightStatistics} from "../../models/tournament-fight-statistics.model";
 import {Tournament} from "../../models/tournament";
 import {StatisticsService} from "../../services/statistics.service";
@@ -7,6 +7,7 @@ import {takeUntil} from "rxjs";
 import {KendoComponent} from "../kendo-component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'fight-statistics-panel',
   templateUrl: './fight-statistics-panel.component.html',

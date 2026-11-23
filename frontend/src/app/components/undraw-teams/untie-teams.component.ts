@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {Team} from "../../models/team";
 import {Participant} from "../../models/participant";
@@ -12,6 +12,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'untie-teams',
   templateUrl: './untie-teams.component.html',

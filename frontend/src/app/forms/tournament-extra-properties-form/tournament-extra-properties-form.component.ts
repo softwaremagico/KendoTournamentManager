@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {DrawResolution} from "../../models/draw-resolution";
 import {SwissTieBreakRule} from "../../models/swiss-tie-break-rule";
 import {Type} from "@biit-solutions/wizardry-theme/inputs";
@@ -15,6 +15,7 @@ import {TournamentType} from "../../models/tournament-type";
 import {combineLatest, concatMap, from, map, Observable, takeUntil, toArray} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-extra-properties-form',
   templateUrl: './tournament-extra-properties-form.component.html',
@@ -90,7 +91,20 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
 
   ngOnInit(): void {
     if (!this.tournament.id) {
-      this.propertiesLoaded = true;
+      // The backend copies the latest configured properties into every new tournament. Prefill
+      // SWISS_ROUNDS here so the field shows the inherited value that will actually be stored.
+      this.tournamentExtendedPropertiesService.getLatest().pipe(takeUntil(this.destroySubject)).subscribe({
+        next: (properties: TournamentExtendedProperty[]): void => {
+          const inheritedRounds = properties?.find(property =>
+            property.propertyKey === TournamentExtraPropertyKey.SWISS_ROUNDS);
+          if (inheritedRounds) {
+            this.applyTournamentProperty(inheritedRounds);
+          }
+          this.propertiesLoaded = true;
+        },
+        complete: (): void => { this.propertiesLoaded = true; },
+        error: (): void => { this.propertiesLoaded = true; }
+      });
       return;
     }
 
@@ -129,7 +143,7 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
         break;
       case TournamentExtraPropertyKey.SWISS_ROUNDS: {
         const parsed: number = Number(property.propertyValue);
-        this.swissRounds = Number.isNaN(parsed) ? null : parsed;
+        this.swissRounds = property.propertyValue && !Number.isNaN(parsed) ? parsed : null;
         break;
       }
       case TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE:

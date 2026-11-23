@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {UserRoles} from "../../../services/rbac/user-roles";
@@ -8,6 +8,7 @@ import {UserService} from "../../../services/user.service";
 import {MessageService} from "../../../services/message.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'authenticated-user-role-popup',
   templateUrl: './authenticated-user-role-popup.component.html',

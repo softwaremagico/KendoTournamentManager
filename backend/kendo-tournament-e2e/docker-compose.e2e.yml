@@ -25,7 +25,7 @@ services:
       - /application/kendo-tournament-backend.jar
       - --spring.kendo.datasource.platform=mysql
       - --spring.kendo.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-      - --spring.kendo.datasource.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+      - --spring.kendo.datasource.hibernate.dialect=com.softwaremagico.kt.persistence.dialect.KendoMySQLDialect
       - --spring.kendo.datasource.jdbc-url=jdbc:mysql://database:3306/kendo_e2e?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - --spring.kendo.datasource.username=kendo_e2e
       - --spring.kendo.datasource.password=kendo_e2e_password
@@ -38,6 +38,19 @@ services:
       - --jwt.ip.check=false
     ports:
       - "18080:8080"
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/8080;
+          printf 'GET /kendo-tournament-backend/info/health-check HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3;
+          head -1 <&3 | grep -q ' 200 '
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
     volumes:
       - ../kendo-tournament-rest/target/kendo-tournament-backend.jar:/application/kendo-tournament-backend.jar:ro
 
@@ -45,7 +58,7 @@ services:
     image: nginx:1.25.5-alpine
     depends_on:
       backend:
-        condition: service_started
+        condition: service_healthy
     command:
       - /bin/sh
       - -ec

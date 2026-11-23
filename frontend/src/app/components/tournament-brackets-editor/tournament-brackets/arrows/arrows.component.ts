@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {GroupsUpdatedService} from "../groups-updated.service";
 import {Group} from "../../../../models/group";
 import {BracketsMeasures} from "../brackets-measures";
@@ -6,6 +6,7 @@ import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {ShiaijoComponent} from "../shiaijo/shiaijo.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'arrows',
   templateUrl: './arrows.component.html',

@@ -21,7 +21,7 @@ package com.softwaremagico.kt.pdf.accreditations;
  * #L%
  */
 
-import com.lowagie.text.Image;
+import org.openpdf.text.Image;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;

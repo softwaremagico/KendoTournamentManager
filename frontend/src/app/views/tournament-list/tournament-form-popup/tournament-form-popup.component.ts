@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {Tournament} from "../../../models/tournament";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
@@ -7,6 +7,7 @@ import {TournamentFormValidationFields} from "../../../forms/tournament-form/tou
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'tournament-form-popup',
   templateUrl: './tournament-form-popup.component.html',

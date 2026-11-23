@@ -1,11 +1,11 @@
-import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
 import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {combineLatest} from "rxjs";
-import {DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {DatatableColumn} from "../../models/datatable-column";
 import {DatePipe} from "@angular/common";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
@@ -15,6 +15,7 @@ import {Constants} from "../../constants";
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-club-list',
   templateUrl: './club-list.component.html',

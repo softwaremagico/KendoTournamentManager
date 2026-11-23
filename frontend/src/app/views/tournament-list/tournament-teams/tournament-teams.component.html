@@ -94,7 +94,7 @@
           <div class="buttons-row">
             @if ((RbacActivity.CREATE_TEAM | hasPermission)) {
               <button biit-button primary id="tournament-team-add" class="tournament-team-add"
-                [ngStyle]="{'pointer-events': addingTeam ? 'none' : 'auto'}"
+                [disabled]="addingTeam || !groupsLoaded"
                 (click)="addTeam()">
                 {{ t('addTeamsText') }}
               </button>

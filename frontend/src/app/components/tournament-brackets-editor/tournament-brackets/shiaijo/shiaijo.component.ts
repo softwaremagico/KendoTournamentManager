@@ -1,9 +1,10 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Group} from "../../../../models/group";
 import {BracketsMeasures} from "../brackets-measures";
 import {Tournament} from "../../../../models/tournament";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'shiaijo-separator',
   templateUrl: './shiaijo.component.html'

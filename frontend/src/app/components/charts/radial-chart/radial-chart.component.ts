@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {
   ApexChart,
   ApexFill,
@@ -30,6 +30,7 @@ type RadialChartOptions = {
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-radial-chart',
   templateUrl: './radial-chart.component.html',

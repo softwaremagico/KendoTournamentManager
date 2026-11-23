@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 
 import {LoginService} from "../../services/login.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -20,6 +20,7 @@ import packageJson from '../../../../package.json';
 const appVersion: string = packageJson.version;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',

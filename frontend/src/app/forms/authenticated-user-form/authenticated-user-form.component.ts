@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthenticatedUser} from "../../models/authenticated-user";
 import {AuthenticatedUserFormValidationFields} from "./authenticated-user-form-validation-fields";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -16,6 +16,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {ActivityService} from "../../services/rbac/activity.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'authenticated-user-form',
   templateUrl: './authenticated-user-form.component.html',

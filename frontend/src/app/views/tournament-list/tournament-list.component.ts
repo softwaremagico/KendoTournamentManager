@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
 import {MessageService} from "../../services/message.service";
@@ -11,7 +11,8 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {BiitDatatableComponent, DatatableColumn} from "@biit-solutions/wizardry-theme/table";
+import {BiitDatatableComponent} from "@biit-solutions/wizardry-theme/table";
+import {DatatableColumn} from "../../models/datatable-column";
 import {combineLatest, takeUntil} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
@@ -22,6 +23,7 @@ import {Constants} from "../../constants";
 import {RoleType} from "../../models/role-type";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
