@@ -26,12 +26,15 @@ import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
+import com.softwaremagico.kt.core.security.GuestTicketProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -78,10 +81,18 @@ public class QrController {
 
     private final ParticipantProvider participantProvider;
 
-    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider) {
+    private final GuestTicketProvider guestTicketProvider;
+
+    /**
+     * The provider is optional in the core-only test context, where no signing bean exists.
+     * ObjectProvider keeps this an explicit constructor dependency without requiring a bean.
+     */
+    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
+                        ObjectProvider<GuestTicketProvider> guestTicketProvider) {
         this.qrProvider = qrProvider;
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
+        this.guestTicketProvider = guestTicketProvider.getIfAvailable();
     }
 
     @Cacheable(cacheNames = "qr-codes", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId() "
@@ -91,8 +102,11 @@ public class QrController {
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
+            final String ticket = guestTicketProvider == null ? null
+                    : guestTicketProvider.createGuestTicket(tournament.getId(), TenantContext.getRequiredTenantId());
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
-                    + "?tournamentId=" + tournament.getId() + "&user=guest";
+                    + "?tournamentId=" + tournament.getId() + "&user=guest"
+                    + (ticket == null ? "" : "&ticket=" + URLEncoder.encode(ticket, StandardCharsets.UTF_8));
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
                     !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
                     LOGO_RESOURCE,

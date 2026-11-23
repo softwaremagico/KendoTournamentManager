@@ -252,14 +252,25 @@ public class AuthApi {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
-            // Guests do not have a tenant yet. Derive it from the protected tournament,
-            // never from a URL or request-provided tenant identifier.
+            // An anonymous caller must present the signed capability embedded in the
+            // QR code. Otherwise a raw tournament ID could be used as a cross-tenant
+            // selector against an unfiltered repository query.
+            final Integer ticketTenantId = jwtTokenUtil.validateGuestTicket(request.getTicket(), request.getTournamentId());
+            if (ticketTenantId == null) {
+                throw new GuestDisabledException(this.getClass(), "Invalid guest ticket.");
+            }
+            // Set the trusted tenant before loading anything tied to the tournament.
+            TenantContext.setTenantId(ticketTenantId);
             final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
                 new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+            final Integer tournamentTenantId = tournament.getTenantId() == null
+                    ? TenantContext.LEGACY_TENANT_ID : tournament.getTenantId();
+            if (!ticketTenantId.equals(tournamentTenantId)) {
+                throw new GuestDisabledException(this.getClass(), "Invalid guest ticket.");
+            }
             if (tournament.isLocked()) {
                 throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
             }
-            TenantContext.setTenantId(tournament.getTenantId());
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                 .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                     String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));

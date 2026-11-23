@@ -328,9 +328,28 @@ public class AuthApiTest {
 	public void testLoginAsGuestWhenDisabled() {
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("guest-ticket");
 
 		assertThatThrownBy(() -> this.authApi.loginAsGuest(guestRequest, this.httpRequest))
 				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("disabled");
+	}
+
+	@Test
+	public void testLoginAsGuestWithInvalidTicketIsRejected() {
+		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "true");
+
+		final AuthGuestRequest guestRequest = new AuthGuestRequest();
+		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("forged-ticket");
+
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.jwtTokenUtil.validateGuestTicket("forged-ticket", 1)).thenReturn(null);
+
+		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
+				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("ticket");
+		verifyNoInteractions(this.tournamentProvider);
 	}
 
 	@Test
@@ -341,18 +360,42 @@ public class AuthApiTest {
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("guest-ticket");
 		final Tournament tournament = new Tournament();
 		tournament.setId(1);
 		tournament.setTenantId(1);
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.jwtTokenUtil.validateGuestTicket("guest-ticket", 1)).thenReturn(1);
 		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
 		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
 				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("not found");
+	}
+
+	@Test
+	public void testLoginAsGuestWithTicketIssuedForAnotherTenant() {
+		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "true");
+
+		final AuthGuestRequest guestRequest = new AuthGuestRequest();
+		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("guest-ticket");
+		final Tournament tournament = new Tournament();
+		tournament.setId(1);
+		tournament.setTenantId(2);
+
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.jwtTokenUtil.validateGuestTicket("guest-ticket", 1)).thenReturn(1);
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+
+		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
+				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("ticket");
+		verifyNoInteractions(this.authenticatedUserProvider);
 	}
 
 	@Test
@@ -372,11 +415,13 @@ public class AuthApiTest {
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("guest-ticket");
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.of(guestUser));
+		when(this.jwtTokenUtil.validateGuestTicket("guest-ticket", 1)).thenReturn(1);
 		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(lockedTournament));
 
 		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
@@ -400,11 +445,13 @@ public class AuthApiTest {
 
 		final AuthGuestRequest guestRequest = new AuthGuestRequest();
 		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("guest-ticket");
 
 		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
 		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
 		when(this.authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER))
 				.thenReturn(Optional.of(guestUser));
+		when(this.jwtTokenUtil.validateGuestTicket("guest-ticket", 1)).thenReturn(1);
 		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(unlockedTournament));
 		when(this.jwtTokenUtil.getJwtGuestExpirationTime()).thenReturn(1800000L);
 		when(this.jwtTokenUtil.generateAccessToken(guestUser, "192.168.1.1", 1800000L)).thenReturn("guest-jwt");
