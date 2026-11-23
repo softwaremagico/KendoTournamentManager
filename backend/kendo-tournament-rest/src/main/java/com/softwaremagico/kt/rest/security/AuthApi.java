@@ -263,12 +263,14 @@ public class AuthApi {
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                 .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                     String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));
-            final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
-            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
+            // getJwtGuestExpirationTime() is an absolute timestamp for the Expires header,
+            // while generateAccessToken expects a relative duration.
+            final long expiresAt = jwtTokenUtil.getJwtGuestExpirationTime();
+            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtTokenUtil.getJwtGuestExpirationDuration());
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
-                .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                .headers(getLoginHeaders(jwtToken, expiresAt, jwtTokenUtil.getSession(jwtToken)))
                 .body(user);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
@@ -322,8 +324,11 @@ public class AuthApi {
             final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
             final long milliseconds = zdt.toInstant().toEpochMilli();
 
-            final long jwtExpiration = jwtTokenUtil.getJwtParticipantExpirationTime();
-            final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
+            // Never issue a token that outlives the participant account or the
+            // configured validity window. Both values are durations here.
+            final long remainingAccountTime = Math.max(0, milliseconds - System.currentTimeMillis());
+            final long jwtDuration = Math.min(jwtTokenUtil.getJwtParticipantExpirationDuration(), remainingAccountTime);
+            final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtDuration);
 
             return ResponseEntity.ok()
                 .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))

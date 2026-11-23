@@ -407,6 +407,7 @@ public class AuthApiTest {
 				.thenReturn(Optional.of(guestUser));
 		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(unlockedTournament));
 		when(this.jwtTokenUtil.getJwtGuestExpirationTime()).thenReturn(1800000L);
+		when(this.jwtTokenUtil.getJwtGuestExpirationDuration()).thenReturn(1800000L);
 		when(this.jwtTokenUtil.generateAccessToken(guestUser, "192.168.1.1", 1800000L)).thenReturn("guest-jwt");
 		when(this.jwtTokenUtil.getSession("guest-jwt")).thenReturn("guest-session");
 

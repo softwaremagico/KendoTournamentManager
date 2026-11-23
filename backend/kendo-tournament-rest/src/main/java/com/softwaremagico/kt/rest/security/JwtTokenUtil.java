@@ -425,6 +425,21 @@ public class JwtTokenUtil {
         return hostMac;
     }
 
+    /** Returns the configured validity window for standard tokens, in milliseconds. */
+    public long getJwtExpirationDuration() {
+        return this.jwtExpiration;
+    }
+
+    /** Returns the configured validity window for guest tokens, in milliseconds. */
+    public long getJwtGuestExpirationDuration() {
+        return this.jwtGuestExpiration;
+    }
+
+    /** Returns the configured validity window for participant tokens, in milliseconds. */
+    public long getJwtParticipantExpirationDuration() {
+        return this.jwtParticipantExpiration;
+    }
+
     /**
      * Returns the expiration date embedded in the given JWT token.
      *
