@@ -120,7 +120,7 @@ services:
 
 
   kendo-tournament-database:
-    image: mysql:8.4.6
+    image: mysql:9.7.4
     restart: always
     networks:
       - containers

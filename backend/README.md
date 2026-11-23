@@ -67,7 +67,7 @@ other modules.
 |------|----------------|
 | Java (JDK) | 17 |
 | Maven | 3.8 |
-| Database server | MySQL 8 (default) or any Hibernate-compatible engine |
+| Database server | MySQL 9.7 LTS (default) or any Hibernate-compatible engine |
 
 ---
 
@@ -163,7 +163,7 @@ docker run -d \
   -e MYSQL_PASSWORD=asd123 \
   -e MYSQL_ROOT_PASSWORD=<rootpass> \
   -p 3306:3306 \
-  mysql:8
+  mysql:9.7.4
 ```
 
 This creates the database expected by the default backend configuration (`jdbc:mysql://127.0.0.1:3306/kendotournament`).
@@ -311,7 +311,7 @@ kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sq
 ### Database
 
 The project uses Hibernate for managing database connections, allowing easy interchange between different database
-providers. The default setup targets **MySQL 8**:
+providers. The default setup targets **MySQL 9.7 LTS**:
 
 ```properties
 spring.kendo.datasource.platform=mysql

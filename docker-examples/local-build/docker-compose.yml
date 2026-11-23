@@ -123,7 +123,7 @@ services:
 
 
   kendo-tournament-database:
-    image: postgres:14
+    image: postgres:19.0
     restart: always
     networks:
       - containers
@@ -131,7 +131,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - kendo-tournament-database:/var/lib/postgresql/data
+      - kendo-tournament-database:/var/lib/postgresql
     container_name: kendo-tournament-database
     hostname: kendo-tournament-database
     environment:
