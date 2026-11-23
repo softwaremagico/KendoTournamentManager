@@ -424,3 +424,5 @@ public class WebSocketConfigurationTest {
         }
     }
 }
+
+// Re-trigger backend Sonar analysis after adding websocket coverage tests.
