@@ -196,6 +196,19 @@ By default the frontend is available at `http://localhost:14200` and the API at
 `http://localhost:18080/kendo-tournament-backend`, with bootstrap credentials
 `admin@test.local` / `Admin-password-123`.
 
+Before printing the URLs, the script seeds the database through the REST API
+using the existing test CSVs:
+
+- `backend/kendo-tournament-core/src/test/resources/csv/clubs.csv`
+- `backend/kendo-tournament-core/src/test/resources/csv/participants.csv`
+
+The default mode is `if-empty`, so a club or participant CSV is imported only
+when that resource is empty. This makes restarts with an existing database
+safe. Use `APP_SEED_DATA=never` to skip seeding, or `APP_SEED_DATA=always` to
+force the import (participants with an existing `idCard` are rejected by the
+backend importer). `APP_SEED_CLUBS_CSV` and `APP_SEED_PARTICIPANTS_CSV` can be
+used to point to other CSV files.
+
 Useful options:
 
 ```bash
@@ -206,7 +219,8 @@ Useful options:
 ```
 
 Environment variables: `APP_FRONTEND_PORT`, `APP_BACKEND_PORT`, `APP_USERNAME`,
-`APP_PASSWORD`, `APP_ENABLE_TENANCY`, `APP_PROJECT_NAME`.
+`APP_PASSWORD`, `APP_ENABLE_TENANCY`, `APP_PROJECT_NAME`, `APP_SEED_DATA`,
+`APP_SEED_CLUBS_CSV`, `APP_SEED_PARTICIPANTS_CSV`.
 
 ## Architecture
 
