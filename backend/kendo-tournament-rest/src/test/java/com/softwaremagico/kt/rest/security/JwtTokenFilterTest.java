@@ -258,6 +258,10 @@ public class JwtTokenFilterTest {
         when(authenticatedUserProvider.findByUsername("participant-user")).thenReturn(Optional.empty());
         when(participantProvider.findByTokenUsername("participant-user")).thenReturn(Optional.of(participant));
 		when(participant.getTenantId()).thenReturn(1);
+        when(participant.isAccountNonExpired()).thenReturn(true);
+        when(participant.isAccountNonLocked()).thenReturn(true);
+        when(participant.isCredentialsNonExpired()).thenReturn(true);
+        when(participant.isEnabled()).thenReturn(true);
 
         localFilter.doFilterInternal(request, response, chain);
 
