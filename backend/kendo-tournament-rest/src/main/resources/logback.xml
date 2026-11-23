@@ -46,11 +46,12 @@
         <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="DEBUG">
+    <!-- AOP loggers print method arguments; keep them at INFO to avoid recording request bodies/PII by default. -->
+    <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
-    <logger name="com.softwaremagico.kt.logger.RestAccessLogging" additivity="false" level="DEBUG">
+    <logger name="com.softwaremagico.kt.logger.RestAccessLogging" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>

@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.lang.Nullable;
 
 import java.io.Serial;
@@ -29,6 +30,7 @@ import java.io.Serializable;
 public class ErrorResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -3296687318782961235L;
+    @JsonIgnore
     private final Throwable cause;
     private final String message;
     private final String code;
@@ -51,6 +53,7 @@ public class ErrorResponse implements Serializable {
         this.code = code;
     }
 
+    @JsonIgnore
     @Nullable
     public Throwable getCause() {
         return cause;
