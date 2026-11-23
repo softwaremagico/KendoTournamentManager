@@ -154,6 +154,8 @@ export class LoginService {
     this.activityService.setRoles([]);
     localStorage.removeItem('account');
     localStorage.removeItem('tournamentId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('session');
   }
 
   private setJwtValue(token: string, expires: number): void {
