@@ -172,10 +172,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
         try {
             return updatedDTO;
         } finally {
-            //Advise the frontend!
-            new Thread(() ->
-                    elementUpdatedListeners.forEach(elementUpdatedListener ->
-                            elementUpdatedListener.updated(updatedDTO, username, session))).start();
+            //Advise the frontend with the tenant of the request thread.
+            notifyAsync(() -> elementUpdatedListeners.forEach(elementUpdatedListener ->
+                    elementUpdatedListener.updated(updatedDTO, username, session)));
         }
     }
 
@@ -202,10 +201,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
             return refreshedData;
         } finally {
             //Advise the frontend!
-            new Thread(() ->
-                    refreshedData.forEach(updatedDTO ->
-                            elementUpdatedListeners.forEach(elementUpdatedListener ->
-                                    elementUpdatedListener.updated(updatedDTO, username, session)))).start();
+            notifyAsync(() -> refreshedData.forEach(updatedDTO ->
+                    elementUpdatedListeners.forEach(elementUpdatedListener ->
+                            elementUpdatedListener.updated(updatedDTO, username, session))));
         }
     }
 
@@ -230,9 +228,8 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
             return savedDTO;
         } finally {
             //Advise the frontend!
-            new Thread(() ->
-                    elementCreatedListeners.forEach(elementCreatedListener ->
-                            elementCreatedListener.created(savedDTO, username, session))).start();
+            notifyAsync(() -> elementCreatedListeners.forEach(elementCreatedListener ->
+                    elementCreatedListener.created(savedDTO, username, session)));
         }
     }
 
@@ -258,10 +255,9 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
             return savedDTOs;
         } finally {
             //Advise the frontend!
-            new Thread(() ->
-                    savedDTOs.forEach(savedDTO ->
-                            elementCreatedListeners.forEach(elementCreatedListener ->
-                                    elementCreatedListener.created(savedDTO, username, session)))).start();
+            notifyAsync(() -> savedDTOs.forEach(savedDTO ->
+                    elementCreatedListeners.forEach(elementCreatedListener ->
+                            elementCreatedListener.created(savedDTO, username, session))));
         }
     }
 
@@ -282,9 +278,8 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
             getProvider().delete(reverse(entity));
         } finally {
             //Advise the frontend!
-            new Thread(() ->
-                    elementDeletedListeners.forEach(elementDeletedListener ->
-                            elementDeletedListener.deleted(entity, username, session))).start();
+            notifyAsync(() -> elementDeletedListeners.forEach(elementDeletedListener ->
+                    elementDeletedListener.deleted(entity, username, session)));
         }
     }
 
@@ -309,15 +304,33 @@ public abstract class BasicInsertableController<E, D extends ElementDTO, R exten
             getProvider().delete(reverseAll(entities));
         } finally {
             //Advise the frontend!
-            new Thread(() ->
-                    entities.forEach(deletedDTO ->
-                            elementDeletedListeners.forEach(elementDeletedListener ->
-                                    elementDeletedListener.deleted(deletedDTO, username, session)))).start();
+            notifyAsync(() -> entities.forEach(deletedDTO ->
+                    elementDeletedListeners.forEach(elementDeletedListener ->
+                            elementDeletedListener.deleted(deletedDTO, username, session))));
         }
     }
 
     public void deleteAll() {
         getProvider().deleteAll();
+    }
+
+    /**
+     * Runs listener notifications asynchronously while preserving the tenant of the
+     * request thread. Without this, WebSocket listeners fall back to the legacy
+     * tenant and publish another tenant's data.
+     */
+    private void notifyAsync(Runnable notification) {
+        final Integer tenantId = TenantContext.getTenantId();
+        new Thread(() -> {
+            if (tenantId != null) {
+                TenantContext.setTenantId(tenantId);
+            }
+            try {
+                notification.run();
+            } finally {
+                TenantContext.clear();
+            }
+        }).start();
     }
 
     protected abstract Q createConverterRequest(E entity);
