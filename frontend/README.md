@@ -17,7 +17,7 @@ a comprehensive web application designed to efficiently manage kendo tournament 
 It provides a modern, responsive interface to handle tournaments of varying sizes and formats,
 from small club events to large professional competitions.
 
-Built with **Angular 15 LTS** and the **Wizardry Theme** (by BiiT Solutions), the frontend communicates with a Java Spring Boot backend via REST API
+Built with **Angular 22** and the **Wizardry Theme** (by BiiT Solutions), the frontend communicates with a Java Spring Boot backend via REST API
 and supports real-time score updates through WebSockets (STOMP over SockJS).
 
 Key features exposed through this UI include:
@@ -41,13 +41,13 @@ For further details on the application functionality, refer to the
 
 | Technology | Version |
 |---|---|
-| Angular | 15 (LTS) |
-| Angular Material | ^15.2.9 |
-| Transloco (i18n) | ^4.3.0 |
-| RxJS | ~7.4.0 |
+| Angular | 22.2.6 |
+| Angular Material | 22.2.7 |
+| Transloco (i18n) | ^8.4.0 |
+| RxJS | 7.8.2 |
 | STOMP / WebSockets | @stomp/rx-stomp ^2.0.0 |
-| jsPDF | ^2.5.1 |
-| TypeScript | ~4.9.4 |
+| jsPDF | ^4.2.1 |
+| TypeScript | 6.0.3 |
 | Karma + Jasmine | (unit tests) |
 
 ---

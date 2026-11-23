@@ -322,7 +322,7 @@ Common causes:
 - The database container is not yet healthy when the backend tries to connect. The `depends_on` + `healthcheck` in
   `docker-compose.yml` should handle this, but some systems need a longer `start_period`.
 - Incorrect database credentials in `.env`.
-- A Java version mismatch (the backend requires Java 17+).
+- A Java version mismatch (the backend requires Java 25+).
 
 ### Let's Encrypt certificate not issued
 

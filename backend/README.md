@@ -14,7 +14,7 @@ a comprehensive tool designed to manage all aspects of kendo tournaments: partic
 rankings, statistics, and achievements.
 
 The backend exposes a RESTful API secured by JWT authentication, consumed by the Angular frontend and any third-party
-integrations. It is built with **Java 17+**, **Spring Boot**, and **Maven**, and uses **Hibernate** for database
+integrations. It is built with **Java 25**, **Spring Boot 4.1**, and **Maven**, and uses **Hibernate** for database
 abstraction.
 
 ---
@@ -65,7 +65,7 @@ other modules.
 
 | Tool | Minimum version |
 |------|----------------|
-| Java (JDK) | 17 |
+| Java (JDK) | 25 |
 | Maven | 3.8 |
 | Database server | MySQL 8 (default) or any Hibernate-compatible engine |
 
