@@ -377,6 +377,28 @@ public class AuthApiTest {
 	}
 
 	@Test
+	public void testLoginAsGuestWithTicketIssuedForAnotherTenant() {
+		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
+				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
+				this.participantController, this.tournamentProvider, this.tenantRepository, this.authenticatedUserRepository, "true");
+
+		final AuthGuestRequest guestRequest = new AuthGuestRequest();
+		guestRequest.setTournamentId(1);
+		guestRequest.setTicket("guest-ticket");
+		final Tournament tournament = new Tournament();
+		tournament.setId(1);
+		tournament.setTenantId(2);
+
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.168.1.1");
+		when(this.jwtTokenUtil.validateGuestTicket("guest-ticket", 1)).thenReturn(1);
+		when(this.tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+
+		assertThatThrownBy(() -> guestEnabledApi.loginAsGuest(guestRequest, this.httpRequest))
+				.isInstanceOf(GuestDisabledException.class).hasMessageContaining("ticket");
+		verifyNoInteractions(this.authenticatedUserProvider);
+	}
+
+	@Test
 	public void testLoginAsGuestWithLockedTournament() {
 		final AuthApi guestEnabledApi = new AuthApi(this.authenticationManager, this.jwtTokenUtil,
 				this.authenticatedUserController, this.bruteForceService, this.authenticatedUserProvider,
