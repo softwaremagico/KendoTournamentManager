@@ -264,6 +264,15 @@ public class JwtTokenUtilTest {
         assertNotNull(token);
         assertTrue(util.validate(token));
     }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldExposeConfiguredExpirationDurations() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "3000", "4000", this.networkController);
+
+        assertEquals(util.getJwtExpirationDuration(), 1_200_000L);
+        assertEquals(util.getJwtGuestExpirationDuration(), 3_000L);
+        assertEquals(util.getJwtParticipantExpirationDuration(), 4_000L);
+    }
 }
 
 class TestNetworkController extends NetworkController {
