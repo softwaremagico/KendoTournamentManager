@@ -281,3 +281,5 @@ class TestNetworkController extends NetworkController {
         return "AA-BB-CC-DD";
     }
 }
+
+// Re-trigger backend Sonar analysis after adding expiration accessor tests.
