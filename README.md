@@ -276,7 +276,7 @@ The application follows a standard three-tier architecture deployed as Docker co
 | Frontend | Angular 22, served via Nginx | [`softwaremagico/kendo-tournament-manager-frontend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
 | Backend | Java 25, Spring Boot 4, REST + WebSockets | [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend) |
 | Reverse proxy | Traefik (automatic Let's Encrypt TLS) | [`softwaremagico/kendo-tournament-manager-rproxy`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
-| Database | PostgreSQL 14 (default) or MySQL 8 | official image |
+| Database | PostgreSQL 19 (Docker default) or MySQL 9.7 LTS (standalone default) | official image |
 
 ---
 

@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.security.dto;
 
 public class AuthGuestRequest {
     private Integer tournamentId;
+    private String ticket;
 
     /**
      * Creates an empty guest authentication request.
@@ -38,6 +39,14 @@ public class AuthGuestRequest {
 
     public void setTournamentId(Integer tournamentId) {
         this.tournamentId = tournamentId;
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 
 }

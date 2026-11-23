@@ -65,9 +65,9 @@ export class LoginService {
         map((response: HttpResponse<AuthenticatedUser>) => this.withAuthHeaders(response)));
   }
 
-  loginAsGuest(tournamentId: number): Observable<AuthenticatedUser> {
+  loginAsGuest(tournamentId: number, ticket?: string): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/public/login/guest`;
-    return this.http.post<AuthenticatedUser>(url, new AuthGuestRequest(tournamentId), {
+    return this.http.post<AuthenticatedUser>(url, new AuthGuestRequest(tournamentId, ticket), {
       headers: new HttpHeaders({'Content-Type': 'application/json'}),
       responseType: 'json',
       observe: 'response'
@@ -102,8 +102,9 @@ export class LoginService {
     return authenticatedUser;
   }
 
-  setGuestUserSession(tournamentId: number, callback: (token: string, expiration: number) => void): void {
-    this.loginAsGuest(tournamentId).subscribe({
+  setGuestUserSession(tournamentId: number, ticket: string | undefined,
+                      callback: (token: string, expiration: number) => void): void {
+    this.loginAsGuest(tournamentId, ticket).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.setAuthenticatedUser(authenticatedUser, callback);
         localStorage.setItem('account', 'guest');
@@ -154,6 +155,8 @@ export class LoginService {
     this.activityService.setRoles([]);
     localStorage.removeItem('account');
     localStorage.removeItem('tournamentId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('session');
   }
 
   private setJwtValue(token: string, expires: number): void {

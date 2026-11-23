@@ -264,6 +264,67 @@ public class JwtTokenUtilTest {
         assertNotNull(token);
         assertTrue(util.validate(token));
     }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldCreateAndValidateGuestTicket() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String ticket = util.createGuestTicket(7, 3);
+
+        assertNotNull(ticket);
+        assertEquals(util.validateGuestTicket(ticket, 7), Integer.valueOf(3));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketCreationWithoutTournamentOrTenant() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertThrows(IllegalArgumentException.class, () -> util.createGuestTicket(null, 3));
+        assertThrows(IllegalArgumentException.class, () -> util.createGuestTicket(7, null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketValidationWithMissingArguments() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertNull(util.validateGuestTicket(null, 7));
+        assertNull(util.validateGuestTicket("   ", 7));
+        assertNull(util.validateGuestTicket("ticket", null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketIssuedForAnotherTournament() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String ticket = util.createGuestTicket(7, 3);
+
+        assertNull(util.validateGuestTicket(ticket, 8));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketWithWrongSignature() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String foreignTicket = Jwts.builder().subject("guest:7:3")
+                .signWith(signingKey("different-secret"), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateGuestTicket(foreignTicket, 7));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectMalformedGuestTicketSubjects() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String regularToken = util.generateAccessToken(this.user, "10.0.0.1");
+        final String tokenWithoutSubject = Jwts.builder().issuer(JwtTokenUtilTest.class.getName())
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+        final String ticketWithoutTenant = Jwts.builder().subject("guest:7")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+        final String ticketWithNonNumericTenant = Jwts.builder().subject("guest:7:abc")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateGuestTicket(regularToken, 7));
+        assertNull(util.validateGuestTicket(tokenWithoutSubject, 7));
+        assertNull(util.validateGuestTicket(ticketWithoutTenant, 7));
+        assertNull(util.validateGuestTicket(ticketWithNonNumericTenant, 7));
+    }
 }
 
 class TestNetworkController extends NetworkController {
