@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Set;
 
 import static org.testng.Assert.*;
 
@@ -263,6 +264,29 @@ public class JwtTokenUtilTest {
         final String token = util.generateAccessToken(this.user, "10.0.0.1");
         assertNotNull(token);
         assertTrue(util.validate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldEmbedAndReadRolesInToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        this.user.setRoles(Set.of("VIEWER", "ADMIN"));
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertEquals(util.getRoles(token), Set.of("VIEWER", "ADMIN"));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnEmptyRolesForTokenWithoutRoleClaim() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        this.user.setRoles(null);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+        final String legacyToken = Jwts.builder().subject("7,user7,session-1,10.0.0.1,AA-BB")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertEquals(util.getRoles(token), java.util.Collections.emptySet());
+        assertEquals(util.getRoles(legacyToken), java.util.Collections.emptySet());
     }
 
     @Test(groups = "jwtTokenUtil")
