@@ -249,7 +249,7 @@ The application follows a standard three-tier architecture deployed as Docker co
 ```
 ┌─────────────────────────────┐
 │  Browser (any device)       │
-│  Angular 15 SPA             │
+│  Angular SPA                │
 └────────────┬────────────────┘
              │ HTTPS / WebSockets
 ┌────────────▼────────────────┐
@@ -273,8 +273,8 @@ The application follows a standard three-tier architecture deployed as Docker co
 
 | Layer | Technology | Docker Hub image |
 |-------|------------|-----------------|
-| Frontend | Angular 15, served via Nginx | [`softwaremagico/kendo-tournament-manager-frontend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
-| Backend | Java 17, Spring Boot 3, REST + WebSockets | [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend) |
+| Frontend | Angular 22, served via Nginx | [`softwaremagico/kendo-tournament-manager-frontend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
+| Backend | Java 25, Spring Boot 4, REST + WebSockets | [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend) |
 | Reverse proxy | Traefik (automatic Let's Encrypt TLS) | [`softwaremagico/kendo-tournament-manager-rproxy`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
 | Database | PostgreSQL 14 (default) or MySQL 8 | official image |
 
@@ -314,7 +314,7 @@ Simply extract the file `kendo-tournament-frontend.zip` onto your server as a st
 #### Deploy the backend
 
 The backend is distributed as a standalone JAR file.
-Running this application requires Java JRE 17 or higher.
+Running this application requires Java JRE 25 or higher.
 You can manually execute it by entering the following command:
 
 ```
