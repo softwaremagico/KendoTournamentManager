@@ -38,6 +38,13 @@
             [disabled]="!table.selectedRows || table.selectedRows.length !== 1 || table.selectedRows[0].locked"
           ></button>
         }
+        @if (RbacActivity.TAKE_PICTURE | hasPermission) {
+          <button id="button-camera" class="menu-button" biit-icon icon="camera"
+            [title]="t('images')"
+            (click)="openImages(table.selectedRows[0])"
+            [disabled]="!table.selectedRows || table.selectedRows.length !== 1"
+          ></button>
+        }
         @if ((RbacActivity.READ_ONE_TOURNAMENT | hasPermission)) {
           <button mat-button class="menu-button"
             [title]="t('tournamentClone')"
@@ -146,6 +153,14 @@
       (closed)="this.target = null; loadData();"
       (saved)="onSaved($event)"
       />
+  }
+
+  @if (addPhoto) {
+    <biit-popup id="tournament-images-popup" no-header>
+      <tournament-images
+        [tournament]="table.selectedRows[0]"
+        (onClosed)="addPhoto=false"></tournament-images>
+    </biit-popup>
   }
 
   @if (confirmDelete) {

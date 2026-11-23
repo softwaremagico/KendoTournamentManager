@@ -62,6 +62,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected showTournamentTeams: boolean = false;
   protected showDiplomasRoles: boolean = false;
   protected showAccreditationRoles: boolean = false;
+  protected addPhoto: boolean = false;
 
   protected loading: boolean = false;
   protected loadingGlobal: boolean = false;
@@ -156,6 +157,12 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   editElement(tournament: Tournament): void {
     this.target = tournament;
     this.userSessionService.setSelectedTournament(tournament.id + "");
+  }
+
+  openImages(tournament?: Tournament): void {
+    if (tournament?.id) {
+      this.addPhoto = true;
+    }
   }
 
   deleteElements(tournaments: Tournament[]): void {

@@ -130,6 +130,25 @@ describe('TournamentListComponent', () => {
     expect(userSessionServiceSpy.setSelectedTournament).toHaveBeenCalledWith('10');
   });
 
+  it('should open the tournament images popup for a saved tournament', () => {
+    const tournament = buildTournament(12, '2024-01-01');
+    expect((component as any).addPhoto).toBeFalse();
+
+    component.openImages(tournament);
+
+    expect((component as any).addPhoto).toBeTrue();
+  });
+
+  it('should not open the tournament images popup without a saved tournament', () => {
+    const unsavedTournament = new Tournament();
+    (component as any).addPhoto = false;
+
+    component.openImages();
+    component.openImages(unsavedTournament);
+
+    expect((component as any).addPhoto).toBeFalse();
+  });
+
   it('should delete tournaments and show success notification', () => {
     const t1 = buildTournament(1, '2024-01-01');
     const t2 = buildTournament(2, '2024-01-02');

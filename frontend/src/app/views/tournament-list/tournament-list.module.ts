@@ -11,6 +11,7 @@ import {HasPermissionPipe} from "../../pipes/has-permission.pipe";
 import {BiitButtonModule, BiitIconButtonModule} from "@biit-solutions/wizardry-theme/button";
 import {MatDividerModule} from "@angular/material/divider";
 import {TournamentFormPopupModule} from "./tournament-form-popup/tournament-form-popup.module";
+import {TournamentImagesModule} from "./tournament-form-popup/tournament-images/tournament-images.module";
 import {BiitPopupModule} from "@biit-solutions/wizardry-theme/popup";
 import {TournamentQrCodeModule} from "../../components/tournament-qr-code/tournament-qr-code.module";
 import {TournamentRolesModule} from "./tournament-roles/tournament-roles.module";
@@ -37,6 +38,7 @@ import {MatButtonModule} from "@angular/material/button";
     BiitButtonModule,
     MatDividerModule,
     TournamentFormPopupModule,
+    TournamentImagesModule,
     BiitPopupModule,
     TournamentQrCodeModule,
     TournamentRolesModule,
