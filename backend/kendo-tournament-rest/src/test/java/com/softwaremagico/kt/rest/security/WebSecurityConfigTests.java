@@ -70,7 +70,7 @@ public class WebSecurityConfigTests {
 	}
 
 	@Test
-	public void shouldAllowAllOriginsWhenCorsDomainsNull() {
+	public void shouldRejectAllOriginsWhenCorsDomainsNull() {
 		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", null);
 
 		final CorsConfigurationSource source = ReflectionTestUtils
@@ -78,7 +78,21 @@ public class WebSecurityConfigTests {
 		final CorsConfiguration corsConfiguration = source.getCorsConfiguration(new MockHttpServletRequest());
 
 		assertNotNull(corsConfiguration);
-		assertTrue(corsConfiguration.getAllowedOriginPatterns().contains("*"));
+		assertTrue(corsConfiguration.getAllowedOriginPatterns().isEmpty());
+		assertTrue(corsConfiguration.getAllowedOrigins().isEmpty());
+	}
+
+	@Test
+	public void shouldIgnoreWildcardOrigin() {
+		ReflectionTestUtils.setField(this.webSecurityConfig, "serverCorsDomains", List.of("*"));
+
+		final CorsConfigurationSource source = ReflectionTestUtils
+				.invokeMethod(this.webSecurityConfig, "generateCorsConfigurationSource");
+		final CorsConfiguration corsConfiguration = source.getCorsConfiguration(new MockHttpServletRequest());
+
+		assertNotNull(corsConfiguration);
+		assertTrue(corsConfiguration.getAllowedOrigins().isEmpty());
+		assertTrue(corsConfiguration.getAllowedOriginPatterns().isEmpty());
 	}
 
 	@Test

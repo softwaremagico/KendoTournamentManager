@@ -118,6 +118,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `timezone` | `Europe/Madrid` | Server timezone (used in logs and date handling) |
 | `version` | `v3.6.0` | Application version tag |
 | `release` | `${version}` | Release label (usually the same as `version`) |
+| `SERVER_CORS_DOMAINS` | `${protocol}://${machine_domain}` | Optional override. Exact browser origin(s) allowed by the backend CORS policy and by the WebSocket handshake. Comma-separated list supported. It is derived automatically in the bundled Traefik setups; override it when the frontend is opened from a different origin (for example `http://localhost:4200` in the no-reverse-proxy examples). Wildcards such as `*` are ignored. |
 
 ### Frontend
 
@@ -190,6 +191,12 @@ websocket_protocol=https
 
 Make sure port 80 and port 443 are open in your server's firewall and that your DNS A record points to the server's
 public IP before starting the stack for the first time.
+
+With `machine_domain=mydomain.com` and `protocol=https`, `SERVER_CORS_DOMAINS` is automatically set to
+`https://mydomain.com` in the backend container. This is the exact origin the browser sends in `Origin` headers, so
+both REST calls and WebSocket handshakes keep working even when the backend does not trust `X-Forwarded-*` headers.
+If you terminate TLS in a different proxy or serve the frontend from another origin, set `SERVER_CORS_DOMAINS`
+explicitly to that browser origin (including scheme and port, without a trailing slash).
 
 ---
 
@@ -368,6 +375,9 @@ Common causes:
 - Verify that `protocol` and `websocket_protocol` are both set correctly in `.env`.
 - For HTTPS deployments, ensure `websocket_protocol=https` (not `http`).
 - In `docker-examples/official-docker-image/config.js`, make sure `websocketsUrl` uses the correct scheme and domain.
+- If the frontend is opened from a different origin than the backend (for example `http://localhost:4200` against
+  `http://localhost:8080`), set `SERVER_CORS_DOMAINS` to that exact browser origin; otherwise both CORS requests and
+  WebSocket handshakes are rejected.
 
 
 ## Domain
