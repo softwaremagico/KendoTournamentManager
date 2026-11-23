@@ -67,7 +67,7 @@ other modules.
 |------|----------------|
 | Java (JDK) | 17 |
 | Maven | 3.8 |
-| Database server | MySQL 9.7 LTS (default) or any Hibernate-compatible engine |
+| Database server | MySQL 9.7 LTS (standalone default) or any Hibernate-compatible engine |
 
 ---
 
