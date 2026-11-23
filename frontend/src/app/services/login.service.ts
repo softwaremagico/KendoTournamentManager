@@ -184,6 +184,28 @@ export class LoginService {
     }
   }
 
+  /** Roles come from the JWT so read-only sessions are identified before opening sockets. */
+  getJwtRoles(): string[] {
+    const token = this.getJwtValue();
+    if (!token) {
+      return [];
+    }
+    try {
+      const payload = token.split('.')[1];
+      const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = JSON.parse(atob(normalizedPayload));
+      if (Array.isArray(decoded.roles)) {
+        return decoded.roles.map((role: unknown): string => String(role));
+      }
+      if (typeof decoded.roles === 'string' && decoded.roles.length > 0) {
+        return decoded.roles.split(',');
+      }
+    } catch {
+      // A malformed token yields no roles; the backend still rejects its sockets.
+    }
+    return [];
+  }
+
   public getJwtExpirationValue(): number {
     return Number(this.userSessionService.getExpirationDate());
   }
