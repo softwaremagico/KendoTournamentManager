@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.core.security.GuestTicketProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
@@ -72,9 +73,11 @@ import java.util.UUID;
  * </p>
  */
 @Component
-public class JwtTokenUtil {
+public class JwtTokenUtil implements GuestTicketProvider {
     private static final String JWT_ISSUER = "com.softwaremagico";
+    private static final String GUEST_TICKET_PREFIX = "guest:";
     private static final String TENANT_ID_CLAIM = "tenantId";
+    private static final String ROLES_CLAIM = "roles";
     /** Default token validity period in milliseconds (20 minutes). */
     private static final long JWT_EXPIRATION = 1200000;
     /** Index of the entity ID field within the pipe-separated token subject. */
@@ -195,6 +198,38 @@ public class JwtTokenUtil {
         return Jwts.parser().verifyWith(this.signingKey).build().parseSignedClaims(token).getPayload();
     }
 
+    @Override
+    public String createGuestTicket(Integer tournamentId, Integer tenantId) {
+        if (tournamentId == null || tenantId == null) {
+            throw new IllegalArgumentException("A guest ticket requires a tournament and a tenant.");
+        }
+        return Jwts.builder()
+                .subject(GUEST_TICKET_PREFIX + tournamentId + ":" + tenantId)
+                .issuer(JWT_ISSUER).issuedAt(toLegacyDate(Instant.now()))
+                .signWith(this.signingKey, Jwts.SIG.HS512)
+                .compact();
+    }
+
+    @Override
+    public Integer validateGuestTicket(String ticket, Integer tournamentId) {
+        if (ticket == null || ticket.isBlank() || tournamentId == null) {
+            return null;
+        }
+        try {
+            final String subject = this.getClaims(ticket).getSubject();
+            if (subject == null || !subject.startsWith(GUEST_TICKET_PREFIX)) {
+                return null;
+            }
+            final String[] fields = subject.substring(GUEST_TICKET_PREFIX.length()).split(":");
+            if (fields.length != 2 || !tournamentId.toString().equals(fields[0])) {
+                return null;
+            }
+            return Integer.valueOf(fields[1]);
+        } catch (JwtException | IllegalArgumentException _) {
+            return null;
+        }
+    }
+
     private TokenSubject getTokenSubject(String token) {
         return TokenSubject.from(this.getClaims(token).getSubject());
     }
@@ -271,6 +306,7 @@ public class JwtTokenUtil {
                         session != null ? session : UUID.randomUUID().toString(), userIp,
                         this.networkController.getHostMac()).value())
                 .claim(TENANT_ID_CLAIM, tenantId)
+                .claim(ROLES_CLAIM, user.getRoles() == null ? "" : String.join(",", user.getRoles()))
                 .issuer(JWT_ISSUER).issuedAt(toLegacyDate(issuedAt))
                 .expiration(toLegacyDate(issuedAt.plusMillis(expirationTime))).signWith(this.signingKey, Jwts.SIG.HS512)
                 .compact();
@@ -377,6 +413,18 @@ public class JwtTokenUtil {
         return null;
     }
 
+    /** Returns the roles granted to this token, or an empty set for older tokens. */
+    public java.util.Set<String> getRoles(String token) {
+        final Object roles = this.getClaims(token).get(ROLES_CLAIM);
+        if (roles instanceof String value && !value.isBlank()) {
+            return java.util.Arrays.stream(value.split(","))
+                    .map(String::trim)
+                    .filter(role -> !role.isEmpty())
+                    .collect(java.util.stream.Collectors.toSet());
+        }
+        return java.util.Collections.emptySet();
+    }
+
     /**
      * Extracts the session identifier from the JWT token subject.
      *
@@ -423,6 +471,21 @@ public class JwtTokenUtil {
             JwtFilterLogger.debug(this.getClass(), "No filed 'host MAC' on JWT token!");
         }
         return hostMac;
+    }
+
+    /** Returns the configured validity window for standard tokens, in milliseconds. */
+    public long getJwtExpirationDuration() {
+        return this.jwtExpiration;
+    }
+
+    /** Returns the configured validity window for guest tokens, in milliseconds. */
+    public long getJwtGuestExpirationDuration() {
+        return this.jwtGuestExpiration;
+    }
+
+    /** Returns the configured validity window for participant tokens, in milliseconds. */
+    public long getJwtParticipantExpirationDuration() {
+        return this.jwtParticipantExpiration;
     }
 
     /**

@@ -4,14 +4,11 @@ ARG release
 ARG machine_domain
 ARG protocol
 ARG database_user
-ARG database_password
 ARG database_name
 ARG database_type
 ARG database_port
-ARG database_encryption_key
 ARG jwt_expiration
 ARG jwt_guest_expiration
-ARG jwt_secret
 ARG jwt_ip_check
 ARG timezone
 ARG enable_guest_user
@@ -43,11 +40,11 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     # update postgresql connector
     #cp /opt/libraries/* /opt/${project_name}/${project_name}/BOOT-INF/lib/ && \
     #rm /opt/${project_name}/${project_name}/BOOT-INF/lib/mysql-connector* && \
-    #Update properties
-    sed -i "s|database\.encryption\.key.*|database\.encryption\.key=${database_encryption_key}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    # Non-secret build-time properties only. Secrets (DB password, field encryption
+    # key and JWT signing key) are supplied as runtime environment variables so
+    # they never end up in image layers or history.
     sed -i "s|jwt\.expiration.*|jwt.expiration=${jwt_expiration}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|jwt\.guest\.expiration.*|jwt.guest.expiration=${jwt_guest_expiration}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
-    sed -i "s|jwt\.secret.*|jwt.secret=${jwt_secret}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|jwt\.ip\.check.*|jwt.ip.check=${jwt_ip_check}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.platform.*|spring.kendo.datasource.platform=${database_type}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jpa\.hibernate\.ddl-auto.*|spring.kendo.datasource.jpa.hibernate.ddl-auto=update|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
@@ -55,7 +52,6 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     sed -i "s|spring\.datasource\.data\.*||g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jdbc-url.*|spring.kendo.datasource.jdbc-url=jdbc:${database_type}://kendo-tournament-database:${database_port}/${database_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.username.*|spring.kendo.datasource.username=${database_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
-    sed -i "s|spring\.kendo\.datasource\.password.*|spring.kendo.datasource.password=${database_password}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.domain.*|server.domain=${machine_domain}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.schema.*|server.schema=${protocol}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.servlet\.context-path.*|server.servlet.context-path=/${project_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \

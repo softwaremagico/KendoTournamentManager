@@ -81,7 +81,7 @@ public abstract class AbstractLogging {
      */
     protected void log(JoinPoint joinPoint, Object... args) {
         if (logger.isDebugEnabled()) {
-            logger.debug(logMessage(joinPoint, args));
+            logger.debug(sanitize(logMessage(joinPoint, args)));
         }
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractLogging {
             logMessage.append(millis);
             logMessage.append(" ms");
 
-            logger.debug(logMessage.toString());
+            logger.debug(sanitize(logMessage.toString()));
         }
     }
 
@@ -152,6 +152,29 @@ public abstract class AbstractLogging {
     }
 
     protected void log(String messageTemplate, Object... arguments) {
-        logger.debug(messageTemplate, arguments);
+        logger.debug(sanitize(messageTemplate), sanitizeArguments(arguments));
+    }
+
+    /**
+     * Replaces control characters (newlines, carriage returns, tabs, etc.) so an
+     * untrusted value can never create a forged log entry.
+     */
+    private static String sanitize(String value) {
+        if (value == null) {
+            return "null";
+        }
+        final StringBuilder sanitized = new StringBuilder(value.length());
+        value.codePoints().forEach(codePoint -> sanitized.appendCodePoint(
+                Character.isISOControl(codePoint) ? '_' : codePoint));
+        return sanitized.toString();
+    }
+
+    private static Object[] sanitizeArguments(Object[] arguments) {
+        if (arguments == null) {
+            return new Object[0];
+        }
+        return Arrays.stream(arguments)
+                .map(argument -> argument == null ? null : sanitize(String.valueOf(argument)))
+                .toArray();
     }
 }

@@ -232,6 +232,7 @@ public class JwtTokenFilterTest {
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer token-mac");
         when(request.getHeader("X-Forwarded-For")).thenReturn("10.10.10.10,10.10.10.11");
+        when(request.getRemoteAddr()).thenReturn("10.10.10.10");
         when(jwtTokenUtil.validate("token-mac")).thenReturn(true);
         when(jwtTokenUtil.getUsername("token-mac")).thenReturn("admin");
 		when(jwtTokenUtil.getTenantId("token-mac")).thenReturn(1);
@@ -258,6 +259,10 @@ public class JwtTokenFilterTest {
         when(authenticatedUserProvider.findByUsername("participant-user")).thenReturn(Optional.empty());
         when(participantProvider.findByTokenUsername("participant-user")).thenReturn(Optional.of(participant));
 		when(participant.getTenantId()).thenReturn(1);
+        when(participant.isAccountNonExpired()).thenReturn(true);
+        when(participant.isAccountNonLocked()).thenReturn(true);
+        when(participant.isCredentialsNonExpired()).thenReturn(true);
+        when(participant.isEnabled()).thenReturn(true);
 
         localFilter.doFilterInternal(request, response, chain);
 

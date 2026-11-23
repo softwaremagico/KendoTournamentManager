@@ -150,37 +150,6 @@ public class AuthApi {
         userAdminGeneratedListeners.add(listener);
     }
 
-    private void createDefaultTenantAndUser(AuthRequest request) {
-        try {
-            // Reuse an existing tenant so the first platform administrator belongs to it.
-            Tenant tenant = tenantRepository.findAllByActiveTrueOrderByNameAsc().stream().findFirst()
-                    .orElseGet(() -> tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null));
-            if (tenant == null) {
-                tenant = new Tenant(com.softwaremagico.kt.persistence.entities.TenantContext.LEGACY_TENANT_NAME);
-                tenant = tenantRepository.save(tenant);
-                RestServerLogger.info(this.getClass(), "Default tenant '{}' created.", tenant);
-            }
-
-            // Set tenant context for user creation
-            TenantContext.setTenantId(tenant.getId());
-
-            try {
-                // The first account manages the platform, including tenants.
-                authenticatedUserController.createUser(null, request.getUsername(), request.getUsername(),
-                        "Administrator", request.getPassword(), AvailableRole.SUPER_ADMIN);
-                RestServerLogger.info(this.getClass(), "Default super administrator created: {}", request.getUsername());
-
-                // Notify listeners that admin was generated
-                userAdminGeneratedListeners.forEach(listener -> listener.generated(request.getUsername()));
-            } finally {
-                TenantContext.clear();
-            }
-        } catch (Exception e) {
-            RestServerLogger.warning(this.getClass(), "Error creating default tenant and user: {}", e.getMessage());
-            throw new RuntimeException("Failed to create default tenant and user", e);
-        }
-    }
-
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
@@ -191,22 +160,18 @@ public class AuthApi {
         if (tenantRepository == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Tenant tenant;
-        if (!tenancyEnabled) {
-            //Tenancy is disabled: every user belongs to the single Default tenant.
-            tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
-        } else {
-            tenant = resolveLastTenant(request.getUsername());
-        }
+        // Tenancy disabled means every user belongs to the single Default tenant.
+        final Tenant tenant = !tenancyEnabled
+                ? tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null)
+                : resolveLastTenant(request.getUsername());
 
-        // If tenant doesn't exist and no users exist, create default tenant and user
+        // An unauthenticated caller must never be able to create the first
+        // SUPER_ADMIN. Bootstrap the platform administrator only through the
+        // explicitly configured bootstrap.super-admin.* credentials.
         if (authenticatedUserRepository != null && authenticatedUserRepository.count() == 0) {
-            RestServerLogger.info(this.getClass(), "First login detected. Creating default tenant and user.");
-            createDefaultTenantAndUser(request);
-            tenant = resolveLastTenant(request.getUsername());
-            if (tenant == null) {
-                tenant = tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
-            }
+            RestServerLogger.severe(this.getClass(),
+                    "No users exist. Configure bootstrap.super-admin.username/password before starting the application.");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
         if (tenant == null) {
@@ -252,23 +217,36 @@ public class AuthApi {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
-            // Guests do not have a tenant yet. Derive it from the protected tournament,
-            // never from a URL or request-provided tenant identifier.
+            // An anonymous caller must present the signed capability embedded in the
+            // QR code. Otherwise a raw tournament ID could be used as a cross-tenant
+            // selector against an unfiltered repository query.
+            final Integer ticketTenantId = jwtTokenUtil.validateGuestTicket(request.getTicket(), request.getTournamentId());
+            if (ticketTenantId == null) {
+                throw new GuestDisabledException(this.getClass(), "Invalid guest ticket.");
+            }
+            // Set the trusted tenant before loading anything tied to the tournament.
+            TenantContext.setTenantId(ticketTenantId);
             final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
                 new GuestDisabledException(this.getClass(), String.format("User '%s' is not allowed!", AuthenticatedUserProvider.GUEST_USER)));
+            final Integer tournamentTenantId = tournament.getTenantId() == null
+                    ? TenantContext.LEGACY_TENANT_ID : tournament.getTenantId();
+            if (!ticketTenantId.equals(tournamentTenantId)) {
+                throw new GuestDisabledException(this.getClass(), "Invalid guest ticket.");
+            }
             if (tournament.isLocked()) {
                 throw new GuestDisabledException(this.getClass(), "Tournament is finished and guest users are not allowed any more.");
             }
-            TenantContext.setTenantId(tournament.getTenantId());
             final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                 .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                     String.format(USER_NOT_FOUND_MESSAGE, AuthenticatedUserProvider.GUEST_USER)));
-            final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
-            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
+            // getJwtGuestExpirationTime() is an absolute timestamp for the Expires header,
+            // while generateAccessToken expects a relative duration.
+            final long expiresAt = jwtTokenUtil.getJwtGuestExpirationTime();
+            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtTokenUtil.getJwtGuestExpirationDuration());
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
-                .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
+                .headers(getLoginHeaders(jwtToken, expiresAt, jwtTokenUtil.getSession(jwtToken)))
                 .body(user);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass(), "Invalid credentials set from IP '{}' ({}).", ip, ex.getMessage());
@@ -322,8 +300,11 @@ public class AuthApi {
             final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
             final long milliseconds = zdt.toInstant().toEpochMilli();
 
-            final long jwtExpiration = jwtTokenUtil.getJwtParticipantExpirationTime();
-            final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
+            // Never issue a token that outlives the participant account or the
+            // configured validity window. Both values are durations here.
+            final long remainingAccountTime = Math.max(0, milliseconds - System.currentTimeMillis());
+            final long jwtDuration = Math.min(jwtTokenUtil.getJwtParticipantExpirationDuration(), remainingAccountTime);
+            final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtDuration);
 
             return ResponseEntity.ok()
                 .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
@@ -381,11 +362,10 @@ public class AuthApi {
     }
 
     private String getClientIP(HttpServletRequest httpRequest) {
-        final String xfHeader = httpRequest.getHeader("X-Forwarded-For");
-        if (xfHeader == null) {
-            return httpRequest.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
+        // Forwarded headers are client-controlled unless a trusted proxy sanitises
+        // them. With the default forward-headers-strategy=none, getRemoteAddr() is
+        // the socket peer and cannot be forged by the caller.
+        return httpRequest.getRemoteAddr();
     }
 
     private void rejectPlatformRoles(CreateUserRequest request) {

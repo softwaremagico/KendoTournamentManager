@@ -67,15 +67,12 @@ services:
         - release
         - machine_domain
         - protocol
-        - database_password
         - database_user
         - database_name
         - database_type
         - database_port
-        - database_encryption_key
         - jwt_expiration
         - jwt_guest_expiration
-        - jwt_secret
         - jwt_ip_check
         - timezone
         - enable_guest_user
@@ -93,6 +90,14 @@ services:
     container_name: kendo-tournament-backend
     hostname: kendo-tournament-backend
     working_dir: /opt/kendo-tournament-backend/
+    # Secrets are runtime environment variables, never build arguments or image layers.
+    environment:
+      - DATABASE_USER=${database_user}
+      - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
+      - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
+      - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
+      - SERVER_CORS_DOMAINS=${server_cors_domains:-}
+      - SERVER_FORWARD_HEADERS_STRATEGY=${SERVER_FORWARD_HEADERS_STRATEGY:-none}
     depends_on:
       - "kendo-tournament-database"
     labels:
@@ -105,10 +110,9 @@ services:
       - "traefik.http.routers.kendo-tournament-backend-api.entrypoints=http"
       # Protect swagger with basic auth
       - "traefik.http.routers.kendo-tournament-backend-api.middlewares=auth"
-      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
-      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
-      # currently: admin:0b186336d5
-      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
+      # Generate a unique htpasswd hash and set TRAEFIK_BASIC_AUTH_USERS in .env.
+      # Never reuse a committed credential (e.g. htpasswd -nB admin).
+      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_BASIC_AUTH_USERS:?Set TRAEFIK_BASIC_AUTH_USERS in .env to an htpasswd hash}"
       - "traefik.docker.network=containers"
       - "traefik.http.services.kendo-tournament-backend.loadbalancer.server.port=8080"
     healthcheck:
@@ -127,15 +131,12 @@ services:
     restart: always
     networks:
       - containers
-      - external
-    ports:
-      - "5432:5432"
     volumes:
       - kendo-tournament-database:/var/lib/postgresql/data
     container_name: kendo-tournament-database
     hostname: kendo-tournament-database
     environment:
-      - POSTGRES_PASSWORD=${database_password}
+      - POSTGRES_PASSWORD=${database_password:?Set database_password in .env}
       - POSTGRES_USER=${database_user}
       - POSTGRES_DB=${database_name}
     healthcheck:

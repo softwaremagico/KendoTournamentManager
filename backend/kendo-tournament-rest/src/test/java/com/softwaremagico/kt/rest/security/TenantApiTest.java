@@ -33,6 +33,7 @@ import com.softwaremagico.kt.rest.security.dto.UpdateTenantRequest;
 import com.softwaremagico.kt.security.AvailableRole;
 import jakarta.servlet.http.HttpServletRequest;
 import org.mockito.Mock;
+import org.springframework.security.core.Authentication;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -123,6 +125,58 @@ public class TenantApiTest {
 		assertThat(response.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("jwt-token");
 		assertThat(response.getHeaders().get(AuthApi.SESSION_HEADER)).containsExactly("session-id");
 		verify(this.tenantRepository).save(any(Tenant.class));
+	}
+
+	@Test
+	public void testCreateTenantIgnoresForwardedForHeader() {
+		final CreateTenantRequest request = new CreateTenantRequest();
+		request.setTenant("Tenant behind proxy");
+		request.setUsername("proxy.admin");
+		request.setPassword("password");
+
+		final Tenant savedTenant = mock(Tenant.class);
+		when(savedTenant.getId()).thenReturn(101);
+		final AuthenticatedUser admin = new AuthenticatedUser();
+		admin.setUsername("proxy.admin");
+
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn("203.0.113.7, 10.0.0.1");
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.0.2.44");
+		when(this.tenantRepository.save(any(Tenant.class))).thenReturn(savedTenant);
+		when(this.authenticatedUserController.createUser(null, "proxy.admin", "", "", "password",
+				AvailableRole.ADMIN)).thenReturn(admin);
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(admin, "192.0.2.44")).thenReturn("jwt-token");
+		when(this.jwtTokenUtil.getSession("jwt-token")).thenReturn("session-id");
+
+		this.tenantApi.createTenant(request, this.httpRequest);
+
+		verify(this.jwtTokenUtil).generateAccessToken(admin, "192.0.2.44");
+		verify(this.jwtTokenUtil, never()).generateAccessToken(admin, "203.0.113.7");
+	}
+
+	@Test
+	public void testSelectTenantIgnoresForwardedForHeader() {
+		final Tenant tenant = mock(Tenant.class);
+		when(tenant.getId()).thenReturn(9);
+		when(tenant.isActive()).thenReturn(true);
+		final AuthenticatedUser member = new AuthenticatedUser();
+		member.setUsername("tenant.member");
+		final Authentication authentication = mock(Authentication.class);
+		when(authentication.getName()).thenReturn("tenant.member");
+
+		when(this.tenantRepository.findById(9)).thenReturn(Optional.of(tenant));
+		when(this.authenticatedUserController.findAllByUsername("tenant.member")).thenReturn(List.of(member));
+		when(this.authenticatedUserController.belongsToTenant(member, 9)).thenReturn(true);
+		when(this.httpRequest.getHeader("X-Forwarded-For")).thenReturn("203.0.113.7");
+		when(this.httpRequest.getRemoteAddr()).thenReturn("192.0.2.44");
+		when(this.jwtTokenUtil.getJwtExpirationTime()).thenReturn(3600000L);
+		when(this.jwtTokenUtil.generateAccessToken(member, "192.0.2.44")).thenReturn("jwt-token");
+		when(this.jwtTokenUtil.getSession("jwt-token")).thenReturn("session-id");
+
+		this.tenantApi.selectTenant(9, authentication, this.httpRequest);
+
+		verify(this.jwtTokenUtil).generateAccessToken(member, "192.0.2.44");
+		verify(this.jwtTokenUtil, never()).generateAccessToken(member, "203.0.113.7");
 	}
 
 	@Test

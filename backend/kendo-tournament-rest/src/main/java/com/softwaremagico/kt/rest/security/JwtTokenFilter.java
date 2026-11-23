@@ -48,7 +48,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -79,19 +78,6 @@ import java.util.Objects;
  */
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-
-    private static final String[] HEADERS_TO_TRY = {
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR"};
 
     private final boolean checkClientIp;
     private final boolean participantAccess;
@@ -240,6 +226,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 && !authenticatedUserProvider.belongsToTenant(authenticatedUser, tenantId)) {
             throw new InvalidJwtException(this.getClass(), "JWT token tenant does not match the authenticated user.");
         }
+        if (!userDetails.isAccountNonExpired() || !userDetails.isAccountNonLocked()
+                || !userDetails.isCredentialsNonExpired() || !userDetails.isEnabled()) {
+            throw new InvalidJwtException(this.getClass(), "JWT token belongs to a disabled or expired account.");
+        }
         if (user instanceof AuthenticatedUser authenticatedUser) {
             authenticatedUser.setTenantId(tenantId);
         }
@@ -275,13 +265,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private List<String> getClientIpAddress(HttpServletRequest request) {
-        for (final String header : HEADERS_TO_TRY) {
-            final String ip = request.getHeader(header);
-            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                return ip.contains(",") ? Arrays.asList(ip.split(",")) : Collections.singletonList(ip);
-            }
-        }
-
+        // Only the verified remote address is used. Forwarded headers can be
+        // forged by the client and must never influence token binding or
+        // brute-force bookkeeping.
         return Collections.singletonList(request.getRemoteAddr());
     }
 }
