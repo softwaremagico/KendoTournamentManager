@@ -196,6 +196,39 @@ By default the frontend is available at `http://localhost:14200` and the API at
 `http://localhost:18080/kendo-tournament-backend`, with bootstrap credentials
 `admin@test.local` / `Admin-password-123`.
 
+Before printing the URLs, the script seeds the database through the REST API
+using the existing test CSVs directly (they are not copied anywhere):
+
+- `backend/kendo-tournament-core/src/test/resources/csv/clubs.csv`
+- `backend/kendo-tournament-core/src/test/resources/csv/participants.csv`
+
+The seeding flow is:
+
+1. Log in with `APP_USERNAME` / `APP_PASSWORD` and read the JWT from the
+   `Authorization` response header.
+2. Send it as `Authorization: Bearer <jwt>` to the REST API.
+3. Import clubs first (`POST /csv/clubs`), then participants
+   (`POST /csv/participants`), so participants can resolve their club.
+
+Seeding is best-effort. If the login fails, no JWT is returned, an API call
+fails or a CSV file is missing, the script prints a `WARNING` and continues
+starting the application without the demo data. A seeding problem never aborts
+`run-app.sh`; the app remains usable normally.
+
+The default mode is `if-empty`, so a club or participant CSV is imported only
+when that resource is empty. This makes restarts with an existing database
+safe. Use `APP_SEED_DATA=never` to skip seeding, or `APP_SEED_DATA=always` to
+force the import (participants with an existing `idCard` are rejected by the
+backend importer). `APP_SEED_CLUBS_CSV` and `APP_SEED_PARTICIPANTS_CSV` can be
+used to point to other CSV files. Invalid `APP_SEED_DATA` values are rejected
+before the containers are started.
+
+With a fresh database this imports **8 clubs** and **18 participants**. On a
+restart with `if-empty`, both imports are skipped instead of duplicating data.
+`bash -n run-app.sh`, a clean-database import, an idempotent restart, the
+`never` mode, a failed login (HTTP 401) and a missing CSV path have all been
+verified.
+
 Useful options:
 
 ```bash
@@ -206,7 +239,8 @@ Useful options:
 ```
 
 Environment variables: `APP_FRONTEND_PORT`, `APP_BACKEND_PORT`, `APP_USERNAME`,
-`APP_PASSWORD`, `APP_ENABLE_TENANCY`, `APP_PROJECT_NAME`.
+`APP_PASSWORD`, `APP_ENABLE_TENANCY`, `APP_PROJECT_NAME`, `APP_SEED_DATA`,
+`APP_SEED_CLUBS_CSV`, `APP_SEED_PARTICIPANTS_CSV`.
 
 ## Architecture
 
