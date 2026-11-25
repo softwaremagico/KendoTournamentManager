@@ -1,0 +1,25 @@
+name: Compose security configuration
+
+on:
+  push:
+    paths:
+      - 'docker/**'
+      - 'docker-examples/**'
+      - 'backend/kendo-tournament-e2e/check-compose-security.py'
+      - '.github/workflows/compose-security.yml'
+  pull_request:
+    paths:
+      - 'docker/**'
+      - 'docker-examples/**'
+      - 'backend/kendo-tournament-e2e/check-compose-security.py'
+      - '.github/workflows/compose-security.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/kendo-tournament-e2e/check-compose-security.py

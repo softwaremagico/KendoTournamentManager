@@ -258,6 +258,11 @@ server.cors.domains=https://my.tournament.site
 
 Wildcards are ignored; leave the property empty for same-origin only. If the application is served behind a reverse proxy, set this to the exact public frontend origin(s). In the Docker examples this property is supplied as `SERVER_CORS_DOMAINS`.
 
+For the default IDE setup (`ng serve` on port 4200 and the backend on port 8080),
+set `SERVER_CORS_DOMAINS=http://localhost:4200` in the backend run configuration.
+The scheme, hostname and port must match the browser URL exactly; `localhost`
+and `127.0.0.1` are distinct origins.
+
 #### Forwarded headers
 
 The default `server.forward-headers-strategy=none` prevents clients from forging `X-Forwarded-For` to evade brute-force limits or JWT IP binding. If you need per-client IP addresses behind a reverse proxy, set `SERVER_FORWARD_HEADERS_STRATEGY` to a supported strategy only when the proxy overwrites (not appends to) those headers.

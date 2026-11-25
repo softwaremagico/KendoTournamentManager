@@ -103,6 +103,10 @@ configurations:
 | `localhost-without-reverse-proxy/` | Runs frontend and backend directly on ports 4200/8080, no Traefik |
 | `local-build/` | Builds all images from source for local testing |
 
+Run `python3 backend/kendo-tournament-e2e/check-compose-security.py` from the
+repository root to validate Compose syntax and the security environment passed
+to each backend. This does not replace starting and testing the selected stack.
+
 ---
 
 ## Configuration reference
@@ -141,8 +145,13 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `enable_guest_user` | `false` | Allow unauthenticated read-only access via QR codes |
 | `enable_tenancy` | `true` | Enable multi-organization support. Set to `false` so the whole installation uses a single organization (the `Legacy organization`): the login selector disappears, the tenant administration menu is hidden and all tenant management API endpoints return `404`. |
 | `database_populate_default_data` | `always` | Controls SQL data initialization. The platform admin is created only from configured `bootstrap.super-admin.*` credentials, never by the first anonymous login |
+| `BOOTSTRAP_SUPER_ADMIN_USERNAME` / `BOOTSTRAP_SUPER_ADMIN_PASSWORD` | *(empty)* | Initial platform administrator credentials. Set both for the first startup, then remove them and recreate the backend container. |
 
 ### Backend — Database
+
+When upgrading an existing installation, preserve its existing database encryption
+key. Generating a new key does not re-encrypt existing records and may make
+them unreadable. Back up and verify the database before changing encryption settings.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
