@@ -97,6 +97,31 @@ public class QrControllerTest {
     }
 
     @Test
+    public void shouldReplaceBackendPortWithFrontendPortInGuestQr() throws Exception {
+        setField(controller, "machineDomain", "localhost:8080");
+        final Tournament tournament = new Tournament("T", 1, 1, TournamentType.LEAGUE, "tester");
+        tournament.setId(7);
+        when(tournamentProvider.get(7)).thenReturn(Optional.of(tournament));
+        when(qrProvider.getQr(anyString(), anyInt(), any(Color.class), anyString(), any(Color.class)))
+                .thenReturn(new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB));
+        assertEquals(controller.generateGuestQrCodeForTournamentFights(7, 4200, true).getContent(),
+                "https://localhost:4200/#/tournaments/fights?tournamentId=7&user=guest&ticket=signed-ticket");
+    }
+
+    @Test
+    public void shouldReplaceBackendPortWithFrontendPortInParticipantQr() throws Exception {
+        setField(controller, "machineDomain", "localhost:8080");
+        final Participant participant = new Participant();
+        participant.setId(9);
+        when(participantProvider.get(9)).thenReturn(Optional.of(participant));
+        when(participantProvider.generateTemporalToken(participant)).thenReturn(new TemporalToken("token"));
+        when(qrProvider.getQr(anyString(), anyInt(), any(Color.class), anyString(), any(Color.class)))
+                .thenReturn(new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB));
+        assertEquals(controller.generateParticipantQrCodeForStatistics(9, 4200, false).getContent(),
+                "https://localhost:4200/#/participants/statistics?participantId=9&temporalToken=token");
+    }
+
+    @Test
     public void shouldThrowWhenTournamentDoesNotExist() {
         when(tournamentProvider.get(99)).thenReturn(Optional.empty());
 
