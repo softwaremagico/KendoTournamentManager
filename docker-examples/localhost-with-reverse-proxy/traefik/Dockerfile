@@ -1,4 +1,4 @@
-FROM traefik:v2.11.0
+FROM traefik:v2.11.31
 
 ARG email
 ARG timezone
@@ -13,5 +13,4 @@ COPY traefik.yml /traefik.yml
 
 # Replace email
 RUN sed -i "s|CUSTOM_EMAIL|${email}|g" /traefik.yml
-
 
