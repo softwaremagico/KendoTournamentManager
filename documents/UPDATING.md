@@ -102,6 +102,12 @@ bootstrap.super-admin.username=platform-admin@example.com
 bootstrap.super-admin.password=<strong-unique-password>
 ```
 
+For the Docker Compose examples, set `BOOTSTRAP_SUPER_ADMIN_USERNAME` and
+`BOOTSTRAP_SUPER_ADMIN_PASSWORD` in the Compose environment or `.env` before
+starting the backend, then remove them and recreate that container.
+Preserve the existing database encryption key during an upgrade: replacing it
+does not migrate encrypted records. Back up and verify the database first.
+
 Only `SUPER_ADMIN` users can create, edit, activate or deactivate tenants.
 Tenant `ADMIN` users manage only their own organization and cannot assign the
 platform role. Deactivating a tenant invalidates new logins, existing JWT
