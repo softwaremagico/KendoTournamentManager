@@ -17,7 +17,7 @@ export class AuthGuardService {
     }
     const queryParams: { [key: string]: string } = {};
     queryParams[Constants.PATHS.QUERY.EXPIRED] = "";
-    this.router.navigate([`/login`], {queryParams: queryParams});
+    void this.router.navigate([`/login`], {queryParams: queryParams});
     return false;
   }
 }

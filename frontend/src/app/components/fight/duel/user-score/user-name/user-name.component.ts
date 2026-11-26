@@ -90,7 +90,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   }
 
   openStatistics(): void {
-    this.router.navigateByUrl("/participants/statistics?participantId=" + this.participant?.id + "&tournamentId=" + this.duel.tournament.id + "&redirectUrl=/tournaments/fights");
+    void this.router.navigateByUrl("/participants/statistics?participantId=" + this.participant?.id + "&tournamentId=" + this.duel.tournament.id + "&redirectUrl=/tournaments/fights");
   }
 
   isOver(fight: Fight): boolean {

@@ -29,7 +29,7 @@ export class LoggedInService {
     }
 
     // Not logged in so redirect to login page with the return url
-    this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});
+    void this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});
     this.isUserLoggedIn.next(false);
     return false;
   }
@@ -39,9 +39,9 @@ export class LoggedInService {
       //Participant users must redirect to their statistics.
       if (localStorage.getItem('account') === 'participant'
         && (!context.startsWith('/participants/statistics') && !context.startsWith('/participants/fights'))) {
-        this.router.navigate(['/participants/statistics']);
+        void this.router.navigate(['/participants/statistics']);
       } else if (localStorage.getItem('account') === 'guest' && !context.startsWith('/tournaments/fights')) {
-        this.router.navigate(['/tournaments/fights']);
+        void this.router.navigate(['/tournaments/fights']);
       }
       return true;
     }

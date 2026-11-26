@@ -181,7 +181,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   openFights(tournament: Tournament): void {
     if (tournament) {
       this.userSessionService.setSelectedTournament(tournament.id + "");
-      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: tournament.id}});
+      void this.router.navigate(['/tournaments/fights'], {state: {tournamentId: tournament.id}});
     }
   }
 
@@ -249,7 +249,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   openStatistics(tournament: Tournament): void {
     if (tournament) {
       this.userSessionService.setSelectedTournament(tournament.id + "");
-      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: tournament.id}});
+      void this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: tournament.id}});
     }
   }
 
