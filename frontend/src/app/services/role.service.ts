@@ -22,8 +22,8 @@ export class RoleService {
 
   private baseUrl: string = this.environmentService.getBackendUrl() + '/roles';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, private systemOverloadService: SystemOverloadService, public loginService: LoginService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, private readonly systemOverloadService: SystemOverloadService, public readonly loginService: LoginService) {
   }
 
   getAll(): Observable<Role[]> {
