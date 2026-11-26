@@ -58,12 +58,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   backUrl: string | null = null;
   srcTournamentId: number | null = null;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute,
-              rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private userSessionService: UserSessionService, private statisticsService: StatisticsService,
-              private translateService: TranslocoService, private rankingService: RankingService,
-              private achievementService: AchievementsService, private participantService: ParticipantService,
-              private loginService: LoginService, private environmentService: EnvironmentService) {
+  constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute,
+              rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+              private readonly userSessionService: UserSessionService, private readonly statisticsService: StatisticsService,
+              private readonly translateService: TranslocoService, private readonly rankingService: RankingService,
+              private readonly achievementService: AchievementsService, private readonly participantService: ParticipantService,
+              private readonly loginService: LoginService, private readonly environmentService: EnvironmentService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
