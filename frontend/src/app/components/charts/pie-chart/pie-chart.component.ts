@@ -48,25 +48,25 @@ export class PieChartComponent extends CustomChartComponent {
   @Input()
   public data: PieChartData;
   @Input()
-  public override readonly width: number = 500;
+  public override width: number = 500;
   @Input()
-  public override readonly height: number | undefined = undefined;
+  public override height: number | undefined = undefined;
   @Input()
-  public override readonly showToolbar: boolean = false;
+  public override showToolbar: boolean = false;
   @Input()
-  public override readonly colors: string[] = Colors.defaultPalette;
+  public override colors: string[] = Colors.defaultPalette;
   @Input()
-  public override readonly title: string | undefined = undefined;
+  public override title: string | undefined = undefined;
   @Input()
-  public override readonly titleAlignment: TitleAlignment = "center";
+  public override titleAlignment: TitleAlignment = "center";
   @Input()
   public isDonut: boolean = false;
   @Input()
-  public override readonly fill: ChartFill = "solid";
+  public override fill: ChartFill = "solid";
   @Input()
-  public override readonly shadow: boolean = true;
+  public override shadow: boolean = true;
   @Input()
-  public override readonly legendPosition: LegendPosition = "bottom"
+  public override legendPosition: LegendPosition = "bottom"
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
@@ -98,7 +98,7 @@ export class PieChartComponent extends CustomChartComponent {
     this.chart.updateSeries(data.getData());
   }
 
-  protected override readonly getTooltip(): ApexTooltip {
+  protected override getTooltip(): ApexTooltip {
     return {
       theme: 'dark',
       //fillSeriesColor: true,
