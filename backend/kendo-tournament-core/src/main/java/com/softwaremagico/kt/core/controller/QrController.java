@@ -108,9 +108,13 @@ public class QrController {
                     + "?tournamentId=" + tournament.getId() + "&user=guest"
                     + (ticket == null ? "" : "&ticket=" + URLEncoder.encode(ticket, StandardCharsets.UTF_8));
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
-                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
+                    nightMode
+                            ? QR_COLOR_NIGHT_MODE
+                            : QR_COLOR_LIGHT_MODE,
                     LOGO_RESOURCE,
-                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE);
+                    nightMode
+                            ? BACKGROUND_NIGHT_MODE
+                            : BACKGROUND_LIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setContent(link);
@@ -176,9 +180,13 @@ public class QrController {
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getContent(), StandardCharsets.UTF_8);
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
-                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
+                    nightMode
+                            ? QR_COLOR_NIGHT_MODE
+                            : QR_COLOR_LIGHT_MODE,
                     LOGO_RESOURCE,
-                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE);
+                    nightMode
+                            ? BACKGROUND_NIGHT_MODE
+                            : BACKGROUND_LIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setContent(link);

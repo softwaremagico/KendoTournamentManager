@@ -162,8 +162,7 @@ public class AuthApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         // Tenancy disabled means every user belongs to the single Default tenant.
-        final Tenant tenant = tenancyEnabled
-                ? resolveLastTenant(request.getUsername())
+        final Tenant tenant = tenancyEnabled ? resolveLastTenant(request.getUsername())
                 : tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
 
         // An unauthenticated caller must never be able to create the first
