@@ -253,8 +253,8 @@ export class NavbarComponent implements OnInit {
         this.messageService.infoMessage('tenantChanged');
         const currentUrl = this.router.url;
         setTimeout(() => {
-          this.router.navigateByUrl('/', {skipLocationChange: true})
-            .then(() => this.router.navigateByUrl(currentUrl));
+          void this.router.navigateByUrl('/', {skipLocationChange: true})
+            .then(() => void this.router.navigateByUrl(currentUrl));
         }, 750);
       },
       error: () => {
