@@ -32,7 +32,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   @Output()
   public imageClicked = new EventEmitter<WebcamImage>();
-  private pictureGenerated: Subject<void> = new Subject<void>();
+  private readonly pictureGenerated: Subject<void> = new Subject<void>();
 
   constructor(rbacService: RbacService, public readonly messageService: MessageService, private readonly fileService: FileService,
               private readonly translateService: TranslocoService, private readonly pictureUpdatedService: PictureUpdatedService) {

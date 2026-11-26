@@ -41,7 +41,7 @@ type PieChartOptions = {
 export class PieChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
-  private chart!: ChartComponent;
+  private readonly chart!: ChartComponent;
 
   public chartOptions: PieChartOptions;
 
