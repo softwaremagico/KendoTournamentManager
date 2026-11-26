@@ -65,7 +65,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
               private readonly achievementService: AchievementsService, private readonly participantService: ParticipantService,
               private readonly loginService: LoginService, private readonly environmentService: EnvironmentService) {
     super(rbacService);
-    let state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.currentNavigation()?.extras.state;
     if (state) {
       if (state['participantId'] && !Number.isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);

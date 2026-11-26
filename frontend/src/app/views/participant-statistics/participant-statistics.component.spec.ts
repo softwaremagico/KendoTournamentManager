@@ -48,7 +48,11 @@ describe('ParticipantStatisticsComponent', () => {
   };
 
   beforeEach(() => {
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'getCurrentNavigation']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    // Router.currentNavigation() is a signal, so the spy provides the callable directly.
+    (routerSpy as any).currentNavigation = () => ({
+      extras: { state: { participantId: 42 } }
+    });
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       snapshot: {
         queryParamMap: {
@@ -77,10 +81,6 @@ describe('ParticipantStatisticsComponent', () => {
     environmentServiceSpy.isAchievementsEnabled.and.returnValue(false);
     loginServiceSpy.getJwtValue.and.returnValue('jwt-token');
 
-    routerSpy.getCurrentNavigation.and.returnValue({
-      extras: { state: { participantId: 42 } }
-    } as any);
-
     component = new ParticipantStatisticsComponent(
       routerSpy,
       activatedRouteSpy,
@@ -106,9 +106,9 @@ describe('ParticipantStatisticsComponent', () => {
   });
 
   it('should navigate back to participants when state has invalid participantId', () => {
-    routerSpy.getCurrentNavigation.and.returnValue({
+    (routerSpy as any).currentNavigation = () => ({
       extras: { state: { participantId: 'invalid_id' } }
-    } as any);
+    });
 
     component = new ParticipantStatisticsComponent(
       routerSpy,
