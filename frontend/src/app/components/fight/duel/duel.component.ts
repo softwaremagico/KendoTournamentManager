@@ -74,7 +74,7 @@ export class DuelComponent extends KendoComponent implements OnInit {
   private memberInTeamPredicate(members: (Participant | undefined)[]):
     (item: CdkDrag<Participant | undefined>, dropList: CdkDropList) => boolean {
     return function (_item: CdkDrag<Participant | undefined>, _dropList: CdkDropList): boolean {
-      return members.filter(m => m?.id == _item.data?.id).length > 0;
+      return members.some(m => m?.id == _item.data?.id);
     };
   }
 
