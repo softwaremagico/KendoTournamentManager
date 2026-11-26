@@ -84,7 +84,7 @@ export class RankingService {
     return this.http.post<ScoreOfCompetitor[]>(url, participants, {
       params: new HttpParams({
         fromObject: {
-          'from': fromDays ? fromDays : 0,
+          'from': fromDays ?? 0,
         }
       })
     })
@@ -109,7 +109,7 @@ export class RankingService {
       }),
       params: new HttpParams({
         fromObject: {
-          'from': fromDays ? fromDays : 0,
+          'from': fromDays ?? 0,
         }
       })
     };
