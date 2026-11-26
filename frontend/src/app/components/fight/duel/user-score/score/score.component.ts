@@ -60,8 +60,8 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
   protected readonly RbacActivity = RbacActivity;
   protected readonly Score = Score;
 
-  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
-              private translateService: TranslocoService, public rbacService: RbacService) {
+  constructor(private readonly duelService: DuelService, private readonly scoreUpdatedService: ScoreUpdatedService, private readonly messageService: MessageService,
+              private readonly translateService: TranslocoService, public rbacService: RbacService) {
     super();
   }
 
