@@ -53,6 +53,7 @@ export class TypeValidations {
         && !parsedUrl.password
         && this.isValidDomain(parsedUrl.hostname);
     } catch (_error) {
+      // Malformed URLs are invalid user input, not an exceptional condition: validation simply fails.
       return false;
     }
   }
