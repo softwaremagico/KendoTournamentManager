@@ -209,6 +209,31 @@ describe('ParticipantStatisticsComponent', () => {
     expect(received[0][1]).toBe(3);
   });
 
+  it('should default missing point counters to zero', () => {
+    const ps = buildParticipantStatistics();
+    const statistics = ps.participantFightStatistics;
+    statistics.menNumber = undefined as any;
+    statistics.koteNumber = undefined as any;
+    statistics.doNumber = undefined as any;
+    statistics.tsukiNumber = undefined as any;
+    statistics.ipponNumber = undefined as any;
+    statistics.fusenGachiNumber = undefined as any;
+    statistics.hansokuNumber = undefined as any;
+    statistics.receivedMenNumber = undefined as any;
+    statistics.receivedKoteNumber = undefined as any;
+    statistics.receivedDoNumber = undefined as any;
+    statistics.receivedTsukiNumber = undefined as any;
+    statistics.receivedIpponNumber = undefined as any;
+    statistics.receivedFusenGachiNumber = undefined as any;
+    statistics.receivedHansokuNumber = undefined as any;
+
+    const points = (component as any).obtainPoints(ps) as [string, number][];
+    const received = (component as any).obtainReceivedPoints(ps) as [string, number][];
+
+    expect(points.every(([, value]) => value === 0)).toBeTrue();
+    expect(received.every(([, value]) => value === 0)).toBeTrue();
+  });
+
   it('should return zero performance willpower when no tournaments', () => {
     const ps = buildParticipantStatistics();
     ps.totalTournaments = 0;
