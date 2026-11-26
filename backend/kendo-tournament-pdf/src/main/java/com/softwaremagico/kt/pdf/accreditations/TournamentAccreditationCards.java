@@ -56,9 +56,9 @@ public class TournamentAccreditationCards extends PdfDocument {
     private final TournamentDTO tournament;
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
     private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
-    private Image banner;
-    private Image background;
-    private Image defaultPhoto;
+    private final Image banner;
+    private final Image background;
+    private final Image defaultPhoto;
 
     public static final class ImageAssets {
         private final byte[] banner;
