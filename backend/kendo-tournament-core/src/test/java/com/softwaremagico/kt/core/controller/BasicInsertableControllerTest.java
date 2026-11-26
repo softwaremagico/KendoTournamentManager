@@ -47,6 +47,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
@@ -211,8 +213,8 @@ public class BasicInsertableControllerTest {
 			org.testng.Assert.assertThrows(NotFoundException.class, () -> this.controller.updateAll(List.of(foreign), "user", "session"));
 			org.testng.Assert.assertThrows(NotFoundException.class, () -> this.controller.deleteById(99, "user", "session"));
 			org.testng.Assert.assertThrows(NotFoundException.class, () -> this.controller.delete(List.of(foreign), "user", "session"));
-			org.mockito.Mockito.verify(this.teamProvider, org.mockito.Mockito.never()).save(any(Team.class));
-			org.mockito.Mockito.verify(this.teamProvider, org.mockito.Mockito.never()).deleteById(any());
+			verify(this.teamProvider, never()).save(any(Team.class));
+			verify(this.teamProvider, never()).deleteById(any());
 		} finally {
 			TenantContext.clear();
 		}
