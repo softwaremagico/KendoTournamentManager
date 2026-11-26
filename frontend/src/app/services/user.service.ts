@@ -70,12 +70,10 @@ export class UserService {
           error: (error: unknown): void => {
             this.systemOverloadService.isBusy.next(false);
             if (error instanceof HttpErrorResponse) {
-              switch (error.status) {
-                case 400:
-                  this.messageService.errorMessage("errorUserAlreadyExists");
-                  break;
-                default:
-                  throw error;
+              if (error.status === 400) {
+                this.messageService.errorMessage("errorUserAlreadyExists");
+              } else {
+                throw error;
               }
             }
           },
