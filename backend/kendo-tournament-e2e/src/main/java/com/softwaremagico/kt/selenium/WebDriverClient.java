@@ -24,6 +24,7 @@ package com.softwaremagico.kt.selenium;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -44,8 +45,17 @@ public class WebDriverClient {
 
     public WebDriverClient(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, WAIT_TIMEOUT);
-        this.wait.ignoring(org.openqa.selenium.StaleElementReferenceException.class);
+        this.wait = newWait();
+    }
+
+    /**
+     * Creates an independent wait so {@code withMessage} customizations cannot leak
+     * into the shared wait used by {@code findVisible} and other helpers.
+     */
+    public WebDriverWait newWait() {
+        final WebDriverWait independentWait = new WebDriverWait(driver, WAIT_TIMEOUT);
+        independentWait.ignoring(StaleElementReferenceException.class);
+        return independentWait;
     }
 
     public WebDriver getDriver() {
