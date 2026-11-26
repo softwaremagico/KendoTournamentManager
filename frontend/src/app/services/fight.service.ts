@@ -56,7 +56,7 @@ export class FightService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight[]>(`get from tournament ${tournament}`))
+        catchError(this.messageService.handleError<Fight[]>(`get from tournament ${tournament.name}`))
       );
   }
 
@@ -78,11 +78,11 @@ export class FightService {
     return this.http.post<Fight>(url, fight)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting fight ${fight}`),
+          next: () => this.loggerService.info(`deleting fight ${fight.id}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight>(`delete ${fight}`))
+        catchError(this.messageService.handleError<Fight>(`delete ${fight.id}`))
       );
   }
 
@@ -91,11 +91,11 @@ export class FightService {
     return this.http.post<Fight[]>(url, fights)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting fights ${fights}`),
+          next: () => this.loggerService.info(`deleting fights ${fights.length}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight[]>(`delete ${fights}`))
+        catchError(this.messageService.handleError<Fight[]>(`delete ${fights.length}`))
       );
   }
 
@@ -104,11 +104,11 @@ export class FightService {
     return this.http.post<Fight>(url, {tournament: tournament})
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting fights on ${tournament}`),
+          next: () => this.loggerService.info(`deleting fights on ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight>(`delete fights on ${tournament}`))
+        catchError(this.messageService.handleError<Fight>(`delete fights on ${tournament.name}`))
       );
   }
 

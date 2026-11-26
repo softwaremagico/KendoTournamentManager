@@ -33,7 +33,7 @@ export class TournamentExtendedPropertiesService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty[]>(`getting properties from tournament ${tournament}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty[]>(`getting properties from tournament ${tournament.name}`))
       );
   }
 
@@ -46,7 +46,7 @@ export class TournamentExtendedPropertiesService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty>(`getting properties from tournament ${tournament} and key ${propertyKey}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty>(`getting properties from tournament ${tournament.name} and key ${propertyKey}`))
       );
   }
 

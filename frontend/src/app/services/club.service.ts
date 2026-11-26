@@ -66,11 +66,11 @@ export class ClubService {
     return this.http.post<Club>(url, club)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting club ${club}`),
+          next: () => this.loggerService.info(`deleting club ${club.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Club>(`delete ${club}`))
+        catchError(this.messageService.handleError<Club>(`delete ${club.name}`))
       );
   }
 
@@ -79,11 +79,11 @@ export class ClubService {
     return this.http.post<Club>(url, club)
       .pipe(
         tap({
-          next: (newClub: Club) => this.loggerService.info(`adding club ${newClub}`),
+          next: (newClub: Club) => this.loggerService.info(`adding club ${newClub.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Club>(`adding ${club}`))
+        catchError(this.messageService.handleError<Club>(`adding ${club.name}`))
       );
   }
 
@@ -92,11 +92,11 @@ export class ClubService {
     return this.http.put<Club>(url, club)
       .pipe(
         tap({
-          next: (updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub}`),
+          next: (updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Club>(`updating ${club}`))
+        catchError(this.messageService.handleError<Club>(`updating ${club.name}`))
       );
   }
 }
