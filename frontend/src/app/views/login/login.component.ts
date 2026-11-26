@@ -6,7 +6,6 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {AuthenticatedUser} from "../../models/authenticated-user";
-import { HttpHeaders } from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
 import {TranslocoService} from '@jsverse/transloco';
 import {EnvironmentService} from "../../environment.service";
