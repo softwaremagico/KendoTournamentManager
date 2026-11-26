@@ -61,25 +61,25 @@ export class TournamentExtraPropertiesFormComponent extends RbacBasedComponent i
   areFightsMaximized: boolean;
   firstInFirstOut: boolean;
   selectedDrawResolution: DrawResolution;
-  protected drawResolutions = DrawResolution.toArray();
-  protected drawResolutionValues: { value: string, label: string, description: string }[] = [];
+  protected readonly drawResolutions = DrawResolution.toArray();
+  protected readonly drawResolutionValues: { value: string, label: string, description: string }[] = [];
   avoidDuplicatedFights: boolean;
   resolveOddFightsAsap: boolean;
   challengeDistance: number;
-  protected senbatsuChallengeDistance: { value: string, label: string }[] = [];
-  protected SENBATSU_ALLOWED_DISTANCE: number[] = [2, 3, 4, 5];
+  protected readonly senbatsuChallengeDistance: { value: string, label: string }[] = [];
+  protected readonly SENBATSU_ALLOWED_DISTANCE: number[] = [2, 3, 4, 5];
 
   swissRounds: number | null;
   swissTieBreakRule: SwissTieBreakRule;
   swissAvoidRepeatedPairings: boolean;
-  private persistedPropertyKeys = new Set<TournamentExtraPropertyKey>();
-  protected swissTieBreakRules = SwissTieBreakRule.toArray();
-  protected swissTieBreakRuleValues: { value: string, label: string, description: string }[] = [];
+  private readonly persistedPropertyKeys = new Set<TournamentExtraPropertyKey>();
+  protected readonly swissTieBreakRules = SwissTieBreakRule.toArray();
+  protected readonly swissTieBreakRuleValues: { value: string, label: string, description: string }[] = [];
   protected readonly Type = Type;
 
-  constructor(rbacService: RbacService, public transloco: TranslocoService,
+  constructor(rbacService: RbacService, public readonly transloco: TranslocoService,
               private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
-              public messageService: MessageService) {
+              public readonly messageService: MessageService) {
     super(rbacService);
 
     this.drawResolution = DrawResolution.toArray();

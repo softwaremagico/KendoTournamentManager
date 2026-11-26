@@ -31,9 +31,9 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
 
   resetFilterValue: Subject<boolean> = new Subject();
 
-  constructor(private router: Router, rbacService: RbacService,
-              private systemOverloadService: SystemOverloadService, private fightService: FightService,
-              private duelService: DuelService) {
+  constructor(private readonly router: Router, rbacService: RbacService,
+              private readonly systemOverloadService: SystemOverloadService, private readonly fightService: FightService,
+              private readonly duelService: DuelService) {
     super(rbacService);
     this.filteredFights = new Map<Tournament, Fight[]>();
     this.filteredUnties = new Map<Tournament, Duel[]>();

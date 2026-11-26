@@ -11,7 +11,7 @@ import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '
   templateUrl: './redirect-guard.html'
 })
 export class RedirectGuard implements CanActivate {
-  constructor(private router: Router) {
+  constructor(private readonly router: Router) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {

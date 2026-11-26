@@ -16,12 +16,12 @@ import {TournamentExtraPropertyKey} from "../models/tournament-extra-property-ke
 })
 export class TournamentExtendedPropertiesService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments/properties';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments/properties';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              public loginService: LoginService, private messageService: MessageService,
-              private systemOverloadService: SystemOverloadService,
-              private loggerService: LoggerService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
+              public readonly loginService: LoginService, private readonly messageService: MessageService,
+              private readonly systemOverloadService: SystemOverloadService,
+              private readonly loggerService: LoggerService) {
   }
 
   getByTournament(tournament: Tournament): Observable<TournamentExtendedProperty[]> {

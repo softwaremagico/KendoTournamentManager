@@ -11,7 +11,7 @@ export class ImageService {
   @Input()
   participant: Participant;
 
-  constructor(private nameUtilsService: NameUtilsService) {
+  constructor(private readonly nameUtilsService: NameUtilsService) {
   }
 
   createBlobImageFileAndSave(base64ImageUrl: string, extension: string = 'jpeg'): void {

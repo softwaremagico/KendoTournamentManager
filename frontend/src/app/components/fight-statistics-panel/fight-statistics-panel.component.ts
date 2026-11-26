@@ -26,7 +26,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   minutes: number;
   seconds: number;
 
-  constructor(private statisticsServices: StatisticsService, private statisticsChangedService: StatisticsChangedService) {
+  constructor(private readonly statisticsServices: StatisticsService, private readonly statisticsChangedService: StatisticsChangedService) {
     super();
   }
 

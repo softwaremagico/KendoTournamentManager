@@ -21,7 +21,7 @@ export class UserListComponent implements OnInit {
   @Output()
   userSelected: EventEmitter<Participant> = new EventEmitter();
 
-  constructor(private filterResetService: FilterResetService) {
+  constructor(private readonly filterResetService: FilterResetService) {
   }
 
   ngOnInit(): void {

@@ -26,7 +26,7 @@ import {ActivityService} from "./activity.service";
 })
 export class RbacService {
 
-  constructor(private userService: UserService, private cookies: CookieService, private activityService: ActivityService) {
+  constructor(private readonly userService: UserService, private readonly cookies: CookieService, private readonly activityService: ActivityService) {
     this.getRoles();
   }
 

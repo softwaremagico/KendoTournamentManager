@@ -45,7 +45,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
-  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected BiitProgressBarType = BiitProgressBarType;
 
   userListData: UserListData = new UserListData();
   teams: Team[];

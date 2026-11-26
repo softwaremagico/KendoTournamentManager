@@ -30,20 +30,20 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
-  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected BiitProgressBarType = BiitProgressBarType;
 
   userListData: UserListData = new UserListData();
   roleTypes: RoleType[] = RoleType.toArray();
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
   loadingGlobal: boolean = false;
-  private pendingCompetitors: Set<Participant> = new Set<Participant>();
+  private readonly pendingCompetitors: Set<Participant> = new Set<Participant>();
 
-  constructor(public participantService: ParticipantService, public roleService: RoleService,
-              private messageService: MessageService,
-              rbacService: RbacService, private filterResetService: FilterResetService,
-               private statisticsChangedService: StatisticsChangedService,
-               private teamService: TeamService, private cdr: ChangeDetectorRef) {
+  constructor(public readonly participantService: ParticipantService, public readonly roleService: RoleService,
+              private readonly messageService: MessageService,
+              rbacService: RbacService, private readonly filterResetService: FilterResetService,
+               private readonly statisticsChangedService: StatisticsChangedService,
+               private readonly teamService: TeamService, private readonly cdr: ChangeDetectorRef) {
     super(rbacService);
   }
 

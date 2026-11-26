@@ -64,8 +64,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   protected confirmReset: boolean = false;
 
 
-  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService,
-              rbacService: RbacService, private filterFocusService: FilterFocusService) {
+  constructor(public readonly audioService: AudioService, private readonly timeChangedService: TimeChangedService,
+              rbacService: RbacService, private readonly filterFocusService: FilterFocusService) {
     super(rbacService);
     this.started = false;
   }

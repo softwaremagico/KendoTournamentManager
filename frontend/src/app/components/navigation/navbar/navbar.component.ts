@@ -52,17 +52,17 @@ export class NavbarComponent implements OnInit {
   protected tenancyEnabled: boolean = true;
   @HostBinding('class') className = '';
 
-  constructor(protected router: Router,
-              private contextMenuService: ContextMenuService<void>,
-              private translocoService: TranslocoService,
-              protected sessionService: UserSessionService,
-              private activityService: ActivityService,
-              protected userSessionService: UserSessionService,
-              private overlay: OverlayContainer, private _renderer: Renderer2,
-               private darkModeService: DarkModeService,
-               private infoService: InfoService,
-               protected rbacService: RbacService, private tenantService: TenantService,
-               private loginService: LoginService, private messageService: MessageService,
+  constructor(protected readonly router: Router,
+              private readonly contextMenuService: ContextMenuService<void>,
+              private readonly translocoService: TranslocoService,
+              protected readonly sessionService: UserSessionService,
+              private readonly activityService: ActivityService,
+              protected readonly userSessionService: UserSessionService,
+              private readonly overlay: OverlayContainer, private readonly _renderer: Renderer2,
+               private readonly darkModeService: DarkModeService,
+               private readonly infoService: InfoService,
+               protected readonly rbacService: RbacService, private readonly tenantService: TenantService,
+               private readonly loginService: LoginService, private readonly messageService: MessageService,
                private readonly cdr: ChangeDetectorRef) {
     this.nightModeEnabled = userSessionService.getNightMode();
   }

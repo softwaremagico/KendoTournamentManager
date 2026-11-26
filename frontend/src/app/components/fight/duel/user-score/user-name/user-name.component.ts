@@ -50,7 +50,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   public displayName: string = '';
 
-  constructor(protected router: Router, private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
+  constructor(protected readonly router: Router, private readonly nameUtilsService: NameUtilsService, private readonly membersOrderChangedService: MembersOrderChangedService) {
     super();
   }
 

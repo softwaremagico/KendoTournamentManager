@@ -58,7 +58,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   tournament: Tournament;
   timer: boolean = false;
   private readonly tournamentId: number | undefined;
-  private guestTicket: string | undefined;
+  private readonly guestTicket: string | undefined;
   groups: Group[];
   swappedColors: boolean = false;
   swappedTeams: boolean = false;

@@ -13,10 +13,10 @@ import {Duel} from "../models/duel";
 })
 export class DuelService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/duels';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/duels';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService) {
 
   }
 

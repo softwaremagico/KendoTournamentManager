@@ -28,7 +28,7 @@ export class ParticipantFormPopupComponent implements OnInit {
   @Output() saved: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() errorEvent: EventEmitter<unknown> = new EventEmitter<unknown>();
 
-  protected readonly RbacActivity = RbacActivity;
+  protected RbacActivity = RbacActivity;
 
   protected errors: Map<ParticipantFormValidationFields, string> = new Map<ParticipantFormValidationFields, string>();
   protected loggedUser: AuthenticatedUser | undefined;

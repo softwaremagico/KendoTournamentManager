@@ -38,7 +38,7 @@ export class TournamentBracketsComponent implements OnInit {
   readonly levelSeparation: number = BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
 
 
-  constructor(private groupsUpdatedService: GroupsUpdatedService) {
+  constructor(private readonly groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {
