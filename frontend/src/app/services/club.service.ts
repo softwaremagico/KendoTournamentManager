@@ -1,7 +1,7 @@
+import {ServiceRequestMonitor} from './service-request-monitor';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
-import {catchError, tap} from 'rxjs/operators';
 import {Observable} from "rxjs";
 import {Club} from "../models/club";
 import {LoginService} from "./login.service";
@@ -14,6 +14,8 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
   providedIn: 'root'
 })
 export class ClubService {
+  private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
+
 
   private baseUrl: string = this.environmentService.getBackendUrl() + '/clubs';
 
@@ -25,78 +27,36 @@ export class ClubService {
   getAll(): Observable<Club[]> {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Club[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched all clubs`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Club[]>(`gets all`))
-      );
+      .pipe(this.monitor.track<Club[]>(`gets all`, () => `fetched all clubs`));
   }
 
   get(id: number): Observable<Club> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Club>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched club id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Club>(`get id=${id}`))
-      );
+      .pipe(this.monitor.track<Club>(`get id=${id}`, () => `fetched club id=${id}`));
   }
 
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting club id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<number>(`delete id=${id}`))
-      );
+      .pipe(this.monitor.track<number>(`delete id=${id}`, () => `deleting club id=${id}`));
   }
 
   delete(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Club>(url, club)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting club ${club.name}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Club>(`delete ${club.name}`))
-      );
+      .pipe(this.monitor.track<Club>(`delete ${club.name}`, () => `deleting club ${club.name}`));
   }
 
   add(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Club>(url, club)
-      .pipe(
-        tap({
-          next: (newClub: Club) => this.loggerService.info(`adding club ${newClub.name}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Club>(`adding ${club.name}`))
-      );
+      .pipe(this.monitor.track<Club>(`adding ${club.name}`, (newClub: Club) => `adding club ${newClub.name}`));
   }
 
   update(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Club>(url, club)
-      .pipe(
-        tap({
-          next: (updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub.name}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Club>(`updating ${club.name}`))
-      );
+      .pipe(this.monitor.track<Club>(`updating ${club.name}`, (updatedClub: Club) => `updating club ${updatedClub.name}`));
   }
 }
