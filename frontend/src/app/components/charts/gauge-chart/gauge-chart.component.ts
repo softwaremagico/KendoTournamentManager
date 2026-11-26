@@ -1,10 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexPlotOptions, ApexTitleSubtitle, ApexTooltip, ChartComponent} from "ng-apexcharts";
-import {Colors} from "../colors";
 import {GaugeChartData} from "./gauge-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
-import {DarkModeService} from "../../../services/notifications/dark-mode.service";
-import {UserSessionService} from "../../../services/user-session.service";
 import {ApexTheme} from "../apex-types";
 
 export type GaugeChartOptions = {
@@ -36,23 +33,7 @@ export class GaugeChartComponent extends CustomChartComponent {
   @Input()
   public data: GaugeChartData;
   @Input()
-  public width: number = 500;
-  @Input()
-  public height: number | undefined = undefined;
-  @Input()
-  public showToolbar: boolean = false;
-  @Input()
-  public colors: string[] = Colors.defaultPalette;
-  @Input()
-  public title: string | undefined = undefined;
-  @Input()
-  public titleAlignment: "left" | "center" | "right" = "center";
-  @Input()
-  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
-  @Input()
   public opacity: number = 1;
-  @Input()
-  public shadow: boolean = true;
   @Input()
   public innerCirclePercentage: number = 50;
   @Input()
@@ -60,24 +41,12 @@ export class GaugeChartComponent extends CustomChartComponent {
   @Input()
   public trackBackgroundThicknessPercentage: number = 97;
 
-  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
-    super(darkModeService, userSessionService);
-    if (userSessionService.getNightMode()) {
-      this.colors = Colors.defaultPaletteNightMode;
-    }
-  }
-
   protected setProperties(): void {
     this.chartOptions = {
-      colors: this.colors,
-      chart: this.getChart('radialBar', this.width, this.height, this.shadow, this.showToolbar),
+      ...this.getCommonChartOptions('radialBar', this.opacity),
       series: this.data.getValues(),
       labels: this.data.getLabels(),
-      fill: this.getFill(this.fill, this.opacity),
-      plotOptions: this.getPlotOptions(),
-      tooltip: this.getTooltip(),
-      title: this.getTitle(this.title, this.titleAlignment),
-      theme: this.getTheme()
+      plotOptions: this.getPlotOptions()
     };
   }
 

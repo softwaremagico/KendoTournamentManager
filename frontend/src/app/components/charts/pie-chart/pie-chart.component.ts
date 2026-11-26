@@ -48,25 +48,25 @@ export class PieChartComponent extends CustomChartComponent {
   @Input()
   public data: PieChartData;
   @Input()
-  public width: number = 500;
+  public override width: number = 500;
   @Input()
-  public height: number | undefined = undefined;
+  public override height: number | undefined = undefined;
   @Input()
-  public showToolbar: boolean = false;
+  public override showToolbar: boolean = false;
   @Input()
-  public colors: string[] = Colors.defaultPalette;
+  public override colors: string[] = Colors.defaultPalette;
   @Input()
-  public title: string | undefined = undefined;
+  public override title: string | undefined = undefined;
   @Input()
-  public titleAlignment: "left" | "center" | "right" = "center";
+  public override titleAlignment: "left" | "center" | "right" = "center";
   @Input()
   public isDonut: boolean = false;
   @Input()
-  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  public override fill: "gradient" | "solid" | "pattern" | "image" = "solid";
   @Input()
-  public shadow: boolean = true;
+  public override shadow: boolean = true;
   @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
+  public override legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);

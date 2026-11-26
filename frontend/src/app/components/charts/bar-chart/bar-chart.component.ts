@@ -12,11 +12,8 @@ import {
   ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
-import {Colors} from "../colors";
 import {BarChartData} from "./bar-chart-data";
-import {CustomChartComponent} from "../custom-chart-component";
-import {DarkModeService} from "../../../services/notifications/dark-mode.service";
-import {UserSessionService} from "../../../services/user-session.service";
+import {CartesianChartComponent} from "../cartesian-chart-component";
 import {ApexTheme} from "../apex-types";
 
 
@@ -42,7 +39,7 @@ type BarChartOptions = {
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent extends CustomChartComponent {
+export class BarChartComponent extends CartesianChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -51,75 +48,16 @@ export class BarChartComponent extends CustomChartComponent {
 
   @Input()
   public data: BarChartData;
-  @Input()
-  public width: number = 500;
-  @Input()
-  public height: number | undefined = undefined;
-  @Input()
-  public showToolbar: boolean = false;
-  @Input()
-  public colors: string[] = Colors.defaultPalette;
-  @Input()
-  public horizontal: boolean = false;
-  @Input()
-  public barThicknessPercentage: number = 75;
-  @Input()
-  public showValuesLabels: boolean = true;
-  @Input()
-  public xAxisOnTop: boolean = false;
-  @Input()
-  public xAxisTitle: string | undefined = undefined;
-  @Input()
-  public yAxisTitle: string | undefined = undefined;
-  @Input()
-  public showYAxis: boolean = true;
-  @Input()
-  public title: string | undefined = undefined;
-  @Input()
-  public titleAlignment: "left" | "center" | "right" = "center";
-  @Input()
-  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
-  @Input()
-  public borderRadius: number = 0;
-  @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
-  @Input()
-  public shadow: boolean = true;
-
-  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
-    super(darkModeService, userSessionService);
-    if (userSessionService.getNightMode()) {
-      this.colors = Colors.defaultPaletteNightMode;
-    }
-  }
 
   protected setProperties(): void {
     this.chartOptions = {
-      colors: this.colors,
-      chart: this.getChart('bar', this.width, this.height, this.shadow, this.showToolbar),
-      series: this.data.getData(),
-      labels: this.getLabels(this.showValuesLabels),
-      fill: this.getFill(this.fill),
-      plotOptions: this.getPlotOptions(),
-      tooltip: this.getTooltip(),
-      xaxis: this.getXAxis(this.data.getLabels(), this.xAxisOnTop ? 'top' : 'bottom', this.xAxisTitle),
-      yaxis: this.getYAxis(this.showYAxis, this.yAxisTitle),
-      title: this.getTitle(this.title, this.titleAlignment),
-      legend: this.getLegend(this.legendPosition),
-      theme: this.getTheme()
+      ...this.getCartesianChartOptions('bar', this.data.getData(), this.getPlotOptions(),
+        this.getXAxis(this.data.getLabels(), this.xAxisOnTop ? 'top' : 'bottom', this.xAxisTitle))
     };
   }
 
   protected getPlotOptions(): ApexPlotOptions {
-    return {
-      bar: {
-        distributed: true, // this line is mandatory for using colors
-        horizontal: this.horizontal,
-        barHeight: this.barThicknessPercentage + '%',
-        columnWidth: this.barThicknessPercentage + '%',
-        borderRadius: this.borderRadius
-      }
-    }
+    return this.getBarPlotOptions(true);
   }
 
   update(data: BarChartData) {

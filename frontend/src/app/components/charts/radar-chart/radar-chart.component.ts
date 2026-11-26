@@ -14,11 +14,8 @@ import {
   ChartComponent
 } from "ng-apexcharts";
 import {StackedBarsData} from "../stacked-bars-chart/stacked-bars-chart-data";
-import {Colors} from "../colors";
 import {RadarChartData} from "./radar-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
-import {DarkModeService} from "../../../services/notifications/dark-mode.service";
-import {UserSessionService} from "../../../services/user-session.service";
 import {ApexTheme} from "../apex-types";
 
 type RadarChartOptions = {
@@ -53,57 +50,27 @@ export class RadarChartComponent extends CustomChartComponent {
   @Input()
   public data: RadarChartData;
   @Input()
-  public width: number = 600;
-  @Input()
-  public height: number | undefined = undefined;
-  @Input()
   public radarSize: number = 140;
-  @Input()
-  public showToolbar: boolean = false;
-  @Input()
-  public colors: string[] = Colors.defaultPalette;
   @Input()
   public showValuesLabels: boolean = false;
   @Input()
   public xAxisTitle: string | undefined = undefined;
-  @Input()
-  public title: string | undefined = undefined;
-  @Input()
-  public titleAlignment: "left" | "center" | "right" = "center";
-  @Input()
-  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
-  @Input()
-  public shadow: boolean = true;
   @Input()
   public opacity: number = 0.4;
   @Input()
   public strokeWidth: number = 5;
   @Input()
   public innerColors: string[] = ["#ffffff"]
-  @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
-
-  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
-    super(darkModeService, userSessionService);
-    if (userSessionService.getNightMode()) {
-      this.colors = Colors.defaultPaletteNightMode;
-    }
-  }
 
   protected setProperties(): void {
     this.chartOptions = {
-      chart: this.getChart('radar', this.width, this.height, this.shadow, this.showToolbar),
+      ...this.getCommonChartOptions('radar', this.opacity),
       series: this.setColors(this.data.getData()),
       labels: this.getLabels(this.showValuesLabels),
-      fill: this.getFill(this.fill, this.opacity),
-      markers: this.getMarkers(),
-      stroke: this.getStroke(this.strokeWidth),
       plotOptions: this.getPlotOptions(),
-      tooltip: this.getTooltip(),
-      xaxis: this.getXAxis(this.data.getLabels()),
-      title: this.getTitle(this.title, this.titleAlignment),
-      legend: this.getLegend(this.legendPosition),
-      theme: this.getTheme()
+      xaxis: this.getXAxis(this.data.getLabels(), undefined, this.xAxisTitle),
+      markers: this.getMarkers(),
+      stroke: this.getStroke(this.strokeWidth)
     };
   }
 
@@ -125,9 +92,6 @@ export class RadarChartComponent extends CustomChartComponent {
   }
 
   setColors(data: StackedBarsData[]): StackedBarsData[] {
-    for (let i = 0; i < data.length; i++) {
-      data[i].color = this.colors[i % this.colors.length];
-    }
-    return data;
+    return this.setSeriesColors(data);
   }
 }
