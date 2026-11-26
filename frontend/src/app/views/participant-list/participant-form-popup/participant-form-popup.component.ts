@@ -48,17 +48,20 @@ export class ParticipantFormPopupComponent implements OnInit {
       return;
     }
 
-    this.csvService.addParticipants(file).subscribe(_participants => {
-      if (_participants.length === 0) {
-        this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantStored'), NotificationType.SUCCESS);
-        this.saved.emit();
-      } else {
-        const parameters: object = {element: _participants[0].name};
-        this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', parameters), NotificationType.ERROR);
+    this.csvService.addParticipants(file).subscribe({
+      next: _participants => {
+        if (_participants.length === 0) {
+          this.biitSnackbarService.showNotification(this.transloco.translate('infoParticipantStored'), NotificationType.SUCCESS);
+          this.saved.emit();
+        } else {
+          const parameters: object = {element: _participants[0].name};
+          this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', parameters), NotificationType.ERROR);
+        }
+      },
+      error: error => {
+        this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', {element: file.name}), NotificationType.ERROR);
+        this.errorEvent.emit(error);
       }
-    }, error => {
-      this.biitSnackbarService.showNotification(this.transloco.translate('failedOnCsvField', {element: file.name}), NotificationType.ERROR);
-      this.errorEvent.emit(error);
     });
   }
 }

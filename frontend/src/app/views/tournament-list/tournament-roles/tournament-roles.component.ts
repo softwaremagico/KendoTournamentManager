@@ -166,16 +166,19 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       this.userListData.filteredParticipants = filteredParticipants;
       this.cdr.detectChanges();
     };
-    this.roleService.add(role).subscribe((_role: Role): void => {
-      if (!_role) {
-        rollback();
-        return;
-      }
-      this.messageService.infoMessage("infoRoleStored");
-      this.filterResetService.resetFilter.next(true);
-      this.statisticsChangedService.areStatisticsChanged.next(true);
-      this.cdr.detectChanges();
-    }, rollback);
+    this.roleService.add(role).subscribe({
+      next: (_role: Role): void => {
+        if (!_role) {
+          rollback();
+          return;
+        }
+        this.messageService.infoMessage("infoRoleStored");
+        this.filterResetService.resetFilter.next(true);
+        this.statisticsChangedService.areStatisticsChanged.next(true);
+        this.cdr.detectChanges();
+      },
+      error: rollback
+    });
   }
 
   addCompetitor(participant: Participant): void {
@@ -188,21 +191,24 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     role.participant = participant;
     role.roleType = RoleType.COMPETITOR;
     this.pendingCompetitors.add(participant);
-    this.roleService.add(role).pipe(finalize(() => this.pendingCompetitors.delete(participant))).subscribe((savedRole) => {
-      if (!savedRole) {
-        return;
+    this.roleService.add(role).pipe(finalize(() => this.pendingCompetitors.delete(participant))).subscribe({
+      next: savedRole => {
+        if (!savedRole) {
+          return;
+        }
+        this.getParticipantsContainer(RoleType.COMPETITOR).push(participant);
+        this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
+        this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
+        this.shortRoles();
+        this.messageService.infoMessage("infoRoleStored");
+        this.filterResetService.resetFilter.next(true);
+        this.statisticsChangedService.areStatisticsChanged.next(true);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // The HTTP error interceptor reports the failure; keep the participant available for retry.
+        this.cdr.detectChanges();
       }
-      this.getParticipantsContainer(RoleType.COMPETITOR).push(participant);
-      this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
-      this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
-      this.shortRoles();
-      this.messageService.infoMessage("infoRoleStored");
-      this.filterResetService.resetFilter.next(true);
-      this.statisticsChangedService.areStatisticsChanged.next(true);
-      this.cdr.detectChanges();
-    }, () => {
-      // The HTTP error interceptor reports the failure; keep the participant available for retry.
-      this.cdr.detectChanges();
     });
   }
 
