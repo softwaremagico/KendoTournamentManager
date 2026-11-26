@@ -3,7 +3,7 @@
   "dataIsMandatory": "El camp és obligatori.",
   "minLengthError": "Les dades introduïdes són massa curtes.",
   "maxLengthError": "Les dades introduïdes són massa grans.",
-  "passwordMismatch": "Les contrasenyes no coincideixen.",
+  "credentialsMismatch": "Les dades de seguretat no coincideixen.",
   "usernameInvalid": "El nom d'usuari té un format invàlid. Si us plau, esborra qualsevol espai buit.",
   "formatInvalid": "El format del camp és invàlid."
 }
