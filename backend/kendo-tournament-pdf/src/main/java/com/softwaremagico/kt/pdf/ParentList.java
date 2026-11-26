@@ -25,6 +25,8 @@ import org.openpdf.text.Document;
 import org.openpdf.text.Element;
 import org.openpdf.text.Font;
 import org.openpdf.text.Paragraph;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -70,7 +72,32 @@ public abstract class ParentList extends PdfDocument {
      * @param fontSize
      *            the font size used for the header text.
      */
-    protected abstract void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
+    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
+                                BaseFont font, int fontSize) {
+        addTitleRow(mainTable, getHeaderTitle(), font, fontSize, isHeaderTitleCentered());
+    }
+
+    /**
+     * Title used by the common header. Lists with a specific header keep their
+     * own {@link #createHeaderRow} implementation instead.
+     */
+    protected String getHeaderTitle() {
+        return "";
+    }
+
+    protected boolean isHeaderTitleCentered() {
+        return true;
+    }
+
+    @Override
+    public Rectangle getPageSize() {
+        return PageSize.A4;
+    }
+
+    @Override
+    public void addDocumentWriterEvents(PdfWriter writer) {
+        // No background.
+    }
 
     protected void createRowSeparator(PdfPTable mainTable) {
         final PdfPCell cell = new PdfPCell();
@@ -121,7 +148,40 @@ public abstract class ParentList extends PdfDocument {
      * @param fontSize
      *            the font size used for the footer text.
      */
-    protected abstract void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
+    public void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize) {
+        mainTable.addCell(getEmptyRow());
+    }
+
+    /**
+     * Adds the common title cell used by the document lists.
+     *
+     * @param mainTable        table where the title cell is added.
+     * @param title            text to show in the title.
+     * @param font             font used for the title.
+     * @param fontSize         size of the font.
+     * @param centerVertically whether the text must be vertically centred.
+     */
+    protected void addTitleRow(PdfPTable mainTable, String title, BaseFont font, int fontSize, boolean centerVertically) {
+        addTitleCell(mainTable, new PdfPCell(new Paragraph(title, new Font(font, (float) fontSize))), centerVertically);
+    }
+
+    /**
+     * Adds a previously built cell applying the common title formatting.
+     *
+     * @param mainTable        table where the title cell is added.
+     * @param cell             cell to format and add.
+     * @param centerVertically whether the text must be vertically centred.
+     */
+    protected void addTitleCell(PdfPTable mainTable, PdfPCell cell, boolean centerVertically) {
+        cell.setColspan(getTableWidths().length);
+        cell.setBorderWidth(HEADER_BORDER);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        if (centerVertically) {
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        }
+        cell.setMinimumHeight(MIN_HEADER_HIGH);
+        mainTable.addCell(cell);
+    }
 
     /**
      * Obtain the width of the main table of the document.
@@ -282,7 +342,12 @@ public abstract class ParentList extends PdfDocument {
      * @param mainTable
      *            the main table whose properties will be configured.
      */
-    public abstract void setTableProperties(PdfPTable mainTable);
+    public void setTableProperties(PdfPTable mainTable) {
+        mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
+        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
+    }
 
     /**
      * Creates the main table of the document.

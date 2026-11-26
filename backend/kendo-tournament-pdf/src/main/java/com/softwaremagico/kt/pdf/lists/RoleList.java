@@ -21,23 +21,19 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-
 import org.openpdf.text.Document;
 import org.openpdf.text.Element;
-import org.openpdf.text.Font;
-import org.openpdf.text.PageSize;
-import org.openpdf.text.Paragraph;
-import org.openpdf.text.Rectangle;
+
+
 import org.openpdf.text.pdf.BaseFont;
-import org.openpdf.text.pdf.PdfPCell;
+
 import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.pdf.BaseColor;
+
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
-import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
@@ -47,27 +43,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class RoleList extends ParentList {
+public class RoleList extends AbstractTournamentList {
 
     private static final float[] TABLE_WIDTH = {0.60f, 0.30f};
     private final MessageSource messageSource;
     private final Locale locale;
-    private final TournamentDTO tournament;
     private final Map<ClubDTO, List<RoleDTO>> rolesByClub;
 
     public RoleList(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ClubDTO, List<RoleDTO>> rolesByClub) {
         this.messageSource = messageSource;
         this.locale = locale;
-        this.tournament = tournament;
+        super(tournament);
         this.rolesByClub = rolesByClub;
-    }
-
-    @Override
-    public void setTableProperties(PdfPTable mainTable) {
-        mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
-        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override
@@ -106,35 +93,9 @@ public class RoleList extends ParentList {
     }
 
     @Override
-    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, (float) fontSize)));
-        cell.setColspan(getTableWidths().length);
-        cell.setBorderWidth(HEADER_BORDER);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(MIN_HEADER_HIGH);
-        mainTable.addCell(cell);
-    }
-
-    @Override
-    public void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        mainTable.addCell(getEmptyRow());
-    }
-
-    @Override
     public float[] getTableWidths() {
         return TABLE_WIDTH;
     }
 
-    @Override
-    protected Rectangle getPageSize() {
-        return PageSize.A4;
-    }
 
-    @Override
-    protected void addDocumentWriterEvents(PdfWriter writer) {
-        // No background.
-    }
 }
