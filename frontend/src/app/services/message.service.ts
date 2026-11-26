@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {Observable, of, Subscription} from "rxjs";
+import {EMPTY, Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
 import {Message} from "@stomp/stompjs";
@@ -10,7 +10,6 @@ import {TranslocoService} from '@jsverse/transloco';
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {LoginService} from './login.service';
 import {switchMap} from 'rxjs/operators';
-import {EMPTY} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
