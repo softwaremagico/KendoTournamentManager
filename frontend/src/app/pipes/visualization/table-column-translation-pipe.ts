@@ -37,12 +37,29 @@ export class TableColumnTranslationPipe implements PipeTransform {
       return "";
     }
 
-    const text: string = String(column);
+    const text: string | undefined = this.columnKey(column);
+    if (text === undefined) {
+      return "";
+    }
     if (text.toUpperCase() === text) {
       // probably is an enum
       return this.transloco.translate(this.snakeToCamel(text.toLowerCase()));
     }
     return this.transloco.translate(text);
+  }
+
+  /** Resolves a stable translation key without stringifying arbitrary objects. */
+  private columnKey(column: unknown): string | undefined {
+    if (typeof column === 'string') {
+      return column;
+    }
+    if (typeof column === 'object' && column !== null && 'scoreType' in column) {
+      const scoreType: unknown = column.scoreType;
+      if (typeof scoreType === 'string') {
+        return scoreType;
+      }
+    }
+    return undefined;
   }
 
   snakeToCamel(string: string): string {

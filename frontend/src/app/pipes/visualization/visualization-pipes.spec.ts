@@ -52,6 +52,18 @@ describe('Visualization pipes', () => {
     expect(pipe.transform('')).toBe('');
   });
 
+  it('translates object columns through their stable scalar key only', () => {
+    const translate = jasmine.createSpyObj<TranslocoService>('TranslocoService', ['translate']);
+    (translate.translate.and as any).callFake((key: string) => `translated:${key}`);
+    const session = jasmine.createSpyObj<UserSessionService>('UserSessionService', ['getLanguage']);
+    session.getLanguage.and.returnValue('en');
+    const pipe = new TableColumnTranslationPipe(translate, session);
+    expect(pipe.transform({scoreType: 'WIN_OVER_DRAWS'})).toBe('translated:winOverDraws');
+    expect(pipe.transform({scoreType: 7})).toBe('');
+    expect(pipe.transform({})).toBe('');
+    expect(translate.translate).toHaveBeenCalledOnceWith('winOverDraws');
+  });
+
   it('formats dates in translated table columns', () => {
     const translate = jasmine.createSpyObj<TranslocoService>('TranslocoService', ['translate']);
     const session = jasmine.createSpyObj<UserSessionService>('UserSessionService', ['getLanguage']);
