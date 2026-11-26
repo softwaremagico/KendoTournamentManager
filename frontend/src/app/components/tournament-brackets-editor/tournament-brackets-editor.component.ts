@@ -139,7 +139,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
         this.editorTeamsLengthUpdated.next(_teams.length);
         this.totalTeams = _teams.length;
-        _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
+        _teams = _teams.filter((item: Team): boolean => !groupTeamsIds.includes(item.id!));
 
         this.teamListData.teams = _teams;
         this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
