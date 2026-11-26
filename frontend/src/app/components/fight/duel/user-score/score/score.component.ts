@@ -7,7 +7,8 @@ import {ScoreUpdatedService} from "../../../../../services/notifications/score-u
 import {TranslocoService} from '@jsverse/transloco';
 import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
-import {KendoComponent} from "../../../../../components/kendo-component";
+import {TooltipPositionedComponent} from "../../../../tooltip/tooltip-positioned-component";
+import {getTimeRepresentation} from "../../../../../utils/dates/time-representation";
 import {takeUntil} from "rxjs";
 
 type ScoreKey = 'competitor1Score' | 'competitor2Score';
@@ -22,7 +23,7 @@ type ScoreTimeKey = 'competitor1ScoreTime' | 'competitor2ScoreTime';
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class ScoreComponent extends KendoComponent implements OnInit, OnChanges {
+export class ScoreComponent extends TooltipPositionedComponent implements OnInit, OnChanges {
 
   @Input()
   index: number;
@@ -49,13 +50,6 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
   saving: boolean = false;
 
   timeRepresentation: string | undefined;
-
-  mouseX: number | undefined;
-  mouseY: number | undefined;
-  screenHeight: number | undefined;
-  screenWidth: number | undefined;
-  onLeftBorder: boolean;
-  onRightBorder: boolean;
 
   protected readonly RbacActivity = RbacActivity;
   protected readonly Score = Score;
@@ -155,22 +149,9 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
   }
 
   setTime(): void {
-    let seconds: number | undefined = this.isCompetitor1Selected() ?
+    const seconds: number | undefined = this.isCompetitor1Selected() ?
       this.duel.competitor1ScoreTime[this.index] : this.duel.competitor2ScoreTime[this.index];
-    if (seconds) {
-      const minutes: number | undefined = seconds ? Math.floor(seconds / 60) : undefined;
-      seconds = seconds % 60;
-      let text: string = "";
-      if (minutes) {
-        text += minutes + " " + this.translateService.translate('minutesAbbreviation') + " ";
-      }
-      if (seconds) {
-        text += seconds + " " + this.translateService.translate('secondsAbbreviation') + " ";
-      }
-      this.timeRepresentation = text;
-    } else {
-      this.timeRepresentation = undefined;
-    }
+    this.timeRepresentation = getTimeRepresentation(seconds, (key: string): string => this.translateService.translate(key));
   }
 
   tooltipText(): string {
@@ -181,28 +162,4 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
       '<div class="time-tooltip-container"><img src="assets/icons/timer.svg" alt="My Icon" width="16px" height="16px">\n<span class="time-tooltip-text">' + this.timeRepresentation + '</span></div>';
   }
 
-  updateCoordinates($event: MouseEvent): void {
-    this.mouseX = $event.clientX;
-    this.mouseY = $event.clientY;
-    this.calculateTooltipMargin();
-  }
-
-  clearCoordinates(): void {
-    this.mouseX = undefined;
-    this.mouseY = undefined;
-  }
-
-
-  calculateTooltipMargin(): void {
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-    this.onLeftBorder = false;
-    this.onRightBorder = false;
-    if (this.mouseX! - 150 < 0) {
-      this.onLeftBorder = true;
-    }
-    if (this.mouseX! + 150 > this.screenWidth) {
-      this.onRightBorder = true;
-    }
-  }
 }

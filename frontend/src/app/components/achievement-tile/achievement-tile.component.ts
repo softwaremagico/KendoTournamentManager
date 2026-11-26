@@ -6,7 +6,7 @@ import {formatDate} from "@angular/common";
 import {AchievementType} from "../../models/achievement-type.model";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {KendoComponent} from "../kendo-component";
+import {TooltipPositionedComponent} from "../tooltip/tooltip-positioned-component";
 import {takeUntil} from "rxjs";
 
 @Component({
@@ -18,7 +18,7 @@ import {takeUntil} from "rxjs";
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class AchievementTileComponent extends KendoComponent implements OnInit, OnChanges {
+export class AchievementTileComponent extends TooltipPositionedComponent implements OnInit, OnChanges {
 
   @Input()
   achievementType: AchievementType;
@@ -31,13 +31,6 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
 
   grade: AchievementGrade;
   type: AchievementType;
-  mouseX: number | undefined;
-  mouseY: number | undefined;
-  screenHeight: number | undefined;
-  screenWidth: number | undefined;
-  onLeftBorder: boolean;
-  onRightBorder: boolean;
-  onBottomBorder: boolean;
   newAchievement: boolean;
   totalAchievements: number;
 
@@ -181,39 +174,25 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
   }
 
   participantToolTipText(): string {
-    if (!this.view || !this.achievements || this.achievements.length === 0) {
-      return "";
-    }
-    let tooltipText: string = this.getAchievementDescription();
-    if (this.achievements) {
-      tooltipText += '<br>' + this.translateService.translate('achievementToolTipObtainedAt') + ':<br>';
-      tooltipText += '<div class="tournament-list">';
-      for (const achievement of this.achievements) {
-        if (achievement.tournament) {
-          tooltipText += '<div class="tournament-item">';
-          tooltipText += '<div class="circle ';
-          tooltipText += this.gradeClass(achievement.achievementGrade);
-          tooltipText += '"></div>';
-          tooltipText += achievement.tournament.name;
-          const formattedDate: string = formatDate(achievement.tournament.createdAt, 'dd/MM/yyyy', navigator.language)
-          tooltipText += ' (' + formattedDate + ')';
-
-          //End of tournament item.
-          tooltipText += '</div>';
-        }
-      }
-      tooltipText += '</div>';
-    }
-    return tooltipText;
+    return this.achievementListTooltip('achievementToolTipObtainedAt', (achievement: Achievement): string => {
+      const formattedDate: string = formatDate(achievement.tournament!.createdAt, 'dd/MM/yyyy', navigator.language)
+      return achievement.tournament!.name + ' (' + formattedDate + ')';
+    });
   }
 
   tournamentToolTipText(): string {
+    return this.achievementListTooltip('achievementToolTipObtainedBy', (achievement: Achievement): string =>
+      '<span>' + this.nameUtils.getDisplayName(achievement.participant) + '</span>');
+  }
+
+  /** Lista común de logros con su círculo de grado y el contenido de cada vista. */
+  private achievementListTooltip(titleKey: string, itemText: (achievement: Achievement) => string): string {
     if (!this.view || !this.achievements || this.achievements.length === 0) {
       return "";
     }
     let tooltipText: string = this.getAchievementDescription();
     if (this.achievements) {
-      tooltipText += '<br>' + this.translateService.translate('achievementToolTipObtainedBy') + ':<br>';
+      tooltipText += '<br>' + this.translateService.translate(titleKey) + ':<br>';
       tooltipText += '<div class="tournament-list">';
       for (const achievement of this.achievements) {
         if (achievement.tournament) {
@@ -221,7 +200,7 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
           tooltipText += '<div class="circle ';
           tooltipText += this.gradeClass(achievement.achievementGrade);
           tooltipText += '"></div>';
-          tooltipText += '<span>' + this.nameUtils.getDisplayName(achievement.participant) + '</span>';
+          tooltipText += itemText(achievement);
 
           //End of tournament item.
           tooltipText += '</div>';
@@ -257,31 +236,4 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
     return tooltipText;
   }
 
-  updateCoordinates($event: MouseEvent): void {
-    this.mouseX = $event.clientX;
-    this.mouseY = $event.clientY;
-    this.calculateTooltipMargin();
-  }
-
-  clearCoordinates(): void {
-    this.mouseX = undefined;
-    this.mouseY = undefined;
-  }
-
-
-  calculateTooltipMargin(): void {
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-    this.onLeftBorder = false;
-    this.onRightBorder = false;
-    if (this.mouseX! - 150 < 0) {
-      this.onLeftBorder = true;
-    }
-    if (this.mouseX! + 150 > this.screenWidth) {
-      this.onRightBorder = true;
-    }
-    if (this.mouseY! + 250 > this.screenHeight) {
-      this.onBottomBorder = true;
-    }
-  }
 }

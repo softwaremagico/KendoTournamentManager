@@ -6,6 +6,8 @@ import {ScoreUpdatedService} from "../../../../../services/notifications/score-u
 import {TranslocoService} from '@jsverse/transloco';
 import {RbacService} from "../../../../../services/rbac/rbac.service";
 import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
+import {TooltipPositionedComponent} from "../../../../tooltip/tooltip-positioned-component";
+import {getTimeRepresentation} from "../../../../../utils/dates/time-representation";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -16,7 +18,7 @@ import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class FaultComponent implements OnChanges {
+export class FaultComponent extends TooltipPositionedComponent implements OnChanges {
 
   @Input()
   duel: Duel;
@@ -38,15 +40,9 @@ export class FaultComponent implements OnChanges {
 
   timeRepresentation: string | undefined;
 
-  mouseX: number | undefined;
-  mouseY: number | undefined;
-  screenHeight: number | undefined;
-  screenWidth: number | undefined;
-  onLeftBorder: boolean;
-  onRightBorder: boolean;
-
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
               private translateService: TranslocoService, public rbacService: RbacService) {
+    super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -110,22 +106,9 @@ export class FaultComponent implements OnChanges {
   }
 
   setTime(): void {
-    let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+    const seconds: number | undefined = this.isCompetitor1Selected() ?
       this.duel.competitor1FaultTime : this.duel.competitor2FaultTime;
-    if (seconds) {
-      const minutes: number | undefined = seconds ? Math.floor(seconds / 60) : undefined;
-      seconds = seconds % 60;
-      let text: string = "";
-      if (minutes) {
-        text += minutes + " " + this.translateService.translate('minutesAbbreviation') + " ";
-      }
-      if (seconds) {
-        text += seconds + " " + this.translateService.translate('secondsAbbreviation') + " ";
-      }
-      this.timeRepresentation = text;
-    } else {
-      this.timeRepresentation = undefined;
-    }
+    this.timeRepresentation = getTimeRepresentation(seconds, (key: string): string => this.translateService.translate(key));
   }
 
   tooltipText(): string {
@@ -135,31 +118,6 @@ export class FaultComponent implements OnChanges {
     let tooltipText: string = '<b>' + this.translateService.translate('fault') + '</b><br>' +
       '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip">' + this.timeRepresentation + '</span></div>';
     return tooltipText;
-  }
-
-  updateCoordinates($event: MouseEvent): void {
-    this.mouseX = $event.clientX;
-    this.mouseY = $event.clientY;
-    this.calculateTooltipMargin();
-  }
-
-  clearCoordinates($event: MouseEvent): void {
-    this.mouseX = undefined;
-    this.mouseY = undefined;
-  }
-
-
-  calculateTooltipMargin(): void {
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-    this.onLeftBorder = false;
-    this.onRightBorder = false;
-    if (this.mouseX! - 150 < 0) {
-      this.onLeftBorder = true;
-    }
-    if (this.mouseX! + 150 > this.screenWidth) {
-      this.onRightBorder = true;
-    }
   }
 
   protected readonly RbacActivity = RbacActivity;
