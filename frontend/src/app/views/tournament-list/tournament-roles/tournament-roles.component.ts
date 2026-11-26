@@ -70,9 +70,9 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
           participant.club = participants.find(p => p.id === participant.id)?.club;
         })
         //Get participants and subtract the ones already with roles.
-        const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
+        const participantsIds: Set<number | undefined> = new Set(this.participants.get(roleType)!.map(participant => participant.id));
         participants = participants.filter((participantWithoutRole: Participant) => !participantsIds
-          .includes(participantWithoutRole.id));
+          .has(participantWithoutRole.id));
       }
       participants.sort(function (a: Participant, b: Participant) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
