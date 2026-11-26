@@ -30,7 +30,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
-  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected BiitProgressBarType = BiitProgressBarType;
 
   userListData: UserListData = new UserListData();
   roleTypes: RoleType[] = RoleType.toArray();

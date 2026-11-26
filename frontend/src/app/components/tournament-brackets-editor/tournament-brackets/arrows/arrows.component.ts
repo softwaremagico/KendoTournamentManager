@@ -14,7 +14,7 @@ import {ShiaijoComponent} from "../shiaijo/shiaijo.component";
 })
 export class ArrowsComponent implements OnInit {
 
-  public readonly static readonly ARROW_SIZE: number = 30;
+  public static readonly readonly ARROW_SIZE: number = 30;
   arrow_size: number = ArrowsComponent.ARROW_SIZE;
 
   @Input()

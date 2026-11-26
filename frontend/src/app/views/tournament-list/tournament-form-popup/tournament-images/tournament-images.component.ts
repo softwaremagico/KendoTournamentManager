@@ -26,7 +26,7 @@ export class TournamentImagesComponent extends RbacBasedComponent implements OnI
   @Input()
   tournament: Tournament;
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
-  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected BiitProgressBarType = BiitProgressBarType;
   protected loading: boolean = false;
   protected diplomaImage: string | null;
   protected bannerImage: string | null;

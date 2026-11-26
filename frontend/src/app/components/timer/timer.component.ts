@@ -61,7 +61,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   timerPosition: Point = {x: 0, y: 0};
 
-  protected readonly confirmReset: boolean = false;
+  protected confirmReset: boolean = false;
 
 
   constructor(public readonly audioService: AudioService, private readonly timeChangedService: TimeChangedService,

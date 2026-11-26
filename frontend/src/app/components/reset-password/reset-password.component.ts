@@ -26,7 +26,7 @@ export class ResetPasswordComponent implements OnInit {
   @Input() @Output() errorEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
-  protected readonly PASSWORD_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected PASSWORD_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
 
   protected readonly password: string[] = ["", ""];
   protected readonly Type = Type;

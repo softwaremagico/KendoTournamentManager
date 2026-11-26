@@ -25,7 +25,7 @@ export class AuthenticatedUserRolePopupComponent extends RbacBasedComponent impl
   @Input() user: AuthenticatedUser | null;
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
   @Output() saved: EventEmitter<void> = new EventEmitter<void>();
-  protected readonly translatedRoles: { value: string, label: string, description: string }[] = [];
+  protected translatedRoles: { value: string, label: string, description: string }[] = [];
   selectedRole: string;
 
   constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly userService: UserService,

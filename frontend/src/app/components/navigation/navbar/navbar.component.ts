@@ -39,10 +39,10 @@ export class NavbarComponent implements OnInit {
   user: AuthenticatedUser | undefined;
 
   protected readonly RbacActivity = RbacActivity;
-  protected readonly logoutConfirmation: boolean = false;
-  protected readonly languagePopup: boolean = false;
+  protected logoutConfirmation: boolean = false;
+  protected languagePopup: boolean = false;
   protected tenantPopup: boolean = false;
-  protected readonly passwordPopup: boolean = false;
+  protected passwordPopup: boolean = false;
   protected tenants: Tenant[] = [];
   protected selectedTenantId: number | null = null;
   protected tenantOptions: { label: string, value: string }[] = [];

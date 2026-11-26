@@ -84,7 +84,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   protected showCompetitorsRanking: boolean = false;
   protected showTeamsRanking: boolean = false;
   protected showDrawWarningOnTeamsRankingOpen: boolean = false;
-  protected readonly confirmResetFights: boolean = false;
+  protected confirmResetFights: boolean = false;
   protected confirmDeleteFights: boolean = false;
 
   private topicSubscription: Subscription;
