@@ -41,7 +41,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -89,7 +88,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 		return this.objectMapper.writeValueAsString(object);
 	}
 
-	private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+	private <T> T fromJson(String payload, Class<T> clazz) {
 		return this.objectMapper.readValue(payload, clazz);
 	}
 

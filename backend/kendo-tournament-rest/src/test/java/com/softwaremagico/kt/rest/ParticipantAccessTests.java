@@ -44,8 +44,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -95,7 +93,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
         return objectMapper.writeValueAsString(object);
     }
 
-    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+    private <T> T fromJson(String payload, Class<T> clazz) {
         return objectMapper.readValue(payload, clazz);
     }
 

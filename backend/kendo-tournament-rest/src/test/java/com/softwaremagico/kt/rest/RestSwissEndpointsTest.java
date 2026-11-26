@@ -55,7 +55,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -116,7 +115,7 @@ public class RestSwissEndpointsTest extends AbstractTestNGSpringContextTests {
         return objectMapper.writeValueAsString(object);
     }
 
-    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+    private <T> T fromJson(String payload, Class<T> clazz) {
         return objectMapper.readValue(payload, clazz);
     }
 
