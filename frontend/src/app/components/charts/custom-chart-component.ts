@@ -16,7 +16,7 @@ import {
   ApexXAxis,
   ApexYAxis
 } from "ng-apexcharts";
-import {ApexTheme, ChartType} from "./apex-types";
+import {ApexTheme, ChartFill, ChartType, LegendPosition, TitleAlignment} from "./apex-types";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
 
@@ -92,13 +92,13 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
   @Input()
   public title: string | undefined = undefined;
   @Input()
-  public titleAlignment: "left" | "center" | "right" = "center";
+  public titleAlignment: TitleAlignment = "center";
   @Input()
-  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  public fill: ChartFill = "solid";
   @Input()
   public shadow: boolean = true;
   @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom";
+  public legendPosition: LegendPosition = "bottom";
 
   constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
     super();
@@ -153,7 +153,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     }
   }
 
-  protected getTitle(title: string | undefined, titleAlignment: "left" | "center" | "right" = "center"): ApexTitleSubtitle {
+  protected getTitle(title: string | undefined, titleAlignment: TitleAlignment = "center"): ApexTitleSubtitle {
     return {
       text: title?.toUpperCase(),
       align: titleAlignment,
@@ -166,7 +166,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     }
   }
 
-  protected getLegend(legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"): ApexLegend {
+  protected getLegend(legendPosition: LegendPosition = "bottom"): ApexLegend {
     return {
       position: legendPosition,
       labels: {
@@ -176,7 +176,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     }
   }
 
-  protected getResponsive(legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"): ApexResponsive[] {
+  protected getResponsive(legendPosition: LegendPosition = "bottom"): ApexResponsive[] {
     return [
       {
         breakpoint: 480,
@@ -192,7 +192,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     ];
   }
 
-  protected getFill(fill: "gradient" | "solid" | "pattern" | "image" = "solid", opacity?: number): ApexFill {
+  protected getFill(fill: ChartFill = "solid", opacity?: number): ApexFill {
     return {
       type: fill,
       opacity: opacity,

@@ -72,6 +72,6 @@ export class LineChartComponent extends CartesianChartComponent {
 
   update(data: LineChartData) {
     this.chart.updateSeries(data.getData());
-    this.chart.updateOptions(this.getXAxisUpdateOptions(data.getLabels()));
+    void this.chart.updateOptions(this.getXAxisUpdateOptions(data.getLabels()));
   }
 }

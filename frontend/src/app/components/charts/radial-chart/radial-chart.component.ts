@@ -10,7 +10,7 @@ import {
 } from "ng-apexcharts";
 import {RadialChartData} from "./radial-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
-import {ApexTheme} from "../apex-types";
+import {ApexTheme, ChartFill, LegendPosition, TitleAlignment} from "../apex-types";
 
 type RadialChartOptions = {
   series: number[];
@@ -43,7 +43,7 @@ export class RadialChartComponent extends CustomChartComponent {
   @Input()
   public data: RadialChartData;
   @Input()
-  public override fill: "gradient" | "solid" | "pattern" | "image" = "gradient";
+  public override fill: ChartFill = "gradient";
   @Input()
   public innerCirclePercentage: number = 40;
   @Input()

@@ -67,7 +67,7 @@ export class StackedBarsChartComponent extends CartesianChartComponent {
 
   update(data: StackedBarChartData) {
     this.chart.updateSeries(this.setColors(data.getData()), true);
-    this.chart.updateOptions(this.getXAxisUpdateOptions(data.getLabels()));
+    void this.chart.updateOptions(this.getXAxisUpdateOptions(data.getLabels()));
   }
 
   setColors(data: StackedBarsData[]): StackedBarsData[] {

@@ -13,3 +13,7 @@ export interface ApexTheme {
   palette?: string;
 }
 
+
+export type LegendPosition = 'left' | 'bottom' | 'right' | 'top';
+export type TitleAlignment = 'left' | 'center' | 'right';
+export type ChartFill = 'gradient' | 'solid' | 'pattern' | 'image';

@@ -15,7 +15,7 @@ import {Colors} from "../colors";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
 import {CustomChartComponent} from "../custom-chart-component";
-import {ApexTheme} from "../apex-types";
+import {ApexTheme, ChartFill, LegendPosition, TitleAlignment} from "../apex-types";
 
 
 type PieChartOptions = {
@@ -58,15 +58,15 @@ export class PieChartComponent extends CustomChartComponent {
   @Input()
   public override title: string | undefined = undefined;
   @Input()
-  public override titleAlignment: "left" | "center" | "right" = "center";
+  public override titleAlignment: TitleAlignment = "center";
   @Input()
   public isDonut: boolean = false;
   @Input()
-  public override fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  public override fill: ChartFill = "solid";
   @Input()
   public override shadow: boolean = true;
   @Input()
-  public override legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
+  public override legendPosition: LegendPosition = "bottom"
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
