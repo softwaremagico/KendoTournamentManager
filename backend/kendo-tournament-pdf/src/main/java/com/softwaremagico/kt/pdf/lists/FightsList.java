@@ -199,7 +199,7 @@ public class FightsList extends ParentList {
     @Override
     public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                 BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournamentDto.getName(), new Font(font, fontSize)));
+        final PdfPCell cell = new PdfPCell(new Paragraph(tournamentDto.getName(), new Font(font, (float) fontSize)));
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);

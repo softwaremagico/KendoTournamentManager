@@ -178,10 +178,10 @@ public abstract class ParentList extends PdfDocument {
     @SuppressWarnings("java:S107")
     public PdfPCell getCell(String text, int border, int colspan, int align, Color color,
                             BaseFont font, int fontSize, int fontType) {
-        final Paragraph p = new Paragraph(text, new Font(font, fontSize, fontType));
+        final Paragraph p = new Paragraph(text, new Font(font, (float) fontSize, fontType));
         final PdfPCell cell = new PdfPCell(p);
         cell.setColspan(colspan);
-        cell.setBorderWidth(border);
+        cell.setBorderWidth((float) border);
         cell.setBorderColor(getCellBorderColor());
         cell.setHorizontalAlignment(align);
         cell.setPadding(CELL_PADDING);

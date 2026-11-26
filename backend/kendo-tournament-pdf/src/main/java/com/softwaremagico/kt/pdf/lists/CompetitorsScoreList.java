@@ -73,12 +73,12 @@ public class CompetitorsScoreList extends ParentList {
 
         // Tournament name.
         if (tournament != null) {
-            cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, fontSize)));
+            cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, (float) fontSize)));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         } else {
             // List name.
             cell = new PdfPCell(new Paragraph(
-                    messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, fontSize)));
+                    messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, (float) fontSize)));
         }
 
         cell.setColspan(getTableWidths().length);
