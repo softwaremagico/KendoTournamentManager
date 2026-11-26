@@ -21,50 +21,39 @@ package com.softwaremagico.kt.logger;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Logger wrapper for frontend operations.
  */
+
 public final class FrontendLogger extends AbstractLoggerWrapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FrontendLogger.class);
-
-    private FrontendLogger() {
-    }
+    private static final LoggerFacade FRONTEND_DELEGATE = new LoggerFacade(FrontendLogger.class);
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateInfo(LOGGER, clazz, messageTemplate, arguments);
+        FRONTEND_DELEGATE.info(clazz, messageTemplate, arguments);
     }
-
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateWarning(LOGGER, clazz, messageTemplate, arguments);
+        FRONTEND_DELEGATE.warning(clazz, messageTemplate, arguments);
     }
-
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateDebug(LOGGER, clazz, messageTemplate, arguments);
+        FRONTEND_DELEGATE.debug(clazz, messageTemplate, arguments);
     }
-
-
     public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
+        FRONTEND_DELEGATE.severe(clazz, messageTemplate, arguments);
     }
-
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        delegateErrorMessage(LOGGER, clazz, throwable);
+        FRONTEND_DELEGATE.error(clazz, throwable);
     }
-
-
-    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateErrorMessage(LOGGER, clazz.getName(), messageTemplate, arguments);
-    }
-
     public static void errorMessage(Object object, Throwable throwable) {
-        delegateErrorMessage(LOGGER, object, throwable);
+        FRONTEND_DELEGATE.error(object, throwable);
+    }
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        FRONTEND_DELEGATE.error(clazz, messageTemplate, arguments);
+    }
+    public static boolean isDebugEnabled() {
+        return FRONTEND_DELEGATE.isDebugEnabled();
     }
 
-    public static boolean isDebugEnabled() {
-        return isDebugEnabled(LOGGER);
+    private FrontendLogger() {
     }
 }
