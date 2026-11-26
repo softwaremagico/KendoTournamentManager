@@ -13,7 +13,7 @@ import {DatatableColumn as WizardryDatatableColumn} from "@biit-solutions/wizard
 export class DatatableColumn extends WizardryDatatableColumn {
   constructor(name: string, prop: string | number, visible?: boolean, width?: number, sortable?: boolean,
               pipe?: PipeTransform, cellTemplate?: TemplateRef<any>,
-              cellClass?: string | ((data: unknown) => string | unknown), comparator?: Function) {
+              cellClass?: string | ((data: object) => string | undefined), comparator?: Function) {
     super(name, prop, visible, width, sortable, pipe, cellTemplate, cellClass, comparator);
     this.width ??= 150;
   }
