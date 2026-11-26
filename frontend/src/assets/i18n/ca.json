@@ -96,11 +96,7 @@
     },
     "boneBreaker": {
       "title": "Trenca Ossos",
-      "description": "Perd un combat amb dos Hansokus.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Perd un combat amb dos Hansokus."
     },
     "flexibleAsBamboo": {
       "title": "Flexible com el bambú",
@@ -312,7 +308,7 @@
   },
   "banner": "Patrocinador",
   "blockedUserError": "Massa intents! Prova-ho més tard.",
-  "bloggerStatistics": "Blogger code",
+  "bloggerStatistics": "Codi Blogger",
   "bothEliminated": "Tots dos eliminats",
   "bothEliminatedHint": "Tots dos equips són eliminats",
   "bubbleSort": "Torneig Destronar el Rei",
@@ -524,7 +520,7 @@
   "installDatabaseError": "No es pot instal·lar la base de dades. Està executant-se el servidor?.",
   "international": "Internacional",
   "internationalHint": "El guanyador s'obté per partits guanyats. Si hi ha empat, es compten els partits empatats. Si a més hi ha un empat es compten els combats guanyats. Si encara hi ha empat, es compten el nombre de colps. Tingueu en compte que la diferència amb el format europeu és que els duels d'empat s'ignoren. Els cops perduts tampoc no es comptabilitzen.",
-  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
+  "invalidDatabase": "La base de dades de destinació no és vàlida. Probablement prové d'una versió antiga del programari.",
   "invalidEmail": "Per favor, introduïu un email correcte",
   "invalidFileSize": "Només es permeten fitxers amb una grandària entre {{minSize}} B i {{maxSize}} MB.",
   "invalidPassword": "Per favor, introduïu una contrasenya correcte",
@@ -816,7 +812,7 @@
   "users": "Usuaris",
   "viewer": "Espectador",
   "viewerHint": "Podeu llegir informació però no modificar-la",
-  "volunteer": "Voluntario",
+  "volunteer": "Voluntari",
   "waitNewLevel": "El ordre del equips not pot ser cambiat fins que els combats no finisquen",
   "waitingArena": "Espere mentre finalitzen els combats del shiaijo",
   "waitingConnection": "Esperant resposta de la base de dades. Comprove la connexió de xarxa.",
@@ -831,7 +827,21 @@
   "winnerOfGroup": "Els combats d'un grup han finalitzat. Els equips que passen a la següent ronda són",
   "wizard": "Assistent",
   "worstNightmareOf": "Tu ets el pitjor malson de",
-  "yes": "Yes",
+  "yes": "Sí",
   "youCannotDeleteYourself": "No podeu suprimir el vostre compte.",
-  "yourWorstNightmare": "El teu pitjor malson"
+  "yourWorstNightmare": "El teu pitjor malson",
+  "active": "Actiu",
+  "administratorUsername": "Nom d'usuari de l'administrador",
+  "createTenant": "Crear organització",
+  "tenantAdministrationDenied": "No tens permisos per administrar organitzacions.",
+  "tenantName": "Organització",
+  "languageKey": {
+    "en": "English",
+    "es": "Español",
+    "ca": "Català",
+    "it": "Italiano",
+    "nl": "Nederlandse",
+    "de": "Deutsche",
+    "fr": "Française"
+  }
 }
