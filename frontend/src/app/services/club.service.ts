@@ -17,7 +17,7 @@ export class ClubService {
   private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
 
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/clubs';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/clubs';
 
   constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
               private readonly loggerService: LoggerService, public readonly loginService: LoginService,
