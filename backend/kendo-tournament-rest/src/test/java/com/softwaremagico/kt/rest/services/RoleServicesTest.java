@@ -119,7 +119,7 @@ public class RoleServicesTest {
     public void getAllFromTournamentAsPdf_expectPdfBytesAndContentDisposition() throws Exception {
         final TournamentDTO tournament = new TournamentDTO();
         tournament.setName("My Tournament");
-        final byte[] pdfBytes = new byte[]{1, 2, 3};
+        final byte[] pdfBytes = {1, 2, 3};
 
         when(mockTournamentController.get(10)).thenReturn(tournament);
         when(mockPdfController.generateClubList(Locale.ENGLISH, tournament)).thenReturn(mockRoleList);

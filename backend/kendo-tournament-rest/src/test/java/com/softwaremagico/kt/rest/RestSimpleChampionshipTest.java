@@ -83,7 +83,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     private static final String USER_FIRST_NAME = "Test";
     private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "asd123";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;

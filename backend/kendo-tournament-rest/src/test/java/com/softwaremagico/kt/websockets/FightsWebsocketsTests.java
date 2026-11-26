@@ -71,7 +71,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     @LocalServerPort
     private Integer port;

@@ -61,7 +61,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
     private static final String USER_FIRST_NAME = "Test";
     private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     @Autowired
     private MockMvc mockMvc;

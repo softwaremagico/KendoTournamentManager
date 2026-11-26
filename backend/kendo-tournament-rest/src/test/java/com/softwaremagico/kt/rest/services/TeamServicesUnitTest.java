@@ -136,7 +136,7 @@ public class TeamServicesUnitTest {
     public void shouldGenerateTeamsPdfAndSetHeader() throws InvalidXmlElementException, EmptyPdfBodyException {
         final TournamentDTO tournament = tournament();
         final TeamList teamList = mock(TeamList.class);
-        final byte[] expected = new byte[]{1, 2, 3};
+        final byte[] expected = {1, 2, 3};
 
         when(tournamentController.get(9)).thenReturn(tournament);
         when(pdfController.generateTeamList(tournament)).thenReturn(teamList);

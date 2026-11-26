@@ -33,7 +33,7 @@ public class CoreExceptionsConstructorsCoverageTest {
 
 	@Test
 	public void shouldInstantiateAllCoreExceptionConstructors() {
-		final Class<?>[] exceptionClasses = new Class<?>[]{
+		final Class<?>[] exceptionClasses = {
 				com.softwaremagico.kt.core.exceptions.ClubNotFoundException.class,
 				com.softwaremagico.kt.core.exceptions.CustomTournamentFightsException.class,
 				com.softwaremagico.kt.core.exceptions.DataInputException.class,

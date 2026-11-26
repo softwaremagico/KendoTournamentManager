@@ -73,7 +73,7 @@ public class RestSwissEndpointsTest extends AbstractTestNGSpringContextTests {
     private static final String USER_FIRST_NAME = "Swiss";
     private static final String USER_LAST_NAME = "Admin";
     private static final String USER_PASSWORD = "asd123";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     @Autowired
     private ObjectMapper objectMapper;

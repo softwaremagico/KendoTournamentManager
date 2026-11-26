@@ -66,7 +66,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 
 	private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
 	private static final String USER_PASSWORD = "password";
-	private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+	private static final String[] USER_ROLES = {"admin", "viewer"};
 
 	private static final String ONE_CLUBS_CSV_FILE_PATH = "csv/oneClub.csv";
 	private static final String CLUBS_CSV_FILE_PATH = "csv/clubs.csv";
