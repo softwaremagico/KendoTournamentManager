@@ -13,7 +13,7 @@ This is a totally unsafe way to run the tournament, should be used only for test
 After it, execute:
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 For accessing to the tool, please open a browser and access to:
