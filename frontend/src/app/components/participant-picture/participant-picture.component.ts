@@ -61,8 +61,9 @@ export class ParticipantPictureComponent extends KendoComponent implements OnIni
     if (participant.id) {
       const seed = Math.abs(participant.id);
       const mainColor = seed % 135 + 120;
-      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 === 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
-        (mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30);
+      const evenOffset = mainColor % 2 === 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30;
+      const fallbackOffset = mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30;
+      const secondaryColor = mainColor > 170 && mainColor < 205 ? evenOffset : fallbackOffset;
       const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 === 0 || seed > 230 ? -1 : 1));
       const channelIndex = seed % 3;
       color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 0, 1) + ", ";
