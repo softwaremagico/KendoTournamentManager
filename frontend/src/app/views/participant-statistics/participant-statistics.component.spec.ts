@@ -252,6 +252,15 @@ describe('ParticipantStatisticsComponent', () => {
     expect(performance[3][1]).toBe(0);
   });
 
+  it('should navigate to the tournament fights on goBack when a backUrl is set', () => {
+    (component as any).backUrl = '/tournaments';
+    (component as any).srcTournamentId = 7;
+
+    component.goBack();
+
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/tournaments/fights'], {state: {tournamentId: 7}});
+  });
+
   it('should navigate to registry/participants on goBack without backUrl', () => {
     component.goBack();
 

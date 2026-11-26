@@ -217,9 +217,9 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   goBack(): void {
     if (this.backUrl) {
-      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.srcTournamentId}});
+      void this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.srcTournamentId}});
     } else {
-      this.router.navigate(['/registry/participants'], {});
+      void this.router.navigate(['/registry/participants'], {});
     }
   }
 
@@ -240,7 +240,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   openParticipantFights(): void {
     if (this.participantId) {
-      this.router.navigate(['/participants/fights'], {state: {participantId: this.participantId}});
+      void this.router.navigate(['/participants/fights'], {state: {participantId: this.participantId}});
     }
   }
 
