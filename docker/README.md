@@ -65,7 +65,7 @@ self-contained example that pulls all three images from Docker Hub.
 5. Run:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 For full details, see the
@@ -79,7 +79,7 @@ Build the images locally using the published release selected by `version` in
 ```bash
 # From the repository root
 cd docker
-docker-compose build && docker-compose up -d
+docker compose build && docker compose up -d
 ```
 
 This builds all three images using the Dockerfiles in `docker/backend/`, `docker/frontend/`, and `docker/traefik/`.
@@ -268,7 +268,7 @@ htpasswd -nB admin
 Use a high cost factor (`-C 12` or higher) and a unique password. To rotate the credential, update `.env` and restart:
 
 ```bash
-docker-compose up -d kendo-tournament-rproxy
+docker compose up -d kendo-tournament-rproxy
 ```
 
 ### Disabling the reverse proxy
@@ -312,7 +312,7 @@ Before going to production, verify the following:
 3. Rebuild and restart the stack:
 
 ```bash
-docker-compose build && docker-compose up -d
+docker compose build && docker compose up -d
 ```
 
 Hibernate's `ddl-auto=update` will automatically apply any required schema changes on startup.
@@ -367,7 +367,7 @@ This forces a new login and clears the stale token.
 Check the backend logs:
 
 ```bash
-docker-compose logs kendo-tournament-backend
+docker compose logs kendo-tournament-backend
 ```
 
 Common causes:
@@ -380,7 +380,7 @@ Common causes:
 
 - Ensure your domain's DNS A record points to the server's public IP.
 - Ensure ports 80 and 443 are open in the firewall.
-- Check Traefik logs: `docker-compose logs kendo-tournament-rproxy`.
+- Check Traefik logs: `docker compose logs kendo-tournament-rproxy`.
 - Let's Encrypt has rate limits; if you have hit them, wait before retrying.
 
 ### Frontend cannot connect to the backend (WebSocket errors)
@@ -467,7 +467,7 @@ email=myemail@domain.com
 Regenerate again the proxy if needed with the next command:
 
 ```
-docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy
+docker compose build --no-cache kendo-tournament-rproxy && docker compose up -d kendo-tournament-rproxy
 ```
 
 ## Traefik Dashboard
@@ -480,7 +480,7 @@ htpasswd -nB admin -C 12
 # TRAEFIK_BASIC_AUTH_USERS=admin:$2y$12$...
 ```
 
-Restart the proxy with `docker-compose up -d kendo-tournament-rproxy` after changing it.
+Restart the proxy with `docker compose up -d kendo-tournament-rproxy` after changing it.
 
 ## Disable the REVERSE PROXY
 

@@ -10,7 +10,7 @@ the published images; a new image must be published to include later fixes.
 Subsequently, execute the following command:
 
 ```
-docker-compose build && docker-compose up -d
+docker compose up -d
 ```
 
 After configuring a domain and TLS for Traefik, open the configured domain:
