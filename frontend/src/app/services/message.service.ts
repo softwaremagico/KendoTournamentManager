@@ -16,7 +16,7 @@ import {EMPTY} from 'rxjs';
   providedIn: 'root'
 })
 export class MessageService implements OnDestroy {
-  private readonly static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
+  private static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
 
   private readonly websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
