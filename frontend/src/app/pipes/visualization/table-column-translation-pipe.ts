@@ -2,6 +2,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {TranslocoService} from '@jsverse/transloco';
 import {DatePipe} from "@angular/common";
 import {UserSessionService} from "../../services/user-session.service";
+import {createLocaleDatePipe} from "../../utils/dates/locale-date-pipe";
 
 @Pipe({
   name: 'tournamentType',
@@ -16,17 +17,7 @@ export class TableColumnTranslationPipe implements PipeTransform {
   }
 
   private setLocale(): void {
-    if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
-      this.pipe = new DatePipe('es');
-    } else if (this.userSessionService.getLanguage() === 'it') {
-      this.pipe = new DatePipe('it');
-    } else if (this.userSessionService.getLanguage() === 'de') {
-      this.pipe = new DatePipe('de');
-    } else if (this.userSessionService.getLanguage() === 'nl') {
-      this.pipe = new DatePipe('nl');
-    } else {
-      this.pipe = new DatePipe('en-US');
-    }
+    this.pipe = createLocaleDatePipe(this.userSessionService.getLanguage());
   }
 
   transform(column: unknown): unknown {

@@ -5,6 +5,7 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {ParticipantStatistics} from "../../models/participant-statistics.model";
 import {DatePipe} from "@angular/common";
+import {createLocaleDatePipe} from "../../utils/dates/locale-date-pipe";
 import {UserSessionService} from "../../services/user-session.service";
 import {RoleType} from "../../models/role-type";
 import {convertDate, convertSeconds} from "../../utils/dates/date-conversor";
@@ -86,17 +87,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
   private setLocale(): void {
-    if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
-      this.pipe = new DatePipe('es');
-    } else if (this.userSessionService.getLanguage() === 'it') {
-      this.pipe = new DatePipe('it');
-    } else if (this.userSessionService.getLanguage() === 'de') {
-      this.pipe = new DatePipe('de');
-    } else if (this.userSessionService.getLanguage() === 'nl') {
-      this.pipe = new DatePipe('nl');
-    } else {
-      this.pipe = new DatePipe('en-US');
-    }
+    this.pipe = createLocaleDatePipe(this.userSessionService.getLanguage());
   }
 
   ngOnInit(): void {
