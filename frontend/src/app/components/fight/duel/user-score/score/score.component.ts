@@ -89,58 +89,44 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
               this.duel.competitor1ScoreTime[this.index] = this.duel.duration!;
               updated = true;
             }
-          } else {
-            if (this.duel.competitor2Score[this.index] !== score) {
-              this.duel.competitor2Score[this.index] = score;
-              this.duel.competitor2ScoreTime[this.index] = this.duel.duration!;
-              updated = true;
-            }
+          } else if (this.duel.competitor2Score[this.index] !== score) {
+            this.duel.competitor2Score[this.index] = score;
+            this.duel.competitor2ScoreTime[this.index] = this.duel.duration!;
+            updated = true;
           }
-        } else {
-          if (!this.swapTeams) {
-            if (this.duel.competitor1Score[this.index] !== undefined) {
-              Reflect.deleteProperty(this.duel.competitor1Score, this.index);
-              Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
-              updated = true;
-            }
-          } else {
-            if (this.duel.competitor2Score[this.index] !== undefined) {
-              Reflect.deleteProperty(this.duel.competitor2Score, this.index);
-              Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
-              updated = true;
-            }
+        } else if (!this.swapTeams) {
+          if (this.duel.competitor1Score[this.index] !== undefined) {
+            Reflect.deleteProperty(this.duel.competitor1Score, this.index);
+            Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
+            updated = true;
           }
+        } else if (this.duel.competitor2Score[this.index] !== undefined) {
+          Reflect.deleteProperty(this.duel.competitor2Score, this.index);
+          Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
+          updated = true;
         }
-      } else {
-        if (score !== Score.EMPTY) {
-          if (!this.swapTeams) {
-            if (this.duel.competitor2Score[this.index] !== score) {
-              this.duel.competitor2Score[this.index] = score;
-              this.duel.competitor2ScoreTime[this.index] = this.duel.duration!;
-              updated = true;
-            }
-          } else {
-            if (this.duel.competitor1Score[this.index] !== score) {
-              this.duel.competitor1Score[this.index] = score;
-              this.duel.competitor1ScoreTime[this.index] = this.duel.duration!;
-              updated = true;
-            }
+      } else if (score !== Score.EMPTY) {
+        if (!this.swapTeams) {
+          if (this.duel.competitor2Score[this.index] !== score) {
+            this.duel.competitor2Score[this.index] = score;
+            this.duel.competitor2ScoreTime[this.index] = this.duel.duration!;
+            updated = true;
           }
-        } else {
-          if (!this.swapTeams) {
-            if (this.duel.competitor2Score[this.index] !== undefined) {
-              Reflect.deleteProperty(this.duel.competitor2Score, this.index);
-              Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
-              updated = true;
-            }
-          } else {
-            if (this.duel.competitor1Score[this.index] !== undefined) {
-              Reflect.deleteProperty(this.duel.competitor1Score, this.index);
-              Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
-              updated = true;
-            }
-          }
+        } else if (this.duel.competitor1Score[this.index] !== score) {
+          this.duel.competitor1Score[this.index] = score;
+          this.duel.competitor1ScoreTime[this.index] = this.duel.duration!;
+          updated = true;
         }
+      } else if (!this.swapTeams) {
+        if (this.duel.competitor2Score[this.index] !== undefined) {
+          Reflect.deleteProperty(this.duel.competitor2Score, this.index);
+          Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
+          updated = true;
+        }
+      } else if (this.duel.competitor1Score[this.index] !== undefined) {
+        Reflect.deleteProperty(this.duel.competitor1Score, this.index);
+        Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
+        updated = true;
       }
     }
     if (updated) {
@@ -171,12 +157,10 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
       } else {
         return this.duel.competitor2Score[this.index];
       }
+    } else if (!this.swapTeams) {
+      return this.duel.competitor2Score[this.index];
     } else {
-      if (!this.swapTeams) {
-        return this.duel.competitor2Score[this.index];
-      } else {
-        return this.duel.competitor1Score[this.index];
-      }
+      return this.duel.competitor1Score[this.index];
     }
   }
 
@@ -200,21 +184,19 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
           return Score.noCompetitor();
         }
       }
+    } else if (!this.swapTeams) {
+      if (!this.duel.competitor2) {
+        return Score.clear();
+      }
+      if (!this.duel.competitor1) {
+        return Score.noCompetitor();
+      }
     } else {
-      if (!this.swapTeams) {
-        if (!this.duel.competitor2) {
-          return Score.clear();
-        }
-        if (!this.duel.competitor1) {
-          return Score.noCompetitor();
-        }
-      } else {
-        if (!this.duel.competitor1) {
-          return Score.clear();
-        }
-        if (!this.duel.competitor2) {
-          return Score.noCompetitor();
-        }
+      if (!this.duel.competitor1) {
+        return Score.clear();
+      }
+      if (!this.duel.competitor2) {
+        return Score.noCompetitor();
       }
     }
     return Score.toArray();

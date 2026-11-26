@@ -103,15 +103,13 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     if (this.loginService.getJwtValue()) {
       //Already logged in.
       this.initializeData();
+    } else if (this.temporalToken) {
+      this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
+        this.initializeData();
+        this.router.navigate([]);
+      });
     } else {
-      if (this.temporalToken) {
-        this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
-          this.initializeData();
-          this.router.navigate([]);
-        });
-      } else {
-        this.goBack();
-      }
+      this.goBack();
     }
     this.backUrl = this.activatedRoute.snapshot.queryParamMap.get('redirectUrl');
     this.srcTournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
