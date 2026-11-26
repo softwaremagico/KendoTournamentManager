@@ -306,4 +306,18 @@ public abstract class AbstractFightStatistics extends ElementDTO {
     public void setDrawDuels(Long drawDuels) {
         this.drawDuels = drawDuels;
     }
+
+    /**
+     * Equality remains the identity-based comparison of {@link ElementDTO}. The DTO subclass
+     * extends this implementation to compare the statistics fields as well.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

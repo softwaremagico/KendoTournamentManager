@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.statistics;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ParticipantFightStatisticsDTO;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.testng.annotations.Test;
 
@@ -386,6 +387,48 @@ public class StatisticsModelsTest {
         stats.setNumberOfParticipants(map);
 
         assertThat(stats.getNumberOfParticipants()).containsEntry(RoleType.REFEREE, 2L);
+    }
+
+    @Test
+    public void testParticipantFightStatisticsEqualityUsesElementDtoIdentity() {
+        final java.time.LocalDateTime createdAt = java.time.LocalDateTime.of(2026, 1, 1, 10, 0);
+        final ParticipantFightStatistics left = new ParticipantFightStatistics();
+        left.setId(1);
+        left.setCreatedAt(createdAt);
+        left.setMenNumber(3L);
+
+        final ParticipantFightStatistics sameIdentity = new ParticipantFightStatistics();
+        sameIdentity.setId(1);
+        sameIdentity.setCreatedAt(createdAt);
+        sameIdentity.setMenNumber(9L);
+
+        assertThat(left).isEqualTo(sameIdentity).hasSameHashCodeAs(sameIdentity);
+
+        final ParticipantFightStatistics otherIdentity = new ParticipantFightStatistics();
+        otherIdentity.setId(2);
+        otherIdentity.setCreatedAt(createdAt);
+        assertThat(left).isNotEqualTo(otherIdentity).isNotEqualTo("other");
+    }
+
+    @Test
+    public void testParticipantFightStatisticsDtoEqualityStillComparesStatisticsFields() {
+        final java.time.LocalDateTime createdAt = java.time.LocalDateTime.of(2026, 1, 1, 10, 0);
+        final ParticipantFightStatisticsDTO left = new ParticipantFightStatisticsDTO();
+        left.setId(2);
+        left.setCreatedAt(createdAt);
+        left.setMenNumber(1L);
+
+        final ParticipantFightStatisticsDTO same = new ParticipantFightStatisticsDTO();
+        same.setId(2);
+        same.setCreatedAt(createdAt);
+        same.setMenNumber(1L);
+        assertThat(left).isEqualTo(same).hasSameHashCodeAs(same);
+
+        final ParticipantFightStatisticsDTO differentStatistics = new ParticipantFightStatisticsDTO();
+        differentStatistics.setId(2);
+        differentStatistics.setCreatedAt(createdAt);
+        differentStatistics.setMenNumber(2L);
+        assertThat(left).isNotEqualTo(differentStatistics);
     }
 }
 
