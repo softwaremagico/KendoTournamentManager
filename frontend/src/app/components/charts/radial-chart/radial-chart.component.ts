@@ -10,7 +10,7 @@ import {
 } from "ng-apexcharts";
 import {RadialChartData} from "./radial-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
-import {ApexTheme, ChartFill, LegendPosition, TitleAlignment} from "../apex-types";
+import {ApexTheme, ChartFill} from "../apex-types";
 
 type RadialChartOptions = {
   series: number[];
