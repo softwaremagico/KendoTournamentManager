@@ -60,45 +60,47 @@ export class FaultComponent implements OnInit, OnChanges {
   }
 
   private setFault(fault: boolean): boolean {
-    if ((this.left && !this.swapTeams) || (!this.left && this.swapTeams)) {
-      if (!fault || !this.duel.competitor1Fault) {
-        this.duel.competitor1Fault = fault;
-        if (fault) {
-          this.duel.competitor1FaultTime = this.duel.duration!;
-        } else {
-          this.duel.competitor1FaultTime = undefined;
-        }
-      } else {
-        this.duel.competitor1Fault = false;
-        this.duel.competitor1FaultTime = undefined;
-        if (Duel.addHansoku(this.duel, false)) {
-          this.scoreUpdatedService.isScoreUpdated.next(this.duel);
-        } else {
-          this.messageService.warningMessage("scoreNotAdded");
-          this.setTime();
-          return false;
-        }
-      }
-    } else if (!fault || !this.duel.competitor2Fault) {
-      this.duel.competitor2Fault = fault;
-      if (fault) {
-        this.duel.competitor2FaultTime = this.duel.duration!;
-      } else {
-        this.duel.competitor2FaultTime = undefined;
-      }
-    } else {
-      this.duel.competitor2Fault = false;
-      this.duel.competitor2FaultTime = undefined;
-      if (Duel.addHansoku(this.duel, true)) {
-        this.scoreUpdatedService.isScoreUpdated.next(this.duel);
-      } else {
-        this.messageService.warningMessage("scoreNotAdded");
-        this.setTime();
-        return false;
-      }
-    }
+    const faultAdded: boolean = this.isCompetitor1Selected()
+      ? this.setCompetitor1Fault(fault)
+      : this.setCompetitor2Fault(fault);
     this.setTime();
-    return true;
+    return faultAdded;
+  }
+
+  private isCompetitor1Selected(): boolean {
+    return (this.left && !this.swapTeams) || (!this.left && this.swapTeams);
+  }
+
+  private setCompetitor1Fault(fault: boolean): boolean {
+    if (!fault || !this.duel.competitor1Fault) {
+      this.duel.competitor1Fault = fault;
+      this.duel.competitor1FaultTime = fault ? this.duel.duration! : undefined;
+      return true;
+    }
+    this.duel.competitor1Fault = false;
+    this.duel.competitor1FaultTime = undefined;
+    if (Duel.addHansoku(this.duel, false)) {
+      this.scoreUpdatedService.isScoreUpdated.next(this.duel);
+      return true;
+    }
+    this.messageService.warningMessage("scoreNotAdded");
+    return false;
+  }
+
+  private setCompetitor2Fault(fault: boolean): boolean {
+    if (!fault || !this.duel.competitor2Fault) {
+      this.duel.competitor2Fault = fault;
+      this.duel.competitor2FaultTime = fault ? this.duel.duration! : undefined;
+      return true;
+    }
+    this.duel.competitor2Fault = false;
+    this.duel.competitor2FaultTime = undefined;
+    if (Duel.addHansoku(this.duel, true)) {
+      this.scoreUpdatedService.isScoreUpdated.next(this.duel);
+      return true;
+    }
+    this.messageService.warningMessage("scoreNotAdded");
+    return false;
   }
 
   updateFault(fault: boolean): void {

@@ -10,6 +10,9 @@ import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 import {KendoComponent} from "../../../../../components/kendo-component";
 import {takeUntil} from "rxjs";
 
+type ScoreKey = 'competitor1Score' | 'competitor2Score';
+type ScoreTimeKey = 'competitor1ScoreTime' | 'competitor2ScoreTime';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
@@ -79,60 +82,41 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
   }
 
   private updateDuel(score: Score): boolean {
-    let updated: boolean = false;
-    if (score) {
-      if (this.left) {
-        if (score !== Score.EMPTY) {
-          if (!this.swapTeams) {
-            if (this.duel.competitor1Score[this.index] !== score) {
-              this.duel.competitor1Score[this.index] = score;
-              this.duel.competitor1ScoreTime[this.index] = this.duel.duration!;
-              updated = true;
-            }
-          } else if (this.duel.competitor2Score[this.index] !== score) {
-            this.duel.competitor2Score[this.index] = score;
-            this.duel.competitor2ScoreTime[this.index] = this.duel.duration!;
-            updated = true;
-          }
-        } else if (!this.swapTeams) {
-          if (this.duel.competitor1Score[this.index] !== undefined) {
-            Reflect.deleteProperty(this.duel.competitor1Score, this.index);
-            Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
-            updated = true;
-          }
-        } else if (this.duel.competitor2Score[this.index] !== undefined) {
-          Reflect.deleteProperty(this.duel.competitor2Score, this.index);
-          Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
-          updated = true;
-        }
-      } else if (score !== Score.EMPTY) {
-        if (!this.swapTeams) {
-          if (this.duel.competitor2Score[this.index] !== score) {
-            this.duel.competitor2Score[this.index] = score;
-            this.duel.competitor2ScoreTime[this.index] = this.duel.duration!;
-            updated = true;
-          }
-        } else if (this.duel.competitor1Score[this.index] !== score) {
-          this.duel.competitor1Score[this.index] = score;
-          this.duel.competitor1ScoreTime[this.index] = this.duel.duration!;
-          updated = true;
-        }
-      } else if (!this.swapTeams) {
-        if (this.duel.competitor2Score[this.index] !== undefined) {
-          Reflect.deleteProperty(this.duel.competitor2Score, this.index);
-          Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
-          updated = true;
-        }
-      } else if (this.duel.competitor1Score[this.index] !== undefined) {
-        Reflect.deleteProperty(this.duel.competitor1Score, this.index);
-        Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
-        updated = true;
-      }
+    if (!score) {
+      return false;
     }
+    const competitor1Selected: boolean = this.isCompetitor1Selected();
+    const scoreKey: ScoreKey = competitor1Selected ? 'competitor1Score' : 'competitor2Score';
+    const scoreTimeKey: ScoreTimeKey = competitor1Selected ? 'competitor1ScoreTime' : 'competitor2ScoreTime';
+    const updated: boolean = score === Score.EMPTY
+      ? this.removeScore(scoreKey, scoreTimeKey)
+      : this.setScore(scoreKey, scoreTimeKey, score);
     if (updated) {
       this.scoreUpdatedService.isScoreUpdated.next(this.duel);
     }
     return updated;
+  }
+
+  private isCompetitor1Selected(): boolean {
+    return (this.left && !this.swapTeams) || (!this.left && this.swapTeams);
+  }
+
+  private setScore(scoreKey: ScoreKey, scoreTimeKey: ScoreTimeKey, score: Score): boolean {
+    if (this.duel[scoreKey][this.index] === score) {
+      return false;
+    }
+    this.duel[scoreKey][this.index] = score;
+    this.duel[scoreTimeKey][this.index] = this.duel.duration!;
+    return true;
+  }
+
+  private removeScore(scoreKey: ScoreKey, scoreTimeKey: ScoreTimeKey): boolean {
+    if (this.duel[scoreKey][this.index] === undefined) {
+      return false;
+    }
+    Reflect.deleteProperty(this.duel[scoreKey], this.index);
+    Reflect.deleteProperty(this.duel[scoreTimeKey], this.index);
+    return true;
   }
 
   updateScore(score: Score): void {
@@ -151,59 +135,27 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
   }
 
   getScore(): Score {
-    if (this.left) {
-      if (!this.swapTeams) {
-        return this.duel.competitor1Score[this.index];
-      } else {
-        return this.duel.competitor2Score[this.index];
-      }
-    } else if (!this.swapTeams) {
-      return this.duel.competitor2Score[this.index];
-    } else {
-      return this.duel.competitor1Score[this.index];
-    }
+    return this.isCompetitor1Selected()
+      ? this.duel.competitor1Score[this.index]
+      : this.duel.competitor2Score[this.index];
   }
 
   possibleScores(): Score[] {
     if (this.locked) {
       return [];
     }
-    if (this.left) {
-      if (!this.swapTeams) {
-        if (!this.duel.competitor1) {
-          return Score.clear();
-        }
-        if (!this.duel.competitor2) {
-          return Score.noCompetitor();
-        }
-      } else {
-        if (!this.duel.competitor2) {
-          return Score.clear();
-        }
-        if (!this.duel.competitor1) {
-          return Score.noCompetitor();
-        }
-      }
-    } else if (!this.swapTeams) {
-      if (!this.duel.competitor2) {
-        return Score.clear();
-      }
-      if (!this.duel.competitor1) {
-        return Score.noCompetitor();
-      }
-    } else {
-      if (!this.duel.competitor1) {
-        return Score.clear();
-      }
-      if (!this.duel.competitor2) {
-        return Score.noCompetitor();
-      }
+    const competitor1Selected: boolean = this.isCompetitor1Selected();
+    if (competitor1Selected ? !this.duel.competitor1 : !this.duel.competitor2) {
+      return Score.clear();
+    }
+    if (competitor1Selected ? !this.duel.competitor2 : !this.duel.competitor1) {
+      return Score.noCompetitor();
     }
     return Score.toArray();
   }
 
   setTime(): void {
-    let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+    let seconds: number | undefined = this.isCompetitor1Selected() ?
       this.duel.competitor1ScoreTime[this.index] : this.duel.competitor2ScoreTime[this.index];
     if (seconds) {
       const minutes: number | undefined = seconds ? Math.floor(seconds / 60) : undefined;
