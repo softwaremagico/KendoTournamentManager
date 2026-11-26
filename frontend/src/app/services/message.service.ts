@@ -63,10 +63,10 @@ export class MessageService implements OnDestroy {
             this.infoMessage(res);
         }
 
-      } catch (e) {
-        // The exception is ignored on purpose: malformed payloads from stale WebSocket clients are expected,
-        // so dropping that single message keeps the subscription alive instead of breaking all notifications.
-        console.error("Invalid message payload", message.body);
+      } catch (parseError: unknown) {
+        // The exception is ignored for the message flow: malformed payloads from stale WebSocket clients are expected,
+        // so we log it and keep the subscription alive instead of breaking all notifications.
+        console.error("Invalid message payload", message.body, parseError);
       }
     });
   }
