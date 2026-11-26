@@ -231,9 +231,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         final DrawResolution drawResolution = getDrawResolution(tournament);
         final List<Group> existingGroups = groupProvider.getGroups(tournament);
         group.setTeams(getTeamsOrderedByRanks(tournament,
-                existingGroups.isEmpty()
-                        ? null
-                        : existingGroups.get(existingGroups.size() - 1),
+                existingGroups.isEmpty() ? null : existingGroups.get(existingGroups.size() - 1),
                 drawResolution));
         addGroup(tournament, group);
 
