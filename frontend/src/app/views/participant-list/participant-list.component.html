@@ -116,7 +116,7 @@
     <biit-popup id="photo-popup" no-header>
       <participant-picture
         [participant]="table.selectedRows[0]"
-      (onClosed)="addPhoto=false"></participant-picture>
+      (closed)="addPhoto=false"></participant-picture>
     </biit-popup>
   }
 </ng-container>

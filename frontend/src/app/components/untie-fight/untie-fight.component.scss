@@ -60,8 +60,6 @@
 
 .red-ribbon {
   color: var(--red-team-color);
-  //To be below the timer
-  //z-index: -1;
 
   ::ng-deep svg {
     color: var(--red-team-color) !important;
@@ -70,8 +68,6 @@
 
 .white-ribbon {
   color: var(--white-team-color);
-  //To be below the timer
-  //z-index: -1;
 
   ::ng-deep svg {
     color: var(--white-team-color) !important;

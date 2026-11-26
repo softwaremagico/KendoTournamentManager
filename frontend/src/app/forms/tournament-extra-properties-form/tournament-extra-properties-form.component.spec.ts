@@ -65,12 +65,12 @@ describe('TournamentExtraPropertiesFormComponent', () => {
   });
 
   it('should initialize senbatsu challenge distance values in constructor', () => {
-    expect((component as any).senbatsuChallengeDistance.length).toBe(4);
+    expect((component as any).senbatsuChallengeDistance).toHaveSize(4);
     expect((component as any).senbatsuChallengeDistance[0].value).toBe('2');
   });
 
   it('should initialize draw resolution translated values in constructor', () => {
-    expect((component as any).drawResolutionValues.length).toBe(3);
+    expect((component as any).drawResolutionValues).toHaveSize(3);
   });
 
   it('should set capability flags in ngOnInit based on tournament type', () => {
@@ -234,7 +234,7 @@ describe('TournamentExtraPropertiesFormComponent', () => {
     });
 
     it('should initialize swissTieBreakRuleValues with all 5 rules in constructor', () => {
-      expect((component as any).swissTieBreakRuleValues.length).toBe(5);
+      expect((component as any).swissTieBreakRuleValues).toHaveSize(5);
       const values: string[] = (component as any).swissTieBreakRuleValues.map((v: any) => v.value);
       expect(values).toContain(SwissTieBreakRule.BUCHHOLZ);
       expect(values).toContain(SwissTieBreakRule.MEDIAN_BUCHHOLZ);

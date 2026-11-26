@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -13,19 +13,15 @@ import {Type} from "@biit-solutions/wizardry-theme/inputs";
   templateUrl: './tournament-custom-scores-form.component.html',
   styleUrls: ['./tournament-custom-scores-form.component.scss']
 })
-export class TournamentCustomScoresFormComponent extends RbacBasedComponent implements OnInit {
+export class TournamentCustomScoresFormComponent extends RbacBasedComponent {
 
   @Input()
   tournament: Tournament;
   @Output()
-  onClosed: EventEmitter<void> = new EventEmitter<void>();
+  closed: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(rbacService: RbacService, public translateService: TranslocoService) {
     super(rbacService);
-  }
-
-  ngOnInit(): void {
-
   }
 
   protected readonly TournamentFormValidationFields = TournamentFormValidationFields;

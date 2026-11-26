@@ -115,7 +115,7 @@ describe('TournamentRolesComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.participants.get(RoleType.COMPETITOR)?.length).toBe(1);
+    expect(component.participants.get(RoleType.COMPETITOR)).toHaveSize(1);
     expect(component.participants.get(RoleType.COMPETITOR)?.[0].club?.name).toBe('Club 1');
     expect(component.participants.get(RoleType.COMPETITOR)?.[0].locked).toBeTrue();
     expect(component.userListData.participants.map(p => p.lastname)).toEqual(['Alpha', 'Zulu']);

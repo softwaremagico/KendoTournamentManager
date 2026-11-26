@@ -99,14 +99,14 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
         } else {
           if (!this.swapTeams) {
             if (this.duel.competitor1Score[this.index] !== undefined) {
-              delete this.duel.competitor1Score[this.index];
-              delete this.duel.competitor1ScoreTime[this.index];
+              Reflect.deleteProperty(this.duel.competitor1Score, this.index);
+              Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
               updated = true;
             }
           } else {
             if (this.duel.competitor2Score[this.index] !== undefined) {
-              delete this.duel.competitor2Score[this.index];
-              delete this.duel.competitor2ScoreTime[this.index];
+              Reflect.deleteProperty(this.duel.competitor2Score, this.index);
+              Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
               updated = true;
             }
           }
@@ -129,14 +129,14 @@ export class ScoreComponent extends KendoComponent implements OnInit, OnChanges 
         } else {
           if (!this.swapTeams) {
             if (this.duel.competitor2Score[this.index] !== undefined) {
-              delete this.duel.competitor2Score[this.index];
-              delete this.duel.competitor2ScoreTime[this.index];
+              Reflect.deleteProperty(this.duel.competitor2Score, this.index);
+              Reflect.deleteProperty(this.duel.competitor2ScoreTime, this.index);
               updated = true;
             }
           } else {
             if (this.duel.competitor1Score[this.index] !== undefined) {
-              delete this.duel.competitor1Score[this.index];
-              delete this.duel.competitor1ScoreTime[this.index];
+              Reflect.deleteProperty(this.duel.competitor1Score, this.index);
+              Reflect.deleteProperty(this.duel.competitor1ScoreTime, this.index);
               updated = true;
             }
           }

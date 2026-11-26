@@ -121,7 +121,7 @@ describe('ParticipantListComponent', () => {
     component.ngAfterViewInit();
 
     expect(participantServiceSpy.getAll).toHaveBeenCalled();
-    expect((component as any).participants.length).toBe(2);
+    expect((component as any).participants).toHaveSize(2);
   });
 
   it('should sort clubs by name in loadData', () => {

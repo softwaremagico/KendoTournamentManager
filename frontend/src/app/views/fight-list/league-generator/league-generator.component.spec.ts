@@ -78,7 +78,7 @@ describe('LeagueGeneratorComponent', () => {
     component.ngOnInit();
 
     expect(teamServiceSpy.getFromTournament).toHaveBeenCalledWith(component.tournament);
-    expect(component.teams.length).toBe(2);
+    expect(component.teams).toHaveSize(2);
     expect(component.teamListData.teams[0].name).toBe('A Team');
   });
 
@@ -105,9 +105,9 @@ describe('LeagueGeneratorComponent', () => {
 
     component.sortedTeams();
 
-    expect(component.teamsOrder.length).toBe(2);
+    expect(component.teamsOrder).toHaveSize(2);
     expect(component.teamsOrder[0].name).toBe('A Team');
-    expect(component.teamListData.teams.length).toBe(0);
+    expect(component.teamListData.teams).toHaveSize(0);
   });
 
   it('should return and remove random team from list', () => {
@@ -116,7 +116,7 @@ describe('LeagueGeneratorComponent', () => {
     const selected = component.getRandomTeam(teams);
 
     expect(['A', 'B']).toContain(selected.name);
-    expect(teams.length).toBe(1);
+    expect(teams).toHaveSize(1);
     expect(teams).not.toContain(selected);
   });
 
@@ -191,7 +191,7 @@ describe('LeagueGeneratorComponent', () => {
 
     component.balancedTeams();
 
-    expect(component.teamsOrder.length).toBe(2);
+    expect(component.teamsOrder).toHaveSize(2);
     expect(component.teamsOrder[0].name).toBe('Team B');
   });
 });

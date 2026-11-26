@@ -10,10 +10,7 @@ export class AudioService implements OnDestroy {
   private soundHandler: ReturnType<typeof setInterval> | null;
 
   ngOnDestroy(): void {
-    if (this.soundHandler != null) {
-      clearInterval(this.soundHandler);
-      this.soundHandler = null;
-    }
+    this.clearSound();
   }
 
   clearSound(): void {

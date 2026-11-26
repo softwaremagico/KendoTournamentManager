@@ -86,7 +86,7 @@ describe('LanguageSelectorComponent', () => {
       userSessionService
     );
 
-    expect((newComponent as any).languages.length).toBe(1);
+    expect((newComponent as any).languages).toHaveSize(1);
     expect((newComponent as any).languages[0]).toBe('es');
   });
 

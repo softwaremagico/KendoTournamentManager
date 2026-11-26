@@ -94,7 +94,7 @@ describe('NavbarComponent', () => {
     component.ngOnInit();
 
     expect(component.user).toEqual({email: 'john@doe.com'} as any);
-    expect(component.routes.length).toBe(4);
+    expect(component.routes).toHaveSize(4);
     expect(translocoServiceSpy.selectTranslate).toHaveBeenCalled();
   });
 

@@ -173,5 +173,32 @@ describe('ScoreComponent', () => {
     expect(component.mouseX).toBeUndefined();
     expect(component.mouseY).toBeUndefined();
   });
+
+  it('should remove an existing score when EMPTY is selected', () => {
+    const combinations: [boolean, boolean, 'competitor1' | 'competitor2'][] = [
+      [true, false, 'competitor1'],
+      [true, true, 'competitor2'],
+      [false, false, 'competitor2'],
+      [false, true, 'competitor1']
+    ];
+
+    for (const [left, swapTeams, competitor] of combinations) {
+      component = new ScoreComponent(duelServiceSpy, scoreUpdatedService as ScoreUpdatedService,
+        messageServiceSpy, translateServiceSpy, rbacServiceSpy);
+      component.duel = buildDuel();
+      component.index = 0;
+      component.left = left;
+      component.swapTeams = swapTeams;
+      component.duel[`${competitor}Score`][0] = Score.MEN;
+      component.duel[`${competitor}ScoreTime`][0] = 30;
+      duelServiceSpy.update.calls.reset();
+
+      component.updateScore(Score.EMPTY);
+
+      expect(component.duel[`${competitor}Score`][0]).toBeUndefined();
+      expect(component.duel[`${competitor}ScoreTime`][0]).toBeUndefined();
+      expect(duelServiceSpy.update).toHaveBeenCalled();
+    }
+  });
 });
 

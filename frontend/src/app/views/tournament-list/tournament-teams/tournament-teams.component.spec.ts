@@ -136,7 +136,7 @@ describe('TournamentTeamsComponent', () => {
 
     expect(teamServiceSpy.getFromTournament).toHaveBeenCalled();
     expect(roleServiceSpy.getFromTournamentAndType).toHaveBeenCalled();
-    expect(component.teams.length).toBe(1);
+    expect(component.teams).toHaveSize(1);
     expect(component.userListData).not.toBe(initialUserListData);
     expect(component.groupsLoaded).toBeTrue();
   });
@@ -262,7 +262,7 @@ describe('TournamentTeamsComponent', () => {
     const selectedMember = component.getRandomMember(participants);
 
     expect(selectedMember).toBeTruthy();
-    expect(participants.length).toBe(1);
+    expect(participants).toHaveSize(1);
   });
 
   it('should download PDF and trigger file download when tournament has id', () => {
@@ -300,5 +300,175 @@ describe('TournamentTeamsComponent', () => {
     const members = component.getMembersContainer(team1);
 
     expect(members).toEqual([p1]);
+  });
+
+  it('locks participants when the tournament is locked and removes assigned members', () => {
+    component.tournament.locked = true;
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const p2 = buildParticipant(2, 'Bob', 'Jones');
+    const team = buildTeam(1, 'Team A', [p2]);
+    roleServiceSpy.getFromTournamentAndType.and.returnValue(of([{participant: p1}, {participant: p2}] as Role[]));
+    teamServiceSpy.getFromTournament.and.returnValue(of([team]));
+
+    component.ngOnInit();
+
+    expect(p1.locked).toBeTrue();
+    expect(component.userListData.participants).toEqual([p1]);
+    expect(component.members.get(team)).toEqual([p2]);
+    expect(component.teamSize).toEqual([0, 1, 2]);
+  });
+
+  it('locks teams that already have fights and ignores empty fight references', () => {
+    const team1 = buildTeam(1, 'Team A', []);
+    const team2 = buildTeam(2, 'Team B', []);
+    roleServiceSpy.getFromTournamentAndType.and.returnValue(of([]));
+    teamServiceSpy.getFromTournament.and.returnValue(of([team1, team2]));
+    fightServiceSpy.getFromTournament.and.returnValue(of([
+      {team1, team2: undefined}, {team1: undefined, team2}
+    ] as any));
+
+    component.ngOnInit();
+
+    expect(team1.locked).toBeTrue();
+    expect(team2.locked).toBeTrue();
+  });
+
+  it('reorders and transfers members between teams and the available list', () => {
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const p2 = buildParticipant(2, 'Bob', 'Jones');
+    const p3 = buildParticipant(3, 'Carol', 'Brown');
+    const source = buildTeam(1, 'Team A', [p1, p2]);
+    const target = buildTeam(2, 'Team B', [p3]);
+    component.teams = [source, target];
+    component.members.set(source, [p1, p2]);
+    component.members.set(target, [p3]);
+    component.userListData.participants = [];
+    component.userListData.filteredParticipants = [];
+    teamServiceSpy.update.and.returnValue(of(source));
+
+    const reorderEvent = {
+      previousContainer: {data: [p1, p2]}, container: {data: [p1, p2]},
+      previousIndex: 1, item: {data: p2}
+    } as any;
+    component.dropMember(reorderEvent, source, 0);
+    expect(source.members).toEqual([p2, p1]);
+
+    component.userListData.participants = [p3];
+    const moveEvent = {
+      previousContainer: {data: [p3]}, container: {data: source.members},
+      previousIndex: 0, item: {data: p3}
+    } as any;
+    component.dropMember(moveEvent, source, 1);
+    expect(source.members[1]).toBe(p3);
+    expect(component.userListData.participants).toEqual([]);
+    expect(filterResetServiceSpy.resetFilter.next).toHaveBeenCalledWith(true);
+  });
+
+  it('removes a member from a team and returns it to the available list', () => {
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const team = buildTeam(1, 'Team A', [p1]);
+    component.teams = [team];
+    component.members.set(team, [p1]);
+    teamServiceSpy.deleteByMemberAndTournament.and.returnValue(of(team));
+    teamServiceSpy.update.and.returnValue(of(team));
+    component.tournament.teamSize = 1;
+    component.userListData.participants = [];
+    component.userListData.filteredParticipants = [];
+
+    component.members.set(team, team.members);
+    component.removeFromTeam({
+      previousContainer: {data: team.members}, container: {data: []},
+      previousIndex: 0, item: {data: p1}
+    } as any);
+
+    expect(team.members[0]).toBeUndefined();
+    expect(teamServiceSpy.deleteByMemberAndTournament).toHaveBeenCalledWith(p1, component.tournament);
+    expect(component.userListData.participants).toEqual([p1]);
+  });
+
+  it('accepts drops only on unlocked teams with a free slot', () => {
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const team = buildTeam(1, 'Team A', [p1]);
+
+    expect(component.dropListEnterPredicate(0, team)({} as any, {} as any)).toBeFalse();
+    expect(component.dropListEnterPredicate(1, team)({} as any, {} as any)).toBeTrue();
+    team.locked = true;
+    expect(component.dropListEnterPredicate(1, team)({} as any, {} as any)).toBeFalse();
+    expect(component.dropListEnterPredicate(1, undefined as any)({} as any, {} as any)).toBeTrue();
+  });
+
+  it('updates team names, adds teams to the default group and deletes teams', () => {
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const team = buildTeam(1, 'Team A', [p1]);
+    const group = {...new Group(), id: 4} as Group;
+    component.groups = [group];
+    component.teams = [team];
+    component.userListData.participants = [];
+    component.userListData.filteredParticipants = [];
+    teamServiceSpy.update.and.returnValue(of(team));
+    teamServiceSpy.add.and.returnValue(of(buildTeam(2, 'Team B', [])));
+    teamServiceSpy.delete.and.returnValue(of(team));
+    groupServiceSpy.addTeamsToGroup.and.returnValue(of(group));
+    groupServiceSpy.deleteTeamsFromGroup.and.returnValue(of(group));
+
+    component.updateTeamName(team);
+    expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('infoTeamUpdated');
+
+    component.addTeam();
+    expect(component.teams).toHaveSize(2);
+    expect(groupServiceSpy.addTeamsToGroup).toHaveBeenCalled();
+
+    component.deleteTeam(team);
+    expect(groupServiceSpy.deleteTeamsFromGroup).toHaveBeenCalledWith(4, [team]);
+    expect(component.teams).toEqual([component.teams[0]]);
+    expect(component.userListData.participants).toEqual([p1]);
+  });
+
+  it('assigns one team per participant when the team size is one', () => {
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const p2 = buildParticipant(2, 'Alice', 'Smith');
+    component.tournament.teamSize = 1;
+    component.userListData.participants = [p1, p2];
+    nameUtilsServiceSpy.getLastnameNameNoSpaces.and.returnValue('smithAlice');
+    const stored = [buildTeam(1, 'smithAlice', [p1]), buildTeam(2, 'smithAlice (2)', [p2])];
+    teamServiceSpy.setAll.and.returnValue(of(stored));
+
+    component.generateTeams();
+
+    expect(teamServiceSpy.setAll).toHaveBeenCalledTimes(1);
+    expect((teamServiceSpy.setAll.calls.mostRecent().args[0] as Team[]).map(team => team.name))
+      .toEqual(['smithAlice', 'smithAlice (2)']);
+    expect(component.teams).toEqual(stored);
+  });
+
+  it('creates random teams with the remaining participants', () => {
+    const p1 = buildParticipant(1, 'Alice', 'Smith');
+    const p2 = buildParticipant(2, 'Bob', 'Jones');
+    const team = buildTeam(1, 'Team A', []);
+    component.teams = [team];
+    component.members.set(team, []);
+    component.userListData.participants = [p1, p2];
+    component.userListData.filteredParticipants = [p1, p2];
+    teamServiceSpy.update.and.returnValue(of(team));
+
+    component.randomTeams();
+
+    expect(team.members.filter(Boolean).map(member => member!.id).sort()).toEqual([1, 2]);
+    expect(teamServiceSpy.update).toHaveBeenCalledWith(team);
+  });
+
+  it('reports a CSV import error when the imported team is invalid', () => {
+    const file = new File(['team,invalid'], 'teams.csv', {type: 'text/csv'});
+    const input = document.createElement('input');
+    Object.defineProperty(input, 'files', {
+      get: () => ({item: () => file, length: 1} as any)
+    });
+    csvServiceSpy.addTeams.and.returnValue(of([buildTeam(1, 'Invalid', [])]));
+    spyOn(component.closed, 'emit');
+
+    component.handleFileInput({currentTarget: input} as any);
+
+    expect(messageServiceSpy.errorMessage).toHaveBeenCalledWith('translated');
+    expect(component.closed.emit).not.toHaveBeenCalled();
   });
 });

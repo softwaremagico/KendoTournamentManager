@@ -42,19 +42,15 @@ describe('TournamentCustomScoresFormComponent', () => {
   });
 
   it('should initialize output emitter', () => {
-    expect(component.onClosed).toBeTruthy();
+    expect(component.closed).toBeTruthy();
   });
 
   it('should emit onClosed when requested', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
-    component.onClosed.emit();
+    component.closed.emit();
 
-    expect(component.onClosed.emit).toHaveBeenCalled();
-  });
-
-  it('should execute ngOnInit without errors', () => {
-    expect(() => component.ngOnInit()).not.toThrow();
+    expect(component.closed.emit).toHaveBeenCalled();
   });
 
   it('should expose TournamentFormValidationFields reference', () => {

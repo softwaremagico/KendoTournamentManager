@@ -42,10 +42,6 @@ export class UserSessionService {
       }
       this.loggedIn = true;
     }
-    if ((authToken && expires)
-      || (sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`) && sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`))) {
-      this.setAutoRenew(authToken, expires);
-    }
   }
 
   setLanguage(language: string | undefined): void {
@@ -198,11 +194,6 @@ export class UserSessionService {
 
   getToken(): string | null {
     return sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
-  }
-
-  private setAutoRenew(token: string | null, expires: number | null): void {
-    if (token && expires) {
-    }
   }
 
   clearToken(): void {

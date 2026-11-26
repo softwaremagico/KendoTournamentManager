@@ -36,11 +36,11 @@ export class RoleSelectorComponent {
     this.closed.emit();
   }
 
-  select(checked: boolean, roleType: RoleType): void {
-    if (checked) {
-      this.roles.push(roleType);
-    } else {
-      this.roles = this.roles.filter((item: RoleType): boolean => item !== roleType);
-    }
+  select(roleType: RoleType): void {
+    this.roles.push(roleType);
+  }
+
+  deselect(roleType: RoleType): void {
+    this.roles = this.roles.filter((item: RoleType): boolean => item !== roleType);
   }
 }

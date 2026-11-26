@@ -209,7 +209,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         return g.level === 0;
       })
       const lastGroup: Group = level0Groups.reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-        prev : current, level0Groups[level0Groups.length - 1]);
+        prev : current, level0Groups.at(-1)!);
       this.deleteGroup(lastGroup);
     }
   }

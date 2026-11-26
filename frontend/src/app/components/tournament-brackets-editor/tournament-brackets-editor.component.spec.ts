@@ -129,7 +129,7 @@ describe('TournamentBracketsEditorComponent', () => {
 
     const converted = component.convert(relations);
 
-    expect(converted.get(0)?.length).toBe(2);
+    expect(converted.get(0)).toHaveSize(2);
     expect(converted.get(0)?.[0]).toEqual({ src: 1, dest: 2, winner: 0 });
     expect(converted.get(0)?.[1]).toEqual({ src: 3, dest: 4, winner: 1 });
   });
@@ -232,6 +232,80 @@ describe('TournamentBracketsEditorComponent', () => {
 
     expect(groupServiceSpy.deleteAllTeamsFromTournament).toHaveBeenCalledOnceWith(1);
     expect(nextSpy).toHaveBeenCalledOnceWith([]);
+  });
+
+  it('loads teams, groups and relations and emits refreshed editor state', () => {
+    const teamA = createTeam(1, 'A');
+    const teamB = createTeam(2, 'B');
+    const group = createGroup(1, 0, 0, [teamA]);
+    const relations = [{
+      source: {level: 0, index: 0}, destination: {index: 1}, winner: 1
+    }] as unknown as GroupLink[];
+    teamServiceSpy.getFromTournament.and.returnValue(of([teamB, teamA]));
+    groupServiceSpy.getFromTournament.and.returnValue(of([group]));
+    groupLinkServiceSpy.getFromTournament.and.returnValue(of(relations));
+
+    spyOn(component.editorGroupsUpdated, 'emit');
+    spyOn(component.editorGroupsDisabled, 'emit');
+    spyOn(component.editorTeamsLengthUpdated, 'next');
+
+    component.updateData(true, true);
+
+    expect(component.teamListData.teams).toEqual([teamB]);
+    expect(component.totalTeams).toBe(2);
+    expect(component.groups).toEqual([group]);
+    expect(component.editorGroupsDisabled.emit).toHaveBeenCalledWith(true);
+    expect(component.editorTeamsLengthUpdated.next).toHaveBeenCalledWith(2);
+    expect(component.relations.get(0)?.[0]).toEqual({src: 0, dest: 1, winner: 1} as any);
+  });
+
+  it('deletes the last level group and distributes teams deterministically', () => {
+    const first = createGroup(1, 0, 0);
+    const second = createGroup(2, 0, 1);
+    component.groups = [first, second];
+    component.teamListData.teams = [createTeam(1, 'Beta'), createTeam(2, 'Alpha')];
+    spyOn(component, 'updateData');
+    groupServiceSpy.deleteGroup.and.returnValue(of(undefined as any));
+    groupServiceSpy.addTeamsToGroup.and.returnValue(of([] as any));
+    teamServiceSpy.getFromTournament.and.returnValue(of([]));
+    groupServiceSpy.getFromTournament.and.returnValue(of([first, second]));
+    groupLinkServiceSpy.getFromTournament.and.returnValue(of([]));
+
+    component.deleteLast();
+    expect(groupServiceSpy.deleteGroup).toHaveBeenCalledWith(second);
+
+    component.sortedGroups();
+    expect(first.teams.map(team => team.name)).toEqual(['Alpha']);
+    expect(second.teams.map(team => team.name)).toEqual(['Beta']);
+    expect(groupServiceSpy.addTeamsToGroup).toHaveBeenCalledTimes(2);
+  });
+
+  it('distributes teams randomly, removes all teams and reloads on websocket events', () => {
+    const group = createGroup(1, 0, 0);
+    component.groups = [group];
+    component.teamListData.teams = [createTeam(1, 'Beta'), createTeam(2, 'Alpha')];
+    groupServiceSpy.addTeamsToGroup.and.returnValue(of([] as any));
+    groupServiceSpy.deleteAllTeamsFromTournament.and.returnValue(of([group]));
+    teamServiceSpy.getFromTournament.and.returnValue(of([]));
+    groupServiceSpy.getFromTournament.and.returnValue(of([group]));
+    groupLinkServiceSpy.getFromTournament.and.returnValue(of([]));
+    const topics$: Record<string, Subject<any>> = {};
+    rxStompServiceSpy.watch.and.callFake(((topic: string): any => {
+      topics$[topic] = new Subject<any>();
+      return topics$[topic];
+    }) as any);
+
+    component.randomGroups();
+    expect(group.teams).toHaveSize(2);
+
+    component.removeAllTeams();
+    expect(groupServiceSpy.deleteAllTeamsFromTournament).toHaveBeenCalledWith(1);
+
+    component.ngOnInit();
+    localStorage.setItem('session', 'other-session');
+    topics$['/ws/tenant/1/groups'].next({body: JSON.stringify({topic: 'Group'})});
+    expect(groupServiceSpy.getFromTournament).toHaveBeenCalled();
+    component.ngOnDestroy();
   });
 
   it('should call updateData from handleFileInput after importing links', () => {
