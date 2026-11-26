@@ -58,17 +58,17 @@ describe('UserSessionService', () => {
 
   it('persists and clears display preferences', () => {
     service.setItemsPerPage(25);
-    service.setSwappedColors(true);
-    service.setSwappedTeams(true);
-    service.setNightMode(true);
+    service.enableSwappedColors();
+    service.enableSwappedTeams();
+    service.enableNightMode();
     expect(service.getItemsPerPage()).toBe(25);
     expect(service.getSwappedColors()).toBeTrue();
     expect(service.getSwappedTeams()).toBeTrue();
     expect(service.getNightMode()).toBeTrue();
     service.setItemsPerPage(undefined);
-    service.setSwappedColors(false);
-    service.setSwappedTeams(false);
-    service.setNightMode(false);
+    service.disableSwappedColors();
+    service.disableSwappedTeams();
+    service.disableNightMode();
     expect(service.getItemsPerPage()).toBe(0);
     expect(service.getSwappedColors()).toBeFalse();
     expect(service.getSwappedTeams()).toBeFalse();

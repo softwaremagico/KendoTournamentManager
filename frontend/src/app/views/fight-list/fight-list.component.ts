@@ -921,12 +921,20 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   swapColors(): void {
     this.swappedColors = !this.swappedColors;
-    this.userSessionService.setSwappedColors(this.swappedColors);
+    if (this.swappedColors) {
+      this.userSessionService.enableSwappedColors();
+    } else {
+      this.userSessionService.disableSwappedColors();
+    }
   }
 
   swapTeams(): void {
     this.swappedTeams = !this.swappedTeams;
-    this.userSessionService.setSwappedTeams(this.swappedTeams);
+    if (this.swappedTeams) {
+      this.userSessionService.enableSwappedTeams();
+    } else {
+      this.userSessionService.disableSwappedTeams();
+    }
   }
 
   enableMemberOrder(enabled: boolean): void {

@@ -226,7 +226,11 @@ export class NavbarComponent implements OnInit {
 
   switchDarkMode(): void {
     this.nightModeEnabled = !this.nightModeEnabled;
-    this.userSessionService.setNightMode(this.nightModeEnabled);
+    if (this.nightModeEnabled) {
+      this.userSessionService.enableNightMode();
+    } else {
+      this.userSessionService.disableNightMode();
+    }
     this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
     this.setDarkModeTheme();
   }

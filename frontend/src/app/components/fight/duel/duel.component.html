@@ -1,4 +1,4 @@
-<user-score (cdkDropListDropped)="drop($event, true)" [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, true)"
+<user-score (cdkDropListDropped)="drop($event, true)" [cdkDropListEnterPredicate]="dropListEnterPredicateTeam1(fight)"
   [duelIndex]="duelIndex"
   [fight]="fight"
   [duel]="duel"
@@ -20,7 +20,7 @@ class="user-score"></user-score>
   <div class="substitute-separation"></div>
 }
 <user-score (cdkDropListDropped)="drop($event, false)"
-  [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)"
+  [cdkDropListEnterPredicate]="dropListEnterPredicateTeam2(fight)"
   [duelIndex]="duelIndex"
   [fight]="fight"
   [duel]="duel"

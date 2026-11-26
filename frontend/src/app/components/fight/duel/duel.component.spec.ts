@@ -86,7 +86,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1, p2], []);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, true);
+    const predicate = component.dropListEnterPredicateTeam1(fight);
 
     const dragItem = { data: p1 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
@@ -102,7 +102,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1], [p2]);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, true);
+    const predicate = component.dropListEnterPredicateTeam1(fight);
 
     const dragItem = { data: p2 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
@@ -118,7 +118,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1], [p2]);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, false);
+    const predicate = component.dropListEnterPredicateTeam2(fight);
 
     const dragItem = { data: p2 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
@@ -134,7 +134,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1], [p2]);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, false);
+    const predicate = component.dropListEnterPredicateTeam2(fight);
 
     const dragItem = { data: p1 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
