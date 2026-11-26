@@ -61,22 +61,7 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
       this.tooltipHtml = this.tooltipText();
 
       //Set border color.
-      if (this.achievements) {
-        for (const achievement of this.achievements) {
-          if (achievement.achievementGrade === AchievementGrade.BRONZE &&
-            this.grade !== AchievementGrade.SILVER) {
-            this.grade = AchievementGrade.BRONZE;
-          }
-          if (achievement.achievementGrade === AchievementGrade.SILVER) {
-            this.grade = AchievementGrade.SILVER;
-          }
-          if (achievement.achievementGrade === AchievementGrade.GOLD) {
-            this.grade = AchievementGrade.GOLD;
-            break;
-          }
-          this.achievementType = achievement.achievementType;
-        }
-      }
+      this.updateGradeAndType();
       if (this.achievements?.length) {
         this.achievementsService.countByType(this.achievementType).pipe(takeUntil(this.destroySubject)).subscribe(_count => {
           this.totalHtml = this.totalAchievedByText(_count);
@@ -86,6 +71,50 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
     if (changes['view']) {
       this.tooltipHtml = this.tooltipText();
     }
+  }
+
+  private updateGradeAndType(): void {
+    if (!this.achievements) {
+      return;
+    }
+    for (const achievement of this.achievements) {
+      if (this.applyAchievementGrade(achievement)) {
+        break;
+      }
+      this.achievementType = achievement.achievementType;
+    }
+  }
+
+  private applyAchievementGrade(achievement: Achievement): boolean {
+    if (achievement.achievementGrade === AchievementGrade.BRONZE &&
+      this.grade !== AchievementGrade.SILVER) {
+      this.grade = AchievementGrade.BRONZE;
+    }
+    if (achievement.achievementGrade === AchievementGrade.SILVER) {
+      this.grade = AchievementGrade.SILVER;
+    }
+    if (achievement.achievementGrade === AchievementGrade.GOLD) {
+      this.grade = AchievementGrade.GOLD;
+      return true;
+    }
+    return false;
+  }
+
+  private gradeClass(grade: AchievementGrade): string {
+    let gradeClass: string = '';
+    if (grade === AchievementGrade.NORMAL) {
+      gradeClass += ' normal';
+    }
+    if (grade === AchievementGrade.BRONZE) {
+      gradeClass += ' bronze';
+    }
+    if (grade === AchievementGrade.SILVER) {
+      gradeClass += ' silver';
+    }
+    if (grade === AchievementGrade.GOLD) {
+      gradeClass += ' gold';
+    }
+    return gradeClass;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -163,18 +192,7 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
         if (achievement.tournament) {
           tooltipText += '<div class="tournament-item">';
           tooltipText += '<div class="circle ';
-          if (achievement.achievementGrade === AchievementGrade.NORMAL) {
-            tooltipText += ' normal';
-          }
-          if (achievement.achievementGrade === AchievementGrade.BRONZE) {
-            tooltipText += ' bronze';
-          }
-          if (achievement.achievementGrade === AchievementGrade.SILVER) {
-            tooltipText += ' silver';
-          }
-          if (achievement.achievementGrade === AchievementGrade.GOLD) {
-            tooltipText += ' gold';
-          }
+          tooltipText += this.gradeClass(achievement.achievementGrade);
           tooltipText += '"></div>';
           tooltipText += achievement.tournament.name;
           const formattedDate: string = formatDate(achievement.tournament.createdAt, 'dd/MM/yyyy', navigator.language)
@@ -201,18 +219,7 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
         if (achievement.tournament) {
           tooltipText += '<div class="tournament-item">';
           tooltipText += '<div class="circle ';
-          if (achievement.achievementGrade === AchievementGrade.NORMAL) {
-            tooltipText += ' normal';
-          }
-          if (achievement.achievementGrade === AchievementGrade.BRONZE) {
-            tooltipText += ' bronze';
-          }
-          if (achievement.achievementGrade === AchievementGrade.SILVER) {
-            tooltipText += ' silver';
-          }
-          if (achievement.achievementGrade === AchievementGrade.GOLD) {
-            tooltipText += ' gold';
-          }
+          tooltipText += this.gradeClass(achievement.achievementGrade);
           tooltipText += '"></div>';
           tooltipText += '<span>' + this.nameUtils.getDisplayName(achievement.participant) + '</span>';
 
