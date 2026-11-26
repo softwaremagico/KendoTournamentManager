@@ -10,7 +10,8 @@ type SuccessLog<T> = string | ((response: T) => string) | null;
 /**
  * Operador compartido por los servicios HTTP: registra la respuesta, libera el
  * indicador de ocupación tanto al completar como al fallar y delega el error en
- * `MessageService`. Centraliza el comportamiento repetido en los servicios CRUD.
+ * `MessageService`. Centraliza el comportamiento repetido en los servicios CRUD
+ * de clubes, equipos, roles, torneos, combates y clasificaciones.
  */
 export class ServiceRequestMonitor {
 
