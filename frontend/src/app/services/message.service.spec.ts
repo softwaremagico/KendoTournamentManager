@@ -83,6 +83,17 @@ describe('MessageService', () => {
     service.ngOnDestroy();
   });
 
+  it('formats unknown error values without stringifying objects', () => {
+    service.handleError<number>('error-branch', 0)(new Error('offline')).subscribe();
+    expect((logger.sendError.calls.mostRecent().args[0] as any).message).toBe('error-branch failed: offline');
+
+    service.logOnlyError<string>('string-branch')('invalid').subscribe();
+    expect((logger.sendError.calls.mostRecent().args[0] as any).message).toBe('string-branch failed: invalid');
+
+    service.logOnlyError<number>('other-branch')({code: 500}).subscribe();
+    expect((logger.sendError.calls.mostRecent().args[0] as any).message).toBe('other-branch failed: ');
+  });
+
   it('translates websocket payloads and ignores malformed ones', () => {
     spyOn(console, 'error');
     const messages = [

@@ -114,7 +114,7 @@ export class MessageService implements OnDestroy {
 
   handleError<T>(operation = 'operation', result?: T) {
     return (error: unknown): Observable<T> => {
-      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
+      const errorMessage: string = this.formatError(error);
       //Log error
       const log: Log = new Log();
       log.message = `${operation} failed: ${errorMessage}`;
@@ -130,7 +130,7 @@ export class MessageService implements OnDestroy {
 
   logOnlyError<T>(operation: string = 'operation', result?: T) {
     return (error: unknown): Observable<T> => {
-      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
+      const errorMessage: string = this.formatError(error);
       //Log error
       const log: Log = new Log();
       log.message = `${operation} failed: ${errorMessage}`;
@@ -139,6 +139,16 @@ export class MessageService implements OnDestroy {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+  private formatError(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === 'string') {
+      return error;
+    }
+    return '';
   }
 
 }
