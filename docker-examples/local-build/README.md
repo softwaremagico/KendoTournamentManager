@@ -1,6 +1,13 @@
-This folder contains a script (localdockerbuild.sh) that will build locally the current code and docker images.
+This folder contains a script (`localdockerbuild.sh`) that will build the current code and Docker images:
+
+```bash
+bash docker-examples/local-build/localdockerbuild.sh
+```
+
+The command above runs from the repository root; the script can also be run from its own directory.
 You can customise the `.env` file
-You need nodejs 22 installed, angular 22 & maven in order to build locally frontend & backend.
+You need a Node.js version supported by the project's Angular CLI, npm, Maven, Java 25 and Docker Compose.
+The script installs the project's local Angular CLI; a global `ng` installation is not required.
 This is a totally unsafe way to run the tournament, should be used only for testing purposes.
 
 After it, execute:
