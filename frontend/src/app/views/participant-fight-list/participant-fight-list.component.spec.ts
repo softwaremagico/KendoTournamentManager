@@ -141,7 +141,7 @@ describe('ParticipantFightListComponent', () => {
     component.initializeData();
 
     expect(component.competitorFights.size).toBe(2);
-    expect(component.tournaments.length).toBe(2);
+    expect(component.tournaments).toHaveSize(2);
   });
 
   it('should sort tournaments by createdAt descending', () => {
@@ -168,7 +168,7 @@ describe('ParticipantFightListComponent', () => {
     component.filter('kendo');
 
     const filtered = component.filteredFights.get(tournament1);
-    expect(filtered?.length).toBe(1);
+    expect(filtered).toHaveSize(1);
     expect(filtered?.[0].team1.name).toBe('Kendo Team Alpha');
   });
 
@@ -183,7 +183,7 @@ describe('ParticipantFightListComponent', () => {
     component.filter('');
 
     const filtered = component.filteredFights.get(tournament1);
-    expect(filtered?.length).toBe(2);
+    expect(filtered).toHaveSize(2);
   });
 
   it('should reset filter values and emit signal', () => {

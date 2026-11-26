@@ -1,7 +1,7 @@
 <div class="canvas" slot="{{'empty' | transloco}}">
   <span class="example-list-section">
     @for (roleType of roleTypes; track roleType) {
-      <biit-checkbox (onValueChange)="select($event, roleType)">
+      <biit-checkbox (onValueChange)="$event ? select(roleType) : deselect(roleType)">
         {{ roleType.toLowerCase() | transloco }}
       </biit-checkbox>
     }

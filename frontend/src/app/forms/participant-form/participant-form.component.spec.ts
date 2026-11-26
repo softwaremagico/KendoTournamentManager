@@ -73,8 +73,8 @@ describe('ParticipantFormComponent', () => {
 
   it('should load clubs in constructor and build translatedClubs', () => {
     expect(clubServiceSpy.getAll).toHaveBeenCalled();
-    expect((component as any).clubs.length).toBe(2);
-    expect((component as any).translatedClubs.length).toBe(2);
+    expect((component as any).clubs).toHaveSize(2);
+    expect((component as any).translatedClubs).toHaveSize(2);
   });
 
   it('should initialize participant picture from pictureUpdated stream', () => {

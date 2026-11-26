@@ -23,7 +23,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   selectedPicture: number | undefined = undefined;
   @Input()
   participant: Participant;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
   imageType: string = "image/png";
   modes: string[] = ["environment", "user"];
   facingMode: number = 0;  //Set back camera
@@ -47,7 +47,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   public takePicture(): void {

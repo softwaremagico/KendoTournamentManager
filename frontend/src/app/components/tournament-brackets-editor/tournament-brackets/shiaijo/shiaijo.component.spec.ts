@@ -37,7 +37,7 @@ describe('ShiaijoComponent', () => {
 
     const result = component.getGroupsInShiaijo(0, 0);
 
-    expect(result.length).toBe(2);
+    expect(result).toHaveSize(2);
     expect(result.every((group) => group.shiaijo === 0)).toBeTrue();
   });
 

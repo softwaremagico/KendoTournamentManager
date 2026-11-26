@@ -166,8 +166,8 @@ describe('TournamentGeneratorComponent', () => {
 
     component.groupsUpdated(groups);
 
-    expect(component.groups.length).toBe(3);
-    expect(component.groupsLevelZero.length).toBe(2);
+    expect(component.groups).toHaveSize(3);
+    expect(component.groupsLevelZero).toHaveSize(2);
   });
 
   it('should update totalTeams on teamsSizeUpdated', () => {

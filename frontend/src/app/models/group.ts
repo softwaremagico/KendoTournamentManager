@@ -83,7 +83,7 @@ export class Group extends Element {
 
   public override toString = (): string => {
     return "Group{"
-      + "tournament=" + this.tournament
+      + "tournament=" + JSON.stringify(this.tournament)
       + ", shiaijo=" + this.shiaijo
       + ", level=" + this.level
       + ", index=" + this.index

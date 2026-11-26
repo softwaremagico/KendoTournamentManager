@@ -84,7 +84,7 @@ describe('TeamListComponent', () => {
     teamListData.teams = [team1, team2, team3];
     component.filter('kendo');
 
-    expect(teamListData.filteredTeams.length).toBe(1);
+    expect(teamListData.filteredTeams).toHaveSize(1);
     expect(teamListData.filteredTeams[0]).toEqual(team1);
   });
 
@@ -106,7 +106,7 @@ describe('TeamListComponent', () => {
     teamListData.teams = [team1, team2];
     component.filter('john');
 
-    expect(teamListData.filteredTeams.length).toBe(1);
+    expect(teamListData.filteredTeams).toHaveSize(1);
     expect(teamListData.filteredTeams[0]).toEqual(team1);
   });
 });

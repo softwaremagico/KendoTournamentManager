@@ -316,7 +316,7 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (onClosed)="openNewFightPopup=false"></fight-creator>
+      (closed)="openNewFightPopup=false"></fight-creator>
     </biit-popup>
   }
 

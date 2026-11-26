@@ -10,6 +10,8 @@ import {Fight} from '../models/fight';
 import {Group} from '../models/group';
 import {Team} from '../models/team';
 import {AchievementsService} from './achievements.service';
+import {AchievementType} from '../models/achievement-type.model';
+
 import {ClubService} from './club.service';
 import {CsvService} from './csv-service';
 import {DuelService} from './duel.service';
@@ -356,5 +358,126 @@ describe('HTTP service endpoints', () => {
     spyOn(service, 'error').and.callThrough();
     service.handleError<string>('saving')(new Error('offline')).subscribe();
     expect(service.error).toHaveBeenCalledWith('saving failed: offline');
+  });
+
+  it('queries achievement counts and regeneration endpoints', () => {
+    const service = new AchievementsService(http, environment, messages, logger, login, busy);
+
+    service.getParticipantAchievements(8).subscribe();
+    service.getTournamentAchievements(7).subscribe();
+    service.regenerateTournamentAchievements(7).subscribe();
+    service.countByTypes().subscribe();
+    service.countByType(AchievementType.THE_WINNER).subscribe();
+
+    expect(http.get).toHaveBeenCalledWith('/backend/achievements/participants/8');
+    expect(http.get).toHaveBeenCalledWith('/backend/achievements/tournaments/7');
+    expect(http.patch).toHaveBeenCalledWith('/backend/achievements/tournaments/7', null);
+    expect(http.get).toHaveBeenCalledWith('/backend/achievements/count/types');
+    expect(http.get).toHaveBeenCalledWith(`/backend/achievements/count/types/${AchievementType.THE_WINNER}`);
+  });
+
+  it('covers the remaining tournament, accreditation and ranking endpoints', () => {
+    const tournaments = new TournamentService(http, environment, login, messages, busy, logger);
+    const rankings = new RankingService(http, environment, messages, logger, login, busy);
+    const tournament = {id: 7, name: 'League'} as Tournament;
+    const participant = {id: 8, name: 'Aki'} as Participant;
+
+    tournaments.delete(tournament).subscribe();
+    tournaments.add(tournament).subscribe();
+    tournaments.update(tournament).subscribe();
+    tournaments.getAccreditations(7, true, []).subscribe();
+    tournaments.getParticipantAccreditation(7, participant, undefined).subscribe();
+    tournaments.getDiplomas(7, true, []).subscribe();
+    tournaments.getParticipantDiploma(7, participant).subscribe();
+    tournaments.getLastUnlockedTournament().subscribe();
+
+    rankings.getCompetitorsScoreRankingByTournamentAsPdf(7).subscribe();
+    rankings.getCompetitorsGlobalScoreRankingAsPdf([participant], 7).subscribe();
+    rankings.getCompetitorsScoreRankingByClub(3).subscribe();
+    rankings.getCompetitorsScoreRankingByClubAsPdf(3).subscribe();
+    rankings.getTeamsScoreRankingByGroup(1).subscribe();
+    rankings.getTeamsScoreRankingByTournamentAsPdf(7).subscribe();
+    rankings.getTeamsScoreRankingByGroupAsPdf(1).subscribe();
+    rankings.getTournamentSummaryAsHtml(7).subscribe();
+    rankings.getAllListAsZip(7).subscribe();
+
+    expect(http.get).toHaveBeenCalledWith('/backend/tournaments/unlocked/lasts');
+    expect((http.get as jasmine.Spy).calls.allArgs().some(args => args[0] === '/backend/rankings/summary/7/html')).toBeTrue();
+    expect((http.get as jasmine.Spy).calls.allArgs().some(args => args[0] === '/backend/rankings/tournament/7/zip')).toBeTrue();
+  });
+
+  it('covers remaining team, group and fight write endpoints', () => {
+    const teams = new TeamService(http, environment, messages, logger, login, busy);
+    const groups = new GroupService(http, environment, messages, logger, login, busy);
+    const fights = new FightService(http, environment, messages, logger, login, busy);
+    const tournament = {id: 7, name: 'League'} as Tournament;
+    const team = {id: 3, name: 'Team'} as Team;
+    const participant = {id: 8, name: 'Aki'} as Participant;
+    const fight = {id: 3} as Fight;
+
+    teams.deleteByMemberAndTournament(participant, tournament).subscribe();
+    teams.deleteByMembersAndTournament([participant], tournament).subscribe();
+    teams.deleteByTournament(tournament).subscribe();
+    teams.createByTournament(tournament).subscribe();
+    teams.add(team).subscribe();
+    teams.setAll([team]).subscribe();
+    teams.getTeamsByTournament(7).subscribe();
+
+    groups.deleteAllTeamsFromTournament(7).subscribe();
+    groups.setTeams([]).subscribe();
+    groups.addUnties(3, []).subscribe();
+    groups.getGroupsByTournament(7).subscribe();
+    groups.refreshNonStartedGroups(7, 0).subscribe();
+
+    fights.deleteByTournament(tournament).subscribe();
+    fights.addCollection([fight]).subscribe();
+    fights.getFightSummaryPDf(7).subscribe();
+    fights.getFromParticipant(8).subscribe();
+
+    expect((http.get as jasmine.Spy).calls.allArgs().some(args => args[0] === '/backend/teams/tournaments/7/pdf')).toBeTrue();
+    expect((http.get as jasmine.Spy).calls.allArgs().some(args => args[0] === '/backend/groups/tournaments/7/pdf')).toBeTrue();
+    expect((http.get as jasmine.Spy).calls.allArgs().some(args => args[0] === '/backend/fights/tournaments/7/pdf')).toBeTrue();
+    expect(http.get).toHaveBeenCalledWith('/backend/fights/competitor/8');
+  });
+
+  it('covers remaining file, role, user, property and statistics endpoints', () => {
+    const files = new FileService(http, environment, messages, logger, login, busy);
+    const roles = new RoleService(http, environment, messages, logger, busy, login);
+    const users = new UserService(http, environment, {} as CookieService, busy, login, logger, messages);
+    const properties = new TournamentExtendedPropertiesService(http, environment, login, messages, busy, logger);
+    const statistics = new StatisticsService(http, environment, messages, logger, login, busy);
+    const tournament = {id: 7, name: 'League'} as Tournament;
+    const participant = {id: 8, name: 'Aki'} as Participant;
+    const file = new File(['image'], 'avatar.png');
+
+    files.setTournamentFilePicture(file, tournament, 'logo' as any, 'NONE' as any).subscribe();
+    files.setBase64Picture({} as any).subscribe();
+    files.getParticipantPicture(participant).subscribe();
+    files.deleteTournamentPicture(tournament, 'logo' as any).subscribe();
+
+    roles.delete({id: 3} as any).subscribe();
+    roles.deleteByParticipantAndTournament(participant, tournament).subscribe();
+    roles.add({id: 3} as any).subscribe();
+    roles.update({id: 3} as any).subscribe();
+    roles.getRolesByTournament(7).subscribe();
+
+    users.add({username: 'aki'} as any).subscribe();
+    users.update({username: 'aki'} as any).subscribe();
+    users.delete({username: 'aki'} as any).subscribe();
+    users.updatePassword('old', 'new').subscribe();
+    users.updateUserPassword('aki', 'new').subscribe();
+
+    properties.getByTournamentAndKey(tournament, 'ACHIEVEMENTS' as any).subscribe();
+    properties.add({} as any).subscribe();
+    properties.update({} as any).subscribe();
+
+    statistics.getPreviousTournamentStatistics(7, 3).subscribe();
+    statistics.getParticipantStatistics(8).subscribe();
+    statistics.getWorstNightmareOf(8).subscribe();
+
+    expect(http.post).toHaveBeenCalledWith('/backend/files/participants', {} as any);
+    expect((http.get as jasmine.Spy).calls.allArgs().some(args => args[0] === '/backend/roles/tournaments/7/pdf')).toBeTrue();
+    expect(http.post).toHaveBeenCalledWith('/backend/auth/password', {oldPassword: 'old', newPassword: 'new'});
+    expect(http.get).toHaveBeenCalledWith('/backend/statistics/tournaments/7/previous/3');
   });
 });

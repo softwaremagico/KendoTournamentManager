@@ -37,7 +37,7 @@ export class FightCreator implements OnInit {
   @Input()
   grid: boolean = false;
   @Output()
-  onClosed: EventEmitter<void> = new EventEmitter<void>();
+  closed: EventEmitter<void> = new EventEmitter<void>();
 
   teamListData: TeamListData = new TeamListData();
 
@@ -64,7 +64,7 @@ export class FightCreator implements OnInit {
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): Team {

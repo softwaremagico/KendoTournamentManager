@@ -53,7 +53,7 @@ describe('AchievementWallComponent', () => {
 
     expect(component.groupedAchievements.size).toBe(component.totalAchievementsTypes.length);
     expect([...component.groupedAchievements.values()].every((achievements) => achievements.length === 0)).toBeTrue();
-    expect(fixture.nativeElement.querySelectorAll('achievement-tile').length).toBe(component.totalAchievementsTypes.length);
+    expect(fixture.nativeElement.querySelectorAll('achievement-tile')).toHaveSize(component.totalAchievementsTypes.length)
   });
 
   it('should recalculate groups when the achievements input changes', () => {

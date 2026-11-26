@@ -33,7 +33,7 @@ describe('MemberSelectorComponent', () => {
 
     component.ngOnChanges();
 
-    expect(component.members.length).toBe(2);
+    expect(component.members).toHaveSize(2);
     expect(component.members).toEqual([participant1, participant2]);
   });
 
@@ -94,7 +94,7 @@ describe('MemberSelectorComponent', () => {
 
     component.ngOnChanges();
 
-    expect(component.members.length).toBe(0);
+    expect(component.members).toHaveSize(0);
     expect(component.members).toEqual([]);
   });
 
@@ -108,7 +108,7 @@ describe('MemberSelectorComponent', () => {
 
     component.selectUser(participant);
 
-    expect(component.selectedMembers.length).toBe(1);
+    expect(component.selectedMembers).toHaveSize(1);
     expect(component.selectedMembers[0]).toEqual(participant);
     expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant]);
   });
@@ -127,7 +127,7 @@ describe('MemberSelectorComponent', () => {
 
     component.selectUser(participant2);
 
-    expect(component.selectedMembers.length).toBe(1);
+    expect(component.selectedMembers).toHaveSize(1);
     expect(component.selectedMembers[0]).toEqual(participant2);
     expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
   });
@@ -180,7 +180,7 @@ describe('MemberSelectorComponent', () => {
     component.selectUser(participant2);
     component.selectUser(participant3);
 
-    expect(component.selectedMembers.length).toBe(3);
+    expect(component.selectedMembers).toHaveSize(3);
     expect(component.selectedMembers).toEqual([participant1, participant2, participant3]);
   });
 

@@ -52,8 +52,8 @@ describe('TournamentBracketsComponent', () => {
 
     const grouped = TournamentBracketsComponent.convert(groups);
 
-    expect(grouped.get(0)?.length).toBe(2);
-    expect(grouped.get(1)?.length).toBe(1);
+    expect(grouped.get(0)).toHaveSize(2);
+    expect(grouped.get(1)).toHaveSize(1);
   });
 
   it('should return empty map from convert when groups are undefined', () => {
@@ -72,8 +72,8 @@ describe('TournamentBracketsComponent', () => {
 
     areGroupsUpdatedSubject.next(groups);
 
-    expect(component.groupsByLevel.get(0)?.length).toBe(2);
-    expect(component.groupsByLevel.get(1)?.length).toBe(1);
+    expect(component.groupsByLevel.get(0)).toHaveSize(2);
+    expect(component.groupsByLevel.get(1)).toHaveSize(1);
     expect(component.shiaijosByLevel.get(0)).toEqual([0]);
   });
 

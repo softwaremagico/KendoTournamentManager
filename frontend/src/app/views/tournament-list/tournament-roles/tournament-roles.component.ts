@@ -28,7 +28,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
 
   @Input()
   tournament: Tournament;
-  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
@@ -67,7 +67,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         }));
         //Update participant's club from roles. Needed if dropping back the card from role to user list.
         this.participants.get(roleType)!.forEach((participant: Participant) => {
-          participant.club = participants.filter(p => p.id === participant.id)[0]?.club;
+          participant.club = participants.find(p => p.id === participant.id)?.club;
         })
         //Get participants and subtract the ones already with roles.
         const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);

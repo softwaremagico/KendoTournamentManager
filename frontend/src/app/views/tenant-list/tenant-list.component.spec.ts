@@ -42,8 +42,8 @@ describe('TenantListComponent', () => {
     component.ngAfterViewInit();
     expect(tenants.getAll).toHaveBeenCalled();
     expect(component.tenants).toEqual([tenant]);
-    expect(component.columns.length).toBe(2);
-    expect(component.userColumns.length).toBe(4);
+    expect(component.columns).toHaveSize(2);
+    expect(component.userColumns).toHaveSize(4);
     expect(cdr.detectChanges).toHaveBeenCalled();
   });
 

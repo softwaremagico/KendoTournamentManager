@@ -77,7 +77,7 @@ export class AchievementTileComponent extends KendoComponent implements OnInit, 
           this.achievementType = achievement.achievementType;
         }
       }
-      if (this.achievements && this.achievements?.length) {
+      if (this.achievements?.length) {
         this.achievementsService.countByType(this.achievementType).pipe(takeUntil(this.destroySubject)).subscribe(_count => {
           this.totalHtml = this.totalAchievedByText(_count);
         });

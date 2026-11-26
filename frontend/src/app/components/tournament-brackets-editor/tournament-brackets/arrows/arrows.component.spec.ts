@@ -91,7 +91,7 @@ describe('ArrowsComponent', () => {
     component.groupsByLevel = new Map([[0, [grp]], [1, [grp]]]);
     component.relations = [{ src: 0, dest: 0, winner: 0 }];
     component.generateCoordinates();
-    expect(component.coordinates.length).toBe(1);
+    expect(component.coordinates).toHaveSize(1);
     expect(component.coordinates[0].color).toBe('var(--component-color)');
   });
   it('should use secondary color when winner is non-zero', () => {

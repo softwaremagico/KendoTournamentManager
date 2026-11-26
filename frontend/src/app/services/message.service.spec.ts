@@ -1,4 +1,5 @@
 import {NEVER, of} from 'rxjs';
+import {Message} from '@stomp/stompjs';
 import {BiitSnackbarService, NotificationType} from '@biit-solutions/wizardry-theme/info';
 import {TranslocoService} from '@jsverse/transloco';
 import {MessageService} from './message.service';
@@ -64,6 +65,42 @@ describe('MessageService', () => {
     const connected = createServiceWithConnection(of(undefined), ['VIEWER']);
 
     expect(connected.stomp.watch).toHaveBeenCalledWith('/backend/tenant/1/messages');
+  });
+
+  it('shows warnings, backend errors and received websocket messages', () => {
+    service.warningMessage('Careful');
+    expect(snackBar.showNotification).toHaveBeenCalledWith('Careful', NotificationType.WARNING, undefined, 7);
+
+    service.backendErrorMessage(403, 'FORBIDDEN');
+    expect(snackBar.showNotification).toHaveBeenCalledWith(
+      "Error '403' with code 'FORBIDDEN' received.", NotificationType.ERROR, undefined, 5);
+
+    (logger as any).sendError.calls.reset();
+    service.handleError<number>('saving', 0)(new Error('offline')).subscribe(result => expect(result).toBe(0));
+    expect(logger.sendError).toHaveBeenCalled();
+    service.logOnlyError<string>('loading')('invalid').subscribe(result => expect(result).toBeUndefined());
+
+    service.ngOnDestroy();
+  });
+
+  it('translates websocket payloads and ignores malformed ones', () => {
+    spyOn(console, 'error');
+    const messages = [
+      {body: JSON.stringify({payload: 'score.updated', parameters: {}, type: 'WARNING'})},
+      {body: JSON.stringify({payload: 'fight.finished', parameters: {}, type: 'unknown'})},
+      {body: 'not-json'}
+    ] as Message[];
+    const localStomp = jasmine.createSpyObj<RxStompService>('RxStompService', ['watch'], {connected$: of(undefined) as any});
+    localStomp.watch.and.returnValue(of(...messages));
+    const localLogin = jasmine.createSpyObj<LoginService>('LoginService', ['getTenantId', 'getJwtRoles']);
+    localLogin.getTenantId.and.returnValue(1);
+    localLogin.getJwtRoles.and.returnValue(['ADMIN']);
+    const localService = new MessageService(snackBar, translate, logger, localStomp, environment, localLogin);
+
+    expect(snackBar.showNotification).toHaveBeenCalledWith('score.updated', NotificationType.WARNING, undefined, 7);
+    expect(snackBar.showNotification).toHaveBeenCalledWith('fight.finished', NotificationType.SUCCESS, undefined, 4);
+    expect(console.error).toHaveBeenCalledWith('Invalid message payload', 'not-json');
+    localService.ngOnDestroy();
   });
 
   function createServiceWithConnection(connected$: any, roles: string[]) {

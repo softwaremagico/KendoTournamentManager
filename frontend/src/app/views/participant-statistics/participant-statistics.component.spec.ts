@@ -180,7 +180,7 @@ describe('ParticipantStatisticsComponent', () => {
 
     const performance = (component as any).generatePerformanceStatistics(ps);
 
-    expect(performance.length).toBe(5);
+    expect(performance).toHaveSize(5);
     expect(performance[0][0]).toBe('attack');
     expect(performance[1][0]).toBe('defense');
     expect(performance[2][0]).toBe('willpower');
@@ -194,7 +194,7 @@ describe('ParticipantStatisticsComponent', () => {
 
     const points = (component as any).obtainPoints(ps);
 
-    expect(points.length).toBe(7);
+    expect(points).toHaveSize(7);
     expect(points[0][1]).toBe(5);
   });
 
@@ -205,7 +205,7 @@ describe('ParticipantStatisticsComponent', () => {
 
     const received = (component as any).obtainReceivedPoints(ps);
 
-    expect(received.length).toBe(7);
+    expect(received).toHaveSize(7);
     expect(received[0][1]).toBe(3);
   });
 
