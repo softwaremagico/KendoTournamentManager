@@ -167,9 +167,7 @@ export class TournamentService {
 
   getParticipantAccreditation(tournamentId: number, participant: Participant, roleType: RoleType | undefined): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
-    if (roleType === undefined) {
-      roleType = RoleType.getRandom();
-    }
+    roleType ??= RoleType.getRandom();
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations/' + roleType;
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
