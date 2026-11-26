@@ -106,7 +106,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     } else if (this.temporalToken) {
       this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
         this.initializeData();
-        this.router.navigate([]);
+        void this.router.navigate([]);
       });
     } else {
       this.goBack();

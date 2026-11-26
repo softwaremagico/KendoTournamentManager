@@ -188,7 +188,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit, 
   openStatistics(): void {
     if (this.tournament) {
       this.closeDialog();
-      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.tournament.id}});
+      void this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.tournament.id}});
     }
   }
 
