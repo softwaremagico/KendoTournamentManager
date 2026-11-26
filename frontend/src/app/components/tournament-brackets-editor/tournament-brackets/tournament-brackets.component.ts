@@ -88,12 +88,13 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getGroupHigh(level: number, index: number): number {
-    if (this.groupsByLevel?.get(level) && this.groupsByLevel.get(level)![index]) {
+    const levelGroups = this.groupsByLevel?.get(level);
+    if (levelGroups?.[index]) {
       const estimatedTeams: number = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
       let teams: number = -1;
-      for (const i of this.groupsByLevel.get(level)!.keys()) {
-        if (this.groupsByLevel.get(level)![i].teams.length > teams) {
-          teams = this.groupsByLevel.get(level)![i].teams.length;
+      for (const i of levelGroups.keys()) {
+        if (levelGroups[i].teams.length > teams) {
+          teams = levelGroups[i].teams.length;
         }
       }
 
