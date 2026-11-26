@@ -82,8 +82,9 @@ export class TypeValidations {
       return false;
     }
 
-    const topLevelDomain: string = domainLabels[domainLabels.length - 1];
-    if (topLevelDomain.length < 2 || ![...topLevelDomain].every((character: string): boolean => this.isAsciiLetter(character))) {
+    const topLevelDomain: string | undefined = domainLabels.at(-1);
+    if (!topLevelDomain || topLevelDomain.length < 2
+      || ![...topLevelDomain].every((character: string): boolean => this.isAsciiLetter(character))) {
       return false;
     }
 
