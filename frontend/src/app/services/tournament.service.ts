@@ -79,11 +79,11 @@ export class TournamentService {
     return this.http.post<Tournament>(url, tournament)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting tournament ${tournament}`),
+          next: () => this.loggerService.info(`deleting tournament ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Tournament>(`delete ${tournament}`))
+        catchError(this.messageService.handleError<Tournament>(`delete ${tournament.name}`))
       );
   }
 
@@ -92,11 +92,11 @@ export class TournamentService {
     return this.http.post<Tournament>(url, tournament)
       .pipe(
         tap({
-          next: () => (newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`),
+          next: () => (newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Tournament>(`adding ${tournament}`))
+        catchError(this.messageService.handleError<Tournament>(`adding ${tournament.name}`))
       );
   }
 
@@ -107,11 +107,11 @@ export class TournamentService {
     return this.http.put<Tournament>(url, tournament)
       .pipe(
         tap({
-          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
+          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
+        catchError(this.messageService.handleError<Tournament>(`updating ${tournament.name}`))
       );
   }
 
@@ -134,11 +134,11 @@ export class TournamentService {
     return this.http.put<Tournament>(url, null)
       .pipe(
         tap({
-          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
+          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
+        catchError(this.messageService.handleError<Tournament>(`updating ${tournament.name}`))
       );
   }
 
@@ -230,7 +230,7 @@ export class TournamentService {
     return this.http.get<Tournament>(url)
       .pipe(
         tap({
-          next: () => (newTournament: Tournament) => this.loggerService.info(`Last unlocked tournament is ${newTournament}`),
+          next: () => (newTournament: Tournament) => this.loggerService.info(`Last unlocked tournament is ${newTournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),

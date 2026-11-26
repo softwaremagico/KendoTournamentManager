@@ -58,7 +58,7 @@ export class TeamService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
+        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament.name}`))
       );
   }
 
@@ -71,7 +71,7 @@ export class TeamService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
+        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament.name}`))
       );
   }
 
@@ -94,11 +94,11 @@ export class TeamService {
     return this.http.post<Team>(url, team)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting team ${team}`),
+          next: () => this.loggerService.info(`deleting team ${team.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team>(`delete ${team}`))
+        catchError(this.messageService.handleError<Team>(`delete ${team.name}`))
       );
   }
 
@@ -110,11 +110,11 @@ export class TeamService {
     })
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting member ${participant} on ${tournament}`),
+          next: () => this.loggerService.info(`deleting member ${participant} on ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team>(`delete member ${participant} on ${tournament}`))
+        catchError(this.messageService.handleError<Team>(`delete member ${participant} on ${tournament.name}`))
       );
   }
 
@@ -126,11 +126,11 @@ export class TeamService {
     })
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting members ${participants} on ${tournament}`),
+          next: () => this.loggerService.info(`deleting members ${participants} on ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team>(`delete members ${participants} on ${tournament}`))
+        catchError(this.messageService.handleError<Team>(`delete members ${participants} on ${tournament.name}`))
       );
   }
 
@@ -139,11 +139,11 @@ export class TeamService {
     return this.http.post<Team>(url, {tournament: tournament})
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting teams on ${tournament}`),
+          next: () => this.loggerService.info(`deleting teams on ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team>(`delete teams on ${tournament}`))
+        catchError(this.messageService.handleError<Team>(`delete teams on ${tournament.name}`))
       );
   }
 
@@ -152,11 +152,11 @@ export class TeamService {
     return this.http.put<Team[]>(url, {tournament: tournament})
       .pipe(
         tap({
-          next: () => this.loggerService.info(`creating teams for ${tournament}`),
+          next: () => this.loggerService.info(`creating teams for ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team[]>(`creating teams for ${tournament}`))
+        catchError(this.messageService.handleError<Team[]>(`creating teams for ${tournament.name}`))
       );
   }
 
@@ -192,11 +192,11 @@ export class TeamService {
     return this.http.put<Team>(url, team)
       .pipe(
         tap({
-          next: (updatedTeam: Team) => this.loggerService.info(`updating team ${updatedTeam}`),
+          next: (updatedTeam: Team) => this.loggerService.info(`updating team ${updatedTeam.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Team>(`updating ${team}`))
+        catchError(this.messageService.handleError<Team>(`updating ${team.name}`))
       );
   }
 
