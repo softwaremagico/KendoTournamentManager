@@ -176,7 +176,7 @@ export class LoginService {
     }
     try {
       const payload = token.split('.')[1];
-      const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const normalizedPayload = payload.replaceAll('-', '+').replaceAll('_', '/');
       const decoded = JSON.parse(atob(normalizedPayload));
       return typeof decoded.tenantId === 'number' ? decoded.tenantId : null;
     } catch {
@@ -192,7 +192,7 @@ export class LoginService {
     }
     try {
       const payload = token.split('.')[1];
-      const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const normalizedPayload = payload.replaceAll('-', '+').replaceAll('_', '/');
       const decoded = JSON.parse(atob(normalizedPayload));
       if (Array.isArray(decoded.roles)) {
         return decoded.roles.map((role: unknown): string => String(role));
