@@ -11,5 +11,5 @@ export function isAuthSessionErrorStatus(status: number): boolean {
 export function logoutAndRedirectToLogin(router: Router, loginService: LoginService, messageService: MessageService): void {
   loginService.logout();
   messageService.warningMessage("userLoggedOutMessage");
-  router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
+  void router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
 }

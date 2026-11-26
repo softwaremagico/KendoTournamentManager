@@ -481,7 +481,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   openBracketsManager(): void {
     if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
-      this.router.navigate(['tournaments/fights/championship'], {
+      void this.router.navigate(['tournaments/fights/championship'], {
         state: {
           tournamentId: this.tournament.id,
           editionDisabled: this.getFights().length > 0
@@ -623,7 +623,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   goBackToTournament(): void {
-    this.router.navigate(['/tournaments'], {});
+    void this.router.navigate(['/tournaments'], {});
   }
 
   selectFight(fight: Fight | undefined): void {

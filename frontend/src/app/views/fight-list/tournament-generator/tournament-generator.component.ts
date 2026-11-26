@@ -77,7 +77,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   goBackToFights(): void {
-    this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.tournamentId}});
+    void this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.tournamentId}});
   }
 
   addGroup(): void {

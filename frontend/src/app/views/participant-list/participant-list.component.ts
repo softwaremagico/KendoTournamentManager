@@ -145,7 +145,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements Afte
   openStatistics(participant: Participant): void {
     if (participant) {
       this.userSessionService.setSelectedParticipant(participant.id + "");
-      this.router.navigate(['/participants/statistics'], {state: {participantId: participant.id}});
+      void this.router.navigate(['/participants/statistics'], {state: {participantId: participant.id}});
     }
   }
 

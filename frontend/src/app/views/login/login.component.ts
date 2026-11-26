@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
     this.isLastVersion();
     this.managePathQueries();
     if (!this.userSessionService.isTokenExpired()) {
-      this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+      void this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
     } else {
       this.waiting = false;
       this.userSessionService.clearToken();
@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit {
         });
         queryParams[Constants.PATHS.QUERY.LOGOUT] = null;
       }
-      this.router.navigate([], {queryParams: queryParams, queryParamsHandling: 'merge'});
+      void this.router.navigate([], {queryParams: queryParams, queryParamsHandling: 'merge'});
     });
   }
 
@@ -96,9 +96,9 @@ export class LoginComponent implements OnInit {
         this.activityService.setRoles(authenticatedUser.roles);
         const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         if (returnUrl) {
-          this.router.navigate([returnUrl]);
+          void this.router.navigate([returnUrl]);
         } else {
-          this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+          void this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
         }
         this.messageService.infoMessage("userLoggedInMessage");
         this.userSessionService.setUser(AuthenticatedUser.clone(authenticatedUser))

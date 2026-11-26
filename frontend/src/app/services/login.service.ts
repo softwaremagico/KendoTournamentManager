@@ -111,7 +111,7 @@ export class LoginService {
         localStorage.setItem('tournamentId', tournamentId + "");
       },
       error: (): void => {
-        this.router.navigate(["/"]);
+        void this.router.navigate(["/"]);
       }
     });
   }
@@ -123,7 +123,7 @@ export class LoginService {
         localStorage.setItem('account', 'participant');
       },
       error: (): void => {
-        this.router.navigate(["/"]);
+        void this.router.navigate(["/"]);
       }
     });
   }
@@ -150,7 +150,7 @@ export class LoginService {
   }
 
   logout(): void {
-    this.rxStompService.deactivate();
+    void this.rxStompService.deactivate();
     this.userSessionService.clearToken();
     this.activityService.setRoles([]);
     localStorage.removeItem('account');

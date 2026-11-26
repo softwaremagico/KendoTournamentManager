@@ -51,7 +51,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
   }
 
   goBackToStatistics(): void {
-    this.router.navigate(['/participants/statistics'], {state: {participantId: this.participantId}});
+    void this.router.navigate(['/participants/statistics'], {state: {participantId: this.participantId}});
   }
 
   ngOnInit(): void {
