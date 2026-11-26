@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component, OnInit} from "@angular/core";
+import {ChangeDetectionStrategy, Component, Input, OnInit} from "@angular/core";
+import {Colors} from "./colors";
 import {DarkModeService} from "../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../services/user-session.service";
 import {
@@ -15,7 +16,7 @@ import {
   ApexXAxis,
   ApexYAxis
 } from "ng-apexcharts";
-import {ApexTheme, ChartType} from "./apex-types";
+import {ApexTheme, ChartFill, ChartType, LegendPosition, TitleAlignment} from "./apex-types";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
 
@@ -79,9 +80,45 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
   protected toolTextTipColor: string = "#000000"
   protected darkMode: boolean;
 
-  protected constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
+  /** Ajustes compartidos por todas las gráficas, heredados como `@Input`. */
+  @Input()
+  public width: number = 500;
+  @Input()
+  public height: number | undefined = undefined;
+  @Input()
+  public showToolbar: boolean = false;
+  @Input()
+  public colors: string[] = Colors.defaultPalette;
+  @Input()
+  public title: string | undefined = undefined;
+  @Input()
+  public titleAlignment: TitleAlignment = "center";
+  @Input()
+  public fill: ChartFill = "solid";
+  @Input()
+  public shadow: boolean = true;
+  @Input()
+  public legendPosition: LegendPosition = "bottom";
+
+  constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
     super();
     this.darkMode = userSessionService.getNightMode();
+    if (this.darkMode) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
+  }
+
+  /** Opciones comunes de cabecera, relleno, tooltip, título, leyenda y tema. */
+  protected getCommonChartOptions(type: ChartType, fillOpacity?: number) {
+    return {
+      colors: this.colors,
+      chart: this.getChart(type, this.width, this.height, this.shadow, this.showToolbar),
+      fill: this.getFill(this.fill, fillOpacity),
+      tooltip: this.getTooltip(),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
+    };
   }
 
 
@@ -116,7 +153,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     }
   }
 
-  protected getTitle(title: string | undefined, titleAlignment: "left" | "center" | "right" = "center"): ApexTitleSubtitle {
+  protected getTitle(title: string | undefined, titleAlignment: TitleAlignment = "center"): ApexTitleSubtitle {
     return {
       text: title?.toUpperCase(),
       align: titleAlignment,
@@ -129,7 +166,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     }
   }
 
-  protected getLegend(legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"): ApexLegend {
+  protected getLegend(legendPosition: LegendPosition = "bottom"): ApexLegend {
     return {
       position: legendPosition,
       labels: {
@@ -139,7 +176,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     }
   }
 
-  protected getResponsive(legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"): ApexResponsive[] {
+  protected getResponsive(legendPosition: LegendPosition = "bottom"): ApexResponsive[] {
     return [
       {
         breakpoint: 480,
@@ -155,7 +192,7 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
     ];
   }
 
-  protected getFill(fill: "gradient" | "solid" | "pattern" | "image" = "solid", opacity?: number): ApexFill {
+  protected getFill(fill: ChartFill = "solid", opacity?: number): ApexFill {
     return {
       type: fill,
       opacity: opacity,
@@ -168,6 +205,14 @@ export abstract class CustomChartComponent extends KendoComponent implements OnI
         stops: [0, 50, 53, 91]
       }
     }
+  }
+
+  /** Asigna la paleta en orden cíclico a una serie de datos. */
+  protected setSeriesColors<T extends { color: string }>(data: T[]): T[] {
+    for (let i = 0; i < data.length; i++) {
+      data[i].color = this.colors[i % this.colors.length];
+    }
+    return data;
   }
 
   protected getShadow(shadow: boolean): ApexDropShadow {

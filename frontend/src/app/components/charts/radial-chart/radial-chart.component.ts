@@ -8,12 +8,9 @@ import {
   ApexTooltip,
   ChartComponent
 } from "ng-apexcharts";
-import {Colors} from "../colors";
 import {RadialChartData} from "./radial-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
-import {DarkModeService} from "../../../services/notifications/dark-mode.service";
-import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "../apex-types";
+import {ApexTheme, ChartFill, LegendPosition, TitleAlignment} from "../apex-types";
 
 type RadialChartOptions = {
   series: number[];
@@ -46,23 +43,7 @@ export class RadialChartComponent extends CustomChartComponent {
   @Input()
   public data: RadialChartData;
   @Input()
-  public width: number = 500;
-  @Input()
-  public height: number | undefined = undefined;
-  @Input()
-  public showToolbar: boolean = false;
-  @Input()
-  public colors: string[] = Colors.defaultPalette;
-  @Input()
-  public title: string | undefined = undefined;
-  @Input()
-  public titleAlignment: "left" | "center" | "right" = "center";
-  @Input()
-  public fill: "gradient" | "solid" | "pattern" | "image" = "gradient";
-  @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
-  @Input()
-  public shadow: boolean = true;
+  public override fill: ChartFill = "gradient";
   @Input()
   public innerCirclePercentage: number = 40;
   @Input()
@@ -70,26 +51,12 @@ export class RadialChartComponent extends CustomChartComponent {
   @Input()
   public endAngle: number = 360;
 
-  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
-    super(darkModeService, userSessionService);
-    if (userSessionService.getNightMode()) {
-      this.colors = Colors.defaultPaletteNightMode;
-    }
-  }
-
-
   protected setProperties(): void {
     this.chartOptions = {
-      colors: this.colors,
-      chart: this.getChart('radialBar', this.width, this.height, this.shadow, this.showToolbar),
+      ...this.getCommonChartOptions('radialBar'),
       series: this.data.getValues(),
       labels: this.data.getLabels(),
-      fill: this.getFill(this.fill),
-      plotOptions: this.getPlotOptions(),
-      tooltip: this.getTooltip(),
-      title: this.getTitle(this.title, this.titleAlignment),
-      legend: this.getLegend(this.legendPosition),
-      theme: this.getTheme()
+      plotOptions: this.getPlotOptions()
     };
   }
 
