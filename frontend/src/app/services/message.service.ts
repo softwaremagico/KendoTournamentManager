@@ -16,9 +16,9 @@ import {EMPTY} from 'rxjs';
   providedIn: 'root'
 })
 export class MessageService implements OnDestroy {
-  private static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
+  private readonly static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
 
-  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+  private readonly websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   private messageSubscription: Subscription;
   private readonly recentMessages: Map<string, number> = new Map<string, number>();

@@ -29,11 +29,11 @@ import {AchievementGrade} from "../models/achievement-grade.model";
 })
 export class AchievementsService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/achievements';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/achievements';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
   getParticipantAchievements(participantId: number): Observable<Achievement[]> {

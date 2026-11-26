@@ -6,9 +6,9 @@ import {MatIconRegistry} from "@angular/material/icon";
 @NgModule({})
 export class IconModule {
 
-  private path: string = "../../../assets/icons";
+  private readonly path: string = "../../../assets/icons";
 
-  constructor(private domSanitizer: DomSanitizer, public matIconRegistry: MatIconRegistry) {
+  constructor(private readonly domSanitizer: DomSanitizer, public readonly matIconRegistry: MatIconRegistry) {
     this.matIconRegistry
       .addSvgIcon("men", this.setPath(`${this.path}/men.svg`))
       .addSvgIcon("shinai", this.setPath(`${this.path}/shinai.svg`))

@@ -59,7 +59,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
 
   reorderAllowed: boolean = true;
 
-  constructor(private duelChangedService: DuelChangedService, rbacService: RbacService, private membersOrderChangedService: MembersOrderChangedService) {
+  constructor(private readonly duelChangedService: DuelChangedService, rbacService: RbacService, private readonly membersOrderChangedService: MembersOrderChangedService) {
     super(rbacService);
     this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
   }

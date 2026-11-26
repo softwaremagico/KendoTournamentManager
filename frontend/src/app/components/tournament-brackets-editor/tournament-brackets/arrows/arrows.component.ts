@@ -14,7 +14,7 @@ import {ShiaijoComponent} from "../shiaijo/shiaijo.component";
 })
 export class ArrowsComponent implements OnInit {
 
-  public static readonly ARROW_SIZE: number = 30;
+  public readonly static readonly ARROW_SIZE: number = 30;
   arrow_size: number = ArrowsComponent.ARROW_SIZE;
 
   @Input()
@@ -52,7 +52,7 @@ export class ArrowsComponent implements OnInit {
   height: number;
   width: number;
 
-  constructor(private groupsUpdatedService: GroupsUpdatedService) {
+  constructor(private readonly groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {

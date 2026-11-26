@@ -31,12 +31,12 @@ import {UserRoles} from "./rbac/user-roles";
 })
 export class UserService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private cookies: CookieService, private systemOverloadService: SystemOverloadService,
-              public loginService: LoginService,
-              private loggerService: LoggerService, private messageService: MessageService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
+              private readonly cookies: CookieService, private readonly systemOverloadService: SystemOverloadService,
+              public readonly loginService: LoginService,
+              private readonly loggerService: LoggerService, private readonly messageService: MessageService) {
 
   }
 

@@ -25,12 +25,12 @@ export class SenbatsuFightCreatorComponent extends FightCreator implements OnIni
   public teamDragDisabled: Team[];
 
   constructor(
-    protected override teamService: TeamService,
-    protected override fightService: FightService,
-    protected override groupServices: GroupService,
-    protected override messageService: MessageService,
-    protected override groupUpdatedService: GroupUpdatedService,
-    private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService
+    protected readonly override teamService: TeamService,
+    protected readonly override fightService: FightService,
+    protected readonly override groupServices: GroupService,
+    protected readonly override messageService: MessageService,
+    protected readonly override groupUpdatedService: GroupUpdatedService,
+    private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService
   ) {
     super(teamService, fightService, groupServices, messageService, groupUpdatedService);
   }

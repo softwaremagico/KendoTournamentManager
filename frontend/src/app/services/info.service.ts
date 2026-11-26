@@ -10,10 +10,10 @@ import {LoggerService} from "./logger.service";
 })
 export class InfoService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/info';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/info';
 
-  constructor(private http: HttpClient, private messageService: MessageService, private environmentService: EnvironmentService,
-              private loggerService: LoggerService) {
+  constructor(private readonly http: HttpClient, private readonly messageService: MessageService, private readonly environmentService: EnvironmentService,
+              private readonly loggerService: LoggerService) {
   }
 
   getLatestVersion(): Observable<string> {

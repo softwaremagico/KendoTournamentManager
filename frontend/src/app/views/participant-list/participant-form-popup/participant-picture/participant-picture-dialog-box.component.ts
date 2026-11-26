@@ -31,11 +31,11 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   availableCameras: number;
 
   @Output()
-  public imageClicked = new EventEmitter<WebcamImage>();
-  private pictureGenerated: Subject<void> = new Subject<void>();
+  public readonly imageClicked = new EventEmitter<WebcamImage>();
+  private readonly pictureGenerated: Subject<void> = new Subject<void>();
 
-  constructor(rbacService: RbacService, public messageService: MessageService, private fileService: FileService,
-              private translateService: TranslocoService, private pictureUpdatedService: PictureUpdatedService) {
+  constructor(rbacService: RbacService, public readonly messageService: MessageService, private readonly fileService: FileService,
+              private readonly translateService: TranslocoService, private readonly pictureUpdatedService: PictureUpdatedService) {
     super(rbacService);
   }
 
@@ -95,7 +95,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     }
   }
 
-  public get clickOnCamera(): Observable<void> {
+  public readonly get clickOnCamera(): Observable<void> {
     return this.pictureGenerated.asObservable();
   }
 

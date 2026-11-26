@@ -34,13 +34,13 @@ export class LoginComponent implements OnInit {
   protected waiting: boolean = true;
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
-  protected checkForNewVersion: boolean = this.environmentService.isCheckForNewVersion();
+  protected readonly checkForNewVersion: boolean = this.environmentService.isCheckForNewVersion();
 
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService,
-              private formBuilder: UntypedFormBuilder, private messageService: MessageService, private loggerService: LoggerService,
-              private infoService: InfoService, private translateService: TranslocoService, private environmentService: EnvironmentService,
-                private userSessionService: UserSessionService, private activityService: ActivityService, private translocoService: TranslocoService) {
+  constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute, private readonly loginService: LoginService,
+              private readonly formBuilder: UntypedFormBuilder, private readonly messageService: MessageService, private readonly loggerService: LoggerService,
+              private readonly infoService: InfoService, private readonly translateService: TranslocoService, private readonly environmentService: EnvironmentService,
+                private readonly userSessionService: UserSessionService, private readonly activityService: ActivityService, private readonly translocoService: TranslocoService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],

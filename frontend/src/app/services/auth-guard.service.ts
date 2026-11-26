@@ -8,7 +8,7 @@ import {UserSessionService} from "./user-session.service";
 })
 export class AuthGuardService {
 
-  constructor(private router: Router, private sessionService: UserSessionService) {
+  constructor(private readonly router: Router, private readonly sessionService: UserSessionService) {
   }
 
   canActivate(): boolean {

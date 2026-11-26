@@ -26,7 +26,7 @@ export class ParticipantQrCodeComponent implements OnInit {
 
   protected readonly RbacActivity = RbacActivity;
 
-  constructor(private qrService: QrService, private userSessionService: UserSessionService, public rbacService: RbacService) {
+  constructor(private readonly qrService: QrService, private readonly userSessionService: UserSessionService, public readonly rbacService: RbacService) {
 
   }
 

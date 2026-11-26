@@ -39,7 +39,7 @@ import {LoginService} from '../../services/login.service';
 })
 export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
-  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+  private readonly websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   @Input()
   tournament: Tournament;
@@ -63,7 +63,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   editorTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
   @ViewChild('tournamentBracketsComponent', {read: ElementRef})
-  public tournamentBracketsComponent: ElementRef;
+  public readonly tournamentBracketsComponent: ElementRef;
 
   groups: Group[];
   selectedGroup: Group;
@@ -83,13 +83,13 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   protected readonly RbacActivity = RbacActivity;
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
-  constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              public rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
-              private rxStompService: RxStompService, private environmentService: EnvironmentService,
-              private tournamentChangedService: TournamentChangedService, private csvService: CsvService,
-               private messageService: MessageService, private translateService: TranslocoService,
-               private loginService: LoginService) {
+  constructor(private readonly teamService: TeamService, private readonly groupService: GroupService, private readonly groupLinkService: GroupLinkService,
+              public readonly rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+              private readonly groupsUpdatedService: GroupsUpdatedService, private readonly numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
+              private readonly rxStompService: RxStompService, private readonly environmentService: EnvironmentService,
+              private readonly tournamentChangedService: TournamentChangedService, private readonly csvService: CsvService,
+               private readonly messageService: MessageService, private readonly translateService: TranslocoService,
+               private readonly loginService: LoginService) {
   }
 
   ngOnInit(): void {

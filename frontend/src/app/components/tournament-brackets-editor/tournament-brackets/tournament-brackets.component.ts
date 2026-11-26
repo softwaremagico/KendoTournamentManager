@@ -38,7 +38,7 @@ export class TournamentBracketsComponent implements OnInit {
   readonly levelSeparation: number = BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
 
 
-  constructor(private groupsUpdatedService: GroupsUpdatedService) {
+  constructor(private readonly groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {
@@ -72,7 +72,7 @@ export class TournamentBracketsComponent implements OnInit {
     });
   }
 
-  public static convert(groups: Group[]): Map<number, Group[]> {
+  public readonly static convert(groups: Group[]): Map<number, Group[]> {
     const groupsByLevel: Map<number, Group[]> = new Map();
     if (groups) {
       for (const group of groups) {

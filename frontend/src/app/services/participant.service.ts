@@ -13,11 +13,11 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class ParticipantService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/participants';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/participants';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
   getAll(): Observable<Participant[]> {

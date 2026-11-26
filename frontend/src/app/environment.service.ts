@@ -9,11 +9,11 @@ declare const __config: EnvironmentData;
 })
 export class EnvironmentService {
 
-  private backendUrl: string = __config.backendUrl ? __config.backendUrl : Environment.backendUrl;
-  private websocketUrl: string = __config.websocketsUrl ? __config.websocketsUrl : Environment.websocketsUrl;
-  private websocketPrefix: string = __config.websocketsTopicPrefix ? __config.websocketsTopicPrefix : Environment.websocketsTopicPrefix;
-  private achievementsEnabled: boolean = __config.achievementsEnabled ? __config.achievementsEnabled : (Environment.achievementsEnabled as unknown as boolean);
-  private checkForNewVersion: boolean = __config.checkForNewVersion ? __config.checkForNewVersion : (Environment.checkForNewVersion as unknown as boolean);
+  private readonly backendUrl: string = __config.backendUrl ? __config.backendUrl : Environment.backendUrl;
+  private readonly websocketUrl: string = __config.websocketsUrl ? __config.websocketsUrl : Environment.websocketsUrl;
+  private readonly websocketPrefix: string = __config.websocketsTopicPrefix ? __config.websocketsTopicPrefix : Environment.websocketsTopicPrefix;
+  private readonly achievementsEnabled: boolean = __config.achievementsEnabled ? __config.achievementsEnabled : (Environment.achievementsEnabled as unknown as boolean);
+  private readonly checkForNewVersion: boolean = __config.checkForNewVersion ? __config.checkForNewVersion : (Environment.checkForNewVersion as unknown as boolean);
 
   getBackendUrl(): string {
     return this.backendUrl;

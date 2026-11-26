@@ -16,7 +16,7 @@ export class LanguageSelectorComponent {
 
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(private translocoService: TranslocoService, private userSessionService: UserSessionService) {
+  constructor(private readonly translocoService: TranslocoService, private readonly userSessionService: UserSessionService) {
     this.languages = this.translocoService.getAvailableLangs() as string[];
     this.selectedLanguage = this.userSessionService.getLanguage();
   }
