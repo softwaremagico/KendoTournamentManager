@@ -58,6 +58,7 @@ describe('Visualization pipes', () => {
     const session = jasmine.createSpyObj<UserSessionService>('UserSessionService', ['getLanguage']);
     session.getLanguage.and.returnValue('en');
     const pipe = new TableColumnTranslationPipe(translate, session);
+    // TournamentScore exposes scoreType as its stable translation key.
     expect(pipe.transform({scoreType: 'WIN_OVER_DRAWS'})).toBe('translated:winOverDraws');
     expect(pipe.transform({scoreType: 7})).toBe('');
     expect(pipe.transform({})).toBe('');
