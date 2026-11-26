@@ -1,26 +1,28 @@
-import {Component, Inject, Optional} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../RbacBasedComponent";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {RbacService} from "../../../services/rbac/rbac.service";
-import {Action} from "../../../action";
 
 @Component({
-  selector: 'app-picture-dialog-box',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'picture-dialog-box',
   templateUrl: './picture-dialog-box.component.html',
   styleUrls: ['./picture-dialog-box.component.scss']
 })
 export class PictureDialogBoxComponent extends RbacBasedComponent {
 
+  @Output()
+  closed: EventEmitter<void> = new EventEmitter<void>();
+
+  @Input()
   participantPicture: string;
 
-  constructor(public dialogRef: MatDialogRef<PictureDialogBoxComponent>, rbacService: RbacService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { image: string }, public dialog: MatDialog,) {
+  constructor(rbacService: RbacService) {
     super(rbacService);
-    this.participantPicture = data.image;
   }
 
   closeDialog() {
-    this.dialogRef.close({action: Action.Cancel});
+    this.closed.emit();
   }
 
 }

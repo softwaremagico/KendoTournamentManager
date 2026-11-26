@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {MessageService} from "./message.service";
@@ -33,7 +33,7 @@ export class TournamentExtendedPropertiesService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty[]>(`getting properties from tournament ${tournament}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty[]>(`getting properties from tournament ${tournament.name}`))
       );
   }
 
@@ -46,7 +46,20 @@ export class TournamentExtendedPropertiesService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty>(`getting properties from tournament ${tournament} and key ${propertyKey}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty>(`getting properties from tournament ${tournament.name} and key ${propertyKey}`))
+      );
+  }
+
+  getLatest(): Observable<TournamentExtendedProperty[]> {
+    const url: string = `${this.baseUrl}/latest`;
+    return this.http.get<TournamentExtendedProperty[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info('fetched latest tournament properties'),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<TournamentExtendedProperty[]>('getting latest tournament properties'))
       );
   }
 

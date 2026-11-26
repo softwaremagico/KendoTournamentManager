@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,7 +49,8 @@ public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp>
         try {
             return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData));
         } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid timestamp value '{}' in database.", dbData);
+            EncryptorLogger.errorMessage(this.getClass(), "Invalid timestamp value '{}' in database ({}).", dbData,
+                    nfe.getMessage());
             return null;
         }
     }

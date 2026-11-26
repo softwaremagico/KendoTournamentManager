@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -88,6 +88,12 @@ public class ListTests extends BasicDataTest {
     public void generateTeamListPdf() {
         Assert.assertEquals(pdfController.generateTeamList(tournament)
                 .createFile(PDF_PATH_OUTPUT + "TeamList.pdf"), 2); // No clue why are 2 pages and not 1.
+    }
+
+    @Test
+    public void generateGroupListPdf() {
+        Assert.assertEquals(pdfController.generateGroupList(Locale.getDefault(), tournament)
+                .createFile(PDF_PATH_OUTPUT + "GroupList.pdf"), 2); // Consistente con el resto de listados de prueba.
     }
 
     @Test

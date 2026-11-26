@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,9 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -69,4 +72,8 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     void deleteByParticipantAndTournament(Participant participant, Tournament tournament);
 
     long deleteByTournament(Tournament tournament);
+
+    @Modifying
+    @Query("DELETE FROM Role r WHERE r.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

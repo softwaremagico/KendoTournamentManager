@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,7 +71,7 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     private T decrypt(String dbData) throws InvalidEncryptionException {
         final T entity = stringToEntityAttribute(cipherEngine.decrypt(dbData));
-        EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
+        EncryptorLogger.debug(this.getClass(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
     }
 

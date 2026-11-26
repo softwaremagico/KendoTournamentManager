@@ -4,7 +4,7 @@ package com.softwaremagico.kt;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,7 +45,7 @@ public class SwaggerConfiguration {
     private static final String SWAGGER_README = SWAGGER_TITLE + " Documentation";
     private static final String SWAGGER_URL = "https://softwaremagico.github.io/KendoTournamentManager/";
     private static final String SWAGGER_DEFAULT_VERSION = "Dev";
-    private static final String[] PACKAGES_TO_SCAN = new String[]{"com.softwaremagico.kt"};
+    private static final String[] PACKAGES_TO_SCAN = {"com.softwaremagico.kt"};
 
     @Bean
     public GroupedOpenApi publicApi() {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,16 +22,16 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.BaseFont;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
@@ -91,9 +91,6 @@ public class GroupList extends ParentList {
     @Override
     public void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                BaseFont font, int fontSize) throws EmptyPdfBodyException {
-        PdfPCell cell;
-        Paragraph p;
-
         mainTable.addCell(getEmptyRow());
 
         if (groups.isEmpty()) {
@@ -103,44 +100,58 @@ public class GroupList extends ParentList {
         final Map<Integer, List<GroupDTO>> groupsByLevel = GroupUtils.orderDTOByLevel(groups);
 
         for (int level = 0; level < groupsByLevel.size(); level++) {
-            //Check if level is empty!
-            boolean empty = true;
-            for (GroupDTO groupDTO : groupsByLevel.get(level)) {
-                if (!groupDTO.getTeams().isEmpty()) {
-                    empty = false;
-                    break;
-                }
-            }
-
-            if (empty) {
+            final List<GroupDTO> levelGroups = groupsByLevel.get(level);
+            if (isEmptyLevel(levelGroups)) {
                 continue;
             }
 
-            //Show level header.
-            if (groupsByLevel.size() > 1) {
-                mainTable.addCell(getHeader3(messageSource.getMessage("tournament.phase", null, locale) + " " + (level + 1), 0));
-            }
-            for (int i = 0; i < groupsByLevel.get(level).size(); i++) {
-                cell = new PdfPCell(groupTable(groupsByLevel.get(level).get(i)));
-                cell.setColspan(1);
-                mainTable.addCell(cell);
-
-                if (i % 2 == 0) {
-                    p = new Paragraph(" ");
-                    cell = new PdfPCell(p);
-                    cell.setBorderWidth(BORDER);
-                    cell.setColspan(1);
-                    mainTable.addCell(cell);
-                } else {
-                    mainTable.addCell(getEmptyRow());
-                }
-            }
-            mainTable.completeRow();
-
-            //Spaces between levels.
-            mainTable.addCell(getEmptyRow());
-            mainTable.addCell(getEmptyRow());
+            addLevelHeader(mainTable, groupsByLevel.size(), level);
+            addLevelGroups(mainTable, levelGroups);
+            addLevelSpacer(mainTable);
         }
+    }
+
+    private boolean isEmptyLevel(List<GroupDTO> levelGroups) {
+        for (final GroupDTO groupDTO : levelGroups) {
+            if (!groupDTO.getTeams().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void addLevelHeader(PdfPTable mainTable, int totalLevels, int level) {
+        if (totalLevels > 1) {
+            mainTable.addCell(getHeader3(messageSource.getMessage("tournament.phase", null, locale)
+                    + " " + (level + 1), 0));
+        }
+    }
+
+    private void addLevelGroups(PdfPTable mainTable, List<GroupDTO> levelGroups) {
+        for (int i = 0; i < levelGroups.size(); i++) {
+            final PdfPCell groupCell = new PdfPCell(groupTable(levelGroups.get(i)));
+            groupCell.setColspan(1);
+            mainTable.addCell(groupCell);
+
+            if (i % 2 == 0) {
+                mainTable.addCell(createSeparatorCell());
+            } else {
+                mainTable.addCell(getEmptyRow());
+            }
+        }
+        mainTable.completeRow();
+    }
+
+    private PdfPCell createSeparatorCell() {
+        final PdfPCell separatorCell = new PdfPCell(new Paragraph(" "));
+        separatorCell.setBorderWidth(BORDER);
+        separatorCell.setColspan(1);
+        return separatorCell;
+    }
+
+    private void addLevelSpacer(PdfPTable mainTable) {
+        mainTable.addCell(getEmptyRow());
+        mainTable.addCell(getEmptyRow());
     }
 
     @Override
@@ -152,7 +163,7 @@ public class GroupList extends ParentList {
     @Override
     public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                 BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, fontSize)));
+        final PdfPCell cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, (float) fontSize)));
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);

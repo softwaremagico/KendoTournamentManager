@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="100%"
+   height="100%"
+   viewBox="0 0 52.91667 52.916669"
+   version="1.1"
+   id="svg8"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <g
+     transform="matrix(-0.12664274,-0.02415835,0.02415835,-0.12664274,-8.2706343,100.1021)"
+     id="g506"
+     style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2" />
+  <path
+     id="path5425"
+     style="clip-rule:evenodd;fill-rule:evenodd;stroke-width:0.122224;stroke-linejoin:round;stroke-miterlimit:2"
+     d="m 51.458335,1.4583345 -6.05511,1.4443359 V 51.458334 l 6.05511,-1.443846 z M 17.608408,10.488608 1.4583349,26.388022 17.459967,42.428061 l 0.04325,-8.14502 -4.885277,-4.896972 28.943022,0.135742 0.02801,-5.758789 -29.098344,-0.132325 5.083854,-5.004882 z" />
+  <g
+     transform="matrix(0,0.32204138,0.32204138,0,-1037.1454,-132.41729)"
+     id="g516-3"
+     style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2">
+    <g
+       transform="translate(-1026.61,3231.23)"
+       id="g514-6">
+      <g
+         transform="translate(0,-257.882)"
+         id="g512-7">
+        <g
+           transform="rotate(100.79998,489.64728,1541.3032)"
+           id="g506-5" />
+        <g
+           transform="translate(873.583,-38.5703)"
+           id="g510-5" />
+      </g>
+    </g>
+  </g>
+  <g
+     transform="matrix(-0.07586559,-0.07655366,0.07655366,-0.07586559,114.89194,182.44882)"
+     id="g6"
+     style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2">
+    <g
+       transform="translate(-3854.11,-22832)"
+       id="g4" />
+  </g>
+</svg>

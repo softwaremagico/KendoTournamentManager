@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,7 +71,7 @@ public class GroupLinkController {
     }
 
     public List<GroupLinkDTO> getLinks(Tournament tournament) {
-        return convertAll(groupLinkProvider.generateLinks(tournament));
+        return convertAll(groupLinkProvider.getGroupLinks(tournament));
     }
 
     private List<GroupLinkDTO> convertAll(Collection<GroupLink> entities) {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,12 +21,16 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.Nullable;
+
 import java.io.Serial;
 import java.io.Serializable;
 
 public class ErrorResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -3296687318782961235L;
+    @JsonIgnore
     private final Throwable cause;
     private final String message;
     private final String code;
@@ -35,20 +39,22 @@ public class ErrorResponse implements Serializable {
         this(message, null, null);
     }
 
-    public ErrorResponse(String message, String code) {
+    public ErrorResponse(String message, @Nullable String code) {
         this(message, code, null);
     }
 
-    public ErrorResponse(String message, Throwable cause) {
+    public ErrorResponse(String message, @Nullable Throwable cause) {
         this(message, null, cause);
     }
 
-    public ErrorResponse(String message, String code, Throwable cause) {
+    public ErrorResponse(String message, @Nullable String code, @Nullable Throwable cause) {
         this.message = message;
         this.cause = cause;
         this.code = code;
     }
 
+    @JsonIgnore
+    @Nullable
     public Throwable getCause() {
         return cause;
     }
@@ -57,6 +63,7 @@ public class ErrorResponse implements Serializable {
         return message;
     }
 
+    @Nullable
     public String getCode() {
         if (code != null) {
             return code;

@@ -1,0 +1,73 @@
+<ng-container id="club-form" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div class="row">
+      <biit-input-text id="club-name" [(ngModel)]="club.name"
+                       [placeholder]="t('clubName')"
+                       [required]="true"
+                       [minLength]="CLUB_NAME_MIN_LENGTH"
+                       [maxlength]="CLUB_NAME_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.NAME_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="club-country" [(ngModel)]="club.country"
+                       [placeholder]="t('clubCountry')"
+                       [required]="true"
+                       [minLength]="CLUB_COUNTRY_MIN_LENGTH"
+                       [maxlength]="CLUB_COUNTRY_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.COUNTRY_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="club-city" [(ngModel)]="club.city"
+                       [placeholder]="t('clubCity')"
+                       [required]="true"
+                       [minLength]="CLUB_CITY_MIN_LENGTH"
+                       [maxlength]="CLUB_CITY_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.CITY_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="club-address" [(ngModel)]="club.address"
+                       [placeholder]="t('clubAddress')"
+                       [minLength]="CLUB_ADDRESS_MIN_LENGTH"
+                       [maxlength]="CLUB_ADDRESS_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.ADDRESS_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="club-email" [(ngModel)]="club.email"
+                       [placeholder]="t('clubEmail')"
+                       [maxlength]="CLUB_EMAIL_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.EMAIL_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="club-phone" [(ngModel)]="club.phone"
+                       [placeholder]="t('clubPhone')"
+                       [minLength]="CLUB_PHONE_MIN_LENGTH"
+                       [maxlength]="CLUB_PHONE_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.PHONE_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-input-text id="club-web" [(ngModel)]="club.web"
+                       [placeholder]="t('clubWeb')"
+                       [minLength]="CLUB_WEB_MIN_LENGTH"
+                       [maxlength]="CLUB_WEB_MAX_LENGTH"
+                       error="{{errors | mapGet: ClubFormValidationFields.WEB_ERRORS}}"
+                       [disabled]="!(RbacActivity.EDIT_CLUB | hasPermission)"
+      ></biit-input-text>
+    </div>
+    <button biit-button id="club-button-save" (click)="onSave()"
+            [disabled]="saving || !(RbacActivity.EDIT_CLUB | hasPermission)">
+      {{ t('saveButton') }}
+    </button>
+  </div>
+</ng-container>

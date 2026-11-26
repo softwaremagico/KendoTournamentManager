@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,9 @@ import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Objects;
 
 public class TournamentImageDTO extends ElementDTO {
 
@@ -49,6 +51,8 @@ public class TournamentImageDTO extends ElementDTO {
 
     @NotNull
     private ImageCompression imageCompression;
+
+    private boolean defaultImage = false;
 
     public TournamentDTO getTournament() {
         return tournament;
@@ -82,6 +86,14 @@ public class TournamentImageDTO extends ElementDTO {
         this.imageCompression = imageCompression;
     }
 
+    public boolean isDefaultImage() {
+        return defaultImage;
+    }
+
+    public void setDefaultImage(boolean defaultImage) {
+        this.defaultImage = defaultImage;
+    }
+
     @JsonGetter
     public String getBase64() {
         if (data == null) {
@@ -91,5 +103,29 @@ public class TournamentImageDTO extends ElementDTO {
             case JPG -> IMAGE_JPG_BASE_64 + Base64.getEncoder().encodeToString(data);
             case PNG -> IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TournamentImageDTO that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return isDefaultImage() == that.isDefaultImage()
+                && Objects.equals(getTournament(), that.getTournament())
+                && Arrays.equals(getData(), that.getData())
+                && getImageType() == that.getImageType()
+                && getImageCompression() == that.getImageCompression();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getTournament(), getImageType(), getImageCompression(),
+                isDefaultImage(), Arrays.hashCode(getData()));
     }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -66,6 +66,8 @@ import java.util.Set;
 @Controller
 public class FightController extends BasicInsertableController<Fight, FightDTO, FightRepository,
         FightProvider, FightConverterRequest, FightConverter> {
+    private static final String TOURNAMENT_NOT_FOUND_WITH_ID = "No tournament found with id '";
+
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final TournamentHandlerSelector tournamentHandlerSelector;
@@ -99,6 +101,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         this.senbatsuTournamentHandler = senbatsuTournamentHandler;
     }
 
+    @SuppressWarnings("java:S2696")
     public void addFightsAddedListeners(FightsAddedListener listener) {
         fightsAddedListeners.add(listener);
     }
@@ -118,7 +121,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public List<FightDTO> getByTournamentId(Integer tournamentId) {
         return get(tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',",
                         ExceptionType.INFO)))));
     }
 
@@ -153,7 +156,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                     if (groupsFromTournament.size() == 1) {
                         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
                                 TournamentExtraPropertyKey.KING_INDEX,
-                                getMaxIndex(groupsFromTournament.get(0).getTeams(),
+                                getMaxIndex(groupsFromTournament.getFirst().getTeams(),
                                         Collections.singletonList(teamConverter.reverse(dto.getTeam2()))) + ""));
                     }
                 }
@@ -211,13 +214,13 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public FightDTO getCurrent(Integer tournamentId) {
         return convert(getProvider().getCurrent((tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',",
                         ExceptionType.INFO)))));
     }
 
     public List<FightDTO> createFights(Integer tournamentId, TeamsOrder teamsOrder, Integer level, String createdBy, String session) {
         final Tournament tournament = (tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',",
                         ExceptionType.INFO)));
         //Delete any deeper level. If a group changes, the inner levels are invalid.
         getProvider().delete(tournament, level + 1);
@@ -243,7 +246,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public List<FightDTO> createNextFights(Integer tournamentId, String createdBy, String session) {
         final Tournament tournament = (tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',",
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
@@ -276,7 +279,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public boolean scoresGoesFromCompetitorsNameToCenter(int tournamentId) {
         return getProvider().scoresGoesFromCompetitorsNameToCenter(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "',",
                         ExceptionType.INFO)));
     }
 

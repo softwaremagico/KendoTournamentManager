@@ -4,7 +4,7 @@ package com.softwaremagico.kt.utils;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,9 @@ public final class StringUtils {
     }
 
     public static String setCase(String value) {
+        if (value == null) {
+            return null;
+        }
         final StringBuilder caseString = new StringBuilder();
         final String[] data = value.split(" ");
         for (final String datum : data) {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.statistics;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,6 +44,8 @@ public class TournamentStatistics {
     private Long numberOfTeams;
 
     private Integer teamSize;
+
+    private Integer fightSize;
 
     private Map<RoleType, Long> numberOfParticipants = new EnumMap<>(RoleType.class);
 
@@ -124,5 +126,13 @@ public class TournamentStatistics {
 
     public void setTeamSize(Integer teamsMember) {
         this.teamSize = teamsMember;
+    }
+
+    public Integer getFightSize() {
+        return fightSize;
+    }
+
+    public void setFightSize(Integer fightSize) {
+        this.fightSize = fightSize;
     }
 }

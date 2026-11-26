@@ -1,6 +1,5 @@
 .user-score {
   width: 50%;
-  float: left;
   display: flex;
   align-items: center;
 }
@@ -12,3 +11,8 @@
   display: flex;
 }
 
+.substitute-separation {
+  width: 20px;
+  max-width: 50px;
+  height: 100%;
+}

@@ -3,18 +3,62 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: 'cimg/openjdk:17.0'
+      - image: 'cimg/openjdk:25.0'
     working_directory: ~/KendoTournamentManager/backend
     steps:
       - checkout:
           method: blobless
           path: ~/KendoTournamentManager
       - run:
-          name: Analyze on SonarCloud
-          command: mvn verify sonar:sonar -Dsonar.projectKey=kendo-tournament-backend -DdeploySnapshot=true
+          name: Execute mvn tests
+          command: mvn test --file pom.xml -Dmdep.skip=true
+
+  frontend-test:
+    docker:
+      - image: 'cimg/node:24.15.0'
+    working_directory: ~/KendoTournamentManager/frontend
+    steps:
+      - checkout:
+          method: blobless
+          path: ~/KendoTournamentManager
+      - run:
+          name: Install Chrome
+          command: |
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+      - restore_cache:
+          keys:
+            - v2-frontend-node-modules-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: |
+            npm ci --no-audit --no-fund --foreground-scripts &
+            npm_pid=$!
+            while kill -0 "$npm_pid" 2>/dev/null; do
+              echo "npm ci still running..."
+              sleep 60
+            done &
+            heartbeat_pid=$!
+            wait "$npm_pid"
+            install_status=$?
+            kill "$heartbeat_pid" 2>/dev/null || true
+            wait "$heartbeat_pid" 2>/dev/null || true
+            exit "$install_status"
+          no_output_timeout: 20m
+      - save_cache:
+          key: v2-frontend-node-modules-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - node_modules
+      - run:
+          name: Run tests
+          command: npm test -- --watch=false --browsers=ChromeHeadlessCI
 
 workflows:
   main:
     jobs:
       - build:
           context: SonarCloud
+      - frontend-test

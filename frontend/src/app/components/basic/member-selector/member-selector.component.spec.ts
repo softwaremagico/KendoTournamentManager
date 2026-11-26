@@ -1,0 +1,204 @@
+import {MemberSelectorComponent} from './member-selector.component';
+import {Team} from '../../../models/team';
+import {Participant} from '../../../models/participant';
+
+describe('MemberSelectorComponent', () => {
+  let component: MemberSelectorComponent;
+
+  const createParticipant = (name: string, id: number): Participant => {
+    const participant = new Participant();
+    participant.id = id;
+    participant.name = name;
+    participant.lastname = 'Test';
+    return participant;
+  };
+
+  beforeEach(() => {
+    component = new MemberSelectorComponent();
+  });
+
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should filter out undefined members from the team when ngOnChanges is called', () => {
+    const participant1 = new Participant();
+    participant1.name = 'John';
+    const participant2 = new Participant();
+    participant2.name = 'Jane';
+
+    const team = new Team('Test Team');
+    team.members = [participant1, undefined, participant2, undefined];
+    component.team = team;
+
+    component.ngOnChanges();
+
+    expect(component.members).toHaveSize(2);
+    expect(component.members).toEqual([participant1, participant2]);
+  });
+
+  it('should auto-select and emit when there is only one member and single selection mode', () => {
+    const onlyMember = createParticipant('Solo', 11);
+    component.selections = 1;
+    component.autoSelectSingleMember = true;
+    component.team = {
+      id: 4,
+      name: 'Team Solo',
+      members: [onlyMember]
+    } as unknown as Team;
+    spyOn(component.selectedMember, 'emit');
+
+    component.ngOnChanges();
+
+    expect(component.selectedMembers).toEqual([onlyMember]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([onlyMember]);
+  });
+
+  it('should not auto-select a single member unless autoSelectSingleMember is enabled', () => {
+    const onlyMember = createParticipant('Solo', 11);
+    component.selections = 1;
+    component.team = {
+      id: 4,
+      name: 'Team Solo',
+      members: [onlyMember]
+    } as unknown as Team;
+    spyOn(component.selectedMember, 'emit');
+
+    component.ngOnChanges();
+
+    expect(component.selectedMembers).toEqual([]);
+    expect(component.selectedMember.emit).not.toHaveBeenCalled();
+  });
+
+  it('should not auto-select when there are multiple members', () => {
+    const memberA = createParticipant('A', 21);
+    const memberB = createParticipant('B', 22);
+    component.selections = 1;
+    component.team = {
+      id: 5,
+      name: 'Team Multi',
+      members: [memberA, memberB]
+    } as unknown as Team;
+    spyOn(component.selectedMember, 'emit');
+
+    component.ngOnChanges();
+
+    expect(component.selectedMembers).toEqual([]);
+    expect(component.selectedMember.emit).not.toHaveBeenCalled();
+  });
+
+  it('should handle empty team members list when ngOnChanges is called', () => {
+    const team = new Team('Empty Team');
+    team.members = [undefined, undefined];
+    component.team = team;
+
+    component.ngOnChanges();
+
+    expect(component.members).toHaveSize(0);
+    expect(component.members).toEqual([]);
+  });
+
+  it('should select a single participant when selections is 1', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 1;
+
+    const participant = new Participant();
+    participant.name = 'Test User';
+    component.selectedMembers = [];
+
+    component.selectUser(participant);
+
+    expect(component.selectedMembers).toHaveSize(1);
+    expect(component.selectedMembers[0]).toEqual(participant);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant]);
+  });
+
+  it('should replace the previous selection when selections is 1 and a new user is selected', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 1;
+
+    const participant1 = new Participant();
+    participant1.name = 'User 1';
+    const participant2 = new Participant();
+    participant2.name = 'User 2';
+
+    component.selectUser(participant1);
+    (component.selectedMember.emit as jasmine.Spy).calls.reset();
+
+    component.selectUser(participant2);
+
+    expect(component.selectedMembers).toHaveSize(1);
+    expect(component.selectedMembers[0]).toEqual(participant2);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
+  });
+
+  it('should add participant to selection when selections > 1 and participant is not selected', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 2;
+    component.selectedMembers = [];
+
+    const participant = new Participant();
+    participant.name = 'Test User';
+
+    component.selectUser(participant);
+
+    expect(component.selectedMembers).toContain(participant);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant]);
+  });
+
+  it('should remove participant from selection when selections > 1 and participant is already selected', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 2;
+
+    const participant1 = new Participant();
+    participant1.name = 'User 1';
+    const participant2 = new Participant();
+    participant2.name = 'User 2';
+
+    component.selectedMembers = [participant1, participant2];
+
+    component.selectUser(participant1);
+
+    expect(component.selectedMembers).not.toContain(participant1);
+    expect(component.selectedMembers).toEqual([participant2]);
+    expect(component.selectedMember.emit).toHaveBeenCalledOnceWith([participant2]);
+  });
+
+  it('should allow multiple selections when selections > 1', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 3;
+    component.selectedMembers = [];
+
+    const participant1 = new Participant();
+    participant1.name = 'User 1';
+    const participant2 = new Participant();
+    participant2.name = 'User 2';
+    const participant3 = new Participant();
+    participant3.name = 'User 3';
+
+    component.selectUser(participant1);
+    component.selectUser(participant2);
+    component.selectUser(participant3);
+
+    expect(component.selectedMembers).toHaveSize(3);
+    expect(component.selectedMembers).toEqual([participant1, participant2, participant3]);
+  });
+
+  it('should treat participants with same id as the same selected member', () => {
+    spyOn(component.selectedMember, 'emit');
+    component.selections = 2;
+
+    const participant1 = new Participant();
+    participant1.id = 7;
+    participant1.name = 'User 1';
+
+    const participant1Clone = new Participant();
+    participant1Clone.id = 7;
+    participant1Clone.name = 'User 1 clone';
+
+    component.selectUser(participant1);
+    component.selectUser(participant1Clone);
+
+    expect(component.selectedMembers).toHaveSize(0);
+  });
+});

@@ -1,30 +1,39 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {FileService} from "../../services/file.service";
 import {NameUtilsService} from "../../services/name-utils.service";
-import {PictureDialogBoxComponent} from "./picture-dialog-box/picture-dialog-box.component";
-import {MatDialog} from "@angular/material/dialog";
 import {ParticipantImage} from "../../models/participant-image.model";
+import {KendoComponent} from "../kendo-component";
+import {takeUntil} from "rxjs";
 
 @Component({
-  selector: 'app-participant-picture',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'participant-picture',
   templateUrl: './participant-picture.component.html',
   styleUrls: ['./participant-picture.component.scss']
 })
-export class ParticipantPictureComponent implements OnInit {
+export class ParticipantPictureComponent extends KendoComponent implements OnInit {
 
   @Input()
   participant: Participant | undefined;
 
+  @Output()
+  windowOpened: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   participantPicture: string | undefined;
   participantInitials: string;
 
-  constructor(private fileService: FileService, private nameUtils: NameUtilsService, public dialog: MatDialog) {
+  participantWindowOpened: boolean = false;
+
+
+  constructor(private readonly fileService: FileService, private readonly nameUtils: NameUtilsService) {
+    super();
   }
 
   ngOnInit(): void {
     if (this.participant?.hasAvatar) {
-      this.fileService.getParticipantPicture(this.participant).subscribe((_picture: ParticipantImage): void => {
+      this.fileService.getParticipantPicture(this.participant).pipe(takeUntil(this.destroySubject)).subscribe((_picture: ParticipantImage): void => {
         if (_picture) {
           this.participantPicture = _picture.base64;
         } else {
@@ -52,12 +61,13 @@ export class ParticipantPictureComponent implements OnInit {
     if (participant.id) {
       const seed = Math.abs(participant.id);
       const mainColor = seed % 135 + 120;
-      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 == 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
+      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 === 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
         (mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30);
-      const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 == 0 || seed > 230 ? -1 : 1));
-      color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);
+      const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 === 0 || seed > 230 ? -1 : 1));
+      const channelIndex = seed % 3;
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 0, 1) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 1, 2) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 2, 0);
     } else {
       color += "255, 255, 255";
     }
@@ -72,9 +82,10 @@ export class ParticipantPictureComponent implements OnInit {
       const mainColor = seed % 100;
       const secondaryColor = 100 - seed % 100;
       const thirdColor = mainColor > 10 ? mainColor - 10 + seed % 30 : mainColor + seed % 30;
-      color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);
+      const channelIndex = seed % 3;
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 0, 1) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 1, 2) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 2, 0);
     } else {
       color += "255, 255, 255";
     }
@@ -82,18 +93,19 @@ export class ParticipantPictureComponent implements OnInit {
     return color;
   }
 
-  openImage() {
-    if (this.participantPicture) {
-      this.openDialog("", this.participantPicture);
+  private channel(channelIndex: number, mainColor: number, secondaryColor: number, thirdColor: number,
+                  mainIndex: number, secondaryIndex: number): number {
+    if (channelIndex === mainIndex) {
+      return mainColor;
     }
+    if (channelIndex === secondaryIndex) {
+      return secondaryColor;
+    }
+    return thirdColor;
   }
 
-  openDialog(title: string, image: string) {
-    this.dialog.open(PictureDialogBoxComponent, {
-      width: '435px',
-      data: {
-        image: image
-      }
-    });
+  openImage(opened: boolean): void {
+    this.participantWindowOpened = opened;
+    this.windowOpened.emit(opened);
   }
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -204,6 +204,19 @@ export class GroupService {
         'Content-Type': 'application/json'
       })
     });
+  }
+
+  refreshNonStartedGroups(tournamentId: number, level:number): Observable<void> {
+    const url: string = `${this.baseUrl}/refresh/tournaments/${tournamentId}/levels/${level}`;
+    return this.http.patch<void>(url, null)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Refreshing groups from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Refreshing groups from tournament ${tournamentId}`))
+      );
   }
 
 }

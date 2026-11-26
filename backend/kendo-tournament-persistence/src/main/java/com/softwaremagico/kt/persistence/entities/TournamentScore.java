@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,28 +22,33 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.ScoreTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_scores")
+@SuppressWarnings("java:S2160")
 public class TournamentScore extends Element {
 
+    /** Default points awarded for a win in a Swiss tournament. */
+    public static final int SWISS_DEFAULT_WIN_POINTS = 3;
+
+    /** Default points awarded for a draw in a Swiss tournament. */
+    public static final int SWISS_DEFAULT_DRAW_POINTS = 1;
+
     @Column(name = "score_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Convert(converter = StringCryptoConverter.class)
+    @Convert(converter = ScoreTypeCryptoConverter.class)
     private ScoreType scoreType;
 
     @Column(name = "points_by_victory")
@@ -62,6 +67,20 @@ public class TournamentScore extends Element {
     public TournamentScore(ScoreType scoreType) {
         super();
         this.scoreType = scoreType;
+    }
+
+    /**
+     * Creates a TournamentScore with explicit win and draw point values.
+     *
+     * @param scoreType      the scoring algorithm to use for ranking
+     * @param pointsByVictory points awarded to the winner of a fight
+     * @param pointsByDraw    points awarded to each team in a drawn fight
+     */
+    public TournamentScore(ScoreType scoreType, int pointsByVictory, int pointsByDraw) {
+        super();
+        this.scoreType = scoreType;
+        this.pointsByVictory = pointsByVictory;
+        this.pointsByDraw = pointsByDraw;
     }
 
     public ScoreType getScoreType() {

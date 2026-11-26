@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,9 +24,13 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -36,9 +40,38 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
      * Note that this method will not work with encrypted databases. Use the username search based on Hash.
      *
      * @param username
-     * @return
+     *            the username to search for.
+     * @return the matching {@link AuthenticatedUser}, if any.
      */
     Optional<AuthenticatedUser> findByUsername(String username);
 
     Optional<AuthenticatedUser> findByUsernameHash(String username);
+
+    List<AuthenticatedUser> findAllByUsername(String username);
+
+    List<AuthenticatedUser> findAllByUsernameHash(String username);
+
+    boolean existsByUsernameHash(String username);
+
+    @Query(value = "SELECT * FROM authenticated_users", nativeQuery = true)
+    List<AuthenticatedUser> findAllUnscoped();
+
+    boolean existsByRolesContaining(String role);
+
+    @Modifying
+    @Query("UPDATE AuthenticatedUser u SET u.lastTenantId = :tenantId WHERE u.usernameHash = :username")
+    int updateLastTenantIdByUsernameHash(@Param("username") String username, @Param("tenantId") Integer tenantId);
+
+    @Modifying
+    @Query("UPDATE AuthenticatedUser u SET u.lastTenantId = NULL WHERE u.lastTenantId = :tenantId")
+    int clearLastTenantId(@Param("tenantId") Integer tenantId);
+
+    @Modifying
+    @Query("DELETE FROM AuthenticatedUser u WHERE u.id IN :userIds")
+    long deleteAllByIdIn(@Param("userIds") List<Integer> userIds);
+
+    @Modifying
+    @Query(value = "DELETE FROM authenticated_user_roles WHERE authenticated_user IN :userIds", nativeQuery = true)
+    int deleteRolesByUserIds(@Param("userIds") List<Integer> userIds);
+
 }

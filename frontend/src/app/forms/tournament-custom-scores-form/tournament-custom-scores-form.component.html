@@ -1,0 +1,31 @@
+<ng-container id="tournament-score-options" *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    @if (true) {
+      <div class="row">
+        <biit-input-text id="tournament-points-by-vitory" class="tournament-field"
+          [(ngModel)]="tournament.tournamentScore.pointsByVictory"
+          [placeholder]="t('pointsByVictory')"
+          [required]="true"
+          [type]="Type.NUMBER"
+          [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)"
+        ></biit-input-text>
+      </div>
+    }
+    @if (true) {
+      <div class="row">
+        <biit-input-text id="tournament-points-by-draw" class="tournament-field"
+          [(ngModel)]="tournament.tournamentScore.pointsByDraw"
+          [placeholder]="t('pointsByDraw')"
+          [required]="true"
+          [type]="Type.NUMBER"
+          [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)"
+        ></biit-input-text>
+      </div>
+    }
+    <div class="buttons-row">
+      <button biit-button id="tournament-button-close" (click)="closed.emit()" primary>
+        {{ t('close') }}
+      </button>
+    </div>
+  </div>
+</ng-container>

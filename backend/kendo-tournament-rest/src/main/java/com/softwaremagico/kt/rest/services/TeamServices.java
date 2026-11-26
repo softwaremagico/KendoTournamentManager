@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -151,7 +151,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
                 throw new BadRequestException(getClass(), "Team data is missing");
             }
         });
-        getController().delete(teamsDTOs.get(0).getTournament());
+        getController().delete(teamsDTOs.getFirst().getTournament());
         return getController().create(teamsDTOs, authentication.getName(), session);
     }
 

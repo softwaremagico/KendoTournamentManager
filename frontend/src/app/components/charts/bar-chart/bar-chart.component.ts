@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -17,7 +17,7 @@ import {BarChartData} from "./bar-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 
 type BarChartOptions = {
@@ -36,6 +36,8 @@ type BarChartOptions = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
@@ -86,6 +88,9 @@ export class BarChartComponent extends CustomChartComponent {
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
+    if (userSessionService.getNightMode()) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
   }
 
   protected setProperties(): void {

@@ -1,0 +1,295 @@
+package com.softwaremagico.kt.rest.security;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (Rest)
+ * %%
+ * Copyright (C) 2021 - 2026 SoftwareMagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
+import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.repositories.TenantRepository;
+import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
+import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
+import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.util.Optional;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertThrows;
+
+public class JwtTokenFilterTest {
+
+    @Mock
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Mock
+    private AuthenticatedUserProvider authenticatedUserProvider;
+
+    @Mock
+    private ParticipantProvider participantProvider;
+
+    @Mock
+    private NetworkController networkController;
+
+    @Mock
+    private TenantRepository tenantRepository;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
+
+    @Mock
+    private FilterChain chain;
+
+    @InjectMocks
+    private JwtTokenFilter filter;
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        filter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider, participantProvider, networkController);
+        SecurityContextHolder.clearContext();
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void cleanContext() {
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldContinueChainWhenAuthorizationHeaderIsMissing() throws Exception {
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(null);
+        when(request.getContextPath()).thenReturn("/api");
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(jwtTokenUtil, never()).validate(any());
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldContinueChainWhenTokenIsInvalid() throws Exception {
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer invalid-token");
+        when(jwtTokenUtil.validate("invalid-token")).thenReturn(false);
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(authenticatedUserProvider, never()).findByUsername(any());
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldContinueChainWhenBearerTokenIsBlank() throws Exception {
+        final JwtTokenFilter localFilter = new JwtTokenFilter("false", "false", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer   ");
+
+        localFilter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(jwtTokenUtil, never()).validate(any());
+        verify(authenticatedUserProvider, never()).findByUsername(any());
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldAuthenticateStandardUserWhenTokenIsValid() throws Exception {
+        final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
+        authenticatedUser.setRoles(Set.of("ROLE_ADMIN"));
+		authenticatedUser.setTenantId(1);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer valid-token");
+        when(jwtTokenUtil.validate("valid-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("valid-token")).thenReturn("admin");
+        when(jwtTokenUtil.getTenantId("valid-token")).thenReturn(1);
+        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(authenticatedUserProvider.belongsToTenant(authenticatedUser, 1)).thenReturn(true);
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        assertSame(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), authenticatedUser);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldRejectTokenForInactiveTenant() throws Exception {
+        final JwtTokenFilter tenantAwareFilter = new JwtTokenFilter("false", "false", jwtTokenUtil,
+                authenticatedUserProvider, participantProvider, networkController, tenantRepository);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer disabled-tenant-token");
+        when(jwtTokenUtil.validate("disabled-tenant-token")).thenReturn(true);
+        when(jwtTokenUtil.getTenantId("disabled-tenant-token")).thenReturn(9);
+        when(tenantRepository.existsByIdAndActiveTrue(9)).thenReturn(false);
+
+        assertThrows(InvalidJwtException.class, () -> tenantAwareFilter.doFilterInternal(request, response, chain));
+        verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldAuthenticateVirtualGuestWithoutTenantMembership() throws Exception {
+        final AuthenticatedUser guest = new AuthenticatedUser(AuthenticatedUserProvider.GUEST_USER);
+        guest.setRoles(Set.of("ROLE_GUEST"));
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer guest-token");
+        when(jwtTokenUtil.validate("guest-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("guest-token")).thenReturn(AuthenticatedUserProvider.GUEST_USER);
+        when(jwtTokenUtil.getTenantId("guest-token")).thenReturn(7);
+        when(authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)).thenReturn(Optional.of(guest));
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(authenticatedUserProvider, never()).belongsToTenant(any(), any());
+        assertSame(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), guest);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldRejectStandardUserWithoutTenantMembership() throws Exception {
+        final AuthenticatedUser user = new AuthenticatedUser("admin");
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer foreign-token");
+        when(jwtTokenUtil.validate("foreign-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("foreign-token")).thenReturn("admin");
+        when(jwtTokenUtil.getTenantId("foreign-token")).thenReturn(7);
+        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(user));
+        when(authenticatedUserProvider.belongsToTenant(user, 7)).thenReturn(false);
+
+        assertThrows(InvalidJwtException.class, () -> filter.doFilterInternal(request, response, chain));
+        verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldThrowInvalidIpWhenIpDoesNotMatchToken() {
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
+		authenticatedUser.setTenantId(1);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer token-ip");
+        when(jwtTokenUtil.validate("token-ip")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("token-ip")).thenReturn("admin");
+		when(jwtTokenUtil.getTenantId("token-ip")).thenReturn(1);
+        when(jwtTokenUtil.getUserIp("token-ip")).thenReturn("10.10.10.10");
+        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(authenticatedUserProvider.belongsToTenant(authenticatedUser, 1)).thenReturn(true);
+        when(request.getHeader("X-Forwarded-For")).thenReturn(null);
+        when(request.getHeader("Proxy-Client-IP")).thenReturn(null);
+        when(request.getHeader("WL-Proxy-Client-IP")).thenReturn(null);
+        when(request.getHeader("HTTP_X_FORWARDED_FOR")).thenReturn(null);
+        when(request.getHeader("HTTP_X_FORWARDED")).thenReturn(null);
+        when(request.getHeader("HTTP_X_CLUSTER_CLIENT_IP")).thenReturn(null);
+        when(request.getHeader("HTTP_CLIENT_IP")).thenReturn(null);
+        when(request.getHeader("HTTP_FORWARDED_FOR")).thenReturn(null);
+        when(request.getHeader("HTTP_FORWARDED")).thenReturn(null);
+        when(request.getHeader("HTTP_VIA")).thenReturn(null);
+        when(request.getHeader("REMOTE_ADDR")).thenReturn(null);
+        when(request.getRemoteAddr()).thenReturn("192.168.1.99");
+
+        assertThrows(InvalidIpException.class, () -> localFilter.doFilterInternal(request, response, chain));
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldThrowInvalidMacWhenMacDoesNotMatchToken() {
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "false", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        final AuthenticatedUser authenticatedUser = new AuthenticatedUser("admin");
+		authenticatedUser.setTenantId(1);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer token-mac");
+        when(request.getHeader("X-Forwarded-For")).thenReturn("10.10.10.10,10.10.10.11");
+        when(request.getRemoteAddr()).thenReturn("10.10.10.10");
+        when(jwtTokenUtil.validate("token-mac")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("token-mac")).thenReturn("admin");
+		when(jwtTokenUtil.getTenantId("token-mac")).thenReturn(1);
+        when(jwtTokenUtil.getUserIp("token-mac")).thenReturn("10.10.10.10");
+        when(jwtTokenUtil.getHostMac("token-mac")).thenReturn("AA-BB");
+        when(networkController.getHostMac()).thenReturn("CC-DD");
+        when(authenticatedUserProvider.findByUsername("admin")).thenReturn(Optional.of(authenticatedUser));
+        when(authenticatedUserProvider.belongsToTenant(authenticatedUser, 1)).thenReturn(true);
+
+        assertThrows(InvalidMacException.class, () -> localFilter.doFilterInternal(request, response, chain));
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldAllowParticipantUserWhenParticipantAccessIsEnabled() throws Exception {
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        final Participant participant = mock(Participant.class);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer participant-token");
+        when(jwtTokenUtil.validate("participant-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("participant-token")).thenReturn("participant-user");
+		when(jwtTokenUtil.getTenantId("participant-token")).thenReturn(1);
+        when(jwtTokenUtil.getUserIp("participant-token")).thenReturn("11.11.11.11");
+        when(authenticatedUserProvider.findByUsername("participant-user")).thenReturn(Optional.empty());
+        when(participantProvider.findByTokenUsername("participant-user")).thenReturn(Optional.of(participant));
+		when(participant.getTenantId()).thenReturn(1);
+        when(participant.isAccountNonExpired()).thenReturn(true);
+        when(participant.isAccountNonLocked()).thenReturn(true);
+        when(participant.isCredentialsNonExpired()).thenReturn(true);
+        when(participant.isEnabled()).thenReturn(true);
+
+        localFilter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        assertSame(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), participant);
+    }
+
+    @Test(groups = {"jwtTokenUtil"})
+    public void shouldRejectDisabledParticipantAccount() throws Exception {
+        final JwtTokenFilter localFilter = new JwtTokenFilter("true", "true", jwtTokenUtil, authenticatedUserProvider,
+                participantProvider, networkController);
+        final Participant participant = mock(Participant.class);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer disabled-token");
+        when(jwtTokenUtil.validate("disabled-token")).thenReturn(true);
+        when(jwtTokenUtil.getUsername("disabled-token")).thenReturn("disabled-user");
+        when(jwtTokenUtil.getTenantId("disabled-token")).thenReturn(1);
+        when(authenticatedUserProvider.findByUsername("disabled-user")).thenReturn(Optional.empty());
+        when(participantProvider.findByTokenUsername("disabled-user")).thenReturn(Optional.of(participant));
+        when(participant.getTenantId()).thenReturn(1);
+        when(participant.isAccountNonExpired()).thenReturn(true);
+        when(participant.isAccountNonLocked()).thenReturn(true);
+        when(participant.isCredentialsNonExpired()).thenReturn(true);
+        when(participant.isEnabled()).thenReturn(false);
+
+        assertThrows(InvalidJwtException.class, () -> localFilter.doFilterInternal(request, response, chain));
+        verify(chain, never()).doFilter(request, response);
+    }
+}

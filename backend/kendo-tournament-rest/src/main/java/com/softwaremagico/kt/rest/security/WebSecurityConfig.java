@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,6 +47,33 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Spring Security configuration for the Kendo Tournament Manager REST API.
+ * <p>
+ * Security is implemented as a stateless, JWT-based scheme:
+ * </p>
+ * <ul>
+ *   <li>All public paths ({@link #AUTH_WHITELIST}) are permitted without a token,
+ *       including Swagger UI, the {@code /} namespace and WebSocket
+ *       endpoints (which apply their own security through
+ *       {@link WebSocketSecurityConfig}).</li>
+ *   <li>Every other endpoint requires a valid {@code Authorization: Bearer} header.
+ *       Tokens are validated by {@link JwtTokenFilter} which is inserted before
+ *       {@link UsernamePasswordAuthenticationFilter} in the filter chain.</li>
+ *   <li>CSRF is disabled because the API is entirely token-based.</li>
+ *   <li>Sessions are stateless; no HTTP session is ever created by Spring Security.</li>
+ * </ul>
+ * <p>
+ * CORS is configured through {@link #generateCorsConfigurationSource()} and accepts
+ * only the explicit origins supplied via the {@code server.cors.domains} property.
+ * When no origins are configured, cross-origin requests are rejected (same-origin
+ * only), which is the safe default for production deployments behind a reverse proxy.
+ * </p>
+ * <p>
+ * Passwords are encoded with BCrypt (work-factor 10).
+ * </p>
+ */
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(
@@ -67,7 +94,7 @@ public class WebSecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
 
-    @Value("${server.cors.domains:null}")
+    @Value("${server.cors.domains:}")
     private List<String> serverCorsDomains;
 
     @Autowired
@@ -89,11 +116,12 @@ public class WebSecurityConfig {
 
 
     @Bean
+    @SuppressWarnings("java:S4502")
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 //Disable cors headers
                 .cors(cors -> cors.configurationSource(generateCorsConfigurationSource()))
-                //Disable csrf protection
+                // CSRF is intentionally disabled because this API is fully stateless and authenticated via JWT bearer tokens.
                 .csrf(AbstractHttpConfigurer::disable)
                 //Sessions should be stateless
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
@@ -101,30 +129,34 @@ public class WebSecurityConfig {
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
                         httpSecurityExceptionHandlingConfigurer
                                 .authenticationEntryPoint((request, response, ex) -> {
-                                    RestServerLogger.severe(this.getClass().getName(), ex.getMessage());
+                                    RestServerLogger.severe(this.getClass(), ex.getMessage());
                                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
                                 })
                                 .accessDeniedHandler((request, response, ex) -> {
-                                    RestServerLogger.severe(this.getClass().getName(), ex.getMessage());
+                                    RestServerLogger.severe(this.getClass(), ex.getMessage());
                                     response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
                                 })
                 )
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(this.jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
 
     private CorsConfigurationSource generateCorsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        if (serverCorsDomains == null || serverCorsDomains.contains("*")) {
-            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-        } else {
-            configuration.setAllowedOrigins(serverCorsDomains);
-            configuration.setAllowCredentials(true);
-        }
+        // Only register origins that were explicitly configured. An empty list means
+        // no cross-origin request is allowed; a wildcard is never accepted.
+        final List<String> allowedOrigins = serverCorsDomains == null
+                ? Collections.emptyList()
+                : serverCorsDomains.stream()
+                        .filter(origin -> origin != null && !origin.isBlank() && !origin.contains("*"))
+                        .toList();
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedOriginPatterns(Collections.emptyList());
+        configuration.setAllowCredentials(!allowedOrigins.isEmpty());
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);

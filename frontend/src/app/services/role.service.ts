@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
@@ -107,11 +107,11 @@ export class RoleService {
     return this.http.post<Role>(url, role)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting role ${role}`),
+          next: () => this.loggerService.info(`deleting role ${role.id}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Role>(`delete ${role}`))
+        catchError(this.messageService.handleError<Role>(`delete ${role.id}`))
       );
   }
 
@@ -123,11 +123,11 @@ export class RoleService {
     })
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting role for ${participant} on ${tournament}`),
+          next: () => this.loggerService.info(`deleting role for ${participant} on ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Role>(`delete role for ${participant} on ${tournament}`))
+        catchError(this.messageService.handleError<Role>(`delete role for ${participant} on ${tournament.name}`))
       );
   }
 
@@ -136,11 +136,11 @@ export class RoleService {
     return this.http.post<Role>(url, role)
       .pipe(
         tap({
-          next: (newRole: Role) => this.loggerService.info(`adding role ${newRole}`),
+          next: (newRole: Role) => this.loggerService.info(`adding role ${newRole.id}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Role>(`adding ${role}`))
+        catchError(this.messageService.handleError<Role>(`adding ${role.id}`))
       );
   }
 
@@ -149,11 +149,11 @@ export class RoleService {
     return this.http.put<Role>(url, role)
       .pipe(
         tap({
-          next: (updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`),
+          next: (updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole.id}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Role>(`updating ${role}`))
+        catchError(this.messageService.handleError<Role>(`updating ${role.id}`))
       );
   }
 

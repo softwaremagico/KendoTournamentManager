@@ -1,10 +1,12 @@
-import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {Team} from "../../../models/team";
-import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 
 @Component({
-  selector: 'app-member-selector',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'member-selector',
   templateUrl: './member-selector.component.html',
   styleUrls: ['./member-selector.component.scss']
 })
@@ -13,25 +15,31 @@ export class MemberSelectorComponent implements OnChanges {
   @Input()
   team: Team;
 
+  @Input()
+  selections: number = 1;
+
+  @Input()
+  autoSelectSingleMember: boolean = false;
+
+  @Output() selectedMember: EventEmitter<Participant[]> = new EventEmitter<Participant[]>();
+
   members: Participant[];
   selectedMembers: Participant[] = [];
 
-  @Output() selectedMember: EventEmitter<Participant> = new EventEmitter<Participant>();
-
   ngOnChanges(): void {
     //Refresh automatically the team.
-    const teamMembers: (Participant | undefined)[] = this.team.members;
+    const teamMembers: (Participant | undefined)[] = this.team?.members ?? [];
     //Removing undefined members.
     this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
-  }
 
-  checkDroppedElement(item: CdkDrag<Participant>, drop: CdkDropList): boolean {
-    return drop.data.length === 0;
-  }
-
-  dropParticipant(event: CdkDragDrop<Participant[], any>): void {
-    this.transferCard(event);
-    this.selectedMember.emit(this.selectedMembers[0]);
+    //If there is only one possible option, select it automatically.
+    if (this.autoSelectSingleMember && this.selections === 1 && this.members.length === 1) {
+      const onlyMember: Participant = this.members[0];
+      if (!this.isSelected(onlyMember) || this.selectedMembers.length !== 1) {
+        this.selectedMembers = [onlyMember];
+        this.selectedMember.emit(this.selectedMembers);
+      }
+    }
   }
 
   transferCard(event: CdkDragDrop<Participant[], any>): Participant {
@@ -47,4 +55,25 @@ export class MemberSelectorComponent implements OnChanges {
     return event.container.data[event.currentIndex];
   }
 
+  selectUser(participant: Participant) {
+    const isAlreadySelected = this.selectedMembers.some(selected =>
+      selected === participant || (selected?.id != null && participant?.id != null && selected.id === participant.id));
+    if (this.selections > 1) {
+      if (isAlreadySelected) {
+        this.selectedMembers = this.selectedMembers.filter(selected =>
+          selected !== participant && !(selected?.id != null && participant?.id != null && selected.id === participant.id));
+      } else {
+        this.selectedMembers.push(participant);
+      }
+    } else {
+      this.selectedMembers = [];
+      this.selectedMembers.push(participant);
+    }
+    this.selectedMember.emit(this.selectedMembers);
+  }
+
+  isSelected(participant: Participant): boolean {
+    return this.selectedMembers.some(selected =>
+      selected === participant || (selected?.id != null && participant?.id != null && selected.id === participant.id));
+  }
 }

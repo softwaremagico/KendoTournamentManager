@@ -1,11 +1,13 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Group} from "../../../models/group";
 import {GroupsUpdatedService} from "./groups-updated.service";
 import {Tournament} from "../../../models/tournament";
 import {BracketsMeasures} from "./brackets-measures";
 
 @Component({
-  selector: 'app-tournament-brackets',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'tournament-brackets',
   templateUrl: './tournament-brackets.component.html',
   styleUrls: ['./tournament-brackets.component.scss']
 })
@@ -17,6 +19,12 @@ export class TournamentBracketsComponent implements OnInit {
   @Input()
   droppingDisabled: boolean;
 
+  @Input()
+  selectedGroup: Group;
+
+  @Output()
+  elementClicked: EventEmitter<Group> = new EventEmitter<Group>();
+
   numberOfWinnersFirstLevel: number;
 
   totalTeams: number;
@@ -26,6 +34,8 @@ export class TournamentBracketsComponent implements OnInit {
   shiaijosByLevel: Map<number, number[]> = new Map();
 
   groupsByLevel: Map<number, Group[]> = new Map();
+
+  readonly levelSeparation: number = BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
 
 
   constructor(private groupsUpdatedService: GroupsUpdatedService) {
@@ -50,6 +60,9 @@ export class TournamentBracketsComponent implements OnInit {
         });
       });
     });
+    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
+      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
+    })
   }
 
   private updateShiaijos(): void {
@@ -75,69 +88,80 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getGroupHigh(level: number, index: number): number {
-    if (this.groupsByLevel?.get(level) && this.groupsByLevel.get(level)![index]) {
+    const levelGroups = this.groupsByLevel?.get(level);
+    if (levelGroups?.[index]) {
       const estimatedTeams: number = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
       let teams: number = -1;
-      for (const i of this.groupsByLevel.get(level)!.keys()) {
-        if (this.groupsByLevel.get(level)![i].teams.length > teams) {
-          teams = this.groupsByLevel.get(level)![i].teams.length;
+      for (const i of levelGroups.keys()) {
+        if (levelGroups[i].teams.length > teams) {
+          teams = levelGroups[i].teams.length;
         }
       }
 
       if (level == 0 && Math.max(estimatedTeams, teams) > 1) {
-        return Math.max(estimatedTeams, teams) * 60;
+        return Math.max(estimatedTeams, teams) * BracketsMeasures.TEAM_GROUP_HIGH;
       } else if (teams && teams > 1) {
-        return teams * 60;
+        return teams * BracketsMeasures.TEAM_GROUP_HIGH;
       }
     }
     return BracketsMeasures.GROUP_HIGH;
   }
 
+  private getLevelWithMostGroups(groupsByLevel: Map<number, Group[]>): number {
+    return [...groupsByLevel.entries()]
+      .sort(([levelA], [levelB]): number => levelA - levelB)
+      .reduce((levelWithMostGroups: number, [level, groups]: [number, Group[]]): number =>
+        groups.length > (groupsByLevel.get(levelWithMostGroups)?.length ?? 0) ? level : levelWithMostGroups, 0);
+  }
+
+  private getSmallLevelTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]>,
+                                     levelWithMostGroups: number): number {
+    const groupsAtMaxLevel: number = groupsByLevel.get(levelWithMostGroups)!.length;
+    const totalHeight: number = groupsAtMaxLevel * this.getGroupHigh(levelWithMostGroups, group)
+      + (groupsAtMaxLevel - 1) * BracketsMeasures.GROUP_SEPARATION;
+    const portion: number = totalHeight / groupsByLevel.get(level)!.length;
+    // First group has no separation with top.
+    return group === 0 ? (portion / 2) - (this.getGroupHigh(level, group) / 2) : portion;
+  }
+
   getGroupTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number {
-    let maxGroupsByLevel: number = 0;
-    let levelWithMaxGroups: number = 0;
-    //Now group 0 maybe is the one with the highest number of groups. Search for which level is.
-    if (groupsByLevel) {
-      for (let key of groupsByLevel.keys()) {
-        if (groupsByLevel.get(key)!.length > maxGroupsByLevel) {
-          maxGroupsByLevel = groupsByLevel.get(key)!.length;
-          levelWithMaxGroups = key;
-        }
+    if (!groupsByLevel || groupsByLevel.size === 0) {
+      return 0;
+    }
+    const levelWithMostGroups: number = this.getLevelWithMostGroups(groupsByLevel);
+    if (level === levelWithMostGroups
+      || groupsByLevel.get(levelWithMostGroups)?.length === groupsByLevel.get(level)?.length) {
+      if (group === 0) {
+        // First group has no margin. Only difference on size of groups.
+        const separation: number = level !== 0 && (groupsByLevel.get(level)!.length > groupsByLevel.get(0)!.length)
+          ? BracketsMeasures.GROUP_SEPARATION : 0;
+        return separation + (this.getGroupHigh(levelWithMostGroups, group) - this.getGroupHigh(level, group)) / 2;
       }
+      return BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(levelWithMostGroups, group);
     }
-    if (level == levelWithMaxGroups) {
-      return group * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(level, group));
+    return this.getSmallLevelTopSeparation(level, group, groupsByLevel, levelWithMostGroups);
+  }
+
+  getGroupYCoordinate(level: number, group: number): number {
+    let y: number = 0;
+    for (let i = 0; i <= group; i++) {
+      if (i > 0) {
+        //Add previous group high
+        y += this.getGroupHigh(level, i - 1);
+      }
+      //Add separation between groups.
+      y += this.getGroupTopSeparation(level, i, this.groupsByLevel);
     }
-    if (groupsByLevel?.get(levelWithMaxGroups) && groupsByLevel?.get(level)) {
-      const maxHeight: number = groupsByLevel.get(levelWithMaxGroups)!.length * (this.getGroupHigh(levelWithMaxGroups, group) + BracketsMeasures.GROUP_SEPARATION);
-      const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
-      return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - BracketsMeasures.GROUP_SEPARATION / 2
-    }
-    return 0;
+    return y;
   }
 
   getGroupLeftSeparation(level: number, group: number): number {
-    return (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION) * level;
+    //included on arrow div.
+    return 0;
   }
 
-  getArrowX1Coordinate(level: number, group: number): number {
-    return BracketsMeasures.GROUP_WIDTH * (level + 1) + BracketsMeasures.LEVEL_SEPARATION * level + 5;
-  }
-
-  getArrowY1Coordinate(level: number, group: number): number {
-    return this.getGroupTopSeparation(level, group, this.groupsByLevel) + this.getGroupHigh(level, group) / 2;
-  }
-
-  getArrowX2Coordinate(column: number, group: number): number {
-    return BracketsMeasures.GROUP_WIDTH * column + BracketsMeasures.LEVEL_SEPARATION * column + 5;
-  }
-
-  getArrowY2Coordinate(column: number, sourceGroupIndex: number, destinationGroupIndex: number): number {
-    let correction: number = 15;
-    if (sourceGroupIndex % 2 === 0) {
-      correction = -correction;
-    }
-    return this.getGroupTopSeparation(column, destinationGroupIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceGroupIndex) / 2 + correction;
+  getLevelSeparation(): number {
+    return BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
   }
 
   getShiaijos(): Map<number, number[]> {
@@ -145,9 +169,9 @@ export class TournamentBracketsComponent implements OnInit {
     for (let key of this.groupsByLevel.keys()) {
       shiaijosByLevel.set(key, []);
       if (!this.tournament.shiaijos || this.groupsByLevel.get(key)?.length! <= 1) {
-        shiaijosByLevel.set(key, [...Array(0).keys()]);
+        shiaijosByLevel.set(key, [...new Array(0).keys()]);
       } else {
-        shiaijosByLevel.set(key, [...Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(key)?.length! - 1))).keys()]);
+        shiaijosByLevel.set(key, [...new Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(key)?.length! - 1))).keys()]);
       }
     }
     return shiaijosByLevel;
@@ -158,5 +182,9 @@ export class TournamentBracketsComponent implements OnInit {
       return this.groupsByLevel.get(level)!.filter((_group: Group): boolean => _group.shiaijo == shiaijo);
     }
     return [];
+  }
+
+  isSelected(group: Group) {
+    this.elementClicked.emit(group);
   }
 }

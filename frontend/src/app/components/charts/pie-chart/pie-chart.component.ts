@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 
 import {
   ApexChart,
@@ -7,7 +7,7 @@ import {
   ApexNonAxisChartSeries,
   ApexResponsive,
   ApexTitleSubtitle,
-  ApexTooltip, ApexYAxis,
+  ApexTooltip,
   ChartComponent
 } from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";
@@ -15,7 +15,7 @@ import {Colors} from "../colors";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
 import {CustomChartComponent} from "../custom-chart-component";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 
 type PieChartOptions = {
@@ -32,6 +32,8 @@ type PieChartOptions = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-pie-chart',
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss']
@@ -68,6 +70,9 @@ export class PieChartComponent extends CustomChartComponent {
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
+    if (userSessionService.getNightMode()) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
   }
 
   protected setProperties(): void {
@@ -96,8 +101,8 @@ export class PieChartComponent extends CustomChartComponent {
   protected override getTooltip(): ApexTooltip {
     return {
       theme: 'dark',
-        //fillSeriesColor: true,
-        style: {
+      //fillSeriesColor: true,
+      style: {
         fontFamily: 'Roboto',
       }
     }

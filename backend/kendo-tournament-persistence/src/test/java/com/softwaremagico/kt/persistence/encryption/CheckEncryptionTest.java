@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ public class CheckEncryptionTest {
 
     @BeforeClass
     public void loadPassword() {
-        new KeyProperty(PASSWORD, PUBLIC_KEY, PRIVATE_KEY);
+        KeyProperty.configure(PASSWORD, PUBLIC_KEY, PRIVATE_KEY);
     }
 
     @Test

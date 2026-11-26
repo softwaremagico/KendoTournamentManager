@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * KendoTournamentManager
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,6 +46,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.Collator;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -53,17 +55,35 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * A registered person is any person that is in a tournament. Can be a
- * competitor, referee, public, etc.
+ * JPA entity representing any person registered in the system.
+ * <p>
+ * A participant may hold one or more {@link Role}s within a tournament (e.g.
+ * competitor, referee, volunteer). Participants can optionally be granted
+ * temporary authentication credentials so they can log in as a limited
+ * {@code VIEWER} with access to their own fight schedule.
+ * </p>
+ * <p>
+ * The entity implements both {@link UserDetails} (for Spring Security integration)
+ * and {@link IAuthenticatedUser} (for the application's own JWT-based auth).
+ * Participant accounts expire after {@value #TEMPORARY_PARTICIPANT_ACCOUNT_DURATION} days.
+ * Temporary tokens (e.g. for QR-code access) are valid for
+ * {@value #TEMPORARY_TOKEN_DURATION} seconds.
+ * </p>
+ * <p>
+ * Sensitive fields (idCard, name, lastName) are encrypted at rest via
+ * {@link com.softwaremagico.kt.persistence.encryption.StringCryptoConverter}.
+ * </p>
  */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "participants",
+@Table(name = "participants", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "id_card"})},
         indexes = {
                 @Index(name = "ind_club", columnList = "club"),
                 @Index(name = "ind_token", columnList = "temporal_token"),
         })
+@SuppressWarnings("java:S2160")
 public class Participant extends Element implements Comparable<Participant>, IParticipantName, UserDetails, IAuthenticatedUser {
 
     public static final String PARTICIPANT_ROLE = "participant";
@@ -75,7 +95,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     private static final int TEMPORARY_PARTICIPANT_ACCOUNT_DURATION = 365;
     private static final int TOKEN_LENGTH = 15;
 
-    @Column(name = "id_card", unique = true)
+    @Column(name = "id_card")
     @Convert(converter = StringCryptoConverter.class)
     private String idCard;
 
@@ -126,7 +146,9 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     }
 
     public void setIdCard(String value) {
-        idCard = value.replace("-", "").replace(" ", "").trim().toUpperCase();
+        if (value != null) {
+            idCard = value.replace("-", "").replace(" ", "").trim().toUpperCase();
+        }
     }
 
     public boolean isValid() {
@@ -183,7 +205,29 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-        return collator.compare(string1, string2);
+        final int comparison = collator.compare(string1, string2);
+        if (comparison != 0) {
+            return comparison;
+        }
+        if (this.getId() != null && otherParticipant.getId() != null) {
+            return this.getId().compareTo(otherParticipant.getId());
+        }
+        return Integer.compare(System.identityHashCode(this), System.identityHashCode(otherParticipant));
+    }
+
+    /**
+     * Identity equality is kept based on the entity id (see {@link Element#equals(Object)}),
+     * as required to fulfil JPA/Hibernate entity semantics. This override only exists to comply
+     * with the contract between {@link Comparable#compareTo(Object)} and {@link Object#equals(Object)}.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public String getToken() {
@@ -220,12 +264,12 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     public void generateTemporalToken() {
         setTemporalToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setTemporalTokenExpiration(LocalDateTime.now().plusSeconds(TEMPORARY_TOKEN_DURATION));
+        setTemporalTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(TEMPORARY_TOKEN_DURATION));
     }
 
     public void generateToken() {
         setToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setAccountExpiration(LocalDateTime.now().plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
+        setAccountExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
     }
 
     @Override
@@ -250,7 +294,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+        return accountExpiration != null && LocalDateTime.now(ZoneId.systemDefault()).isBefore(accountExpiration);
     }
 
     @Override
@@ -260,7 +304,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+        return accountExpiration != null && LocalDateTime.now(ZoneId.systemDefault()).isBefore(accountExpiration);
     }
 
     @Override

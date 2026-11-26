@@ -15,6 +15,23 @@
                 <include name="groupRepository"/>
                 <include name="fightRepository"/>
                 <include name="duelRepository"/>
+                <include name="stringUtils"/>
+                <include name="idCard"/>
+                <include name="nameUtils"/>
+                <include name="availableRole"/>
+                <include name="cacheEventLogger"/>
+                <include name="encryptorLogger"/>
+                <include name="cryptoConverters"/>
+                <include name="entityBeans"/>
+                <include name="persistenceValues"/>
+                <include name="entityEquals"/>
+                <include name="duelEntity"/>
+                <include name="fightEntity"/>
+                <include name="teamEntity"/>
+                <include name="groupEntity"/>
+                <include name="authenticatedUserEntity"/>
+                <include name="clubEntity"/>
+                <include name="participantEntity"/>
             </run>
         </groups>
         <classes>
@@ -26,6 +43,34 @@
             <class name="com.softwaremagico.kt.persistence.repositories.DuelRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptedDataStorageTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptionTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.EncryptionEnginesAdditionalTests"/>
+            <class name="com.softwaremagico.kt.utils.StringUtilsTests"/>
+            <class name="com.softwaremagico.kt.utils.IdCardTests"/>
+            <class name="com.softwaremagico.kt.utils.NameUtilsAdditionalTests"/>
+            <class name="com.softwaremagico.kt.security.AvailableRoleTests"/>
+            <class name="com.softwaremagico.kt.logger.CacheEventLoggerTests"/>
+            <class name="com.softwaremagico.kt.logger.EncryptorLoggerTests"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersTests"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.CryptoConvertersAdditionalTests"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverterTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.EnumCryptoConvertersCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.EncryptedRoundTripCryptoConvertersTests"/>
+            <class name="com.softwaremagico.kt.persistence.entities.EntityBeansCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.EntityEqualsCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.DuelEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.FightEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.TeamEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.GroupEntityCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.values.PersistenceValuesCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.DoubleCryptoConverterTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.GCMCipherEngineTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverterTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.SHA512HashGeneratorTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.StringCryptoConverterTest"/>
+            <class name="com.softwaremagico.kt.utils.NameUtilsTests"/>
+            <class name="com.softwaremagico.kt.persistence.entities.AuthenticatedUserTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.ClubTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.ParticipantTest"/>
         </classes>
     </test>
 </suite>

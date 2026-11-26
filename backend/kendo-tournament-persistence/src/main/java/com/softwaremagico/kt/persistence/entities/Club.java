@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,9 +41,11 @@ import java.util.Locale;
  * statistics
  */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "clubs", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "city"})})
+@Table(name = "clubs", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "name", "city"})})
+@SuppressWarnings("java:S2160")
 public class Club extends Element implements Comparable<Club> {
 
     @Column(name = "name", nullable = false)
@@ -225,7 +227,18 @@ public class Club extends Element implements Comparable<Club> {
         return collator.compare(getName() + getCity(), c.getName() + c.getCity());
     }
 
+    /**
+     * Identity equality is kept based on the entity id (see {@link Element#equals(Object)}),
+     * as required to fulfil JPA/Hibernate entity semantics. This override only exists to comply
+     * with the contract between {@link Comparable#compareTo(Object)} and {@link Object#equals(Object)}.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

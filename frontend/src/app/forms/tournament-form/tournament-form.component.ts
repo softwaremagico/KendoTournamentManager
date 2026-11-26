@@ -1,0 +1,221 @@
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Tournament} from "../../models/tournament";
+import {TournamentFormValidationFields} from "./tournament-form-validation-fields";
+import {ScoreType} from "../../models/score-type";
+import {TournamentType} from "../../models/tournament-type";
+import {RbacService} from "../../services/rbac/rbac.service";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
+import {combineLatest, map, switchMap, takeUntil} from "rxjs";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {InputLimits} from "../../utils/input-limits";
+import {Type} from "@biit-solutions/wizardry-theme/inputs";
+import {TournamentService} from "../../services/tournament.service";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {FightService} from "../../services/fight.service";
+import {Fight} from "../../models/fight";
+import {TournamentExtraPropertiesFormComponent} from "../tournament-extra-properties-form/tournament-extra-properties-form.component";
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'tournament-form',
+  templateUrl: './tournament-form.component.html',
+  styleUrls: ['./tournament-form.component.scss'],
+  providers: [provideTranslocoScope({scope: '/', alias: ''}), provideTranslocoScope({scope: 'validation', alias: 'v'})]
+})
+export class TournamentFormComponent extends RbacBasedComponent implements OnInit {
+
+  protected TOURNAMENT_NAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected TOURNAMENT_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected TOURNAMENT_MIN_SHIAIJO: number = 1;
+  protected TOURNAMENT_MAX_SHIAIJO: number = 10;
+  protected TOURNAMENT_MIN_FIGHT: number = 1;
+  protected TOURNAMENT_MAX_FIGHT: number = 10;
+  protected TOURNAMENT_MIN_TEAM: number = 1;
+  protected TOURNAMENT_MAX_TEAM: number = 10;
+  protected TOURNAMENT_ALLOWED_DURATION: number[] = [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600];
+
+  @Input()
+  tournament: Tournament;
+  @Input() @Output()
+  saved: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  @Input() @Output()
+  errorEvent: EventEmitter<unknown> = new EventEmitter<unknown>();
+  @ViewChild(TournamentExtraPropertiesFormComponent)
+  protected extraPropertiesForm: TournamentExtraPropertiesFormComponent;
+  protected addPhoto: boolean = false;
+
+  protected errors: Map<TournamentFormValidationFields, string> = new Map<TournamentFormValidationFields, string>();
+  protected readonly TournamentFormValidationFields = TournamentFormValidationFields;
+  protected types = TournamentType.toArray();
+  protected translatedTypes: { value: string, label: string, description: string }[] = [];
+  protected scores = ScoreType.toArray();
+  protected translatedScores: { value: string, label: string, description: string }[] = [];
+  private swissScores: { value: string, label: string, description: string }[] = [];
+  protected translatedDuration: { value: number, label: string }[] = [];
+  selectedType: TournamentType | undefined;
+
+  protected readonly TournamentType = TournamentType;
+  protected readonly Type = Type;
+
+  typeLoop: TournamentType = TournamentType.LOOP;
+  typeLeague: TournamentType = TournamentType.LEAGUE;
+  typeKing: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  typeCustom: TournamentType = TournamentType.CUSTOMIZED;
+  typeSorting: TournamentType = TournamentType.BUBBLE_SORT;
+  scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
+
+  protected saving: boolean = false;
+  protected openScoreRules: boolean = false;
+
+  tournamentWithTeams: boolean = false;
+
+
+  constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly biitSnackbarService: BiitSnackbarService,
+              private readonly tournamentService: TournamentService, private readonly fightService: FightService) {
+    super(rbacService);
+  }
+
+  ngOnInit(): void {
+    this.translateTypes();
+    this.translateScores();
+    this.translateDuration();
+    this.isTournamentStarted();
+  }
+
+  private translateTypes(): void {
+    const typesTranslations = this.types.map(type => this.transloco.selectTranslate(`${TournamentType.toCamel(type)}`));
+    combineLatest(typesTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
+      this.translatedTypes = translations.map((label, index) => ({
+        value: this.types[index],
+        label: label,
+        description: this.transloco.translate(TournamentType.toCamel(this.types[index]) + "Hint")
+      }));
+    });
+  }
+
+  private translateScores(): void {
+    const scoresTranslations = this.scores.map(score => this.transloco.selectTranslate(`${ScoreType.toCamel(score)}`));
+    combineLatest(scoresTranslations).pipe(takeUntil(this.destroySubject)).subscribe((translations) => {
+      this.translatedScores = translations.map((label, index) => ({
+        value: this.scores[index],
+        label: label,
+        description: this.transloco.translate(ScoreType.toCamel(this.scores[index]) + "Hint")
+      }));
+      this.swissScores = this.translatedScores.filter(score => score.value === ScoreType.CUSTOM);
+    });
+  }
+
+   private translateDuration(): void {
+     for (let number of this.TOURNAMENT_ALLOWED_DURATION) {
+       this.translatedDuration.push({
+         value: number, label: this.getMinutes(number) + " " + this.transloco.translate('minutes') + " "
+           + this.getSeconds(number) + " " + this.transloco.translate('seconds')
+       });
+     }
+   }
+
+   /**
+    * Get available score types for the current tournament type.
+    * For Swiss tournaments, only CUSTOM score type is allowed.
+    * For other tournaments, all score types are available.
+    */
+   protected getAvailableScores(): { value: string, label: string, description: string }[] {
+     if (this.tournament?.type === TournamentType.SWISS) {
+       return this.swissScores;
+     }
+     return this.translatedScores;
+   }
+
+   private isTournamentStarted(): void {
+    if (this.tournament.id) {
+      this.fightService.getFromTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_fights: Fight[]): void => {
+        this.tournamentWithTeams = _fights.length > 0;
+      });
+    } else {
+      this.tournamentWithTeams = false;
+    }
+  }
+
+  getMinutes(time: number): number {
+    return Math.trunc(time / 60);
+  }
+
+  getSeconds(time: number): number {
+    return time % 60;
+  }
+
+   protected validate(): boolean {
+     this.errors = new Map<TournamentFormValidationFields, string>();
+     let verdict: boolean = true;
+      if (!this.tournament.name || this.tournament.name.length === 0) {
+       verdict = false;
+       this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.dataIsMandatory`));
+     } else {
+       if (this.tournament.name && this.tournament.name.length < this.TOURNAMENT_NAME_MIN_LENGTH) {
+         verdict = false;
+         this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.minLengthError`));
+       }
+       if (this.tournament.name && this.tournament.name.length > this.TOURNAMENT_NAME_MAX_LENGTH) {
+         verdict = false;
+         this.errors.set(TournamentFormValidationFields.NAME_ERRORS, this.transloco.translate(`v.maxLengthError`));
+       }
+     }
+     // Swiss tournaments must use CUSTOM score type
+     if (this.tournament.type === TournamentType.SWISS && this.tournament.tournamentScore?.scoreType !== ScoreType.CUSTOM) {
+       this.tournament.tournamentScore.scoreType = ScoreType.CUSTOM;
+     }
+     if (this.tournament!.shiaijos! > this.TOURNAMENT_MAX_SHIAIJO) {
+      verdict = false;
+      this.errors.set(TournamentFormValidationFields.SHIAIJO_ERRORS, this.transloco.translate(`v.maxLengthError`));
+    }
+    if (this.tournament!.shiaijos! < this.TOURNAMENT_MIN_SHIAIJO) {
+      verdict = false;
+      this.errors.set(TournamentFormValidationFields.SHIAIJO_ERRORS, this.transloco.translate(`v.minLengthError`));
+    }
+    if (this.tournament!.teamSize! > this.TOURNAMENT_MAX_TEAM) {
+      verdict = false;
+      this.errors.set(TournamentFormValidationFields.TEAM_ERRORS, this.transloco.translate(`v.maxLengthError`));
+    }
+    if (this.tournament!.teamSize! < this.TOURNAMENT_MIN_TEAM) {
+      verdict = false;
+      this.errors.set(TournamentFormValidationFields.TEAM_ERRORS, this.transloco.translate(`v.minLengthError`));
+    }
+    if (this.tournament!.teamSize! < this.tournament!.fightSize!) {
+      verdict = false;
+      this.errors.set(TournamentFormValidationFields.TEAM_ERRORS, this.transloco.translate(`teamsSmallerThanFights`));
+      this.errors.set(TournamentFormValidationFields.FIGHT_ERRORS, this.transloco.translate(`teamsSmallerThanFights`));
+    }
+    return verdict;
+  }
+
+  onSave(): void {
+    if (!this.validate()) {
+      this.biitSnackbarService.showNotification(this.transloco.translate('v.validationFailed'), NotificationType.WARNING);
+      return;
+    }
+
+    this.saving = true;
+
+    const saveTournament = this.tournament.id
+      ? this.tournamentService.update(this.tournament)
+      : this.tournamentService.add(this.tournament);
+
+    saveTournament.pipe(
+      switchMap(tournament => {
+        if (!tournament || tournament.id == null) {
+          throw new Error('Could not save tournament');
+        }
+        this.tournament.id = tournament.id;
+        return this.extraPropertiesForm.saveProperties(tournament).pipe(map(() => tournament));
+      })
+    ).subscribe({
+      next: (tournament: Tournament): void => this.saved.emit(tournament),
+      error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+    }).add(() => {
+      this.saving = false;
+    });
+  }
+
+}

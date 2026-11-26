@@ -47,10 +47,9 @@ services:
       - "traefik.http.routers.dashboard.entrypoints=https"
       - "traefik.http.routers.dashboard.tls.certresolver=https"
       - "traefik.http.routers.dashboard.middlewares=auth"
-      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
-      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
-      # currently: admin:0b186336d5
-      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
+      # Generate a unique htpasswd hash and set TRAEFIK_BASIC_AUTH_USERS in .env.
+      # Never reuse a committed credential (e.g. htpasswd -nB admin).
+      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_BASIC_AUTH_USERS:?Set TRAEFIK_BASIC_AUTH_USERS in .env to an htpasswd hash}"
       # profiles:
       #      - donotstart
 
@@ -99,6 +98,16 @@ services:
       - "kendo-tournament-database"
     environment:
       - EXTERNAL_CONFIG_FILE=/opt/kendo-tournament-backend/application.properties
+      - BOOTSTRAP_SUPER_ADMIN_USERNAME=${BOOTSTRAP_SUPER_ADMIN_USERNAME:-}
+      - BOOTSTRAP_SUPER_ADMIN_PASSWORD=${BOOTSTRAP_SUPER_ADMIN_PASSWORD:-}
+      - DATABASE_USER=${database_user}
+      - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
+      - SPRING_KENDO_DATASOURCE_PASSWORD=${database_password:?Set database_password in .env}
+      - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
+      - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
+      # Same origin as the URLs in config.js (https, no port) and WebSocket origin.
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-https://${machine_domain}}
+      - SERVER_FORWARD_HEADERS_STRATEGY=${SERVER_FORWARD_HEADERS_STRATEGY:-none}
     labels:
       - "traefik.enable=true"
       - "traefik.backend=kendo-tournament-backend"
@@ -111,27 +120,24 @@ services:
       - "traefik.http.routers.kendo-tournament-backend-api.tls.certresolver=https"
       # Protect swagger with basic auth
       - "traefik.http.routers.kendo-tournament-backend-api.middlewares=auth"
-      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
-      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
-      # currently: admin:asd123
-      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$wKDB6fFj4qie2X16ShtsfO2TsoZRR4tZNb8bHC/ZShka2rQ35v.2m"
+      # Generate a unique htpasswd hash and set TRAEFIK_BASIC_AUTH_USERS in .env.
+      # Never reuse a committed credential (e.g. htpasswd -nB admin).
+      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_BASIC_AUTH_USERS:?Set TRAEFIK_BASIC_AUTH_USERS in .env to an htpasswd hash}"
       - "traefik.docker.network=containers"
       - "traefik.http.services.kendo-tournament-backend.loadbalancer.server.port=8080"
 
 
   kendo-tournament-database:
-    image: mysql:8.4.6
+    image: mysql:9.7.4
     restart: always
     networks:
       - containers
-    ports:
-      - "3306"
     volumes:
       - kendo-tournament-database:/var/lib/mysql
     container_name: kendo-tournament-database
     hostname: kendo-tournament-database
     environment:
-      - MYSQL_ROOT_PASSWORD=${database_password}
+      - MYSQL_ROOT_PASSWORD=${database_password:?Set database_password in .env}
       - MYSQL_DATABASE=${database_name}
       - MYSQL_USER=${database_user}
-      - MYSQL_PASSWORD=${database_password}
+      - MYSQL_PASSWORD=${database_password:?Set database_password in .env}

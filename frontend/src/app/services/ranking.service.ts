@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -12,6 +12,16 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Participant} from "../models/participant";
 import {CompetitorRanking} from "../models/competitor-ranking";
 
+/**
+ * Angular service for competitor and team ranking data.
+ *
+ * Wraps the backend {@code /rankings} REST endpoints. Provides:
+ * - Per-group and per-tournament competitor score rankings.
+ * - Global (cross-tournament) competitor score rankings.
+ * - Team score rankings per group and per tournament.
+ * - PDF export of rankings.
+ * - A custom global ranking computed from a list of participants and a time window.
+ */
 @Injectable({
   providedIn: 'root'
 })

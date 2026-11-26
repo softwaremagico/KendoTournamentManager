@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -168,9 +168,10 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addUnties(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                               @RequestBody List<DuelDTO> duelDTOs,
+                              @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                               Authentication authentication,
                               HttpServletRequest request) {
-        return getController().addUnties(groupId, duelDTOs, authentication.getName());
+        return getController().addUnties(groupId, duelDTOs, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -190,5 +191,17 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Recalculate teams and fights from a group that has not started.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/refresh/tournaments/{tournamentId}/levels/{level}", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public void refreshNonStartedGroups(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                        Integer tournamentId,
+                                        @Parameter(description = "Group level to starting the checks.", required = false) @PathVariable("level")
+                                        Integer level,
+                                        HttpServletResponse response, HttpServletRequest request) {
+        getController().refreshGroupContent(tournamentId, level == null ? 0 : level);
     }
 }

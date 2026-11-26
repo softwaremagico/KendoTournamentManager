@@ -4,7 +4,7 @@ package com.softwaremagico.kt.html.controller;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,8 +54,9 @@ public class HtmlController {
     public BlogExporter generateBlogCode(Locale locale, TournamentDTO tournament) {
         final List<RoleDTO> roleDTOS = roleController.get(tournament);
         return new BlogExporter(messageSource, locale, tournament, roleDTOS, groupController.get(tournament),
-                roleDTOS.stream().map(RoleDTO::getParticipant).toList(), rankingController.getTeamsScoreRanking(tournament),
-                rankingController.getCompetitorsScoreRanking(tournament));
+                roleDTOS.stream().map(RoleDTO::getParticipant).toList(),
+                new BlogExporter.ScoreData(rankingController.getTeamsScoreRanking(tournament),
+                        rankingController.getCompetitorsScoreRanking(tournament)));
 
     }
 }

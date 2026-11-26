@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,60 +22,97 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.softwaremagico.kt.persistence.entities.Element;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository<ENTITY, KEY>> {
+public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
 
-    private final REPOSITORY repository;
+    private final R repository;
 
-    protected CrudProvider(REPOSITORY repository) {
+    protected CrudProvider(R repository) {
         this.repository = repository;
     }
 
-    public REPOSITORY getRepository() {
+    public R getRepository() {
         return repository;
     }
 
-    public ENTITY save(ENTITY entity) {
+    public E save(E entity) {
+        if (entity == null) {
+            return null;
+        }
+        if (entity instanceof Element tenantScopedEntity && tenantScopedEntity.getTenantId() == null) {
+            tenantScopedEntity.setTenantId(TenantContext.getRequiredTenantId());
+        }
         return repository.save(entity);
     }
 
-    public List<ENTITY> save(Collection<ENTITY> entities) {
-        return repository.saveAll(entities);
+    public List<E> save(Collection<E> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return List.of();
+        }
+        final List<E> validEntities = entities.stream().filter(Objects::nonNull).toList();
+        if (validEntities.isEmpty()) {
+            return List.of();
+        }
+        validEntities.forEach(entity -> {
+            if (entity instanceof Element tenantScopedEntity && tenantScopedEntity.getTenantId() == null) {
+                tenantScopedEntity.setTenantId(TenantContext.getRequiredTenantId());
+            }
+        });
+        return repository.saveAll(validEntities);
     }
 
-    public List<ENTITY> saveAll(Collection<ENTITY> entity) {
-        return repository.saveAll(entity);
+    public List<E> saveAll(Collection<E> entity) {
+        return save(entity);
     }
 
-    public Optional<ENTITY> get(KEY id) {
-        return repository.findById(id);
+    public Optional<E> get(K id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return repository.findById(id).filter(this::belongsToCurrentTenant);
     }
 
-    public List<ENTITY> get(Collection<KEY> ids) {
-        return repository.findAllById(ids);
+    public List<E> get(Collection<K> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        final List<K> validIds = ids.stream().filter(Objects::nonNull).distinct().toList();
+        if (validIds.isEmpty()) {
+            return List.of();
+        }
+        return repository.findAllById(validIds).stream().filter(this::belongsToCurrentTenant).toList();
     }
 
-    public List<ENTITY> getAll() {
-        return repository.findAll();
+    public List<E> getAll() {
+        return repository.findAll().stream().filter(this::belongsToCurrentTenant).toList();
     }
 
-    public ENTITY update(ENTITY entity) {
-        return repository.save(entity);
+    public E update(E entity) {
+        return save(entity);
     }
 
-    public void delete(ENTITY entity) {
+    public void delete(E entity) {
+        if (entity == null || !belongsToCurrentTenant(entity)) {
+            return;
+        }
         repository.delete(entity);
     }
 
-    public void delete(Collection<ENTITY> entities) {
-        repository.deleteAll(entities);
+    public void delete(Collection<E> e) {
+        deleteAll(e);
     }
 
-    public void deleteById(KEY id) {
+    public void deleteById(K id) {
+        if (id == null) {
+            return;
+        }
         repository.deleteById(id);
     }
 
@@ -83,15 +120,34 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         repository.deleteAll();
     }
 
-    public void deleteAll(Collection<ENTITY> entities) {
-        repository.deleteAll(entities);
+    public void deleteAll(Collection<E> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return;
+        }
+        final List<E> validEntities = entities.stream().filter(Objects::nonNull).filter(this::belongsToCurrentTenant).toList();
+        if (validEntities.isEmpty()) {
+            return;
+        }
+        repository.deleteAll(validEntities);
     }
 
     public long count() {
         return repository.count();
     }
 
-    public List<ENTITY> findByIdIn(Collection<KEY> ids) {
-        return getRepository().findAllById(ids);
+    public List<E> findByIdIn(Collection<K> ids) {
+        return get(ids);
+    }
+
+    /**
+     * Repository methods remain generic for the statistics subsystem. Domain
+     * entities are additionally checked here so a missed repository predicate
+     * cannot expose a row from another active request tenant.
+     */
+    private boolean belongsToCurrentTenant(E entity) {
+        if (!(entity instanceof Element tenantScopedEntity) || TenantContext.getTenantId() == null) {
+            return true;
+        }
+        return TenantContext.getTenantId().equals(tenantScopedEntity.getTenantId());
     }
 }

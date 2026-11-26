@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.exceptions;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NoContentException extends RuntimeException {
     private static final long serialVersionUID = 7032994133678894370L;
 
-    public NoContentException(Class<?> clazz, String message) {
+    public NoContentException(String message) {
         super(message);
+    }
+
+    public NoContentException(Class<?> clazz, String message) {
+        super(clazz.getName() + ": " + message);
     }
 }

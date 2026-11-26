@@ -7,6 +7,19 @@ export class TournamentExtendedProperty extends Element {
   public propertyKey: TournamentExtraPropertyKey;
   public propertyValue: string;
 
+  constructor(tournament?: Tournament, propertyKey?: TournamentExtraPropertyKey, propertyValue?: string) {
+    super();
+    if (tournament) {
+      this.tournament = tournament;
+    }
+    if (propertyKey) {
+      this.propertyKey = propertyKey;
+    }
+    if (propertyValue) {
+      this.propertyValue = propertyValue;
+    }
+  }
+
   public static override copy(source: TournamentExtendedProperty, target: TournamentExtendedProperty): void {
     Element.copy(source, target);
     if (source.tournament !== undefined) {

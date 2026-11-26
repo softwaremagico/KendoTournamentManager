@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.score;
  * #%L
  * Kendo TournamentDTO Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +49,8 @@ public class ScoreOfTeam {
     private Integer hitsLost = null;
     private Integer level = null;
     private Integer sortingIndex = null;
+    private SwissTieBreakRule swissTieBreakRuleUsed = null;
+    private Double swissTieBreakValue = null;
 
     public ScoreOfTeam() {
 
@@ -240,6 +243,22 @@ public class ScoreOfTeam {
 
     public void setSortingIndex(Integer sortingIndex) {
         this.sortingIndex = sortingIndex;
+    }
+
+    public SwissTieBreakRule getSwissTieBreakRuleUsed() {
+        return swissTieBreakRuleUsed;
+    }
+
+    public void setSwissTieBreakRuleUsed(SwissTieBreakRule swissTieBreakRuleUsed) {
+        this.swissTieBreakRuleUsed = swissTieBreakRuleUsed;
+    }
+
+    public Double getSwissTieBreakValue() {
+        return swissTieBreakValue;
+    }
+
+    public void setSwissTieBreakValue(Double swissTieBreakValue) {
+        this.swissTieBreakValue = swissTieBreakValue;
     }
 
     @Override

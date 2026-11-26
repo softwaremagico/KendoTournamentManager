@@ -1,25 +1,36 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {catchError, map, tap} from "rxjs/operators";
 import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 
+/**
+ * Angular service for all fight-related HTTP operations.
+ *
+ * Wraps the backend {@code /fights} REST endpoints. Provides methods to:
+ * - Retrieve all fights or fights filtered by tournament.
+ * - Create, update, and delete individual fights or collections.
+ * - Generate the next round of fights for dynamic tournament formats.
+ * - Download fight lists as PDF documents.
+ *
+ * All HTTP calls update the system-overload indicator on completion or error.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class FightService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/fights';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/fights';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
 
   }
 
@@ -45,7 +56,7 @@ export class FightService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight[]>(`get from tournament ${tournament}`))
+        catchError(this.messageService.handleError<Fight[]>(`get from tournament ${tournament.name}`))
       );
   }
 
@@ -67,11 +78,11 @@ export class FightService {
     return this.http.post<Fight>(url, fight)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting fight ${fight}`),
+          next: () => this.loggerService.info(`deleting fight ${fight.id}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight>(`delete ${fight}`))
+        catchError(this.messageService.handleError<Fight>(`delete ${fight.id}`))
       );
   }
 
@@ -80,11 +91,11 @@ export class FightService {
     return this.http.post<Fight[]>(url, fights)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting fights ${fights}`),
+          next: () => this.loggerService.info(`deleting fights ${fights.length}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight[]>(`delete ${fights}`))
+        catchError(this.messageService.handleError<Fight[]>(`delete ${fights.length}`))
       );
   }
 
@@ -93,11 +104,11 @@ export class FightService {
     return this.http.post<Fight>(url, {tournament: tournament})
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting fights on ${tournament}`),
+          next: () => this.loggerService.info(`deleting fights on ${tournament.name}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<Fight>(`delete fights on ${tournament}`))
+        catchError(this.messageService.handleError<Fight>(`delete fights on ${tournament.name}`))
       );
   }
 
@@ -170,12 +181,12 @@ export class FightService {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/next';
     return this.http.put<Fight[]>(url, undefined, {observe: 'response'})
       .pipe(
-        map((response: any) => {
+        map((response: HttpResponse<Fight[]>) => {
           //204 means that fights are not created due to an existing draw score.
           if (response.status === 204) {
-            return of(null);
+            return [];
           }
-          return response.body;
+          return response.body ?? [];
         })
       );
   }

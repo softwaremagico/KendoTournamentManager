@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,19 +30,18 @@ public abstract class LoggedHttpException extends RuntimeException {
     protected LoggedHttpException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
         super(message);
         this.status = status;
-        final String className = clazz.getName();
         switch (type) {
             case INFO:
-                RestServerLogger.info(className, message);
+                RestServerExceptionLogger.info(clazz, message);
                 break;
             case WARNING:
-                RestServerLogger.warning(className, message);
+                RestServerExceptionLogger.warning(clazz, message);
                 break;
             case SEVERE:
-                RestServerLogger.severe(className, message);
+                RestServerExceptionLogger.severe(clazz, message);
                 break;
             default:
-                RestServerLogger.debug(className, message);
+                RestServerExceptionLogger.debug(clazz, message);
                 break;
         }
     }

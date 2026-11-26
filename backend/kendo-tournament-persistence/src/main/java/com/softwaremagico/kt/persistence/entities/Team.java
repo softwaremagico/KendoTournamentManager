@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,8 +43,10 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}), indexes = {
@@ -114,12 +116,63 @@ public class Team extends Element implements Comparable<Team>, IName {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Team team = (Team) o;
+        if (this.getId() != null && team.getId() != null) {
+            return Objects.equals(this.getId(), team.getId());
+        }
+        if (!Objects.equals(this.name, team.name)) {
+            return false;
+        }
+        if (this.tournament == team.tournament) {
+            return true;
+        }
+        if (this.tournament == null || team.tournament == null) {
+            return false;
+        }
+        if (this.tournament.getId() != null && team.tournament.getId() != null) {
+            return Objects.equals(this.tournament.getId(), team.tournament.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.getId() != null) {
+            return Objects.hash(this.getId());
+        }
+        final Integer tournamentId = this.tournament != null ? this.tournament.getId() : null;
+        if (tournamentId != null) {
+            return Objects.hash(this.name, tournamentId);
+        }
+        return Objects.hash(this.name, System.identityHashCode(this.tournament));
+    }
+
+    @Override
     public int compareTo(Team team) {
         // Ignore accents
         final Collator collator = Collator.getInstance(new Locale("es"));
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-        return collator.compare(getName(), team.getName());
+        final int nameComparison = collator.compare(getName(), team.getName());
+        if (nameComparison != 0) {
+            return nameComparison;
+        }
+        if (this.getId() != null && team.getId() != null) {
+            return this.getId().compareTo(team.getId());
+        }
+        final Integer thisTournamentId = this.tournament != null ? this.tournament.getId() : null;
+        final Integer otherTournamentId = team.tournament != null ? team.tournament.getId() : null;
+        if (thisTournamentId != null && otherTournamentId != null) {
+            return thisTournamentId.compareTo(otherTournamentId);
+        }
+        return Integer.compare(System.identityHashCode(this.tournament), System.identityHashCode(team.tournament));
     }
 }

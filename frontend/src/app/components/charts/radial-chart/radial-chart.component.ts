@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {
   ApexChart,
   ApexFill,
@@ -13,7 +13,7 @@ import {RadialChartData} from "./radial-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 type RadialChartOptions = {
   series: number[];
@@ -30,6 +30,8 @@ type RadialChartOptions = {
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-radial-chart',
   templateUrl: './radial-chart.component.html',
   styleUrls: ['./radial-chart.component.scss']
@@ -70,6 +72,9 @@ export class RadialChartComponent extends CustomChartComponent {
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
+    if (userSessionService.getNightMode()) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
   }
 
 

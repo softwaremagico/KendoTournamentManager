@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -19,7 +19,7 @@ import {RadarChartData} from "./radar-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 type RadarChartOptions = {
   series: ApexAxisChartSeries;
@@ -37,6 +37,8 @@ type RadarChartOptions = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-radar-chart',
   templateUrl: './radar-chart.component.html',
   styleUrls: ['./radar-chart.component.scss']
@@ -83,6 +85,9 @@ export class RadarChartComponent extends CustomChartComponent {
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
+    if (userSessionService.getNightMode()) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
   }
 
   protected setProperties(): void {

@@ -1,182 +1,171 @@
-/* You can add global styles to this file, and also import other style files */
-@import "basic-colors";
+@use "theme-colors";
 
-.cdk-overlay-pane {
-  &.mat-tooltip-panel {
-    .mat-tooltip {
-      background: var(--tooltip-background);
-      font-size: 15px;
-      padding: 10px;
+$background: var(--body-background-color);
+$space: 0.7rem;
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+  font-size: 16px;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: Montserrat, sans-serif;
+  background-color: $background;
+}
+
+app-root > router-outlet + * {
+  display: block;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+}
+
+biit-snackbar {
+  z-index: 1000;
+  position: absolute;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+}
+
+//Toggle component descriptions overflow on popups.
+.toggle-description {
+  width: 65vh;
+}
+
+.gap {
+  gap: $space;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .horizontal {
+    flex-direction: column;
+  }
+
+  .table-view {
+    padding: unset !important;
+    margin: 2rem 0.5rem !important;
+    box-sizing: unset !important;
+    border: unset !important;
+  }
+
+  .tab-row {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .tab-row-single {
+    width: unset !important;
+  }
+
+  .form-bottom {
+    position: sticky;
+    bottom: 0;
+  }
+}
+
+
+//Icons default color
+svg {
+  color: var(--icon-color);
+}
+
+//Size of buttons in table
+button > .mat-icon {
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.mdc-button {
+  min-width: 34px !important;
+}
+
+.mat-divider {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  color: var(--component-color);
+}
+
+button .warning {
+  color: var(--warning-color);
+}
+
+.logo {
+  filter: brightness(0) saturate(100%) invert(12%) sepia(35%) saturate(3300%) hue-rotate(204deg) brightness(88%) contrast(113%);
+}
+
+//Custom table buttons has a right margin
+.table-view .mat-mdc-button > .mat-icon, biit-action-button button, .upper-menu button > .mat-icon {
+  margin-right: 0 !important;
+}
+
+//Custom table buttons mimic biit-buttons styles
+.table-view button, biit-action-button button {
+  &:hover, &:focus-visible, &:has(.checked) {
+    background-color: var(--main-background);
+  }
+
+  &:active {
+    path {
+      fill: var(--main-color) !important;
     }
   }
 }
 
 
-//Messages
-.mat-snack-bar-container.info-snackbar.message-service {
-  background: #3700B3;
-  color: aliceblue;
-  width: 80%;
-}
-
-.mat-snack-bar-container.warning-snackbar.message-service {
-  background: #FF9800;
-  color: aliceblue;
-}
-
-.mat-snack-bar-container.error-snackbar.message-service {
-  background: var(--alert);
-  color: var(--warning);
-}
-
-// Table
-.kendo-table {
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
-  min-width: 600px;
-}
-
-.page-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.upper-menu {
-  display: inline-flex;
-  flex-flow: row wrap;
-  text-align: left;
-  float: left;
-  flex-shrink: 0;
-  flex-grow: 0;
-  padding: 10px;
-}
-
-.page-content {
-  flex-shrink: 1;
-  flex-grow: 1;
-  position: relative;
-  overflow-y: auto;
-}
-
-body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden
-}
-
-.upper-menu .mat-button {
-  width: 80px;
-}
-
-.upper-menu .cell {
-  display: flex;
-}
-
-.upper-menu .filter {
-  text-align: right;
-  flex: 1 1 100px;
-  padding-right: 50px;
-  margin-bottom: 0px;
-}
-
-.bottom-menu {
-  text-align: right;
-  padding-left: 20px;
-  position: absolute;
-  margin-top: -50px;
-}
-
-.mat-cell {
-  text-align: left;
-  padding: 3px 20px 3px 20px !important;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-}
-
-.mat-row.hovered {
-  background: var(--hover-color);
-}
-
-.dark-mode .mat-row.hovered {
-  background: #b0a3d5;
-}
-
-.mat-row.highlighted {
-  background: var(--hightligh-color);
-  color: var(--text-color);
-}
-
-.dark-mode .mat-row.highlighted {
-  background: #5f4ca1;
-  color: white;
-}
-
-.highlighted .mat-cell {
-  color: var(--selected-color);
-  font-weight: bold;
-}
-
-.mat-form-field-wrapper {
-  font-size: 12px;
-}
-
-.mat-paginator-container {
-  color: var(--footer);
-}
-
-.table-settings {
-  padding: 15px;
-}
-
-@font-face {
-  font-family: "Square Sans Serif 7";
-  src: local("Square Sans Serif 7"), url(./assets/fonts/square_sans_serif_7.ttf) format("truetype");
-}
-
-
-a:link {
-  color: var(--link);
-}
-
-/* visited link */
-a:visited {
-  color: var(--link-visited);
-}
-
-/* mouse over link */
-a:hover {
-  color: var(--link-hover);
-}
-
-/* selected link */
-a:active {
-  color: var(--link-active);
-}
-
-.mat-toolbar a:link {
-  color: var(--title-color);
-}
-
-/* visited link */
-.mat-toolbar a:visited {
-  color: var(--title-color);
-}
-
-/* mouse over link */
-.mat-toolbar a:hover {
-  color: var(--title-color);
-}
-
-/* selected link */
-.mat-toolbar a:active {
-  color: var(--title-color);
-}
-
 /* Allow new lines on tooltips with this class */
 .tooltip-with-lines {
   white-space: pre-line;
+}
+
+/* Tootip style */
+.mdc-tooltip__surface.mdc-tooltip__surface-animation {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
+
+/* datatable */
+.datatable-body-row.locked-row {
+  color: var(--disabled-primary-color);
+}
+
+
+datatable-body-row.locked-row:hover {
+  .datatable-body-cell-label {
+    color: var(--table-text-hover-locked-color) !important;
+  }
 }

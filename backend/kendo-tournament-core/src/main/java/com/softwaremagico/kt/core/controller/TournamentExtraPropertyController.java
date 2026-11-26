@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,10 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class TournamentExtraPropertyController extends BasicInsertableController<TournamentExtraProperty, TournamentExtraPropertyDTO,
         TournamentExtraPropertyRepository, TournamentExtraPropertyProvider, TournamentExtraPropertyConverterRequest, TournamentExtraPropertyConverter> {
+    private static final String TOURNAMENT_NOT_FOUND_WITH_ID = "No tournament found with id '";
 
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
@@ -64,9 +66,15 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username, String session) {
-        getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
-        //Remove any existing group if changed.
-        if (dto.getPropertyKey() == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
+        final TournamentExtraProperty tournamentExtraProperty = getProvider()
+                .getByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
+        if (tournamentExtraProperty != null) {
+            dto.setId(tournamentExtraProperty.getId());
+        }
+        // Changing this setting invalidates the bracket, but saving its initial or unchanged value does not.
+        if (dto.getPropertyKey() == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP
+                && tournamentExtraProperty != null
+                && !Objects.equals(tournamentExtraProperty.getPropertyValue(), dto.getPropertyValue())) {
             groupProvider.delete(tournamentConverter.reverse(dto.getTournament()));
         }
         return super.update(dto, username, session);
@@ -74,17 +82,17 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {
         return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'."))));
     }
 
     public TournamentExtraPropertyDTO getByTournamentAndProperty(Integer tournamentId, TournamentExtraPropertyKey key) {
         if (key == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
             return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
-                            .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key,
+                            .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'.")), key,
                     SenbatsuTournamentHandler.DEFAULT_CHALLENGE_DISTANCE));
         }
         return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key));
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), TOURNAMENT_NOT_FOUND_WITH_ID + tournamentId + "'.")), key));
     }
 
     public List<TournamentExtraPropertyDTO> getLatest(String username) {

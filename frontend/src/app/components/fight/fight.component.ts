@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/notifications/duel-changed.service";
@@ -7,13 +7,20 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {TournamentType} from "../../models/tournament-type";
+import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'fight',
   templateUrl: './fight.component.html',
   styleUrls: ['./fight.component.scss']
 })
 export class FightComponent extends RbacBasedComponent implements OnInit {
+
+  readonly ROW_HIGH: number = 70;
+
+  protected readonly TournamentType = TournamentType;
 
   @Input()
   fight: Fight;
@@ -27,8 +34,11 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   locked: boolean;
 
+  @Input()
+  projectMode: boolean;
+
   @Output()
-  onSelectedDuel: EventEmitter<Duel> = new EventEmitter();
+  selectedFightDuel: EventEmitter<Duel> = new EventEmitter();
 
   selectedDuel: Duel | undefined;
 
@@ -41,12 +51,17 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-
   @Input()
   showAvatars: boolean = false;
 
-  constructor(private duelChangedService: DuelChangedService, rbacService: RbacService) {
+  @Input()
+  onlyShow: boolean = false;
+
+  reorderAllowed: boolean = true;
+
+  constructor(private duelChangedService: DuelChangedService, rbacService: RbacService, private membersOrderChangedService: MembersOrderChangedService) {
     super(rbacService);
+    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
   }
 
   ngOnInit(): void {
@@ -72,15 +87,13 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   }
 
   selectDuel(duel: Duel): void {
-    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL)) {
+    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL) && !duel.substitute) {
       this.selectedDuel = duel;
-      this.onSelectedDuel.emit(duel);
+      this.selectedFightDuel.emit(duel);
     }
   }
 
   isOver(duel: Duel): boolean {
-    return duel.finished && !this.locked;
+    return duel.substitute || (duel.finished && !this.locked);
   }
-
-  protected readonly TournamentType = TournamentType;
 }

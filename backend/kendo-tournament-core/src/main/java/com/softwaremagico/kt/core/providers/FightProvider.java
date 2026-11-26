@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -183,9 +183,9 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         if (scores.size() == 1) {
             return false;
         }
-        //Scores are set at index 1 before index 0;
+        // Scores are set at index 1 before index 0.
         return (scores.size() > 1
-                && scores.get(0) == null
+                && scores.getFirst() == null
                 && scores.get(1) != null && scores.get(1) != Score.EMPTY);
     }
 

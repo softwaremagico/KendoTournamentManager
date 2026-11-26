@@ -22,7 +22,7 @@
             <maxHistory>10</maxHistory>
             <!-- daily rollover -->
             <fileNamePattern>/logs/kendo-tournament/kendo.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy">
                 <!-- or whenever the file size reaches 100MB -->
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -46,11 +46,12 @@
         <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="DEBUG">
+    <!-- AOP loggers print method arguments; keep them at INFO to avoid recording request bodies/PII by default. -->
+    <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
-    <logger name="com.softwaremagico.kt.logger.RestAccessLogging" additivity="false" level="DEBUG">
+    <logger name="com.softwaremagico.kt.logger.RestAccessLogging" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>

@@ -1,0 +1,1377 @@
+package com.softwaremagico.kt.core.providers;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2026 SoftwareMagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
+import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.score.CompetitorRanking;
+import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
+import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.ScoreType;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.persistence.values.TournamentType;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@Test(groups = {"rankingProviderTests"})
+public class RankingProviderTest {
+
+	@Mock
+	private FightProvider fightProvider;
+	@Mock
+	private DuelProvider duelProvider;
+	@Mock
+	private ParticipantProvider participantProvider;
+	@Mock
+	private TournamentRepository tournamentRepository;
+	@Mock
+	private GroupProvider groupProvider;
+	@Mock
+	private RoleProvider roleProvider;
+	@Mock
+	private TeamProvider teamProvider;
+	@Mock
+	private TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
+	private RankingProvider provider;
+
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+		this.provider = new RankingProvider(this.fightProvider, this.duelProvider, this.participantProvider,
+				this.tournamentRepository, this.groupProvider, this.roleProvider, this.teamProvider,
+				this.tournamentExtraPropertyProvider);
+	}
+
+	// ========== Competitors Ranking Tests ==========
+
+	@Test
+	public void testGetCompetitorsScoreRankingWithEmptyList() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsScoreRanking(List.of(), List.of(),
+				List.of(), tournament);
+		assertThat(ranking).isEmpty();
+	}
+
+	@Test
+	public void testGetCompetitorsScoreRankingWithMultipleFighters() {
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Participant p2 = this.participant(2, "Ryu", "Gi");
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsScoreRanking(List.of(p1, p2),
+				List.of(fight), List.of(), tournament);
+
+		assertThat(ranking).hasSize(2).extracting(ScoreOfCompetitor::getCompetitor).containsExactlyInAnyOrder(p1, p2);
+	}
+
+	@Test
+	public void testGetCompetitorsGlobalScoreRankingFiltersOldFights() {
+		final Participant p1 = this.participant(1, "A", "One");
+		final Participant p2 = this.participant(2, "B", "Two");
+		final Participant p3 = this.participant(3, "C", "Three");
+
+		final Fight recentFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now().minusDays(2));
+		final Fight oldFight = this.fight(List.of(p2), List.of(p3), LocalDateTime.now().minusDays(90));
+
+		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(recentFight, oldFight));
+		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(null, ScoreType.DEFAULT,
+				30);
+
+		assertThat(ranking).hasSize(2).extracting(ScoreOfCompetitor::getCompetitor).containsExactlyInAnyOrder(p1, p2);
+	}
+
+	@Test
+	public void testGetCompetitorsGlobalScoreRankingWithProvidedList() {
+		final Participant p1 = this.participant(1, "A", "One");
+		final Participant p2 = this.participant(2, "B", "Two");
+		final Participant p3 = this.participant(3, "C", "Three");
+
+		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now());
+
+		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
+		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(List.of(p1, p2, p3),
+				ScoreType.DEFAULT, 30);
+
+		assertThat(ranking).hasSize(3);
+	}
+
+	@Test
+	public void testGetCompetitorsGlobalScoreRankingWithZeroDaysUsesNoDateFilter() {
+		final Participant p1 = this.participant(4, "A", "One");
+		final Participant p2 = this.participant(5, "B", "Two");
+		final Participant p3 = this.participant(6, "C", "Three");
+
+		final Fight recentFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, Month.JUNE, 20, 12, 0));
+		final Fight oldFight = this.fight(List.of(p2), List.of(p3), LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
+
+		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(recentFight, oldFight));
+		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(null, ScoreType.DEFAULT,
+				0);
+
+		assertThat(ranking).hasSize(3);
+	}
+
+	@Test
+	public void testGetCompetitorsGlobalScoreRankingFiltersUntiesByDateRange() {
+		final Participant p1 = this.participant(7, "A", "One");
+		final Participant p2 = this.participant(8, "B", "Two");
+		final Participant p3 = this.participant(9, "C", "Three");
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+
+		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, Month.JUNE, 20, 12, 0));
+		final Duel recentUntie = new Duel(p1, p2, tournament, "tester");
+		recentUntie.setCreatedAt(LocalDateTime.of(2026, Month.JUNE, 22, 12, 0));
+		final Duel oldUntie = new Duel(p2, p3, tournament, "tester");
+		oldUntie.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
+
+		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
+		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of(recentUntie, oldUntie));
+
+		final List<ScoreOfCompetitor> ranking = this.provider
+				.getCompetitorsGlobalScoreRanking(new ArrayList<>(List.of(p1, p2, p3)), ScoreType.DEFAULT, 30);
+
+		assertThat(ranking).hasSize(3);
+	}
+
+	@Test
+	public void testGetCompetitorsGlobalScoreRankingWithUntiesAndNullDaysUsesNoDateFilter() {
+		final Participant p1 = this.participant(10, "A", "One");
+		final Participant p2 = this.participant(11, "B", "Two");
+		final Participant p3 = this.participant(12, "C", "Three");
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+
+		final Fight fight = this.fight(List.of(p1), List.of(p2), LocalDateTime.of(2026, Month.JUNE, 20, 12, 0));
+		final Duel recentUntie = new Duel(p1, p2, tournament, "tester");
+		recentUntie.setCreatedAt(LocalDateTime.of(2026, Month.JUNE, 22, 12, 0));
+		final Duel oldUntie = new Duel(p2, p3, tournament, "tester");
+		oldUntie.setCreatedAt(LocalDateTime.of(2026, Month.JANUARY, 1, 12, 0));
+
+		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(fight));
+		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of(recentUntie, oldUntie));
+
+		final List<ScoreOfCompetitor> ranking = this.provider
+				.getCompetitorsGlobalScoreRanking(new ArrayList<>(List.of(p1, p2, p3)), ScoreType.DEFAULT, null);
+
+		assertThat(ranking).hasSize(3);
+	}
+
+	@Test
+	public void testGetCompetitorGlobalRanking() {
+		final Participant p1 = this.participant(1, "A", "One");
+		final Participant p2 = this.participant(2, "B", "Two");
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+
+		final Role role1 = new Role(tournament, p1, RoleType.COMPETITOR);
+		final Role role2 = new Role(tournament, p2, RoleType.COMPETITOR);
+
+		when(this.roleProvider.getAll()).thenReturn(List.of(role1, role2));
+		when(this.fightProvider.getAll()).thenReturn(List.of());
+		when(this.duelProvider.getUnties()).thenReturn(List.of());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorGlobalRanking(ScoreType.DEFAULT);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetCompetitorsScoreRankingFromTournament() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		tournament.setId(100);
+		when(this.tournamentRepository.findById(100)).thenReturn(Optional.of(tournament));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsScoreRankingFromTournament(100);
+
+		assertThat(ranking).isNotNull();
+	}
+
+	// ========== Teams Ranking Tests ==========
+
+	@Test
+	public void testGetTeamsScoreRankingWithNullGroup() {
+		final Group nullGroup = null;
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(nullGroup);
+		assertThat(ranking).isEmpty();
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingWithValidGroup() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		group.setTeams(List.of(team1, team2));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		assertThat(ranking).hasSize(2).extracting(ScoreOfTeam::getTeam).containsExactlyInAnyOrder(team1, team2);
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingWithSortingIndices() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		final Team team3 = this.team(3, "Team C", tournament);
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.CLASSIC,
+				List.of(team1, team2, team3), List.of(), List.of(), true);
+
+		assertThat(ranking).isNotEmpty().allMatch(score -> score.getSortingIndex() != null);
+	}
+
+	@Test
+	public void testGetTeamsByPositionWithTiedTeams() {
+		final RankingProvider spyProvider = spy(this.provider);
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+
+		final Team teamA = this.team(1, "A", tournament);
+		final Team teamB = this.team(2, "B", tournament);
+		final Team teamC = this.team(3, "C", tournament);
+		final Team teamD = this.team(4, "D", tournament);
+
+		final ScoreOfTeam scoreA = this.score(teamA, 3, 0, 6, 12, 0, 0);
+		final ScoreOfTeam scoreB = this.score(teamB, 2, 0, 4, 8, 0, 0);
+		final ScoreOfTeam scoreC = this.score(teamC, 2, 0, 4, 8, 0, 0);
+		final ScoreOfTeam scoreD = this.score(teamD, 1, 0, 2, 4, 0, 0);
+
+		doReturn(List.of(scoreA, scoreB, scoreC, scoreD)).when(spyProvider).getTeamsScoreRanking(group);
+
+		final Map<Integer, List<Team>> teamsByPosition = spyProvider.getTeamsByPosition(group);
+
+		assertThat(teamsByPosition).hasSize(3);
+		assertThat(teamsByPosition.get(0)).containsExactly(teamA);
+		assertThat(teamsByPosition.get(1)).containsExactlyInAnyOrder(teamB, teamC);
+		assertThat(teamsByPosition.get(2)).containsExactly(teamD);
+	}
+
+	@Test
+	public void testGetFirstTeamsWithDrawScore() {
+		final RankingProvider spyProvider = spy(this.provider);
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+
+		final Team teamA = this.team(1, "A", tournament);
+		final Team teamB = this.team(2, "B", tournament);
+		final Team teamC = this.team(3, "C", tournament);
+
+		final ScoreOfTeam scoreA = this.score(teamA, 3, 0, 6, 12, 0, 0);
+		final ScoreOfTeam scoreB = this.score(teamB, 2, 0, 4, 8, 0, 0);
+		final ScoreOfTeam scoreC = this.score(teamC, 2, 0, 4, 8, 0, 0);
+
+		doReturn(List.of(scoreA, scoreB, scoreC)).when(spyProvider).getTeamsScoreRanking(group);
+
+		final List<Team> drawTeams = spyProvider.getFirstTeamsWithDrawScore(group, 2);
+
+		assertThat(drawTeams).containsExactlyInAnyOrder(teamB, teamC);
+	}
+
+	@Test
+	public void testGetFirstTeamsWithDrawScoreWhenNoDraws() {
+		final RankingProvider spyProvider = spy(this.provider);
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+
+		final Team teamA = this.team(1, "A", tournament);
+		final Team teamB = this.team(2, "B", tournament);
+
+		final ScoreOfTeam scoreA = this.score(teamA, 3, 0, 6, 12, 0, 0);
+		final ScoreOfTeam scoreB = this.score(teamB, 2, 0, 4, 8, 0, 0);
+
+		doReturn(List.of(scoreA, scoreB)).when(spyProvider).getTeamsScoreRanking(group);
+
+		final List<Team> drawTeams = spyProvider.getFirstTeamsWithDrawScore(group, 2);
+
+		assertThat(drawTeams).isEmpty();
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingFromTournament() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		tournament.setId(100);
+		when(this.tournamentRepository.findById(100)).thenReturn(Optional.of(tournament));
+		when(this.teamProvider.getAll(tournament)).thenReturn(List.of());
+		when(this.fightProvider.getFights(tournament)).thenReturn(List.of());
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of());
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRankingFromTournament(100);
+
+		assertThat(ranking).isNotNull();
+	}
+
+	// ========== Tournament Type Tests ==========
+
+	@Test
+	public void testCountNotOverFightsForKingOfMountain() {
+		final Participant p1 = this.participant(11, "Ken", "Do");
+		final Participant p2 = this.participant(12, "Ryu", "Gi");
+
+		final Fight notFinishedFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now().minusDays(1));
+		notFinishedFight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+
+		final Tournament leagueTournament = this.tournament(TournamentType.LEAGUE);
+		final Tournament kingTournament = this.tournament(TournamentType.KING_OF_THE_MOUNTAIN);
+
+		final List<ScoreOfCompetitor> leagueRanking = this.provider.getCompetitorsScoreRanking(List.of(p1, p2),
+				List.of(notFinishedFight), List.of(), leagueTournament);
+		final List<ScoreOfCompetitor> kingRanking = this.provider.getCompetitorsScoreRanking(List.of(p1, p2),
+				List.of(notFinishedFight), List.of(), kingTournament);
+
+		final ScoreOfCompetitor leagueP1 = leagueRanking.stream().filter(score -> score.getCompetitor().equals(p1))
+				.findFirst().orElseThrow();
+		final ScoreOfCompetitor kingP1 = kingRanking.stream().filter(score -> score.getCompetitor().equals(p1))
+				.findFirst().orElseThrow();
+
+		assertThat(leagueP1.getWonDuels()).isZero();
+		assertThat(kingP1.getWonDuels()).isOne();
+	}
+
+	// ========== Individual Lookup Tests ==========
+
+	@Test
+	public void testGetScoreRanking() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Team team = this.team(1, "Team", tournament);
+		team.setMembers(List.of(p1));
+		group.setTeams(List.of(team));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final ScoreOfCompetitor score = this.provider.getScoreRanking(group, p1);
+
+		assertThat(score).isNotNull().extracting(ScoreOfCompetitor::getCompetitor).isEqualTo(p1);
+	}
+
+	@Test
+	public void testGetScoreRankingWithMissingCompetitor() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Participant p2 = this.participant(2, "Ryu", "Gi");
+		final Team team = this.team(1, "Team", tournament);
+		team.setMembers(List.of(p1));
+		group.setTeams(List.of(team));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final ScoreOfCompetitor score = this.provider.getScoreRanking(group, p2);
+
+		assertThat(score).isNull();
+	}
+
+	@Test
+	public void testGetCompetitorRankingWithMissing() {
+		final RankingProvider spyProvider = spy(this.provider);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Participant p2 = this.participant(2, "Ryu", "Gi");
+		final Participant missing = this.participant(3, "C", "Three");
+
+		final ScoreOfCompetitor score1 = new ScoreOfCompetitor();
+		score1.setCompetitor(p1);
+		final ScoreOfCompetitor score2 = new ScoreOfCompetitor();
+		score2.setCompetitor(p2);
+
+		doReturn(List.of(score1, score2)).when(spyProvider).getCompetitorGlobalRanking(ScoreType.DEFAULT);
+
+		final CompetitorRanking ranking = spyProvider.getCompetitorRanking(missing);
+
+		assertThat(ranking.getRanking()).isEqualTo(1);
+		assertThat(ranking.getTotal()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetCompetitorRankingWhenFound() {
+		final RankingProvider spyProvider = spy(this.provider);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Participant p2 = this.participant(2, "Ryu", "Gi");
+
+		final ScoreOfCompetitor score1 = new ScoreOfCompetitor();
+		score1.setCompetitor(p1);
+		final ScoreOfCompetitor score2 = new ScoreOfCompetitor();
+		score2.setCompetitor(p2);
+
+		doReturn(List.of(score1, score2)).when(spyProvider).getCompetitorGlobalRanking(ScoreType.DEFAULT);
+
+		final CompetitorRanking ranking = spyProvider.getCompetitorRanking(p1);
+
+		assertThat(ranking.getRanking()).isZero();
+		assertThat(ranking.getTotal()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetOrderFromRanking() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+
+		final ScoreOfTeam score1 = this.score(team1, 3, 0, 6, 12, 0, 0);
+		final ScoreOfTeam score2 = this.score(team2, 2, 0, 4, 8, 0, 0);
+
+		final Integer order = this.provider.getOrderFromRanking(List.of(score1, score2), team1);
+
+		assertThat(order).isZero();
+	}
+
+	@Test
+	public void testGetOrderFromRankingWithMissingTeam() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team missingTeam = this.team(3, "Team C", tournament);
+
+		final ScoreOfTeam score1 = this.score(team1, 3, 0, 6, 12, 0, 0);
+
+		final Integer order = this.provider.getOrderFromRanking(List.of(score1), missingTeam);
+
+		assertThat(order).isNull();
+	}
+
+	@Test
+	public void testGetTeamsRanking() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		group.setTeams(List.of(team1, team2));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final List<Team> ranking = this.provider.getTeamsRanking(group);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetTeamsRankingById() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		group.setId(1);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		group.setTeams(List.of(team1, team2));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		when(this.groupProvider.getGroup(1)).thenReturn(group);
+
+		final List<Team> ranking = this.provider.getTeamsRanking(1);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetTeamsRankingByIdNotFound() {
+		when(this.groupProvider.getGroup(999)).thenReturn(null);
+
+		assertThatThrownBy(() -> this.provider.getTeamsRanking(999)).isInstanceOf(GroupNotFoundException.class);
+	}
+
+	@Test
+	public void testGetCompetitor() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Participant p2 = this.participant(2, "Ryu", "Gi");
+		final Team team = this.team(1, "Team", tournament);
+		team.setMembers(List.of(p1, p2));
+		group.setTeams(List.of(team));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final Participant competitor = this.provider.getCompetitor(group, 0);
+
+		assertThat(competitor).isNotNull();
+	}
+
+	@Test
+	public void testGetCompetitorWithInvalidOrder() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		group.setTeams(List.of());
+
+		final Participant competitor = this.provider.getCompetitor(group, 5);
+
+		assertThat(competitor).isNull();
+	}
+
+	@Test
+	public void testGetScoreOfCompetitor() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Team team = this.team(1, "Team", tournament);
+		team.setMembers(List.of(p1));
+		group.setTeams(List.of(team));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final ScoreOfCompetitor score = this.provider.getScoreOfCompetitor(group, 0);
+
+		assertThat(score).isNotNull().extracting(ScoreOfCompetitor::getCompetitor).isEqualTo(p1);
+	}
+
+	@Test
+	public void testGetScoreOfCompetitorWithInvalidOrder() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		group.setTeams(List.of());
+
+		final ScoreOfCompetitor score = this.provider.getScoreOfCompetitor(group, 10);
+
+		assertThat(score).isNull();
+	}
+
+	@Test
+	public void testGetParticipants() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Participant p1 = this.participant(1, "Ken", "Do");
+		final Participant p2 = this.participant(2, "Ryu", "Gi");
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		team1.setMembers(List.of(p1));
+		team2.setMembers(List.of(p2));
+		group.setTeams(List.of(team1, team2));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final List<Participant> participants = this.provider.getParticipants(group);
+
+		assertThat(participants).hasSize(2);
+	}
+
+	@Test
+	public void testGetOrder() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		group.setTeams(List.of(team1, team2));
+		group.setFights(List.of());
+		group.setUnties(List.of());
+
+		final Integer order = this.provider.getOrder(group, team1);
+
+		assertThat(order).isNotNull().isGreaterThanOrEqualTo(0);
+	}
+
+	@Test
+	public void testGetOrderWithMissingTeam() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+		final Team missingTeam = this.team(3, "Team C", tournament);
+		group.setTeams(List.of(team1, team2));
+
+		final Integer order = this.provider.getOrder(group, missingTeam);
+
+		assertThat(order).isNull();
+	}
+
+	// ========== Exception Handling Tests ==========
+
+	@Test
+	public void testGetCompetitorsScoreRankingFromTournamentNotFound() {
+		when(this.tournamentRepository.findById(999)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> this.provider.getCompetitorsScoreRankingFromTournament(999))
+				.isInstanceOf(TournamentNotFoundException.class);
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingFromTournamentNotFound() {
+		when(this.tournamentRepository.findById(999)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> this.provider.getTeamsScoreRankingFromTournament(999))
+				.isInstanceOf(TournamentNotFoundException.class);
+	}
+
+	// ========== Score Type Tests ==========
+
+	@Test
+	public void testGetTeamsScoreRankingWithEuropeanScoreType() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.EUROPEAN, List.of(team1, team2),
+				List.of(), List.of(), true);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingWithInternationalScoreType() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.INTERNATIONAL,
+				List.of(team1, team2), List.of(), List.of(), true);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingWithCustomScoreType() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.CUSTOM, List.of(team1, team2),
+				List.of(), List.of(), true);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingWithWinOverDrawsScoreType() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(1, "Team A", tournament);
+		final Team team2 = this.team(2, "Team B", tournament);
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.WIN_OVER_DRAWS,
+				List.of(team1, team2), List.of(), List.of(), true);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetCompetitorsGlobalScoreRankingWithEmptyCompetitorsAndNoDateFilter() {
+		final Participant p1 = this.participant(21, "A", "One");
+		final Participant p2 = this.participant(22, "B", "Two");
+		final Fight oldFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now().minusDays(200));
+
+		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2)));
+		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(oldFight));
+		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
+
+		final List<ScoreOfCompetitor> ranking = this.provider.getCompetitorsGlobalScoreRanking(new ArrayList<>(),
+				ScoreType.DEFAULT, null);
+
+		assertThat(ranking).hasSize(2);
+	}
+
+	@Test
+	public void testGetCompetitorAndScoreWithNegativeOrderReturnNull() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Group group = this.group(tournament);
+		final Participant p1 = this.participant(31, "Ken", "Do");
+		final Team team = this.team(31, "Team", tournament);
+		team.setMembers(List.of(p1));
+		group.setTeams(List.of(team));
+
+		assertThat(this.provider.getCompetitor(group, -1)).isNull();
+		assertThat(this.provider.getScoreOfCompetitor(group, -1)).isNull();
+	}
+
+	@Test
+	public void testGetCompetitorGlobalRankingUsesAllComparatorTypesAndFiltersNonCompetitors() {
+		final Participant competitor = this.participant(41, "C", "One");
+		final Participant referee = this.participant(42, "R", "Two");
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Role competitorRole = new Role(tournament, competitor, RoleType.COMPETITOR);
+		final Role refereeRole = new Role(tournament, referee, RoleType.REFEREE);
+
+		when(this.roleProvider.getAll()).thenReturn(List.of(competitorRole, refereeRole));
+		when(this.fightProvider.getAll()).thenReturn(List.of());
+		when(this.duelProvider.getUnties()).thenReturn(List.of());
+
+		assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.CUSTOM)).hasSize(1)
+				.extracting(ScoreOfCompetitor::getCompetitor).containsExactly(competitor);
+		assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.EUROPEAN)).hasSize(1);
+		assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.INTERNATIONAL)).hasSize(1);
+		assertThat(this.provider.getCompetitorGlobalRanking(ScoreType.WIN_OVER_DRAWS)).hasSize(1);
+	}
+
+	@Test
+	public void testPrivateSortHelpersAndCheckLevelBranchesViaReflection() throws Exception {
+		final Method sortTeamsScores = RankingProvider.class.getDeclaredMethod("sortTeamsScores", ScoreType.class,
+				List.class, boolean.class);
+		sortTeamsScores.setAccessible(true);
+		sortTeamsScores.invoke(null, ScoreType.DEFAULT, null, true);
+
+		final Method sortCompetitorsScores = RankingProvider.class.getDeclaredMethod("sortCompetitorsScores",
+				ScoreType.class, List.class);
+		sortCompetitorsScores.setAccessible(true);
+		sortCompetitorsScores.invoke(null, ScoreType.DEFAULT, null);
+
+		final Method checkLevel = RankingProvider.class.getDeclaredMethod("checkLevel", Tournament.class);
+		checkLevel.setAccessible(true);
+
+		assertThat((Boolean) checkLevel.invoke(this.provider, new Object[]{null})).isTrue();
+		assertThat((Boolean) checkLevel.invoke(this.provider, this.tournament(TournamentType.KING_OF_THE_MOUNTAIN)))
+				.isFalse();
+	}
+
+	@Test
+	public void testGetTeamsScoreRankingAssignsDifferentSortingIndexWhenTeamsDiffer() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Participant p1 = this.participant(51, "A", "One");
+		final Participant p2 = this.participant(52, "B", "Two");
+		final Team team1 = this.team(51, "Team A", tournament);
+		final Team team2 = this.team(52, "Team B", tournament);
+		team1.setMembers(new ArrayList<>(List.of(p1)));
+		team2.setMembers(new ArrayList<>(List.of(p2)));
+
+		final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");
+		fight.setCreatedAt(LocalDateTime.now());
+		fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+		fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(ScoreType.CLASSIC, List.of(team1, team2),
+				List.of(fight), List.of(), true);
+
+		assertThat(ranking).hasSize(2);
+		assertThat(ranking.getFirst().getSortingIndex()).isZero();
+		assertThat(ranking.get(1).getSortingIndex()).isEqualTo(1);
+	}
+
+	@Test
+	public void testGetSwissTieBreakOrderMatchesConfiguredFallbackChain() {
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.BUCHHOLZ)).containsExactly(
+				SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.MEDIAN_BUCHHOLZ)).containsExactly(
+				SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.SONNEBORN_BERGER)).containsExactly(
+				SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.DIRECT_ENCOUNTER)).containsExactly(
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+		assertThat(RankingProvider.getSwissTieBreakOrder(SwissTieBreakRule.POINT_DIFFERENTIAL)).containsExactly(
+				SwissTieBreakRule.POINT_DIFFERENTIAL, SwissTieBreakRule.BUCHHOLZ, SwissTieBreakRule.MEDIAN_BUCHHOLZ,
+				SwissTieBreakRule.SONNEBORN_BERGER, SwissTieBreakRule.DIRECT_ENCOUNTER);
+	}
+
+	@Test
+	public void testGetSwissTieBreakOrderUsesBuchholzChainWhenSelectionIsNull() {
+		assertThat(RankingProvider.getSwissTieBreakOrder(null)).containsExactly(SwissTieBreakRule.BUCHHOLZ,
+				SwissTieBreakRule.MEDIAN_BUCHHOLZ, SwissTieBreakRule.SONNEBORN_BERGER,
+				SwissTieBreakRule.DIRECT_ENCOUNTER, SwissTieBreakRule.POINT_DIFFERENTIAL);
+	}
+
+	@Test
+	public void testSwissRankingUsesBuchholzByDefault() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(101, "Team 0", tournament);
+		final Team team1 = this.team(102, "Team 1", tournament);
+		final Team team2 = this.team(103, "Team 2", tournament);
+		final Team team3 = this.team(104, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).allSatisfy(
+				score -> assertThat(score.getSwissTieBreakRuleUsed()).isEqualTo(SwissTieBreakRule.BUCHHOLZ));
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingCanUsePointDifferentialRule() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(201, "Team 0", tournament);
+		final Team team1 = this.team(202, "Team 1", tournament);
+		final Team team2 = this.team(203, "Team 2", tournament);
+		final Team team3 = this.team(204, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.POINT_DIFFERENTIAL.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(4.0, 1.0, -1.0, -4.0);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 1", "Team 0",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingFallsBackToBuchholzWhenTieBreakRuleValueIsInvalid() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(205, "Team 0", tournament);
+		final Team team1 = this.team(206, "Team 1", tournament);
+		final Team team2 = this.team(207, "Team 2", tournament);
+		final Team team3 = this.team(208, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						"NOT_VALID"));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).allSatisfy(
+				score -> assertThat(score.getSwissTieBreakRuleUsed()).isEqualTo(SwissTieBreakRule.BUCHHOLZ));
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingCountsByeAsOneWin() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(901, "Team 0", tournament);
+		final Team team1 = this.team(902, "Team 1", tournament);
+		final Team team2 = this.team(903, "Team 2", tournament);
+		final Team team3 = this.team(904, "Team 3", tournament);
+		final Team team4 = this.team(905, "Team 4", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3, team4));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 0),
+				this.fightWithScores(tournament, team2, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		final ScoreOfTeam byeTeamScore = ranking.stream().filter(score -> score.getTeam().equals(team4)).findFirst()
+				.orElseThrow();
+
+		assertThat(byeTeamScore.getWonFights()).isEqualTo(1);
+		assertThat(byeTeamScore.getFightsDone()).isEqualTo(1);
+	}
+
+	@Test
+	public void testSwissRankingCanUseDirectEncounterRule() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(301, "Team 0", tournament);
+		final Team team1 = this.team(302, "Team 1", tournament);
+		final Team team2 = this.team(303, "Team 2", tournament);
+		final Team team3 = this.team(304, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team1, team0, 2, 0),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team3, 2, 0),
+				this.fightWithScores(tournament, team2, team1, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.DIRECT_ENCOUNTER.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(0.0, 3.0, 0.0, 0.0);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 1", "Team 0",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingCanUseMedianBuchholzRule() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(311, "Team 0", tournament);
+		final Team team1 = this.team(312, "Team 1", tournament);
+		final Team team2 = this.team(313, "Team 2", tournament);
+		final Team team3 = this.team(314, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.MEDIAN_BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 9.0, 3.0, 9.0);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingCanUseSonnebornBergerRule() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(321, "Team 0", tournament);
+		final Team team1 = this.team(322, "Team 1", tournament);
+		final Team team2 = this.team(323, "Team 2", tournament);
+		final Team team3 = this.team(324, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0)));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.SONNEBORN_BERGER.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue).containsExactly(3.0, 3.0, 0.0, 0.0);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 0", "Team 1",
+				"Team 3");
+	}
+
+	@Test
+	public void testSwissRankingSeparatesBuchholzMedianAndSonnebornBergerWithDifferentOrders() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final List<Team> teams = new ArrayList<>();
+		for (int i = 1; i <= 16; i++) {
+			teams.add(this.team(6000 + i, String.format("Team%02d", i), tournament));
+		}
+		group.setTeams(teams);
+
+		final java.util.function.Function<String, Team> teamByName = name -> teams.stream()
+				.filter(team -> team.getName().equals(name)).findFirst().orElseThrow();
+
+		// Deterministic 4-round/16-team scenario where the 2-win group is tied and
+		// primary metrics differ across tie-break rules.
+		final List<Fight> fights = List.of(
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team02"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team03"), teamByName.apply("Team04"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team05"), teamByName.apply("Team06"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team07"), teamByName.apply("Team08"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team09"), teamByName.apply("Team10"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team11"), teamByName.apply("Team12"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team13"), teamByName.apply("Team14"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team15"), teamByName.apply("Team16"), 2, 0),
+
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team03"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team05"), teamByName.apply("Team07"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team09"), teamByName.apply("Team11"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team13"), teamByName.apply("Team15"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team02"), teamByName.apply("Team04"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team06"), teamByName.apply("Team08"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team10"), teamByName.apply("Team12"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team14"), teamByName.apply("Team16"), 2, 0),
+
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team05"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team09"), teamByName.apply("Team15"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team02"), teamByName.apply("Team03"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team06"), teamByName.apply("Team07"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team10"), teamByName.apply("Team11"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team13"), teamByName.apply("Team14"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team04"), teamByName.apply("Team08"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team12"), teamByName.apply("Team16"), 2, 0),
+
+				this.fightWithScores(tournament, teamByName.apply("Team01"), teamByName.apply("Team15"), 0, 2),
+				this.fightWithScores(tournament, teamByName.apply("Team02"), teamByName.apply("Team05"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team07"), teamByName.apply("Team09"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team10"), teamByName.apply("Team14"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team03"), teamByName.apply("Team04"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team06"), teamByName.apply("Team11"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team12"), teamByName.apply("Team13"), 2, 0),
+				this.fightWithScores(tournament, teamByName.apply("Team08"), teamByName.apply("Team16"), 0, 2));
+		group.setFights(fights);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+		final List<String> buchholzOrder = this.provider.getTeamsScoreRanking(group).stream()
+				.filter(score -> score.getWonFights() == 2).map(score -> score.getTeam().getName()).toList();
+
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.MEDIAN_BUCHHOLZ.name()));
+		final List<String> medianBuchholzOrder = this.provider.getTeamsScoreRanking(group).stream()
+				.filter(score -> score.getWonFights() == 2).map(score -> score.getTeam().getName()).toList();
+
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.SONNEBORN_BERGER.name()));
+		final List<String> sonnebornBergerOrder = this.provider.getTeamsScoreRanking(group).stream()
+				.filter(score -> score.getWonFights() == 2).map(score -> score.getTeam().getName()).toList();
+
+		assertThat(buchholzOrder).containsExactly("Team13", "Team05", "Team04", "Team10", "Team14", "Team03");
+		assertThat(medianBuchholzOrder).containsExactly("Team05", "Team13", "Team04", "Team14", "Team03", "Team10");
+		assertThat(sonnebornBergerOrder).containsExactly("Team13", "Team04", "Team05", "Team10", "Team14", "Team03");
+	}
+
+	@Test
+	public void testSwissRankingFallsBackToStableNameOrderingWhenTieBreakersMatch() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		final Group group = this.group(tournament);
+		final Team alpha = this.team(401, "Alpha", tournament);
+		final Team beta = this.team(402, "Beta", tournament);
+		group.setTeams(List.of(beta, alpha));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.SONNEBORN_BERGER.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Alpha", "Beta");
+	}
+
+	@Test
+	public void testSwissFinalRankingFromTournamentRespectsSelectedTieBreakRule() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		tournament.setId(501);
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(5010, "Team 0", tournament);
+		final Team team1 = this.team(5011, "Team 1", tournament);
+		final Team team2 = this.team(5012, "Team 2", tournament);
+		final Team team3 = this.team(5013, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		final List<Fight> fights = List.of(this.fightWithScores(tournament, team0, team1, 2, 1),
+				this.fightWithScores(tournament, team2, team3, 2, 0),
+				this.fightWithScores(tournament, team0, team2, 0, 2),
+				this.fightWithScores(tournament, team1, team3, 2, 0));
+		group.setFights(fights);
+
+		when(this.tournamentRepository.findById(501)).thenReturn(Optional.of(tournament));
+		when(this.teamProvider.getAll(tournament)).thenReturn(group.getTeams());
+		when(this.fightProvider.getFights(tournament)).thenReturn(fights);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.POINT_DIFFERENTIAL.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRankingFromTournament(501);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Team 2", "Team 1", "Team 0",
+				"Team 3");
+	}
+
+	@Test
+	public void testLeagueFinalRankingFromTournamentKeepsExistingOrderLogic() {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		tournament.setId(502);
+		final Group group = this.group(tournament);
+		final Team alpha = this.team(5021, "Alpha", tournament);
+		final Team beta = this.team(5022, "Beta", tournament);
+		final Team gamma = this.team(5023, "Gamma", tournament);
+		group.setTeams(List.of(alpha, beta, gamma));
+		final List<Fight> fights = List.of(this.fightWithScores(tournament, alpha, beta, 2, 0),
+				this.fightWithScores(tournament, alpha, gamma, 2, 0),
+				this.fightWithScores(tournament, beta, gamma, 2, 0));
+		group.setFights(fights);
+
+		when(this.tournamentRepository.findById(502)).thenReturn(Optional.of(tournament));
+		when(this.teamProvider.getAll(tournament)).thenReturn(group.getTeams());
+		when(this.fightProvider.getFights(tournament)).thenReturn(fights);
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRankingFromTournament(502);
+
+		assertThat(ranking).extracting(score -> score.getTeam().getName()).containsExactly("Alpha", "Beta", "Gamma");
+		Mockito.verifyNoInteractions(this.tournamentExtraPropertyProvider);
+	}
+
+	// ========== Custom Swiss Scoring Tests ==========
+
+	/**
+	 * Verifies Swiss ranking when win and draw points are equal (win=1, draw=1).
+	 *
+	 * <p>Fight schedule (4 fights):
+	 * <ul>
+	 *   <li>Team 0 vs Team 1 → Draw</li>
+	 *   <li>Team 2 vs Team 3 → Draw</li>
+	 *   <li>Team 0 vs Team 2 → Draw</li>
+	 *   <li>Team 1 vs Team 3 → Team 1 wins (2-0)</li>
+	 * </ul>
+	 *
+	 * <p>With the <b>default</b> scoring (win=3, draw=1):
+	 * <ul>
+	 *   <li>Team 1: 1 draw + 1 win = 4 pts → <b>1st</b></li>
+	 *   <li>Team 0: 2 draws = 2 pts, Buchholz = Team1(4)+Team2(2) = 6 → <b>2nd</b></li>
+	 *   <li>Team 2: 2 draws = 2 pts, Buchholz = Team3(1)+Team0(2) = 3 → <b>3rd</b></li>
+	 *   <li>Team 3: 1 draw + 1 loss = 1 pt → <b>4th</b></li>
+	 * </ul>
+	 *
+	 * <p>With <b>win=draw=1</b>:
+	 * <ul>
+	 *   <li>Team 0, Team 1, Team 2: all 2 pts (wins equal draws in value)</li>
+	 *   <li>Team 3: 1 pt</li>
+	 *   <li>Buchholz (with win=1,draw=1 points): Team0=4 (Team1+Team2=2+2),
+	 *       Team1=3 (Team0+Team3=2+1), Team2=3 (Team3+Team0=1+2)</li>
+	 * </ul>
+	 *
+	 * <p><b>Critical difference vs default</b>: Team 0 rises from <b>2nd → 1st</b> and
+	 * Team 1 drops from <b>1st → 2nd</b>. When wins equal draws, Team 0's two draws
+	 * are worth the same as Team 1's win+draw, and Team 0's higher Buchholz (its
+	 * opponents Team 1 and Team 2 both have 2 pts, while Team 1's opponent Team 3
+	 * only has 1 pt) becomes the deciding factor.
+	 */
+	@Test
+	public void testSwissRankingWithEqualWinAndDrawPoints() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		// Override Swiss defaults: wins and draws are now worth the same (1 pt each)
+		tournament.getTournamentScore().setPointsByVictory(1);
+		tournament.getTournamentScore().setPointsByDraw(1);
+
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(9001, "Team 0", tournament);
+		final Team team1 = this.team(9002, "Team 1", tournament);
+		final Team team2 = this.team(9003, "Team 2", tournament);
+		final Team team3 = this.team(9004, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(
+				this.fightWithScores(tournament, team0, team1, 1, 1),  // draw
+				this.fightWithScores(tournament, team2, team3, 1, 1),  // draw
+				this.fightWithScores(tournament, team0, team2, 1, 1),  // draw
+				this.fightWithScores(tournament, team1, team3, 2, 0)   // team1 wins
+		));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		// Team 0 is now 1st (was 2nd with default win=3): its Buchholz=4.0 beats Team 1's
+		// Buchholz=3.0 because Team 0 faced stronger opponents (Team1+Team2=2+2=4 vs
+		// Team1's opponents Team0+Team3=2+1=3).
+		// Team 3 stays last (1 pt) but its Buchholz=4.0 reflects that both of its
+		// opponents (Team 2 and Team 1) have 2 pts each.
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue)
+				.containsExactly(4.0, 3.0, 3.0, 4.0);
+		assertThat(ranking).extracting(score -> score.getTeam().getName())
+				.containsExactly("Team 0", "Team 1", "Team 2", "Team 3");
+	}
+
+	/**
+	 * Verifies Swiss ranking when draws are worth zero points (win=1, draw=0).
+	 *
+	 * <p>Fight schedule (4 fights, same structure as
+	 * {@link #testSwissRankingWithEqualWinAndDrawPoints}):
+	 * <ul>
+	 *   <li>Team 0 vs Team 1 → Draw</li>
+	 *   <li>Team 2 vs Team 3 → Draw</li>
+	 *   <li>Team 0 vs Team 2 → Draw</li>
+	 *   <li>Team 1 vs Team 3 → Team 1 wins (2-0)</li>
+	 * </ul>
+	 *
+	 * <p>With the <b>default</b> scoring (win=3, draw=1):
+	 * <ul>
+	 *   <li>Team 1: 1 draw + 1 win = 4 pts → <b>1st</b></li>
+	 *   <li>Team 0: 2 draws = 2 pts, Buchholz = 6 → <b>2nd</b></li>
+	 *   <li>Team 2: 2 draws = 2 pts, Buchholz = 3 → <b>3rd</b></li>
+	 *   <li>Team 3: 1 draw + 1 loss = 1 pt → <b>4th</b></li>
+	 * </ul>
+	 *
+	 * <p>With <b>win=1, draw=0</b>:
+	 * <ul>
+	 *   <li>Team 1: 1 win = 1 pt → <b>1st</b></li>
+	 *   <li>Team 0: 2 draws = 0 pts, Buchholz = Team1(1)+Team2(0) = 1 → <b>2nd</b></li>
+	 *   <li>Team 3: 1 draw + 1 loss = 0 pts, Buchholz = Team2(0)+Team1(1) = 1,
+	 *       hits=1 → <b>3rd</b></li>
+	 *   <li>Team 2: 2 draws = 0 pts, Buchholz = Team3(0)+Team0(0) = 0 → <b>4th</b></li>
+	 * </ul>
+	 *
+	 * <p><b>Critical difference vs default</b>: Team 2 drops from <b>3rd → 4th</b> and
+	 * Team 3 rises from <b>4th → 3rd</b>. With draw=0, Team 2's two draws earn nothing.
+	 * Both Team 2 and Team 3 are at 0 pts, but Team 3's Buchholz (1.0) is higher than
+	 * Team 2's (0.0) because Team 3 played against Team 1 (the only team with points),
+	 * while Team 2's opponents Team 3 and Team 0 both have 0 pts.
+	 */
+	@Test
+	public void testSwissRankingWithZeroDrawPoints() {
+		final Tournament tournament = this.tournament(TournamentType.SWISS);
+		// Override Swiss defaults: wins are worth 1 pt, draws earn nothing
+		tournament.getTournamentScore().setPointsByVictory(1);
+		tournament.getTournamentScore().setPointsByDraw(0);
+
+		final Group group = this.group(tournament);
+		final Team team0 = this.team(9005, "Team 0", tournament);
+		final Team team1 = this.team(9006, "Team 1", tournament);
+		final Team team2 = this.team(9007, "Team 2", tournament);
+		final Team team3 = this.team(9008, "Team 3", tournament);
+		group.setTeams(List.of(team0, team1, team2, team3));
+		group.setFights(List.of(
+				this.fightWithScores(tournament, team0, team1, 1, 1),  // draw
+				this.fightWithScores(tournament, team2, team3, 1, 1),  // draw
+				this.fightWithScores(tournament, team0, team2, 1, 1),  // draw
+				this.fightWithScores(tournament, team1, team3, 2, 0)   // team1 wins
+		));
+		when(this.groupProvider.getGroups(tournament)).thenReturn(List.of(group));
+		when(this.tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+				TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE, SwissTieBreakRule.BUCHHOLZ.name()))
+				.thenReturn(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE,
+						SwissTieBreakRule.BUCHHOLZ.name()));
+
+		final List<ScoreOfTeam> ranking = this.provider.getTeamsScoreRanking(group);
+
+		// Team 1 leads (only winner, 1 pt). The remaining three teams all have 0 pts.
+		// Buchholz (computed with draw=0 points): Team1=0.0, Team0=1.0, Team3=1.0, Team2=0.0.
+		// Team 2, which had 3rd place under default scoring due to 2 draws worth 2 pts,
+		// now drops to last because its Buchholz=0.0 (both its opponents—Team 3 and
+		// Team 0—also have 0 pts). Team 3 rises to 3rd because it played Team 1 (1 pt),
+		// giving it Buchholz=1.0.
+		assertThat(ranking).extracting(ScoreOfTeam::getSwissTieBreakValue)
+				.containsExactly(0.0, 1.0, 1.0, 0.0);
+		assertThat(ranking).extracting(score -> score.getTeam().getName())
+				.containsExactly("Team 1", "Team 0", "Team 3", "Team 2");
+	}
+
+	// ========== Helper Methods ==========
+
+	private Tournament tournament(TournamentType type) {
+		final Tournament tournament = new Tournament("T", 1, 1, type, "tester", ScoreType.INTERNATIONAL);
+		tournament.setId(100);
+		// Swiss default points (3 win / 1 draw) are now initialised automatically
+		// by the Tournament constructor, so no manual override is needed here.
+		return tournament;
+	}
+
+	private Group group(Tournament tournament) {
+		final Group group = new Group(tournament, 0, 0);
+		group.setTeams(new ArrayList<>());
+		group.setFights(new ArrayList<>());
+		group.setUnties(new ArrayList<>());
+		return group;
+	}
+
+	private Participant participant(int id, String name, String lastname) {
+		final Club club = new Club("Club " + id, "ES", "City");
+		club.setId(id);
+		final Participant participant = new Participant("ID" + id, name, lastname, club);
+		participant.setId(id);
+		return participant;
+	}
+
+	private Team team(int id, String name, Tournament tournament) {
+		final Team team = new Team(name, tournament);
+		team.setId(id);
+		team.setMembers(new ArrayList<>());
+		return team;
+	}
+
+	private Fight fight(List<Participant> members1, List<Participant> members2, LocalDateTime createdAt) {
+		final Tournament tournament = this.tournament(TournamentType.LEAGUE);
+		final Team team1 = this.team(200 + members1.getFirst().getId(), "T1-" + members1.getFirst().getId(),
+				tournament);
+		final Team team2 = this.team(300 + members2.getFirst().getId(), "T2-" + members2.getFirst().getId(),
+				tournament);
+		team1.setMembers(new ArrayList<>(members1));
+		team2.setMembers(new ArrayList<>(members2));
+		final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");
+		fight.setCreatedAt(createdAt);
+		return fight;
+	}
+
+	private Fight fightWithScores(Tournament tournament, Team team1, Team team2, int team1Score, int team2Score) {
+		final Fight fight = new Fight(tournament, team1, team2, 0, 0, "tester");
+		for (int i = 0; i < team1Score; i++) {
+			fight.getDuels().getFirst().addCompetitor1Score(Score.MEN);
+		}
+		for (int i = 0; i < team2Score; i++) {
+			fight.getDuels().getFirst().addCompetitor2Score(Score.MEN);
+		}
+		fight.getDuels().forEach(duel -> duel.setFinished(true));
+		return fight;
+	}
+
+	private ScoreOfTeam score(Team team, int wonFights, int drawFights, int wonDuels, int hits, int unties, int level) {
+		final ScoreOfTeam score = new ScoreOfTeam();
+		score.setTeam(team);
+		score.setWonFights(wonFights);
+		score.setDrawFights(drawFights);
+		score.setWonDuels(wonDuels);
+		score.setHits(hits);
+		score.setUntieDuels(unties);
+		score.setLevel(level);
+		return score;
+	}
+}

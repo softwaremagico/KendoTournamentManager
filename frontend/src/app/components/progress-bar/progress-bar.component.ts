@@ -1,14 +1,16 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'app-progress-bar',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'progress-bar',
   templateUrl: './progress-bar.component.html',
   styleUrls: ['./progress-bar.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class ProgressBarComponent implements OnInit {
 
-  intervalId: NodeJS.Timeout;
+  intervalId: ReturnType<typeof setInterval>;
 
   drawnPercentage: number = 0;
 

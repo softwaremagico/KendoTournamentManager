@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.values;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,7 +34,10 @@ public enum TournamentExtraPropertyKey {
     NUMBER_OF_WINNERS(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP, TournamentType.LEAGUE),
     LEAGUE_FIGHTS_ORDER_GENERATION(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
     ODD_FIGHTS_RESOLVED_ASAP(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
-    SENBATSU_CHALLENGE_DISTANCE(TournamentType.SENBATSU);
+    SENBATSU_CHALLENGE_DISTANCE(TournamentType.SENBATSU),
+    SWISS_ROUNDS(TournamentType.SWISS),
+    SWISS_TIE_BREAK_RULE(TournamentType.SWISS),
+    SWISS_AVOID_REPEATED_PAIRINGS(TournamentType.SWISS);
 
     private final Set<TournamentType> allowedTournaments;
 

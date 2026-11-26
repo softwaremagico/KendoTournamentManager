@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security.dto;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,6 +29,13 @@ public class AuthRequest {
     @NotBlank
     private String password;
 
+    /**
+     * Creates an empty authentication request.
+     */
+    public AuthRequest() {
+        // No state to initialize.
+    }
+
     public String getUsername() {
         return username;
     }
@@ -44,4 +51,15 @@ public class AuthRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    /**
+     * Accepts legacy tenant input while tenancy selection is resolved from the
+     * authenticated account's persisted membership.
+     *
+     * @param tenant ignored legacy tenant name
+     */
+    public void setTenant(String tenant) {
+        // Tenant selection is not accepted from login requests.
+    }
+
 }

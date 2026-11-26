@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.exceptions;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
+@SuppressWarnings("java:S110")
 public class DuelNotFoundException extends NotFoundException {
     private static final long serialVersionUID = 3392553855955576861L;
 

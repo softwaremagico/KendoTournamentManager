@@ -1,6 +1,5 @@
 .user-score {
   width: 100%;
-  float: left;
   display: flex;
   align-items: center;
 }
@@ -8,7 +7,17 @@
 .user-name {
   width: 100%;
   padding-right: 20px;
-  color: var(--text-color);
+  color: var(--component-color);
+}
+
+.substitute-separation {
+  min-width: 135px;
+  height: 50px;
+  margin: 2px 0;
+}
+
+participant-picture.over {
+  opacity: 30%;
 }
 
 @media screen and (max-width: 1024px) {

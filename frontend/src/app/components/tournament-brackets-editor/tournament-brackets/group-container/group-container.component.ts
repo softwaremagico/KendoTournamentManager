@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../../models/team";
 import {Group} from "../../../../models/group";
@@ -8,11 +8,16 @@ import {Tournament} from "../../../../models/tournament";
 import {BracketsMeasures} from "../brackets-measures";
 
 @Component({
-  selector: 'app-group-container',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'group-container',
   templateUrl: './group-container.component.html',
   styleUrls: ['./group-container.component.scss']
 })
 export class GroupContainerComponent implements OnInit {
+
+  @Input()
+  group: Group;
 
   @Input()
   index: number;
@@ -37,6 +42,12 @@ export class GroupContainerComponent implements OnInit {
 
   @Input()
   getGroupHigh: (level: number, group: number) => number;
+
+  @Input()
+  selected: boolean = false;
+
+  @Output()
+  elementClicked: EventEmitter<Group> = new EventEmitter<Group>();
 
   totalTeams: number;
 
@@ -84,4 +95,7 @@ export class GroupContainerComponent implements OnInit {
     return this.level !== 0;
   }
 
+  isClicked() {
+    this.elementClicked.emit(this.group);
+  }
 }

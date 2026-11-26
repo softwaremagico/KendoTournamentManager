@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core;
  */
 
 import com.softwaremagico.kt.core.controller.ClubController;
+import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
@@ -29,14 +30,18 @@ import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +56,11 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
+
+    // Record to group tournament role configuration and reduce parameter count (S107)
+    protected record RoleConfiguration(int members, int teams, int referees, int organizers, int volunteers, int press) {
+        // Intentionally empty: this record is a compact immutable parameter group for tests.
+    }
 
     @Autowired
     private ClubController clubController;
@@ -69,6 +79,9 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
 
     @Autowired
     private TournamentController tournamentController;
+
+    @Autowired
+    private FightController fightController;
 
     @Autowired
     private TournamentExtraPropertyController tournamentExtraPropertyController;
@@ -141,7 +154,7 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
         TeamDTO teamDTO = null;
         int teamMember = 0;
 
-        final GroupDTO groupDTO = groupController.get(tournamentDTO).get(0);
+        final GroupDTO groupDTO = groupController.get(tournamentDTO).getFirst();
 
         for (RoleDTO competitorRoleDTO : competitorsRolesDTO) {
             // Create a new team.
@@ -169,21 +182,44 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     }
 
     protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, int minutesPast) {
-        return addTournament(tournamentName, members, teams, referees, organizers, volunteers, press, TournamentType.LEAGUE, minutesPast);
+        return addTournament(tournamentName, new RoleConfiguration(members, teams, referees, organizers, volunteers, press), TournamentType.LEAGUE, minutesPast);
     }
 
     protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, TournamentType type, int minutesPast) {
+        return addTournament(tournamentName, new RoleConfiguration(members, teams, referees, organizers, volunteers, press), type, minutesPast);
+    }
+
+    protected TournamentDTO addTournament(String tournamentName, RoleConfiguration roleConfig, TournamentType type, int minutesPast) {
         //Create Tournament
-        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null, null);
+        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, roleConfig.members(), type), null, null);
         tournamentDTO.setCreatedAt(LocalDateTime.now().minusMinutes(minutesPast));
         tournamentController.update(tournamentDTO, null, null);
         if (TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION.getAllowedTournaments().contains(type)) {
             tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
                     TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null, null);
         }
-        generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
-        addTeams(tournamentDTO, members);
+        generateRoles(tournamentDTO, roleConfig.members(), roleConfig.teams(), roleConfig.referees(), roleConfig.organizers(), roleConfig.volunteers(), roleConfig.press());
+        addTeams(tournamentDTO, roleConfig.members());
         return tournamentDTO;
+    }
+
+    protected void solveFights(TournamentDTO tournamentDTO, int minutesPast) {
+        final List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournamentDTO.getId(), TeamsOrder.SORTED, 0, null, null));
+        LocalDateTime startingTime = LocalDateTime.now().plusMinutes(minutesPast);
+        LocalDateTime endingTime = startingTime.plusSeconds(tournamentDTO.getDuelsDuration());
+        for (FightDTO fightDTO : fightDTOs) {
+            for (DuelDTO duelDTO : fightDTO.getDuels()) {
+                duelDTO.addCompetitor1Score(Score.MEN);
+                duelDTO.addCompetitor1ScoreTime(11);
+                duelDTO.setStartedAt(startingTime);
+                duelDTO.setFinishedAt(endingTime);
+                duelDTO.setFinished(true);
+                //Extending duration for Long Path achievement.
+                startingTime = endingTime.plusMinutes(40);
+                endingTime = startingTime.plusSeconds(tournamentDTO.getDuelsDuration());
+            }
+            fightDTOs.set(0, fightController.update(fightDTO, null, null));
+        }
     }
 
     public void wipeOut() {

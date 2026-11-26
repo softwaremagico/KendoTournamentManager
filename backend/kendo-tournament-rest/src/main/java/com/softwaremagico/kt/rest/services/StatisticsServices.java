@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,11 +49,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * REST controller that exposes statistics endpoints under {@code /statistics}.
+ * <p>
+ * Provides aggregated metrics for tournaments and individual participants:
+ * </p>
+ * <ul>
+ *   <li>{@code GET /tournaments/{id}/fights} — fight statistics for a tournament
+ *       (hit counts, average durations, etc.). Supports member-level and team-level
+ *       breakdowns via query parameters.</li>
+ *   <li>{@code GET /tournaments/{id}} — high-level tournament statistics
+ *       (number of participants, teams, fights, duels).</li>
+ *   <li>{@code GET /tournaments/{id}/previous/{n}} — the last N tournaments'
+ *       statistics for trend comparison.</li>
+ *   <li>{@code GET /participants/{id}} — a participant's lifetime statistics
+ *       across all tournaments.</li>
+ * </ul>
+ * <p>
+ * All endpoints require at least the VIEWER role.
+ * </p>
+ */
 @RestController
 @RequestMapping("/statistics")
 public class StatisticsServices {
@@ -105,7 +126,7 @@ public class StatisticsServices {
                                                                HttpServletRequest request) {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentController.get(tournamentId));
         tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return tournamentStatisticsDTO;
     }
 
@@ -127,7 +148,7 @@ public class StatisticsServices {
         tournamentsDTO.forEach(tournamentDTO -> {
             final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentDTO);
             tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
             statisticsDTOS.add(tournamentStatisticsDTO);
         });
         return statisticsDTOS;
@@ -151,7 +172,7 @@ public class StatisticsServices {
         }
         final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(participantController.get(participantId));
         participantStatisticsDTO.setCreatedBy(authentication != null ? authentication.getName() : null);
-        participantStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        participantStatisticsDTO.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return participantStatisticsDTO;
     }
 

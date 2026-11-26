@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,37 +29,39 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        TestLogging.info("### Test started '" + result.getMethod().getMethodName() + "' from '" + result.getTestClass().getName() + "'.");
+        TestLogging.info("### Test started '" + result.getMethod().getMethodName() + "' from '"
+                + result.getTestClass().getName() + "'.");
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        TestLogging.info("### Test finished '" + result.getMethod().getMethodName() + "' from '" + result.getTestClass().getName() + "'.");
+        TestLogging.info("### Test finished '" + result.getMethod().getMethodName() + "' from '"
+                + result.getTestClass().getName() + "'.");
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        TestLogging.errorMessage(this.getClass().getName(),
-                "### Test failed '" + result.getMethod().getMethodName() + "' from '" + result.getTestClass().getName() + "'.");
+        TestLogging.errorMessage(this.getClass(), "### Test failed '" + result.getMethod().getMethodName() + "' from '"
+                + result.getTestClass().getName() + "'.");
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        //Nothing
+        // Nothing
     }
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        //Nothing
+        // Nothing
     }
 
     @Override
     public void onStart(ITestContext context) {
-        TestLogging.info(this.getClass().getName(), "##### Starting tests from '" + context.getName() + "'.");
+        TestLogging.info(this.getClass(), "##### Starting tests from '" + context.getName() + "'.");
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        TestLogging.info(this.getClass().getName(), "##### Tests finished from '" + context.getName() + "'.");
+        TestLogging.info(this.getClass(), "##### Tests finished from '" + context.getName() + "'.");
     }
 }

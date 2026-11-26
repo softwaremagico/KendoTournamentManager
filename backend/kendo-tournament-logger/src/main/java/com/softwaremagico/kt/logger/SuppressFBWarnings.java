@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,11 +29,15 @@ public @interface SuppressFBWarnings {
     /**
      * The set of FindBugs warnings that are to be suppressed in
      * annotated element. The value can be a bug category, kind or pattern.
+     *
+     * @return the FindBugs warnings to suppress.
      */
     String[] value() default {};
 
     /**
-     * Optional documentation of the reason why the warning is suppressed
+     * Optional documentation of the reason why the warning is suppressed.
+     *
+     * @return the justification text.
      */
     String justification() default "";
 }

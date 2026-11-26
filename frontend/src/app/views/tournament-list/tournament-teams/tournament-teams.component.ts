@@ -1,10 +1,9 @@
-import {Component, HostListener, Inject, OnInit, Optional,} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,} from '@angular/core';
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
-import {forkJoin, Observable} from "rxjs";
+import {forkJoin, Observable, takeUntil} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from "@angular/cdk/drag-drop";
@@ -29,107 +28,128 @@ import {Role} from "../../../models/role";
 import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {TournamentType} from "../../../models/tournament-type";
 import {getBalancedMember} from "../../../utils/teams/members";
+import {CsvService} from "../../../services/csv-service";
+import {TranslocoService} from '@jsverse/transloco';
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
-  selector: 'app-tournament-teams',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'tournament-teams',
   templateUrl: './tournament-teams.component.html',
   styleUrls: ['./tournament-teams.component.scss']
 })
 export class TournamentTeamsComponent extends RbacBasedComponent implements OnInit {
 
-  userListData: UserListData = new UserListData();
+  @Input()
   tournament: Tournament;
+  @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
+  userListData: UserListData = new UserListData();
   teams: Team[];
   members: Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
-  groups: Group[];
+  groups: Group[] = [];
+  groupsLoaded: boolean = false;
   teamSize: number[];
   protected addingTeam: boolean = false;
+  loadingGlobal: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
-              private loggerService: LoggerService, private teamService: TeamService, private roleService: RoleService,
-              public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
-              rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
-              private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
-              private filterResetService: FilterResetService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+  constructor(private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, private readonly teamService: TeamService, private readonly roleService: RoleService,
+              public nameUtilsService: NameUtilsService, private readonly systemOverloadService: SystemOverloadService,
+              rbacService: RbacService, private readonly groupService: GroupService, private readonly fightService: FightService,
+              private readonly rankingService: RankingService, private readonly statisticsChangedService: StatisticsChangedService,
+              private readonly filterResetService: FilterResetService, public csvService: CsvService,
+               private readonly translateService: TranslocoService, private readonly cdr: ChangeDetectorRef) {
     super(rbacService);
-    this.tournament = data.tournament;
   }
 
   getMembersContainer(team: Team): (Participant | undefined)[] {
     return this.members.get(team)!;
   }
 
-  ngOnInit(): void {
-    let teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
-    let roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
-    forkJoin([teamsRequest, roleRequests]).subscribe(([teams, roles]): void => {
-      if (roles === undefined) {
-        roles = [];
+  private sortTeamsByName(teams: Team[]): Team[] {
+    return teams.sort((a: Team, b: Team): number => a.name.localeCompare(b.name));
+  }
+
+  private buildTeamSize(): void {
+    this.teamSize = [];
+    for (let i = 0; i < this.tournament.teamSize; i++) {
+      this.teamSize.push(i);
+    }
+  }
+
+  private blockParticipantsIfTournamentLocked(): void {
+    if (!this.tournament.locked) {
+      return;
+    }
+    for (const participant of this.userListData.participants) {
+      participant.locked = participant.locked || this.tournament.locked;
+    }
+  }
+
+  private removeAssignedParticipantsFromAvailableList(teams: Team[]): void {
+    const memberIds: Set<number> = new Set<number>();
+    for (const team of teams) {
+      for (const member of team.members) {
+        if (member?.id !== undefined) {
+          memberIds.add(member.id);
+        }
       }
-      this.userListData.participants = roles.map((role: Role) => role.participant).sort(function (a: Participant, b: Participant) {
+      this.members.set(team, team.members);
+    }
+    this.userListData.participants = this.userListData.participants.filter((participant: Participant): boolean => !memberIds.has(participant.id!));
+  }
+
+  private loadTeamsAndParticipants(): void {
+    const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
+    const roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
+    forkJoin([teamsRequest, roleRequests]).pipe(takeUntil(this.destroySubject)).subscribe(([teams, roles]): void => {
+      roles ??= [];
+      this.userListData = new UserListData();
+      this.userListData.participants = roles.map((role: Role) => role.participant).sort((a: Participant, b: Participant): number => {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
-      //Block participants.
-      if (this.tournament.locked) {
-        for (let participant of this.userListData.participants) {
-          participant.locked = participant.locked || this.tournament.locked;
-        }
+      this.blockParticipantsIfTournamentLocked();
+      if (teams === undefined) {
+        return;
       }
-      if (teams !== undefined) {
-        teams.sort(function (a: Team, b: Team) {
-          return a.name.localeCompare(b.name);
-        });
-        for (let team of teams) {
-          for (let member of team.members) {
-            if (member) {
-              this.userListData.participants.splice(this.userListData.participants.map(function (p: Participant) {
-                return p.id;
-              }).indexOf(member.id), 1)
-            }
-          }
-          this.members.set(team, team.members);
-        }
-        this.userListData.filteredParticipants = this.userListData.participants;
-        this.teams = teams;
-        this.teamSize = []
-        for (let i = 0; i < this.tournament.teamSize; i++) {
-          this.teamSize.push(i);
+      this.teams = this.sortTeamsByName(teams);
+      this.removeAssignedParticipantsFromAvailableList(this.teams);
+      this.userListData.filteredParticipants = this.userListData.participants;
+      this.buildTeamSize();
+      this.cdr.markForCheck();
+    });
+  }
+
+  private loadGroups(): void {
+    this.groupService.getFromTournament(this.tournament.id!).pipe(takeUntil(this.destroySubject)).subscribe((_groups: Group[]): void => {
+      this.groups = _groups;
+      this.groupsLoaded = true;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private loadTeamLocks(): void {
+    this.fightService.getFromTournament(this.tournament).pipe(takeUntil(this.destroySubject)).subscribe((_fights: Fight[]): void => {
+      const teamIdsInFights: Set<number> = new Set<number>([
+        ..._fights.map((fight: Fight) => fight.team1?.id),
+        ..._fights.map((fight: Fight) => fight.team2?.id)
+      ].filter((teamId): teamId is number => teamId !== undefined));
+      if (this.teams) {
+        for (const team of this.teams) {
+          team.locked = teamIdsInFights.has(team.id!);
         }
       }
     });
-    //Get tournament groups
-    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
-        this.groups = _groups;
-      }
-    )
-    //Prevent removing teams that are on fights
-    this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
-      let teamInFights: Team[] = [];
-      teamInFights.push(..._fights.map((fight: Fight) => fight.team1));
-      teamInFights.push(..._fights.map((fight: Fight) => fight.team2));
-      //Remove duplicates.
-      teamInFights = teamInFights.filter((team: Team, i: number, a: Team[]): boolean => i === a.indexOf(team));
-      if (this.teams) {
-        for (let team of this.teams) {
-          team.locked = teamInFights.some((t: Team): boolean => t.id === team.id);
-        }
-      }
-    })
   }
 
-  @HostListener('document:click', ['$event.target'])
-  onClick(element: HTMLElement): void {
-    if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
-      if (this.teams) {
-        for (let team of this.teams) {
-          if (team.editing) {
-            team.editing = false;
-            this.updateTeamName(team);
-          }
-        }
-      }
-    }
+  ngOnInit(): void {
+    this.loadTeamsAndParticipants();
+    this.loadGroups();
+    this.loadTeamLocks();
   }
 
   getMember(team: Team, index: number): Participant | undefined {
@@ -155,10 +175,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return "";
   }
 
-  closeDialog(): void {
-    this.dialogRef.close();
-  }
-
   private transferCard(event: CdkDragDrop<(Participant | undefined)[], any>, memberIndex: number): Participant | undefined {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, memberIndex);
@@ -170,6 +186,44 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return event.container.data[memberIndex];
   }
 
+  private sortParticipantLists(): void {
+    this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+  }
+
+  private removeParticipantFromList(participant: Participant): void {
+    if (this.userListData.filteredParticipants.includes(participant)) {
+      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    }
+    if (this.userListData.participants.includes(participant)) {
+      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
+    }
+  }
+
+  private ensureParticipantInList(participant: Participant): void {
+    if (!this.userListData.participants.includes(participant)) {
+      this.userListData.participants.push(participant);
+    }
+    if (!this.userListData.filteredParticipants.includes(participant)) {
+      this.userListData.filteredParticipants.push(participant);
+    }
+  }
+
+  private reorderMemberOnSameTeam(team: Team, participant: Participant, memberIndex: number, sourceIndex: number): void {
+    if (team.members[memberIndex] === undefined) {
+      team.members[memberIndex] = participant;
+      team.members[sourceIndex] = undefined;
+    } else {
+      moveItemInArray(team.members, sourceIndex, memberIndex);
+    }
+  }
+
+  private updateSingleMemberTeamName(team: Team, participant: Participant): void {
+    if (this.tournament.teamSize === 1) {
+      team.name = participant.lastname + ", " + participant.name;
+    }
+  }
+
   removeFromTeam(event: CdkDragDrop<Participant[], any>): void {
     // Correct index, as always return the first non-empty.
     const sourceTeam: Team | undefined = this.searchTeam(event as CdkDragDrop<(Participant | undefined)[], any>);
@@ -178,7 +232,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     //Remove from source data.
     if (sourceTeam && this.members) {
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(movedParticipant);
-      if (sourceIndex || sourceIndex === 0) {
+      if (sourceIndex !== undefined) {
         //Removing team member from team.
         const teamMembers: (Participant | undefined)[] | undefined = this.members.get(sourceTeam);
         if (teamMembers) {
@@ -188,16 +242,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
         this.deleteMemberFromTeam(movedParticipant);
         this.updateTeam(sourceTeam, undefined);
-        //Add to user list.
-        if (!this.userListData.participants.includes(movedParticipant)) {
-          this.userListData.participants.push(movedParticipant);
-        }
-        if (!this.userListData.filteredParticipants.includes(movedParticipant)) {
-          this.userListData.filteredParticipants.push(movedParticipant);
-        }
-
-        this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
-        this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+        this.ensureParticipantInList(movedParticipant);
+        this.sortParticipantLists();
       }
     }
   }
@@ -220,15 +266,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     if (sourceTeam === team) {
       //Reordering the team.
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(event.item.data);
-      if (sourceIndex || sourceIndex === 0) {
-        // Moving to an empty space.
-        if (team.members[memberIndex] == undefined) {
-          team.members[memberIndex] = participant;
-          team.members[sourceIndex] = undefined;
-        } else {
-          //Swapping with an existing member.
-          moveItemInArray(team.members, sourceIndex, memberIndex);
-        }
+      if (sourceIndex !== undefined) {
+        this.reorderMemberOnSameTeam(team, participant, memberIndex, sourceIndex);
       }
       this.updateTeam(team, participant);
     } else {
@@ -244,16 +283,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     }
     //Reset filter
     this.filterResetService.resetFilter.next(true);
-    //Set default name as the member.
-    if (this.tournament.teamSize === 1) {
-      team.name = participant.lastname + ", " + participant.name
-    }
-    if (this.userListData.filteredParticipants.includes(participant)) {
-      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
-    }
-    if (this.userListData.participants.includes(participant)) {
-      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
-    }
+    this.updateSingleMemberTeamName(team, participant);
+    this.removeParticipantFromList(participant);
   }
 
   updateTeam(team: Team, member: Participant | undefined): void {
@@ -278,7 +309,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>): Team | undefined {
     const participant: Participant = event.previousContainer.data[event.previousIndex];
-    for (let team of [...this.members.keys()]) {
+    for (let team of this.members.keys()) {
       if (this.getMembersContainer(team).includes(participant)) {
         return team;
       }
@@ -287,9 +318,9 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   dropListEnterPredicate(memberIndex: number, team: Team) {
-    return function (_item: CdkDrag<Participant>, dropList: CdkDropList): boolean {
+    return function (_item: CdkDrag<Participant>, _dropList: CdkDropList): boolean {
       if (team) {
-        return !team.locked && (team.members[memberIndex] === undefined || team.members[memberIndex] === null);
+        return !team.locked && team.members[memberIndex] === undefined;
       }
       return true;
     };
@@ -382,8 +413,9 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   balancedTeams(): void {
     let participants: Participant[];
-    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
 
+    this.loadingGlobal = true;
     this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
       const sortedParticipants: Participant[] = _scoreRanking.map((scoreOfCompetitor: ScoreOfCompetitor) => scoreOfCompetitor.competitor);
       for (let team of this.teams) {
@@ -402,17 +434,19 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
             this.loggerService.info("Team '" + newTeam.name + "' updated.");
           }),
           catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
-        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
+        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true))
+          .add(() => this.loadingGlobal = false);
       }
       //Remaining one on left column.
       this.userListData.participants = sortedParticipants;
       this.userListData.filteredParticipants = this.userListData.participants;
+      this.cdr.markForCheck();
     });
   }
 
   randomTeams(): void {
     let participants: Participant[];
-    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
     for (let team of this.teams) {
       team.members = [];
       for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
@@ -452,12 +486,20 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   assignTeamByParticipant(): void {
     this.teams = [];
     let participants: Participant[];
-    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    participants = [...[...this.members.values()].flat().filter((participant): participant is Participant => !!participant), ...this.userListData.participants];
+    this.loadingGlobal = true;
     this.members = new Map<Team, Participant[]>();
+    const usedNames = new Set<string>();
     for (const member of participants) {
       const team: Team = new Team();
       team.tournament = this.tournament;
       team.name = this.nameUtilsService.getLastnameNameNoSpaces(member);
+      const baseName = team.name;
+      let suffix = 2;
+      while (usedNames.has(team.name.toLocaleLowerCase())) {
+        team.name = `${baseName} (${suffix++})`;
+      }
+      usedNames.add(team.name.toLocaleLowerCase());
       team.members = [];
       team.members[0] = member;
       this.teams.push(team);
@@ -472,11 +514,13 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
       this.systemOverloadService.isBusy.next(false);
       this.statisticsChangedService.areStatisticsChanged.next(true);
-    });
+      this.cdr.markForCheck();
+    }).add(() => this.loadingGlobal = false);
   }
 
   downloadPDF(): void {
     if (this.tournament?.id) {
+      this.loadingGlobal = true;
       this.teamService.getTeamsByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -485,7 +529,29 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         anchor.download = "Team List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
+      }).add(() => {
+        this.loadingGlobal = false;
       });
+    }
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addTeams(file, this.tournament.id).pipe(takeUntil(this.destroySubject)).subscribe(_teams => {
+          if (_teams.length === 0) {
+            this.messageService.infoMessage('teamStored');
+            //We cancel action or will be saved later again.
+            this.closed.emit();
+          } else {
+            const parameters: object = {element: _teams[0].name};
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
+          }
+        });
+      }
     }
   }
 }

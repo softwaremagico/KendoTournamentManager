@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,21 +24,27 @@ package com.softwaremagico.kt.persistence.encryption;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+/**
+ * Converter for boolean values. Boolean fields are stored as plain
+ * "true"/"false" strings without encryption to comply with H2 database check
+ * constraints that restrict values to 'true' or 'false'.
+ */
 @Converter
-public class BooleanCryptoConverter extends AbstractCryptoConverter<Boolean> implements AttributeConverter<Boolean, String> {
+public class BooleanCryptoConverter implements AttributeConverter<Boolean, String> {
 
     @Override
-    protected boolean isNotNullOrEmpty(Boolean attribute) {
-        return attribute != null;
+    public String convertToDatabaseColumn(Boolean attribute) {
+        if (attribute == null) {
+            return null;
+        }
+        return attribute.toString();
     }
 
     @Override
-    protected Boolean stringToEntityAttribute(String dbData) {
-        return (dbData == null || dbData.isEmpty()) ? null : Boolean.parseBoolean(dbData);
-    }
-
-    @Override
-    protected String entityAttributeToString(Boolean attribute) {
-        return attribute == null ? null : attribute.toString();
+    public Boolean convertToEntityAttribute(String dbData) {
+        if (dbData == null || dbData.isEmpty()) {
+            return Boolean.FALSE;
+        }
+        return Boolean.parseBoolean(dbData);
     }
 }

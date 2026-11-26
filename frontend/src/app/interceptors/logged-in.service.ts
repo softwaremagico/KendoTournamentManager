@@ -1,9 +1,8 @@
-import {inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {LoginService} from "../services/login.service";
 import {BehaviorSubject} from "rxjs";
 import {TournamentService} from "../services/tournament.service";
-import {Tournament} from "../models/tournament";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,7 @@ export class LoggedInService {
 
   public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(private router: Router, public loginService: LoginService, private tournamentService: TournamentService) {
+  constructor(private readonly router: Router, public loginService: LoginService, private readonly tournamentService: TournamentService) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
@@ -37,19 +36,15 @@ export class LoggedInService {
 
   userLoginPageDependingOnRoles(context: string, params: string): boolean {
     if (this.loginService.getJwtValue()) {
-      //Participant users must redirect to their statistcs.
-      if (localStorage.getItem('account') == 'participant'
+      //Participant users must redirect to their statistics.
+      if (localStorage.getItem('account') === 'participant'
         && (!context.startsWith('/participants/statistics') && !context.startsWith('/participants/fights'))) {
         this.router.navigate(['/participants/statistics']);
-      } else if (localStorage.getItem('account') == 'guest' && !context.startsWith('/tournaments/fights')) {
+      } else if (localStorage.getItem('account') === 'guest' && !context.startsWith('/tournaments/fights')) {
         this.router.navigate(['/tournaments/fights']);
       }
       return true;
     }
     return this.whiteListedPages.includes(context);
   }
-}
-
-export const LoggedIn: CanActivateFn = (next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
-  return inject(LoggedInService).canActivate(next, state);
 }

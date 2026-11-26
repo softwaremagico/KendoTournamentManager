@@ -30,7 +30,15 @@ export enum AchievementType {
 
   THE_WINNER_TEAM = 'THE_WINNER_TEAM',
 
+  SWISS_WINNER = 'SWISS_WINNER',
+
+  BUCHHOLZ_WHISPERER = 'BUCHHOLZ_WHISPERER',
+
   WOODCUTTER = 'WOODCUTTER',
+
+  HEAD_SHOT = 'HEAD_SHOT',
+
+  YOU_ARE_UNDER_ARREST = 'YOU_ARE_UNDER_ARREST',
 
   THE_NEVER_ENDING_STORY = 'THE_NEVER_ENDING_STORY',
 
@@ -53,6 +61,8 @@ export enum AchievementType {
   DETHRONE_THE_KING = 'DETHRONE_THE_KING',
 
   CLIMB_THE_LADDER = 'CLIMB_THE_LADDER',
+
+  LONG_PATH = 'LONG_PATH',
 
 }
 
@@ -87,6 +97,6 @@ export namespace AchievementType {
       .replace(/_(.)/g, function ($1: string) {
         return $1.toUpperCase();
       })
-      .replace(/_/g, '');
+      .replaceAll('_', '');
   }
 }

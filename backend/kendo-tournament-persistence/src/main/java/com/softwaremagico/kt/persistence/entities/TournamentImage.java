@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,11 +43,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_image", indexes = {
         @Index(name = "ind_tournament", columnList = "tournament"),
 })
+@SuppressWarnings("java:S2160")
 public class TournamentImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -66,7 +68,6 @@ public class TournamentImage extends Element {
     private TournamentImageType imageType;
 
     @Column(name = "image_format", nullable = false)
-    @Enumerated(EnumType.STRING)
     @Convert(converter = ImageCompressionCryptoConverter.class)
     private ImageCompression imageCompression;
 
@@ -108,7 +109,8 @@ public class TournamentImage extends Element {
 
     @Override
     public String toString() {
-        return "TournamentImage{tournament='" + tournament + "', size='" + getData().length + "'}";
+        final byte[] currentData = getData();
+        return "TournamentImage{tournament='" + tournament + "', size='" + (currentData == null ? 0 : currentData.length) + "'}";
     }
 
 }

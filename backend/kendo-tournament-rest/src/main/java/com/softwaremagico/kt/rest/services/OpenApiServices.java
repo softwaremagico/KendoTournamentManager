@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,7 @@ public class OpenApiServices {
     @Operation(summary = "Redirects root address to API web site.")
     @GetMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
-    public void root(HttpServletResponse response, HttpServletRequest httpRequest) throws IOException {
+    public void root(HttpServletResponse response, HttpServletRequest request) throws IOException {
         response.sendRedirect("./swagger-ui/index.html");
     }
 }

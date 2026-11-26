@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.TournamentController;
@@ -64,6 +65,27 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * REST controller that exposes competitor and team ranking endpoints under {@code /rankings}.
+ * <p>
+ * Delegates computation to {@link RankingController} and exposes the results via
+ * several scoped endpoints:
+ * </p>
+ * <ul>
+ *   <li>{@code GET /competitors/groups/{id}} — competitor scores for a single group</li>
+ *   <li>{@code GET /competitors/tournaments/{id}} — competitor scores across a tournament</li>
+ *   <li>{@code GET /competitors/tournaments/{id}/pdf} — competitor ranking as PDF</li>
+ *   <li>{@code POST /competitors} — global competitor ranking for an arbitrary participant list</li>
+ *   <li>{@code GET /teams/groups/{id}} — team scores for a single group</li>
+ *   <li>{@code GET /teams/tournaments/{id}} — team scores across a tournament</li>
+ *   <li>{@code GET /teams/tournaments/{id}/pdf} — team ranking as PDF</li>
+ *   <li>{@code GET /bracket/{id}} — bracket ranking for championship-style tournaments</li>
+ * </ul>
+ * <p>
+ * All endpoints require at least the VIEWER role. PDF download endpoints additionally
+ * set appropriate {@code Content-Disposition} headers for browser-initiated downloads.
+ * </p>
+ */
 @RestController
 @RequestMapping("/rankings")
 public class RankingServices {
@@ -76,6 +98,8 @@ public class RankingServices {
 
     private final ParticipantController participantController;
 
+    private final ClubController clubController;
+
     private final PdfController pdfController;
 
     private final HtmlController htmlController;
@@ -85,12 +109,14 @@ public class RankingServices {
     private final ZipController zipController;
 
     public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
-                           ParticipantController participantController, HtmlController htmlController, GroupController groupController,
+                           ParticipantController participantController, ClubController clubController,
+                           HtmlController htmlController, GroupController groupController,
                            ZipController zipController) {
         this.rankingController = rankingController;
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
         this.participantController = participantController;
+        this.clubController = clubController;
         this.htmlController = htmlController;
         this.groupController = groupController;
         this.zipController = zipController;
@@ -101,8 +127,9 @@ public class RankingServices {
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingGroup(@Parameter(description = "Id of an existing group", required = true)
-                                                                      @PathVariable("groupId") Integer groupId,
-                                                                      HttpServletRequest request) {
+                                                                       @PathVariable("groupId") Integer groupId,
+                                                                       HttpServletRequest request) {
+        groupController.get(groupId);
         return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
     }
 
@@ -112,8 +139,9 @@ public class RankingServices {
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                                           @PathVariable("tournamentId") Integer tournamentId,
-                                                                           HttpServletRequest request) {
+                                                                            @PathVariable("tournamentId") Integer tournamentId,
+                                                                            HttpServletRequest request) {
+        tournamentController.get(tournamentId);
         return rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
     }
 
@@ -162,8 +190,9 @@ public class RankingServices {
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/clubs/{clubId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@Parameter(description = "Id of an existing club", required = true)
-                                                                       @PathVariable("clubId") Integer clubId,
-                                                                       HttpServletRequest request) {
+                                                                        @PathVariable("clubId") Integer clubId,
+                                                                        HttpServletRequest request) {
+        clubController.get(clubId);
         return rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
     }
 

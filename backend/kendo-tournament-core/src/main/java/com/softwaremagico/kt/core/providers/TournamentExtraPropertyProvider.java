@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,11 +22,13 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.core.exceptions.InvalidExtraPropertyException;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.SwissTieBreakRule;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,17 +84,38 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
 
 
     @Override
-    public TournamentExtraProperty save(TournamentExtraProperty entity) {
+    public synchronized TournamentExtraProperty save(TournamentExtraProperty entity) {
         if (!entity.getPropertyKey().getAllowedTournaments().contains(entity.getTournament().getType())) {
             throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
                     + "' cannot have property '" + entity.getPropertyKey() + "'");
         }
-        deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
+        if (entity.getPropertyKey() == TournamentExtraPropertyKey.SWISS_TIE_BREAK_RULE
+                && SwissTieBreakRule.getType(entity.getPropertyValue()) == null) {
+            throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
+                    + "' has invalid Swiss tie-break rule '" + entity.getPropertyValue() + "'");
+        }
+        final TournamentExtraProperty entityToSave;
+        final TournamentExtraProperty existing = getByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
+        if (existing != null) {
+            // Hibernate 6.6 is stricter with stale detached instances. Update the managed row instead of delete+insert.
+            existing.setPropertyValue(entity.getPropertyValue());
+            if (entity.getUpdatedBy() != null) {
+                existing.setUpdatedBy(entity.getUpdatedBy());
+            }
+            if (existing.getCreatedBy() == null && entity.getCreatedBy() != null) {
+                existing.setCreatedBy(entity.getCreatedBy());
+            }
+            entityToSave = existing;
+        } else {
+            entityToSave = TournamentExtraProperty.copy(entity);
+            entityToSave.setCreatedBy(entity.getCreatedBy());
+            entityToSave.setUpdatedBy(entity.getUpdatedBy());
+        }
 
         //Refresh groups number of winners.
-        updateGroupNumberOfWinners(entity);
+        updateGroupNumberOfWinners(entityToSave);
 
-        return getRepository().save(entity);
+        return getRepository().save(entityToSave);
     }
 
 
@@ -108,8 +131,9 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
                             groupRepository.save(group);
                         }
                     }
-                } catch (Exception e) {
-                    //Property ignored.
+                } catch (Exception ex) {
+                    KendoTournamentLogger.debug(this.getClass(), "Ignoring invalid NUMBER_OF_WINNERS '{}': {}",
+                            entity.getPropertyValue(), ex.getMessage());
                 }
             }).start();
         }
@@ -118,8 +142,6 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
 
     @Override
     public List<TournamentExtraProperty> saveAll(Collection<TournamentExtraProperty> tournamentExtraProperties) {
-        tournamentExtraProperties.forEach(tournamentExtraProperty ->
-                deleteByTournamentAndProperty(tournamentExtraProperty.getTournament(), tournamentExtraProperty.getPropertyKey()));
-        return super.saveAll(tournamentExtraProperties);
+        return tournamentExtraProperties.stream().map(this::save).toList();
     }
 }

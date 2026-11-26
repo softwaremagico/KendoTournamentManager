@@ -2,6 +2,23 @@ import {Injectable} from "@angular/core";
 import {RbacActivity} from "./rbac.activity";
 import {UserRoles} from "./user-roles";
 
+/**
+ * Angular service that maps user roles to the set of allowed UI activities.
+ *
+ * Maintains an in-memory list of {@link RbacActivity} values derived from the
+ * roles currently assigned to the authenticated user. The mapping is additive:
+ * each role contributes its own subset of activities. Roles and their activity
+ * subsets are:
+ * <ul>
+ *   <li><b>GUEST</b> — read-only access to a single tournament via QR code</li>
+ *   <li><b>VIEWER</b> — read-only access to all tournaments plus timer and PDF export</li>
+ *   <li><b>EDITOR</b> — all VIEWER activities plus fight/score management and team editing</li>
+   *   <li><b>ADMIN / SUPER_ADMIN</b> — all activities including user management and tournament deletion</li>
+ * </ul>
+ *
+ * Call {@link setRoles} whenever the authenticated user's roles change, then use
+ * {@link isAllowed} in templates and guards to gate UI elements.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -29,6 +46,7 @@ export class ActivityService {
     for (const role of roles) {
       switch (role.toLowerCase()) {
         case 'admin':
+        case 'super_admin':
           activities = activities.concat(this.getAdminActivities());
           break;
         case 'editor':
@@ -66,6 +84,8 @@ export class ActivityService {
     this.removeActivity(adminActivities, RbacActivity.DELETE_USER);
     this.removeActivity(adminActivities, RbacActivity.EDIT_LOCKED_TOURNAMENT);
     this.removeActivity(adminActivities, RbacActivity.LINK_QR_CODE);
+    this.removeActivity(adminActivities, RbacActivity.UPDATE_OTHERS_PASSWORD);
+    this.removeActivity(adminActivities, RbacActivity.CHANGE_OTHERS_PASSWORD);
     return adminActivities;
   }
 
@@ -93,6 +113,8 @@ export class ActivityService {
       RbacActivity.SHOW_TIMER,
       RbacActivity.PLAY_WHISTLE,
       RbacActivity.EDIT_FIGHT_TIME,
+      RbacActivity.WIKI_ACCESS,
+      RbacActivity.DARK_MODE
     ];
   }
 
@@ -109,8 +131,14 @@ export class ActivityService {
       RbacActivity.READ_COMPETITORS_RANKINGS,
       RbacActivity.CAN_LOGOUT,
       RbacActivity.VIEW_PARTICIPANT_FIGHTS,
-      RbacActivity.VIEW_PARTICIPANT_STATISTICS
+      RbacActivity.VIEW_PARTICIPANT_STATISTICS,
+      RbacActivity.WIKI_ACCESS,
+      RbacActivity.DARK_MODE
     ];
+  }
+
+  public clear(): void {
+    this.activities = [];
   }
 
 }

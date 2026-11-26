@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -63,6 +63,24 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * REST controller that exposes fight management endpoints under {@code /fights}.
+ * <p>
+ * Provides CRUD operations for {@link Fight} entities and tournament-scoped queries.
+ * Key additional endpoints include:
+ * </p>
+ * <ul>
+ *   <li>Retrieving all fights for a given tournament.</li>
+ *   <li>Generating the next set of fights (for dynamic formats such as
+ *       {@link com.softwaremagico.kt.core.tournaments.BubbleSortTournamentHandler}).</li>
+ *   <li>Downloading fight lists as PDF documents.</li>
+ *   <li>Deleting all fights for a tournament (typically before re-generation).</li>
+ * </ul>
+ * <p>
+ * Write operations (create, update, delete) require at least the EDITOR role.
+ * Read operations are accessible to VIEWER, EDITOR and ADMIN roles.
+ * </p>
+ */
 @RestController
 @RequestMapping("/fights")
 public class FightServices extends BasicServices<Fight, FightDTO, FightRepository,

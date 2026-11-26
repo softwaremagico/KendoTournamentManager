@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,9 +22,9 @@ package com.softwaremagico.kt.pdf;
  */
 
 
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.pdf.BaseFont;
+import org.openpdf.text.Font;
+import org.openpdf.text.FontFactory;
+import org.openpdf.text.pdf.BaseFont;
 
 public abstract class PdfTheme {
     public static final String LOGO_IMAGE = "kendo-tournament-manager-kendo-tournament-manager-logo.png";
@@ -33,12 +33,12 @@ public abstract class PdfTheme {
     public static final String TABLE_SUBTITLE_FONT_NAME = "DejaVuSansCondensed-Oblique.ttf";
     public static final String LINE_BOLD_FONT_NAME = "DejaVuSansCondensed-Bold.ttf";
     public static final String TITLE_FONT_NAME = "DejaVuSansCondensed-Bold.ttf";
-    public static final String HANDWRITTEN_FONT_NAME = "ArchitectsDaughter.ttf";
+    public static final String FILLED_TEXT_FONT_NAME = "Montserrat-Regular.ttf";
 
     public static final int FOOTER_FONT_SIZE = 8;
 
     public static final int FONT_SIZE = 12;
-    public static final int SCORE_FONT_SIZE = 8;
+    public static final int SCORE_FONT_SIZE = 12;
     public static final int SCORE_LIST_SIZE = 9;
 
     public static final int HEADER_FONT_SIZE = FONT_SIZE + 15;
@@ -58,6 +58,7 @@ public abstract class PdfTheme {
     private static BaseFont titleFont;
     private static BaseFont tableSubtitleFont;
     private static BaseFont handwrittenFont;
+    private static BaseFont scoreFont;
 
     private static BaseFont basicFont;
 
@@ -121,11 +122,20 @@ public abstract class PdfTheme {
 
     public static BaseFont getHandwrittenFont() {
         if (handwrittenFont == null) {
-            final Font font = FontFactory.getFont("/" + HANDWRITTEN_FONT_NAME, BaseFont.IDENTITY_H, BaseFont.EMBEDDED,
+            final Font font = FontFactory.getFont("/" + FILLED_TEXT_FONT_NAME, BaseFont.IDENTITY_H, BaseFont.EMBEDDED,
                     0.8f, Font.NORMAL, BaseColor.BLACK);
             handwrittenFont = font.getBaseFont();
         }
         return handwrittenFont;
+    }
+
+    public static BaseFont getScoreFont() {
+        if (scoreFont == null) {
+            final Font font = FontFactory.getFont("/" + FILLED_TEXT_FONT_NAME, BaseFont.IDENTITY_H, BaseFont.EMBEDDED,
+                    0.8f, Font.BOLD, BaseColor.BLACK);
+            scoreFont = font.getBaseFont();
+        }
+        return scoreFont;
     }
 
     public static BaseFont getBasicFont() {

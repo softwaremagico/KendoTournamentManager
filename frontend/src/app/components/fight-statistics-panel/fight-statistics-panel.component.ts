@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {TournamentFightStatistics} from "../../models/tournament-fight-statistics.model";
 import {Tournament} from "../../models/tournament";
 import {StatisticsService} from "../../services/statistics.service";
@@ -7,7 +7,9 @@ import {takeUntil} from "rxjs";
 import {KendoComponent} from "../kendo-component";
 
 @Component({
-  selector: 'app-fight-statistics-panel',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'fight-statistics-panel',
   templateUrl: './fight-statistics-panel.component.html',
   styleUrls: ['./fight-statistics-panel.component.scss']
 })
@@ -63,10 +65,11 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   }
 
   toDoubleDigit(num: number): string {
-    if (isNaN(num)) {
+    const safeNum = Number(num);
+    if (Number.isNaN(safeNum)) {
       return '00';
     }
-    return num < 10 ? '0' + num : num + '';
+    return safeNum < 10 ? '0' + safeNum : safeNum + '';
   };
 
 }

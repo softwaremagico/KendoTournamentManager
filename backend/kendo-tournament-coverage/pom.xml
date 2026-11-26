@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>kendo-tournament-coverage</artifactId>
+    <name>Kendo Tournament Manager (Coverage)</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <artifactId>kendo-tournament-backend</artifactId>
+        <groupId>com.softwaremagico</groupId>
+        <version>3.7.0</version>
+    </parent>
+
+    <properties>
+        <main.basedir>${basedir}/..</main.basedir>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.softwaremagico</groupId>
+            <artifactId>kendo-tournament-logger</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.softwaremagico</groupId>
+            <artifactId>kendo-tournament-persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.softwaremagico</groupId>
+            <artifactId>kendo-tournament-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.softwaremagico</groupId>
+            <artifactId>kendo-tournament-pdf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.softwaremagico</groupId>
+            <artifactId>kendo-tournament-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <!-- Dummy in-memory JpaRepository implementations: statistics are never
+                                     persisted, these classes only provide no-op/default overrides required
+                                     to satisfy the JpaRepository contract and have no real business logic. -->
+                                <exclude>**/statistics/TournamentStatisticsRepository.class</exclude>
+                                <exclude>**/statistics/TournamentFightStatisticsRepository.class</exclude>
+                                <exclude>**/statistics/ParticipantStatisticsRepository.class</exclude>
+                                <exclude>**/statistics/ParticipantFightStatisticsRepository.class</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

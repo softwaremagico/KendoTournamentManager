@@ -4,18 +4,18 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -43,6 +43,10 @@ public class TestLogging extends BasicLogger {
         info(logger, className, message);
     }
 
+    public static void info(Class<?> clazz, String message) {
+        info(clazz.getName(), message);
+    }
+
     public static void info(String message) {
         info(logger, message);
     }
@@ -59,6 +63,10 @@ public class TestLogging extends BasicLogger {
         warning(logger, className, message);
     }
 
+    public static void warning(Class<?> clazz, String message) {
+        warning(clazz.getName(), message);
+    }
+
     public static void warning(String message) {
         warning(logger, message);
     }
@@ -71,11 +79,11 @@ public class TestLogging extends BasicLogger {
      * @param message   the text
      */
     public static void debug(String className, String message) {
-        debug(logger, className, message);
+        BasicLogger.debug(logger, className, message);
     }
 
     public static void debug(String message) {
-        debug(logger, message);
+        BasicLogger.debug(logger, message);
     }
 
     /**
@@ -86,6 +94,10 @@ public class TestLogging extends BasicLogger {
      */
     public static void severe(String className, String message) {
         severe(logger, className, message);
+    }
+
+    public static void severe(Class<?> clazz, String message) {
+        severe(clazz.getName(), message);
     }
 
     /**
@@ -112,6 +124,10 @@ public class TestLogging extends BasicLogger {
      */
     public static void errorMessage(String className, String error) {
         errorMessageNotification(logger, className, error);
+    }
+
+    public static void errorMessage(Class<?> clazz, String error) {
+        errorMessage(clazz.getName(), error);
     }
 
     public static void errorMessage(String error) {

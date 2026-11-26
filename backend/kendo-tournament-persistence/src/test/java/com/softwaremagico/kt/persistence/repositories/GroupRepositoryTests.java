@@ -4,18 +4,18 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -56,14 +56,14 @@ public class GroupRepositoryTests extends BasicDataTest {
 
     @Test
     public void findGroupByFights() {
-        Group groupOfFight = groupRepository.findByFightsId(fights.get(0).getId()).orElse(null);
+        Group groupOfFight = groupRepository.findByFightsId(fights.getFirst().getId()).orElse(null);
         Assert.assertNotNull(groupOfFight);
         Assert.assertEquals(groupOfFight, group);
     }
 
     @Test(dependsOnMethods = "findGroupByFights")
     public void deleteCorrectlyFights() {
-        Group group = groupRepository.findByFightsId(fights.get(0).getId()).orElse(null);
+        Group group = groupRepository.findByFightsId(fights.getFirst().getId()).orElse(null);
         Assert.assertNotNull(group);
         List<Group> groups = groupRepository.findDistinctByFightsIdIn(fights.stream()
                 .map(Fight::getId)

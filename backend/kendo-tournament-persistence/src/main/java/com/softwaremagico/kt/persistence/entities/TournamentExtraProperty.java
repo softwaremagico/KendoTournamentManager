@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,15 +38,22 @@ import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
+
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_extra_properties", uniqueConstraints = {@UniqueConstraint(columnNames = {"tournament", "property_key"})},
         indexes = {
                 @Index(name = "ind_tournament", columnList = "tournament"),
         })
+@SuppressWarnings("java:S2160")
 public class TournamentExtraProperty extends Element {
+
+    @Serial
+    private static final long serialVersionUID = -7263989925801297370L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament", nullable = false)

@@ -1,26 +1,31 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {TranslateService} from '@ngx-translate/core';
 import {Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
-import {Message} from "@stomp/stompjs/esm6";
+import {Message} from "@stomp/stompjs";
 import {RxStompService} from "../websockets/rx-stomp.service";
 import {EnvironmentService} from "../environment.service";
 import {MessageContent} from "../websockets/message-content.model";
+import {TranslocoService} from '@jsverse/transloco';
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {LoginService} from './login.service';
+import {switchMap} from 'rxjs/operators';
+import {EMPTY} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService implements OnDestroy {
+  private static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
 
   private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   private messageSubscription: Subscription;
+  private readonly recentMessages: Map<string, number> = new Map<string, number>();
 
-  constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
-              private loggerService: LoggerService, private rxStompService: RxStompService,
-              private environmentService: EnvironmentService) {
+  constructor(public readonly snackBar: BiitSnackbarService, private readonly translateService: TranslocoService,
+              private readonly loggerService: LoggerService, private readonly rxStompService: RxStompService,
+               private readonly environmentService: EnvironmentService, private readonly loginService: LoginService) {
     this.registerWebsocketsMessages();
   }
 
@@ -30,74 +35,91 @@ export class MessageService implements OnDestroy {
   }
 
   private registerWebsocketsMessages(): void {
-    this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/messages').subscribe((message: Message): void => {
+    this.messageSubscription = this.rxStompService.connected$.pipe(switchMap(() => {
+      const tenantId = this.loginService.getTenantId();
+      const roles = this.loginService.getJwtRoles().map((role: string): string => role.toUpperCase());
+      const readOnlySession = roles.includes('GUEST') || roles.includes('PARTICIPANT');
+      if (tenantId == null || readOnlySession) {
+        return EMPTY;
+      }
+      return this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + tenantId + '/messages');
+    })).subscribe((message: Message): void => {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
-        this.translateService.get(messageContent.payload, messageContent.parameters).subscribe((res: string): void => {
-          let type: string = messageContent.type.toLowerCase();
-          if (!type) {
-            type = "info";
-          }
-          switch (type) {
-            case "error":
-              this.errorMessage(res);
-              break;
-            case "warning":
-              this.warningMessage(res);
-              break;
-            case "info":
-            default:
-              this.infoMessage(res);
-          }
-        });
+        const res: string = this.translateService.translate(messageContent.payload, messageContent.parameters);
+        let type: string = messageContent.type.toLowerCase();
+        if (!type) {
+          type = "info";
+        }
+        switch (type) {
+          case "error":
+            this.errorMessage(res);
+            break;
+          case "warning":
+            this.warningMessage(res);
+            break;
+          case "info":
+          default:
+            this.infoMessage(res);
+        }
 
       } catch (e) {
-        console.log("Invalid message payload", message.body);
+        console.error("Invalid message payload", message.body);
       }
     });
   }
 
-  private openSnackBar(message: string, cssClass: string, duration: number, action?: string): void {
-    this.snackBar.open(this.translateService.instant(message), action, {
-      duration: duration,
-      panelClass: [cssClass, 'message-service'],
-      verticalPosition: 'top',
-      horizontalPosition: 'right'
-    });
+  private openSnackBar(message: string, type: NotificationType, duration: number, action?: string): void {
+    const translatedMessage = this.translateService.translate(message);
+    if (this.wasRecentlyShown(`${type}:${translatedMessage}`)) {
+      return;
+    }
+    this.snackBar.showNotification(translatedMessage, type, action, duration)
+  }
+
+  private wasRecentlyShown(message: string): boolean {
+    const now = Date.now();
+    const previous = this.recentMessages.get(message);
+    this.recentMessages.set(message, now);
+    for (const [recentMessage, timestamp] of this.recentMessages) {
+      if (now - timestamp > MessageService.MESSAGE_DEDUPLICATION_MILLIS) {
+        this.recentMessages.delete(recentMessage);
+      }
+    }
+    return previous !== undefined && now - previous < MessageService.MESSAGE_DEDUPLICATION_MILLIS;
   }
 
 
-  infoMessage(message: string) {
-    this.openSnackBar(message, 'info-snackbar', this.getDuration(message, 2));
+  infoMessage(message: string): void {
+    this.openSnackBar(message, NotificationType.SUCCESS, this.getDuration(message, 4));
   }
 
-  warningMessage(message: string) {
-    this.openSnackBar(message, 'warning-snackbar', this.getDuration(message, 3));
+  warningMessage(message: string): void {
+    this.openSnackBar(message, NotificationType.WARNING, this.getDuration(message, 7));
   }
 
   private getDuration(message: string, minDuration: number): number {
-    return Math.max((message.length / 15), minDuration) * 1000;
+    return Math.max((message.length / 15), minDuration);
   }
 
-  errorMessage(message: string) {
-    this.openSnackBar(message, 'error-snackbar', this.getDuration(message, 5));
+  errorMessage(message: string): void {
+    this.openSnackBar(message, NotificationType.ERROR, this.getDuration(message, 10));
   }
 
-  backendErrorMessage(error: number, code: string) {
-    this.openSnackBar(`Error '${error}' with code '${code}' received.`, 'error-snackbar', this.getDuration(code, 5));
+  backendErrorMessage(error: number, code: string): void {
+    this.openSnackBar(`Error '${error}' with code '${code}' received.`, NotificationType.ERROR, this.getDuration(code, 5));
   }
 
   handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: unknown): Observable<T> => {
+      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
       //Log error
       const log: Log = new Log();
-      if (error) {
-        log.message = `${operation} failed: ${error.message}`;
-      }
+      log.message = `${operation} failed: ${errorMessage}`;
       this.loggerService.sendError(log);
 
       //Show error
-      this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${error ? error.message : ""}`);
+      this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${errorMessage}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -105,10 +127,11 @@ export class MessageService implements OnDestroy {
   }
 
   logOnlyError<T>(operation: string = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: unknown): Observable<T> => {
+      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
       //Log error
       const log: Log = new Log();
-      log.message = `${operation} failed: ${error.message}`;
+      log.message = `${operation} failed: ${errorMessage}`;
       this.loggerService.sendError(log);
 
       // Let the app keep running by returning an empty result.

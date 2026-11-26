@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,21 +39,35 @@ public abstract class BasicLogger {
      * Shows not critical errors. I.e. Email address not found, permissions not
      * allowed for this user, ...
      *
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void warning(Logger logger, String messageTemplate, Object... arguments) {
-        logger.warn(messageTemplate, arguments);
+        if (logger.isWarnEnabled() && messageTemplate != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
+                }
+            }
+            messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
+            logger.warn(messageTemplate, arguments);
+        }
     }
 
     /**
      * Shows not critical errors. I.e. Email address not found, permissions not
      * allowed for this user, ...
      *
-     * @param logger          the Logger.
-     * @param className       the class to log.
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param logger
+     *            the Logger.
+     * @param className
+     *            the class to log.
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void warning(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isWarnEnabled() && messageTemplate != null) {
@@ -71,8 +85,10 @@ public abstract class BasicLogger {
      * Events that have business meaning (i.e. creating category, deleting form,
      * ...). To follow user actions.
      *
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void info(Logger logger, String messageTemplate, Object... arguments) {
         if (logger.isInfoEnabled() && messageTemplate != null) {
@@ -89,12 +105,15 @@ public abstract class BasicLogger {
     /**
      * Events that have business meaning (i.e. creating category, deleting form,
      * ...). To follow user actions.
-     * <p>
      *
-     * @param logger          the Logger.
-     * @param className       the class to log.
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param logger
+     *            the Logger.
+     * @param className
+     *            the class to log.
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void info(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isInfoEnabled() && messageTemplate != null) {
@@ -104,7 +123,7 @@ public abstract class BasicLogger {
                 }
             }
             final String templateWithClass = (className + ": " + messageTemplate).replaceAll(NEW_LINE_REGEX, "_");
-            logger.info(templateWithClass, arguments);
+            logger.info(templateWithClass, arguments); // NOSONAR - arguments and template are sanitized above (CRLF stripped).
         }
     }
 
@@ -112,8 +131,10 @@ public abstract class BasicLogger {
      * For following the trace of the execution. I.e. Knowing if the application
      * access to a method, opening database connection, etc.
      *
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void debug(Logger logger, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled() && messageTemplate != null) {
@@ -131,10 +152,14 @@ public abstract class BasicLogger {
      * For following the trace of the execution. I.e. Knowing if the application
      * access to a method, opening database connection, etc.
      *
-     * @param logger          the Logger.
-     * @param className       the class to log.
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param logger
+     *            the Logger.
+     * @param className
+     *            the class to log.
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void debug(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled() && messageTemplate != null) {
@@ -145,16 +170,20 @@ public abstract class BasicLogger {
                 }
             }
             messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
-            logger.debug(String.format("%s: %s", className, messageTemplate), arguments); //NOSONAR
+            logger.debug(String.format("%s: %s", className, messageTemplate), arguments); // NOSONAR
         }
     }
 
     /**
-     * To log any not expected error that can cause application malfunctions.
-     * I.e. couldn't open database connection, etc..
+     * To log any not expected error that can cause application malfunctions. I.e.
+     * couldn't open database connection, etc..
      *
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param logger
+     *            the Logger.
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     protected static void severe(Logger logger, String messageTemplate, Object... arguments) {
         if (logger.isErrorEnabled() && messageTemplate != null) {
@@ -171,25 +200,33 @@ public abstract class BasicLogger {
     /**
      * To log any not expected error that can cause application malfunctions.
      *
-     * @param logger          the Logger.
-     * @param className       the class to log.
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param logger
+     *            the Logger.
+     * @param className
+     *            the class to log.
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
     public static void severe(Logger logger, String className, String messageTemplate, Object... arguments) {
         severe(logger, className + ": " + messageTemplate, arguments);
     }
 
     /**
-     * Logs an error and email the email configured in settings.conf
-     * file.
+     * Logs an error and email the email configured in settings.conf file.
      *
-     * @param logger          the Logger.
-     * @param className       the class to log.
-     * @param messageTemplate string with static text as template.
-     * @param arguments       parameters to fill up the template
+     * @param logger
+     *            the Logger.
+     * @param className
+     *            the class to log.
+     * @param messageTemplate
+     *            string with static text as template.
+     * @param arguments
+     *            parameters to fill up the template
      */
-    public static void errorMessageNotification(Logger logger, String className, String messageTemplate, Object... arguments) {
+    public static void errorMessageNotification(Logger logger, String className, String messageTemplate,
+            Object... arguments) {
         if (logger.isErrorEnabled()) {
             severe(logger, className, messageTemplate, arguments);
         }
@@ -203,10 +240,10 @@ public abstract class BasicLogger {
 
     public static void errorMessageNotification(Logger logger, String className, Throwable throwable) {
         if (logger.isErrorEnabled()) {
-            logger.error("Exception on class {}:\n", className, throwable);
+            final String sanitizedClassName = className != null ? className.replaceAll(NEW_LINE_REGEX, "_") : null;
+            logger.error("Exception on class {}:\n", sanitizedClassName, throwable);
         }
     }
-
 
     public static String getStackTrace(Throwable throwable) {
         final Writer writer = new StringWriter();

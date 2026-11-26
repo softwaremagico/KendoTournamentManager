@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,28 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * Abstract base handler for all league-style tournament formats.
+ * <p>
+ * In a league each team faces every other team (or a scheduled subset) in
+ * a round-robin fashion. All matches belong to a single {@link Group} at level 0;
+ * there are no subsequent knockout rounds. Concrete subclasses define the
+ * specific fight-generation algorithm:
+ * </p>
+ * <ul>
+ *   <li>{@link SimpleLeagueHandler} — standard round-robin order</li>
+ *   <li>{@link LoopLeagueHandler} — optimised for continuous round-robin loops</li>
+ *   <li>{@link CustomLeagueHandler} — administrator-defined fight order</li>
+ *   <li>{@link BubbleSortTournamentHandler} — real-time ranking via bubble-sort</li>
+ * </ul>
+ * <p>
+ * The fight generation order (FIFO vs other strategies) is stored as a
+ * {@link TournamentExtraProperty} with key
+ * {@link TournamentExtraPropertyKey#LEAGUE_FIGHTS_ORDER_GENERATION}.
+ * </p>
+ */
 @Service
 public abstract class LeagueHandler implements ITournamentManager {
 
@@ -68,7 +89,7 @@ public abstract class LeagueHandler implements ITournamentManager {
             group.setTeams(teamProvider.getAll(tournament));
             return addGroup(tournament, group);
         }
-        return groups.get(0);
+        return groups.getFirst();
     }
 
     protected Group addGroup(Tournament tournament, Integer level) {
@@ -116,7 +137,14 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public Group addGroup(Tournament tournament, Group group) {
-        if (!groupProvider.getGroups(tournament).isEmpty()) {
+        final List<Group> existingGroups = groupProvider.getGroups(tournament);
+        if (!existingGroups.isEmpty()) {
+            final Group existingGroup = existingGroups.getFirst();
+            // For league tournaments there is only one group; if we're updating that same group,
+            // keep the row and update it in-place to avoid detached entity issues.
+            if (group.getId() != null && Objects.equals(existingGroup.getId(), group.getId())) {
+                return groupProvider.addGroup(tournament, group);
+            }
             groupProvider.delete(tournament);
         }
         return groupProvider.addGroup(tournament, group);
@@ -133,7 +161,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     public boolean exist(Tournament tournament, Team team) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
-            return groups.get(0).getTeams().contains(team);
+            return groups.getFirst().getTeams().contains(team);
         }
         return false;
     }
@@ -142,8 +170,8 @@ public abstract class LeagueHandler implements ITournamentManager {
     public void removeTeams(Tournament tournament, Integer level) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
-            groups.get(0).getTeams().clear();
-            groupProvider.save(groups.get(0));
+            groups.getFirst().getTeams().clear();
+            groupProvider.save(groups.getFirst());
         }
     }
 

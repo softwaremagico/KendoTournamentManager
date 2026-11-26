@@ -1,11 +1,11 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexPlotOptions, ApexTitleSubtitle, ApexTooltip, ChartComponent} from "ng-apexcharts";
 import {Colors} from "../colors";
 import {GaugeChartData} from "./gauge-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 export type GaugeChartOptions = {
   series: number[];
@@ -20,6 +20,8 @@ export type GaugeChartOptions = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-gauge-chart',
   templateUrl: './gauge-chart.component.html',
   styleUrls: ['./gauge-chart.component.scss']
@@ -60,6 +62,9 @@ export class GaugeChartComponent extends CustomChartComponent {
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
+    if (userSessionService.getNightMode()) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
   }
 
   protected setProperties(): void {

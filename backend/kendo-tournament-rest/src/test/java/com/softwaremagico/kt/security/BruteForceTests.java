@@ -4,7 +4,7 @@ package com.softwaremagico.kt.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,16 +21,14 @@ package com.softwaremagico.kt.security;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.BruteForceService;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -47,7 +45,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
-@ExtendWith(MockitoExtension.class)
 @Test(groups = "bruteForce")
 public class BruteForceTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
@@ -67,7 +64,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
     @Autowired
     private BruteForceService bruteForceService;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JacksonException {
         return objectMapper.writeValueAsString(object);
     }
 
@@ -85,30 +82,36 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
         request.setPassword("invalidPassword");
+        request.setTenant("Legacy organization");
 
-        // 3 attempts to block the user.
-        for (int i = 0; i < BruteForceService.MAX_ATTEMPTS; i++) {
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+
+        try {
+            // 3 attempts to block the user.
+            for (int i = 0; i < BruteForceService.MAX_ATTEMPTS; i++) {
+                this.mockMvc
+                        .perform(post("/auth/public/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(request))
+                                .with(csrf()))
+                        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                        .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
+                        .andReturn();
+            }
+
+            //Correct password, user blocked.
+            request.setPassword(USER_PASSWORD);
+            request.setTenant("Legacy organization");
             this.mockMvc
                     .perform(post("/auth/public/login")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(toJson(request))
-                            .with(csrf()))
-                    .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                            .content(toJson(request)))
+                    .andExpect(MockMvcResultMatchers.status().isLocked())
                     .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                     .andReturn();
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
         }
-
-        //Correct password, user blocked.
-        request.setPassword(USER_PASSWORD);
-        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isLocked())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test
@@ -119,6 +122,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
         request.setPassword("invalidPassword");
+        request.setTenant("Legacy organization");
 
         // 3 attempts to block the user.
         this.mockMvc
@@ -141,6 +145,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         //Correct password, attempts reset.
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)

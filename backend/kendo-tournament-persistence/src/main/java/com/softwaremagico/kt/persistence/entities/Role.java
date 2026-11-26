@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,12 +40,14 @@ import org.hibernate.annotations.FetchMode;
 
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "roles", indexes = {
         @Index(name = "ind_tournament", columnList = "tournament"),
         @Index(name = "ind_type", columnList = "role_type"),
 })
+@SuppressWarnings("java:S2160")
 public class Role extends Element {
 
     @ManyToOne(fetch = FetchType.LAZY)

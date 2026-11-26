@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,7 +64,7 @@ public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSp
         tournament2 = tournamentProvider.save(tournament2);
         //Has a default one, copied from previous one.
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).size(), 1);
-        Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).get(0).getPropertyValue(), "2");
+        Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).getFirst().getPropertyValue(), "2");
 
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament2, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1", USER));
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament2, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "true", USER));

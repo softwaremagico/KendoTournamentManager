@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -78,7 +78,7 @@ public class TournamentExtraPropertiesServices {
     @Operation(summary = "Creates a tournament property with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentExtraPropertyDTO add(TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
+    public TournamentExtraPropertyDTO add(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
                                           Authentication authentication,
                                           @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                           HttpServletRequest request) {
@@ -91,7 +91,6 @@ public class TournamentExtraPropertiesServices {
     public TournamentExtraPropertyDTO update(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
                                              @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                              Authentication authentication, HttpServletRequest request) {
-        tournamentExtraPropertyDTO.setCreatedBy(authentication.getName());
         return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName(), session);
     }
 

@@ -1,0 +1,308 @@
+/*-
+ * #%L
+ * Kendo Tournament Manager (Persistence)
+ * %%
+ * Copyright (C) 2021 - 2026 Softwaremagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
+package com.softwaremagico.kt.persistence.encryption;
+
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.*;
+
+/**
+ * Test suite for {@link StringCryptoConverter}. Tests JPA attribute converter
+ * for encrypted String values.
+ */
+@Test(groups = "cryptoConverters")
+public class StringCryptoConverterTest {
+
+	@Mock
+	private ICipherEngine cipherEngine;
+
+	private StringCryptoConverter converter;
+	private static final String TEST_VALUE = "sensitiveString";
+	private static final String ENCRYPTED_VALUE = "encryptedValue123456";
+	private static final String ENCRYPTION_KEY = "test-key";
+
+	@BeforeMethod(alwaysRun = true)
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+        this.converter = new StringCryptoConverter(this.cipherEngine);
+	}
+
+	@Test
+	public void testConvertToDatabaseColumnWithEncryption() throws InvalidEncryptionException {
+
+		when(this.cipherEngine.encrypt(TEST_VALUE)).thenReturn(ENCRYPTED_VALUE);
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToDatabaseColumn(TEST_VALUE);
+
+			assertEquals(result, ENCRYPTED_VALUE);
+		}
+	}
+
+	@Test
+	public void testConvertToDatabaseColumnWithoutEncryptionKey() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
+
+			final String result = this.converter.convertToDatabaseColumn(TEST_VALUE);
+
+			assertEquals(result, TEST_VALUE);
+		}
+	}
+
+	@Test
+	public void testConvertToDatabaseColumnWithEmptyEncryptionKey() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn("");
+
+			final String result = this.converter.convertToDatabaseColumn(TEST_VALUE);
+
+			assertEquals(result, TEST_VALUE);
+		}
+	}
+
+	@Test
+	public void testConvertToDatabaseColumnNull() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToDatabaseColumn(null);
+
+			assertNull(result);
+		}
+	}
+
+	@Test
+	public void testConvertToDatabaseColumnEmpty() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToDatabaseColumn("");
+
+			assertEquals(result, "");
+		}
+	}
+
+	@Test
+	public void testConvertToEntityAttributeWithDecryption() throws InvalidEncryptionException {
+		when(this.cipherEngine.decrypt(ENCRYPTED_VALUE)).thenReturn(TEST_VALUE);
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToEntityAttribute(ENCRYPTED_VALUE);
+
+			assertEquals(result, TEST_VALUE);
+		}
+	}
+
+	@Test
+	public void testConvertToEntityAttributeWithoutEncryptionKey() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
+
+			final String result = this.converter.convertToEntityAttribute(ENCRYPTED_VALUE);
+
+			assertEquals(result, ENCRYPTED_VALUE);
+		}
+	}
+
+	@Test
+	public void testConvertToEntityAttributeWithEmptyEncryptionKey() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn("");
+
+			final String result = this.converter.convertToEntityAttribute(ENCRYPTED_VALUE);
+
+			assertEquals(result, ENCRYPTED_VALUE);
+		}
+	}
+
+	@Test
+	public void testConvertToEntityAttributeNull() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToEntityAttribute(null);
+
+			assertNull(result);
+		}
+	}
+
+	@Test
+	public void testConvertToEntityAttributeEmpty() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToEntityAttribute("");
+
+			assertEquals(result, "");
+		}
+	}
+
+	@Test
+	public void testRoundTripEncryptionDecryption() throws InvalidEncryptionException {
+		// Create a converter with default cipher engine for round-trip test
+		final StringCryptoConverter converter2 = new StringCryptoConverter();
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn("roundtrip-test-key");
+
+			final String original = "This is a test string";
+			final String encrypted = converter2.convertToDatabaseColumn(original);
+			final String decrypted = converter2.convertToEntityAttribute(encrypted);
+
+			assertEquals(decrypted, original);
+			assertNotEquals(encrypted, original);
+		}
+	}
+
+	@Test
+	public void testIsNotNullOrEmptyMethod() {
+		assertTrue(this.converter.isNotNullOrEmpty("value"));
+		assertFalse(this.converter.isNotNullOrEmpty(""));
+		assertFalse(this.converter.isNotNullOrEmpty(null));
+	}
+
+	@Test
+	public void testStringToEntityAttributeMethod() {
+		final String input = "testString";
+		final String result = this.converter.stringToEntityAttribute(input);
+
+		assertEquals(result, input);
+	}
+
+	@Test
+	public void testStringToEntityAttributeNull() {
+		final String result = this.converter.stringToEntityAttribute(null);
+
+		assertNull(result);
+	}
+
+	@Test
+	public void testEntityAttributeToStringMethod() {
+		final String input = "testString";
+		final String result = this.converter.entityAttributeToString(input);
+
+		assertEquals(result, input);
+	}
+
+	@Test
+	public void testEntityAttributeToStringNull() {
+		final String result = this.converter.entityAttributeToString(null);
+
+		assertNull(result);
+	}
+
+	@Test
+	public void testConverterWithSpecialCharacters() throws InvalidEncryptionException {
+		final String specialValue = "!@#$%^&*()_+-=[]{}|;:',.<>?/~`";
+		when(this.cipherEngine.encrypt(specialValue)).thenReturn(ENCRYPTED_VALUE);
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToDatabaseColumn(specialValue);
+
+			assertEquals(result, ENCRYPTED_VALUE);
+		}
+	}
+
+	@Test
+	public void testConverterWithUnicodeCharacters() throws InvalidEncryptionException {
+		final String unicodeValue = "你好世界 مرحبا بالعالم";
+		when(this.cipherEngine.encrypt(unicodeValue)).thenReturn(ENCRYPTED_VALUE);
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToDatabaseColumn(unicodeValue);
+
+			assertEquals(result, ENCRYPTED_VALUE);
+		}
+	}
+
+	@Test
+	public void testConverterWithLongString() throws InvalidEncryptionException {
+		final String longValue = "A".repeat(10000);
+		when(this.cipherEngine.encrypt(longValue)).thenReturn(ENCRYPTED_VALUE);
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			final String result = this.converter.convertToDatabaseColumn(longValue);
+
+			assertEquals(result, ENCRYPTED_VALUE);
+		}
+	}
+
+	@Test
+	public void testConstructorWithDefaultEngine() {
+		final StringCryptoConverter defaultConverter = new StringCryptoConverter();
+		assertNotNull(defaultConverter);
+	}
+
+	@Test
+	public void testConverterEncryptionException() throws InvalidEncryptionException {
+		when(this.cipherEngine.encrypt(TEST_VALUE)).thenThrow(new InvalidEncryptionException("Encryption failed"));
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			assertThrows(InvalidEncryptionException.class, () -> this.converter.convertToDatabaseColumn(TEST_VALUE));
+		}
+	}
+
+	@Test
+	public void testConverterDecryptionException() throws InvalidEncryptionException {
+		when(this.cipherEngine.decrypt(ENCRYPTED_VALUE)).thenThrow(new InvalidEncryptionException("Decryption failed"));
+
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(ENCRYPTION_KEY);
+
+			assertThrows(InvalidEncryptionException.class, () -> this.converter.convertToEntityAttribute(ENCRYPTED_VALUE));
+		}
+	}
+
+	@Test
+	public void testMultipleConversionsWithoutEncryption() {
+		try (final MockedStatic<KeyProperty> keyPropertyMocked = mockStatic(KeyProperty.class)) {
+			keyPropertyMocked.when(KeyProperty::getDatabaseEncryptionKey).thenReturn(null);
+
+			final String value1 = "value1";
+			final String value2 = "value2";
+			final String value3 = "value3";
+
+			assertEquals(this.converter.convertToDatabaseColumn(value1), value1);
+			assertEquals(this.converter.convertToDatabaseColumn(value2), value2);
+			assertEquals(this.converter.convertToDatabaseColumn(value3), value3);
+		}
+	}
+}

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,8 +22,8 @@ package com.softwaremagico.kt.rest;
  */
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
@@ -48,7 +48,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -83,7 +83,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     private static final String USER_FIRST_NAME = "Test";
     private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "asd123";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;
@@ -159,10 +159,10 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     }
 
     private void resetGroup(TournamentDTO tournamentDTO) {
-        resetGroup(groupController.get(tournamentDTO).get(0));
+        resetGroup(groupController.get(tournamentDTO).getFirst());
     }
 
-    private <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JacksonException {
         return objectMapper.writeValueAsString(object);
     }
 
@@ -178,6 +178,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -232,10 +233,10 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
-            ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
-            Assert.assertEquals(participantDTO.getName(), String.format("Name%s", i));
-            Assert.assertEquals(participantDTO.getLastname(), String.format("Lastname%s", i));
-            Assert.assertEquals(participantDTO.getIdCard(), String.format("0000%s", i));
+            ParticipantDTO createdParticipant = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+            Assert.assertEquals(createdParticipant.getName(), String.format("Name%s", i));
+            Assert.assertEquals(createdParticipant.getLastname(), String.format("Lastname%s", i));
+            Assert.assertEquals(createdParticipant.getIdCard(), String.format("0000%s", i));
         }
 
         MvcResult createResult = this.mockMvc
@@ -359,7 +360,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             //First member of the team, add team to group
             if (teamMember == 0) {
                 this.mockMvc
-                        .perform(patch("/groups/" + groupsDTO.get(0).getId() + "/teams/add")
+                        .perform(patch("/groups/" + groupsDTO.getFirst().getId() + "/teams/add")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer " + jwtToken)
                                 .content(toJson(Collections.singleton(team)))
@@ -413,7 +414,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
         //Check group has been created.
         Assert.assertEquals(tournamentGroups.size(), 1);
-        Assert.assertEquals(tournamentGroups.get(0).getFights().size(), tournamentFights.size());
+        Assert.assertEquals(tournamentGroups.getFirst().getFights().size(), tournamentFights.size());
 
         Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
 
@@ -438,8 +439,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             FightDTO currentFight = fromJson(createResult.getResponse().getContentAsString(), FightDTO.class);
 
             // First duel won
-            currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
-            currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
+            currentFight.getDuels().getFirst().getCompetitor1Score().add(Score.MEN);
+            currentFight.getDuels().getFirst().getCompetitor1Score().add(Score.MEN);
             currentFight.getDuels().forEach(duel -> duel.setFinished(true));
 
             //Update the fight.

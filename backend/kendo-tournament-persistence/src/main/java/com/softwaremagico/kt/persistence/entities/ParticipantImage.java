@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,8 +29,6 @@ import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
@@ -41,9 +39,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participant_image")
+@SuppressWarnings("java:S2160")
 public class ParticipantImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -55,7 +55,6 @@ public class ParticipantImage extends Element {
     private byte[] data;
 
     @Column(name = "format", nullable = false)
-    @Enumerated(EnumType.STRING)
     @Convert(converter = ImageFormatCryptoConverter.class)
     private ImageFormat imageFormat;
 
@@ -94,7 +93,8 @@ public class ParticipantImage extends Element {
 
     @Override
     public String toString() {
-        return "ParticipantImage{participant='" + participant + "', size='" + getData().length + "'}";
+        final byte[] currentData = getData();
+        return "ParticipantImage{participant='" + participant + "', size='" + (currentData == null ? 0 : currentData.length) + "'}";
     }
 
 }

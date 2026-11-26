@@ -1,0 +1,7 @@
+export enum TournamentFormValidationFields {
+  NAME_ERRORS = 'NAME_ERRORS',
+  TYPE_ERRORS = 'TYPE_ERRORS',
+  SHIAIJO_ERRORS = 'SHIAIJO_ERRORS',
+  TEAM_ERRORS = 'TEAM_ERRORS',
+  FIGHT_ERRORS = 'FIGHT_ERRORS',
+}

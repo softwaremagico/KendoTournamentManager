@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,6 +43,8 @@ public class TournamentDTO extends ElementDTO implements IName {
 
     @NotNull
     private Integer teamSize;
+
+    private Integer fightSize;
 
     @NotNull
     private TournamentType type;
@@ -156,6 +158,14 @@ public class TournamentDTO extends ElementDTO implements IName {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    public Integer getFightSize() {
+        return fightSize;
+    }
+
+    public void setFightSize(Integer fightSize) {
+        this.fightSize = fightSize;
     }
 
     @Override

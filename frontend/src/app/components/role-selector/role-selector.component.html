@@ -1,0 +1,20 @@
+<div class="canvas" slot="{{'empty' | transloco}}">
+  <span class="example-list-section">
+    @for (roleType of roleTypes; track roleType) {
+      <biit-checkbox (onValueChange)="$event ? select(roleType) : deselect(roleType)">
+        {{ roleType.toLowerCase() | transloco }}
+      </biit-checkbox>
+    }
+  </span>
+  <div class="button-container">
+    <button biit-button (click)="setRoles(false)" primary>
+      {{ 'all' | transloco }}
+    </button>
+    <button biit-button (click)="setRoles(true)" secondary>
+      {{ 'onlyNews' | transloco }}
+    </button>
+    <button biit-button (click)="closeDialog()" secondary>
+      {{ 'cancel' | transloco }}
+    </button>
+  </div>
+</div>

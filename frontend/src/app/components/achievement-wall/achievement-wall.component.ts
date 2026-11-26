@@ -1,9 +1,11 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {AchievementType} from "../../models/achievement-type.model";
 import {Achievement} from "../../models/achievement.model";
 
 @Component({
-  selector: 'app-achievement-wall',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'achievements-wall',
   templateUrl: './achievement-wall.component.html',
   styleUrls: ['./achievement-wall.component.scss']
 })

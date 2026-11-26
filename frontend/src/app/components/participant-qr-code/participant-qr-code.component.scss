@@ -1,4 +1,4 @@
-.mat-dialog-actions {
+.button-container {
   display: flex;
   justify-content: center;
 }
@@ -21,13 +21,13 @@
   height: auto;
 }
 
-.mat-dialog-content {
-  overflow: clip;
-}
-
 .link {
   display: flex;
   justify-content: center;
   width: 100%;
   margin-top: 30px;
+
+  a {
+    color: var(--link-color);
+  }
 }

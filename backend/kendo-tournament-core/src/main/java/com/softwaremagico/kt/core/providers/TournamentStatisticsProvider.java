@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,6 +55,7 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
         tournamentStatistics.setTournamentLockedAt(tournament.getLockedAt());
         tournamentStatistics.setTournamentFinishedAt(tournament.getFinishedAt());
         tournamentStatistics.setTeamSize(tournament.getTeamSize());
+        tournamentStatistics.setFightSize(tournament.getFightSize());
         for (final RoleType roleType : RoleType.values()) {
             tournamentStatistics.addNumberOfParticipants(roleType, roleProvider.count(tournament, roleType));
         }

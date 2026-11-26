@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -85,7 +85,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     @Override
     public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
-        final Group group = groupProvider.getGroups(tournament).get(0);
+        final Group group = groupProvider.getGroups(tournament).getFirst();
         final Fight lastFight = group.getFights().get(group.getFights().size() - 1);
 
         final Fight newFight = new Fight();
@@ -134,7 +134,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         final TournamentExtraProperty extraProperty = getKingIndex(tournament);
         try {
             kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException _) {
             kingIndex.set(1);
         }
         kingIndex.getAndIncrement();

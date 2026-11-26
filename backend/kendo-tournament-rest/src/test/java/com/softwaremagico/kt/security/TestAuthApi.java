@@ -4,7 +4,7 @@ package com.softwaremagico.kt.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,17 +21,15 @@ package com.softwaremagico.kt.security;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,7 +52,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @Test(groups = "authApi")
 public class TestAuthApi extends AbstractTestNGSpringContextTests {
@@ -65,7 +62,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private static final String USER_NEW_FIRST_NAME = "New Test";
     private static final String USER_NEW_LAST_NAME = "New User";
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     private static final String USER2_NAME = "user2";
     private static final String USER2_FIRST_NAME = "Test2";
@@ -89,7 +86,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     private String jwtToken;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JacksonException {
         return objectMapper.writeValueAsString(object);
     }
 
@@ -113,6 +110,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -134,6 +132,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword("zxc");
+        request.setTenant("Legacy organization");
 
         this.mockMvc
                 .perform(post("/auth/public/login")
@@ -150,6 +149,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -234,14 +234,18 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        this.mockMvc
-                .perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        System.out.println("------------------------- End Expected Logged Exception -------------------------");
+
+        try {
+            this.mockMvc
+                    .perform(post("/auth/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + jwtToken)
+                            .content(toJson(request))
+                            .with(csrf()))
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
     }
 
     @Test(dependsOnMethods = "testJwt")
@@ -277,6 +281,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER2_NAME);
         request.setPassword(USER2_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -308,6 +313,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         request = new AuthRequest();
         request.setUsername(USER2_NAME);
         request.setPassword(USER2_PASSWORD);
+        request.setTenant("Legacy organization");
 
         createResult = this.mockMvc
                 .perform(post("/auth/public/login")

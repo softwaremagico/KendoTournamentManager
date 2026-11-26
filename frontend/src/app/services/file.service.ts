@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -69,7 +69,7 @@ export class FileService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<ParticipantImage>(`adding picture to ${image}`))
+        catchError(this.messageService.handleError<ParticipantImage>(`adding picture to ${image.participant?.id}`))
       );
   }
 

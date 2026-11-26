@@ -4,7 +4,7 @@ package com.softwaremagico.kt;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,24 +21,23 @@ package com.softwaremagico.kt;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
+import java.io.Serial;
+
 public class LoggableDispatcherServlet extends DispatcherServlet {
+    @Serial
     private static final long serialVersionUID = -8650983209144626130L;
+    private static final int CONTENT_CACHE_LIMIT = 256 * 1024;
 
     @Override
-    protected void doDispatch(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (!(request instanceof ContentCachingRequestWrapper)) {
-            request = new ContentCachingRequestWrapper(request);
+            request = new ContentCachingRequestWrapper(request, CONTENT_CACHE_LIMIT);
         }
-        try {
-            super.doDispatch(request, response);
-        } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass(), e);
-        }
+        super.doDispatch(request, response);
     }
 }

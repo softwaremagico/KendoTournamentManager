@@ -4,7 +4,7 @@ package com.softwaremagico.kt;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,22 +23,21 @@ package com.softwaremagico.kt;
 
 import com.softwaremagico.kt.rest.security.AuthApi;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tools.jackson.databind.MapperFeature;
 
 @Configuration
-@PropertySources({
-        @PropertySource("classpath:application.properties"),
-        @PropertySource(value = "file:${EXTERNAL_CONFIG_FILE}", ignoreResourceNotFound = true)
-})
+@PropertySource("classpath:application.properties")
+@PropertySource(value = "file:${EXTERNAL_CONFIG_FILE}", ignoreResourceNotFound = true)
 @ComponentScan({"com.softwaremagico.kt"})
 public class ServerConfiguration {
     private static final int CORE_POOL_SIZE = 20;
@@ -47,6 +46,23 @@ public class ServerConfiguration {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    /**
+     * Configures how the JSON mapper builds the objects of the data transfer objects.
+     * <p>
+     * Jackson 3 infers the constructor to use from the parameter names of the class, so a
+     * data transfer object that offers a convenience constructor next to its empty one is
+     * built with the convenience constructor. Those constructors expect the whole object
+     * graph and they cannot be used to read a JSON document. Detecting the parameter names
+     * is disabled to keep the empty constructor as the one used to read the documents.
+     * </p>
+     *
+     * @return the customizer of the JSON mapper builder.
+     */
+    @Bean
+    public JsonMapperBuilderCustomizer jsonMapperBuilderCustomizer() {
+        return builder -> builder.disable(MapperFeature.DETECT_PARAMETER_NAMES);
     }
 
 

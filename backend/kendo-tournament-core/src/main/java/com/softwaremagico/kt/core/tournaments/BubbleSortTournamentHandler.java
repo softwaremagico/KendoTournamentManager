@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,6 +44,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Bubble sort tournament handler.
+ * <p>
+ * In a bubble sort tournament, teams are ranked by iteratively pitting the
+ * current "king" (top-ranked team) against the next challenger. The process
+ * continues until all teams are ranked:
+ * </p>
+ * <ol>
+ *   <li>The first fight pits the first two teams in the initial order.</li>
+ *   <li>The winner becomes the new "king" and fights the next team.</li>
+ *   <li>The loser is eliminated and the winner continues as king.</li>
+ *   <li>After each fight, {@link #generateNextFights} determines the next matchup.
+ *       If the last fight is over a new group/level is created and the next pair
+ *       of teams is matched based on winner/loser resolution.</li>
+ *   <li>The tournament ends when the total number of groups equals
+ *       {@code teams.size() - 1} and all fights in the last group are complete.</li>
+ * </ol>
+ * <p>
+ * Draw resolution (both teams eliminated, winner or loser stays) is configurable
+ * via {@link TournamentExtraPropertyKey#KING_DRAW_RESOLUTION}.
+ * </p>
+ */
 @Service
 public class BubbleSortTournamentHandler extends LeagueHandler {
     private final BubbleSortTournamentManager bubbleSortTournamentManager;
@@ -151,7 +173,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         final TournamentExtraProperty extraProperty = getKingIndex(tournament);
         try {
             kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException _) {
             kingIndex.set(1);
         }
         kingIndex.getAndIncrement();
@@ -229,61 +251,61 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
 
     public List<Team> getTeamsOrderedByRanks(Tournament tournament, Group group, DrawResolution drawResolution) {
         final List<Team> teams = new ArrayList<>();
-        if (group != null) {
-            //Add last teams that have no fights!
-            for (int i = group.getLevel(); i > 0; i--) {
-                teams.add(0, group.getTeams().get(group.getTeams().size() - (group.getLevel() - i) - 1));
-            }
-            if (group.getFights() != null && !group.getFights().isEmpty()) {
-                //From the last fight we get both teams
-                if (group.getFights().get(group.getFights().size() - 1).getWinner() != null) {
-                    //Winner only if is not added before.
-                    teams.add(0, group.getFights().get(group.getFights().size() - 1).getWinner());
-                    teams.add(0, group.getFights().get(group.getFights().size() - 1).getLoser());
-                } else {
-                    switch (drawResolution) {
-                        case NEWEST_ELIMINATED:
-                            //Newest is Team2 always.
-                            teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
-                            teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
-                            break;
-                        case OLDEST_ELIMINATED, BOTH_ELIMINATED:
-                            //Both_eliminated cannot be on bubble sort!
-                        default:
-                            //Oldest is Team1 always.
-                            teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
-                            teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
-                            break;
-                    }
-
-                }
-                //For any other fight, we get the disqualified one.
-                for (int i = group.getFights().size() - 2; i >= 0; i--) {
-                    if (group.getFights().get(i).getWinner() != null) {
-                        //Add the disqualified, as the winner has been already added on other fights.
-                        teams.add(0, group.getFights().get(i).getLoser());
-                    } else {
-                        switch (drawResolution) {
-                            case NEWEST_ELIMINATED:
-                                //Newest is Team2 always.
-                                teams.add(0, group.getFights().get(i).getTeam2());
-                                break;
-                            case OLDEST_ELIMINATED, BOTH_ELIMINATED:
-                                //Both cannot be on bubble sort!
-                            default:
-                                //Oldest is Team1 always.
-                                teams.add(0, group.getFights().get(i).getTeam1());
-                                break;
-                        }
-                    }
-                }
-                return teams;
-            }
-        }
         if (group == null) {
             return teamProvider.getAll(tournament);
         }
+        addPendingTeamsWithoutFights(teams, group);
+        if (group.getFights() != null && !group.getFights().isEmpty()) {
+            final Fight lastFight = group.getFights().get(group.getFights().size() - 1);
+            addTeamsFromLastFight(teams, lastFight, drawResolution);
+            addTeamsFromPreviousFights(teams, group.getFights(), drawResolution);
+            return teams;
+        }
         return group.getTeams();
+    }
+
+    private void addPendingTeamsWithoutFights(List<Team> teams, Group group) {
+        for (int i = group.getLevel(); i > 0; i--) {
+            teams.add(0, group.getTeams().get(group.getTeams().size() - (group.getLevel() - i) - 1));
+        }
+    }
+
+    private void addTeamsFromLastFight(List<Team> teams, Fight lastFight, DrawResolution drawResolution) {
+        if (lastFight.getWinner() != null) {
+            teams.add(0, lastFight.getWinner());
+            teams.add(0, lastFight.getLoser());
+            return;
+        }
+
+        switch (drawResolution) {
+            case NEWEST_ELIMINATED:
+                teams.add(0, lastFight.getTeam1());
+                teams.add(0, lastFight.getTeam2());
+                break;
+            case OLDEST_ELIMINATED, BOTH_ELIMINATED:
+            default:
+                teams.add(0, lastFight.getTeam2());
+                teams.add(0, lastFight.getTeam1());
+                break;
+        }
+    }
+
+    private void addTeamsFromPreviousFights(List<Team> teams, List<Fight> fights, DrawResolution drawResolution) {
+        for (int i = fights.size() - 2; i >= 0; i--) {
+            final Fight fight = fights.get(i);
+            if (fight.getWinner() != null) {
+                teams.add(0, fight.getLoser());
+            } else {
+                teams.add(0, getDrawLoserByResolution(fight, drawResolution));
+            }
+        }
+    }
+
+    private Team getDrawLoserByResolution(Fight fight, DrawResolution drawResolution) {
+        return switch (drawResolution) {
+            case NEWEST_ELIMINATED -> fight.getTeam2();
+            case OLDEST_ELIMINATED, BOTH_ELIMINATED -> fight.getTeam1();
+        };
     }
 
     @Override

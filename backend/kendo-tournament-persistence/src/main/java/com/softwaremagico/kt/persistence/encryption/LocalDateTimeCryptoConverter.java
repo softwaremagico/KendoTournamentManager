@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,9 +25,10 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
@@ -53,36 +54,54 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
 
     @Override
     protected LocalDateTime stringToEntityAttribute(String dbData) {
+        if (dbData == null || dbData.isEmpty()) {
+            return null;
+        }
         try {
-            return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
-        } catch (NumberFormatException nfe) {
-            try {
-                //Old versions store it as LocalDateTime
-                return LocalDateTime.parse(dbData);
-            } catch (DateTimeParseException dtpe) {
-                try {
-                    // From SQL Script with milliseconds
-                    return LocalDateTime.parse(dbData, formatterWithMilliseconds);
-                } catch (DateTimeParseException dte) {
-                    try {
-                        // try without milliseconds
-                        return LocalDateTime.parse(dbData, formatter);
-                    } catch (DateTimeParseException dteo) {
-                        try {
-                            //Try with offset.
-                            return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
-                        } catch (DateTimeParseException e) {
-                            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
-                            return null;
-                        }
-                    }
-                }
+            return Instant.ofEpochMilli(Long.parseLong(dbData)).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        } catch (NumberFormatException ex) {
+            return parseLegacyDateTime(dbData, ex);
+        }
+    }
+
+    private LocalDateTime parseLegacyDateTime(String dbData, NumberFormatException numberFormatException) {
+        try {
+            //Old versions store it as LocalDateTime
+            return LocalDateTime.parse(dbData);
+        } catch (DateTimeParseException ex) {
+            final LocalDateTime withMillis = tryParseWithFormatter(dbData, formatterWithMilliseconds);
+            if (withMillis != null) {
+                return withMillis;
             }
+            final LocalDateTime withoutMillis = tryParseWithFormatter(dbData, formatter);
+            if (withoutMillis != null) {
+                return withoutMillis;
+            }
+            try {
+                //Try with offset.
+                return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
+            } catch (DateTimeParseException offsetException) {
+                EncryptorLogger.errorMessage(this.getClass(),
+                        "Invalid datetime value '{}' in database. Causes: '{}', '{}', '{}'", dbData,
+                        numberFormatException.getMessage(), ex.getMessage(), offsetException.getMessage());
+                return null;
+            }
+        }
+    }
+
+    private LocalDateTime tryParseWithFormatter(String dbData, DateTimeFormatter dateTimeFormatter) {
+        try {
+            return LocalDateTime.parse(dbData, dateTimeFormatter);
+        } catch (DateTimeParseException ex) {
+            EncryptorLogger.debug(this.getClass(), "Datetime '{}' does not match formatter '{}': {}", dbData,
+                    dateTimeFormatter, ex.getMessage());
+            return null;
         }
     }
 
     @Override
     protected String entityAttributeToString(LocalDateTime attribute) {
-        return attribute == null ? null : String.valueOf(Timestamp.valueOf(attribute).getTime());
+        return attribute == null ? null
+                : String.valueOf(attribute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
     }
 }

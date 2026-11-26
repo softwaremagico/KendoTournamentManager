@@ -2,6 +2,7 @@ export enum UserRoles {
   VIEWER = 'VIEWER',
   EDITOR = 'EDITOR',
   ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
   GUEST = 'GUEST',
 }
 

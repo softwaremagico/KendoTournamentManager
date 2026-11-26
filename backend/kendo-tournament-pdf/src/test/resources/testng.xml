@@ -4,22 +4,45 @@
         <listener class-name="com.softwaremagico.kt.TestListener"/>
     </listeners>
 
-    <test name="KendoTournament" enabled="true" preserve-order="true">
-        <groups>
-            <run>
-                <include name="scoreListPdf"/>
-                <include name="accreditationPdf"/>
-                <include name="diplomaPdf"/>
-                <include name="qrPdf"/>
-                <include name="blogTests"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.softwaremagico.kt.pdf.ListTests"/>
-            <class name="com.softwaremagico.kt.pdf.AccreditationTests"/>
-            <class name="com.softwaremagico.kt.pdf.DiplomaTests"/>
-            <class name="com.softwaremagico.kt.pdf.QrTests"/>
-            <class name="com.softwaremagico.kt.html.HtmlTests"/>
-        </classes>
-    </test>
+     <test name="KendoTournament" enabled="true" preserve-order="true">
+         <groups>
+             <run>
+                 <include name="baseColor"/>
+                 <include name="pdfTheme"/>
+                 <include name="pdfExceptions"/>
+                 <include name="scoreListPdf"/>
+                 <include name="accreditationPdf"/>
+                 <include name="diplomaPdf"/>
+                 <include name="qrPdf"/>
+                 <include name="blogTests"/>
+                 <include name="emptyFightsListTests"/>
+                 <include name="listsUnitTests"/>
+             </run>
+         </groups>
+         <classes>
+             <class name="com.softwaremagico.kt.pdf.tests.BaseColorTests"/>
+             <class name="com.softwaremagico.kt.pdf.tests.PdfThemeTests"/>
+             <class name="com.softwaremagico.kt.pdf.tests.PdfExceptionsTests"/>
+             <class name="com.softwaremagico.kt.pdf.ListTests"/>
+             <class name="com.softwaremagico.kt.pdf.AccreditationTests"/>
+             <class name="com.softwaremagico.kt.pdf.DiplomaTests"/>
+             <class name="com.softwaremagico.kt.pdf.QrTests"/>
+             <class name="com.softwaremagico.kt.html.HtmlTests"/>
+             <class name="com.softwaremagico.kt.html.controller.ZipControllerTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.EmptyFightsListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.TeamsScoreListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.RoleListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.GroupListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.CompetitorsScoreListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.TeamListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.FightsListTest"/>
+             <class name="com.softwaremagico.kt.pdf.lists.FightSummaryTest"/>
+             <class name="com.softwaremagico.kt.pdf.events.TableBackgroundEventTest"/>
+             <class name="com.softwaremagico.kt.pdf.accreditations.ParticipantAccreditationCardTest"/>
+             <class name="com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCardsTest"/>
+             <class name="com.softwaremagico.kt.html.lists.BlogExporterTest"/>
+             <class name="com.softwaremagico.kt.pdf.controller.PdfControllerTest"/>
+             <class name="com.softwaremagico.kt.pdf.qr.TournamentQrTest"/>
+         </classes>
+     </test>
 </suite>

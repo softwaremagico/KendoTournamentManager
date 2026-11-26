@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,28 +28,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST extends ConverterRequest<ENTITY>>
-        extends SimpleConverter<ENTITY, DTO, REQUEST> implements IElementConverter<ENTITY, DTO, REQUEST> {
+public abstract class ElementConverter<E, D extends ElementDTO, Q extends ConverterRequest<E>>
+        extends SimpleConverter<E, D, Q> implements IElementConverter<E, D, Q> {
 
-    protected abstract DTO convertElement(REQUEST from);
+    protected abstract D convertElement(Q from);
 
     @Override
-    public List<DTO> convertAll(Collection<REQUEST> from) {
+    public List<D> convertAll(Collection<Q> from) {
         if (from == null) {
             return new ArrayList<>();
         }
         //Returns the DTOs sorted by creation time by default
         return from.stream().map(this::convert).sorted(Comparator.comparing(ElementDTO::getCreatedAt,
-                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+                Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 
-    public List<DTO> convertAllNotSorted(Collection<REQUEST> from) {
+    public List<D> convertAllNotSorted(Collection<Q> from) {
         if (from == null) {
             return new ArrayList<>();
         }
         //Returns the DTOs sorted by creation time by default
-        return from.stream().map(this::convert).collect(Collectors.toList());
+        return from.stream().map(this::convert).toList();
     }
 }

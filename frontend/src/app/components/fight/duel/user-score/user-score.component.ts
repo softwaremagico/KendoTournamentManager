@@ -1,14 +1,20 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Duel} from "../../../../models/duel";
 import {DuelType} from "../../../../models/duel-type";
 import {Participant} from "../../../../models/participant";
+import {Fight} from "../../../../models/fight";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'user-score',
   templateUrl: './user-score.component.html',
   styleUrls: ['./user-score.component.scss']
 })
 export class UserScoreComponent {
+
+  @Input()
+  fight: Fight;
 
   @Input()
   duel: Duel;
@@ -26,10 +32,24 @@ export class UserScoreComponent {
   showAvatar: boolean = false;
 
   @Input()
+  isSelected: boolean;
+
+  @Input()
   locked: boolean = false;
 
   @Input()
+  projectMode: boolean;
+
+  @Input()
   highlightedParticipantId: number | undefined;
+
+  @Input()
+  substitute: boolean = false;
+
+  @Input()
+  over: boolean = false;
+
+  participantWindowOpened: boolean = false;
 
   isUntie(): boolean {
     return this.duel.type === DuelType.UNDRAW;
@@ -42,13 +62,14 @@ export class UserScoreComponent {
       } else {
         return this.duel.competitor2;
       }
+    } else if (!this.swapTeams) {
+      return this.duel.competitor2;
     } else {
-      if (!this.swapTeams) {
-        return this.duel.competitor2;
-      } else {
-        return this.duel.competitor1;
-      }
+      return this.duel.competitor1;
     }
   }
 
+  isParticipantPhotoWindowVisible($event: boolean) {
+    this.participantWindowOpened = $event;
+  }
 }

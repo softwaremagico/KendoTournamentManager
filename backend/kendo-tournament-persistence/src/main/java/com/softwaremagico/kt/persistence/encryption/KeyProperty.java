@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,45 +21,55 @@ package com.softwaremagico.kt.persistence.encryption;
  * #L%
  */
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KeyProperty {
 
-    private static String databaseEncryptionKey;
-    private static String databasePublicKey;
-    private static String databasePrivateKey;
+    private static KeyProperty instance;
 
-    public KeyProperty(@Value("${database.encryption.key:#{null}}") String databaseEncryptionKey,
+    private final String databaseEncryptionKey;
+    private final String databasePublicKey;
+    private final String databasePrivateKey;
+
+    protected KeyProperty(@Value("${database.encryption.key:#{null}}") String databaseEncryptionKey,
                        @Value("${database.public.key:#{null}}") String databasePublicKey,
                        @Value("${database.private.key:#{null}}") String databasePrivateKey) {
-        setDatabaseEncryptionKey(databaseEncryptionKey);
-        setDatabasePublicKey(databasePublicKey);
-        setDatabasePrivateKey(databasePrivateKey);
+        this.databaseEncryptionKey = databaseEncryptionKey;
+        this.databasePublicKey = databasePublicKey;
+        this.databasePrivateKey = databasePrivateKey;
     }
 
-    public static synchronized String getDatabaseEncryptionKey() {
-        return databaseEncryptionKey;
+    /**
+     * Registers this instance as the shared singleton once construction has finished.
+     * Invoked automatically by Spring after bean initialization, and explicitly by
+     * {@link #configure(String, String, String)} for manually created instances (tests).
+     */
+    @PostConstruct
+    @SuppressWarnings("java:S2696")
+    private void register() {
+        instance = this;
     }
 
-    private static synchronized void setDatabaseEncryptionKey(String databaseEncryptionKey) {
-        KeyProperty.databaseEncryptionKey = databaseEncryptionKey;
+    /**
+     * Factory method used to (re)configure the shared encryption keys, mainly from tests,
+     * without exposing a public constructor on this class.
+     */
+    public static void configure(String databaseEncryptionKey, String databasePublicKey, String databasePrivateKey) {
+        new KeyProperty(databaseEncryptionKey, databasePublicKey, databasePrivateKey).register();
     }
 
-    public static synchronized String getDatabasePublicKey() {
-        return databasePublicKey;
+    public static String getDatabaseEncryptionKey() {
+        return instance == null ? null : instance.databaseEncryptionKey;
     }
 
-    private static synchronized void setDatabasePublicKey(String databasePublicKey) {
-        KeyProperty.databasePublicKey = databasePublicKey;
+    public static String getDatabasePublicKey() {
+        return instance == null ? null : instance.databasePublicKey;
     }
 
-    public static synchronized String getDatabasePrivateKey() {
-        return databasePrivateKey;
-    }
-
-    private static synchronized void setDatabasePrivateKey(String databasePrivateKey) {
-        KeyProperty.databasePrivateKey = databasePrivateKey;
+    public static String getDatabasePrivateKey() {
+        return instance == null ? null : instance.databasePrivateKey;
     }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,8 @@ package com.softwaremagico.kt.rest;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
@@ -30,20 +30,15 @@ import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -57,7 +52,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @Test(groups = "participantAccess")
 public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
@@ -67,7 +61,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     private static final String CLUB_NAME = "Club";
 
@@ -97,7 +91,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     private ParticipantDTO participantDTO;
     private TemporalToken temporalToken;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JacksonException {
         return objectMapper.writeValueAsString(object);
     }
 
@@ -112,6 +106,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -128,14 +123,14 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void createClub() throws Exception {
-        ClubDTO clubDTO = new ClubDTO();
-        clubDTO.setName(CLUB_NAME);
+        ClubDTO clubDto = new ClubDTO();
+        clubDto.setName(CLUB_NAME);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(clubDTO))
+                        .content(toJson(clubDto))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
@@ -147,16 +142,16 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "createClub")
     public void createParticipant() throws Exception {
-        ParticipantDTO participantDTO = new ParticipantDTO();
-        participantDTO.setClub(this.clubDTO);
-        participantDTO.setName(PARTICIPANT_NAME);
-        participantDTO.setLastname(PARTICIPANT_LASTNAME);
+        ParticipantDTO participantDto = new ParticipantDTO();
+        participantDto.setClub(this.clubDTO);
+        participantDto.setName(PARTICIPANT_NAME);
+        participantDto.setLastname(PARTICIPANT_LASTNAME);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(participantDTO))
+                        .content(toJson(participantDto))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
@@ -193,11 +188,11 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+        ParticipantDTO responseParticipantDto = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
 
         this.participantJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
 
-        Assert.assertEquals(participantDTO.getName(), PARTICIPANT_NAME);
+        Assert.assertEquals(responseParticipantDto.getName(), PARTICIPANT_NAME);
     }
 
     @Test(dependsOnMethods = "generateToken")
@@ -213,7 +208,6 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOthersStatistics() throws Exception {
-        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(get("/statistics/participants/" + 25)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -221,7 +215,6 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
-        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
     }
 
     @Test(dependsOnMethods = "generateToken")
@@ -238,13 +231,20 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOtherServices() throws Exception {
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
-        this.mockMvc
-                .perform(get("/participants")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + participantJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andReturn();
+        try {
+            this.mockMvc
+                    .perform(get("/participants")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + participantJwtToken)
+                            .with(csrf()))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                    .andReturn();
+        } catch (Exception e) {
+            // Spring Security 6.x may propagate AuthorizationDeniedException during MockMvc invocation.
+            Assert.assertTrue(e.getMessage().contains("Access Denied")
+                            || e.getMessage().contains("response is already committed"),
+                    "Expected access denied error when participant calls /participants, but got: " + e.getMessage());
+        }
         System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 

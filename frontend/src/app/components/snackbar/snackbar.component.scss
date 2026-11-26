@@ -1,0 +1,48 @@
+.snackbar-canvas {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  padding: 1rem;
+  box-sizing: border-box;
+  pointer-events: none;
+  transition: .5s ease all;
+
+  &.top .snackbar-element + .snackbar-element {
+    margin-top: 1rem;
+  }
+
+  &.bottom .snackbar-element + .snackbar-element {
+    margin-bottom: 1rem;
+  }
+
+  &.top {
+    flex-flow: column;
+    flex-direction: column;
+  }
+
+  &.bottom {
+    flex-flow: column-reverse;
+    flex-direction: column-reverse;
+  }
+
+  &.left {
+    align-items: start;
+  }
+
+  &.center {
+    align-items: center;
+  }
+
+  &.right {
+    align-items: end;
+  }
+}
+
+.snackbar-element {
+  display: inline-flex;
+  pointer-events: all;
+  transition: .5s ease all;
+}

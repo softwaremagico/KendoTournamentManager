@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -17,7 +17,7 @@ import {StackedBarChartData, StackedBarsData} from "./stacked-bars-chart-data";
 import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
+import {ApexTheme} from "../apex-types";
 
 
 type StackedBarsChartOptions = {
@@ -39,6 +39,8 @@ type UpdateBarsChartOptions = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-stacked-bars-chart',
   templateUrl: './stacked-bars-chart.component.html',
   styleUrls: ['./stacked-bars-chart.component.scss']
@@ -95,6 +97,9 @@ export class StackedBarsChartComponent extends CustomChartComponent {
 
   constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
     super(darkModeService, userSessionService);
+    if (userSessionService.getNightMode()) {
+      this.colors = Colors.defaultPaletteNightMode;
+    }
   }
 
   protected setProperties(): void {

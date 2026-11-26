@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,16 +22,16 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.BaseFont;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.BaseColor;
@@ -73,12 +73,12 @@ public class CompetitorsScoreList extends ParentList {
 
         // Tournament name.
         if (tournament != null) {
-            cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, fontSize)));
+            cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, (float) fontSize)));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         } else {
             // List name.
             cell = new PdfPCell(new Paragraph(
-                    messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, fontSize)));
+                    messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, (float) fontSize)));
         }
 
         cell.setColspan(getTableWidths().length);

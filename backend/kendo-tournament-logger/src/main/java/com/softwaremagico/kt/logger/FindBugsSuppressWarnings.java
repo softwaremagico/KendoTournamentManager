@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,8 @@ public @interface FindBugsSuppressWarnings {
      * The <a href="http://findbugs.sourceforge.net/bugDescriptions.html">FindBugs
      * Patterns</a> to suppress, such as {@code SE_TRANSIENT_FIELD_NOT_RESTORED}
      * or {@code Se}. Full, upper case names are preferred.
+     *
+     * @return the FindBugs pattern names to suppress.
      */
     String[] value();
 }

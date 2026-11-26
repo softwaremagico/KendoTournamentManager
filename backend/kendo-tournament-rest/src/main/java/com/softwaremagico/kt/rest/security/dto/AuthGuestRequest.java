@@ -1,10 +1,11 @@
 package com.softwaremagico.kt.rest.security.dto;
 
+
 /*-
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +24,14 @@ package com.softwaremagico.kt.rest.security.dto;
 
 public class AuthGuestRequest {
     private Integer tournamentId;
+    private String ticket;
+
+    /**
+     * Creates an empty guest authentication request.
+     */
+    public AuthGuestRequest() {
+        // No state to initialize.
+    }
 
     public Integer getTournamentId() {
         return tournamentId;
@@ -31,4 +40,13 @@ public class AuthGuestRequest {
     public void setTournamentId(Integer tournamentId) {
         this.tournamentId = tournamentId;
     }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
+    }
+
 }

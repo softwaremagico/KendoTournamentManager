@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -12,7 +12,9 @@ import {Participant} from "../../models/participant";
 import {DuelService} from "../../services/duel.service";
 
 @Component({
-  selector: 'app-participant-fight-list',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'participant-fight-list',
   templateUrl: './participant-fight-list.component.html',
   styleUrls: ['./participant-fight-list.component.scss']
 })
@@ -40,7 +42,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       //Send by previous view.
-      if (state['participantId'] && !isNaN(Number(state['participantId']))) {
+      if (state['participantId'] && !Number.isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);
       } else {
         this.goBackToStatistics();
@@ -82,7 +84,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
         this.tournaments = [...this.competitorFights.keys()];
 
         this.tournaments.sort((a: Tournament, b: Tournament): number =>
-          a.createdAt && b.createdAt ? (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) : 0);
+          a.createdAt && b.createdAt ? (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) : 0);
 
         //Undraw fights.
         this.competitorUndraws = new Map<Tournament, Duel[]>();
@@ -113,22 +115,22 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
         this.filteredFights.set(tournament, this.competitorFights.get(tournament)!.filter((fight: Fight) =>
           (fight.team1 ? fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
           (fight.team2 ? fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
-          (fight.team1 && fight.team1.members ? fight.team1.members.some((user: Participant | undefined) => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+          (fight.team1?.members ? fight.team1.members.some((user: Participant | undefined) => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
             user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
             (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) : "") ||
-          (fight.team2 && fight.team2.members ? fight.team2.members.some((user: Participant | undefined) => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+          (fight.team2?.members ? fight.team2.members.some((user: Participant | undefined) => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
             user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
             (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) : "")));
 
-        if (this.filteredUnties.get(tournament) != undefined) {
+        if (this.filteredUnties.get(tournament) !== undefined) {
           this.filteredUnties.set(tournament, this.filteredUnties.get(tournament)!.filter((duel: Duel) =>
             (duel.competitor1 ? duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
             (duel.competitor1 ? duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
-            (duel.competitor1 && duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (duel.competitor1?.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
 
             (duel.competitor2 ? duel.competitor2!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
             (duel.competitor2 ? duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
-            (duel.competitor2 && duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "")));
+            (duel.competitor2?.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "")));
         }
       }
     }

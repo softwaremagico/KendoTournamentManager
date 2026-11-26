@@ -8,7 +8,7 @@ export class TournamentScore extends Element {
 
   constructor() {
     super();
-    this.scoreType = ScoreType.INTERNATIONAL;
+    this.scoreType = ScoreType.EUROPEAN;
     this.pointsByVictory = 1;
     this.pointsByDraw = 0;
   }

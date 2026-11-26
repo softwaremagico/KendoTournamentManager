@@ -1,0 +1,9 @@
+{
+  "validationFailed": "Validierungsfehler. Bitte prüfen Sie, ob Felder leer oder ungültig sind.",
+  "dataIsMandatory": "Dieses Feld ist erforderlich.",
+  "minLengthError": "Die eingegebenen Daten sind zu kurz.",
+  "maxLengthError": "Die eingegebenen Daten sind zu lang.",
+  "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+  "usernameInvalid": "Der Benutzername hat ein ungültiges Format. Bitte entfernen Sie alle Leerzeichen.",
+  "formatInvalid": "Das Feldformat ist ungültig."
+}

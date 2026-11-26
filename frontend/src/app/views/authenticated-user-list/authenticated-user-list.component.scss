@@ -1,5 +1,85 @@
-.mat-column-id {
-  width: 60px;
-  padding-right: 24px;
-  text-align: center;
+$space: 1em;
+$main-black: #262626;
+
+.table-view {
+  box-sizing: border-box;
+  height: calc(100% - 4rem);
+  overflow-y: hidden;
+  padding: 2rem;
+  margin: 2rem;
+  border: solid 0.2rem $main-black;
+  background: var(--table-background-color);
+  overflow-x: hidden;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.menu-button {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.menu-button .mat-icon.kendo-icon {
+  margin-left: 0;
+}
+
+.menu-button .mat-mdc-button-persistent-ripple,
+.menu-button .mat-mdc-button-touch-target {
+  display: none;
+}
+
+.menu-button.mat-mdc-button .mdc-button__label,
+.menu-button.mat-mdc-button .mat-mdc-button-touch-target,
+.menu-button.mat-mdc-unelevated-button .mdc-button__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-button mat-icon,
+.menu-button .kendo-icon,
+.menu-button [biit-icon] {
+  vertical-align: middle;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: $space;
+}
+
+@media screen and (max-width: 1000px) {
+  .extra-menu {
+    display: none;
+  }
+}
+
+button.mdc-button:disabled {
+  opacity: 0.5;
+}
+
+button.mdc-button:disabled mat-icon {
+  fill: grey !important;
 }

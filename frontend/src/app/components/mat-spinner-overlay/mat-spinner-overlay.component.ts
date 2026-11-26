@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ProgressSpinnerMode} from "@angular/material/progress-spinner";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {KendoComponent} from "../kendo-component";
@@ -6,7 +6,9 @@ import {takeUntil} from "rxjs";
 import {ThemePalette} from "@angular/material/core";
 
 @Component({
-  selector: 'app-mat-spinner-overlay',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'spinner-overlay',
   templateUrl: './mat-spinner-overlay.component.html',
   styleUrls: ['./mat-spinner-overlay.component.scss']
 })

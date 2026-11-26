@@ -1,0 +1,288 @@
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Route, Router} from '@angular/router';
+import {provideTranslocoScope, TranslocoService} from '@jsverse/transloco';
+import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
+import {AuthenticatedUser} from "../../../models/authenticated-user";
+import {UserSessionService} from "../../../services/user-session.service";
+import {Constants} from "../../../constants";
+import {AuthGuardService} from "../../../services/auth-guard.service";
+import {ActivityService} from "../../../services/rbac/activity.service";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
+import {ClubListComponent} from "../../../views/club-list/club-list.component";
+import {ParticipantListComponent} from "../../../views/participant-list/participant-list.component";
+import {UserListComponent} from "../../basic/user-list/user-list.component";
+import {RbacService} from "../../../services/rbac/rbac.service";
+import {TournamentListComponent} from "../../../views/tournament-list/tournament-list.component";
+import {TenantListComponent} from "../../../views/tenant-list/tenant-list.component";
+import {OverlayContainer} from "@angular/cdk/overlay";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {InfoService} from "../../../services/info.service";
+import {UserRoles} from '../../../services/rbac/user-roles';
+import {Tenant, TenantService} from '../../../services/tenant.service';
+import {LoginService} from '../../../services/login.service';
+import {MessageService} from '../../../services/message.service';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
+  providers: [provideTranslocoScope({scope: 'navigation', alias: 't'})]
+})
+
+export class NavbarComponent implements OnInit {
+  protected readonly Constants = Constants;
+
+  @ViewChild('contextMenu') contextMenu: ContextMenuComponent<void>;
+  @ViewChild('navUser', {read: ElementRef}) navUser: ElementRef;
+  user: AuthenticatedUser | undefined;
+
+  protected readonly RbacActivity = RbacActivity;
+  protected logoutConfirmation: boolean = false;
+  protected languagePopup: boolean = false;
+  protected tenantPopup: boolean = false;
+  protected passwordPopup: boolean = false;
+  protected tenants: Tenant[] = [];
+  protected selectedTenantId: number | null = null;
+  protected tenantOptions: { label: string, value: string }[] = [];
+  protected pendingTenantId: string | null = null;
+
+  nightModeEnabled: boolean = false;
+  protected tenancyEnabled: boolean = true;
+  @HostBinding('class') className = '';
+
+  constructor(protected router: Router,
+              private contextMenuService: ContextMenuService<void>,
+              private translocoService: TranslocoService,
+              protected sessionService: UserSessionService,
+              private activityService: ActivityService,
+              protected userSessionService: UserSessionService,
+              private overlay: OverlayContainer, private _renderer: Renderer2,
+               private darkModeService: DarkModeService,
+               private infoService: InfoService,
+               protected rbacService: RbacService, private tenantService: TenantService,
+               private loginService: LoginService, private messageService: MessageService,
+               private readonly cdr: ChangeDetectorRef) {
+    this.nightModeEnabled = userSessionService.getNightMode();
+  }
+
+  routes: Route[] = [];
+
+  ngOnInit() {
+    this.user = this.sessionService.getUser();
+    this.selectedTenantId = this.loginService.getTenantId();
+    if (this.user?.roles?.some(role => ['admin', 'super_admin', 'editor', 'viewer'].includes(role.toLowerCase()))) {
+      this.tenantService.getAvailable().subscribe({
+      next: tenants => {
+        this.tenants = tenants;
+        this.tenantOptions = tenants.map(tenant => ({label: tenant.name, value: String(tenant.id)}));
+      },
+      error: () => this.tenants = []
+      });
+    }
+    this.infoService.getAppConfig().subscribe({
+      next: config => {
+        if (config && config['tenancyEnabled'] !== undefined) {
+          this.tenancyEnabled = config['tenancyEnabled'];
+        }
+        this.buildRoutes();
+      },
+      error: () => {
+        //Fall back to the default multi-organization mode if the configuration endpoint is unavailable.
+        this.tenancyEnabled = true;
+        this.buildRoutes();
+      }
+    });
+  }
+
+  private buildRoutes() {
+    this.routes = [
+      {
+        path: Constants.PATHS.REGISTRY.ROOT,
+        canActivate: [AuthGuardService],
+        title: 'registry',
+        data: {
+          hidden: !this.activityService.isAllowed(RbacActivity.REGISTER_ELEMENTS)
+        },
+        children: [
+          {
+            path: Constants.PATHS.REGISTRY.CLUBS,
+            component: ClubListComponent,
+            canActivate: [AuthGuardService],
+            title: 'clubs',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_CLUBS)
+            }
+          },
+          {
+            path: Constants.PATHS.REGISTRY.PARTICIPANTS,
+            component: ParticipantListComponent,
+            canActivate: [AuthGuardService],
+            title: 'participants',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_PARTICIPANTS)
+            }
+          }]
+      },
+      {
+        path: Constants.PATHS.TOURNAMENTS.ROOT,
+        canActivate: [AuthGuardService],
+        title: 'competitions',
+        data: {
+          hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_TOURNAMENTS)
+        },
+        children: [
+          {
+            path: Constants.PATHS.TOURNAMENTS.LIST,
+            component: TournamentListComponent,
+            canActivate: [AuthGuardService],
+            title: 'list',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_TOURNAMENTS)
+            }
+          }]
+      },
+      {
+        path: Constants.PATHS.ADMINISTRATION.ROOT,
+        canActivate: [AuthGuardService],
+        title: 'administration',
+        data: {
+            hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
+              && !this.user?.roles?.includes(UserRoles.SUPER_ADMIN)
+        },
+        children: [
+          {
+            path: Constants.PATHS.ADMINISTRATION.USERS,
+            component: UserListComponent,
+            canActivate: [AuthGuardService],
+            title: 'users',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.READ_ALL_USERS)
+            }
+          },
+          {
+            path: Constants.PATHS.ADMINISTRATION.TENANTS,
+            component: TenantListComponent,
+            canActivate: [AuthGuardService],
+            title: 'tenants',
+            data: {
+              hidden: !this.tenancyEnabled
+                || !this.user?.roles?.includes(UserRoles.SUPER_ADMIN)
+            }
+          }]
+      },
+      {
+        path: Constants.PATHS.HELP.ROOT,
+        title: 'help',
+        children: [
+          {
+            path: Constants.PATHS.HELP.WIKI,
+            title: 'wiki',
+            data: {
+              hidden: !this.activityService.isAllowed(RbacActivity.WIKI_ACCESS)
+            }
+          },
+          {
+            path: Constants.PATHS.HELP.LICENSE,
+            title: 'licenses',
+          },
+          {
+            path: Constants.PATHS.HELP.ABOUT,
+            title: 'about',
+          }]
+      },
+    ]
+    this.routes.forEach(route => {
+      this.translocoService.selectTranslate(route.title as string, {}, {scope: 'navigation'}).subscribe(value => route.title = value);
+
+      route.children?.forEach(child => {
+        this.translocoService.selectTranslate(child.title as string, {}, {scope: 'navigation'}).subscribe(value => child.title = value);
+      })
+    });
+
+    this.setDarkModeTheme();
+  }
+
+  protected onContextMenu($event: Event): void {
+    this.contextMenuService.show(
+      this.contextMenu,
+      {
+        x: this.navUser.nativeElement.offsetLeft + this.navUser.nativeElement.offsetWidth,
+        y: this.navUser.nativeElement.offsetHeight
+      }
+    );
+    $event.preventDefault();
+    $event.stopPropagation();
+  }
+
+  openWiki(): void {
+    window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank", "noopener");
+  }
+
+  openAbout(): void {
+    window.open("https://github.com/softwaremagico/KendoTournamentManager", "_blank", "noopener");
+  }
+
+  switchDarkMode(): void {
+    this.nightModeEnabled = !this.nightModeEnabled;
+    if (this.nightModeEnabled) {
+      this.userSessionService.enableNightMode();
+    } else {
+      this.userSessionService.disableNightMode();
+    }
+    this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
+    this.setDarkModeTheme();
+  }
+
+  protected selectTenant(): void {
+    if (this.pendingTenantId == null) {
+      return;
+    }
+    const tenantId = Number(this.pendingTenantId);
+    if (tenantId === this.selectedTenantId) {
+      this.tenantPopup = false;
+      return;
+    }
+    this.loginService.selectTenant(tenantId).subscribe({
+      next: user => {
+        this.loginService.setAuthenticatedUser(user, (): void => {});
+        this.selectedTenantId = tenantId;
+        this.closeTenantPopup();
+        this.cdr.detectChanges();
+        this.messageService.infoMessage('tenantChanged');
+        const currentUrl = this.router.url;
+        setTimeout(() => {
+          this.router.navigateByUrl('/', {skipLocationChange: true})
+            .then(() => this.router.navigateByUrl(currentUrl));
+        }, 750);
+      },
+      error: () => {
+        this.messageService.warningMessage('tenantChangeFailed');
+      }
+    });
+  }
+
+  protected closeTenantPopup(): void {
+    this.pendingTenantId = this.selectedTenantId?.toString() ?? null;
+    this.tenantPopup = false;
+  }
+
+  protected openTenantPopup(): void {
+    this.pendingTenantId = this.selectedTenantId?.toString() ?? null;
+    this.tenantPopup = true;
+  }
+
+  private setDarkModeTheme(): void {
+    this.className = this.nightModeEnabled ? 'dark-mode' : '';
+    if (this.nightModeEnabled) {
+      this.overlay.getContainerElement().classList.add('dark-mode');
+      //For drag and drop preview.
+      this._renderer.addClass(document.body, 'dark-mode');
+    } else {
+      this.overlay.getContainerElement().classList.remove('dark-mode');
+      //For drag and drop preview.
+      this._renderer.removeClass(document.body, 'dark-mode');
+    }
+  }
+}

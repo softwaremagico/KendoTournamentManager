@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.events;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,12 +21,12 @@ package com.softwaremagico.kt.pdf.events;
  * #L%
  */
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfGState;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPCellEvent;
-import com.lowagie.text.pdf.PdfPTable;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.PdfContentByte;
+import org.openpdf.text.pdf.PdfGState;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPCellEvent;
+import org.openpdf.text.pdf.PdfPTable;
 
 import java.awt.Color;
 

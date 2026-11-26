@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,8 +26,6 @@ import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
 import com.softwaremagico.kt.persistence.encryption.SHA512HashGenerator;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
-import jakarta.persistence.Access;
-import jakarta.persistence.AccessType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -35,35 +33,49 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
+@SuppressWarnings("java:S2160")
 public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @jakarta.persistence.Id
+    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Integer id;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @Column(name = "password")
     @Convert(converter = BCryptPasswordConverter.class)
     private String password;
 
-    @Access(AccessType.PROPERTY)
     @Column(name = "username")
     @Convert(converter = StringCryptoConverter.class)
     private String username;
@@ -85,6 +97,12 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
     @Column(name = "roles")
     private Set<String> roles;
 
+    @Column(name = "last_tenant_id")
+    private Integer lastTenantId;
+
+    @jakarta.persistence.Transient
+    private Integer tenantId;
+
     public AuthenticatedUser() {
         super();
     }
@@ -94,12 +112,14 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
         setUsername(username);
     }
 
+    /** Creates a transient principal for a known tenant, for token generation and tests. */
+    public AuthenticatedUser(String username, Integer tenantId) {
+        this(username);
+        setTenantId(tenantId);
+    }
+
     @JsonIgnore
     private transient Set<SimpleGrantedAuthority> authorities;
-
-    public Integer getId() {
-        return id;
-    }
 
     @JsonIgnore
     @Override
@@ -179,6 +199,54 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
         this.roles = roles;
     }
 
+    public Integer getLastTenantId() {
+        return lastTenantId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public void setLastTenantId(Integer lastTenantId) {
+        this.lastTenantId = lastTenantId;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
+    }
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -189,6 +257,9 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
                     final AvailableRole availableRole = AvailableRole.get(authority);
                     if (availableRole != null) {
                         authorities.add(new SimpleGrantedAuthority(availableRole.name()));
+                        if (availableRole == AvailableRole.SUPER_ADMIN) {
+                            authorities.add(new SimpleGrantedAuthority(AvailableRole.ADMIN.name()));
+                        }
                     }
                 });
             }
@@ -205,5 +276,30 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
                 + ", roles=" + roles
                 + ", authorities=" + authorities
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AuthenticatedUser that = (AuthenticatedUser) o;
+        if (id == null || that.id == null) {
+            return false;
+        }
+        return Objects.equals(password, that.password)
+                && Objects.equals(username, that.username)
+                && Objects.equals(usernameHash, that.usernameHash)
+                && Objects.equals(name, that.name)
+                && Objects.equals(lastname, that.lastname)
+                && Objects.equals(roles, that.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, password, username, usernameHash, name, lastname, roles);
     }
 }

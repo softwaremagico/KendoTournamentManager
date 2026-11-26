@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.Score;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -124,4 +125,8 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT d FROM Duel d WHERE (d.competitor1=:participant1 AND d.competitor2=:participant2) "
             + "OR (d.competitor2=:participant1 AND d.competitor1=:participant2)")
     List<Duel> findByParticipants(@Param("participant1") Participant participant1, @Param("participant2") Participant participant2);
+
+    @Modifying
+    @Query("DELETE FROM Duel d WHERE d.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }

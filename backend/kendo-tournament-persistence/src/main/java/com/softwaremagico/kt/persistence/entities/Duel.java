@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,7 +48,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * JPA entity that represents a single match between two individual competitors within a {@link Fight}.
+ * <p>
+ * In kendo team tournaments a {@link Fight} between two {@link Team}s is composed of
+ * several duels — one per member pair. Each duel runs for at most
+ * {@code tournament.duelsDuration} seconds. The first competitor to score
+ * {@link #POINTS_TO_WIN} ippon-equivalent points wins the duel.
+ * </p>
+ * <p>
+ * Scores are stored as ordered lists of {@link Score} values, where each element
+ * corresponds to one ippon scored by the respective competitor. Hansoku (penalty)
+ * points are recorded in the same lists using {@link Score#HANSOKU}.
+ * Score timestamps (in seconds from duel start) are stored in parallel lists so
+ * that the time of each score can be replayed or audited.
+ * </p>
+ * <p>
+ * A duel can be played as an untie duel (type = {@link com.softwaremagico.kt.persistence.entities.DuelType#UNDRAW})
+ * when the parent fight is tied and an additional match is needed to determine a winner.
+ * </p>
+ */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "duels", indexes = {
@@ -56,18 +77,35 @@ import java.util.Set;
         @Index(name = "ind_competitor1", columnList = "competitor1"),
         @Index(name = "ind_competitor2", columnList = "competitor2")
 })
+@SuppressWarnings("java:S2160")
 public class Duel extends Element {
+    /**
+     * Default duel duration indicator when set individually (typically 1 minute for untie duels).
+     */
     public static final int DEFAULT_DURATION = 1;
+    /**
+     * Number of points required to win a duel outright.
+     */
     public static final int POINTS_TO_WIN = 2;
 
+    /**
+     * The first (left / red) competitor in the duel.
+     */
     @ManyToOne
     @JoinColumn(name = "competitor1")
     private Participant competitor1;
 
+    /**
+     * The second (right / white) competitor in the duel.
+     */
     @ManyToOne
     @JoinColumn(name = "competitor2")
     private Participant competitor2;
 
+    /**
+     * Ordered list of scores earned by competitor 1.
+     * Valid values are the {@link Score} enum entries: M (Men), K (Kote), T (Do), D (Tsuki), H (Hansoku), I (Invalid).
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score")
     @Fetch(value = FetchMode.SUBSELECT)
@@ -75,6 +113,11 @@ public class Duel extends Element {
     @OrderColumn(name = "score_index")
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
 
+    /**
+     * Ordered list of scores earned by competitor 2.
+     *
+     * @see #competitor1Score
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score")
     @Fetch(value = FetchMode.SUBSELECT)
@@ -82,18 +125,30 @@ public class Duel extends Element {
     @OrderColumn(name = "score_index")
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
+    /**
+     * Timestamps (in seconds from duel start) of each score in {@link #competitor1Score}.
+     * Parallel list — index {@code i} in this list corresponds to index {@code i} in {@code competitor1Score}.
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
     @OrderColumn(name = "score_index")
     private List<Integer> competitor1ScoreTime = new ArrayList<>();
 
+    /**
+     * Timestamps (in seconds from duel start) of each score in {@link #competitor2Score}.
+     *
+     * @see #competitor1ScoreTime
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
     @OrderColumn(name = "score_index")
     private List<Integer> competitor2ScoreTime = new ArrayList<>();
 
+    /**
+     * Time (in seconds) at which competitor 1 received a fault (hansoku-make), or {@code null} if none.
+     */
     @Column(name = "competitor_1_fault_time")
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer competitor1FaultTime;
@@ -132,11 +187,22 @@ public class Duel extends Element {
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
+    @Column(name = "substitute")
+    private Boolean substitute = false;
+
     public Duel() {
         super();
         setType(DuelType.STANDARD);
     }
 
+    /**
+     * Creates a fully initialised duel between two competitors within the given tournament.
+     *
+     * @param competitor1 the first (left / red) competitor; may be {@code null} if the position is empty
+     * @param competitor2 the second (right / white) competitor; may be {@code null} if the position is empty
+     * @param tournament  the tournament this duel belongs to
+     * @param createdBy   the username of the user creating this duel
+     */
     public Duel(Participant competitor1, Participant competitor2, Tournament tournament, String createdBy) {
         this();
         setCompetitor1(competitor1);
@@ -145,6 +211,12 @@ public class Duel extends Element {
         setCreatedBy(createdBy);
     }
 
+    /**
+     * Returns both competitors of this duel as a set.
+     * Competitors with a {@code null} value are excluded from the result.
+     *
+     * @return a set containing the non-null participants in this duel
+     */
     public Set<Participant> getCompetitors() {
         final Set<Participant> competitors = new HashSet<>();
         if (competitor1 != null) {
@@ -172,6 +244,11 @@ public class Duel extends Element {
         this.competitor2 = competitor2;
     }
 
+    /**
+     * Appends a score entry for competitor 1, lazily initialising the score list if necessary.
+     *
+     * @param score the score to add
+     */
     public void addCompetitor1Score(Score score) {
         if (this.competitor1Score == null) {
             this.competitor1Score = new ArrayList<>();
@@ -195,6 +272,11 @@ public class Duel extends Element {
         this.competitor2Score = competitor2Score;
     }
 
+    /**
+     * Appends a score entry for competitor 2, lazily initialising the score list if necessary.
+     *
+     * @param score the score to add
+     */
     public void addCompetitor2Score(Score score) {
         if (this.competitor2Score == null) {
             this.competitor2Score = new ArrayList<>();
@@ -225,7 +307,7 @@ public class Duel extends Element {
      * @return true if the round is over.
      */
     public boolean isOver() {
-        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || finished;
+        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || finished || getSubstitute();
     }
 
     /**
@@ -237,6 +319,11 @@ public class Duel extends Element {
         return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
     }
 
+    /**
+     * Returns the winning competitor of this duel, or {@code null} if the duel is a draw.
+     *
+     * @return the winning {@link Participant}, or {@code null} on a draw
+     */
     public Participant getCompetitorWinner() {
         if (getWinner() < 0) {
             return getCompetitor1();
@@ -246,6 +333,11 @@ public class Duel extends Element {
         return null;
     }
 
+    /**
+     * Returns the losing competitor of this duel, or {@code null} if the duel is a draw.
+     *
+     * @return the losing {@link Participant}, or {@code null} on a draw
+     */
     public Participant getCompetitorLooser() {
         if (getWinner() < 0) {
             return getCompetitor2();
@@ -255,10 +347,21 @@ public class Duel extends Element {
         return null;
     }
 
+    /**
+     * Returns the number of valid ippon points scored by competitor 1.
+     * Scores of type {@link Score#HANSOKU} and other non-valid entries are excluded.
+     *
+     * @return valid ippon count for competitor 1
+     */
     public Integer getCompetitor1ScoreValue() {
         return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
     }
 
+    /**
+     * Returns the number of valid ippon points scored by competitor 2.
+     *
+     * @return valid ippon count for competitor 2
+     */
     public Integer getCompetitor2ScoreValue() {
         return (int) competitor2Score.stream().filter(Score::isValidPoint).count();
     }
@@ -349,5 +452,22 @@ public class Duel extends Element {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    /**
+     * Returns whether this duel involves a substitute member.
+     * Substitute duels are always marked as finished and do not affect rankings.
+     *
+     * @return {@code true} if this is a substitute duel; never {@code null}
+     */
+    public Boolean getSubstitute() {
+        if (substitute == null) {
+            return false;
+        }
+        return substitute;
+    }
+
+    public void setSubstitute(Boolean substitute) {
+        this.substitute = substitute;
     }
 }

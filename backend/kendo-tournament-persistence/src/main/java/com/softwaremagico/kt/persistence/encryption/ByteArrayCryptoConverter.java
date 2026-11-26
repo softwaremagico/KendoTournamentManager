@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,8 @@ import java.util.Base64;
 
 @Converter
 public class ByteArrayCryptoConverter extends AbstractCryptoConverter<byte[]>
-        implements AttributeConverter<byte[], String> {
+        implements
+            AttributeConverter<byte[], String> {
 
     public ByteArrayCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
@@ -48,9 +49,11 @@ public class ByteArrayCryptoConverter extends AbstractCryptoConverter<byte[]>
     @Override
     protected byte[] stringToEntityAttribute(String dbData) {
         try {
-            return (dbData == null || dbData.isEmpty()) ? null : Base64.getDecoder().decode(dbData.getBytes(StandardCharsets.UTF_8));
-        } catch (IllegalArgumentException e) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), e);
+            return (dbData == null || dbData.isEmpty())
+                    ? null
+                    : Base64.getDecoder().decode(dbData.getBytes(StandardCharsets.UTF_8));
+        } catch (final IllegalArgumentException e) {
+            EncryptorLogger.errorMessage(this.getClass(), e);
             return new byte[0];
         }
     }

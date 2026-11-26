@@ -10,6 +10,7 @@ export class TournamentImage extends Element {
   base64: string;
   imageType: TournamentImageType;
   imageCompression: ImageCompression;
+  defaultImage: boolean = false;
 
   public static override copy(source: TournamentImage, target: TournamentImage): void {
     Element.copy(source, target);

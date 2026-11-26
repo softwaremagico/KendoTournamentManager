@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,16 +22,16 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.BaseFont;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
@@ -118,7 +118,6 @@ public class FightsList extends ParentList {
     }
 
     private void championshipTable(PdfPTable mainTable) {
-        PdfPCell cell;
 
         final Integer levels = groups.stream().max(Comparator.comparing(GroupDTO::getLevel)).orElseThrow(() ->
                 new GroupNotFoundException(this.getClass(), "Group not found!")).getLevel();
@@ -128,40 +127,48 @@ public class FightsList extends ParentList {
             final List<GroupDTO> groupsOfLevel = groups.stream().filter(groupDTO -> Objects.equals(groupDTO.getLevel(), currentLevel))
                     .toList();
             if (groupsOfLevel.stream().anyMatch(groupDTO -> !groupDTO.getFights().isEmpty())) {
-                /*
-                 * Header of the phase
-                 */
-                mainTable.addCell(getEmptyRow());
-                mainTable.addCell(getEmptyRow());
+                addChampionshipPhaseHeader(mainTable, level, levels);
+                addChampionshipGroupFights(mainTable, groupsOfLevel);
+            }
+        }
+    }
 
-                if (level < levels - 2) {
-                    mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.round", null, locale) + " " + (level + 1), 0,
-                            Element.ALIGN_LEFT));
-                } else if (level == levels - 2) {
-                    mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.semifinal", null, locale), 0, Element.ALIGN_LEFT));
-                } else if (tournamentDto.getType().equals(TournamentType.CHAMPIONSHIP)) {
-                    mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.final", null, locale), 0, Element.ALIGN_LEFT));
-                }
+    private void addChampionshipPhaseHeader(PdfPTable mainTable, int level, int levels) {
+        mainTable.addCell(getEmptyRow());
+        mainTable.addCell(getEmptyRow());
 
-                for (int i = 0; i < groupsOfLevel.size(); i++) {
-                    mainTable.addCell(getEmptyRow());
-                    if (groupsOfLevel.size() > 1) {
-                        mainTable.addCell(getHeader2(
-                                messageSource.getMessage("tournament.group", null, locale) + " " + (i + 1) + " ("
-                                        + messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(i), TABLE_BORDER));
-                    }
+        if (level < levels - 2) {
+            mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.round", null, locale)
+                    + " " + (level + 1), 0, Element.ALIGN_LEFT));
+        } else if (level == levels - 2) {
+            mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.semifinal", null, locale), 0, Element.ALIGN_LEFT));
+        } else if (tournamentDto.getType().equals(TournamentType.CHAMPIONSHIP)) {
+            mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.final", null, locale), 0, Element.ALIGN_LEFT));
+        }
+    }
 
-                    for (final FightDTO fight : fights) {
-                        if (groupsOfLevel.get(i).getFights().contains(fight)) {
-                            cell = new PdfPCell(fightTable(fight));
-                            cell.setBorderWidth(BORDER_WIDTH);
-                            cell.setColspan(TABLE_WITH.length);
-                            cell.setBackgroundColor(BaseColor.WHITE);
-                            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            mainTable.addCell(cell);
-                        }
-                    }
-                }
+    private void addChampionshipGroupFights(PdfPTable mainTable, List<GroupDTO> groupsOfLevel) {
+        for (int i = 0; i < groupsOfLevel.size(); i++) {
+            mainTable.addCell(getEmptyRow());
+            if (groupsOfLevel.size() > 1) {
+                mainTable.addCell(getHeader2(
+                        messageSource.getMessage("tournament.group", null, locale) + " " + (i + 1) + " ("
+                                + messageSource.getMessage("tournament.shiaijo", null, locale) + " "
+                                + ShiaijoName.getShiaijoName(i), TABLE_BORDER));
+            }
+            addFightsForGroup(mainTable, groupsOfLevel.get(i));
+        }
+    }
+
+    private void addFightsForGroup(PdfPTable mainTable, GroupDTO groupDTO) {
+        for (final FightDTO fight : fights) {
+            if (groupDTO.getFights().contains(fight)) {
+                final PdfPCell cell = new PdfPCell(fightTable(fight));
+                cell.setBorderWidth(BORDER_WIDTH);
+                cell.setColspan(TABLE_WITH.length);
+                cell.setBackgroundColor(BaseColor.WHITE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                mainTable.addCell(cell);
             }
         }
     }
@@ -192,7 +199,7 @@ public class FightsList extends ParentList {
     @Override
     public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                 BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournamentDto.getName(), new Font(font, fontSize)));
+        final PdfPCell cell = new PdfPCell(new Paragraph(tournamentDto.getName(), new Font(font, (float) fontSize)));
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);

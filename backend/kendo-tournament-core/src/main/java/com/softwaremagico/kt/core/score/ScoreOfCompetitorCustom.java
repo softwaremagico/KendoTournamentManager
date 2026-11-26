@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.score;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,7 @@ package com.softwaremagico.kt.core.score;
  * #L%
  */
 
-
+import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.Comparator;
@@ -32,19 +32,22 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
     @Override
     public int compare(ScoreOfCompetitor scoreOfCompetitor1, ScoreOfCompetitor scoreOfCompetitor2) {
         if (!scoreOfCompetitor1.getFights().isEmpty()) {
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory()
-                    + scoreOfCompetitor1.getDrawDuels()
-                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
-                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
-                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+            final Fight firstFight = scoreOfCompetitor1.getFights().getFirst();
+            if (scoreOfCompetitor1.getWonDuels() * firstFight.getTournament().getTournamentScore().getPointsByVictory()
+                    + scoreOfCompetitor1.getDrawDuels() * firstFight.getTournament().getTournamentScore()
+                            .getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
+                                    * firstFight.getTournament().getTournamentScore().getPointsByVictory()
+                                    + scoreOfCompetitor2.getDrawDuels()
+                                            * firstFight.getTournament().getTournamentScore().getPointsByDraw()) {
                 return -1;
             }
 
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory()
-                    + scoreOfCompetitor1.getDrawDuels()
-                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
-                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
-                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+            if (scoreOfCompetitor1.getWonDuels() * firstFight.getTournament().getTournamentScore().getPointsByVictory()
+                    + scoreOfCompetitor1.getDrawDuels() * firstFight.getTournament().getTournamentScore()
+                            .getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
+                                    * firstFight.getTournament().getTournamentScore().getPointsByVictory()
+                                    + scoreOfCompetitor2.getDrawDuels()
+                                            * firstFight.getTournament().getTournamentScore().getPointsByDraw()) {
                 return 1;
             }
 
@@ -58,7 +61,8 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
             }
         }
 
-        // Same obtained score, order by name;
-        return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
+        // Same obtained score, order by name
+        return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor())
+                .compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
     }
 }

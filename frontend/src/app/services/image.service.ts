@@ -27,7 +27,7 @@ export class ImageService {
       const arrayBuffer: ArrayBuffer = new ArrayBuffer(byteString.length);
       const int8Array: Uint8Array = new Uint8Array(arrayBuffer);
       for (let i = 0; i < byteString.length; i++) {
-        int8Array[i] = byteString.charCodeAt(i);
+        int8Array[i] = byteString.codePointAt(i)!;
       }
       const blob = new Blob([int8Array], {type: `image/${extension}`});
       observer.next(blob);
@@ -36,7 +36,7 @@ export class ImageService {
   }
 
   generateFileName(ext: string): string {
-    const date: number = new Date().valueOf();
+    const date: number = Date.now();
     return date + "." + this.nameUtilsService.getLastnameNameNoSpaces(this.participant) + "." + ext;
   }
 }

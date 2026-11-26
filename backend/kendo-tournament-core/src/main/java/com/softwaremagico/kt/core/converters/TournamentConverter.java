@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,7 +49,7 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
                 tournamentDTO.setTournamentScore(tournamentScoreConverter.convert(
                         new TournamentScoreConverterRequest(from.getEntity().getTournamentScore())));
             }
-        } catch (UnexpectedValueException e) {
+        } catch (UnexpectedValueException _) {
             tournamentDTO.setTournamentScore(null);
         }
         return tournamentDTO;
@@ -62,6 +62,9 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
         }
         final Tournament tournament = new Tournament();
         BeanUtils.copyProperties(to, tournament, ConverterUtils.getNullPropertyNames(to));
+        if (tournament.getTenantId() == null && com.softwaremagico.kt.persistence.entities.TenantContext.getTenantId() != null) {
+            tournament.setTenantId(com.softwaremagico.kt.persistence.entities.TenantContext.getRequiredTenantId());
+        }
         tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScore()));
         return tournament;
     }

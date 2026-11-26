@@ -1,9 +1,7 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
 import {Subject, takeUntil} from "rxjs";
-import {MatDialog} from "@angular/material/dialog";
-import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CdkDragEnd, Point} from "@angular/cdk/drag-drop";
@@ -11,13 +9,13 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {FilterFocusService} from "../../services/notifications/filter-focus.service";
 
 @Component({
-  selector: 'app-timer',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'popup-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss']
 })
 export class TimerComponent extends RbacBasedComponent implements OnInit {
-
-  private TIMER_HEIGHT: number = 320;
 
   @Input()
   set startingMinutes(value: number) {
@@ -33,6 +31,9 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   private keysControls: boolean;
 
   @Input()
+  duelDuration: number;
+
+  @Input()
   set startingSeconds(value: number) {
     this.seconds = value;
   }
@@ -40,48 +41,44 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   @Input()
   resetTimerPosition: Subject<boolean>;
 
-  @Output() onTimerFinished: EventEmitter<boolean[]> = new EventEmitter();
-  @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
-  @Output() onSoftTimerChanged: EventEmitter<any> = new EventEmitter();
-  @Output() onPlayPressed: EventEmitter<any> = new EventEmitter();
+  @Output() timerFinished: EventEmitter<boolean[]> = new EventEmitter();
+  @Output() timerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() softTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() playPressed: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
   @Output() timerClosed: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
   seconds: number;
-  private clockHandler: NodeJS.Timeout | null;
+  private clockHandler: ReturnType<typeof setInterval> | null;
   elapsedSeconds: number = 0;
-  private alarmOn: boolean;
+  private alarmRinging: boolean;
   totalTime: number;
-  increasedTime: number = 0;
   started: boolean = false;
   minutesEditable: boolean = false;
   secondsEditable: boolean = false;
   private clickedElement: HTMLElement;
 
   timerPosition: Point = {x: 0, y: 0};
-  private screenWidth: number;
-  private screenHeight: number;
+
+  protected confirmReset: boolean = false;
 
 
-  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
+  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService,
               rbacService: RbacService, private filterFocusService: FilterFocusService) {
     super(rbacService);
     this.started = false;
   }
 
   ngOnInit(): void {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
 
     //Enable/Disable key controls if the filter is in use.
     this.filterFocusService.isFilterActive.subscribe((_value: boolean): void => {
       this.keysControls = !_value;
     })
 
-    const self: TimerComponent = this;
-    this.clockHandler = setInterval(function (): void {
-      self.secondElapsed.apply(self);
+    this.clockHandler = setInterval((): void => {
+      this.secondElapsed();
     }, 1000);
     this.timeChangedService.isElapsedTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe((elapsedTime: number): void => {
       this.elapsedSeconds = elapsedTime;
@@ -101,13 +98,6 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
       clearInterval(this.clockHandler);
       this.clockHandler = null;
     }
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(): void {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
-    this.correctTimerPosition();
   }
 
 
@@ -140,12 +130,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
 
   resetVariablesAsSeconds(rawSeconds: number, started: boolean): void {
-    rawSeconds = rawSeconds - this.elapsedSeconds;
-    if (rawSeconds < 0) {
-      rawSeconds = 0;
-    }
-    this.seconds = rawSeconds % 60;
-    this.minutes = Math.floor(rawSeconds / 60);
+    this.correctSecondsAndMinutes(rawSeconds - this.elapsedSeconds, 0);
     this.started = started;
   }
 
@@ -155,21 +140,22 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   startTimer(): void {
     this.started = true;
-    this.onPlayPressed.emit([this.elapsedSeconds]);
+    this.playPressed.emit([this.elapsedSeconds]);
+    this.alarmRinging = false;
   };
 
   pauseTimer(): void {
     this.started = false;
-    this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.timerChanged.emit([this.elapsedSeconds]);
   };
 
   finishTimer() {
     if (!this.elapsedSeconds) {
       this.elapsedSeconds = 1;
     }
-    this.onTimerFinished.emit([true]);
+    this.timerFinished.emit([true]);
     this.resetVariables(this.minutes, this.seconds, false);
-    this.alarmOn = false;
+    this.alarmRinging = false;
     this.elapsedSeconds = 0;
     //Removing focus from the button for finishing timer, or space key will also finish the duel.
     if (document.activeElement) {
@@ -178,26 +164,15 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   };
 
   restoreTimer(): void {
-    if (this.elapsedSeconds === 0) {
-      return;
-    }
-    let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "timerResetWarning"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.elapsedSeconds = 0;
-        this.onTimerChanged.emit([this.elapsedSeconds]);
-        this.resetVariablesAsSeconds(this.totalTime + this.increasedTime, false);
-        this.alarmOn = false;
-      }
-    });
+    this.elapsedSeconds = 0;
+    this.resetVariablesAsSeconds(this.duelDuration, false);
+    this.timerChanged.emit([0]);
+    this.timeDurationChanged.emit([this.duelDuration]);
+    this.alarmRinging = false;
   }
 
   timerComplete(): void {
-    this.onTimerFinished.emit([true]);
+    this.timerFinished.emit([true]);
     this.started = false;
   }
 
@@ -216,16 +191,16 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
       this.seconds--;
     }
     //Here only is launched when seconds changes from 1 to 0.
-    if (this.seconds === 0 && this.minutes === 0 && !this.alarmOn) {
-      this.alarmOn = true;
+    if (this.seconds === 0 && this.minutes === 0 && !this.alarmRinging) {
+      this.alarmRinging = true;
       this.audioService.playWhistleByTime(4);
       this.pauseTimer();
     }
     this.elapsedSeconds++;
     if (this.seconds % 3 == 0) {
-      this.onTimerChanged.emit([this.elapsedSeconds]);
+      this.timerChanged.emit([this.elapsedSeconds]);
     } else {
-      this.onSoftTimerChanged.emit([this.elapsedSeconds]);
+      this.softTimerChanged.emit([this.elapsedSeconds]);
     }
   }
 
@@ -242,16 +217,22 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   toDoubleDigit(num: number): string {
-    if (isNaN(num)) {
+    const safeNum = Number(num);
+    if (Number.isNaN(safeNum)) {
       return '00';
     }
-    return num < 10 ? '0' + num : num + '';
+    return safeNum < 10 ? '0' + safeNum : safeNum + '';
   };
 
   addTime(time: number): void {
-    this.seconds += time;
-    this.increasedTime += time;
-    let rawSeconds: number = this.seconds + this.minutes * 60;
+    const rawSeconds: number = this.correctSecondsAndMinutes(this.seconds + time, this.minutes);
+    this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
+    console.log('rawSeconds', rawSeconds);
+    this.alarmRinging = false;
+  }
+
+  correctSecondsAndMinutes(seconds: number, minutes: number): number {
+    let rawSeconds: number = seconds + minutes * 60;
     if (rawSeconds < 0) {
       rawSeconds = 0;
     }
@@ -260,9 +241,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     if (this.minutes > 20) {
       this.minutes = 20;
     }
-    this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
-    this.onTimerChanged.emit([this.elapsedSeconds]);
-    this.alarmOn = false;
+    return this.minutes * 60 + this.seconds;
   }
 
   setMinutesEditable(editable: boolean): void {
@@ -285,8 +264,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
-  @HostListener('document:click', ['$event.target'])
-  onClick(element: HTMLElement): void {
+  onClick(element: EventTarget | null): void {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
     if (this.minutesEditable && !element.classList.contains('timer-edition-minutes')) {
       this.minutesEditable = false;
       this.validateMinutesElement(this.clickedElement);
@@ -304,7 +285,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   validateMinutesElement(element: HTMLElement): void {
     let inputValue: number = Number((element as HTMLInputElement).value);
-    if (isNaN(inputValue)) {
+    if (Number.isNaN(inputValue)) {
       inputValue = this.minutes;
     } else if (inputValue < 0) {
       inputValue = 0;
@@ -321,7 +302,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   validateSecondsElement(element: HTMLElement): void {
     let inputValue: number = Number((element as HTMLInputElement).value);
-    if (isNaN(inputValue)) {
+    if (Number.isNaN(inputValue)) {
       inputValue = this.seconds;
     } else if (inputValue < 0) {
       inputValue = 0;
@@ -333,27 +314,11 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   updateElapsedTime(): void {
-    this.elapsedSeconds = (this.totalTime + this.increasedTime - this.minutes * 60 - this.seconds);
-    this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.elapsedSeconds = (this.totalTime - this.minutes * 60 - this.seconds);
+    this.timerChanged.emit([this.elapsedSeconds]);
   }
 
   dragEnd($event: CdkDragEnd): void {
     this.timerPosition = $event.source.getFreeDragPosition();
-    this.correctTimerPosition();
-  }
-
-  correctTimerPosition(): void {
-    if (this.timerPosition.x < -this.screenWidth / 2) {
-      this.timerPosition.x = -this.screenWidth / 2;
-    }
-    if (this.timerPosition.x > 100) {
-      this.timerPosition.x = 100;
-    }
-    if (this.timerPosition.y < -130) {
-      this.timerPosition.y = -130;
-    }
-    if (this.timerPosition.y > -130 + this.screenHeight - this.TIMER_HEIGHT) {
-      this.timerPosition.y = -130 + this.screenHeight - this.TIMER_HEIGHT;
-    }
   }
 }

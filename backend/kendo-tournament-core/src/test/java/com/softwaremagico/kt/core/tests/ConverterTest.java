@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,6 +47,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -85,6 +86,7 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     private static final String TOURNAMENT_NAME = "tournament";
     private static final Integer TOURNAMENT_SHIAIJOS = 3;
     private static final Integer TOURNAMENT_TEAM_SIZE = 42;
+    private static final Integer TOURNAMENT_FIGHT_SIZE = 3;
     private static final TournamentType TOURNAMENT_TYPE = TournamentType.LOOP;
 
     private static final int DUELS_DURATION = 180;
@@ -189,6 +191,7 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
         tournament.setName(TOURNAMENT_NAME);
         tournament.setShiaijos(TOURNAMENT_SHIAIJOS);
         tournament.setTeamSize(TOURNAMENT_TEAM_SIZE);
+        tournament.setFightSize(TOURNAMENT_FIGHT_SIZE);
         tournament.setType(TOURNAMENT_TYPE);
         tournament.setTournamentScore(createTournamentScore());
         tournament.setDuelsDuration(DUELS_DURATION);
@@ -199,6 +202,7 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournament.getName(), TOURNAMENT_NAME);
         Assert.assertEquals(tournament.getShiaijos(), TOURNAMENT_SHIAIJOS);
         Assert.assertEquals(tournament.getTeamSize(), TOURNAMENT_TEAM_SIZE);
+        Assert.assertEquals(tournament.getFightSize(), TOURNAMENT_FIGHT_SIZE);
         Assert.assertEquals(tournament.getType(), TOURNAMENT_TYPE);
         checkTournamentScore(tournament.getTournamentScore());
     }
@@ -345,9 +349,27 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
+    public void checkFightConverterRetainsActiveTenantForDeletion() {
+        final Integer previousTenant = TenantContext.getTenantId();
+        try {
+            TenantContext.setTenantId(42);
+            final Fight fight = fightConverter.reverse(fightConverter.convert(new FightConverterRequest(createFight())));
+
+            Assert.assertEquals(fight.getTenantId(), Integer.valueOf(42),
+                    "Converted fights must belong to the active tenant so tenant-scoped deletion can remove them.");
+            checkFight(fight);
+        } finally {
+            if (previousTenant == null) {
+                TenantContext.clear();
+            } else {
+                TenantContext.setTenantId(previousTenant);
+            }
+        }
+    }
+
+    @Test
     public void checkGroupConverter() {
         checkGroup(groupConverter.reverse(groupConverter.convert(new GroupConverterRequest(createGroup()))));
     }
 }
-
 

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -39,8 +39,11 @@ import java.util.Collection;
 /**
  * Is automatically injected to the AuthenticationManager in WebSecurityConfig
  */
-@Component
+@Service
 public class KendoUserDetailsService implements UserDetailsService {
+    private static final String USER_NOT_FOUND_MESSAGE = "User '%s' not found!";
+    private static final String USER_WITH_USERNAME_PREFIX = "User with username '";
+    private static final String NOT_REGISTERED_USER_SUFFIX = "' is not a registered user";
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -51,10 +54,10 @@ public class KendoUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException(String.format("User '%s' not found!", username)));
+                new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, username)));
 
         if (user instanceof Participant) {
-            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+            throw new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + NOT_REGISTERED_USER_SUFFIX);
         }
 
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;

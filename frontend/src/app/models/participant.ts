@@ -30,4 +30,8 @@ export class Participant extends Element {
     this.copy(data, instance);
     return instance;
   }
+
+  public override toString = (): string => {
+    return `Participant{${this.name}, ${this.lastname}}`;
+  }
 }

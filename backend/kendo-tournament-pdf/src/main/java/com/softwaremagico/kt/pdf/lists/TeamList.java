@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,16 +22,16 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.BaseFont;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
@@ -70,14 +70,10 @@ public class TeamList extends ParentList {
         teamTable.addCell(getHeader4(NameUtils.getShortName(teamDTO), 0));
 
         for (final ParticipantDTO member : teamDTO.getMembers()) {
-            String memberName;
-            try {
-                if (member.getLastname() != null && !member.getLastname().isEmpty()) {
-                    memberName = NameUtils.getLastnameName(member);
-                } else {
-                    memberName = " ";
-                }
-            } catch (NullPointerException npe) {
+            final String memberName;
+            if (member != null && member.getLastname() != null && !member.getLastname().isEmpty()) {
+                memberName = NameUtils.getLastnameName(member);
+            } else {
                 memberName = " ";
             }
             teamTable.addCell(getCell(memberName, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_LEFT));
@@ -124,7 +120,7 @@ public class TeamList extends ParentList {
     @Override
     public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                 BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, fontSize)));
+        final PdfPCell cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, (float) fontSize)));
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);

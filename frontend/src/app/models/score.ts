@@ -35,8 +35,7 @@ export namespace Score {
 export namespace Score {
   export function noCompetitor(): Score[] {
     const scores: Score[] = [];
-    scores.push(Score.FUSEN_GACHI);
-    scores.push(Score.EMPTY);
+    scores.push(Score.FUSEN_GACHI, Score.EMPTY);
     return scores;
   }
 
@@ -85,6 +84,6 @@ export namespace Score {
       .replace(/_(.)/g, function ($1: string) {
         return $1.toUpperCase();
       })
-      .replace(/_/g, '');
+      .replaceAll('_', '');
   }
 }

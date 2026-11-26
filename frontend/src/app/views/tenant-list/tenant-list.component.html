@@ -1,0 +1,61 @@
+<ng-container *transloco="let t">
+<section class="tenant-list" *ngIf="isSuperAdmin(); else denied">
+  <div class="table-view">
+    <biit-datatable #table id="tenants-table" [columns]="columns" [data]="tenants" [pageSize]="10" [pageSizeList]="[10, 25, 50]" selectable>
+      <ng-template #actions>
+        <button id="tenant-add" class="menu-button" biit-icon icon="plus" [title]="t('createTenant')" (click)="openCreate()"></button>
+        <button id="tenant-edit" class="menu-button" biit-icon icon="edit" [title]="t('save')"
+          [disabled]="!table.selectedRows || table.selectedRows.length !== 1" (click)="openEdit(table.selectedRows[0])"></button>
+        <button id="tenant-users" class="menu-button" biit-icon icon="user_add" [title]="t('users')"
+          [disabled]="!table.selectedRows || table.selectedRows.length !== 1" (click)="openUsers(table.selectedRows[0])"></button>
+        <button id="tenant-delete" class="menu-button warning" biit-icon icon="minus" [title]="t('delete')"
+          [disabled]="!table.selectedRows || table.selectedRows.length !== 1" (click)="openDelete(table.selectedRows[0])"></button>
+      </ng-template>
+    </biit-datatable>
+  </div>
+  @if (error) { <p class="error">{{ error }}</p> }
+
+  @if (createPopup) {
+    <biit-popup id="tenant-create-popup" [title]="t('createTenant')" closable (onClosed)="createPopup = false">
+      <div class="tenant-form">
+        <biit-input-text [(ngModel)]="request.tenant" [placeholder]="t('tenantName')" [required]="true"></biit-input-text>
+        <biit-input-text [(ngModel)]="request.username" [placeholder]="t('administratorUsername')" [required]="true"></biit-input-text>
+        <biit-input-text [(ngModel)]="request.password" [placeholder]="t('password')" [type]="Type.PASSWORD" [required]="true"></biit-input-text>
+        <biit-input-text [(ngModel)]="request.name" [placeholder]="t('name')"></biit-input-text>
+        <biit-input-text [(ngModel)]="request.lastname" [placeholder]="t('lastname')"></biit-input-text>
+        <div class="buttons-row"><button biit-button secondary (click)="createPopup = false">{{ t('cancel') }}</button><button biit-button primary (click)="create()" [disabled]="!request.tenant || !request.username || !request.password">{{ t('createTenant') }}</button></div>
+      </div>
+    </biit-popup>
+  }
+
+  @if (editPopup && target) {
+    <biit-popup id="tenant-edit-popup" [title]="t('tenantName')" closable (onClosed)="editPopup = false">
+      <div class="tenant-form"><biit-input-text [(ngModel)]="target.name" [placeholder]="t('tenantName')" [required]="true"></biit-input-text><biit-toggle [(ngModel)]="target.active">{{ t('active') }}</biit-toggle><div class="buttons-row"><button biit-button secondary (click)="editPopup = false">{{ t('cancel') }}</button><button biit-button primary (click)="save(target)" [disabled]="!target.name">{{ t('save') }}</button></div></div>
+    </biit-popup>
+  }
+
+  @if (confirmDelete && target) {
+    <biit-popup id="tenant-delete-popup" no-header><div class="vertical"><span>{{ t('delete') }}: {{ target.name }}</span><div class="buttons-row"><button biit-button secondary (click)="confirmDelete = false">{{ t('cancel') }}</button><button biit-button primary (click)="delete(target)">{{ t('delete') }}</button></div></div></biit-popup>
+  }
+
+  @if (usersPopup && target) {
+    <biit-popup id="tenant-users-popup" sixty-view closable [title]="t('users') + ': ' + target.name" (onClosed)="usersPopup = false">
+      <div class="tenant-users-content">
+        <biit-datatable #usersTable id="tenant-users-table" [columns]="userColumns" [data]="users" [pageSize]="10" [pageSizeList]="[10, 25, 50]" selectable scrollbarH style="width: 100%">
+          <ng-template #actions>
+            <button id="tenant-users-assign" class="menu-button" biit-icon icon="user_add" [title]="t('assign')"
+              [disabled]="!usersTable.selectedRows.length" (click)="assignUsers(usersTable.selectedRows)"></button>
+            <button id="tenant-users-unassign" class="menu-button warning" biit-icon icon="user_remove" [title]="t('unassign')"
+              [disabled]="!usersTable.selectedRows.length" (click)="unassignUsers(usersTable.selectedRows)"></button>
+          </ng-template>
+        </biit-datatable>
+      </div>
+    </biit-popup>
+  }
+
+  <ng-template #assignedCell let-row="row" let-value="value" let-i="index">
+    @if (value) { <biit-icon [name]="'thick'" class="assigned-icon"></biit-icon> }
+  </ng-template>
+</section>
+<ng-template #denied><p class="error">{{ 'tenantAdministrationDenied' | transloco }}</p></ng-template>
+</ng-container>

@@ -1,0 +1,370 @@
+package com.softwaremagico.kt.rest.security;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (Rest)
+ * %%
+ * Copyright (C) 2021 - 2026 SoftwareMagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
+import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Set;
+
+import static org.testng.Assert.*;
+
+public class JwtTokenUtilTest {
+
+    private static final String SECRET = "test-secret";
+
+    private NetworkController networkController;
+    private AuthenticatedUser user;
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        this.networkController = new TestNetworkController();
+        this.user = new AuthenticatedUser("user7", 1);
+        this.user.setId(7);
+    }
+
+    private SecretKey signingKey(String secret) {
+        try {
+            return Keys.hmacShaKeyFor(MessageDigest.getInstance("SHA-512").digest(secret.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    @SuppressWarnings("java:S1313")
+    public void shouldGenerateAndParseTokenWithAllFields() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "3000", "4000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1", 5000L, "session-1");
+
+        assertTrue(util.validate(token));
+        assertEquals(util.getUserId(token), "7");
+        assertEquals(util.getUsername(token), "user7");
+        assertEquals(util.getSession(token), "session-1");
+        assertEquals(util.getUserIp(token), "10.0.0.1");
+        assertEquals(util.getHostMac(token), "AA-BB-CC-DD");
+        assertNotNull(util.getExpirationDate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldUseFallbackExpirationWhenInvalid() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "invalid", null, null, this.networkController);
+
+        final long now = System.currentTimeMillis();
+        final long standard = util.getJwtExpirationTime() - now;
+        final long guest = util.getJwtGuestExpirationTime() - now;
+        final long participant = util.getJwtParticipantExpirationTime() - now;
+
+        assertTrue(standard > 1_199_000 && standard < 1_201_000);
+        assertTrue(guest > 1_199_000 && guest < 1_201_000);
+        assertTrue(participant > 1_199_000 && participant < 1_201_000);
+    }
+
+    @DataProvider(name = "invalidTokens")
+    public Object[][] invalidTokens() {
+        return new Object[][]{
+                {"not-a-jwt"},
+                {""},
+                {null},
+        };
+    }
+
+    @Test(groups = "jwtTokenUtil", dataProvider = "invalidTokens")
+    public void shouldReturnFalseForInvalidToken(String invalidToken) {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertFalse(util.validate(invalidToken));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnNullForMissingSubjectParts() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String malformedSubjectToken = Jwts.builder().subject("only-id")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertEquals(util.getUserId(malformedSubjectToken), "only-id");
+        assertNull(util.getUsername(malformedSubjectToken));
+        assertNull(util.getSession(malformedSubjectToken));
+        assertNull(util.getUserIp(malformedSubjectToken));
+        assertNull(util.getHostMac(malformedSubjectToken));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    @SuppressWarnings("java:S1313")
+    public void shouldGenerateSessionWhenNullSessionIsProvided() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1", 5000L, null);
+
+        assertNotNull(util.getSession(token));
+        assertFalse(util.getSession(token).isBlank());
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnFalseForExpiredToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String expiredToken = Jwts.builder().subject("7,user7,s,10.0.0.1,AA-BB")
+                .issuedAt(Date.from(Instant.now().minusSeconds(10)))
+                .expiration(Date.from(Instant.now().minusSeconds(1)))
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512)
+                .compact();
+
+        assertFalse(util.validate(expiredToken));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnFalseForTokenWithWrongSignature() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String invalidSignatureToken = Jwts.builder().subject("7,user7,s,10.0.0.1,AA-BB")
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusSeconds(20)))
+                .signWith(signingKey("different-secret"), Jwts.SIG.HS512)
+                .compact();
+
+        assertFalse(util.validate(invalidSignatureToken));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldFallbackGuestAndParticipantExpirationWhenInvalid() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "invalid", "invalid", this.networkController);
+
+        final long now = System.currentTimeMillis();
+        final long guest = util.getJwtGuestExpirationTime() - now;
+        final long participant = util.getJwtParticipantExpirationTime() - now;
+
+        assertTrue(guest > 1_198_500 && guest < 1_201_500);
+        assertTrue(participant > 1_198_500 && participant < 1_201_500);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldFallbackGuestAndParticipantExpirationWhenLiteralNullString() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "null", "null", this.networkController);
+
+        final long now = System.currentTimeMillis();
+        final long guest = util.getJwtGuestExpirationTime() - now;
+        final long participant = util.getJwtParticipantExpirationTime() - now;
+
+        assertTrue(guest > 1_198_500 && guest < 1_201_500);
+        assertTrue(participant > 1_198_500 && participant < 1_201_500);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    @SuppressWarnings("java:S1313")
+    public void shouldUseRandomSecretWhenConfiguredSecretIsBlank() {
+        final JwtTokenUtil utilA = new JwtTokenUtil("   ", "1200000", "1200000", "1200000", this.networkController);
+        final JwtTokenUtil utilB = new JwtTokenUtil("   ", "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = utilA.generateAccessToken(this.user, "10.0.0.1", 5000L, "session-1");
+
+        assertTrue(utilA.validate(token));
+        assertFalse(utilB.validate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldParsePartialSubjectWithThreeFields() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String partialSubjectToken = Jwts.builder().subject("7,user7,session-x")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512)
+                .compact();
+
+        assertEquals(util.getUserId(partialSubjectToken), "7");
+        assertEquals(util.getUsername(partialSubjectToken), "user7");
+        assertEquals(util.getSession(partialSubjectToken), "session-x");
+        assertNull(util.getUserIp(partialSubjectToken));
+        assertNull(util.getHostMac(partialSubjectToken));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldGenerateAccessTokenWithoutExplicitSession() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertNotNull(token);
+        assertTrue(util.validate(token));
+        assertEquals(util.getUserId(token), "7");
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldGenerateAccessTokenWithCustomExpirationOnly() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1", 3_600_000L);
+
+        assertNotNull(token);
+        assertTrue(util.validate(token));
+        assertNotNull(util.getExpirationDate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldValidateFreshlyGeneratedToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertTrue(util.validate(token));
+    }
+
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldGenerateDifferentSessionsOnEachCall() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String token1 = util.generateAccessToken(this.user, "10.0.0.1");
+        final String token2 = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertNotEquals(util.getSession(token1), util.getSession(token2));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnPositiveExpirationTimesForValidConfiguration() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final long now = Instant.now().toEpochMilli();
+
+        assertTrue(util.getJwtExpirationTime() > now);
+        assertTrue(util.getJwtGuestExpirationTime() > now);
+        assertTrue(util.getJwtParticipantExpirationTime() > now);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldBuildUtilWhenSecretIsNull() {
+        final JwtTokenUtil util = new JwtTokenUtil(null, "1200000", null, null, this.networkController);
+
+        assertNotNull(util);
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+        assertNotNull(token);
+        assertTrue(util.validate(token));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldEmbedAndReadRolesInToken() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        this.user.setRoles(Set.of("VIEWER", "ADMIN"));
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+
+        assertEquals(util.getRoles(token), Set.of("VIEWER", "ADMIN"));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldReturnEmptyRolesForTokenWithoutRoleClaim() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        this.user.setRoles(null);
+
+        final String token = util.generateAccessToken(this.user, "10.0.0.1");
+        final String legacyToken = Jwts.builder().subject("7,user7,session-1,10.0.0.1,AA-BB")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertEquals(util.getRoles(token), java.util.Collections.emptySet());
+        assertEquals(util.getRoles(legacyToken), java.util.Collections.emptySet());
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldExposeConfiguredExpirationDurations() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "3000", "4000", this.networkController);
+
+        assertEquals(util.getJwtExpirationDuration(), 1_200_000L);
+        assertEquals(util.getJwtGuestExpirationDuration(), 3_000L);
+        assertEquals(util.getJwtParticipantExpirationDuration(), 4_000L);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldCreateAndValidateGuestTicket() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        final String ticket = util.createGuestTicket(7, 3);
+
+        assertNotNull(ticket);
+        assertEquals(util.validateGuestTicket(ticket, 7), Integer.valueOf(3));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketCreationWithoutTournamentOrTenant() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertThrows(IllegalArgumentException.class, () -> util.createGuestTicket(null, 3));
+        assertThrows(IllegalArgumentException.class, () -> util.createGuestTicket(7, null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketValidationWithMissingArguments() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+
+        assertNull(util.validateGuestTicket(null, 7));
+        assertNull(util.validateGuestTicket("   ", 7));
+        assertNull(util.validateGuestTicket("ticket", null));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketIssuedForAnotherTournament() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String ticket = util.createGuestTicket(7, 3);
+
+        assertNull(util.validateGuestTicket(ticket, 8));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectGuestTicketWithWrongSignature() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String foreignTicket = Jwts.builder().subject("guest:7:3")
+                .signWith(signingKey("different-secret"), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateGuestTicket(foreignTicket, 7));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectMalformedGuestTicketSubjects() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000", this.networkController);
+        final String regularToken = util.generateAccessToken(this.user, "10.0.0.1");
+        final String tokenWithoutSubject = Jwts.builder().issuer(JwtTokenUtilTest.class.getName())
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+        final String ticketWithoutTenant = Jwts.builder().subject("guest:7")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+        final String ticketWithNonNumericTenant = Jwts.builder().subject("guest:7:abc")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateGuestTicket(regularToken, 7));
+        assertNull(util.validateGuestTicket(tokenWithoutSubject, 7));
+        assertNull(util.validateGuestTicket(ticketWithoutTenant, 7));
+        assertNull(util.validateGuestTicket(ticketWithNonNumericTenant, 7));
+    }
+}
+
+class TestNetworkController extends NetworkController {
+    @Override
+    public String getHostMac() {
+        return "AA-BB-CC-DD";
+    }
+}
+
+// Re-trigger backend Sonar analysis after adding expiration accessor tests.

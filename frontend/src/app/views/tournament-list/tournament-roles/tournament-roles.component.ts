@@ -1,5 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
@@ -9,37 +8,43 @@ import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
-import {forkJoin} from "rxjs";
-import {TranslateService} from "@ngx-translate/core";
+import {finalize, forkJoin} from "rxjs";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 import {TeamService} from "../../../services/team.service";
 import {Team} from "../../../models/team";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
 
 @Component({
-  selector: 'app-tournament-roles',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'tournament-roles',
   templateUrl: './tournament-roles.component.html',
   styleUrls: ['./tournament-roles.component.scss']
 })
 export class TournamentRolesComponent extends RbacBasedComponent implements OnInit {
 
-  userListData: UserListData = new UserListData();
+  @Input()
   tournament: Tournament;
+  @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
+  userListData: UserListData = new UserListData();
   roleTypes: RoleType[] = RoleType.toArray();
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
+  loadingGlobal: boolean = false;
+  private pendingCompetitors: Set<Participant> = new Set<Participant>();
 
-  constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
-              public participantService: ParticipantService, public roleService: RoleService,
-              private messageService: MessageService, public translateService: TranslateService,
+  constructor(public participantService: ParticipantService, public roleService: RoleService,
+              private messageService: MessageService,
               rbacService: RbacService, private filterResetService: FilterResetService,
-              private statisticsChangedService: StatisticsChangedService,
-              private teamService: TeamService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+               private statisticsChangedService: StatisticsChangedService,
+               private teamService: TeamService, private cdr: ChangeDetectorRef) {
     super(rbacService);
-    this.tournament = data.tournament;
   }
 
   getParticipantsContainer(role: RoleType): Participant[] {
@@ -60,10 +65,14 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         this.participants.set(roleType, rolesFromType.map(role => role.participant).sort(function (a: Participant, b: Participant) {
           return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
         }));
+        //Update participant's club from roles. Needed if dropping back the card from role to user list.
+        this.participants.get(roleType)!.forEach((participant: Participant) => {
+          participant.club = participants.find(p => p.id === participant.id)?.club;
+        })
         //Get participants and subtract the ones already with roles.
-        const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
+        const participantsIds: Set<number | undefined> = new Set(this.participants.get(roleType)!.map(participant => participant.id));
         participants = participants.filter((participantWithoutRole: Participant) => !participantsIds
-          .includes(participantWithoutRole.id));
+          .has(participantWithoutRole.id));
       }
       participants.sort(function (a: Participant, b: Participant) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
@@ -77,8 +86,10 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
           this.showAvatars = true;
         }
       }
-      this.userListData.participants = participants;
-      this.userListData.filteredParticipants = participants;
+      this.userListData = new UserListData();
+       this.userListData.participants = participants;
+       this.userListData.filteredParticipants = [...participants];
+       this.cdr.detectChanges();
       //Prevent removing participants that are on teams already
       this.teamService.getFromTournament(this.tournament).subscribe((_teams: Team[]): void => {
         let teamMembers: Participant[] = [];
@@ -94,10 +105,6 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         }
       });
     });
-  }
-
-  closeDialog(): void {
-    this.dialogRef.close();
   }
 
   transferCard(event: CdkDragDrop<Participant[], any>): Participant | undefined {
@@ -136,6 +143,8 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType): void {
+    const availableParticipants = [...this.userListData.participants];
+    const filteredParticipants = [...this.userListData.filteredParticipants];
     const participant: Participant | undefined = this.transferCard(event);
     if (!participant) {
       return;
@@ -144,18 +153,57 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     role.tournament = this.tournament;
     role.participant = participant;
     role.roleType = roleName;
+    this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
+    this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
+    this.shortRoles();
+    const rollback = (): void => {
+      const index = event.container.data.indexOf(participant);
+      if (index >= 0) {
+        event.container.data.splice(index, 1);
+      }
+      event.previousContainer.data.splice(event.previousIndex, 0, participant);
+      this.userListData.participants = availableParticipants;
+      this.userListData.filteredParticipants = filteredParticipants;
+      this.cdr.detectChanges();
+    };
     this.roleService.add(role).subscribe((_role: Role): void => {
+      if (!_role) {
+        rollback();
+        return;
+      }
       this.messageService.infoMessage("infoRoleStored");
       this.filterResetService.resetFilter.next(true);
       this.statisticsChangedService.areStatisticsChanged.next(true);
+      this.cdr.detectChanges();
+    }, rollback);
+  }
+
+  addCompetitor(participant: Participant): void {
+    if (participant.locked || this.tournament.locked || !this.rbacService.isAllowed(this.RbacActivity.EDIT_ROLE)
+      || this.pendingCompetitors.has(participant) || !this.userListData.participants.includes(participant)) {
+      return;
+    }
+    const role: Role = new Role();
+    role.tournament = this.tournament;
+    role.participant = participant;
+    role.roleType = RoleType.COMPETITOR;
+    this.pendingCompetitors.add(participant);
+    this.roleService.add(role).pipe(finalize(() => this.pendingCompetitors.delete(participant))).subscribe((savedRole) => {
+      if (!savedRole) {
+        return;
+      }
+      this.getParticipantsContainer(RoleType.COMPETITOR).push(participant);
+      this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
+      this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
+      this.shortRoles();
+      this.messageService.infoMessage("infoRoleStored");
+      this.filterResetService.resetFilter.next(true);
+      this.statisticsChangedService.areStatisticsChanged.next(true);
+      this.cdr.detectChanges();
+    }, () => {
+      // The HTTP error interceptor reports the failure; keep the participant available for retry.
+      this.cdr.detectChanges();
     });
-    if (this.userListData.participants.includes(participant)) {
-      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
-    }
-    if (this.userListData.filteredParticipants.includes(participant)) {
-      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
-    }
-    this.shortRoles();
   }
 
   private shortRoles(): void {
@@ -166,6 +214,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
 
   downloadPDF(): void {
     if (this.tournament?.id) {
+      this.loadingGlobal = true;
       this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -174,6 +223,8 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         anchor.download = "Role List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
+      }).add(() => {
+        this.loadingGlobal = false;
       });
     }
   }
@@ -184,5 +235,5 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     }
     return this.participants.get(roleType)!.length;
   }
-}
 
+}

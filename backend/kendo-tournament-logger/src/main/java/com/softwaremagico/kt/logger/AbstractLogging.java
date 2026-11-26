@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,10 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Abstract class to provide basic logging capabilities to logging advises.
@@ -39,7 +39,15 @@ import java.util.Calendar;
 @Aspect
 public abstract class AbstractLogging {
     // Logger specialized for each subclass.
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * Creates a new logging aspect, initializing a logger scoped to the concrete subclass.
+     */
+    protected AbstractLogging() {
+        // Nothing to initialize besides the logger field above.
+    }
 
     protected Logger getLogger() {
         return logger;
@@ -60,9 +68,7 @@ public abstract class AbstractLogging {
         }
         logMessage.append(") at ");
 
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        final Calendar cal = Calendar.getInstance();
-        logMessage.append(dateFormat.format(cal.getTime()));
+        logMessage.append(LocalDateTime.now(ZoneId.systemDefault()).format(DATE_TIME_FORMATTER));
         return logMessage.toString();
     }
 
@@ -75,7 +81,7 @@ public abstract class AbstractLogging {
      */
     protected void log(JoinPoint joinPoint, Object... args) {
         if (logger.isDebugEnabled()) {
-            logger.debug(logMessage(joinPoint, args));
+            logger.debug(sanitize(logMessage(joinPoint, args)));
         }
     }
 
@@ -99,30 +105,35 @@ public abstract class AbstractLogging {
             logMessage.append("(");
 
             // Add params
-            final Object[] paramValues = joinPoint.getArgs();
-            if (paramValues != null) {
-                for (int i = 0; i < paramValues.length; i++) {
-                    if (paramValues[i] != null) {
-                        if (paramValues[i] instanceof String) {
-                            logMessage.append("'").append(paramValues[i].toString()).append("'");
-                        } else {
-                            logMessage.append(paramValues[i].toString());
-                        }
-                    } else {
-                        logMessage.append(paramValues[i]);
-                    }
-                    if (i < paramValues.length - 1) {
-                        logMessage.append(", ");
-                    }
-                }
-            }
+            logMessage.append(formatParams(joinPoint.getArgs()));
 
             logMessage.append(") in ");
             logMessage.append(millis);
             logMessage.append(" ms");
 
-            logger.debug(logMessage.toString());
+            logger.debug(sanitize(logMessage.toString()));
         }
+    }
+
+    private String formatParams(Object[] paramValues) {
+        if (paramValues == null) {
+            return "";
+        }
+        final StringBuilder params = new StringBuilder();
+        for (int i = 0; i < paramValues.length; i++) {
+            params.append(formatParamValue(paramValues[i]));
+            if (i < paramValues.length - 1) {
+                params.append(", ");
+            }
+        }
+        return params.toString();
+    }
+
+    private String formatParamValue(Object value) {
+        if (value instanceof String) {
+            return "'" + value + "'";
+        }
+        return String.valueOf(value);
     }
 
     protected String getTargetClassName(JoinPoint joinPoint) {
@@ -141,6 +152,31 @@ public abstract class AbstractLogging {
     }
 
     protected void log(String messageTemplate, Object... arguments) {
-        logger.debug(messageTemplate, arguments);
+        if (logger.isDebugEnabled()) {
+            logger.debug(sanitize(messageTemplate), sanitizeArguments(arguments));
+        }
+    }
+
+    /**
+     * Replaces control characters (newlines, carriage returns, tabs, etc.) so an
+     * untrusted value can never create a forged log entry.
+     */
+    private static String sanitize(String value) {
+        if (value == null) {
+            return "null";
+        }
+        final StringBuilder sanitized = new StringBuilder(value.length());
+        value.codePoints().forEach(codePoint -> sanitized.appendCodePoint(
+                Character.isISOControl(codePoint) ? '_' : codePoint));
+        return sanitized.toString();
+    }
+
+    private static Object[] sanitizeArguments(Object[] arguments) {
+        if (arguments == null) {
+            return new Object[0];
+        }
+        return Arrays.stream(arguments)
+                .map(argument -> argument == null ? null : sanitize(String.valueOf(argument)))
+                .toArray();
     }
 }

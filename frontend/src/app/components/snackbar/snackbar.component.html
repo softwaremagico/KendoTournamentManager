@@ -1,0 +1,8 @@
+<div id="snackbar-canvas"
+     class="snackbar-canvas {{snackbarService.verticalPosition}} {{snackbarService.horizontalPosition}}">
+  @for (notification of notifications; track notification) {
+    <div class="snackbar-element" [attr.id]="'snackbar-element-' + notification.type">
+      <biit-notification [notification]="notification" style="display: inline-flex;"></biit-notification>
+    </div>
+  }
+</div>

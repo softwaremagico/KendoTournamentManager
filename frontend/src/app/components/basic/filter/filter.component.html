@@ -1,11 +1,14 @@
-<div class="filter">
-  <mat-form-field>
-    <input (keyup)="filter($event)" [(ngModel)]="filterString" [disabled]="disabled" matInput
-           (focus)="focus()" (focusout)="focusout()"
-           placeholder="{{'filter' | translate}}"
-           type="text">
-  </mat-form-field>
+<div class="filter" *transloco="let t">
+  <biit-input-text class="filter-field" id="filter-field" [(ngModel)]="filterString"
+                   (keyup)="filter($event)"
+                   [disabled]="disabled"
+                   (focus)="focus()" (focusout)="focusout()"
+                   [placeholder]="t('filter')"
+                   [type]="Type.TEXT"
+                   [minLength]="0"
+                   [maxLength]="20"
+                   (onActionPerformed)="filterValue($event)"
+  ></biit-input-text>
+  <button id="reset-button" class="reset-button" (click)="reset()" icon="cross" biit-icon>
+  </button>
 </div>
-<button #resetButton (click)="reset()" class="reset" color="warn" mat-button>
-  <mat-icon>clear</mat-icon>
-</button>

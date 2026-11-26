@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,13 +21,54 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import java.io.Serial;
+
+@Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Table(name = "groups_links", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+})
+@SuppressWarnings("java:S2160")
 public class GroupLink extends Element {
 
+    @Serial
+    private static final long serialVersionUID = -482003310040506662L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament", nullable = false)
+    private Tournament tournament;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "source", nullable = false)
     private Group source;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "destination", nullable = false)
     private Group destination;
 
+    @Column(name = "winner")
     private Integer winner = 0;
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
 
     public Group getSource() {
         return source;

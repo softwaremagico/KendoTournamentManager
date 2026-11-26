@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,60 +33,116 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity that represents a kendo tournament.
+ * <p>
+ * A tournament groups a collection of {@link Team}s that compete in
+ * {@link Fight}s across one or more shiaijos (fighting areas). The tournament
+ * format is determined by {@link TournamentType} and may be further customised
+ * through {@link TournamentExtraProperty} records.
+ * </p>
+ * <p>
+ * Sensitive fields (name, durations, type) are encrypted at rest using the
+ * configured
+ * {@link com.softwaremagico.kt.persistence.encryption.StringCryptoConverter}
+ * converters. The second-level cache is enabled for read-heavy workloads.
+ * </p>
+ */
 @Entity
+@org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournaments")
+@Table(name = "tournaments", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "name"})})
+@SuppressWarnings("java:S2160")
 public class Tournament extends Element implements IName {
+    /** Default duel duration in seconds (3 minutes). */
     public static final int DEFAULT_DURATION = 180;
 
+    /** Human-readable name of the tournament. Must be unique across the system. */
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
+    /**
+     * Number of simultaneous shiaijos (fighting areas) available in this
+     * tournament.
+     */
     @Column(name = "shiaijos", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijos;
 
+    /** Maximum number of members a team can have (including substitutes). */
     @Column(name = "team_size", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer teamSize;
 
+    /**
+     * Number of members per team that actually compete in each fight. When
+     * {@code fightSize < teamSize}, the remaining members are substitutes.
+     */
+    @Column(name = "fight_size")
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer fightSize;
+
+    /**
+     * The structural format of this tournament (league, championship, kachinuki,
+     * etc.).
+     */
     @Column(name = "tournament_type", nullable = false)
-    @Enumerated(EnumType.STRING)
     @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
+    /**
+     * Scoring rules configuration that determines how team/competitor rankings are
+     * calculated.
+     */
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "tournament_score")
     private TournamentScore tournamentScore;
 
+    /**
+     * Maximum duration of each duel in seconds. Defaults to
+     * {@link #DEFAULT_DURATION} (180 s).
+     */
     @Column(name = "duels_duration", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer duelsDuration = DEFAULT_DURATION;
 
+    /**
+     * Whether the tournament is locked. A locked tournament prevents further score
+     * edits and is treated as finished from the system's perspective.
+     */
     @Column(name = "locked", nullable = false)
     private boolean locked = false;
 
+    /**
+     * Timestamp at which this tournament was locked, or {@code null} if still open.
+     */
     @Column(name = "locked_at")
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime lockedAt;
 
+    /**
+     * Timestamp at which the first fight was started, or {@code null} if not yet
+     * begun.
+     */
     @Column(name = "started_at")
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime startedAt;
 
+    /**
+     * Timestamp at which the last fight was finished and the tournament concluded.
+     */
     @Column(name = "finished_at")
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime finishedAt;
@@ -99,19 +155,29 @@ public class Tournament extends Element implements IName {
         this(name, shiaijos, teamSize, type, createdBy, ScoreType.INTERNATIONAL);
     }
 
-    public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy, ScoreType scoreType) {
+    public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy,
+            ScoreType scoreType) {
         this();
-        setName(name);
-        setShiaijos(shiaijos);
-        setTeamSize(teamSize);
-        setType(type);
-        setCreatedBy(createdBy);
-        setTournamentScore(new TournamentScore(scoreType));
+        this.setName(name);
+        this.setShiaijos(shiaijos);
+        this.setTeamSize(teamSize);
+        this.setType(type);
+        this.setCreatedBy(createdBy);
+        // Swiss tournaments use 3 points for wins and 1 for draws by default,
+        // matching the standard Swiss system (coincides with the CUSTOM score type).
+        // These defaults apply to newly created tournaments. Existing tournaments in
+        // the database that have not been updated will use the fallback logic in the
+        // handlers.
+        if (TournamentType.SWISS == type) {
+            this.setTournamentScore(new TournamentScore(scoreType, TournamentScore.SWISS_DEFAULT_WIN_POINTS,
+                    TournamentScore.SWISS_DEFAULT_DRAW_POINTS));
+        } else {
+            this.setTournamentScore(new TournamentScore(scoreType));
+        }
     }
 
-
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -119,8 +185,8 @@ public class Tournament extends Element implements IName {
     }
 
     public Integer getTeamSize() {
-        if (type != null && type != TournamentType.SENBATSU) {
-            return teamSize;
+        if (this.type != null && this.type != TournamentType.SENBATSU) {
+            return this.teamSize;
         }
         return 1;
     }
@@ -130,7 +196,7 @@ public class Tournament extends Element implements IName {
     }
 
     public TournamentType getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(TournamentType type) {
@@ -138,7 +204,7 @@ public class Tournament extends Element implements IName {
     }
 
     public Integer getShiaijos() {
-        return shiaijos;
+        return this.shiaijos;
     }
 
     public void setShiaijos(Integer shiaijos) {
@@ -146,7 +212,7 @@ public class Tournament extends Element implements IName {
     }
 
     public TournamentScore getTournamentScore() {
-        return tournamentScore;
+        return this.tournamentScore;
     }
 
     public void setTournamentScore(TournamentScore tournamentScore) {
@@ -154,7 +220,7 @@ public class Tournament extends Element implements IName {
     }
 
     public Integer getDuelsDuration() {
-        return duelsDuration;
+        return this.duelsDuration;
     }
 
     public void setDuelsDuration(Integer duelsDuration) {
@@ -162,7 +228,7 @@ public class Tournament extends Element implements IName {
     }
 
     public boolean isLocked() {
-        return locked;
+        return this.locked;
     }
 
     public void setLocked(boolean locked) {
@@ -170,7 +236,7 @@ public class Tournament extends Element implements IName {
     }
 
     public LocalDateTime getLockedAt() {
-        return lockedAt;
+        return this.lockedAt;
     }
 
     public void setLockedAt(LocalDateTime lockedAt) {
@@ -178,24 +244,35 @@ public class Tournament extends Element implements IName {
     }
 
     public LocalDateTime getStartedAt() {
-        return startedAt;
+        return this.startedAt;
     }
 
     public void setStartedAt(LocalDateTime startedAt) {
         this.startedAt = startedAt;
     }
 
+    public Integer getFightSize() {
+        if (this.fightSize != null) {
+            return this.fightSize;
+        }
+        return this.teamSize;
+    }
+
+    public void setFightSize(Integer fightSize) {
+        this.fightSize = fightSize;
+    }
+
     public void updateFinishedAt(LocalDateTime finishedAt) {
         if (this.finishedAt == null) {
             this.finishedAt = finishedAt;
-            //Reset if new fights are added
+            // Reset if new fights are added
         } else if (finishedAt == null) {
             this.finishedAt = null;
         }
     }
 
     public LocalDateTime getFinishedAt() {
-        return finishedAt;
+        return this.finishedAt;
     }
 
     public void setFinishedAt(LocalDateTime finishedAt) {

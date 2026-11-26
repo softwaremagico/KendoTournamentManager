@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.diplomas;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,23 +21,22 @@ package com.softwaremagico.kt.pdf.diplomas;
  * #L%
  */
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.Image;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 public class DiplomaPDF extends PdfDocument {
@@ -48,11 +47,15 @@ public class DiplomaPDF extends PdfDocument {
 
     public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage, float nameHeight) {
         this.participants = participants;
-        try {
-            this.backgroundImage = Image.getInstance(backgroundImage);
-        } catch (IOException e) {
-            KendoTournamentLogger.severe(this.getClass().getName(), "No background image found");
+        if (backgroundImage == null) {
             this.backgroundImage = null;
+        } else {
+            try {
+                this.backgroundImage = Image.getInstance(backgroundImage);
+            } catch (Exception e) {
+                KendoTournamentLogger.severe(this.getClass(), "No background image found: " + e.getMessage());
+                this.backgroundImage = null;
+            }
         }
         this.nameHeight = nameHeight;
     }

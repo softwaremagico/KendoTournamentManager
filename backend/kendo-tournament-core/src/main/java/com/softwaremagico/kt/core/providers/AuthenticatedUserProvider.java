@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,10 @@ import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.entities.UserTenant;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
+import com.softwaremagico.kt.persistence.repositories.UserTenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -49,16 +52,25 @@ public class AuthenticatedUserProvider {
     private final AuthenticatedUserRepository authenticatedUserRepository;
 
     private final ParticipantProvider participantProvider;
+    private final UserTenantRepository userTenantRepository;
 
 
     private final boolean guestEnabled;
 
     @Autowired
     public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     UserTenantRepository userTenantRepository,
                                      @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticatedUserRepository = authenticatedUserRepository;
         this.participantProvider = participantProvider;
+        this.userTenantRepository = userTenantRepository;
         guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
+    }
+
+    /** Kept for unit tests that do not exercise tenant membership. */
+    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     String guestUsersEnabled) {
+        this(authenticatedUserRepository, participantProvider, null, guestUsersEnabled);
     }
 
 
@@ -66,29 +78,67 @@ public class AuthenticatedUserProvider {
         //Create guest user on the fly
         if (Objects.equals(username, GUEST_USER) && guestEnabled) {
             final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER);
+            guest.setTenantId(TenantContext.getRequiredTenantId());
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
-            //Username is encrypted, use hash
-            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
-            if (authenticatedUser.isPresent()) {
-                authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
-                return Optional.of(authenticatedUser.get());
-            }
-        } else {
-            //Username is not encrypted, use username for compatibility with old databases.
-            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository
-                    .findByUsername(username);
-            if (authenticatedUser.isPresent()) {
-                return Optional.of(authenticatedUser.get());
-            }
+        final Optional<AuthenticatedUser> authenticatedUser = findAuthenticatedUser(username);
+        if (authenticatedUser.isPresent()) {
+            return scopedUser(authenticatedUser);
         }
         final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
         if (participant.isPresent()) {
             return Optional.of(participant.get());
         }
         return Optional.empty();
+    }
+
+    private Optional<AuthenticatedUser> findAuthenticatedUser(String username) {
+        if (getDatabaseEncryptionKey() == null || getDatabaseEncryptionKey().isBlank()) {
+            return authenticatedUserRepository.findByUsername(username);
+        }
+        final Optional<AuthenticatedUser> user = authenticatedUserRepository.findByUsernameHash(username);
+        user.ifPresent(authenticatedUser -> authenticatedUser.setUsernameHash(authenticatedUser.getUsername()));
+        return user;
+    }
+
+    private Optional<IAuthenticatedUser> scopedUser(Optional<AuthenticatedUser> user) {
+        if (TenantContext.getTenantId() == null) {
+            return user.map(IAuthenticatedUser.class::cast);
+        }
+        return user.filter(candidate -> userTenantRepository.existsByAuthenticatedUserIdAndTenantId(candidate.getId(),
+                        TenantContext.getRequiredTenantId()))
+                .map(candidate -> {
+                    candidate.setTenantId(TenantContext.getRequiredTenantId());
+                    return (IAuthenticatedUser) candidate;
+                });
+    }
+
+    public List<AuthenticatedUser> findAllByUsername(String username) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
+            return authenticatedUserRepository.findAllByUsernameHash(username);
+        }
+        return authenticatedUserRepository.findAllByUsername(username);
+    }
+
+    public List<AuthenticatedUser> findAllUnscoped() {
+        return authenticatedUserRepository.findAllUnscoped();
+    }
+
+    public boolean belongsToTenant(AuthenticatedUser user, Integer tenantId) {
+        return userTenantRepository.existsByAuthenticatedUserIdAndTenantId(user.getId(), tenantId);
+    }
+
+    public List<Integer> getTenantIds(AuthenticatedUser user) {
+        return userTenantRepository.findAllByAuthenticatedUserId(user.getId()).stream().map(UserTenant::getTenantId).toList();
+    }
+
+    public void updateLastTenant(String username, Integer tenantId) {
+        authenticatedUserRepository.updateLastTenantIdByUsernameHash(username, tenantId);
+    }
+
+    public void removeFromTenant(String username, Integer tenantId) {
+        findByUsername(username).ifPresent(user -> userTenantRepository.deleteByAuthenticatedUserIdAndTenantId(user.getId(), tenantId));
     }
 
     public long count() {
@@ -99,8 +149,8 @@ public class AuthenticatedUserProvider {
         return findByUsername(uniqueId);
     }
 
-    public AuthenticatedUser save(String username, String firstName, String lastName, String password, String... roles) {
-        if (findByUsername(username).isPresent()) {
+    public AuthenticatedUser save(String creator, String username, String firstName, String lastName, String password, String... roles) {
+        if (usernameExists(username)) {
             throw new DuplicatedUserException(this.getClass(), "Username exists!");
         }
 
@@ -109,6 +159,8 @@ public class AuthenticatedUserProvider {
         authenticatedUser.setName(firstName);
         authenticatedUser.setLastname(lastName);
         authenticatedUser.setPassword(password);
+        authenticatedUser.setCreatedBy(creator);
+        authenticatedUser.setLastTenantId(getEffectiveTenantId());
         if (roles != null) {
             authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
         }
@@ -116,8 +168,26 @@ public class AuthenticatedUserProvider {
         return save(authenticatedUser);
     }
 
+    private boolean usernameExists(String username) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
+            return authenticatedUserRepository.existsByUsernameHash(username);
+        }
+        return authenticatedUserRepository.findByUsername(username).isPresent();
+    }
+
     public AuthenticatedUser save(AuthenticatedUser authenticatedUser) {
-        return authenticatedUserRepository.save(authenticatedUser);
+        final AuthenticatedUser saved = authenticatedUserRepository.save(authenticatedUser);
+        final Integer tenantId = getEffectiveTenantId();
+        if (userTenantRepository != null
+                && !userTenantRepository.existsByAuthenticatedUserIdAndTenantId(saved.getId(), tenantId)) {
+            userTenantRepository.save(new UserTenant(saved.getId(), tenantId));
+        }
+        saved.setTenantId(tenantId);
+        return saved;
+    }
+
+    private Integer getEffectiveTenantId() {
+        return TenantContext.getTenantId() != null ? TenantContext.getRequiredTenantId() : TenantContext.LEGACY_TENANT_ID;
     }
 
     public AuthenticatedUser updateRoles(AuthenticatedUser authenticatedUser, Set<String> roles) {
@@ -126,7 +196,17 @@ public class AuthenticatedUserProvider {
     }
 
     public List<AuthenticatedUser> findAll() {
-        return authenticatedUserRepository.findAll();
+        if (TenantContext.getTenantId() == null) {
+            return authenticatedUserRepository.findAll();
+        }
+        return authenticatedUserRepository.findAll().stream()
+                .filter(user -> userTenantRepository.existsByAuthenticatedUserIdAndTenantId(user.getId(), TenantContext.getRequiredTenantId()))
+                .map(user -> withTenant(user, TenantContext.getRequiredTenantId())).toList();
+    }
+
+    private AuthenticatedUser withTenant(AuthenticatedUser user, Integer tenantId) {
+        user.setTenantId(tenantId);
+        return user;
     }
 
     public void delete(AuthenticatedUser authenticatedUser) {

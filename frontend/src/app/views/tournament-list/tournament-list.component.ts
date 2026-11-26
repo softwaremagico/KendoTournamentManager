@@ -1,82 +1,149 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
+import {ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef, Component, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {Tournament} from "../../models/tournament";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTable, MatTableDataSource} from "@angular/material/table";
-import {MatSort} from "@angular/material/sort";
 import {TournamentService} from "../../services/tournament.service";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {SelectionModel} from "@angular/cdk/collections";
-import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
-import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
-import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
 
 import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
-import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
-import {TranslateService} from "@ngx-translate/core";
+import {TRANSLOCO_SCOPE, TranslocoService} from '@jsverse/transloco';
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
-import {
-  RoleSelectorDialogBoxComponent
-} from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
-import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {TournamentQrCodeComponent} from "../../components/tournament-qr-code/tournament-qr-code.component";
+import {BiitDatatableComponent} from "@biit-solutions/wizardry-theme/table";
+import {DatatableColumn} from "../../models/datatable-column";
+import {combineLatest, takeUntil} from "rxjs";
+import {DatePipe} from "@angular/common";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {TableColumnTranslationPipe} from "../../pipes/visualization/table-column-translation-pipe";
+import {CustomDatePipe} from "../../pipes/visualization/custom-date-pipe";
+import {Constants} from "../../constants";
+import {RoleType} from "../../models/role-type";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
-  styleUrls: ['./tournament-list.component.scss']
+  styleUrls: ['./tournament-list.component.scss'],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      multi: true,
+      useValue: {scope: '', alias: 't'}
+    }, TableColumnTranslationPipe, CustomDatePipe, DatePipe
+  ]
 })
-export class TournamentListComponent extends RbacBasedComponent implements OnInit {
+export class TournamentListComponent extends RbacBasedComponent implements AfterViewInit {
+  private static readonly COLUMN_TRANSLATION_KEYS: readonly string[] = [
+    'id',
+    'name',
+    'tournamentType',
+    'scoreRules',
+    'locked',
+    'shiaijos',
+    'teamSize',
+    'createdBy',
+    'createdAt',
+    'updatedBy',
+    'updatedAt'
+  ];
 
-  basicTableData: BasicTableData<Tournament> = new BasicTableData<Tournament>("Tournament");
+  protected columns: DatatableColumn[] = [];
+  protected pageSize: number = 10;
+  protected pageSizes: number[] = [10, 25, 50, 100];
+  protected tournaments: Tournament[] = [];
+  protected target: Tournament | null = null;
+  protected confirmDelete: boolean = false;
+  protected confirmClone: boolean = false;
+  protected showTournamentRoles: boolean = false;
+  protected showTournamentTeams: boolean = false;
+  protected showDiplomasRoles: boolean = false;
+  protected showAccreditationRoles: boolean = false;
+  protected addPhoto: boolean = false;
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  protected loading: boolean = false;
+  protected loadingGlobal: boolean = false;
+  protected showQr: boolean = false;
+  protected readonly port: number = +window.location.port;
 
-  constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
-              private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private achievementsService: AchievementsService) {
-    super(rbacService);
-    this.basicTableData.columns = ['id', 'name', 'type', 'tournamentScore', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
-    this.basicTableData.dataSource = new MatTableDataSource<Tournament>();
+  @ViewChildren('booleanCell') booleanCellTemplates: QueryList<TemplateRef<unknown>>;
+  @ViewChild('table')
+  table: BiitDatatableComponent<Tournament>;
+
+  public lockedTournaments: (row: Tournament) => boolean = (row) => row.locked;
+
+   constructor(private readonly router: Router, private readonly userSessionService: UserSessionService, private readonly tournamentService: TournamentService,
+               private readonly rankingService: RankingService,
+               private readonly messageService: MessageService, rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+               private readonly achievementsService: AchievementsService, private readonly transloco: TranslocoService, private readonly _datePipe: DatePipe,
+               private readonly biitSnackbarService: BiitSnackbarService, private readonly tableColumnTranslationPipe: TableColumnTranslationPipe,
+               private readonly cdr: ChangeDetectorRef) {
+     super(rbacService);
+   }
+
+  datePipe(): { transform: (value?: number | string | Date | null) => string | null } {
+    return {
+      transform: (value: number | string | Date | null = 0) => this._datePipe.transform(value, Constants.FORMAT.DATE)
+    }
   }
 
-  ngOnInit(): void {
-    this.showAllElements();
+  private buildColumns(labels: string[]): DatatableColumn[] {
+    const [id, name, type, scoreRules, locked, shiaijos, teamSize, createdBy, createdAt, updatedBy, updatedAt] = labels;
+    return [
+      new DatatableColumn(id, 'id', false, 80),
+      new DatatableColumn(name, 'name'),
+      new DatatableColumn(type, 'type', true, undefined, undefined, this.tableColumnTranslationPipe),
+      new DatatableColumn(scoreRules, 'tournamentScore', false, undefined, undefined, this.tableColumnTranslationPipe),
+      new DatatableColumn(locked, 'locked', false, 200, undefined, undefined, this.booleanCellTemplates.first),
+      new DatatableColumn(shiaijos, 'shiaijos', false, 150),
+      new DatatableColumn(teamSize, 'teamSize', true, 150),
+      new DatatableColumn(createdBy, 'createdBy', false),
+      new DatatableColumn(createdAt, 'createdAt', false, undefined, undefined, this.datePipe()),
+      new DatatableColumn(updatedBy, 'updatedBy', false),
+      new DatatableColumn(updatedAt, 'updatedAt', false, undefined, undefined, this.datePipe())
+    ];
   }
 
-  showAllElements(): void {
-    this.systemOverloadService.isTransactionalBusy.next(true);
-    this.tournamentService.getAll().subscribe((_tournaments: Tournament[]): void => {
-      if (_tournaments) {
-        const tournaments: Tournament[] = [];
-        for (let _tournament of _tournaments) {
-          if (_tournament) {
-            tournaments.push(Tournament.clone(_tournament));
-          }
-        }
-        this.basicTableData.dataSource.data = tournaments;
-        //Select session tournament.
-        const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
-          tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
-        const selectedElements: Tournament[] = [];
-        selectedElements.push(selectedTournament);
-        this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
-        this.basicTableData.selectedElement = selectedTournament;
-        this.systemOverloadService.isTransactionalBusy.next(false);
-      }
+  private downloadFile(content: BlobPart, type: string, fileName: string): void {
+    const blob: Blob = new Blob([content], {type});
+    const downloadURL: string = window.URL.createObjectURL(blob);
+    const anchor: HTMLAnchorElement = document.createElement('a');
+    anchor.download = fileName;
+    anchor.href = downloadURL;
+    anchor.click();
+    window.URL.revokeObjectURL(downloadURL);
+  }
+
+  ngAfterViewInit() {
+    combineLatest(TournamentListComponent.COLUMN_TRANSLATION_KEYS.map((key: string) => this.transloco.selectTranslate(key)))
+      .pipe(takeUntil(this.destroySubject)).subscribe((labels: string[]) => {
+      setTimeout((): void => {
+        this.columns = this.buildColumns(labels);
+        this.loadData();
+      });
     });
   }
+
+   loadData(tournament?: Tournament): void {
+     this.loading = true;
+     this.systemOverloadService.isTransactionalBusy.next(true);
+     this.tournamentService.getAll().pipe(takeUntil(this.destroySubject)).subscribe({
+       next: (_tournaments: Tournament[]): void => {
+         this.tournaments = _tournaments.map(_tournament => Tournament.clone(_tournament)).sort((a: Tournament, b: Tournament): number => {
+           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+         });
+         this.cdr.markForCheck();
+       },
+       error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
+     }).add(() => {
+       this.loading = false;
+       this.systemOverloadService.isTransactionalBusy.next(false);
+       this.selectItem(tournament);
+     });
+   }
 
   addElement(): void {
     const tournament: Tournament = new Tournament();
@@ -84,258 +151,158 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
     tournament.teamSize = Tournament.DEFAULT_TEAM_SIZE;
-    this.openDialog(this.translateService.instant('competitionAdd'), Action.Add, tournament);
+    this.target = tournament;
   }
 
-  editElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('competitionEdit'), Action.Update, this.basicTableData.selectedElement);
+  editElement(tournament: Tournament): void {
+    this.target = tournament;
+    this.userSessionService.setSelectedTournament(tournament.id + "");
+  }
+
+  openImages(tournament?: Tournament): void {
+    if (tournament?.id) {
+      this.addPhoto = true;
     }
   }
 
-  deleteElement(): void {
-    if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('competitionDelete'), Action.Delete, this.basicTableData.selectedElement);
-    }
-  }
-
-  openDialog(title: string, action: Action, tournament: Tournament): void {
-    const dialogRef = this.dialog.open(TournamentDialogBoxComponent, {
-      width: '600px',
-      data: {
-        title: title, action: action, entity: tournament
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result?.action == Action.Add) {
-        this.addRowData(result.data);
-      } else if (result?.action == Action.Update) {
-        this.updateRowData(result.data);
-      } else if (result?.action == Action.Delete) {
-        this.deleteRowData(result.data);
-        this.userSessionService.setSelectedTournament(undefined);
-      }
-    });
-  }
-
-  addRowData(tournament: Tournament): void {
-    this.tournamentService.add(tournament).subscribe((_tournament: Tournament): void => {
-      //If data is not already added though table webservice.
-      if (this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id) < 0) {
-        this.basicTableData.dataSource.data.push(_tournament);
-        this.basicTableData.dataSource._updateChangeSubscription();
-      }
-      this.basicTableData.selectItem(_tournament);
-      this.basicTableData.selectedElement = _tournament;
-      this.messageService.infoMessage('infoTournamentStored');
-    });
-  }
-
-  updateRowData(tournament: Tournament): void {
-    this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
-        this.messageService.infoMessage('infoTournamentUpdated');
-        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id);
-        if (index >= 0) {
-          this.basicTableData.dataSource.data[index] = _tournament;
-          this.basicTableData.dataSource._updateChangeSubscription();
-        }
-        this.basicTableData.selectedElement = _tournament;
-        this.basicTableData.selectItem(_tournament);
-      }
-    );
-  }
-
-  deleteRowData(tournament: Tournament): void {
-    this.tournamentService.delete(tournament).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_tournament: Tournament): boolean => _tournament.id !== tournament.id);
-        this.messageService.infoMessage('infoTournamentDeleted');
-        this.basicTableData.selectedElement = undefined;
-      }
-    );
-  }
-
-  addRoles(): void {
-    if (this.basicTableData.selectedElement) {
-      this.dialog.open(TournamentRolesComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          tournament: this.basicTableData.selectedElement
-        }
+  deleteElements(tournaments: Tournament[]): void {
+    if (tournaments) {
+      combineLatest(tournaments.map(tournament => this.tournamentService.delete(tournament))).pipe(takeUntil(this.destroySubject)).subscribe({
+        next: (): void => {
+          this.loadData();
+          this.confirmDelete = false;
+          this.biitSnackbarService.showNotification(this.transloco.translate('infoTournamentDeleted'), NotificationType.SUCCESS);
+        },
+          error: error => ErrorHandler.notify(error, this.transloco as never, this.biitSnackbarService)
       });
     }
   }
 
-  addTeams(): void {
-    if (this.basicTableData.selectedElement) {
-      this.dialog.open(TournamentTeamsComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          tournament: this.basicTableData.selectedElement
-        }
+  openFights(tournament: Tournament): void {
+    if (tournament) {
+      this.userSessionService.setSelectedTournament(tournament.id + "");
+      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: tournament.id}});
+    }
+  }
+
+  downloadBlogCode(tournament: Tournament): void {
+    if (tournament?.id) {
+      this.loadingGlobal = true;
+      this.rankingService.getTournamentSummaryAsHtml(tournament.id).subscribe((html: Blob): void => {
+        this.downloadFile(html, 'txt/plain', "Code - " + tournament.name + '.txt');
+      }).add(() => {
+        this.loadingGlobal = false;
       });
     }
   }
 
-  openFights(): void {
-    if (this.basicTableData.selectedElement) {
-      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
+  downloadAccreditations(data: { tournament: Tournament, roles: RoleType[], newOnes: boolean }): void {
+    if (data?.tournament?.id) {
+      this.tournamentService.getAccreditations(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob): void => {
+        if (html !== null) {
+          this.downloadFile(html, 'application/pdf', 'Accreditations - ' + data.tournament.name + '.pdf');
+          this.showAccreditationRoles = false;
+        } else {
+          this.messageService.warningMessage('noResults');
+        }
+      });
+    } else {
+      this.showAccreditationRoles = false;
     }
   }
 
-  downloadBlogCode(): void {
-    if (this.basicTableData.selectedElement?.id) {
-      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
-        const blob: Blob = new Blob([html], {type: 'txt/plain'});
-        const downloadURL: string = window.URL.createObjectURL(blob);
-
-        const anchor = document.createElement("a");
-        anchor.download = "Code - " + this.basicTableData.selectedElement!.name + ".txt";
-        anchor.href = downloadURL;
-        anchor.click();
+  downloadDiplomas(data: { tournament: Tournament, roles: RoleType[], newOnes: boolean }): void {
+    if (data?.tournament?.id) {
+      this.loadingGlobal = true;
+      this.tournamentService.getDiplomas(data.tournament.id, data.newOnes, data.roles).subscribe((html: Blob) => {
+        if (html !== null) {
+          this.downloadFile(html, 'application/pdf', 'Diplomas - ' + data.tournament.name + '.pdf');
+          this.showDiplomasRoles = false;
+        } else {
+          this.messageService.warningMessage('noResults');
+        }
+      }).add(() => {
+        this.loadingGlobal = false;
       });
+    } else {
+      this.showDiplomasRoles = false;
     }
   }
 
-  downloadAccreditations(): void {
-    if (this.basicTableData.selectedElement) {
-      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
-        data: {
-          tournament: this.basicTableData.selectedElement
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement?.id) {
-            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob): void => {
-              if (html !== null) {
-                const blob: Blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL: string = window.URL.createObjectURL(blob);
-
-                const anchor: HTMLAnchorElement = document.createElement("a");
-                anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
-                anchor.href = downloadURL;
-                anchor.click();
-              } else {
-                this.messageService.warningMessage('noResults');
-              }
-            });
-          }
-        }
-      });
-    }
-  }
-
-  downloadDiplomas(): void {
-    if (this.basicTableData.selectedElement) {
-      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
-        data: {
-          tournament: this.basicTableData.selectedElement
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement?.id) {
-            this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
-              if (html !== null) {
-                const blob: Blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL: string = window.URL.createObjectURL(blob);
-
-                const anchor: HTMLAnchorElement = document.createElement("a");
-                anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
-                anchor.href = downloadURL;
-                anchor.click();
-              } else {
-                this.messageService.warningMessage('noResults');
-              }
-            });
-          }
-        }
-      });
-    }
-  }
-
-  lockElement(locked: boolean): void {
-    if (this.basicTableData.selectedElement) {
-      this.basicTableData.selectedElement.locked = locked;
+  lockElement(tournament: Tournament, locked: boolean): void {
+    if (tournament) {
+      tournament.locked = locked;
       if (locked) {
-        this.achievementsService.regenerateTournamentAchievements(this.basicTableData.selectedElement?.id!).subscribe();
-        if (!this.basicTableData.selectedElement.lockedAt) {
-          this.basicTableData.selectedElement.lockedAt = new Date();
-        }
-        if (!this.basicTableData.selectedElement.finishedAt) {
-          this.basicTableData.selectedElement.finishedAt = new Date();
-        }
+        this.achievementsService.regenerateTournamentAchievements(tournament?.id!).subscribe();
+        tournament.lockedAt ??= new Date();
+        tournament.finishedAt ??= new Date();
       }
-      this.updateRowData(this.basicTableData.selectedElement);
-    }
-  }
-
-  disableRow(argument: any): boolean {
-    return (argument as Tournament).locked;
-  }
-
-  openStatistics(): void {
-    if (this.basicTableData.selectedElement) {
-      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
-    }
-  }
-
-  openCloneTournament(): void {
-    if (this.basicTableData.selectedElement) {
-      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-        disableClose: false
-      });
-      dialogRef.componentInstance.messageTag = "tournamentCloneWarning"
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.cloneElement();
+      this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
+          this.loadData();
+          this.target = null;
+          this.messageService.infoMessage('infoTournamentUpdated');
         }
-      });
+      );
     }
   }
 
-  cloneElement(): void {
-    const tournamentId: number = this.basicTableData.selectedElement?.id!;
-    this.basicTableData.selectedElement = undefined;
+  openStatistics(tournament: Tournament): void {
+    if (tournament) {
+      this.userSessionService.setSelectedTournament(tournament.id + "");
+      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: tournament.id}});
+    }
+  }
+
+  cloneElement(tournament: Tournament): void {
+    const tournamentId: number = tournament?.id!;
     this.tournamentService.clone(tournamentId).subscribe((_tournament: Tournament): void => {
-      this.basicTableData.dataSource.data.push(_tournament);
-      this.basicTableData.selectItem(_tournament);
-      this.basicTableData.dataSource._updateChangeSubscription();
+      this.loadData();
       this.messageService.infoMessage('infoTournamentStored');
-    });
+    }).add(() => {
+      this.confirmClone = false;
+    })
   }
 
-  downloadZip(): void {
-    if (this.basicTableData.selectedElement?.id) {
-      this.rankingService.getAllListAsZip(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
-        const blob: Blob = new Blob([html], {type: 'application/zip'});
-        const downloadURL: string = window.URL.createObjectURL(blob);
-
-        const anchor = document.createElement("a");
-        anchor.download = this.basicTableData.selectedElement!.name + ".zip";
-        anchor.href = downloadURL;
-        anchor.click();
+  downloadZip(tournament: Tournament): void {
+    if (tournament?.id) {
+      this.loadingGlobal = true;
+      this.rankingService.getAllListAsZip(tournament.id).subscribe((html: Blob): void => {
+        this.downloadFile(html, 'application/zip', tournament.name + '.zip');
+      }).add(() => {
+        this.loadingGlobal = false
       });
     }
   }
 
-  showQrCode(): void {
-    if (this.basicTableData.selectedElement) {
-      const dialogRef: MatDialogRef<TournamentQrCodeComponent> = this.dialog.open(TournamentQrCodeComponent, {
-        panelClass: 'pop-up-panel',
-        data: {
-          tournament: this.basicTableData.selectedElement,
-          port: window.location.port
-        }
-      });
+  onSaved(tournament: Tournament) {
+    //Saved already on the popup.
+    this.biitSnackbarService.showNotification(this.transloco.translate('infoTournamentStored'), NotificationType.INFO);
+    this.loadData(tournament);
+    this.target = null;
+  }
+
+  selectItem(tournament?: Tournament) {
+    if (tournament) {
+      // const selectedItems: Tournament[] = [];
+      // selectedItems.push(tournament);
+      // this.table.selectedRows = selectedItems;
+    }
+  }
+
+  getTournamentNames(tournaments: Tournament[]): string {
+    if (tournaments) {
+      return tournaments.map(tournament => tournament.name).join(', ');
+    }
+    return "";
+  }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
+  selectTournaments(tournaments: Tournament[]) {
+    if (tournaments?.length === 1) {
+      this.userSessionService.setSelectedTournament(tournaments[0].id + "");
+    } else {
+      this.userSessionService.setSelectedTournament(undefined);
     }
   }
 }

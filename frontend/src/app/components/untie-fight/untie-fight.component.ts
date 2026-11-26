@@ -1,10 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/notifications/duel-changed.service";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'untie-fight',
   templateUrl: './untie-fight.component.html',
   styleUrls: ['./untie-fight.component.scss']
@@ -15,7 +17,7 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
   duel: Duel;
 
   @Input()
-  selected: boolean;
+  duelSelected: Duel | undefined;
 
   @Input()
   over: boolean;
@@ -26,24 +28,23 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-  @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
+  @Input()
+  projectMode: boolean;
 
-  constructor(private duelChangedService: DuelChangedService) {
+  @Output() selectedDuel: EventEmitter<any> = new EventEmitter();
+
+  constructor(private readonly duelChangedService: DuelChangedService) {
     super();
   }
 
   ngOnInit(): void {
     this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
-      if (selectedDuel && this.duel) {
-        if (selectedDuel.id === this.duel.id) {
-          this.selected = true;
-        }
-      }
+      this.duelSelected = selectedDuel;
     });
   }
 
   selectDuel(duel: Duel) {
-    this.onSelectedDuel.emit([duel]);
+    this.selectedDuel.emit([duel]);
   }
 
   isOver(duel: Duel): boolean {

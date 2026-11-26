@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.StringMessageConverter;
@@ -36,9 +36,9 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
@@ -57,7 +57,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -70,7 +69,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     private static final String TESTING_MESSAGE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus iaculis leo purus, vitae finibus felis fringilla eget.";
 
@@ -88,7 +87,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private WebSocketStompClient webSocketStompClient;
 
-    private WebSocketHttpHeaders headers;
+    private StompHeaders headers;
 
     private AuthenticatedUser authenticatedUser;
 
@@ -101,8 +100,8 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void authentication() {
         authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
-        headers = new WebSocketHttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken(authenticatedUser, "127.0.0.1"));
+		headers = new StompHeaders();
+		headers.add("JWT-Token", jwtTokenUtil.generateAccessToken(authenticatedUser, "127.0.0.1"));
     }
 
 
@@ -121,11 +120,12 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void echoTest() throws ExecutionException, InterruptedException, TimeoutException {
         BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
 
-        final StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
+        final StompSession session = webSocketStompClient.connectAsync(getWsPath(), new WebSocketHttpHeaders(), this.headers,
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
-        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + EchoWebSocketController.ECHO_MAPPING, new StompFrameHandler() {
+        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/" + authenticatedUser.getTenantId()
+                + EchoWebSocketController.ECHO_MAPPING, new StompFrameHandler() {
 
             @Override
             public Type getPayloadType(StompHeaders headers) {
@@ -139,9 +139,8 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         });
 
         session.send(WebSocketConfiguration.SOCKET_RECEIVE_PREFIX + EchoWebSocketController.ECHO_INBOUND_MAPPING, TESTING_MESSAGE);
-
-        await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(TESTING_MESSAGE));
+        final String receivedMessage = blockingQueue.poll(1, TimeUnit.SECONDS);
+        assertThat(receivedMessage).isEqualTo(TESTING_MESSAGE);
     }
 
 

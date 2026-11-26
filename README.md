@@ -1,4 +1,4 @@
-<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2" align="middle"> 
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager NG" align="middle">
 
 ---
 
@@ -9,28 +9,39 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-710.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-935h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
+[![Docker Pulls](https://img.shields.io/docker/pulls/softwaremagico/kendo-tournament-manager-backend)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
+[![Docker Image Version](https://img.shields.io/docker/v/softwaremagico/kendo-tournament-manager-backend?sort=semver)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
+[![Docker Image Size](https://img.shields.io/docker/image-size/softwaremagico/kendo-tournament-manager-backend/latest)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend)
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20angular-red.svg?logo=angular&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
+[![Docker Pulls](https://img.shields.io/docker/pulls/softwaremagico/kendo-tournament-manager-frontend)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend)
+[![Docker Image Version](https://img.shields.io/docker/v/softwaremagico/kendo-tournament-manager-frontend?sort=semver)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend)
+[![Docker Image Size](https://img.shields.io/docker/image-size/softwaremagico/kendo-tournament-manager-frontend/latest)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend)
 
-The Kendo Tournament Manager v2 is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
+[![TraefikProxy](https://img.shields.io/badge/powered%20by%20traeffik-%252300314b.svg?&logo=traefikproxy&logoColor=white)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+[![Docker Pulls](https://img.shields.io/docker/pulls/softwaremagico/kendo-tournament-manager-rproxy)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+[![Docker Image Version](https://img.shields.io/docker/v/softwaremagico/kendo-tournament-manager-rproxy?sort=semver)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+[![Docker Image Size](https://img.shields.io/docker/image-size/softwaremagico/kendo-tournament-manager-rproxy/latest)](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy)
+
+The Kendo Tournament Manager NG is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
 designed to efficiently manage all your kendo tournament data in one convenient location.
 It caters to tournaments of varying sizes, offering versatility to accommodate any type of event for your kendo club.
 Drawing on 15 years of experience with different fighting structures, this tool aims to provide flexibility that serves
 your club's needs effectively.
 
 <p align="center">
-    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
+    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="800" alt="Scores example">
 </p>
 
 A significant upgrade from the previous Kendo Tournament
@@ -51,31 +62,244 @@ features and customization choices.
 Alternatively, for practical illustrations, you can directly check out a few description
 [examples](https://github.com/softwaremagico/KendoTournamentManager/wiki/Full-Examples) provided.
 
-## What can this tool do for you or you and your club?
+## What can this tool do for you or your club?
 
-Some improvements that you can quickly notice include:
+### Tournament management
 
 - Streamline the [creation](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition)
-  and [development](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution) of a
-  championship, league, or tournament in various formats, suitable for both professional and amateur levels.
+  and [execution](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution) of championships,
+  leagues, and tournaments in multiple formats suitable for both professional and amateur levels.
+- Supports six distinct tournament types out of the box: **Championship (Senshuken)**, **League (Saotori shiai)**,
+  **Kachinuki**, **Loop**, **Senbatsu**, and **Dethrone the King** — each with configurable options.
+- Handle any number of teams and participants, from small club events to large multi-club championships.
+- Manage [multiple simultaneous shiaijos](https://github.com/softwaremagico/KendoTournamentManager/wiki/Multiples-Shiaijos)
+  with separate devices assigned to each fighting area.
+
+### Scoring and real-time updates
+
 - Prevent scoring errors by
   providing [instant tracking](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#scores)
-  and
-  automated [point counting](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#advancing-on-the-matches).
-- Track participants' advancements while
-  displaying [their statistics](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participants-statistics)
-  to monitor their progress over time.
-- [Encourage](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements) participation from
-  all club members in tournaments, regardless of their skill level.
+  and automated [point counting](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#advancing-on-the-matches),
+  including automatic *hansoku* (fault penalties) assignment.
+- Scores are synchronized across all connected devices in real time via **WebSockets**, so every shiaijo sees
+  the latest data instantly.
+- Handle [tie-breaking (daihyōsen)](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#tie-resolution-daihysen)
+  matches automatically when teams share the same ranking.
+- Built-in [match timer](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#timer)
+  with configurable duration per tournament.
 
-Additionally, there are many more details outlined in
-the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
+### Participant and club management
+
+- Register clubs and participants once; reuse them across any number of tournaments.
+- Assign participants to roles: competitor, referee, volunteer, and more.
+- Upload participant photos for use in score panels and printed accreditations.
+- Bulk-import clubs and participants from **CSV files** for fast onboarding.
+
+### Statistics, rankings, and gamification
+
+- Track participants' progress through
+  detailed [per-tournament and global statistics](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participants-statistics):
+  scores achieved, scores received, wins, losses, time, aggressiveness, and more.
+- Generate global [participant rankings](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participant-ranking)
+  and [club rankings](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Club-ranking),
+  filterable by time period and downloadable as PDF.
+- An [Achievements system](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements)
+  with hidden goals (normal, bronze, silver, gold) to [encourage](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements)
+  participation from all club members, regardless of skill level.
+
+### PDF generation and display
+
+- Generate printable [PDF documents](https://github.com/softwaremagico/KendoTournamentManager/wiki/Support-PDF-Files):
+  club lists, team lists, group lists, match sheets, match results, team rankings, competitor rankings,
+  participant accreditations, and diplomas.
+- Export PDF files directly from the browser using client-side generation.
+
+### Access control and guest features
+
+- Role-based access control (RBAC) with administrator and standard user roles.
+- Optional [guest access via QR codes](https://github.com/softwaremagico/KendoTournamentManager/wiki/Extra-features#Guest-Access):
+  generate a tournament QR code that any spectator can scan to follow live scores from their mobile device —
+  without needing an account.
+- Optional [competitor access via QR codes](https://github.com/softwaremagico/KendoTournamentManager/wiki/Extra-features#Competitor-Access):
+  share a personal long-lived token with club members so they can review their own statistics.
+- [Projector/referee mode](https://github.com/softwaremagico/KendoTournamentManager/wiki/Referee-Support):
+  hide all controls and show a clean scoreboard suitable for a projected display or second screen.
+
+### User experience
+
+- Fully **responsive** web application accessible from any device with a modern browser.
+- **Night mode** for comfortable use in darkened tournament venues.
+- Internationalisation (**i18n**) with community translations hosted on
+  [Weblate](https://hosted.weblate.org/engage/kendotournamentmanager/) — currently supporting
+  Spanish, English, Italian, and more.
+- Colour and team-position customisation on the score panel to match the referee's viewpoint.
+- Keyboard shortcuts for fast score entry during live matches.
+
+### REST API
+
+- Fully documented **REST API** (OpenAPI 3 / Swagger UI) available at
+  `/kendo-tournament-backend/swagger-ui/index.html` once the backend is running.
+- JWT-based authentication enables third-party integrations and custom tooling.
+
+---
+
+For a complete list of features and usage examples, visit the
+[wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
+
+## End-to-end tests
+
+The Selenium end-to-end suite builds the local frontend and backend, then runs
+against an isolated Docker environment with a disposable MySQL database:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+The temporary frontend and backend listen on ports `14200` and `18080` while
+the suite runs. To observe the browser workflow, use:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --headed
+```
+
+To run a single TestNG class during diagnosis:
+
+```bash
+E2E_TESTS=ClubParticipantTest \
+  bash ./backend/kendo-tournament-e2e/run-e2e.sh
+```
+
+The runner removes its containers and database volume when it exits. If a
+previous diagnostic run kept an environment running, remove all E2E Docker
+environments before starting another one:
+
+```bash
+bash ./backend/kendo-tournament-e2e/run-e2e.sh --stop
+```
+
+See [`backend/kendo-tournament-e2e/README.md`](./backend/kendo-tournament-e2e/README.md)
+for credentials, supported variables, and the complete scenario catalogue.
+
+## Run locally for manual testing
+
+To build and start the application in a disposable Docker environment without
+running automated tests, use the companion script:
+
+```bash
+cd backend/kendo-tournament-e2e
+./run-app.sh
+```
+
+The script builds the backend JAR and the frontend bundle, starts MySQL, the
+backend, and the frontend, waits for readiness, and prints the access URLs.
+By default the frontend is available at `http://localhost:14200` and the API at
+`http://localhost:18080/kendo-tournament-backend`, with bootstrap credentials
+`admin@test.local` / `Admin-password-123`.
+
+Before printing the URLs, the script seeds the database through the REST API
+using the existing test CSVs directly (they are not copied anywhere):
+
+- `backend/kendo-tournament-core/src/test/resources/csv/clubs.csv`
+- `backend/kendo-tournament-core/src/test/resources/csv/participants.csv`
+
+The seeding flow is:
+
+1. Log in with `APP_USERNAME` / `APP_PASSWORD` and read the JWT from the
+   `Authorization` response header.
+2. Send it as `Authorization: Bearer <jwt>` to the REST API.
+3. Import clubs first (`POST /csv/clubs`), then participants
+   (`POST /csv/participants`), so participants can resolve their club.
+
+Seeding is best-effort. If the login fails, no JWT is returned, an API call
+fails or a CSV file is missing, the script prints a `WARNING` and continues
+starting the application without the demo data. A seeding problem never aborts
+`run-app.sh`; the app remains usable normally.
+
+The default mode is `if-empty`, so a club or participant CSV is imported only
+when that resource is empty. This makes restarts with an existing database
+safe. Use `APP_SEED_DATA=never` to skip seeding, or `APP_SEED_DATA=always` to
+force the import (participants with an existing `idCard` are rejected by the
+backend importer). `APP_SEED_CLUBS_CSV` and `APP_SEED_PARTICIPANTS_CSV` can be
+used to point to other CSV files. Invalid `APP_SEED_DATA` values are rejected
+before the containers are started.
+
+With a fresh database this imports **8 clubs** and **18 participants**. On a
+restart with `if-empty`, both imports are skipped instead of duplicating data.
+`bash -n run-app.sh`, a clean-database import, an idempotent restart, the
+`never` mode, a failed login (HTTP 401) and a missing CSV path have all been
+verified.
+
+Useful options:
+
+```bash
+./run-app.sh --no-build  # start using an existing JAR and frontend bundle
+./run-app.sh --logs      # follow container logs
+./run-app.sh --stop      # stop containers but keep the database volume
+./run-app.sh --reset     # stop containers and delete the database volume
+```
+
+Environment variables: `APP_FRONTEND_PORT`, `APP_BACKEND_PORT`, `APP_USERNAME`,
+`APP_PASSWORD`, `APP_ENABLE_TENANCY`, `APP_PROJECT_NAME`, `APP_SEED_DATA`,
+`APP_SEED_CLUBS_CSV`, `APP_SEED_PARTICIPANTS_CSV`.
+
+## Architecture
+
+The application follows a standard three-tier architecture deployed as Docker containers:
+
+```
+┌─────────────────────────────┐
+│  Browser (any device)       │
+│  Angular SPA                │
+└────────────┬────────────────┘
+             │ HTTPS / WebSockets
+┌────────────▼────────────────┐
+│  Traefik reverse proxy      │  ← automatic TLS via Let's Encrypt
+│  (kendo-tournament-rproxy)  │
+└────────────┬────────────────┘
+             │ HTTP (internal)
+     ┌───────┴──────┐
+     │              │
+┌────▼────┐  ┌──────▼───────┐
+│Frontend │  │  Backend     │
+│ (Nginx) │  │ Spring Boot  │
+└─────────┘  └──────┬───────┘
+                    │ JDBC
+             ┌──────▼───────┐
+             │  Database    │
+             │(PostgreSQL / │
+             │   MySQL)     │
+             └──────────────┘
+```
+
+| Layer | Technology | Docker Hub image |
+|-------|------------|-----------------|
+| Frontend | Angular 22, served via Nginx | [`softwaremagico/kendo-tournament-manager-frontend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
+| Backend | Java 25, Spring Boot 4, REST + WebSockets | [`softwaremagico/kendo-tournament-manager-backend`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-backend) |
+| Reverse proxy | Traefik (automatic Let's Encrypt TLS) | [`softwaremagico/kendo-tournament-manager-rproxy`](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
+| Database | PostgreSQL 19 (Docker default) or MySQL 9.7 LTS (standalone default) | official image |
+
+---
 
 ## Installation
 
 For detailed guidance on the installation process, please refer to
 the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation).
 But for your convenience, here is an overview:
+
+### Using Docker
+
+Deploying the application as a [docker](https://www.docker.com/) container is the best option.
+If you prefer deploying it as a Docker container, refer to the guidelines provided in this
+project's [documentation](./docker/README.md).
+Using Docker is recommended for deployment due to its ease of use once you are familiar with it.
+Remember that you can also use the official images from docker hub:
+
+- [Backend](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-backend/general)
+- [Frontend](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-frontend)
+- [Proxy](https://hub.docker.com/repository/docker/softwaremagico/kendo-tournament-manager-rproxy)
+
+Please, check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation-using-docker-hub) for further information about how
+to customize the configuration.
 
 ### From a release version
 
@@ -90,11 +314,11 @@ Simply extract the file `kendo-tournament-frontend.zip` onto your server as a st
 #### Deploy the backend
 
 The backend is distributed as a standalone JAR file.
-Running this application requires Java JRE 17 or higher.
+Running this application requires Java JRE 25 or higher.
 You can manually execute it by entering the following command:
 
 ```
-java -jar kendo-tournament-backend.jar 
+java -jar kendo-tournament-backend.jar
 ```
 
 It's likely that some configuration adjustments may be necessary for the application.
@@ -125,7 +349,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.kendo.datasource.jdbc-url=jdbc:postgresql://kendo-tournament-database:5432/postgres
 spring.kendo.datasource.username=<your user>
 spring.kendo.datasource.password=<your password>
-``` 
+```
 
 3. Upon successful connection of the backend to the database, all necessary database structures will be automatically
    generated.
@@ -152,33 +376,48 @@ The backend requires a database for data persistence.
 You have flexibility in choosing your preferred database provider.
 Refer to [the documentation](./backend/README.md) for guidance on configuring your chosen database engine.
 
-### Using Docker
-
-Furthermore, deploying the application as a [docker](https://www.docker.com/) container is an option.
-If you prefer deploying it as a Docker container, refer to the guidelines provided in this
-project's [documentation](./docker/README.md).
-Using Docker is recommended for deployment due to its ease of use once you are familiar with it.
-
-## Hardware Requirements
+## Hardware requirements
 
 ### Hosting
 
-The application has been tested on a Raspberry Pi 3 model B with 1GB of RAM and has shown excellent performance for
+The application has been tested on a Raspberry Pi 3 model B with 1 GB of RAM and has shown excellent performance for
 small to medium-sized events.
-For larger events, it is recommended to consider using more specialized hardware hosted in the cloud.
+For larger events or high-availability deployments, it is recommended to use more specialized hardware or a cloud
+hosting solution.
 
-### Client Side
+### Client side
 
-Designed as a web application, it can be accessed by any device with a browser.
-The user experience is optimized for desktop environments and tablets, featuring a responsive design that adapts well to
-most devices in the market.
-However, using mobile devices is not advised due to screen size limitations.
+Designed as a web application, it can be accessed by any device with a modern browser.
+The user experience is optimised for desktop environments and tablets, featuring a responsive design that adapts well to
+most devices.
+Using mobile phones is not recommended due to screen-size limitations that make score entry difficult.
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+If you find a bug or have a feature request, please open an [issue](https://github.com/softwaremagico/KendoTournamentManager/issues).
+
+Translations are managed through [Weblate](https://hosted.weblate.org/engage/kendotournamentmanager/).
+If you would like to add or improve a translation, please contribute there.
+
+---
+
+## License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+See the [LICENSE](LICENSE) file for details.
 
 # Using the application
 
 For instructions on using the application, please visit
 the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
 There, you will find comprehensive examples for various types of tournaments and guidance on how to configure them.
+
+A list of all released versions with a short description of each one is available on
+the [Versions page](https://github.com/softwaremagico/KendoTournamentManager/wiki/Versions) of the wiki.
 
 ## Default credentials
 
@@ -187,7 +426,7 @@ password to log in, and the system will immediately create an administrator acco
 This feature is only available if there are no users in the system, so it will be disabled as soon as you create the
 first administrator. Please make a note of the generated username and password and store it in a safe place.
 
-# Contributing to Kendo Tournament Manager v2
+# Contributing to Kendo Tournament Manager NG
 
 There are various ways to contribute to this project:
 
@@ -196,7 +435,7 @@ There are various ways to contribute to this project:
 - Translating the application into different languages is also appreciated.
 - Any suggestions for improving the design are welcome.
 
-To contribute code to Kendo Tournament Manager v2, please follow these steps:
+To contribute code to Kendo Tournament Manager NG, please follow these steps:
 
     Fork this repository.
     Create a branch: git checkout -b <branch_name>.

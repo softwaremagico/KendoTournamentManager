@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {catchError, map, tap} from "rxjs/operators";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {CookieService} from "ngx-cookie-service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
@@ -11,6 +11,21 @@ import {MessageService} from "./message.service";
 import {LoginService} from "./login.service";
 import {UserRoles} from "./rbac/user-roles";
 
+/**
+ * Angular service for authenticated-user account management.
+ *
+ * Wraps the backend {@code /auth/register} and {@code /auth/update-password}
+ * REST endpoints (ADMIN-only operations). Provides:
+ * - Retrieving the full list of registered users.
+ * - Creating new user accounts.
+ * - Updating existing user details and roles.
+ * - Deleting user accounts.
+ * - Resetting or updating passwords.
+ *
+ * All write operations require the ADMIN role. The service maps the raw
+ * {@code roles} string array returned by the backend to typed
+ * {@link UserRoles} values.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -29,10 +44,10 @@ export class UserService {
     const url: string = `${this.baseUrl}/register`;
     return this.http.get<AuthenticatedUser[]>(url)
       .pipe(
-        map((_users: any) => {
-          for (let user of _users) {
+        map((_users: AuthenticatedUser[]) => {
+          _users.forEach((user: AuthenticatedUser): void => {
             user.roles = UserRoles.getByKeys(user.roles);
-          }
+          });
           return _users;
         }),
         tap({
@@ -50,10 +65,9 @@ export class UserService {
       .pipe(
         tap({
           next: (_authenticatedUser: AuthenticatedUser) => {
-            this.loggerService.info(`adding user ${_authenticatedUser}`);
-            this.messageService.infoMessage("infoAuthenticatedUserStored");
+            this.loggerService.info(`adding user ${_authenticatedUser.username}`);
           },
-          error: (error: { status: any; }): void => {
+          error: (error: unknown): void => {
             this.systemOverloadService.isBusy.next(false);
             if (error instanceof HttpErrorResponse) {
               switch (error.status) {
@@ -67,7 +81,7 @@ export class UserService {
           },
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<AuthenticatedUser>(`adding ${authenticatedUser}`))
+        catchError(this.messageService.handleError<AuthenticatedUser>(`adding ${authenticatedUser.username}`))
       );
   }
 
@@ -76,11 +90,11 @@ export class UserService {
     return this.http.patch<AuthenticatedUser>(url, authenticatedUser)
       .pipe(
         tap({
-          next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`updating user ${_authenticatedUser}`),
+          next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`updating user ${_authenticatedUser.username}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<AuthenticatedUser>(`updating ${authenticatedUser}`))
+        catchError(this.messageService.handleError<AuthenticatedUser>(`updating ${authenticatedUser.username}`))
       );
   }
 
@@ -89,11 +103,11 @@ export class UserService {
     return this.http.delete<AuthenticatedUser>(url)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting user ${authenticatedUser}`),
+          next: () => this.loggerService.info(`deleting user ${authenticatedUser.username}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<AuthenticatedUser>(`delete ${authenticatedUser}`))
+        catchError(this.messageService.handleError<AuthenticatedUser>(`delete ${authenticatedUser.username}`))
       );
   }
 
@@ -101,6 +115,20 @@ export class UserService {
     const url: string = `${this.baseUrl}/password`;
     return this.http.post<void>(url, {
       oldPassword: oldPassword,
+      newPassword: newPassword
+    })
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Updating password!`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+      );
+  }
+
+  updateUserPassword(username: string, newPassword: string): Observable<void> {
+    const url: string = `${this.baseUrl}/${username}/password`;
+    return this.http.post<void>(url, {
       newPassword: newPassword
     })
       .pipe(
@@ -122,7 +150,6 @@ export class UserService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        //catchError(this.messageService.handleError<UserRoles[]>(`Roles cannot be retrieved!`))
       );
   }
 }

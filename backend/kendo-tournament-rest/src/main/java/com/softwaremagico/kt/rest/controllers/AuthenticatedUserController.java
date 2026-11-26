@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.controllers;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,9 @@ import java.util.Set;
 
 @Controller
 public class AuthenticatedUserController {
+    private static final String USER_WITH_USERNAME_PREFIX = "User with username '";
+    private static final String USER_DOES_NOT_EXIST_SUFFIX = "' does not exists";
+    private static final String NOT_REGISTERED_USER_SUFFIX = "' is not a registered user";
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -59,11 +62,12 @@ public class AuthenticatedUserController {
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
         try {
             try {
-                return authenticatedUserProvider.save(username, firstName, lastName, password, roles);
+                return authenticatedUserProvider.save(creator, username, firstName, lastName, password, roles);
             } finally {
                 KendoTournamentLogger.info(this.getClass(), "User '{}' created by '{}'.", username, creator);
             }
-        } catch (DuplicatedUserException e) {
+        } catch (DuplicatedUserException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Duplicated user '{}' creation rejected: {}", username, ex.getMessage());
             throw new BadRequestException(this.getClass(), "Username exists!");
         }
     }
@@ -76,12 +80,12 @@ public class AuthenticatedUserController {
         return createUser(creator, username, firstName, lastName, password, roleTags);
     }
 
-    public void updatePassword(String username, String oldPassword, String newPassword) {
+    public void updatePassword(String username, String oldPassword, String newPassword, String updater) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + USER_DOES_NOT_EXIST_SUFFIX));
 
         if (user instanceof Participant) {
-            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+            throw new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + NOT_REGISTERED_USER_SUFFIX);
         }
 
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
@@ -93,18 +97,20 @@ public class AuthenticatedUserController {
 
         //Update the new password.
         authenticatedUser.setPassword(newPassword);
+        authenticatedUser.setUpdatedBy(updater);
         authenticatedUserProvider.save(authenticatedUser);
         KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", user.getUsername());
     }
 
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
         final AuthenticatedUser user = (AuthenticatedUser) authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + createUserRequest.getUsername() + USER_DOES_NOT_EXIST_SUFFIX));
         user.setName(createUserRequest.getName() != null ? createUserRequest.getName().replaceAll("[\n\r\t]", "_") : "");
         user.setLastname(createUserRequest.getLastname() != null ? createUserRequest.getLastname().replaceAll("[\n\r\t]", "_") : "");
         if (!Objects.equals(user.getUsername(), updater)) {
             user.setRoles(createUserRequest.getRoles());
         }
+        user.setUpdatedBy(updater);
         KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}' with roles '{}'.", user.getUsername(),
                 updater, user.getRoles());
         try {
@@ -118,9 +124,9 @@ public class AuthenticatedUserController {
     public void deleteUser(String actioner, String username) {
         //Can only be AuthenticatedUsers and not Participants
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + USER_DOES_NOT_EXIST_SUFFIX));
         if (user instanceof Participant) {
-            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+            throw new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + NOT_REGISTERED_USER_SUFFIX);
         }
         //Ensure that at least, one user remain.
         if (authenticatedUserProvider.count() > 1 && user instanceof AuthenticatedUser authenticatedUser) {
@@ -131,12 +137,40 @@ public class AuthenticatedUserController {
 
     public Set<String> getRoles(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+                new UserNotFoundException(this.getClass(), USER_WITH_USERNAME_PREFIX + username + USER_DOES_NOT_EXIST_SUFFIX));
         return user.getRoles();
     }
 
     public List<AuthenticatedUser> findAll() {
         return authenticatedUserProvider.findAll();
+    }
+
+    public List<AuthenticatedUser> findAllByUsername(String username) {
+        return authenticatedUserProvider.findAllByUsername(username);
+    }
+
+    public List<AuthenticatedUser> findAllUnscoped() {
+        return authenticatedUserProvider.findAllUnscoped();
+    }
+
+    public boolean belongsToTenant(AuthenticatedUser user, Integer tenantId) {
+        return authenticatedUserProvider.belongsToTenant(user, tenantId);
+    }
+
+    public List<Integer> getTenantIds(AuthenticatedUser user) {
+        return authenticatedUserProvider.getTenantIds(user);
+    }
+
+    public void updateLastTenant(String username, Integer tenantId) {
+        authenticatedUserProvider.updateLastTenant(username, tenantId);
+    }
+
+    public AuthenticatedUser createAssignedUser(AuthenticatedUser user) {
+        return authenticatedUserProvider.save(user);
+    }
+
+    public void removeFromTenant(String username, Integer tenantId) {
+        authenticatedUserProvider.removeFromTenant(username, tenantId);
     }
 
     public void delete(AuthenticatedUser authenticatedUser) {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,13 @@ import org.springframework.util.StopWatch;
 @Aspect
 @Component
 public class BasicLogging extends AbstractLogging {
+
+    /**
+     * Creates a new aspect that logs DAO invocations.
+     */
+    public BasicLogging() {
+        super();
+    }
 
     /**
      * Following is the definition for a pointcut to select all the methods

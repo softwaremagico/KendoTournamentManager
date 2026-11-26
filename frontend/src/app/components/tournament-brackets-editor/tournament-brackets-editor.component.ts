@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -18,17 +18,22 @@ import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 import {random} from "../../utils/random/random";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
 import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
-import {Message} from "@stomp/stompjs/esm6";
+import {Message} from "@stomp/stompjs";
 import {MessageContent} from "../../websockets/message-content.model";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
 import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
+import {BiitProgressBarType} from "@biit-solutions/wizardry-theme/info";
+import {CsvService} from "../../services/csv-service";
+import {MessageService} from "../../services/message.service";
+import {TranslocoService} from '@jsverse/transloco';
+import {LoginService} from '../../services/login.service';
 
 @Component({
-  selector: 'app-tournament-brackets-editor',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
@@ -46,42 +51,45 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   groupsDisabled: boolean = true;
 
   @Output()
-  onSelectedGroup: EventEmitter<Group> = new EventEmitter();
+  editorSelectedGroup: EventEmitter<Group> = new EventEmitter();
 
   @Output()
-  onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
+  editorGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
 
   @Output()
-  onGroupsDisabled: EventEmitter<boolean> = new EventEmitter();
+  editorGroupsDisabled: EventEmitter<boolean> = new EventEmitter();
 
   @Output()
-  onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
-
+  editorTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
   @ViewChild('tournamentBracketsComponent', {read: ElementRef})
   public tournamentBracketsComponent: ElementRef;
 
-
   groups: Group[];
-
   selectedGroup: Group;
 
   //Level -> Src Group -> Dst Group
   relations: Map<number, { src: number, dest: number }[]>;
-
   teamListData: TeamListData = new TeamListData();
-
   totalTeams: number;
-
   numberOfWinnersFirstLevel: number;
+
+  removeAllTeamsConfirmation: boolean = false;
 
   private topicSubscription: Subscription;
 
+  loadingGlobal: boolean = false;
+
+  protected readonly RbacActivity = RbacActivity;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
+              public rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
               private rxStompService: RxStompService, private environmentService: EnvironmentService,
-              private tournamentChangedService: TournamentChangedService) {
+              private tournamentChangedService: TournamentChangedService, private csvService: CsvService,
+               private messageService: MessageService, private translateService: TranslocoService,
+               private loginService: LoginService) {
   }
 
   ngOnInit(): void {
@@ -92,7 +100,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       this.numberOfWinnersFirstLevel = numberOfWinners;
       this.updateData(true, false);
     });
-    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + this.loginService.getTenantId() + '/groups').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
       if (messageContent.topic == "Group" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         this.updateData(false, messageContent.actor == localStorage.getItem('username'));
@@ -125,11 +133,11 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         }
 
         this.groups = _groups;
-        this.onGroupsUpdated.emit(_groups);
-        this.onGroupsDisabled.emit(ownAction);
+        this.editorGroupsUpdated.emit(_groups);
+        this.editorGroupsDisabled.emit(ownAction);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
         const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
-        this.onTeamsLengthUpdated.next(_teams.length);
+        this.editorTeamsLengthUpdated.next(_teams.length);
         this.totalTeams = _teams.length;
         _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
 
@@ -139,14 +147,14 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
         this.relations = this.convert(_groupRelations);
         this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
-      });
+      }).add(() => this.loadingGlobal = false);
     }
   }
 
   selectGroup(group: Group): void {
     if (this.rbacService.isAllowed(RbacActivity.SELECT_GROUP)) {
       this.selectedGroup = group;
-      this.onSelectedGroup.emit(group);
+      this.editorSelectedGroup.emit(group);
     }
   }
 
@@ -201,7 +209,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         return g.level === 0;
       })
       const lastGroup: Group = level0Groups.reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-        prev : current, level0Groups[level0Groups.length - 1]);
+        prev : current, level0Groups.at(-1)!);
       this.deleteGroup(lastGroup);
     }
   }
@@ -218,11 +226,12 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   public downloadAsPdf(): void {
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
-    const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
-    //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
+    const height: number = groupsByLevel.get(0)?.length! * (BracketsMeasures.GROUP_SEPARATION
+      + BracketsMeasures.GROUP_HIGH + 100) + (this.totalTeams * (BracketsMeasures.TEAM_GROUP_HIGH + 70));
+    const width: number = (groupsByLevel.size) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.levelSeparation(groupsByLevel.get(0)?.length) + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
+    const pageFormat: string = groupsByLevel.get(0)?.length! > 8 ? "a3" : "a4";
     const widthMM: number = this.getMM(width);
     const heightMM: number = this.getMM(height);
     const ratio: number = this.getRatio(widthMM, heightMM);
@@ -233,7 +242,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       const jsPdfOptions = {
         orientation: orientation,
         unit: imageUnit,
-        format: "a4",
+        format: pageFormat,
       };
       const pdf: jsPDF = new jsPDF(jsPdfOptions);
       pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);
@@ -276,6 +285,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   randomGroups(): void {
     let groups: Group[] = this.groups;
     //Select group from level 0.
+    this.loadingGlobal = true;
     groups = groups.filter((group: Group): boolean => group.level == 0);
     while (this.teamListData.teams.length > 0) {
       const team: Team = this.getRandomTeam(this.teamListData.teams);
@@ -311,24 +321,28 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     return teams[Math.floor(random() * teams.length)];
   }
 
-  askToRemoveAllTeams(): void {
-    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "questionDeleteTeams"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.removeAllTeams();
-      }
-    });
-  }
-
   removeAllTeams(): void {
     this.groupService.deleteAllTeamsFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
   }
 
-  protected readonly RbacActivity = RbacActivity;
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addGroupLinks(file, this.tournament.id!).subscribe(_groupLinks => {
+          if (_groupLinks.length == 0) {
+            this.messageService.infoMessage('groupLinkStored');
+          } else {
+            const parameters: object = {element: _groupLinks[0].source.index + " --" + _groupLinks[0].winner + "--> " + _groupLinks[0].destination.index};
+            this.messageService.errorMessage(this.translateService.translate('failedOnCsvField', parameters));
+          }
+          this.updateData(true, false);
+        });
+      }
+    }
+  }
 }

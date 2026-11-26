@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,27 +21,44 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.RestServerLogger;
 import org.springframework.stereotype.Controller;
 
+import java.net.SocketException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 
 
 @Controller
 public class NetworkController {
 
+    protected InetAddress getLocalHost() throws UnknownHostException {
+        return InetAddress.getLocalHost();
+    }
+
+    protected NetworkInterface getByInetAddress(InetAddress address) throws SocketException {
+        return NetworkInterface.getByInetAddress(address);
+    }
+
     public String getHostMac() {
         try {
-            final InetAddress localHost = InetAddress.getLocalHost();
-            final NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
+            final InetAddress localHost = this.getLocalHost();
+            final NetworkInterface ni = this.getByInetAddress(localHost);
+            if (ni == null) {
+                return "";
+            }
             final byte[] hardwareAddress = ni.getHardwareAddress();
+            if (hardwareAddress == null || hardwareAddress.length < 1) {
+                return "";
+            }
             final String[] hexadecimal = new String[hardwareAddress.length];
             for (int i = 0; i < hardwareAddress.length; i++) {
                 hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
             }
             return String.join("-", hexadecimal);
-        } catch (Exception ignored) {
-            //Ignored.
+        } catch (Exception ex) {
+            RestServerLogger.debug(this.getClass(), "Cannot resolve host MAC: {}", ex.getMessage());
         }
         return "";
     }

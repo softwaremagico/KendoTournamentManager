@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,17 +21,15 @@ package com.softwaremagico.kt.rest;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -51,7 +49,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @Test(groups = "userRegister")
 public class UserRegisterTests extends AbstractTestNGSpringContextTests {
@@ -61,7 +58,7 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     private static final String CLUB_NAME = "The Club";
 
@@ -81,7 +78,7 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
 
     private String jwtToken;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JacksonException {
         return objectMapper.writeValueAsString(object);
     }
 
@@ -96,6 +93,7 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
+        request.setTenant("Legacy organization");
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
@@ -129,7 +127,7 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "whenCreatedClubThenCreatedByIsPopulated")
     public void createdByIsStoredOnDatabase() {
-        Club club = clubRepository.findAll().get(0);
+        Club club = clubRepository.findAll().getFirst();
         Assert.assertNotNull(club);
         Assert.assertEquals(club.getCreatedBy(), USER_NAME);
     }

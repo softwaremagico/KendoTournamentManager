@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {EnvironmentService} from "../environment.service";
+import {HttpClient} from '@angular/common/http';import {EnvironmentService} from "../environment.service";
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from "rxjs";
 import {Participant} from "../models/participant";
@@ -94,8 +93,7 @@ export class ParticipantService {
           next: (newParticipant: Participant) => this.loggerService.info(`adding participant ${newParticipant}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Participant>(`adding ${participant}`))
+        })
       );
   }
 

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -95,12 +96,23 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
-        final List<Participant> databaseParticipants = getRepository().findAllById(ids);
-        //JPA 'in' does not maintain the order. We need to sort them by the source list.
-        final Map<Integer, Participant> participantsById = databaseParticipants.stream().collect(Collectors.toMap(Participant::getId, Function.identity()));
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final List<Integer> validIds = ids.stream().filter(Objects::nonNull).distinct().toList();
+        if (validIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final List<Participant> databaseParticipants = getRepository().findAllById(validIds);
+        final Map<Integer, Participant> participantsById = databaseParticipants.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Participant::getId, Function.identity(), (existing, replacement) -> existing));
         final List<Participant> sortedParticipants = new ArrayList<>();
-        for (final Integer id : ids) {
-            sortedParticipants.add(participantsById.get(id));
+        for (final Integer id : validIds) {
+            final Participant participant = participantsById.get(id);
+            if (participant != null) {
+                sortedParticipants.add(participant);
+            }
         }
         return sortedParticipants;
     }
@@ -136,12 +148,25 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
             try {
                 return getRepository().findById(Integer.parseInt(fields[0]));
-            } catch (NumberFormatException ignore) {
-                //Ignored exception.
+            } catch (NumberFormatException ex) {
+                KendoTournamentLogger.debug(this.getClass(), "Invalid token username id '{}': {}", fields[0], ex.getMessage());
             }
         }
         KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
         return Optional.empty();
+    }
+
+    public Optional<Participant> findByIdCard(String idCard) {
+        if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
+            final List<Participant> participants = getRepository().findAll();
+            for (Participant participant : participants) {
+                if (participant.getIdCard() != null && participant.getIdCard().equalsIgnoreCase(idCard)) {
+                    return Optional.of(participant);
+                }
+            }
+            return Optional.empty();
+        }
+        return getRepository().findByIdCard(idCard);
     }
 
     public List<Participant> getYourWorstNightmare(Participant sourceParticipant) {
@@ -160,7 +185,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
         final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            final int maxScore = sortedLostBy.get(0).getValue();
+            final int maxScore = sortedLostBy.getFirst().getValue();
             int count = 0;
             while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
                 selected.add(sortedLostBy.get(count).getKey());
@@ -190,7 +215,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
         final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            final int maxScore = sortedLostBy.get(0).getValue();
+            final int maxScore = sortedLostBy.getFirst().getValue();
             int count = 0;
             while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
                 selected.add(sortedLostBy.get(count).getKey());
@@ -198,7 +223,8 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             }
         }
 
-        selected.sort(Comparator.comparing(Participant::getLastname).thenComparing(Participant::getName));
-        return selected;
+        return selected.stream().filter(Objects::nonNull).sorted(Comparator.comparing(Participant::getLastname,
+                        Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(Participant::getName, Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 }

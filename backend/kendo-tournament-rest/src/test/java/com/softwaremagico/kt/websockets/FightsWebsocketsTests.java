@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,8 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
@@ -31,7 +31,7 @@ import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -40,10 +40,10 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -71,7 +71,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     @LocalServerPort
     private Integer port;
@@ -93,14 +93,14 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private WebSocketStompClient webSocketStompClient;
 
-    private WebSocketHttpHeaders headers;
+    private StompHeaders headers;
 
     private AuthenticatedUser authenticatedUser;
 
     private <T> T fromJson(String payload, Class<T> clazz) {
         try {
             return objectMapper.readValue(payload, clazz);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             Assert.fail("Cannot convert JSON", e);
             return null;
         }
@@ -115,8 +115,8 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void authentication() {
         authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
-        headers = new WebSocketHttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken((IAuthenticatedUser) authenticatedUser, "127.0.0.1"));
+		headers = new StompHeaders();
+		headers.add("JWT-Token", jwtTokenUtil.generateAccessToken((IAuthenticatedUser) authenticatedUser, "127.0.0.1"));
     }
 
 
@@ -132,11 +132,12 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void fightUpdated() throws ExecutionException, InterruptedException, TimeoutException {
         BlockingQueue<FightDTO> blockingQueue = new ArrayBlockingQueue<>(1);
 
-        StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
+        StompSession session = webSocketStompClient.connectAsync(getWsPath(), new WebSocketHttpHeaders(), this.headers,
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
-        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.FIGHTS_MAPPING, new StompSessionHandlerAdapter() {
+        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + "/tenant/" + authenticatedUser.getTenantId()
+                + WebSocketController.FIGHTS_MAPPING, new StompSessionHandlerAdapter() {
 
             @Override
             public void afterConnected(StompSession session, StompHeaders connectedHeaders) {

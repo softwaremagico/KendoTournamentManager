@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,19 +30,18 @@ public abstract class LoggedException extends RuntimeException {
     protected LoggedException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
         super(message);
         this.status = status;
-        final String className = clazz.getName();
         switch (type) {
             case INFO:
-                KendoTournamentLogger.info(className, message);
+                KendoTournamentLogger.info(clazz, message);
                 break;
             case WARNING:
-                KendoTournamentLogger.warning(className, message);
+                KendoTournamentLogger.warning(clazz, message);
                 break;
             case SEVERE:
-                KendoTournamentLogger.severe(className, message);
+                KendoTournamentLogger.severe(clazz, message);
                 break;
             default:
-                KendoTournamentLogger.debug(className, message);
+                KendoTournamentLogger.debug(clazz, message);
                 break;
         }
     }

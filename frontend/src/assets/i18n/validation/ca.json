@@ -1,0 +1,9 @@
+{
+  "validationFailed": "Error de validació. Comproveu si algun camp està buit o és invàlid.",
+  "dataIsMandatory": "El camp és obligatori.",
+  "minLengthError": "Les dades introduïdes són massa curtes.",
+  "maxLengthError": "Les dades introduïdes són massa grans.",
+  "passwordMismatch": "Les contrasenyes no coincideixen.",
+  "usernameInvalid": "El nom d'usuari té un format invàlid. Si us plau, esborra qualsevol espai buit.",
+  "formatInvalid": "El format del camp és invàlid."
+}

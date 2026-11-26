@@ -1,6 +1,7 @@
-.mat-dialog-actions {
+.button-container {
   display: flex;
   justify-content: center;
+  gap: 1rem;
 }
 
 .mat-raised-button {
@@ -19,10 +20,6 @@
   max-height:400px;
   width: auto;
   height: auto;
-}
-
-.mat-dialog-content {
-  overflow: clip;
 }
 
 .floating-button {

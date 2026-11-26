@@ -1,0 +1,9 @@
+{
+  "validationFailed": "Error de validación. Por favor, compruebe si algún campo está vacío o es inválido.",
+  "dataIsMandatory": "El campo es obligatorio.",
+  "minLengthError": "Los datos introducidos son demasiado cortos.",
+  "maxLengthError": "Los datos introducidos son demasiado grandes.",
+  "passwordMismatch": "Las contraseñas no coinciden.",
+  "usernameInvalid": "El nombre de usuario tiene un formato inválido. Por favor, borra cualquier espacio vacío.",
+  "formatInvalid": "El formato del campo es inválido."
+}

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.accreditations;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,18 +21,18 @@ package com.softwaremagico.kt.pdf.accreditations;
  * #L%
  */
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.BadElementException;
+import org.openpdf.text.Document;
+import org.openpdf.text.DocumentException;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.Image;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
@@ -44,8 +44,10 @@ import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
 import java.awt.Color;
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 
 public class ParticipantAccreditationCard extends PdfDocument {
@@ -99,7 +101,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        // No writer events are needed for this accreditation layout.
     }
 
     private PdfPTable createNameTable() throws BadElementException {
@@ -225,6 +227,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 }
             }
         } catch (NullPointerException npe) {
+            KendoTournamentLogger.debug(this.getClass(), "Using default accreditation color due to missing role information ({}).",
+                    npe.getMessage());
             cell.setBackgroundColor(DEFAULT_COLOR);
         }
         table2.addCell(cell);
@@ -335,17 +339,17 @@ public class ParticipantAccreditationCard extends PdfDocument {
         Paragraph p;
         final PdfPCell cell;
 
-        final Date date = new java.util.Date();
-        final long lnMilliseconds = date.getTime();
-        final Date sqlDate = new java.sql.Date(lnMilliseconds);
-        final Time sqlTime = new java.sql.Time(lnMilliseconds);
+        final LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+        final LocalDate sqlDate = now.toLocalDate();
+        final LocalTime sqlTime = now.toLocalTime().withNano(0);
 
         try {
             p = new Paragraph(tournament.getName() + " (" + sqlTime + " " + sqlDate + ")",
-                    new Font(PdfTheme.getLineFont(), fontSize));
-        } catch (NullPointerException npen) {
+                    new Font(PdfTheme.getLineFont(), (float) fontSize));
+        } catch (NullPointerException ex) {
+            KendoTournamentLogger.debug(this.getClass(), "Falling back to generic accreditation signature ({}).", ex.getMessage());
             p = new Paragraph("Accreditation Card (" + sqlTime + " " + sqlDate + ")",
-                    new Font(PdfTheme.getLineFont(), fontSize));
+                    new Font(PdfTheme.getLineFont(), (float) fontSize));
         }
         cell = new PdfPCell(p);
         cell.setBorderWidth(0);

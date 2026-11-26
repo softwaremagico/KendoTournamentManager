@@ -1,19 +1,11 @@
-.mat-raised-button {
-  width: 150px;
-}
-
-.mat-dialog-actions {
-  display: flex;
-  justify-content: center;
-}
-
 .content {
   align-content: center;
   display: grid;
   text-align: center;
+  gap: 1rem;
 }
 
-.picture-container{
+.picture-container {
   max-height: 480px;
   max-width: 390px;
 }

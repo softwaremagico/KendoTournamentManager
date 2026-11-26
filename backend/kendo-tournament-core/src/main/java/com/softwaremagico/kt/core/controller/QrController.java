@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,18 +26,22 @@ import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
+import com.softwaremagico.kt.core.security.GuestTicketProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.w3c.dom.Document;
 
 import javax.imageio.ImageIO;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -77,20 +81,32 @@ public class QrController {
 
     private final ParticipantProvider participantProvider;
 
-    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider) {
+    private final GuestTicketProvider guestTicketProvider;
+
+    /**
+     * The provider is optional in the core-only test context, where no signing bean exists.
+     * ObjectProvider keeps this an explicit constructor dependency without requiring a bean.
+     */
+    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
+                        ObjectProvider<GuestTicketProvider> guestTicketProvider) {
         this.qrProvider = qrProvider;
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
+        this.guestTicketProvider = guestTicketProvider.getIfAvailable();
     }
 
-    @Cacheable(cacheNames = "qr-codes", key = "#tournamentId")
+    @Cacheable(cacheNames = "qr-codes", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId() "
+            + "+ ':' + #tournamentId + ':' + #port + ':' + #nightMode")
     public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port, boolean nightMode) {
         //Check that exists.
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
-            final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
-                    + "?tournamentId=" + tournament.getId() + "&user=guest";
+            final String ticket = guestTicketProvider == null ? null
+                    : guestTicketProvider.createGuestTicket(tournament.getId(), TenantContext.getRequiredTenantId());
+            final String link = frontendOrigin(port) + TOURNAMENT_FIGHTS_URL
+                    + "?tournamentId=" + tournament.getId() + "&user=guest"
+                    + (ticket == null ? "" : "&ticket=" + URLEncoder.encode(ticket, StandardCharsets.UTF_8));
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
                     !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
                     LOGO_RESOURCE,
@@ -125,7 +141,11 @@ public class QrController {
             final Document qrCode = qrProvider.getQrAsSvg(content, QR_SIZE, QR_BORDER,
                     nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
                     nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE, LOGO_RESOURCE);
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            final Transformer transformer = transformerFactory.newTransformer();
             final StringWriter stringWriter = new StringWriter();
             transformer.transform(new DOMSource(qrCode), new StreamResult(stringWriter));
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
@@ -152,7 +172,7 @@ public class QrController {
         final TemporalToken temporalToken = participantProvider.generateTemporalToken(participant);
 
         try {
-            final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
+            final String link = frontendOrigin(port) + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getContent(), StandardCharsets.UTF_8);
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
@@ -166,6 +186,13 @@ public class QrController {
         } catch (IOException e) {
             throw new UnexpectedValueException(this.getClass(), e);
         }
+    }
+
+    private String frontendOrigin(Integer port) {
+        // machineDomain can contain the backend port in direct Docker setups.
+        // When the browser supplies its frontend port, replace rather than append it.
+        final String domain = port == null ? machineDomain : machineDomain.replaceFirst(":\\d+$", "");
+        return schema + "://" + domain + (port == null ? "" : ":" + port);
     }
 
     // convert BufferedImage to byte[]

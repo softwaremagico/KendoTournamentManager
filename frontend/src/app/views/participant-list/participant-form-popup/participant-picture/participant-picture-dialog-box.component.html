@@ -1,0 +1,53 @@
+<div>
+  <div class="picture-engine">
+    <div class="canvas">
+      <div class="camera-frame">
+        <webcam (imageCapture)="pictureHandler($event)" (initError)="errorHandler($event)" [height]="512"
+          [imageType]="imageType"
+        [trigger]="clickOnCamera" [videoOptions]="videoOptions" [width]="390"></webcam>
+      </div>
+      <div class="rectangle"></div>
+      <div class="circle"></div>
+      <floating-delete-button icon="cross" class="floating-image-delete-button"
+        (click)="deletePicture()" (keydown)="deletePicture()">
+      </floating-delete-button>
+      @if (availableCameras>1 && (RbacActivity.TAKE_PICTURE | hasPermission)) {
+        <button biit-icon class="floating-swap-button"
+          (click)="switchCamera()"
+          [icon]="'camera_swap'">
+        </button>
+      }
+    </div>
+
+    <div class="gallery">
+      @for (image of pictures; track image; let i = $index) {
+        <div class="image-container">
+          <img (click)="selectImage(i)" (keydown)="selectImage(i)" [class.selected-image]="i === selectedPicture"
+            alt="Participant"
+            src="{{ image }}"/>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="button-container">
+    @if ((RbacActivity.TAKE_PICTURE | hasPermission)) {
+      <button biit-button (click)="takePicture()" quaternary>
+        {{ 'photo' | transloco }}
+      </button>
+    }
+    @if ((RbacActivity.TAKE_PICTURE | hasPermission)) {
+      <button biit-button (click)="saveImage()" primary>
+        {{ 'selectButton' | transloco }}
+      </button>
+    }
+    @if ((RbacActivity.UPLOAD_PICTURE | hasPermission)) {
+      <button biit-button (click)="fileInput.click()" secondary>
+        {{ 'upload' | transloco }}
+        <label class="visually-hidden" for="participant-picture-file-input">{{ 'upload' | transloco }}</label>
+        <input id="participant-picture-file-input" #fileInput (change)="handleFileInput($event)" accept=".jpg,.jpeg,.png" style="display:none;" type="file"/>
+      </button>
+    }
+    <button biit-button (click)="closeDialog()" secondary>{{ 'close' | transloco }}</button>
+  </div>
+</div>

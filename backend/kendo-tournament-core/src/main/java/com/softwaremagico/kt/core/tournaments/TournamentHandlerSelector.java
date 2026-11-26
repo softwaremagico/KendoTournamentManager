@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,11 +33,12 @@ public class TournamentHandlerSelector {
     private final KingOfTheMountainHandler kingOfTheMountainHandler;
     private final BubbleSortTournamentHandler bubbleSortTournamentHandler;
     private final SenbatsuTournamentHandler senbatsuTournamentHandler;
+    private final SwissTournamentHandler swissTournamentHandler;
 
     public TournamentHandlerSelector(SimpleLeagueHandler simpleLeagueHandler, CustomLeagueHandler customTournamentHandler,
                                      LoopLeagueHandler loopLeagueHandler, TreeTournamentHandler treeTournamentHandler,
                                      KingOfTheMountainHandler kingOfTheMountainHandler, BubbleSortTournamentHandler bubbleSortTournamentHandler,
-                                     SenbatsuTournamentHandler senbatsuTournamentHandler) {
+                                     SenbatsuTournamentHandler senbatsuTournamentHandler, SwissTournamentHandler swissTournamentHandler) {
         this.simpleLeagueHandler = simpleLeagueHandler;
         this.customTournamentHandler = customTournamentHandler;
         this.loopLeagueHandler = loopLeagueHandler;
@@ -45,6 +46,7 @@ public class TournamentHandlerSelector {
         this.kingOfTheMountainHandler = kingOfTheMountainHandler;
         this.bubbleSortTournamentHandler = bubbleSortTournamentHandler;
         this.senbatsuTournamentHandler = senbatsuTournamentHandler;
+        this.swissTournamentHandler = swissTournamentHandler;
     }
 
     public ITournamentManager selectManager(TournamentType type) {
@@ -65,6 +67,8 @@ public class TournamentHandlerSelector {
                 return bubbleSortTournamentHandler;
             case SENBATSU:
                 return senbatsuTournamentHandler;
+            case SWISS:
+                return swissTournamentHandler;
             default:
                 break;
         }

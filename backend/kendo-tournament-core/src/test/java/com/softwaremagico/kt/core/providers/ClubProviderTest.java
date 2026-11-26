@@ -1,0 +1,162 @@
+package com.softwaremagico.kt.core.providers;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2026 SoftwareMagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
+import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
+import com.softwaremagico.kt.persistence.repositories.ClubRepository;
+import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+@Test(groups = "clubProviderTests")
+public class ClubProviderTest {
+
+    private ClubRepository clubRepository;
+    private ParticipantRepository participantRepository;
+    private ClubProvider clubProvider;
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        TenantContext.clear();
+        clubRepository = mock(ClubRepository.class);
+        participantRepository = mock(ParticipantRepository.class);
+        clubProvider = new ClubProvider(clubRepository, participantRepository);
+        KeyProperty.configure(null, null, null);
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void clearTenantContext() {
+        TenantContext.clear();
+    }
+
+    @Test
+    public void shouldRestoreTenantOnUpdateAndKeepEntityVisibleOnlyToItsTenant() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        club.setTenantId(null);
+        TenantContext.setTenantId(7);
+        when(clubRepository.findById(1)).thenReturn(Optional.of(club));
+
+        clubProvider.update(club);
+
+        assertEquals(club.getTenantId(), Integer.valueOf(7));
+        assertTrue(clubProvider.get(1).isPresent());
+        TenantContext.setTenantId(8);
+        assertTrue(clubProvider.get(1).isEmpty());
+        verify(clubRepository).save(club);
+    }
+
+    @Test
+    public void shouldPreserveExistingTenantWhenSaving() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        club.setTenantId(7);
+        TenantContext.setTenantId(8);
+
+        clubProvider.save(club);
+
+        assertEquals(club.getTenantId(), Integer.valueOf(7));
+    }
+
+    @Test
+    public void shouldUseRepositoryQueryWhenEncryptionDisabled() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        when(clubRepository.findByNameIgnoreCaseAndCityIgnoreCase("Dojo", "Madrid")).thenReturn(Optional.of(club));
+
+        final Optional<Club> found = clubProvider.findBy("Dojo", "Madrid");
+
+        assertTrue(found.isPresent());
+        assertEquals(found.get(), club);
+        verify(clubRepository).findByNameIgnoreCaseAndCityIgnoreCase("Dojo", "Madrid");
+        verify(clubRepository, never()).findAll();
+    }
+
+    @Test
+    public void shouldUseRepositoryQueryWhenEncryptionKeyIsBlank() {
+        KeyProperty.configure("   ", null, null);
+        when(clubRepository.findByNameIgnoreCaseAndCityIgnoreCase("Dojo", "Madrid")).thenReturn(Optional.empty());
+
+        final Optional<Club> found = clubProvider.findBy("Dojo", "Madrid");
+
+        assertFalse(found.isPresent());
+        verify(clubRepository).findByNameIgnoreCaseAndCityIgnoreCase("Dojo", "Madrid");
+        verify(clubRepository, never()).findAll();
+    }
+
+    @Test
+    public void shouldFindClubFromInMemoryLoopWhenEncryptionEnabled() {
+        KeyProperty.configure("enc-key", null, null);
+        final Club first = new Club("Other", "Spain", "Bilbao");
+        final Club matching = new Club("Dojo", "Spain", "Madrid");
+        when(clubRepository.findAll()).thenReturn(List.of(first, matching));
+
+        final Optional<Club> found = clubProvider.findBy("dojo", "madrid");
+
+        assertTrue(found.isPresent());
+        assertEquals(found.get(), matching);
+        verify(clubRepository).findAll();
+        verify(clubRepository, never()).findByNameIgnoreCaseAndCityIgnoreCase("dojo", "madrid");
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenEncryptionEnabledAndNoClubMatches() {
+        KeyProperty.configure("enc-key", null, null);
+        when(clubRepository.findAll()).thenReturn(List.of(new Club("Dojo", "Spain", "Sevilla")));
+
+        final Optional<Club> found = clubProvider.findBy("Dojo", "Madrid");
+
+        assertFalse(found.isPresent());
+        verify(clubRepository).findAll();
+    }
+
+    @Test
+    public void shouldDeleteParticipantsAndClubWhenDeletingById() {
+        final Club club = new Club("Dojo", "Spain", "Madrid");
+        when(clubRepository.findById(1)).thenReturn(Optional.of(club));
+
+        clubProvider.deleteById(1);
+
+        verify(clubRepository).findById(1);
+        verify(clubRepository).deleteById(1);
+        verify(participantRepository).deleteByClubIn(java.util.Collections.singletonList(club));
+    }
+
+    @Test(expectedExceptions = ClubNotFoundException.class)
+    public void shouldThrowClubNotFoundExceptionWhenDeletingByNonExistentId() {
+        when(clubRepository.findById(99)).thenReturn(Optional.empty());
+        clubProvider.deleteById(99);
+    }
+}
+

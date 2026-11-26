@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,9 @@ import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -68,5 +70,9 @@ public interface AchievementRepository extends JpaRepository<Achievement, Intege
 
     @Query(value = "SELECT COUNT(DISTINCT(a.participant)) FROM Achievement a WHERE a.achievementType = :achievementType")
     int countAchievementsByAchievementType(AchievementType achievementType);
+
+    @Modifying
+    @Query("DELETE FROM Achievement a WHERE a.tenantId = :tenantId")
+    long deleteByTenantId(@Param("tenantId") Integer tenantId);
 }
 

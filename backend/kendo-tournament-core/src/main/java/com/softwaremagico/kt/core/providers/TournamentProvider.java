@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -52,15 +53,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
     public static final int DEFAULT_TEAM_SIZE = 3;
+    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
     private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
     private final GroupRepository groupRepository;
     private final FightRepository fightRepository;
@@ -92,6 +96,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Transactional
     @Override
     public Tournament save(Tournament entity) {
+        Objects.requireNonNull(entity, "Tournament to save cannot be null.");
         final boolean newEntity = entity.getId() == null;
         final Tournament tournament = super.save(entity);
         //Only for new tournaments.
@@ -112,7 +117,9 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
 
     private void setDefaultProperties(Tournament tournament, String username) {
         final List<TournamentExtraProperty> properties = tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(username);
-        properties.removeIf(tournamentExtraProperty -> Objects.equals(tournamentExtraProperty.getTournament().getId(), tournament.getId()));
+        properties.removeIf(tournamentExtraProperty ->
+                Objects.equals(tournamentExtraProperty.getTournament().getId(), tournament.getId())
+                        || !tournamentExtraProperty.getPropertyKey().getAllowedTournaments().contains(tournament.getType()));
         final List<TournamentExtraProperty> newProperties = new ArrayList<>();
         properties.forEach(tournamentExtraProperty -> {
             newProperties.add(TournamentExtraProperty.copy(tournamentExtraProperty));
@@ -143,7 +150,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @Override
     public Tournament update(Tournament tournament) {
         if (tournament.isLocked() && tournament.getLockedAt() == null) {
-            tournament.setLockedAt(LocalDateTime.now());
+            tournament.setLockedAt(LocalDateTime.now(DEFAULT_ZONE_ID));
         } else if (!tournament.isLocked()) {
             tournament.setLockedAt(null);
         }
@@ -154,10 +161,15 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         if (tournament == null || tournament.getCreatedAt() == null) {
             return new ArrayList<>();
         }
-        // Due to LocalDateTime encryption countByGreaterThan is not working very well.
         final List<Tournament> tournaments = getRepository().findAll();
         tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-        return tournaments.subList(tournaments.indexOf(tournament) + 1, Math.min(tournaments.indexOf(tournament) + 1 + elementsToRetrieve, tournaments.size()));
+        final int tournamentIndex = tournaments.indexOf(tournament);
+        if (tournamentIndex < 0) {
+            return new ArrayList<>();
+        }
+        final int startIndex = tournamentIndex + 1;
+        final int endIndex = Math.min(startIndex + Math.max(elementsToRetrieve, 0), tournaments.size());
+        return tournaments.subList(startIndex, endIndex);
     }
 
     public List<Tournament> getPreviousTo(Tournament tournament) {
@@ -166,13 +178,17 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         }
         final List<Tournament> tournaments = getRepository().findAll();
         tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-        return tournaments.subList(tournaments.indexOf(tournament) + 1, tournaments.size());
+        final int tournamentIndex = tournaments.indexOf(tournament);
+        if (tournamentIndex < 0) {
+            return new ArrayList<>();
+        }
+        return tournaments.subList(tournamentIndex + 1, tournaments.size());
     }
 
     public long countTournamentsAfter(LocalDateTime createdAfter) {
         if (createdAfter == null) {
             return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt() != null
-                    && tournament.getCreatedAt().isAfter(LocalDateTime.now().minusYears(1)
+                    && tournament.getCreatedAt().isAfter(LocalDateTime.now(DEFAULT_ZONE_ID).minusYears(1)
                     .with(LocalTime.MIN))).count();
 
         }
@@ -184,7 +200,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     public void markAsFinished(Tournament tournament, boolean finish) {
         if (finish && tournament.getFinishedAt() == null) {
-            tournament.updateFinishedAt(LocalDateTime.now());
+            tournament.updateFinishedAt(LocalDateTime.now(DEFAULT_ZONE_ID));
             getRepository().save(tournament);
         } else if (!finish && tournament.getFinishedAt() != null) {
             tournament.updateFinishedAt(null);
@@ -204,9 +220,10 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             //Update winners in group
             final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament);
             final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
-            if (groupsByLevel.get(0) != null) {
-                groupsByLevel.get(0).forEach(group -> group.setNumberOfWinners(numberOfWinners));
-                groupRepository.saveAll(groupsByLevel.get(0));
+            final List<Group> firstLevelGroups = groupsByLevel.get(0);
+            if (firstLevelGroups != null) {
+                firstLevelGroups.forEach(group -> group.setNumberOfWinners(numberOfWinners));
+                groupRepository.saveAll(firstLevelGroups);
             }
 
             //Resize tournament
@@ -287,8 +304,22 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         final List<Tournament> tournaments = getRepository().findByLocked(false);
         if (!tournaments.isEmpty()) {
             tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
-            return tournaments.get(0);
+            return tournaments.getFirst();
         }
         return null;
+    }
+
+    public Optional<Tournament> findByName(String name) {
+        //If encrypt is enabled.
+        if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
+            final List<Tournament> tournaments = getRepository().findAll();
+            for (Tournament tournament : tournaments) {
+                if (tournament.getName() != null && tournament.getName().equalsIgnoreCase(name)) {
+                    return Optional.of(tournament);
+                }
+            }
+            return Optional.empty();
+        }
+        return getRepository().findByName(name);
     }
 }

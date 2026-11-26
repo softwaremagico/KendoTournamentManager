@@ -1,12 +1,16 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
 import {debounceTime, fromEvent, Subscription, takeUntil} from "rxjs";
 import {NameUtilsService} from "../../../../../services/name-utils.service";
 import {MembersOrderChangedService} from "../../../../../services/notifications/members-order-changed.service";
 import {KendoComponent} from "../../../../kendo-component";
 import {Duel} from "../../../../../models/duel";
+import {Router} from "@angular/router";
+import {Fight} from "../../../../../models/fight";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'user-name',
   templateUrl: './user-name.component.html',
   styleUrls: ['./user-name.component.scss']
@@ -15,6 +19,9 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   @Input()
   participant: Participant | undefined;
+
+  @Input()
+  fight: Fight;
 
   @Input()
   duel: Duel;
@@ -31,18 +38,25 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   @Input()
   highlightedParticipantId: number | undefined;
 
+  @Input()
+  locked: boolean = false;
+
+  @Input()
+  over: boolean;
+
   reorderAllowed: boolean = true;
 
   resizeSubscription$: Subscription;
 
   public displayName: string = '';
 
-  constructor(private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
+  constructor(protected router: Router, private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
     super();
   }
 
   ngOnInit(): void {
-    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
+    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled =>
+      this.reorderAllowed = enabled && !this.duel.finished && !this.isOver(this.fight));
     this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(100))
       .subscribe(() => {
         this.displayName = this.getDisplayName(window.innerWidth);
@@ -76,7 +90,16 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   }
 
   openStatistics(): void {
-    window.open("/#/participants/statistics?participantId=" + this.participant?.id, "_blank");
+    this.router.navigateByUrl("/participants/statistics?participantId=" + this.participant?.id + "&tournamentId=" + this.duel.tournament.id + "&redirectUrl=/tournaments/fights");
+  }
+
+  isOver(fight: Fight): boolean {
+    for (let duel of fight.duels) {
+      if (!duel.finished && !duel.substitute) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

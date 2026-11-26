@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.events;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,18 +22,25 @@ package com.softwaremagico.kt.pdf.events;
  */
 
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.Phrase;
+import org.openpdf.text.pdf.ColumnText;
+import org.openpdf.text.pdf.PdfContentByte;
+import org.openpdf.text.pdf.PdfPageEventHelper;
+import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.pdf.PdfTheme;
 
 public class FooterEvent extends PdfPageEventHelper {
     private static final int BOTTOM_MARGIN = 0;
+
+    /**
+     * Creates a new footer event.
+     */
+    public FooterEvent() {
+        super();
+    }
 
     /**
      * Adds a footer to every page
@@ -41,7 +48,7 @@ public class FooterEvent extends PdfPageEventHelper {
     @Override
     public void onEndPage(PdfWriter writer, Document document) {
         final PdfContentByte cb = writer.getDirectContent();
-        final Phrase footer = new Phrase("Created using 'Kendo Tournament Manager v2'",
+        final Phrase footer = new Phrase("Created using 'Kendo Tournament Manager NG'",
                 new Font(PdfTheme.getFooterFont(), PdfTheme.FOOTER_FONT_SIZE));
         ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer, (document.right() - document.left()) / 2 + document.leftMargin(),
                 document.bottom() + BOTTOM_MARGIN, 0);

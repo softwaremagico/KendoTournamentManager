@@ -1,8 +1,11 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {Team} from "../../models/team";
+import {NameUtilsService} from "../../services/name-utils.service";
 
 @Component({
-  selector: 'app-team-card',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
+  selector: 'team-card',
   templateUrl: './team-card.component.html',
   styleUrls: ['./team-card.component.scss']
 })
@@ -16,5 +19,11 @@ export class TeamCardComponent {
 
   @Input()
   disableDrag: boolean = false;
+
+  @Output()
+  clickEvent: EventEmitter<Team> = new EventEmitter<Team>();
+
+  constructor(protected nameUtils: NameUtilsService) {
+  }
 
 }

@@ -1,7 +1,9 @@
-import {Component, OnDestroy} from "@angular/core";
+import {ChangeDetectionStrategy, Component, OnDestroy} from "@angular/core";
 import {Subject} from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   template: ''
 })
 export abstract class KendoComponent implements OnDestroy {

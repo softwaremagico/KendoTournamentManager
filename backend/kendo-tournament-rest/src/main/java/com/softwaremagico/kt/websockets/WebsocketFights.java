@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,6 +33,8 @@ public class WebsocketFights {
         //Refresh screens when a duel is updated.
         duelController.addFightUpdatedListener(((tournament, fight, duel, actor, session) ->
                 webSocketController.fightUpdated(fight, actor, session)));
+        duelController.addUntieUpdatedListener(((tournament, duel, actor, session) ->
+                webSocketController.untieUpdated(duel, actor, session)));
         fightController.addFightsAddedListeners((webSocketController::fightsCreated));
 
     }

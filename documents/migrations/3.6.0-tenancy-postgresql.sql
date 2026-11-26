@@ -1,0 +1,230 @@
+-- Kendo Tournament Manager 3.6.0
+-- Manual migration from a single-tenant installation to tenancy.
+-- Run once, after taking a verified backup and before starting version 3.6.0.
+-- PostgreSQL 14+
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS tenants (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO tenants (name, active)
+SELECT 'Default', TRUE
+WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default')
+  -- Supports installations created by the previous tenancy implementation.
+  AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Legacy organization');
+
+UPDATE tenants SET name = 'Default'
+WHERE id = 1 AND name = 'Legacy organization'
+  AND NOT EXISTS (SELECT 1 FROM tenants WHERE name = 'Default');
+
+-- The application reserves tenant 1 for legacy/background data. Do not continue
+-- against an installation where that invariant cannot be established.
+DO $$
+BEGIN
+    IF (SELECT id FROM tenants WHERE name = 'Default') <> 1 THEN
+        RAISE EXCEPTION 'Default tenant must have tenant id 1; resolve existing tenant data before migration.';
+    END IF;
+END $$;
+
+-- Add the ownership column to every entity that inherits Element.
+ALTER TABLE achievements ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE authenticated_users ADD COLUMN IF NOT EXISTS last_tenant_id INTEGER;
+ALTER TABLE clubs ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE duels ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE fights ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE groups_links ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE participant_image ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE participants ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE roles ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE tournament_extra_properties ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE tournament_groups ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE tournament_image ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE tournament_scores ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+ALTER TABLE tournaments ADD COLUMN IF NOT EXISTS tenant_id INTEGER;
+
+-- Existing data becomes private to the legacy organization.
+DO $$
+DECLARE
+    legacy_tenant_id INTEGER;
+    table_name TEXT;
+BEGIN
+    SELECT id INTO legacy_tenant_id FROM tenants WHERE name = 'Default';
+    FOREACH table_name IN ARRAY ARRAY[
+        'achievements', 'clubs', 'duels', 'fights', 'groups_links',
+        'participant_image', 'participants', 'roles', 'teams', 'tournament_extra_properties',
+        'tournament_groups', 'tournament_image', 'tournament_scores', 'tournaments'
+    ] LOOP
+        EXECUTE format('UPDATE %I SET tenant_id = $1 WHERE tenant_id IS NULL', table_name) USING legacy_tenant_id;
+        EXECUTE format('ALTER TABLE %I ALTER COLUMN tenant_id SET NOT NULL', table_name);
+        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = table_name || '_tenant_fk') THEN
+            EXECUTE format('ALTER TABLE %I ADD CONSTRAINT %I FOREIGN KEY (tenant_id) REFERENCES tenants(id)',
+                           table_name, table_name || '_tenant_fk');
+        END IF;
+        EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON %I (tenant_id)', table_name || '_tenant_idx', table_name);
+    END LOOP;
+END $$;
+
+CREATE TABLE IF NOT EXISTS user_tenants (
+    id SERIAL PRIMARY KEY,
+    authenticated_user_id INTEGER NOT NULL REFERENCES authenticated_users(id),
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_tenants_user_tenant_key UNIQUE (authenticated_user_id, tenant_id)
+);
+INSERT INTO user_tenants (authenticated_user_id, tenant_id)
+SELECT id, (SELECT id FROM tenants WHERE name = 'Default') FROM authenticated_users
+ON CONFLICT (authenticated_user_id, tenant_id) DO NOTHING;
+UPDATE authenticated_users SET last_tenant_id = (SELECT id FROM tenants WHERE name = 'Default') WHERE last_tenant_id IS NULL;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'authenticated_users_last_tenant_fk') THEN
+        ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_last_tenant_fk
+            FOREIGN KEY (last_tenant_id) REFERENCES tenants(id);
+    END IF;
+END $$;
+CREATE INDEX IF NOT EXISTS authenticated_users_last_tenant_idx ON authenticated_users (last_tenant_id);
+
+-- Replace global business uniqueness with tenant-local uniqueness.
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM authenticated_users
+        GROUP BY username_hash HAVING COUNT(*) > 1
+    ) THEN
+        RAISE EXCEPTION 'Duplicate usernames exist; resolve them before migration.';
+    END IF;
+END $$;
+
+ALTER TABLE authenticated_users ADD CONSTRAINT authenticated_users_username_hash_key UNIQUE (username_hash);
+
+ALTER TABLE clubs DROP CONSTRAINT IF EXISTS clubs_name_city_key;
+ALTER TABLE tournaments DROP CONSTRAINT IF EXISTS tournaments_name_key;
+ALTER TABLE participants DROP CONSTRAINT IF EXISTS participants_id_card_key;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'clubs_tenant_name_city_key') THEN
+        ALTER TABLE clubs ADD CONSTRAINT clubs_tenant_name_city_key UNIQUE (tenant_id, name, city);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'tournaments_tenant_name_key') THEN
+        ALTER TABLE tournaments ADD CONSTRAINT tournaments_tenant_name_key UNIQUE (tenant_id, name);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'participants_tenant_id_card_key') THEN
+        ALTER TABLE participants ADD CONSTRAINT participants_tenant_id_card_key UNIQUE (tenant_id, id_card);
+    END IF;
+END $$;
+
+-- Compatibility for legacy schema versions that still use duels_id instead of duel_id.
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_1_score RENAME COLUMN duel_id TO duels_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_2_score RENAME COLUMN duel_id TO duels_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score_time'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_1_score_time'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_1_score_time RENAME COLUMN duel_id TO duels_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score_time'
+          AND column_name = 'duel_id'
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competitor_2_score_time'
+          AND column_name = 'duels_id'
+    ) THEN
+        ALTER TABLE public.competitor_2_score_time RENAME COLUMN duel_id TO duels_id;
+    END IF;
+END $$;
+
+-- Update the tournament type check constraint to include SWISS.
+ALTER TABLE tournaments DROP CONSTRAINT IF EXISTS tournaments_tournament_type_check;
+ALTER TABLE tournaments
+    ADD CONSTRAINT tournaments_tournament_type_check
+        CHECK ((tournament_type)::text = ANY (
+            ARRAY [
+                'CHAMPIONSHIP'::character varying,
+                'TREE'::character varying,
+                'LEAGUE'::character varying,
+                'LOOP'::character varying,
+                'CUSTOM_CHAMPIONSHIP'::character varying,
+                'KING_OF_THE_MOUNTAIN'::character varying,
+                'CUSTOMIZED'::character varying,
+                'SENBATSU'::character varying,
+                'SWISS'::character varying,
+                'BUBBLE_SORT'::character varying
+            ]
+        ));
+
+-- Update the tournament extra properties property key check constraint to include SWISS.
+ALTER TABLE tournament_extra_properties DROP CONSTRAINT IF EXISTS tournament_extra_properties_property_key_check;
+ALTER TABLE tournament_extra_properties
+    ADD CONSTRAINT tournament_extra_properties_property_key_check
+        CHECK ((property_key)::text = ANY (
+            ARRAY [
+                'MAXIMIZE_FIGHTS'::character varying,
+                'AVOID_DUPLICATES'::character varying,
+                'KING_INDEX'::character varying,
+                'KING_DRAW_RESOLUTION'::character varying,
+                'DIPLOMA_NAME_HEIGHT'::character varying,
+                'NUMBER_OF_WINNERS'::character varying,
+                'LEAGUE_FIGHTS_ORDER_GENERATION'::character varying,
+                'ODD_FIGHTS_RESOLVED_ASAP'::character varying,
+                'SENBATSU_CHALLENGE_DISTANCE'::character varying,
+                'SWISS_ROUNDS'::character varying,
+                'SWISS_TIE_BREAK_RULE'::character varying,
+                'SWISS_AVOID_REPEATED_PAIRINGS'::character varying
+            ]
+        ));
+
+COMMIT;

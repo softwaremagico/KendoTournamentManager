@@ -1,12 +1,100 @@
-.fight-container {
-  height: 80vh;
-  max-height: 80vh;
-  min-height: 50vh;
+$fight-border-color: var(--fight-border-color);
+
+.fights-container {
+  flex: 1 1 auto;
+  max-height: 88vh;
   overflow-y: auto;
+  padding-left: 20px;
+  margin-top: -25px;
+  margin-right: 15px;
+  min-width: 800px;
 }
+
+.fights-container.project-mode {
+  height: 98vh;
+  max-height: 100%;
+  overflow: scroll;
+}
+
+.fights-container.project-mode.with-banner {
+  height: 83vh;
+}
+
+/* Compact layout in projector mode to avoid large vertical gaps. */
+.fights-container.project-mode .fight-list {
+  height: auto;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.fights-container.project-mode h2.level-name {
+  padding-top: 45px;
+  margin: 6px 0;
+}
+
+.fights-container.project-mode .group-name {
+  margin: 6px 0 8px 20px;
+}
+
+.fights-container.project-mode .fights-of-group {
+  margin: 4px 5px 10px;
+}
+
+.projector-empty-state {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.projector-empty-state-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: var(--active-fight-color);
+}
+
+.projector-empty-state h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.projector-empty-state p {
+  margin: 0;
+  font-size: 20px;
+  opacity: 0.85;
+}
+
+
 
 .upper-menu {
   padding-left: 30px;
+  margin: 10px;
+  display: flex;
+  gap: 1em;
+  height: 50px;
+  background-color: var(--body-background-color);
+}
+
+.upper-menu button {
+  width: 60px;
+  margin-top:7px
+}
+
+.upper-menu button:disabled {
+  opacity: 50%;
+}
+
+.upper-menu button:disabled .mat-icon.kendo-icon.mat-icon-no-color {
+  fill: var(--disabled-primary-color);
+}
+
+::ng-deep .upper-menu button .mat-icon.kendo-icon.mat-icon-no-color {
+  margin-left: -17px;
 }
 
 .statistics {
@@ -15,20 +103,46 @@
 
 .fight-list {
   width: 99%;
+  height: 100%;
 }
 
 .unties-list {
   width: 100%;
 }
 
-.fights-table {
+.fights-layout {
   min-width: 600px;
+  display: flex;
+  flex-flow: column;
+  gap: 1em;
 }
 
 .fights-of-group {
-  border: #001239 3px solid;
+  border: $fight-border-color 3px solid;
   padding: 5px;
   margin: 5px 5px 20px;
+  background-color: var(--popup-background);
+  transition: border-color 160ms ease-in-out, box-shadow 160ms ease-in-out, background-color 160ms ease-in-out;
+}
+
+.fights-of-group.group-pending {
+  border-color: var(--active-fight-color);
+  background-color: var(--fight-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.fights-of-group.group-finished {
+  border-color: var(--active-fight-color);
+  background-color: var(--fight-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.fights-of-group.group-selected {
+  border-color: var(--component-color);
+  border-style: solid;
+  border-width: 3px;
+  background-color: var(--floating-background);
+  box-shadow: none;
 }
 
 .group-name {
@@ -40,12 +154,23 @@
 
 .group-name-hidden {
   visibility: hidden;
+  height: 0;
 }
 
 .filter-shiaijo {
-  display: inline-block;
+  position: absolute;
+  top: 60px;
+  right: 360px;
   font-size: 18px;
   color: var(--primay-color);
+}
+
+.filter-fights {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  font-size: 18px;
+  z-index: 0;
 }
 
 .shiaijo-label {
@@ -70,7 +195,29 @@ h2.level-name {
   font-weight: bold;
 }
 
-@media screen and (max-width: 1450px) {
+.banner {
+  width: 100%;
+  height: 17vh;
+  position: relative;
+  bottom: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+
+@media screen and (max-width: 1550px) {
+  .expand-divider {
+    display: none !important;
+  }
+
+  .expand-button {
+    display: none !important;
+  }
+
   .download-button {
     display: none !important;
   }
@@ -78,18 +225,28 @@ h2.level-name {
   .download-divider {
     display: none !important;
   }
+}
 
+@media screen and (max-width: 1450px) {
+  .filter-fights {
+    display: none !important;
+  }
   .shiaijo-label {
     display: none !important;
   }
+  .shiaijo-name {
+    display: none !important;
+  }
+}
 
+@media screen and (max-width: 1100px) {
   .whisper-button {
     display: none !important;
   }
 }
 
-@media screen and (max-width: 1300px) {
 
+@media screen and (max-width: 900px) {
   .exchange-colors {
     display: none !important;
   }
@@ -97,17 +254,25 @@ h2.level-name {
   .exchange-teams {
     display: none !important;
   }
-}
-
-
-@media screen and (max-width: 1100px) {
 
   .member-order {
     display: none !important;
   }
 
+  .order-divider {
+    display: none !important;
+  }
+
   .competitors-classification {
     display: none !important;
+  }
+
+  .actions-divider {
+    display: none !important;
+  }
+
+  .upper-menu {
+    gap: 0;
   }
 }
 
@@ -127,10 +292,14 @@ h2.level-name {
   .delete-button {
     display: none !important;
   }
+  .filter-fights {
+    display: none;
+  }
 }
 
 @media screen and (max-height: 850px) {
-  .fight-container {
+  .fights-container {
     height: 75vh;
   }
 }
+

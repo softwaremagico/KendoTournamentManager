@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.values;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,7 +55,15 @@ public enum AchievementType {
 
     THE_WINNER_TEAM,
 
+    SWISS_WINNER,
+
+    BUCHHOLZ_WHISPERER,
+
     WOODCUTTER,
+
+    HEAD_SHOT,
+
+    YOU_ARE_UNDER_ARREST,
 
     THE_NEVER_ENDING_STORY,
 
@@ -77,7 +85,9 @@ public enum AchievementType {
 
     DETHRONE_THE_KING,
 
-    CLIMB_THE_LADDER;
+    CLIMB_THE_LADDER,
+
+    LONG_PATH;
 
 
     public static AchievementType getType(String name) {

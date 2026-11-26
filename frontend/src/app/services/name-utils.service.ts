@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Participant} from "../models/participant";
+import {Team} from "../models/team";
 
 @Injectable({
   providedIn: 'root'
@@ -100,6 +101,17 @@ export class NameUtilsService {
       .replace(/ (.)/g, function ($1) {
         return $1.toUpperCase();
       })
-      .replace(/ /g, '');
+      .replaceAll(' ', '');
+  }
+
+  /**
+   * For showing teams members on a tooltip.
+   */
+  getTeamMembers(team: Team): string {
+    let teamMembers: string = "";
+    for (const member of team.members) {
+      teamMembers += this.getNameLastname(member) + "\n";
+    }
+    return teamMembers;
   }
 }

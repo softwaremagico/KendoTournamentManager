@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2025 Softwaremagico
+ * Copyright (C) 2021 - 2026 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.VersionController;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Map;
 
 
 @RestController
@@ -45,6 +48,9 @@ public class Info {
     private String latestVersion;
     private LocalDateTime checkedVersionAt;
 
+    @Value("${enable.tenancy:true}")
+    private boolean tenancyEnabled = true;
+
     public Info(VersionController versionController) {
         this.versionController = versionController;
     }
@@ -52,24 +58,31 @@ public class Info {
     @Operation(summary = "Basic method to check if the server is online.")
     @GetMapping(value = "/health-check")
     @ResponseStatus(HttpStatus.OK)
-    public void healthCheck(HttpServletRequest httpRequest) {
+    public void healthCheck(HttpServletRequest request) {
         //Not needed.
+    }
+
+    @Operation(summary = "Basic configuration values needed by the front-end.")
+    @GetMapping(value = "/app-config", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Boolean> getAppConfig() {
+        return Map.of("tenancyEnabled", tenancyEnabled);
     }
 
 
     @Operation(summary = "Basic method that checks the latest deployed version of the software.")
     @GetMapping(value = "/latest-version", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getLatestVersion(HttpServletRequest httpRequest) {
+    public ResponseEntity<String> getLatestVersion(HttpServletRequest request) {
         //To no request too much to github.
-        if (checkedVersionAt != null && checkedVersionAt.isBefore(LocalDateTime.now().plusMinutes(CHECKING_VERSION_TIME_MINUTES))) {
+        if (checkedVersionAt != null && checkedVersionAt.isBefore(LocalDateTime.now(ZoneId.systemDefault())
+                .plusMinutes(CHECKING_VERSION_TIME_MINUTES))) {
             return ResponseEntity.ok().body(latestVersion);
         }
         try {
             latestVersion = versionController.getLatestVersionFromGithub();
-            checkedVersionAt = LocalDateTime.now();
+            checkedVersionAt = LocalDateTime.now(ZoneId.systemDefault());
             return ResponseEntity.ok().body(latestVersion);
-        } catch (Exception ex) {
-            return ResponseEntity.ok().body("");
+        } catch (Exception _) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         }
     }
 }
