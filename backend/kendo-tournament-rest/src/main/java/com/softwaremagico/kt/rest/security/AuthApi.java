@@ -136,6 +136,7 @@ public class AuthApi {
     /**
      * Kept for unit tests that do not require a tenant repository.
      */
+    @SuppressWarnings("java:S107") // NOSONAR - Test constructor keeps the Spring collaborators explicit.
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,
