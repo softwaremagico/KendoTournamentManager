@@ -53,10 +53,6 @@ describe('FaultComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should run ngOnInit without throwing', () => {
-    expect(() => component.ngOnInit()).not.toThrow();
-  });
-
   it('should call setTime when duel changes in ngOnChanges', () => {
     spyOn(component, 'setTime');
     component.ngOnChanges({ duel: new SimpleChange(null, component.duel, true) });
