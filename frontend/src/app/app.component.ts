@@ -47,7 +47,8 @@ export class AppComponent extends RbacBasedComponent {
       this.translocoService.setActiveLang(storedLanguage);
       this.selectedLanguage = storedLanguage;
     } else {
-      const language: string | undefined = clientLanguages.find(lang => languages.map(lang => lang.toString()).includes(lang));
+      const language: string | undefined = clientLanguages.find(lang => languages.some(available =>
+        (typeof available === 'string' ? available : available.id) === lang));
       if (language) {
         this.translocoService.setActiveLang(language);
         this.selectedLanguage = language;
