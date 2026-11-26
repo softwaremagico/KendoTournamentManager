@@ -195,7 +195,7 @@ export class LoginService {
       const normalizedPayload = payload.replaceAll('-', '+').replaceAll('_', '/');
       const decoded = JSON.parse(atob(normalizedPayload));
       if (Array.isArray(decoded.roles)) {
-        return decoded.roles.map((role: unknown): string => String(role));
+        return decoded.roles.map(String);
       }
       if (typeof decoded.roles === 'string' && decoded.roles.length > 0) {
         return decoded.roles.split(',');
