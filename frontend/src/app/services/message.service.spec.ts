@@ -110,7 +110,7 @@ describe('MessageService', () => {
 
     expect(snackBar.showNotification).toHaveBeenCalledWith('score.updated', NotificationType.WARNING, undefined, 7);
     expect(snackBar.showNotification).toHaveBeenCalledWith('fight.finished', NotificationType.SUCCESS, undefined, 4);
-    expect(console.error).toHaveBeenCalledWith('Invalid message payload', 'not-json');
+    expect(console.error).toHaveBeenCalledWith('Invalid message payload', 'not-json', jasmine.any(Error));
     localService.ngOnDestroy();
   });
 
