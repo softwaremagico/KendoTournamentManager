@@ -114,7 +114,9 @@ export class MessageService implements OnDestroy {
 
   handleError<T>(operation = 'operation', result?: T) {
     return (error: unknown): Observable<T> => {
-      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
+      const errorMessage: string = error instanceof Error
+        ? error.message
+        : typeof error === 'string' ? error : '';
       //Log error
       const log: Log = new Log();
       log.message = `${operation} failed: ${errorMessage}`;
@@ -130,7 +132,9 @@ export class MessageService implements OnDestroy {
 
   logOnlyError<T>(operation: string = 'operation', result?: T) {
     return (error: unknown): Observable<T> => {
-      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
+      const errorMessage: string = error instanceof Error
+        ? error.message
+        : typeof error === 'string' ? error : '';
       //Log error
       const log: Log = new Log();
       log.message = `${operation} failed: ${errorMessage}`;
