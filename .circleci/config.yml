@@ -15,7 +15,7 @@ jobs:
 
   frontend-test:
     docker:
-      - image: 'cimg/node:18.20.4'
+      - image: 'cimg/node:24.15.0'
     working_directory: ~/KendoTournamentManager/frontend
     steps:
       - checkout:
@@ -54,7 +54,7 @@ jobs:
             - node_modules
       - run:
           name: Run tests
-          command: npm test -- --watch=false --browsers=ChromeHeadless
+          command: npm test -- --watch=false --browsers=ChromeHeadlessCI
 
 workflows:
   main:
