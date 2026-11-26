@@ -36,7 +36,7 @@ export class ImageService {
   }
 
   generateFileName(ext: string): string {
-    const date: number = new Date().valueOf();
+    const date: number = Date.now();
     return date + "." + this.nameUtilsService.getLastnameNameNoSpaces(this.participant) + "." + ext;
   }
 }
