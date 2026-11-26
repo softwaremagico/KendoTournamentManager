@@ -46,16 +46,14 @@ export class TypeValidations {
 
     const normalizedValue: string = trimmedValue.includes('://') ? trimmedValue : `https://${trimmedValue}`;
 
-    try {
-      const parsedUrl: URL = new URL(normalizedValue);
-      return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:')
-        && !parsedUrl.username
-        && !parsedUrl.password
-        && this.isValidDomain(parsedUrl.hostname);
-    } catch (_error) {
-      // Malformed URLs are invalid user input, not an exceptional condition: validation simply fails.
+    if (!URL.canParse(normalizedValue)) {
       return false;
     }
+    const parsedUrl: URL = new URL(normalizedValue);
+    return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:')
+      && !parsedUrl.username
+      && !parsedUrl.password
+      && this.isValidDomain(parsedUrl.hostname);
   }
 
   private static isValidEmailLocalPart(localPart: string): boolean {
