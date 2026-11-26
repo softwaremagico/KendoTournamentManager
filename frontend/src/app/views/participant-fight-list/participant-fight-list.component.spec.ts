@@ -51,7 +51,7 @@ describe('ParticipantFightListComponent', () => {
   } as Fight);
 
   beforeEach(() => {
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'getCurrentNavigation']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'currentNavigation']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     systemOverloadServiceSpy = jasmine.createSpyObj('SystemOverloadService', [], {
       isTransactionalBusy: {next: jasmine.createSpy('next')}
@@ -59,7 +59,7 @@ describe('ParticipantFightListComponent', () => {
     fightServiceSpy = jasmine.createSpyObj('FightService', ['getFromParticipant']);
     duelServiceSpy = jasmine.createSpyObj('DuelService', ['getUntiesFromParticipant']);
 
-    routerSpy.getCurrentNavigation.and.returnValue({
+    routerSpy.currentNavigation.and.returnValue({
       extras: {state: {participantId: 42}}
     } as any);
 
@@ -85,7 +85,7 @@ describe('ParticipantFightListComponent', () => {
   });
 
   it('should navigate back to statistics when participantId is not a number', () => {
-    routerSpy.getCurrentNavigation.and.returnValue({
+    routerSpy.currentNavigation.and.returnValue({
       extras: {state: {participantId: 'invalid'}}
     } as any);
 
@@ -112,7 +112,7 @@ describe('ParticipantFightListComponent', () => {
   });
 
   it('should go back to statistics when participantId is undefined in ngOnInit', () => {
-    routerSpy.getCurrentNavigation.and.returnValue(null);
+    routerSpy.currentNavigation.and.returnValue(null);
 
     component = new ParticipantFightListComponent(
       routerSpy,

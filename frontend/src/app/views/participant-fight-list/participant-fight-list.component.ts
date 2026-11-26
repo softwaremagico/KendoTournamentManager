@@ -39,7 +39,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
     this.filteredUnties = new Map<Tournament, Duel[]>();
     this.tournaments = [];
 
-    const state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.currentNavigation()?.extras.state;
     if (state) {
       //Send by previous view.
       if (state['participantId'] && !Number.isNaN(Number(state['participantId']))) {

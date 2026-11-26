@@ -1,6 +1,5 @@
 import {ErrorHandler, NgModule, provideZoneChangeDetection} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatListModule} from '@angular/material/list';
@@ -153,7 +152,6 @@ registerLocaleData(localeFR, "fr");
     ],
     bootstrap: [AppComponent], imports: [NavbarModule,
         BrowserModule,
-        BrowserAnimationsModule,
         MatToolbarModule,
         MatSidenavModule,
         MatListModule,
