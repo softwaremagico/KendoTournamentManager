@@ -49,6 +49,7 @@ describe('ParticipantStatisticsComponent', () => {
 
   beforeEach(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    // Router.currentNavigation() is a signal, so the spy provides the callable directly.
     (routerSpy as any).currentNavigation = () => ({
       extras: { state: { participantId: 42 } }
     });
