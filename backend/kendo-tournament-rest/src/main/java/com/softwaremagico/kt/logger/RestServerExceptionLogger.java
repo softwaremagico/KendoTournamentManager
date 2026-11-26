@@ -24,38 +24,34 @@ package com.softwaremagico.kt.logger;
 /**
  * Logger wrapper for REST server exception handling.
  */
+
 public final class RestServerExceptionLogger extends AbstractLoggerWrapper {
 
-    private static final LoggerFacade DELEGATE = new LoggerFacade(RestServerExceptionLogger.class);
-
-    private RestServerExceptionLogger() {
-    }
+    private static final LoggerFacade REST_SERVER_EXCEPTION_DELEGATE = new LoggerFacade(RestServerExceptionLogger.class);
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.info(clazz, messageTemplate, arguments);
+        REST_SERVER_EXCEPTION_DELEGATE.info(clazz, messageTemplate, arguments);
     }
-
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.warning(clazz, messageTemplate, arguments);
+        REST_SERVER_EXCEPTION_DELEGATE.warning(clazz, messageTemplate, arguments);
     }
-
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.debug(clazz, messageTemplate, arguments);
+        REST_SERVER_EXCEPTION_DELEGATE.debug(clazz, messageTemplate, arguments);
     }
-
     public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.severe(clazz, messageTemplate, arguments);
+        REST_SERVER_EXCEPTION_DELEGATE.severe(clazz, messageTemplate, arguments);
     }
-
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        DELEGATE.error(clazz, throwable);
+        REST_SERVER_EXCEPTION_DELEGATE.error(clazz, throwable);
     }
-
     public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.error(clazz, messageTemplate, arguments);
+        REST_SERVER_EXCEPTION_DELEGATE.error(clazz, messageTemplate, arguments);
     }
 
     public static boolean isDebugEnabled() {
-        return DELEGATE.isDebugEnabled();
+        return REST_SERVER_EXCEPTION_DELEGATE.isDebugEnabled();
+    }
+
+    private RestServerExceptionLogger() {
     }
 }

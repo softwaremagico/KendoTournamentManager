@@ -24,34 +24,30 @@ package com.softwaremagico.kt.logger;
 /**
  * Logger wrapper for core Kendo Tournament operations.
  */
+
 public final class KendoTournamentLogger extends AbstractLoggerWrapper {
 
-    private static final LoggerFacade DELEGATE = new LoggerFacade(KendoTournamentLogger.class);
-
-    private KendoTournamentLogger() {
-    }
+    private static final LoggerFacade KENDO_TOURNAMENT_DELEGATE = new LoggerFacade(KendoTournamentLogger.class);
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.info(clazz, messageTemplate, arguments);
+        KENDO_TOURNAMENT_DELEGATE.info(clazz, messageTemplate, arguments);
     }
-
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.warning(clazz, messageTemplate, arguments);
+        KENDO_TOURNAMENT_DELEGATE.warning(clazz, messageTemplate, arguments);
     }
-
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.debug(clazz, messageTemplate, arguments);
+        KENDO_TOURNAMENT_DELEGATE.debug(clazz, messageTemplate, arguments);
     }
-
     public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.severe(clazz, messageTemplate, arguments);
+        KENDO_TOURNAMENT_DELEGATE.severe(clazz, messageTemplate, arguments);
     }
-
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        DELEGATE.error(clazz, throwable);
+        KENDO_TOURNAMENT_DELEGATE.error(clazz, throwable);
+    }
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        KENDO_TOURNAMENT_DELEGATE.error(clazz, messageTemplate, arguments);
     }
 
-    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.error(clazz, messageTemplate, arguments);
+    private KendoTournamentLogger() {
     }
 }

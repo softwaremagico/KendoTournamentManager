@@ -24,42 +24,36 @@ package com.softwaremagico.kt.logger;
 /**
  * Logger wrapper for connection pool operations.
  */
+
 public final class PoolLogger extends AbstractLoggerWrapper {
 
-    private static final LoggerFacade DELEGATE = new LoggerFacade(PoolLogger.class);
-
-    private PoolLogger() {
-    }
+    private static final LoggerFacade POOL_DELEGATE = new LoggerFacade(PoolLogger.class);
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.info(clazz, messageTemplate, arguments);
+        POOL_DELEGATE.info(clazz, messageTemplate, arguments);
     }
-
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.warning(clazz, messageTemplate, arguments);
+        POOL_DELEGATE.warning(clazz, messageTemplate, arguments);
     }
-
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.debug(clazz, messageTemplate, arguments);
+        POOL_DELEGATE.debug(clazz, messageTemplate, arguments);
     }
-
     public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.severe(clazz, messageTemplate, arguments);
+        POOL_DELEGATE.severe(clazz, messageTemplate, arguments);
     }
-
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        DELEGATE.error(clazz, throwable);
+        POOL_DELEGATE.error(clazz, throwable);
     }
-
-    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        DELEGATE.error(clazz, messageTemplate, arguments);
-    }
-
     public static void errorMessage(Object object, Throwable throwable) {
-        DELEGATE.error(object, throwable);
+        POOL_DELEGATE.error(object, throwable);
+    }
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        POOL_DELEGATE.error(clazz, messageTemplate, arguments);
+    }
+    public static boolean isDebugEnabled() {
+        return POOL_DELEGATE.isDebugEnabled();
     }
 
-    public static boolean isDebugEnabled() {
-        return DELEGATE.isDebugEnabled();
+    private PoolLogger() {
     }
 }
