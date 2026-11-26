@@ -110,7 +110,6 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   groupsActionsDisabled(_disabled: boolean): void {
-    void _disabled;
     this.updatingGroup = false;
   }
 
