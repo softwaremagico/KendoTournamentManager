@@ -41,7 +41,7 @@ Three pre-built images are published on Docker Hub and updated with every releas
 | Frontend | `softwaremagico/kendo-tournament-manager-frontend` | [View →](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
 | Reverse proxy | `softwaremagico/kendo-tournament-manager-rproxy` | [View →](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
 
-Use a specific version tag (e.g., `v3.6.0`) for production deployments instead of `latest` to ensure
+Use a specific version tag (e.g., `v3.7.0`) for production deployments instead of `latest` to ensure
 reproducibility.
 The `latest` tag refers to the last **published image**, not the current `main`
 branch. Changes to the repository or its Dockerfiles do not reach that image
@@ -129,7 +129,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `machine_domain` | `localhost` | Domain name (or `localhost`) for the deployment |
 | `email` | `myemail@domain.com` | Email used for Let's Encrypt TLS certificate registration |
 | `timezone` | `Europe/Madrid` | Server timezone (used in logs and date handling) |
-| `version` | `v3.6.0` | Application version tag |
+| `version` | `v3.7.0` | Application version tag |
 | `release` | `${version}` | Release label (usually the same as `version`) |
 | `SERVER_CORS_DOMAINS` | `${protocol}://${machine_domain}` | Optional override. Exact browser origin(s) allowed by the backend CORS policy and by the WebSocket handshake. Comma-separated list supported. It is derived automatically in the bundled Traefik setups; override it when the frontend is opened from a different origin (for example `http://localhost:4200` in the no-reverse-proxy examples). Wildcards such as `*` are ignored. |
 
