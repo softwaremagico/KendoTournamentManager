@@ -64,6 +64,7 @@ export class MessageService implements OnDestroy {
         }
 
       } catch (e) {
+        // Malformed payloads from stale WebSocket clients are expected; discard them instead of breaking the subscription.
         console.error("Invalid message payload", message.body);
       }
     });
