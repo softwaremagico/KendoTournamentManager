@@ -408,6 +408,18 @@ describe('FightListComponent', () => {
     expect(userSessionServiceSpy.enableSwappedTeams).toHaveBeenCalled();
   });
 
+  it('should persist disabled colors and teams when toggled back', () => {
+    component.swapColors();
+    component.swapColors();
+    expect(component.swappedColors).toBeFalse();
+    expect(userSessionServiceSpy.disableSwappedColors).toHaveBeenCalled();
+
+    component.swapTeams();
+    component.swapTeams();
+    expect(component.swappedTeams).toBeFalse();
+    expect(userSessionServiceSpy.disableSwappedTeams).toHaveBeenCalled();
+  });
+
   it('should enable member order and notify service', () => {
     component.enableMemberOrder(true);
 
