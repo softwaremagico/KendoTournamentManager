@@ -20,7 +20,7 @@ export class RoleService {
   private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
 
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/roles';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/roles';
 
   constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
               private readonly loggerService: LoggerService, private readonly systemOverloadService: SystemOverloadService, public readonly loginService: LoginService) {

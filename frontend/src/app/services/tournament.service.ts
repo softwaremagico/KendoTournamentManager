@@ -28,7 +28,7 @@ export class TournamentService {
   private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
 
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments';
 
   constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
               public readonly loginService: LoginService, private readonly messageService: MessageService,
