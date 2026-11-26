@@ -136,10 +136,10 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         this.editorGroupsUpdated.emit(_groups);
         this.editorGroupsDisabled.emit(ownAction);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
-        const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
+        const groupTeamsIds: Set<number> = new Set(_groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!));
         this.editorTeamsLengthUpdated.next(_teams.length);
         this.totalTeams = _teams.length;
-        _teams = _teams.filter((item: Team): boolean => !groupTeamsIds.includes(item.id!));
+        _teams = _teams.filter((item: Team): boolean => !groupTeamsIds.has(item.id!));
 
         this.teamListData.teams = _teams;
         this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
