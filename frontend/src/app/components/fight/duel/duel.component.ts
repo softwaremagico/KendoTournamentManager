@@ -63,13 +63,18 @@ export class DuelComponent extends KendoComponent implements OnInit {
     });
   }
 
-  dropListEnterPredicate(fight: Fight, left: boolean) {
-    return function (_item: CdkDrag<Participant | undefined>, dropList: CdkDropList): boolean {
-      if (left) {
-        return fight.team1.members.filter(m => m?.id == _item.data?.id).length > 0;
-      } else {
-        return fight.team2.members.filter(m => m?.id == _item.data?.id).length > 0;
-      }
+  dropListEnterPredicateTeam1(fight: Fight): (item: CdkDrag<Participant | undefined>, dropList: CdkDropList) => boolean {
+    return this.memberInTeamPredicate(fight.team1.members);
+  }
+
+  dropListEnterPredicateTeam2(fight: Fight): (item: CdkDrag<Participant | undefined>, dropList: CdkDropList) => boolean {
+    return this.memberInTeamPredicate(fight.team2.members);
+  }
+
+  private memberInTeamPredicate(members: (Participant | undefined)[]):
+    (item: CdkDrag<Participant | undefined>, dropList: CdkDropList) => boolean {
+    return function (_item: CdkDrag<Participant | undefined>, _dropList: CdkDropList): boolean {
+      return members.filter(m => m?.id == _item.data?.id).length > 0;
     };
   }
 

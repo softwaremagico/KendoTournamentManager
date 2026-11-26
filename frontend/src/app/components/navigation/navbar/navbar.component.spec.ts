@@ -35,7 +35,7 @@ describe('NavbarComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     contextMenuServiceSpy = jasmine.createSpyObj('ContextMenuService', ['show']);
     translocoServiceSpy = jasmine.createSpyObj('TranslocoService', ['selectTranslate']);
-    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getNightMode', 'setNightMode', 'getUser']);
+    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getNightMode', 'enableNightMode', 'disableNightMode', 'getUser']);
     activityServiceSpy = jasmine.createSpyObj('ActivityService', ['isAllowed']);
     overlayContainerSpy = jasmine.createSpyObj('OverlayContainer', ['getContainerElement']);
     rendererSpy = jasmine.createSpyObj('Renderer2', ['addClass', 'removeClass']);
@@ -154,7 +154,7 @@ describe('NavbarComponent', () => {
 
     const classList = overlayContainerSpy.getContainerElement.calls.mostRecent().returnValue.classList;
     expect(component.nightModeEnabled).toBeTrue();
-    expect(userSessionServiceSpy.setNightMode).toHaveBeenCalledOnceWith(true);
+    expect(userSessionServiceSpy.enableNightMode).toHaveBeenCalled();
     expect(darkModeNextSpy).toHaveBeenCalledOnceWith(true);
     expect(component.className).toBe('dark-mode');
     expect(classList.add).toHaveBeenCalledWith('dark-mode');
@@ -169,7 +169,7 @@ describe('NavbarComponent', () => {
 
     const classList = overlayContainerSpy.getContainerElement.calls.mostRecent().returnValue.classList;
     expect(component.nightModeEnabled).toBeFalse();
-    expect(userSessionServiceSpy.setNightMode).toHaveBeenCalledOnceWith(false);
+    expect(userSessionServiceSpy.disableNightMode).toHaveBeenCalled();
     expect(darkModeNextSpy).toHaveBeenCalledOnceWith(false);
     expect(component.className).toBe('');
     expect(classList.remove).toHaveBeenCalledWith('dark-mode');

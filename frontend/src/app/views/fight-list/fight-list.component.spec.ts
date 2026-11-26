@@ -130,7 +130,7 @@ describe('FightListComponent', () => {
     environmentServiceSpy = jasmine.createSpyObj('EnvironmentService', ['getWebsocketPrefix']);
     groupServiceSpy = jasmine.createSpyObj('GroupService', ['getFromTournament', 'setTeams', 'update']);
     duelServiceSpy = jasmine.createSpyObj('DuelService', ['update']);
-    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getSwappedColors', 'getSwappedTeams', 'setSwappedColors', 'setSwappedTeams']);
+    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getSwappedColors', 'getSwappedTeams', 'enableSwappedColors', 'disableSwappedColors', 'enableSwappedTeams', 'disableSwappedTeams']);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     fileServiceSpy = jasmine.createSpyObj('FileService', ['getTournamentPicture']);
@@ -399,13 +399,25 @@ describe('FightListComponent', () => {
   it('should toggle swapped colors and persist them', () => {
     component.swapColors();
     expect(component.swappedColors).toBeTrue();
-    expect(userSessionServiceSpy.setSwappedColors).toHaveBeenCalledWith(true);
+    expect(userSessionServiceSpy.enableSwappedColors).toHaveBeenCalled();
   });
 
   it('should toggle swapped teams and persist them', () => {
     component.swapTeams();
     expect(component.swappedTeams).toBeTrue();
-    expect(userSessionServiceSpy.setSwappedTeams).toHaveBeenCalledWith(true);
+    expect(userSessionServiceSpy.enableSwappedTeams).toHaveBeenCalled();
+  });
+
+  it('should persist disabled colors and teams when toggled back', () => {
+    component.swapColors();
+    component.swapColors();
+    expect(component.swappedColors).toBeFalse();
+    expect(userSessionServiceSpy.disableSwappedColors).toHaveBeenCalled();
+
+    component.swapTeams();
+    component.swapTeams();
+    expect(component.swappedTeams).toBeFalse();
+    expect(userSessionServiceSpy.disableSwappedTeams).toHaveBeenCalled();
   });
 
   it('should enable member order and notify service', () => {
