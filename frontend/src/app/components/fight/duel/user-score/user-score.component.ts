@@ -62,12 +62,10 @@ export class UserScoreComponent {
       } else {
         return this.duel.competitor2;
       }
+    } else if (!this.swapTeams) {
+      return this.duel.competitor2;
     } else {
-      if (!this.swapTeams) {
-        return this.duel.competitor2;
-      } else {
-        return this.duel.competitor1;
-      }
+      return this.duel.competitor1;
     }
   }
 

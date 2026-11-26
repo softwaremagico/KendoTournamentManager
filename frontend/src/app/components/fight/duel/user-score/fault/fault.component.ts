@@ -79,24 +79,22 @@ export class FaultComponent implements OnInit, OnChanges {
           return false;
         }
       }
-    } else {
-      if (!fault || !this.duel.competitor2Fault) {
-        this.duel.competitor2Fault = fault;
-        if (fault) {
-          this.duel.competitor2FaultTime = this.duel.duration!;
-        } else {
-          this.duel.competitor2FaultTime = undefined;
-        }
+    } else if (!fault || !this.duel.competitor2Fault) {
+      this.duel.competitor2Fault = fault;
+      if (fault) {
+        this.duel.competitor2FaultTime = this.duel.duration!;
       } else {
-        this.duel.competitor2Fault = false;
         this.duel.competitor2FaultTime = undefined;
-        if (Duel.addHansoku(this.duel, true)) {
-          this.scoreUpdatedService.isScoreUpdated.next(this.duel);
-        } else {
-          this.messageService.warningMessage("scoreNotAdded");
-          this.setTime();
-          return false;
-        }
+      }
+    } else {
+      this.duel.competitor2Fault = false;
+      this.duel.competitor2FaultTime = undefined;
+      if (Duel.addHansoku(this.duel, true)) {
+        this.scoreUpdatedService.isScoreUpdated.next(this.duel);
+      } else {
+        this.messageService.warningMessage("scoreNotAdded");
+        this.setTime();
+        return false;
       }
     }
     this.setTime();

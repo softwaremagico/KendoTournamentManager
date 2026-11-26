@@ -84,14 +84,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit, 
             this.updateDrawStatusAndWarning();
           });
         }
-      } else {
-        if (this.tournament?.id) {
-          this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
-            this.numberOfWinners = 1;
-            this.teamScores = scoresOfTeams;
-            this.updateDrawStatusAndWarning();
-          });
-        }
+      } else if (this.tournament?.id) {
+        this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
+          this.numberOfWinners = 1;
+          this.teamScores = scoresOfTeams;
+          this.updateDrawStatusAndWarning();
+        });
       }
     }
   }
@@ -154,17 +152,15 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit, 
           anchor.href = downloadURL;
           anchor.click();
         });
-      } else {
-        if (this.tournament?.id) {
-          this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
-            const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
-            const downloadURL: string = window.URL.createObjectURL(blob);
-            const anchor: HTMLAnchorElement = document.createElement("a");
-            anchor.download = "Team Ranking - " + this.tournament.name + ".pdf";
-            anchor.href = downloadURL;
-            anchor.click();
-          });
-        }
+      } else if (this.tournament?.id) {
+        this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
+          const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+          const downloadURL: string = window.URL.createObjectURL(blob);
+          const anchor: HTMLAnchorElement = document.createElement("a");
+          anchor.download = "Team Ranking - " + this.tournament.name + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+        });
       }
     }
   }
