@@ -35,7 +35,7 @@ export class TeamListComponent {
   }
 
   public isDragDisabled(team: Team): boolean {
-    return this.teamsDragDisabled && this.teamsDragDisabled.indexOf(team) >= 0;
+    return this.teamsDragDisabled && this.teamsDragDisabled.includes(team);
   }
 
 }
