@@ -56,6 +56,7 @@
             <class name="com.softwaremagico.kt.persistence.encryption.EnumCryptoConvertersCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.encryption.EncryptedRoundTripCryptoConvertersTests"/>
             <class name="com.softwaremagico.kt.persistence.entities.EntityBeansCoverageTest"/>
+            <class name="com.softwaremagico.kt.persistence.entities.IndexNameTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.EntityEqualsCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.DuelEntityCoverageTest"/>
             <class name="com.softwaremagico.kt.persistence.entities.FightEntityCoverageTest"/>

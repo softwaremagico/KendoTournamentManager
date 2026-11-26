@@ -44,7 +44,7 @@ import org.hibernate.annotations.FetchMode;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "roles", indexes = {
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_roles_tournament", columnList = "tournament"),
         @Index(name = "ind_type", columnList = "role_type"),
 })
 @SuppressWarnings("java:S2160")

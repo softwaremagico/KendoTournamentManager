@@ -43,7 +43,7 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "achievements", indexes = {
         @Index(name = "ind_participant", columnList = "participant"),
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_achievements_tournament", columnList = "tournament"),
 })
 public class Achievement extends Element {
 

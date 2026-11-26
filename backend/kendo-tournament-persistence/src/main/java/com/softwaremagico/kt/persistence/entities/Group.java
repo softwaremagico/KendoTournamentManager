@@ -60,7 +60,7 @@ import java.util.List;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_groups", indexes = {
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_tournament_groups_tournament", columnList = "tournament"),
 })
 @SuppressWarnings("java:S2160")
 public class Group extends Element {

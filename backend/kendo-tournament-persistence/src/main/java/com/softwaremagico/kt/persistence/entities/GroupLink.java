@@ -39,7 +39,7 @@ import java.io.Serial;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "groups_links", indexes = {
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_groups_links_tournament", columnList = "tournament"),
 })
 @SuppressWarnings("java:S2160")
 public class GroupLink extends Element {
