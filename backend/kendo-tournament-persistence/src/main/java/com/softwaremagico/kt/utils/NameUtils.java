@@ -166,8 +166,8 @@ public final class NameUtils {
         }
 
         final float rateLastname = (name.length() + getShortLastname(lastname, MAX_ALLOWED_NAME_LENGTH).length())
-                / (!lastname.isEmpty() ? (float) lastname.length() : 1);
-        final float rateName = (name.length() + getShortName(name, MAX_ALLOWED_NAME_LENGTH).length()) / (!name.isEmpty() ? (float) name.length() : 1);
+                / (lastname.isEmpty() ? 1 : (float) lastname.length());
+        final float rateName = (name.length() + getShortName(name, MAX_ALLOWED_NAME_LENGTH).length()) / (name.isEmpty() ? 1 : (float) name.length());
         final String ret = getShortLastname(lastname, (int) (maxLength / rateLastname)).trim() + ", " + getShortName(name, (int) (maxLength / rateName));
         return ret.trim();
     }
