@@ -142,6 +142,7 @@ describe('DuelComponent', () => {
     expect(predicate(dragItem, dropList)).toBeFalse();
   });
 
+  // Los desempates renderizan <duel> sin [fight]: el predicado debe ser seguro.
   it('should create drop predicates for untie duels without a fight', () => {
     const participant = createParticipant(1, 'A');
     const dragItem = {data: participant} as CdkDrag<Participant>;
