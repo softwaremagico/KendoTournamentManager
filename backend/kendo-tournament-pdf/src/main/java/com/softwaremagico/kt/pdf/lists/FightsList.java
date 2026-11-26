@@ -24,9 +24,7 @@ package com.softwaremagico.kt.pdf.lists;
 import org.openpdf.text.Document;
 import org.openpdf.text.Element;
 
-import org.openpdf.text.PageSize;
 
-import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -188,18 +186,9 @@ public class FightsList extends ParentList {
     }
 
     @Override
-    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        addTitleRow(mainTable, tournamentDto.getName(), font, fontSize, true);
+    protected String getHeaderTitle() {
+        return tournamentDto.getName();
     }
 
-    @Override
-    protected Rectangle getPageSize() {
-        return PageSize.A4;
-    }
 
-    @Override
-    protected void addDocumentWriterEvents(PdfWriter writer) {
-        // No background.
-    }
 }

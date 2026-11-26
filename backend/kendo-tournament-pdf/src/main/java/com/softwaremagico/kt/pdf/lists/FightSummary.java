@@ -25,7 +25,6 @@ import org.openpdf.text.Document;
 import org.openpdf.text.DocumentException;
 import org.openpdf.text.Element;
 import org.openpdf.text.Font;
-import org.openpdf.text.PageSize;
 
 import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
@@ -293,13 +292,5 @@ public class FightSummary extends ParentList {
         addTitleRow(mainTable, header, font, fontSize, false);
     }
 
-    @Override
-    protected Rectangle getPageSize() {
-        return PageSize.A4;
-    }
 
-    @Override
-    protected void addDocumentWriterEvents(PdfWriter writer) {
-        // No background.
-    }
 }

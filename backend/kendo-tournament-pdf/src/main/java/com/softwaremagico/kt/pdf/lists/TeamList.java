@@ -24,9 +24,7 @@ package com.softwaremagico.kt.pdf.lists;
 import org.openpdf.text.Document;
 import org.openpdf.text.Element;
 
-import org.openpdf.text.PageSize;
 import org.openpdf.text.Paragraph;
-import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -36,22 +34,18 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
-import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
 
-public class TeamList extends ParentList {
+public class TeamList extends AbstractTournamentList {
 
-    private static final float[] TABLE_WIDTH = {0.46f, 0.08f, 0.46f};
     private static final int BORDER = 0;
-    private final TournamentDTO tournament;
-
     private final List<TeamDTO> teams;
 
     public TeamList(TournamentDTO tournament, List<TeamDTO> teams) {
-        this.tournament = tournament;
+        super(tournament);
         this.teams = teams;
     }
 
@@ -102,24 +96,5 @@ public class TeamList extends ParentList {
         mainTable.completeRow();
     }
 
-    @Override
-    public float[] getTableWidths() {
-        return TABLE_WIDTH;
-    }
 
-    @Override
-    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        addTitleRow(mainTable, tournament.getName(), font, fontSize, true);
-    }
-
-    @Override
-    protected Rectangle getPageSize() {
-        return PageSize.A4;
-    }
-
-    @Override
-    protected void addDocumentWriterEvents(PdfWriter writer) {
-        // No background.
-    }
 }

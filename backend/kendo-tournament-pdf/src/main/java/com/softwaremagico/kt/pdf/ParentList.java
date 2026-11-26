@@ -25,6 +25,8 @@ import org.openpdf.text.Document;
 import org.openpdf.text.Element;
 import org.openpdf.text.Font;
 import org.openpdf.text.Paragraph;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -70,7 +72,32 @@ public abstract class ParentList extends PdfDocument {
      * @param fontSize
      *            the font size used for the header text.
      */
-    protected abstract void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
+    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
+                                BaseFont font, int fontSize) {
+        addTitleRow(mainTable, getHeaderTitle(), font, fontSize, isHeaderTitleCentered());
+    }
+
+    /**
+     * Title used by the common header. Lists with a specific header keep their
+     * own {@link #createHeaderRow} implementation instead.
+     */
+    protected String getHeaderTitle() {
+        return "";
+    }
+
+    protected boolean isHeaderTitleCentered() {
+        return true;
+    }
+
+    @Override
+    public Rectangle getPageSize() {
+        return PageSize.A4;
+    }
+
+    @Override
+    public void addDocumentWriterEvents(PdfWriter writer) {
+        // No background.
+    }
 
     protected void createRowSeparator(PdfPTable mainTable) {
         final PdfPCell cell = new PdfPCell();
