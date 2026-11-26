@@ -83,7 +83,7 @@ export class NavbarComponent implements OnInit {
     }
     this.infoService.getAppConfig().subscribe({
       next: config => {
-        if (config && config['tenancyEnabled'] !== undefined) {
+        if (config?.['tenancyEnabled'] !== undefined) {
           this.tenancyEnabled = config['tenancyEnabled'];
         }
         this.buildRoutes();
