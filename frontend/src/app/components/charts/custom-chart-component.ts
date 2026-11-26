@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from "@angular/core";
+import {Directive, Input, OnInit} from "@angular/core";
 import {Colors} from "./colors";
 import {DarkModeService} from "../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../services/user-session.service";
@@ -67,11 +67,7 @@ interface ApexDropShadow {
   color?: string;
 }
 
-@Component({
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
-  template: ''
-})
+@Directive()
 export abstract class CustomChartComponent extends KendoComponent implements OnInit {
 
   protected titleTextColor: string = "#000000"
