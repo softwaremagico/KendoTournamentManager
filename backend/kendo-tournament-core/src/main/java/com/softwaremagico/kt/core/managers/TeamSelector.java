@@ -46,7 +46,7 @@ public class TeamSelector {
     public static List<Team> setOrder(List<Team> teams, TeamsOrder teamsOrder) {
         final List<Team> sortedTeams = new ArrayList<>(teams);
         switch (teamsOrder) {
-            case SORTED -> Collections.sort(sortedTeams);
+            case SORTED -> sortedTeams.sort(null);
             case RANDOM -> Collections.shuffle(sortedTeams);
             default -> {
                 // Keep original insertion order.
