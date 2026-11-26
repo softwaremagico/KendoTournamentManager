@@ -53,7 +53,7 @@ public class DataValidationTest extends AbstractTestNGSpringContextTests {
 	private static final String USER_FIRST_NAME = "Test";
 	private static final String USER_LAST_NAME = "User";
 	private static final String USER_PASSWORD = "asd123";
-	private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+	private static final String[] USER_ROLES = {"admin", "viewer"};
 
 	private static final String CLUB_CITY = "Valencia";
 
