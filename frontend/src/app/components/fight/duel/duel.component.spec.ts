@@ -142,6 +142,18 @@ describe('DuelComponent', () => {
     expect(predicate(dragItem, dropList)).toBeFalse();
   });
 
+  // Los desempates renderizan <duel> sin [fight]: el predicado debe ser seguro.
+  it('should create drop predicates for untie duels without a fight', () => {
+    const participant = createParticipant(1, 'A');
+    const dragItem = {data: participant} as CdkDrag<Participant>;
+    const dropList = {} as CdkDropList;
+
+    expect(() => component.dropListEnterPredicateTeam1(undefined)).not.toThrow();
+    expect(() => component.dropListEnterPredicateTeam2(undefined)).not.toThrow();
+    expect(component.dropListEnterPredicateTeam1(undefined)(dragItem, dropList)).toBeFalse();
+    expect(component.dropListEnterPredicateTeam2(undefined)(dragItem, dropList)).toBeFalse();
+  });
+
   it('should swap left competitors using swapMembers', () => {
     const p1 = createParticipant(1, 'A');
     const p2 = createParticipant(2, 'B');
