@@ -47,7 +47,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_image", indexes = {
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_tournament_image_tournament", columnList = "tournament"),
 })
 @SuppressWarnings("java:S2160")
 public class TournamentImage extends Element {

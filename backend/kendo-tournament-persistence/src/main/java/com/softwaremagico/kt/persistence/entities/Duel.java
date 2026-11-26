@@ -73,7 +73,7 @@ import java.util.Set;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "duels", indexes = {
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_duels_tournament", columnList = "tournament"),
         @Index(name = "ind_competitor1", columnList = "competitor1"),
         @Index(name = "ind_competitor2", columnList = "competitor2")
 })
