@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {MessageService} from "../../../../../services/message.service";
@@ -16,7 +16,7 @@ import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class FaultComponent implements OnInit, OnChanges {
+export class FaultComponent implements OnChanges {
 
   @Input()
   duel: Duel;
@@ -47,10 +47,6 @@ export class FaultComponent implements OnInit, OnChanges {
 
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
               private translateService: TranslocoService, public rbacService: RbacService) {
-  }
-
-  ngOnInit(): void {
-    // This is intentional
   }
 
   ngOnChanges(changes: SimpleChanges): void {
