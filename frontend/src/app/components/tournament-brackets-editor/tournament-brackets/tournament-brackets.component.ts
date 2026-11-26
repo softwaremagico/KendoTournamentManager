@@ -124,7 +124,11 @@ export class TournamentBracketsComponent implements OnInit {
     return group === 0 ? (portion / 2) - (this.getGroupHigh(level, group) / 2) : portion;
   }
 
-  getGroupTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number {
+  /**
+   * Se pasa como @Input a los componentes hijos del árbol; debe conservar la
+   * instancia que contiene los helpers privados aunque se invoque desde otro this.
+   */
+  readonly getGroupTopSeparation = (level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number => {
     if (!groupsByLevel || groupsByLevel.size === 0) {
       return 0;
     }
@@ -140,7 +144,7 @@ export class TournamentBracketsComponent implements OnInit {
       return BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(levelWithMostGroups, group);
     }
     return this.getSmallLevelTopSeparation(level, group, groupsByLevel, levelWithMostGroups);
-  }
+  };
 
   getGroupYCoordinate(level: number, group: number): number {
     let y: number = 0;

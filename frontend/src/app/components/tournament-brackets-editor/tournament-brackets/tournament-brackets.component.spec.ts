@@ -169,5 +169,18 @@ describe('TournamentBracketsComponent', () => {
     expect(component.getGroupTopSeparation(1, 0, groupsByLevel)).toBeGreaterThanOrEqual(0);
     expect(component.getGroupTopSeparation(1, 1, groupsByLevel)).toBeGreaterThan(0);
   });
+
+  // Los componentes hijos reciben esta función como @Input y la invocan con su propio this.
+  it('should keep top separation bound when a child component invokes it', () => {
+    const first = createGroup(1, 0, 0, 0, [createTeam(1, 'A'), createTeam(2, 'B')]);
+    const second = createGroup(2, 1, 0, 0, [createTeam(3, 'C')]);
+    const third = createGroup(3, 1, 1, 1, [createTeam(4, 'D')]);
+    const groupsByLevel = new Map<number, Group[]>([[0, [first]], [1, [second, third]]]);
+    component.groupsByLevel = groupsByLevel;
+    const fromChild = component.getGroupTopSeparation;
+
+    expect(fromChild(1, 0, groupsByLevel)).toBeGreaterThan(0);
+    expect(fromChild(1, 1, groupsByLevel)).toBeGreaterThan(0);
+  });
 });
 
