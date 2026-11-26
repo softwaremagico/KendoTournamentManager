@@ -21,13 +21,12 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-
 import org.openpdf.text.Document;
 import org.openpdf.text.DocumentException;
 import org.openpdf.text.Element;
 import org.openpdf.text.Font;
 import org.openpdf.text.PageSize;
-import org.openpdf.text.Paragraph;
+
 import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
@@ -39,7 +38,7 @@ import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
-import com.softwaremagico.kt.pdf.BaseColor;
+
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.pdf.events.FaultTriangleCellEvent;
@@ -175,7 +174,6 @@ public class FightSummary extends ParentList {
         return cell;
     }
 
-
     private PdfPCell getScoreCell(FightDTO fightDTO, int index, int scoreIndex, boolean leftCompetitor) {
         final Score score = getScore(fightDTO, index, scoreIndex, leftCompetitor);
         final PdfPCell pdfPCell = getCell(score != null ? String.valueOf(score.getPdfAbbreviation()) : "", FIGHT_BORDER,
@@ -186,7 +184,6 @@ public class FightSummary extends ParentList {
         return pdfPCell;
     }
 
-
     private PdfPCell getFaultCell(FightDTO fightDTO, int index, boolean leftCompetitor) {
         final boolean fault = getFaults(fightDTO, index, leftCompetitor);
         final PdfPCell pdfPCell = getCell("", FIGHT_BORDER,
@@ -196,7 +193,6 @@ public class FightSummary extends ParentList {
         }
         return pdfPCell;
     }
-
 
     @Override
     public void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
@@ -288,32 +284,13 @@ public class FightSummary extends ParentList {
     }
 
     @Override
-    public void setTableProperties(PdfPTable mainTable) {
-        mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
-        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(TOTAL_WIDTH);
-    }
-
-    @Override
     public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                 BaseFont font, int fontSize) {
         String header = tournament.getName();
         if (useOnlyShiaijo != null) {
             header += " (" + messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(useOnlyShiaijo) + ")";
         }
-        final PdfPCell cell = new PdfPCell(new Paragraph(header, new Font(font, (float) fontSize)));
-        cell.setColspan(getTableWidths().length);
-        cell.setBorderWidth(HEADER_BORDER);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setMinimumHeight(MIN_HEADER_HIGH);
-        mainTable.addCell(cell);
-    }
-
-    @Override
-    public void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        mainTable.addCell(getEmptyRow());
+        addTitleRow(mainTable, header, font, fontSize, false);
     }
 
     @Override

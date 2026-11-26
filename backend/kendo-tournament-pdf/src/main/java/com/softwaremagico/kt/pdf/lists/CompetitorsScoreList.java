@@ -21,7 +21,6 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-
 import org.openpdf.text.Document;
 import org.openpdf.text.Element;
 import org.openpdf.text.Font;
@@ -34,7 +33,7 @@ import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.pdf.BaseColor;
+
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
@@ -74,18 +73,12 @@ public class CompetitorsScoreList extends ParentList {
         // Tournament name.
         if (tournament != null) {
             cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, (float) fontSize)));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         } else {
             // List name.
             cell = new PdfPCell(new Paragraph(
                     messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, (float) fontSize)));
         }
-
-        cell.setColspan(getTableWidths().length);
-        cell.setBorderWidth(HEADER_BORDER);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setMinimumHeight(MIN_HEADER_HIGH);
-        mainTable.addCell(cell);
+        addTitleCell(mainTable, cell, false);
     }
 
     @Override
@@ -120,25 +113,11 @@ public class CompetitorsScoreList extends ParentList {
     }
 
     @Override
-    public void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        mainTable.addCell(getEmptyRow());
-    }
-
-    @Override
     public float[] getTableWidths() {
         if (showClassificationOrder) {
             return TABLE_WIDTH_WITH_CLASSIFICATION;
         }
         return TABLE_WIDTH;
-    }
-
-    @Override
-    public void setTableProperties(PdfPTable mainTable) {
-        mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
-        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override
