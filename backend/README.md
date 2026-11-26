@@ -89,7 +89,7 @@ mvn clean install -DskipTests
 The final deployable artefact is produced inside `kendo-tournament-rest/target/` as a self-contained Spring Boot JAR:
 
 ```
-kendo-tournament-rest/target/kendo-tournament-rest-<version>.jar
+kendo-tournament-rest/target/kendo-tournament-backend.jar
 ```
 
 ---
@@ -105,10 +105,10 @@ cd backend/kendo-tournament-rest
 mvn spring-boot:run
 ```
 
-Or execute the JAR directly:
+Or execute the JAR directly from the `backend` directory:
 
 ```bash
-java -jar kendo-tournament-rest/target/kendo-tournament-rest-<version>.jar
+java -jar kendo-tournament-rest/target/kendo-tournament-backend.jar
 ```
 
 The server listens on **port 8080** by default, under the context path `/kendo-tournament-backend`.
@@ -140,11 +140,12 @@ cd docker-examples/official-docker-image
 docker compose up -d
 ```
 
-This starts the database, backend, frontend and Traefik reverse proxy together. Once running, the app is usually reachable at:
-
-- `http://localhost` for the local frontend
-- `http://localhost:8080/kendo-tournament-backend` for the backend API
-- `http://localhost:8080/kendo-tournament-backend/swagger-ui/index.html` for Swagger UI
+These configurations use Traefik and require the domain, protocol and TLS
+settings to match your deployment. The backend is routed through the proxy;
+port 8080 is not published at a fixed host port in the main Compose file.
+For a local HTTP setup with fixed frontend and backend ports, use the
+`localhost-without-reverse-proxy` example or the manual testing script in the
+repository's main README.
 
 If you only need the database locally while running the backend from the IDE, start just MySQL or PostgreSQL and keep the matching URL in `application.properties`.
 

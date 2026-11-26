@@ -3,17 +3,22 @@ Generate unique values for `jwt_secret`, `database_password`, `database_encrypti
 do not write them into `application.properties` or commit the filled `.env` file. Update the machine domain in
 `.env`, `application.properties` and `config.js`.
 
+These images use the `latest` published tags, which may be older than the
+current source tree. Rebuilding the local Compose configuration does not rebuild
+the published images; a new image must be published to include later fixes.
+
 Subsequently, execute the following command:
 
 ```
 docker-compose build && docker-compose up -d
 ```
 
-To access the tool, open a web browser and navigate to:
+After configuring a domain and TLS for Traefik, open the configured domain:
 
 ```
-http://localhost:4200
+https://<machine-domain>/
 ```
 
-An example demonstrating how to configure these files can be
+The frontend container's port 4200 is internal; it is not published as
+`localhost:4200` by this Compose file. An example demonstrating how to configure these files can be
 found  [here](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation-using-docker-hub)

@@ -43,6 +43,10 @@ Three pre-built images are published on Docker Hub and updated with every releas
 
 Use a specific version tag (e.g., `v3.6.0`) for production deployments instead of `latest` to ensure
 reproducibility.
+The `latest` tag refers to the last **published image**, not the current `main`
+branch. Changes to the repository or its Dockerfiles do not reach that image
+until it is rebuilt and published. Check the image version before relying on a
+recent fix.
 
 ---
 
@@ -67,9 +71,10 @@ docker-compose up -d
 For full details, see the
 [wiki — Installing using Docker Hub images](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation-using-docker-hub).
 
-### Option B — Build from source
+### Option B — Build images from a published release
 
-Build the images locally from the source code in this repository:
+Build the images locally using the published release selected by `version` in
+`docker/.env`:
 
 ```bash
 # From the repository root
@@ -78,7 +83,11 @@ docker-compose build && docker-compose up -d
 ```
 
 This builds all three images using the Dockerfiles in `docker/backend/`, `docker/frontend/`, and `docker/traefik/`.
-Build arguments are automatically read from the `.env` file.
+The backend and frontend Dockerfiles download their application artifacts from
+the configured GitHub release; building these images does **not** compile the
+current checkout or include changes made after that release. Build arguments
+are automatically read from the `.env` file. To build the current checkout,
+use `docker-examples/local-build/localdockerbuild.sh` instead.
 
 ---
 
