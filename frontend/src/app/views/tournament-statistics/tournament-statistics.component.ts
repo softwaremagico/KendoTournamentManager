@@ -230,7 +230,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   goBackToTournament(): void {
-    this.router.navigate(['/tournaments'], {});
+    void this.router.navigate(['/tournaments'], {});
   }
 
   initializeScoreStatistics(tournamentStatistics: TournamentStatistics): void {
