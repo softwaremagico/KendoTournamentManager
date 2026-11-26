@@ -92,7 +92,7 @@ export class ResetPasswordComponent implements OnInit {
     }
     if (this.pwdVerification !== this.newPassword) {
       verdict = false;
-      this.errors.set(PasswordFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.passwordMismatch`));
+      this.errors.set(PasswordFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.credentialsMismatch`));
     }
     return verdict;
   }
