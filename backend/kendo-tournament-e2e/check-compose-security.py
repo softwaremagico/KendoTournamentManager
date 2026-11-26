@@ -15,7 +15,7 @@ CASES = (
 )
 
 
-def render(path, overrides):
+def render(path, overrides, service="kendo-tournament-backend", field="environment"):
     env = os.environ.copy()
     env.update({
         "jwt_secret": "test-jwt",
@@ -31,7 +31,7 @@ def render(path, overrides):
         ["docker", "compose", "-f", str(ROOT / path), "config", "--format", "json"],
         cwd=ROOT / path.parent, env=env, check=True, capture_output=True, text=True,
     )
-    return json.loads(result.stdout)["services"]["kendo-tournament-backend"]["environment"]
+    return json.loads(result.stdout)["services"][service][field]
 
 
 def main():
@@ -41,9 +41,13 @@ def main():
         settings = render(path, overrides)
         assert settings["SERVER_CORS_DOMAINS"] == expected, (name, settings["SERVER_CORS_DOMAINS"])
         assert settings["JWT_SECRET"] == "test-jwt", name
+        assert settings["SPRING_KENDO_DATASOURCE_PASSWORD"] == "test-password", name
         assert settings["DATABASE_ENCRYPTION_KEY"] == "test-key", name
         assert settings["BOOTSTRAP_SUPER_ADMIN_USERNAME"] == "admin@example.test", name
         assert settings["BOOTSTRAP_SUPER_ADMIN_PASSWORD"] == "test-bootstrap", name
+        if "official-docker-image" not in name:
+            health = render(path, overrides, service="kendo-tournament-database", field="healthcheck")
+            assert "POSTGRES_USER" in health["test"][1] and "POSTGRES_DB" in health["test"][1], name
         settings = render(path, {**overrides, "SERVER_CORS_DOMAINS": "https://one.test,https://two.test"})
         assert settings["SERVER_CORS_DOMAINS"] == "https://one.test,https://two.test", name
         print(f"OK {name}")
@@ -54,6 +58,13 @@ def main():
         settings = render(Path(name), {"machine_domain": domain, "protocol": protocol})
         assert settings["SERVER_CORS_DOMAINS"] == f"{protocol}://{domain}", name
         print(f"OK {name} (HTTPS domain)")
+    ports = render(Path("docker-examples/localhost-without-reverse-proxy/docker-compose.yml"),
+                   {}, service="kendo-tournament-frontend", field="ports")
+    assert any(port["target"] == 4200 and port["published"] == "4200" for port in ports), ports
+    networks = render(Path("docker-examples/localhost-without-reverse-proxy/docker-compose.yml"),
+                      {}, service="kendo-tournament-frontend", field="networks")
+    assert "external" in networks, networks
+    print("OK no-proxy frontend port 4200")
 
 
 if __name__ == "__main__":

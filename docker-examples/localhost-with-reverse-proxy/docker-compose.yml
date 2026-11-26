@@ -142,6 +142,7 @@ services:
       - BOOTSTRAP_SUPER_ADMIN_PASSWORD=${BOOTSTRAP_SUPER_ADMIN_PASSWORD:-}
       - DATABASE_USER=${database_user}
       - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
+      - SPRING_KENDO_DATASOURCE_PASSWORD=${database_password:?Set database_password in .env}
       - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
       - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
       - SERVER_FORWARD_HEADERS_STRATEGY=${SERVER_FORWARD_HEADERS_STRATEGY:-none}
@@ -189,7 +190,7 @@ services:
       - POSTGRES_USER=${database_user}
       - POSTGRES_DB=${database_name}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 30s
       timeout: 60s
       retries: 3
