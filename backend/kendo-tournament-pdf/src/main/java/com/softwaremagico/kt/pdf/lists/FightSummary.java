@@ -302,7 +302,7 @@ public class FightSummary extends ParentList {
         if (useOnlyShiaijo != null) {
             header += " (" + messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(useOnlyShiaijo) + ")";
         }
-        final PdfPCell cell = new PdfPCell(new Paragraph(header, new Font(font, fontSize)));
+        final PdfPCell cell = new PdfPCell(new Paragraph(header, new Font(font, (float) fontSize)));
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
