@@ -15,5 +15,8 @@ export class DatatableColumn extends WizardryDatatableColumn {
               pipe?: PipeTransform, cellTemplate?: TemplateRef<any>) {
     super(name, prop, visible, width, sortable, pipe, cellTemplate);
     this.width ??= 150;
+    // The table forwards undefined through ngx-datatable's booleanAttribute
+    // transform, which otherwise disables automatic resizing.
+    this.canAutoResize = true;
   }
 }
