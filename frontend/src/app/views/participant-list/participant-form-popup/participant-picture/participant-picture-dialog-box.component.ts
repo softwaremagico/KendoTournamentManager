@@ -23,7 +23,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   selectedPicture: number | undefined = undefined;
   @Input()
   participant: Participant;
-  @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closed: EventEmitter<void> = new EventEmitter<void>();
   imageType: string = "image/png";
   modes: string[] = ["environment", "user"];
   facingMode: number = 0;  //Set back camera
@@ -32,10 +32,10 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   @Output()
   public imageClicked = new EventEmitter<WebcamImage>();
-  private pictureGenerated: Subject<void> = new Subject<void>();
+  private readonly pictureGenerated: Subject<void> = new Subject<void>();
 
-  constructor(rbacService: RbacService, public messageService: MessageService, private fileService: FileService,
-              private translateService: TranslocoService, private pictureUpdatedService: PictureUpdatedService) {
+  constructor(rbacService: RbacService, public readonly messageService: MessageService, private readonly fileService: FileService,
+              private readonly translateService: TranslocoService, private readonly pictureUpdatedService: PictureUpdatedService) {
     super(rbacService);
   }
 
@@ -47,7 +47,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   }
 
   closeDialog(): void {
-    this.onClosed.emit();
+    this.closed.emit();
   }
 
   public takePicture(): void {

@@ -1,10 +1,10 @@
+import {ServiceRequestMonitor} from './service-request-monitor';
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 
-import {catchError, tap} from "rxjs/operators";
 import {Role} from "../models/role";
 import {RoleType} from "../models/role-type";
 import {Participant} from "../models/participant";
@@ -17,102 +17,55 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
   providedIn: 'root'
 })
 export class RoleService {
+  private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/roles';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, private systemOverloadService: SystemOverloadService, public loginService: LoginService) {
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/roles';
+
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, private readonly systemOverloadService: SystemOverloadService, public readonly loginService: LoginService) {
   }
 
   getAll(): Observable<Role[]> {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Role[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched all roles`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role[]>(`gets all`))
-      );
+      .pipe(this.monitor.track<Role[]>(`gets all`, () => `fetched all roles`));
   }
 
   get(id: number): Observable<Role> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Role>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched role id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role>(`get id=${id}`))
-      );
+      .pipe(this.monitor.track<Role>(`get id=${id}`, () => `fetched role id=${id}`));
   }
 
   getFromTournament(id: number): Observable<Role[]> {
     const url: string = `${this.baseUrl}/tournaments/${id}`;
     return this.http.get<Role[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched roles from tournament id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
-      );
+      .pipe(this.monitor.track<Role[]>(`get from tournament id=${id}`, () => `fetched roles from tournament id=${id}`));
   }
 
   getFromTournamentAndType(id: number, type: RoleType): Observable<Role[]> {
     const url: string = `${this.baseUrl}/tournaments/${id}/types/` + type;
     return this.http.get<Role[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched roles from tournament id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
-      );
+      .pipe(this.monitor.track<Role[]>(`get from tournament id=${id}`, () => `fetched roles from tournament id=${id}`));
   }
 
   getFromTournamentAndTypes(id: number, types: RoleType[]): Observable<Role[]> {
     const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join(',');
     return this.http.get<Role[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched roles from tournament id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
-      );
+      .pipe(this.monitor.track<Role[]>(`get from tournament id=${id}`, () => `fetched roles from tournament id=${id}`));
   }
 
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting role id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<number>(`delete id=${id}`))
-      );
+      .pipe(this.monitor.track<number>(`delete id=${id}`, () => `deleting role id=${id}`));
   }
 
   delete(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Role>(url, role)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting role ${role}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role>(`delete ${role}`))
-      );
+      .pipe(this.monitor.track<Role>(`delete ${role.id}`, () => `deleting role ${role.id}`));
   }
 
   deleteByParticipantAndTournament(participant: Participant, tournament: Tournament): Observable<Role> {
@@ -121,40 +74,19 @@ export class RoleService {
       participant: participant,
       tournament: tournament
     })
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting role for ${participant} on ${tournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role>(`delete role for ${participant} on ${tournament}`))
-      );
+      .pipe(this.monitor.track<Role>(`delete role for ${participant} on ${tournament.name}`, () => `deleting role for ${participant} on ${tournament.name}`));
   }
 
   add(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Role>(url, role)
-      .pipe(
-        tap({
-          next: (newRole: Role) => this.loggerService.info(`adding role ${newRole}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role>(`adding ${role}`))
-      );
+      .pipe(this.monitor.track<Role>(`adding ${role.id}`, (newRole: Role) => `adding role ${newRole.id}`));
   }
 
   update(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Role>(url, role)
-      .pipe(
-        tap({
-          next: (updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Role>(`updating ${role}`))
-      );
+      .pipe(this.monitor.track<Role>(`updating ${role.id}`, (updatedRole: Role) => `updating role ${updatedRole.id}`));
   }
 
   getRolesByTournament(tournamentId: number): Observable<Blob> {

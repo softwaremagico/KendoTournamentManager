@@ -52,7 +52,7 @@ export class ArrowsComponent implements OnInit {
   height: number;
   width: number;
 
-  constructor(private groupsUpdatedService: GroupsUpdatedService) {
+  constructor(private readonly groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {

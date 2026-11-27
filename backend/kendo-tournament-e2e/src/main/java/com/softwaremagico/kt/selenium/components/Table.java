@@ -86,7 +86,7 @@ public class Table {
     }
 
     public void waitUntilContainsText(String text) {
-        webDriverClient.getWebDriverWait()
+        webDriverClient.newWait()
                 .withMessage(() -> {
                     try {
                         return "Table '" + tableLocator + "' does not contain '" + text + "'. url="

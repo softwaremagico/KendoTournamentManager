@@ -98,7 +98,7 @@ describe('ClubListComponent', () => {
     component.loadData();
 
     expect(systemOverloadServiceSpy.isTransactionalBusy.next).toHaveBeenCalledWith(true);
-    expect((component as any).clubs.length).toBe(2);
+    expect((component as any).clubs).toHaveSize(2);
   });
 
   it('should clone clubs in loadData', () => {
@@ -107,7 +107,7 @@ describe('ClubListComponent', () => {
 
     component.loadData();
 
-    expect((component as any).clubs.length).toBe(1);
+    expect((component as any).clubs).toHaveSize(1);
   });
 
   it('should set loading flag to false after loadData completes', (done) => {

@@ -38,7 +38,7 @@ export class TournamentBracketsComponent implements OnInit {
   readonly levelSeparation: number = BracketsMeasures.levelSeparation(this.groupsByLevel.get(0)?.length);
 
 
-  constructor(private groupsUpdatedService: GroupsUpdatedService) {
+  constructor(private readonly groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {
@@ -88,12 +88,13 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getGroupHigh(level: number, index: number): number {
-    if (this.groupsByLevel?.get(level) && this.groupsByLevel.get(level)![index]) {
+    const levelGroups = this.groupsByLevel?.get(level);
+    if (levelGroups?.[index]) {
       const estimatedTeams: number = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
       let teams: number = -1;
-      for (const i of this.groupsByLevel.get(level)!.keys()) {
-        if (this.groupsByLevel.get(level)![i].teams.length > teams) {
-          teams = this.groupsByLevel.get(level)![i].teams.length;
+      for (const i of levelGroups.keys()) {
+        if (levelGroups[i].teams.length > teams) {
+          teams = levelGroups[i].teams.length;
         }
       }
 
@@ -106,42 +107,44 @@ export class TournamentBracketsComponent implements OnInit {
     return BracketsMeasures.GROUP_HIGH;
   }
 
-  getGroupTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number {
-    let maxGroupsByLevel: number = 0;
-    let levelWithMaxGroups: number = 0;
-    //Now group 0 maybe is the one with the highest number of groups. Search for which level is.
-    if (groupsByLevel) {
-      const keys: number[] = [...groupsByLevel.keys()];
-      for (let key of keys.sort((a, b) => a - b)) {
-        if (groupsByLevel.get(key)!.length > maxGroupsByLevel) {
-          maxGroupsByLevel = groupsByLevel.get(key)!.length;
-          levelWithMaxGroups = key;
-        }
-      }
-      if (level == levelWithMaxGroups || groupsByLevel.get(levelWithMaxGroups)?.length == groupsByLevel?.get(level)?.length) {
-        if (group == 0) {
-          //First group no margin. Only difference on size of groups
-          return (level != 0 && (groupsByLevel.get(level)!.length > groupsByLevel.get(0)!.length) ?
-            BracketsMeasures.GROUP_SEPARATION : 0) + (this.getGroupHigh(levelWithMaxGroups, group) - this.getGroupHigh(level, group)) / 2;
-        } else {
-          return BracketsMeasures.GROUP_SEPARATION + (this.getGroupHigh(levelWithMaxGroups, group));
-        }
-      } else {
-        //Level is smaller than the max one.
-        const totalHeight: number = (groupsByLevel.get(levelWithMaxGroups)!.length * this.getGroupHigh(levelWithMaxGroups, group))
-          //First group has no separation with top.
-          + (groupsByLevel.get(levelWithMaxGroups)!.length - 1) * BracketsMeasures.GROUP_SEPARATION;
-        const portion: number = (totalHeight / groupsByLevel.get(level)!.length);
-        if (group == 0) {
-          //return (portion / 2 - this.getGroupHigh(level, group) / 2) - BracketsMeasures.GROUP_SEPARATION / groupsByLevel.get(level)!.length;
-          return (portion / 2) - (this.getGroupHigh(level, group) / 2);
-        } else {
-          return portion;
-        }
-      }
-    }
-    return 0;
+  private getLevelWithMostGroups(groupsByLevel: Map<number, Group[]>): number {
+    return [...groupsByLevel.entries()]
+      .sort(([levelA], [levelB]): number => levelA - levelB)
+      .reduce((levelWithMostGroups: number, [level, groups]: [number, Group[]]): number =>
+        groups.length > (groupsByLevel.get(levelWithMostGroups)?.length ?? 0) ? level : levelWithMostGroups, 0);
   }
+
+  private getSmallLevelTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]>,
+                                     levelWithMostGroups: number): number {
+    const groupsAtMaxLevel: number = groupsByLevel.get(levelWithMostGroups)!.length;
+    const totalHeight: number = groupsAtMaxLevel * this.getGroupHigh(levelWithMostGroups, group)
+      + (groupsAtMaxLevel - 1) * BracketsMeasures.GROUP_SEPARATION;
+    const portion: number = totalHeight / groupsByLevel.get(level)!.length;
+    // First group has no separation with top.
+    return group === 0 ? (portion / 2) - (this.getGroupHigh(level, group) / 2) : portion;
+  }
+
+  /**
+   * Se pasa como @Input a los componentes hijos del árbol; debe conservar la
+   * instancia que contiene los helpers privados aunque se invoque desde otro this.
+   */
+  readonly getGroupTopSeparation = (level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number => {
+    if (!groupsByLevel || groupsByLevel.size === 0) {
+      return 0;
+    }
+    const levelWithMostGroups: number = this.getLevelWithMostGroups(groupsByLevel);
+    if (level === levelWithMostGroups
+      || groupsByLevel.get(levelWithMostGroups)?.length === groupsByLevel.get(level)?.length) {
+      if (group === 0) {
+        // First group has no margin. Only difference on size of groups.
+        const separation: number = level !== 0 && (groupsByLevel.get(level)!.length > groupsByLevel.get(0)!.length)
+          ? BracketsMeasures.GROUP_SEPARATION : 0;
+        return separation + (this.getGroupHigh(levelWithMostGroups, group) - this.getGroupHigh(level, group)) / 2;
+      }
+      return BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(levelWithMostGroups, group);
+    }
+    return this.getSmallLevelTopSeparation(level, group, groupsByLevel, levelWithMostGroups);
+  };
 
   getGroupYCoordinate(level: number, group: number): number {
     let y: number = 0;

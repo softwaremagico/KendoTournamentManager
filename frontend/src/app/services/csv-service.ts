@@ -17,11 +17,11 @@ import {GroupLink} from "../models/group-link.model";
 })
 export class CsvService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/csv';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/csv';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
 

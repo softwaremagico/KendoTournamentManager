@@ -46,15 +46,14 @@ export class TypeValidations {
 
     const normalizedValue: string = trimmedValue.includes('://') ? trimmedValue : `https://${trimmedValue}`;
 
-    try {
-      const parsedUrl: URL = new URL(normalizedValue);
-      return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:')
-        && !parsedUrl.username
-        && !parsedUrl.password
-        && this.isValidDomain(parsedUrl.hostname);
-    } catch (_error) {
+    if (!URL.canParse(normalizedValue)) {
       return false;
     }
+    const parsedUrl: URL = new URL(normalizedValue);
+    return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:')
+      && !parsedUrl.username
+      && !parsedUrl.password
+      && this.isValidDomain(parsedUrl.hostname);
   }
 
   private static isValidEmailLocalPart(localPart: string): boolean {
@@ -82,8 +81,9 @@ export class TypeValidations {
       return false;
     }
 
-    const topLevelDomain: string = domainLabels[domainLabels.length - 1];
-    if (topLevelDomain.length < 2 || ![...topLevelDomain].every((character: string): boolean => this.isAsciiLetter(character))) {
+    const topLevelDomain: string | undefined = domainLabels.at(-1);
+    if (!topLevelDomain || topLevelDomain.length < 2
+      || ![...topLevelDomain].every((character: string): boolean => this.isAsciiLetter(character))) {
       return false;
     }
 

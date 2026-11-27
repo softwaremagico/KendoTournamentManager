@@ -27,11 +27,11 @@ import {Participant} from "../models/participant";
 })
 export class StatisticsService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/statistics';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/statistics';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
   getFightStatistics(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<TournamentFightStatistics> {

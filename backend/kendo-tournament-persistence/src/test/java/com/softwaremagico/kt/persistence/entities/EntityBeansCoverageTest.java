@@ -41,7 +41,7 @@ public class EntityBeansCoverageTest {
 
 	@Test
 	public void shouldCoverEntityGettersSettersAndObjectMethods() throws Exception {
-		final Class<?>[] entityClasses = new Class<?>[]{Achievement.class, AuthenticatedUser.class, Club.class,
+		final Class<?>[] entityClasses = {Achievement.class, AuthenticatedUser.class, Club.class,
 				Duel.class, DuelType.class, Element.class, Fight.class, Group.class, GroupLink.class, Participant.class,
 				ParticipantImage.class, Role.class, Team.class, Tournament.class, TournamentExtraProperty.class,
 				TournamentImage.class, TournamentScore.class};

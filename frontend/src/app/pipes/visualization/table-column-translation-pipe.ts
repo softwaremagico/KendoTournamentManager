@@ -2,6 +2,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {TranslocoService} from '@jsverse/transloco';
 import {DatePipe} from "@angular/common";
 import {UserSessionService} from "../../services/user-session.service";
+import {createLocaleDatePipe} from "../../utils/dates/locale-date-pipe";
 
 @Pipe({
   name: 'tournamentType',
@@ -16,17 +17,7 @@ export class TableColumnTranslationPipe implements PipeTransform {
   }
 
   private setLocale(): void {
-    if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
-      this.pipe = new DatePipe('es');
-    } else if (this.userSessionService.getLanguage() === 'it') {
-      this.pipe = new DatePipe('it');
-    } else if (this.userSessionService.getLanguage() === 'de') {
-      this.pipe = new DatePipe('de');
-    } else if (this.userSessionService.getLanguage() === 'nl') {
-      this.pipe = new DatePipe('nl');
-    } else {
-      this.pipe = new DatePipe('en-US');
-    }
+    this.pipe = createLocaleDatePipe(this.userSessionService.getLanguage());
   }
 
   transform(column: unknown): unknown {
@@ -46,12 +37,29 @@ export class TableColumnTranslationPipe implements PipeTransform {
       return "";
     }
 
-    const text: string = String(column);
+    const text: string | undefined = this.columnKey(column);
+    if (text === undefined) {
+      return "";
+    }
     if (text.toUpperCase() === text) {
       // probably is an enum
       return this.transloco.translate(this.snakeToCamel(text.toLowerCase()));
     }
     return this.transloco.translate(text);
+  }
+
+  /** Resolves a stable translation key without stringifying arbitrary objects. */
+  private columnKey(column: unknown): string | undefined {
+    if (typeof column === 'string') {
+      return column;
+    }
+    if (typeof column === 'object' && column !== null && 'scoreType' in column) {
+      const scoreType: unknown = column.scoreType;
+      if (typeof scoreType === 'string') {
+        return scoreType;
+      }
+    }
+    return undefined;
   }
 
   snakeToCamel(string: string): string {

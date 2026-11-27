@@ -55,7 +55,7 @@ export class GroupContainerComponent implements OnInit {
 
   estimatedTeams: number;
 
-  constructor(private groupService: GroupService, private groupsUpdatedService: GroupsUpdatedService) {
+  constructor(private readonly groupService: GroupService, private readonly groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {

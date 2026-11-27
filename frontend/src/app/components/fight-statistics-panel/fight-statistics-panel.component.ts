@@ -26,7 +26,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   minutes: number;
   seconds: number;
 
-  constructor(private statisticsServices: StatisticsService, private statisticsChangedService: StatisticsChangedService) {
+  constructor(private readonly statisticsServices: StatisticsService, private readonly statisticsChangedService: StatisticsChangedService) {
     super();
   }
 
@@ -34,9 +34,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
     this.statisticsChangedService.areStatisticsChanged.pipe(takeUntil(this.destroySubject)).subscribe(() => {
       if (this.tournament?.id) {
         this.statisticsServices.getFightStatistics(this.tournament.id, !this.teams, this.teams).subscribe((_fightStatistics) => {
-          if (_fightStatistics === undefined || _fightStatistics === null) {
-            _fightStatistics = new TournamentFightStatistics();
-          }
+          _fightStatistics ??= new TournamentFightStatistics();
           this.fightStatistics = _fightStatistics;
           this.setHours(this.fightStatistics.estimatedTime);
           this.setMinutes(this.fightStatistics.estimatedTime);

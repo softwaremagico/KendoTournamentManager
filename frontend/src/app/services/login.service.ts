@@ -111,7 +111,7 @@ export class LoginService {
         localStorage.setItem('tournamentId', tournamentId + "");
       },
       error: (): void => {
-        this.router.navigate(["/"]);
+        void this.router.navigate(["/"]);
       }
     });
   }
@@ -123,7 +123,7 @@ export class LoginService {
         localStorage.setItem('account', 'participant');
       },
       error: (): void => {
-        this.router.navigate(["/"]);
+        void this.router.navigate(["/"]);
       }
     });
   }
@@ -150,7 +150,7 @@ export class LoginService {
   }
 
   logout(): void {
-    this.rxStompService.deactivate();
+    void this.rxStompService.deactivate();
     this.userSessionService.clearToken();
     this.activityService.setRoles([]);
     localStorage.removeItem('account');
@@ -176,12 +176,34 @@ export class LoginService {
     }
     try {
       const payload = token.split('.')[1];
-      const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const normalizedPayload = payload.replaceAll('-', '+').replaceAll('_', '/');
       const decoded = JSON.parse(atob(normalizedPayload));
       return typeof decoded.tenantId === 'number' ? decoded.tenantId : null;
     } catch {
       return null;
     }
+  }
+
+  /** Roles come from the JWT so read-only sessions are identified before opening sockets. */
+  getJwtRoles(): string[] {
+    const token = this.getJwtValue();
+    if (!token) {
+      return [];
+    }
+    try {
+      const payload = token.split('.')[1];
+      const normalizedPayload = payload.replaceAll('-', '+').replaceAll('_', '/');
+      const decoded = JSON.parse(atob(normalizedPayload));
+      if (Array.isArray(decoded.roles)) {
+        return decoded.roles.map(String);
+      }
+      if (typeof decoded.roles === 'string' && decoded.roles.length > 0) {
+        return decoded.roles.split(',');
+      }
+    } catch {
+      // A malformed token yields no roles; the backend still rejects its sockets.
+    }
+    return [];
   }
 
   public getJwtExpirationValue(): number {

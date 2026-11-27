@@ -31,12 +31,12 @@ import {UserRoles} from "./rbac/user-roles";
 })
 export class UserService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private cookies: CookieService, private systemOverloadService: SystemOverloadService,
-              public loginService: LoginService,
-              private loggerService: LoggerService, private messageService: MessageService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
+              private readonly cookies: CookieService, private readonly systemOverloadService: SystemOverloadService,
+              public readonly loginService: LoginService,
+              private readonly loggerService: LoggerService, private readonly messageService: MessageService) {
 
   }
 
@@ -65,23 +65,21 @@ export class UserService {
       .pipe(
         tap({
           next: (_authenticatedUser: AuthenticatedUser) => {
-            this.loggerService.info(`adding user ${_authenticatedUser}`);
+            this.loggerService.info(`adding user ${_authenticatedUser.username}`);
           },
           error: (error: unknown): void => {
             this.systemOverloadService.isBusy.next(false);
             if (error instanceof HttpErrorResponse) {
-              switch (error.status) {
-                case 400:
-                  this.messageService.errorMessage("errorUserAlreadyExists");
-                  break;
-                default:
-                  throw error;
+              if (error.status === 400) {
+                this.messageService.errorMessage("errorUserAlreadyExists");
+              } else {
+                throw error;
               }
             }
           },
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<AuthenticatedUser>(`adding ${authenticatedUser}`))
+        catchError(this.messageService.handleError<AuthenticatedUser>(`adding ${authenticatedUser.username}`))
       );
   }
 
@@ -90,11 +88,11 @@ export class UserService {
     return this.http.patch<AuthenticatedUser>(url, authenticatedUser)
       .pipe(
         tap({
-          next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`updating user ${_authenticatedUser}`),
+          next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`updating user ${_authenticatedUser.username}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<AuthenticatedUser>(`updating ${authenticatedUser}`))
+        catchError(this.messageService.handleError<AuthenticatedUser>(`updating ${authenticatedUser.username}`))
       );
   }
 
@@ -103,11 +101,11 @@ export class UserService {
     return this.http.delete<AuthenticatedUser>(url)
       .pipe(
         tap({
-          next: () => this.loggerService.info(`deleting user ${authenticatedUser}`),
+          next: () => this.loggerService.info(`deleting user ${authenticatedUser.username}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<AuthenticatedUser>(`delete ${authenticatedUser}`))
+        catchError(this.messageService.handleError<AuthenticatedUser>(`delete ${authenticatedUser.username}`))
       );
   }
 

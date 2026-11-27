@@ -28,10 +28,10 @@ export class ResetPasswordComponent implements OnInit {
 
   protected PASSWORD_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
 
-  protected password: string[] = ["", ""];
+  protected readonly password: string[] = ["", ""];
   protected readonly Type = Type;
-  protected errors: Map<PasswordFormValidationFields, string> = new Map<PasswordFormValidationFields, string>();
-  protected complete = false;
+  protected readonly errors: Map<PasswordFormValidationFields, string> = new Map<PasswordFormValidationFields, string>();
+  protected readonly complete = false;
 
   loadingGlobal: boolean = false;
 
@@ -41,15 +41,15 @@ export class ResetPasswordComponent implements OnInit {
 
   protected pwdVerification: string = '';
   protected newPassword: string;
-  protected oldPassword: string;
+  protected readonly oldPassword: string;
   protected loggedUser: AuthenticatedUser | undefined;
 
 
-  constructor(private userService: UserService,
-              protected sessionService: UserSessionService,
-              protected transloco: TranslocoService,
-              private biitSnackbarService: BiitSnackbarService,
-              private messageService: MessageService) {
+  constructor(private readonly userService: UserService,
+              protected readonly sessionService: UserSessionService,
+              protected readonly transloco: TranslocoService,
+              private readonly biitSnackbarService: BiitSnackbarService,
+              private readonly messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -92,7 +92,7 @@ export class ResetPasswordComponent implements OnInit {
     }
     if (this.pwdVerification !== this.newPassword) {
       verdict = false;
-      this.errors.set(PasswordFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.passwordMismatch`));
+      this.errors.set(PasswordFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.credentialsMismatch`));
     }
     return verdict;
   }

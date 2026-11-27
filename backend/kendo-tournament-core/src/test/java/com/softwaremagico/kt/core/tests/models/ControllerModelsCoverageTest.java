@@ -41,7 +41,7 @@ public class ControllerModelsCoverageTest {
 
 	@Test
 	public void shouldCoverControllerModelsGettersSettersAndObjectMethods() throws Exception {
-		final Class<?>[] modelClasses = new Class<?>[]{
+		final Class<?>[] modelClasses = {
 				com.softwaremagico.kt.core.controller.models.AchievementDTO.class,
 				com.softwaremagico.kt.core.controller.models.ClubDTO.class,
 				com.softwaremagico.kt.core.controller.models.DuelDTO.class,

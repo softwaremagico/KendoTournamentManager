@@ -1,10 +1,10 @@
+import {ServiceRequestMonitor} from './service-request-monitor';
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {Team} from "../models/team";
-import {catchError, tap} from "rxjs/operators";
 import {Participant} from "../models/participant";
 import {Tournament} from "../models/tournament";
 import {MessageService} from "./message.service";
@@ -15,91 +15,51 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
   providedIn: 'root'
 })
 export class TeamService {
+  private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/teams';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/teams';
+
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
   getAll(): Observable<Team[]> {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Team[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched all teams`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team[]>(`gets all`))
-      );
+      .pipe(this.monitor.track<Team[]>(`gets all`, () => `fetched all teams`));
   }
 
   get(id: number): Observable<Team> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Team>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched team id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`get id=${id}`))
-      );
+      .pipe(this.monitor.track<Team>(`get id=${id}`, () => `fetched team id=${id}`));
   }
 
   getFromTournament(tournament: Tournament): Observable<Team[]> {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
     return this.http.get<Team[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched teams from tournament ${tournament.name}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
-      );
+      .pipe(this.monitor.track<Team[]>(`get from tournament ${tournament.name}`, () => `fetched teams from tournament ${tournament.name}`));
   }
 
   getRemainingFromTournament(tournament: Tournament): Observable<Team[]> {
     const url: string = `${this.baseUrl}/remaining/tournaments/${tournament.id}`;
     return this.http.get<Team[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched teams from tournament ${tournament.name}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
-      );
+      .pipe(this.monitor.track<Team[]>(`get from tournament ${tournament.name}`, () => `fetched teams from tournament ${tournament.name}`));
   }
 
 
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting team id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<number>(`delete id=${id}`))
-      );
+      .pipe(this.monitor.track<number>(`delete id=${id}`, () => `deleting team id=${id}`));
   }
 
   delete(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Team>(url, team)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting team ${team}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`delete ${team}`))
-      );
+      .pipe(this.monitor.track<Team>(`delete ${team.name}`, () => `deleting team ${team.name}`));
   }
 
   deleteByMemberAndTournament(participant: Participant, tournament: Tournament): Observable<Team> {
@@ -108,14 +68,7 @@ export class TeamService {
       participant: participant,
       tournament: tournament
     })
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting member ${participant} on ${tournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`delete member ${participant} on ${tournament}`))
-      );
+      .pipe(this.monitor.track<Team>(`delete member ${participant} on ${tournament.name}`, () => `deleting member ${participant} on ${tournament.name}`));
   }
 
   deleteByMembersAndTournament(participants: Participant[], tournament: Tournament): Observable<Team> {
@@ -124,80 +77,38 @@ export class TeamService {
       participants: participants,
       tournament: tournament
     })
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting members ${participants} on ${tournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`delete members ${participants} on ${tournament}`))
-      );
+      .pipe(this.monitor.track<Team>(`delete members ${participants} on ${tournament.name}`, () => `deleting members ${participants} on ${tournament.name}`));
   }
 
   deleteByTournament(tournament: Tournament): Observable<Team> {
     const url: string = `${this.baseUrl}/tournaments/delete`;
     return this.http.post<Team>(url, {tournament: tournament})
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting teams on ${tournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`delete teams on ${tournament}`))
-      );
+      .pipe(this.monitor.track<Team>(`delete teams on ${tournament.name}`, () => `deleting teams on ${tournament.name}`));
   }
 
   createByTournament(tournament: Tournament): Observable<Team[]> {
     const url: string = `${this.baseUrl}/tournaments`;
     return this.http.put<Team[]>(url, {tournament: tournament})
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`creating teams for ${tournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team[]>(`creating teams for ${tournament}`))
-      );
+      .pipe(this.monitor.track<Team[]>(`creating teams for ${tournament.name}`, () => `creating teams for ${tournament.name}`));
   }
 
   add(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Team>(url, team)
-      .pipe(
-        tap({
-          next: (newTeam: Team) => this.loggerService.info(`adding team ${newTeam.name}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`adding ${team.name}`))
-      );
+      .pipe(this.monitor.track<Team>(`adding ${team.name}`, (newTeam: Team) => `adding team ${newTeam.name}`));
   }
 
   setAll(teams: Team[]): Observable<Team[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/set`;
     return this.http.post<Team[]>(url, teams)
-      .pipe(
-        tap({
-          next: (newTeam: Team[]) => this.loggerService.info(`adding ` + teams.length + "` teams.`"),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team[]>(`adding ` + teams.length + "` teams.`"))
-      );
+      .pipe(this.monitor.track<Team[]>(`adding ` + teams.length + "` teams.`"));
   }
 
   update(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Team>(url, team)
-      .pipe(
-        tap({
-          next: (updatedTeam: Team) => this.loggerService.info(`updating team ${updatedTeam}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Team>(`updating ${team}`))
-      );
+      .pipe(this.monitor.track<Team>(`updating ${team.name}`, (updatedTeam: Team) => `updating team ${updatedTeam.name}`));
   }
 
   getTeamsByTournament(tournamentId: number): Observable<Blob> {

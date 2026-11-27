@@ -21,43 +21,33 @@ package com.softwaremagico.kt.logger;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Logger wrapper for core Kendo Tournament operations.
  */
+
 public final class KendoTournamentLogger extends AbstractLoggerWrapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KendoTournamentLogger.class);
+    private static final LoggerFacade KENDO_TOURNAMENT_DELEGATE = new LoggerFacade(KendoTournamentLogger.class);
+
+    public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
+        KENDO_TOURNAMENT_DELEGATE.info(clazz, messageTemplate, arguments);
+    }
+    public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
+        KENDO_TOURNAMENT_DELEGATE.warning(clazz, messageTemplate, arguments);
+    }
+    public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
+        KENDO_TOURNAMENT_DELEGATE.debug(clazz, messageTemplate, arguments);
+    }
+    public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
+        KENDO_TOURNAMENT_DELEGATE.severe(clazz, messageTemplate, arguments);
+    }
+    public static void errorMessage(Class<?> clazz, Throwable throwable) {
+        KENDO_TOURNAMENT_DELEGATE.error(clazz, throwable);
+    }
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        KENDO_TOURNAMENT_DELEGATE.error(clazz, messageTemplate, arguments);
+    }
 
     private KendoTournamentLogger() {
     }
-
-    public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateInfo(LOGGER, clazz, messageTemplate, arguments);
-    }
-
-    public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateWarning(LOGGER, clazz, messageTemplate, arguments);
-    }
-
-
-    public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateDebug(LOGGER, clazz, messageTemplate, arguments);
-    }
-
-
-    public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
-    }
-
-    public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        delegateErrorMessage(LOGGER, clazz, throwable);
-    }
-
-    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateErrorMessage(LOGGER, clazz.getName(), messageTemplate, arguments);
-    }
-
 }

@@ -15,11 +15,11 @@ import {Tournament} from "../models/tournament";
 })
 export class QrService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/qr';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/qr';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
   getGuestsQr(tournament: Tournament, nightMode: boolean, port?: number): Observable<QrCode> {

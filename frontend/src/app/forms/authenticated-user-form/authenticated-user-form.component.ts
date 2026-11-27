@@ -126,13 +126,13 @@ export class AuthenticatedUserFormComponent extends RbacBasedComponent implement
       }
       if (this.pwdVerification !== this.user.password) {
         verdict = false;
-        this.errors.set(AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.passwordMismatch`));
+        this.errors.set(AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.credentialsMismatch`));
       }
     } else {
-      const passwordMismatch: boolean = !!this.user.password && this.pwdVerification !== this.user.password;
-      if (passwordMismatch) {
+      const credentialsMismatch: boolean = !!this.user.password && this.pwdVerification !== this.user.password;
+      if (credentialsMismatch) {
         verdict = false;
-        this.errors.set(AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.passwordMismatch`));
+        this.errors.set(AuthenticatedUserFormValidationFields.PASSWORD_MISMATCH, this.transloco.translate(`v.credentialsMismatch`));
       }
     }
 

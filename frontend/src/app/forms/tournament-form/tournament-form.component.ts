@@ -204,7 +204,7 @@ export class TournamentFormComponent extends RbacBasedComponent implements OnIni
 
     saveTournament.pipe(
       switchMap(tournament => {
-        if (!tournament || tournament.id == null) {
+        if (tournament?.id == null) {
           throw new Error('Could not save tournament');
         }
         this.tournament.id = tournament.id;

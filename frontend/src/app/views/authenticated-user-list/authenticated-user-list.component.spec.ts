@@ -73,7 +73,7 @@ describe('AuthenticatedUserListComponent', () => {
 
     component.ngAfterViewInit();
 
-    expect((component as any).columns.length).toBe(9);
+    expect((component as any).columns).toHaveSize(9);
     expect(component.loadData).toHaveBeenCalled();
   });
 
@@ -85,7 +85,7 @@ describe('AuthenticatedUserListComponent', () => {
 
     expect((systemOverloadServiceMock.isTransactionalBusy.next as jasmine.Spy)).toHaveBeenCalledWith(true);
     expect((component as any).loading).toBeFalse();
-    expect((component as any).users.length).toBe(1);
+    expect((component as any).users).toHaveSize(1);
     expect((component as any).users[0]).not.toBe(user);
     expect((systemOverloadServiceMock.isTransactionalBusy.next as jasmine.Spy)).toHaveBeenCalledWith(false);
   });

@@ -159,7 +159,7 @@
     <biit-popup id="tournament-images-popup" no-header>
       <tournament-images
         [tournament]="table.selectedRows[0]"
-        (onClosed)="addPhoto=false"></tournament-images>
+        (closed)="addPhoto=false"></tournament-images>
     </biit-popup>
   }
 
@@ -213,7 +213,7 @@
       [title]="t('addRoleToTournament')">
       <tournament-roles
         [tournament]="table.selectedRows[0]"
-      (onClosed)="showTournamentRoles=false"></tournament-roles>
+      (closed)="showTournamentRoles=false"></tournament-roles>
     </biit-popup>
   }
 

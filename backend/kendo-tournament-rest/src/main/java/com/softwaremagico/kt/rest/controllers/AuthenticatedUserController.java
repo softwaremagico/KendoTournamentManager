@@ -91,7 +91,8 @@ public class AuthenticatedUserController {
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
 
         //Check the old password.
-        if (!BCrypt.checkpw(oldPassword, authenticatedUser.getPassword())) {
+        final String currentPassword = authenticatedUser.getPassword();
+        if (oldPassword == null || currentPassword == null || !BCrypt.checkpw(oldPassword, currentPassword)) {
             throw new InvalidPasswordException(this.getClass(), "Provided password is incorrect!");
         }
 

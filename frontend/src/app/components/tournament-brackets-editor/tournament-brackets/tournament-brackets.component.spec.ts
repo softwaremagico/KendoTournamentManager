@@ -52,8 +52,8 @@ describe('TournamentBracketsComponent', () => {
 
     const grouped = TournamentBracketsComponent.convert(groups);
 
-    expect(grouped.get(0)?.length).toBe(2);
-    expect(grouped.get(1)?.length).toBe(1);
+    expect(grouped.get(0)).toHaveSize(2);
+    expect(grouped.get(1)).toHaveSize(1);
   });
 
   it('should return empty map from convert when groups are undefined', () => {
@@ -72,8 +72,8 @@ describe('TournamentBracketsComponent', () => {
 
     areGroupsUpdatedSubject.next(groups);
 
-    expect(component.groupsByLevel.get(0)?.length).toBe(2);
-    expect(component.groupsByLevel.get(1)?.length).toBe(1);
+    expect(component.groupsByLevel.get(0)).toHaveSize(2);
+    expect(component.groupsByLevel.get(1)).toHaveSize(1);
     expect(component.shiaijosByLevel.get(0)).toEqual([0]);
   });
 
@@ -129,6 +129,58 @@ describe('TournamentBracketsComponent', () => {
     component.groupsByLevel = new Map<number, Group[]>();
 
     expect(component.getGroupsInShiaijo(0, 99)).toEqual([]);
+  });
+
+  it('should return zero top separation for missing or empty groups', () => {
+    expect(component.getGroupTopSeparation(0, 0, null)).toBe(0);
+    expect(component.getGroupTopSeparation(0, 0, new Map<number, Group[]>())).toBe(0);
+  });
+
+  it('should calculate top separation for the level with the most groups', () => {
+    const first = createGroup(1, 0, 0, 0, [createTeam(1, 'A'), createTeam(2, 'B')]);
+    const second = createGroup(2, 1, 0, 0, [createTeam(3, 'C')]);
+    const third = createGroup(3, 1, 1, 1, [createTeam(4, 'D')]);
+    component.groupsByLevel = new Map<number, Group[]>([[0, [first]], [1, [second, third]]]);
+
+    expect(component.getGroupTopSeparation(1, 0, component.groupsByLevel)).toBeGreaterThan(0);
+    expect(component.getGroupTopSeparation(1, 1, component.groupsByLevel)).toBeGreaterThan(0);
+    expect(Number.isFinite(component.getGroupTopSeparation(0, 0, component.groupsByLevel))).toBeTrue();
+  });
+
+  it('should calculate top separation when several levels have the same number of groups', () => {
+    const first = createGroup(1, 0, 0, 0, [createTeam(1, 'A'), createTeam(2, 'B')]);
+    const second = createGroup(2, 0, 1, 1);
+    const third = createGroup(3, 1, 0, 0, [createTeam(3, 'C')]);
+    const fourth = createGroup(4, 1, 1, 1);
+    component.groupsByLevel = new Map<number, Group[]>([[0, [first, second]], [1, [third, fourth]]]);
+
+    expect(component.getGroupTopSeparation(0, 0, component.groupsByLevel)).toBeGreaterThanOrEqual(0);
+    expect(component.getGroupTopSeparation(1, 0, component.groupsByLevel)).toBeGreaterThanOrEqual(0);
+    expect(component.getGroupTopSeparation(1, 1, component.groupsByLevel)).toBeGreaterThan(0);
+  });
+
+  it('should distribute groups of a smaller level below the widest level', () => {
+    const first = createGroup(1, 0, 0, 0, [createTeam(1, 'A'), createTeam(2, 'B')]);
+    const second = createGroup(2, 0, 1, 1);
+    const third = createGroup(3, 1, 0, 0, [createTeam(3, 'C')]);
+    const groupsByLevel = new Map<number, Group[]>([[0, [first, second]], [1, [third]]]);
+    component.groupsByLevel = groupsByLevel;
+
+    expect(component.getGroupTopSeparation(1, 0, groupsByLevel)).toBeGreaterThanOrEqual(0);
+    expect(component.getGroupTopSeparation(1, 1, groupsByLevel)).toBeGreaterThan(0);
+  });
+
+  // Los componentes hijos reciben esta función como @Input y la invocan con su propio this.
+  it('should keep top separation bound when a child component invokes it', () => {
+    const first = createGroup(1, 0, 0, 0, [createTeam(1, 'A'), createTeam(2, 'B')]);
+    const second = createGroup(2, 1, 0, 0, [createTeam(3, 'C')]);
+    const third = createGroup(3, 1, 1, 1, [createTeam(4, 'D')]);
+    const groupsByLevel = new Map<number, Group[]>([[0, [first]], [1, [second, third]]]);
+    component.groupsByLevel = groupsByLevel;
+    const fromChild = component.getGroupTopSeparation;
+
+    expect(fromChild(1, 0, groupsByLevel)).toBeGreaterThan(0);
+    expect(fromChild(1, 1, groupsByLevel)).toBeGreaterThan(0);
   });
 });
 

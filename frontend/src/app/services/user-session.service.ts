@@ -42,10 +42,6 @@ export class UserSessionService {
       }
       this.loggedIn = true;
     }
-    if ((authToken && expires)
-      || (sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_TOKEN}`) && sessionStorage.getItem(`${this.context}.${Constants.SESSION_STORAGE.AUTH_EXPIRATION}`))) {
-      this.setAutoRenew(authToken, expires);
-    }
   }
 
   setLanguage(language: string | undefined): void {
@@ -94,36 +90,36 @@ export class UserSessionService {
     return Number(sessionStorage.getItem("itemsPerPage"));
   }
 
-  setSwappedColors(swappedColors: boolean): void {
-    if (swappedColors) {
-      sessionStorage.setItem("swappedColors", swappedColors.toString());
-    } else {
-      sessionStorage.removeItem("swappedColors");
-    }
+  enableSwappedColors(): void {
+    sessionStorage.setItem("swappedColors", "true");
+  }
+
+  disableSwappedColors(): void {
+    sessionStorage.removeItem("swappedColors");
   }
 
   getSwappedColors(): boolean {
     return Boolean(sessionStorage.getItem("swappedColors"));
   }
 
-  setSwappedTeams(swappedTeams: boolean): void {
-    if (swappedTeams) {
-      sessionStorage.setItem("swappedTeams", swappedTeams.toString());
-    } else {
-      sessionStorage.removeItem("swappedTeams");
-    }
+  enableSwappedTeams(): void {
+    sessionStorage.setItem("swappedTeams", "true");
+  }
+
+  disableSwappedTeams(): void {
+    sessionStorage.removeItem("swappedTeams");
   }
 
   getSwappedTeams(): boolean {
     return Boolean(sessionStorage.getItem("swappedTeams"));
   }
 
-  setNightMode(nightMode: boolean): void {
-    if (nightMode) {
-      localStorage.setItem("nightMode", nightMode.toString());
-    } else {
-      localStorage.removeItem("nightMode");
-    }
+  enableNightMode(): void {
+    localStorage.setItem("nightMode", "true");
+  }
+
+  disableNightMode(): void {
+    localStorage.removeItem("nightMode");
   }
 
   getNightMode(): boolean {
@@ -198,11 +194,6 @@ export class UserSessionService {
 
   getToken(): string | null {
     return sessionStorage.getItem(`${Constants.SESSION_STORAGE.AUTH_TOKEN}`);
-  }
-
-  private setAutoRenew(token: string | null, expires: number | null): void {
-    if (token && expires) {
-    }
   }
 
   clearToken(): void {

@@ -25,12 +25,12 @@ export class SenbatsuFightCreatorComponent extends FightCreator implements OnIni
   public teamDragDisabled: Team[];
 
   constructor(
-    protected override teamService: TeamService,
-    protected override fightService: FightService,
-    protected override groupServices: GroupService,
-    protected override messageService: MessageService,
-    protected override groupUpdatedService: GroupUpdatedService,
-    private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService
+    protected override readonly teamService: TeamService,
+    protected override readonly fightService: FightService,
+    protected override readonly groupServices: GroupService,
+    protected override readonly messageService: MessageService,
+    protected override readonly groupUpdatedService: GroupUpdatedService,
+    private readonly tournamentExtendedPropertiesService: TournamentExtendedPropertiesService
   ) {
     super(teamService, fightService, groupServices, messageService, groupUpdatedService);
   }
@@ -66,8 +66,10 @@ export class SenbatsuFightCreatorComponent extends FightCreator implements OnIni
         event.currentIndex,
       );
     }
-    this.teamListData.filteredTeams = this.teamListData.filteredTeams.sort((a: Team, b: Team) => this.originalTeams.indexOf(a) - this.originalTeams.indexOf(b));
-    this.teamListData.teams = this.teamListData.teams.sort((a: Team, b: Team) => this.originalTeams.indexOf(a) - this.originalTeams.indexOf(b));
+    const sortedFilteredTeams: Team[] = [...this.teamListData.filteredTeams].sort((a: Team, b: Team) => this.originalTeams.indexOf(a) - this.originalTeams.indexOf(b));
+    const sortedTeams: Team[] = [...this.teamListData.teams].sort((a: Team, b: Team) => this.originalTeams.indexOf(a) - this.originalTeams.indexOf(b));
+    this.teamListData.filteredTeams = sortedFilteredTeams;
+    this.teamListData.teams = sortedTeams;
     return event.container.data[event.currentIndex];
   }
 }

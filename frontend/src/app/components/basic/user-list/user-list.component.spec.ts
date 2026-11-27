@@ -64,7 +64,7 @@ describe('UserListComponent', () => {
     userListData.participants = [participant1, participant2];
     component.filter('john');
 
-    expect(userListData.filteredParticipants.length).toBe(1);
+    expect(userListData.filteredParticipants).toHaveSize(1);
     expect(userListData.filteredParticipants[0]).toEqual(participant1);
   });
 
@@ -80,7 +80,7 @@ describe('UserListComponent', () => {
     userListData.participants = [participant1, participant2];
     component.filter('smith');
 
-    expect(userListData.filteredParticipants.length).toBe(1);
+    expect(userListData.filteredParticipants).toHaveSize(1);
     expect(userListData.filteredParticipants[0]).toEqual(participant2);
   });
 
@@ -96,7 +96,7 @@ describe('UserListComponent', () => {
     userListData.participants = [participant1, participant2];
     component.filter('12345678a');
 
-    expect(userListData.filteredParticipants.length).toBe(1);
+    expect(userListData.filteredParticipants).toHaveSize(1);
     expect(userListData.filteredParticipants[0]).toEqual(participant1);
   });
 
@@ -115,7 +115,7 @@ describe('UserListComponent', () => {
     userListData.participants = [participant1, participant2];
     component.filter('kendo');
 
-    expect(userListData.filteredParticipants.length).toBe(1);
+    expect(userListData.filteredParticipants).toHaveSize(1);
     expect(userListData.filteredParticipants[0]).toEqual(participant1);
   });
 
@@ -136,7 +136,7 @@ describe('UserListComponent', () => {
     userListData.participants = [participant1, participant2];
     component.filter('');
 
-    expect(userListData.filteredParticipants.length).toBe(2);
+    expect(userListData.filteredParticipants).toHaveSize(2);
     expect(userListData.filteredParticipants).toEqual([participant1, participant2]);
   });
 });

@@ -24,7 +24,7 @@ export class MatSpinnerOverlayComponent extends KendoComponent implements OnInit
   showSpinner: boolean = false;
   waitBigOperation: boolean = false;
 
-  constructor(private systemOverloadService: SystemOverloadService, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(private readonly systemOverloadService: SystemOverloadService, private readonly changeDetectorRef: ChangeDetectorRef) {
     super();
   }
 

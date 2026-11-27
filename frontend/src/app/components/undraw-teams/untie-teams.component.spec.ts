@@ -87,7 +87,7 @@ describe('UntieTeamsComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.duels.length).toBe(3);
+    expect(component.duels).toHaveSize(3);
     expect(component.duels[0].type).toBe(DuelType.UNDRAW);
     expect(component.duels[0].totalDuration).toBe(180);
     expect(component.duels[0].tournament).toBe(component.tournament);

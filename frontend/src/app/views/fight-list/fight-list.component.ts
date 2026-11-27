@@ -58,7 +58,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   tournament: Tournament;
   timer: boolean = false;
   private readonly tournamentId: number | undefined;
-  private guestTicket: string | undefined;
+  private readonly guestTicket: string | undefined;
   groups: Group[];
   swappedColors: boolean = false;
   swappedTeams: boolean = false;
@@ -481,7 +481,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   openBracketsManager(): void {
     if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
-      this.router.navigate(['tournaments/fights/championship'], {
+      void this.router.navigate(['tournaments/fights/championship'], {
         state: {
           tournamentId: this.tournament.id,
           editionDisabled: this.getFights().length > 0
@@ -623,7 +623,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   goBackToTournament(): void {
-    this.router.navigate(['/tournaments'], {});
+    void this.router.navigate(['/tournaments'], {});
   }
 
   selectFight(fight: Fight | undefined): void {
@@ -921,12 +921,20 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   swapColors(): void {
     this.swappedColors = !this.swappedColors;
-    this.userSessionService.setSwappedColors(this.swappedColors);
+    if (this.swappedColors) {
+      this.userSessionService.enableSwappedColors();
+    } else {
+      this.userSessionService.disableSwappedColors();
+    }
   }
 
   swapTeams(): void {
     this.swappedTeams = !this.swappedTeams;
-    this.userSessionService.setSwappedTeams(this.swappedTeams);
+    if (this.swappedTeams) {
+      this.userSessionService.enableSwappedTeams();
+    } else {
+      this.userSessionService.disableSwappedTeams();
+    }
   }
 
   enableMemberOrder(enabled: boolean): void {

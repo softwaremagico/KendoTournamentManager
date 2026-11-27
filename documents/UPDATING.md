@@ -85,7 +85,11 @@ The migration creates `Default` with ID `1` and assigns all
 existing records to it. The PostgreSQL script aborts when that invariant cannot
 be established. MySQL prints the required ID check: stop immediately unless it
 returns `1`. MySQL removes its prior global unique indexes automatically before
-adding the tenant-local uniqueness constraints.
+adding the tenant-local uniqueness constraints. They also create non-unique
+indexes for the most frequent tenant-scoped queries; PostgreSQL creates them
+concurrently after the main transaction and MySQL builds them with
+`ALGORITHM=INPLACE, LOCK=NONE`. Existing `*_tenant_idx` indexes and tenant-local
+uniqueness are unchanged.
 
 The scripts are single-use migration scripts. MySQL DDL commits implicitly, so
 restore the verified backup rather than rerunning a partially completed script.
@@ -101,6 +105,12 @@ properties once through the deployment environment, then remove them:
 bootstrap.super-admin.username=platform-admin@example.com
 bootstrap.super-admin.password=<strong-unique-password>
 ```
+
+For the Docker Compose examples, set `BOOTSTRAP_SUPER_ADMIN_USERNAME` and
+`BOOTSTRAP_SUPER_ADMIN_PASSWORD` in the Compose environment or `.env` before
+starting the backend, then remove them and recreate that container.
+Preserve the existing database encryption key during an upgrade: replacing it
+does not migrate encrypted records. Back up and verify the database first.
 
 Only `SUPER_ADMIN` users can create, edit, activate or deactivate tenants.
 Tenant `ADMIN` users manage only their own organization and cannot assign the

@@ -39,7 +39,7 @@ import {LoginService} from '../../services/login.service';
 })
 export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
-  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+  private readonly websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   @Input()
   tournament: Tournament;
@@ -63,7 +63,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   editorTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
   @ViewChild('tournamentBracketsComponent', {read: ElementRef})
-  public tournamentBracketsComponent: ElementRef;
+  public readonly tournamentBracketsComponent: ElementRef;
 
   groups: Group[];
   selectedGroup: Group;
@@ -83,13 +83,13 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   protected readonly RbacActivity = RbacActivity;
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
-  constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              public rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
-              private rxStompService: RxStompService, private environmentService: EnvironmentService,
-              private tournamentChangedService: TournamentChangedService, private csvService: CsvService,
-               private messageService: MessageService, private translateService: TranslocoService,
-               private loginService: LoginService) {
+  constructor(private readonly teamService: TeamService, private readonly groupService: GroupService, private readonly groupLinkService: GroupLinkService,
+              public readonly rbacService: RbacService, private readonly systemOverloadService: SystemOverloadService,
+              private readonly groupsUpdatedService: GroupsUpdatedService, private readonly numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
+              private readonly rxStompService: RxStompService, private readonly environmentService: EnvironmentService,
+              private readonly tournamentChangedService: TournamentChangedService, private readonly csvService: CsvService,
+               private readonly messageService: MessageService, private readonly translateService: TranslocoService,
+               private readonly loginService: LoginService) {
   }
 
   ngOnInit(): void {
@@ -136,10 +136,10 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         this.editorGroupsUpdated.emit(_groups);
         this.editorGroupsDisabled.emit(ownAction);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
-        const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
+        const groupTeamsIds: Set<number> = new Set(_groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!));
         this.editorTeamsLengthUpdated.next(_teams.length);
         this.totalTeams = _teams.length;
-        _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
+        _teams = _teams.filter((item: Team): boolean => !groupTeamsIds.has(item.id!));
 
         this.teamListData.teams = _teams;
         this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
@@ -209,7 +209,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
         return g.level === 0;
       })
       const lastGroup: Group = level0Groups.reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-        prev : current, level0Groups[level0Groups.length - 1]);
+        prev : current, level0Groups.at(-1)!);
       this.deleteGroup(lastGroup);
     }
   }

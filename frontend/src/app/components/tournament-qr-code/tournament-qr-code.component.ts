@@ -56,7 +56,7 @@ export class TournamentQrCodeComponent implements OnInit {
           const downloadURL: string = window.URL.createObjectURL(blob);
 
           const anchor: HTMLAnchorElement = document.createElement("a");
-          anchor.download = "Tournament - " + this.tournament + " - QR .pdf";
+          anchor.download = "Tournament - " + this.tournament.name + " - QR .pdf";
           anchor.href = downloadURL;
           anchor.click();
         }

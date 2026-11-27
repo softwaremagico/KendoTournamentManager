@@ -197,7 +197,7 @@ describe('TournamentStatisticsComponent', () => {
 
     const participants = (component as any).obtainParticipants(ts);
 
-    expect(participants.length).toBe(5);
+    expect(participants).toHaveSize(5);
     expect(participants[0][1]).toBe(12);
     expect(participants[1][1]).toBe(3);
   });

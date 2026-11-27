@@ -61,12 +61,14 @@ export class ParticipantPictureComponent extends KendoComponent implements OnIni
     if (participant.id) {
       const seed = Math.abs(participant.id);
       const mainColor = seed % 135 + 120;
-      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 === 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
-        (mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30);
+      const evenOffset = mainColor % 2 === 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30;
+      const fallbackOffset = mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30;
+      const secondaryColor = mainColor > 170 && mainColor < 205 ? evenOffset : fallbackOffset;
       const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 === 0 || seed > 230 ? -1 : 1));
-      color += (seed % 3 === 0 ? mainColor : seed % 3 === 1 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 === 1 ? mainColor : seed % 3 === 2 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 === 2 ? mainColor : seed % 3 === 0 ? secondaryColor : thirdColor);
+      const channelIndex = seed % 3;
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 0, 1) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 1, 2) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 2, 0);
     } else {
       color += "255, 255, 255";
     }
@@ -81,14 +83,26 @@ export class ParticipantPictureComponent extends KendoComponent implements OnIni
       const mainColor = seed % 100;
       const secondaryColor = 100 - seed % 100;
       const thirdColor = mainColor > 10 ? mainColor - 10 + seed % 30 : mainColor + seed % 30;
-      color += (seed % 3 === 0 ? mainColor : seed % 3 === 1 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 === 1 ? mainColor : seed % 3 === 2 ? secondaryColor : thirdColor) + ", ";
-      color += (seed % 3 === 2 ? mainColor : seed % 3 === 0 ? secondaryColor : thirdColor);
+      const channelIndex = seed % 3;
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 0, 1) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 1, 2) + ", ";
+      color += this.channel(channelIndex, mainColor, secondaryColor, thirdColor, 2, 0);
     } else {
       color += "255, 255, 255";
     }
     color += ');';
     return color;
+  }
+
+  private channel(channelIndex: number, mainColor: number, secondaryColor: number, thirdColor: number,
+                  mainIndex: number, secondaryIndex: number): number {
+    if (channelIndex === mainIndex) {
+      return mainColor;
+    }
+    if (channelIndex === secondaryIndex) {
+      return secondaryColor;
+    }
+    return thirdColor;
   }
 
   openImage(opened: boolean): void {

@@ -5,7 +5,7 @@
   "administratorUsername": "Usuario administrador",
   "createTenant": "Crear tenant",
   "tenantAdministrationDenied": "No tienes permisos para administrar tenants.",
-  "tenantName": "Tenant",
+  "tenantName": "Organización",
   "tenantUsersAssigned": "Usuarios asignados correctamente.",
   "tenantUsersUnassigned": "Usuarios desasignados correctamente.",
   "tenantChanged": "Tenant cambiado correctamente.",
@@ -264,7 +264,7 @@
       "gold": "Obtén solo 'Men' durante cinco torneos sucesivos."
     },
     "youAreUnderArrest": {
-      "title": "You are under arrest!",
+      "title": "¡Estás bajo arresto!",
       "description": "Obtén solo puntos 'Kote' y obtén al menos un 'Kote' en cada combate.",
       "normal": "Puntuar solo 'Kote' durante un torneo.",
       "bronze": "Obtén solo 'Kote' durante dos torneos sucesivos.",
@@ -834,5 +834,14 @@
   "worstNightmareOf": "Eres la peor pesadilla de",
   "yes": "Si",
   "youCannotDeleteYourself": "No puede eliminar su propia cuenta.",
-  "yourWorstNightmare": "Tu peor pesadilla"
+  "yourWorstNightmare": "Tu peor pesadilla",
+  "languageKey": {
+    "en": "English",
+    "es": "Español",
+    "ca": "Català",
+    "it": "Italiano",
+    "nl": "Nederlandse",
+    "de": "Deutsche",
+    "fr": "Française"
+  }
 }

@@ -19,11 +19,11 @@ import {ImageCompression} from "../models/image-compression";
 })
 export class FileService {
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/files';
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/files';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public loginService: LoginService,
-              private systemOverloadService: SystemOverloadService) {
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService, private readonly messageService: MessageService,
+              private readonly loggerService: LoggerService, public readonly loginService: LoginService,
+              private readonly systemOverloadService: SystemOverloadService) {
   }
 
   setParticipantFilePicture(file: File, participant: Participant): Observable<ParticipantImage> {
@@ -69,7 +69,7 @@ export class FileService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<ParticipantImage>(`adding picture to ${image}`))
+        catchError(this.messageService.handleError<ParticipantImage>(`adding picture to ${image.participant?.id}`))
       );
   }
 

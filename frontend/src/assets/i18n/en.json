@@ -395,7 +395,6 @@
   "deleteDataError": "Error when trying to remove some data in the database.",
   "deleteDuelError": "Error when trying to remove a fight into the database.",
   "deleteFightError": "Error when deleting a match.",
-  "deleteFightWarningDeleteFightWarning": "This action will delete the selected match ({{team1}} vs {{team2}}). Are you sure you want to continue?",
   "deleteFights": "Do you want to remove the previous generated matches?",
   "deleteFightsWarning": "This action will erase all previous matches stored for this tournament. Are you sure you want to continue?",
   "deleteOneFight": "This action will erase the selected match ({{team1}} vs {{team2}}). Are you sure you want to continue?",
@@ -842,5 +841,7 @@
   "worstNightmareOf": "You are the worst nightmare of",
   "yes": "Yes",
   "youCannotDeleteYourself": "You can not delete your own account.",
-  "yourWorstNightmare": "Your worst nightmare"
+  "yourWorstNightmare": "Your worst nightmare",
+  "deleteFightWarning": "This action will delete the selected match ({{team1}} vs {{team2}}). Are you sure you want to continue?",
+  "unknownDatabaseError": "An unknown error occurred while accessing the database."
 }

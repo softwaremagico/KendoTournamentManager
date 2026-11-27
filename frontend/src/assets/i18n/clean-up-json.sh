@@ -12,7 +12,7 @@ file_tmp=${file}_tmp
 
 echo "Inspecting file $file"
 
-for i in `sed -n '/^\s*.[[:upper:]]/p' ${file} | sed -e 's/.*"\(.*\)"\:.*/\1/'`;
+for i in $(sed -n '/^\s*.[[:upper:]]/p' ${file} | sed -e 's/.*"\(.*\)"\:.*/\1/');
 do
 	echo "Removing.... "$i;
 	jq 'del(.'"${i}"')' ${file} > "${file_tmp}"

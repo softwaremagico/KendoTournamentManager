@@ -58,9 +58,11 @@ import java.util.Objects;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "fights", indexes = {
-        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_fights_tournament", columnList = "tournament"),
         @Index(name = "ind_team1", columnList = "team1"),
-        @Index(name = "ind_team2", columnList = "team2")
+        @Index(name = "ind_team2", columnList = "team2"),
+        @Index(name = "ind_fights_tenant_tournament_shiaijo", columnList = "tenant_id, tournament, shiaijo"),
+        @Index(name = "ind_fights_tenant_tournament_level", columnList = "tenant_id, tournament, fight_level")
 })
 @SuppressWarnings("java:S2160")
 public class Fight extends Element {
@@ -90,7 +92,8 @@ public class Fight extends Element {
      * Duels beyond {@code tournament.fightSize} belong to substitutes and have no scoring.
      */
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
+    @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"),
+            indexes = @Index(name = "ind_duels_by_fight_duel", columnList = "duel_id"))
     @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
 

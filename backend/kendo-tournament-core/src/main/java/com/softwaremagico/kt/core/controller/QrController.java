@@ -104,13 +104,13 @@ public class QrController {
         try {
             final String ticket = guestTicketProvider == null ? null
                     : guestTicketProvider.createGuestTicket(tournament.getId(), TenantContext.getRequiredTenantId());
-            final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
+            final String link = frontendOrigin(port) + TOURNAMENT_FIGHTS_URL
                     + "?tournamentId=" + tournament.getId() + "&user=guest"
                     + (ticket == null ? "" : "&ticket=" + URLEncoder.encode(ticket, StandardCharsets.UTF_8));
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
-                    !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
+                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
                     LOGO_RESOURCE,
-                    !nightMode ? BACKGROUND_LIGHT_MODE : BACKGROUND_NIGHT_MODE);
+                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setContent(link);
@@ -172,13 +172,13 @@ public class QrController {
         final TemporalToken temporalToken = participantProvider.generateTemporalToken(participant);
 
         try {
-            final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
+            final String link = frontendOrigin(port) + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getContent(), StandardCharsets.UTF_8);
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
-                    !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
+                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
                     LOGO_RESOURCE,
-                    !nightMode ? BACKGROUND_LIGHT_MODE : BACKGROUND_NIGHT_MODE);
+                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setContent(link);
@@ -186,6 +186,13 @@ public class QrController {
         } catch (IOException e) {
             throw new UnexpectedValueException(this.getClass(), e);
         }
+    }
+
+    private String frontendOrigin(Integer port) {
+        // machineDomain can contain the backend port in direct Docker setups.
+        // When the browser supplies its frontend port, replace rather than append it.
+        final String domain = port == null ? machineDomain : machineDomain.replaceFirst(":\\d+$", "");
+        return schema + "://" + domain + (port == null ? "" : ":" + port);
     }
 
     // convert BufferedImage to byte[]

@@ -11,8 +11,7 @@ export class CustomDatePipe implements PipeTransform {
 
   }
 
-  transform(value: number | string | Date | null | undefined): string | null {
-    const normalizedValue: number | string | Date = value ?? 0;
-    return this._datePipe.transform(normalizedValue, 'dd/MM/yyyy');
+  transform(value: number | string | Date | null | undefined = 0): string | null {
+    return this._datePipe.transform(value ?? 0, 'dd/MM/yyyy');
   }
 }

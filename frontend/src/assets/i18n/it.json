@@ -96,11 +96,7 @@
     },
     "boneBreaker": {
       "title": "Spaccaossa",
-      "description": "Perdi un combattimento con due Hansokus.",
-      "normale": "",
-      "bronzo": "",
-      "argento": "",
-      "oro": ""
+      "description": "Perdi un combattimento con due Hansokus."
     },
     "flexibleAsBamboo": {
       "title": "Flessibile come il bambù",
@@ -199,12 +195,12 @@
       "gold": "Ottieni i tuoi primi cento punti."
     },
     "daruma": {
-      "titolo": "Daruma",
       "description": "Partecipa a quanti più tornei possibile.",
       "normal": "Partecipa a dieci tornei.",
       "bronze": "Partecipa a venti tornei.",
       "silver": "Partecipa a trenta tornei.",
-      "gold": "Partecipa a cinquanta tornei."
+      "gold": "Partecipa a cinquanta tornei.",
+      "title": "Daruma"
     },
     "stormtrooperSyndrome": {
       "title": "Effetto Stormtrooper",
@@ -311,7 +307,7 @@
   },
   "banner": "Sponsor",
   "blockedUserError": "Troppi tentativi! Prova più tardi.",
-  "bloggerStatistics": "Blogger code",
+  "bloggerStatistics": "Codice Blogger",
   "bothEliminated": "Entrambi eliminati",
   "bothEliminatedHint": "Entrambe le squadre vengono eliminate",
   "bubbleSort": "Torneo Detronizzare il Re",
@@ -516,7 +512,7 @@
   "installDatabaseError": "Non si puó installare el database. Il server è attivo?",
   "international": "Internazionale",
   "internationalHint": "Il vincitore si ottiene degli incontri vinte. Se c'è un pareggio, gli incontri in parità vengono conteggiate. In caso di nueva parità vengono conteggiati i duelli vinti. Se c'è ancora un pareggio, viene contato il numero di colpi. Da notare che la differenza con il formato europeo è che i duelli in parità vengono ignorati. Anche i colpi ricevuti non vengono conteggiati.",
-  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
+  "invalidDatabase": "Il database di destinazione non è valido. Probabilmente proviene da una versione precedente del software.",
   "invalidEmail": "Si prega di inserire un'e-mail corretta.",
   "invalidFileSize": "Sono consentiti solo i file con una dimensione compresa tra {{minSize}} B e {{maxSize}} MB.",
   "invalidPassword": "Si prega di inserire una password corretta",
@@ -802,7 +798,7 @@
   "users": "Utenti",
   "viewer": "Spettatore",
   "viewerHint": "È possibile leggere le informazioni ma non modificarle.",
-  "volunteer": "Voluntario",
+  "volunteer": "Volontario",
   "waitNewLevel": "Non si puó cambiare l'ordine della squadra finché gli incontri attuali non saranno terminati",
   "waitingArena": "Si prega di attendere metre si concludono gli incontri del shiaijo",
   "waitingConnection": "Aspettando risposta dalla base di dati. Controllare la conessionne di rete.",
@@ -818,5 +814,34 @@
   "worstNightmareOf": "Sei l'incubo peggiore di",
   "yes": "Sì",
   "youCannotDeleteYourself": "Non puoi eliminare il tuo account.",
-  "yourWorstNightmare": "Il tuo peggior incubo"
+  "yourWorstNightmare": "Il tuo peggior incubo",
+  "active": "Attivo",
+  "add": "Aggiungi",
+  "administratorUsername": "Nome utente dell'amministratore",
+  "competitionAdd": "Aggiungi competizione",
+  "competitionDelete": "Elimina competizione",
+  "competitionEdit": "Modifica competizione",
+  "createTenant": "Crea organizzazione",
+  "createdAt": "Creato il",
+  "createdBy": "Creato da",
+  "duelsLost": "Duelli persi",
+  "fightsLost": "Incontri persi",
+  "logIn": "Accedi",
+  "login": "Accesso",
+  "teamsOrder": "Ordine delle squadre:",
+  "tenantAdministrationDenied": "Non hai il permesso di amministrare le organizzazioni.",
+  "tenantName": "Organizzazione",
+  "update": "Aggiorna",
+  "updatedAt": "Aggiornato il",
+  "updatedBy": "Aggiornato da",
+  "web": "Web",
+  "languageKey": {
+    "en": "English",
+    "es": "Español",
+    "ca": "Català",
+    "it": "Italiano",
+    "nl": "Nederlandse",
+    "de": "Deutsche",
+    "fr": "Française"
+  }
 }

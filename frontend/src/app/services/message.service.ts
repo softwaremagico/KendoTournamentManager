@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {Observable, of, Subscription} from "rxjs";
+import {EMPTY, Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
 import {Message} from "@stomp/stompjs";
@@ -10,7 +10,6 @@ import {TranslocoService} from '@jsverse/transloco';
 import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {LoginService} from './login.service';
 import {switchMap} from 'rxjs/operators';
-import {EMPTY} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +17,7 @@ import {EMPTY} from 'rxjs';
 export class MessageService implements OnDestroy {
   private static readonly MESSAGE_DEDUPLICATION_MILLIS = 10000;
 
-  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+  private readonly websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   private messageSubscription: Subscription;
   private readonly recentMessages: Map<string, number> = new Map<string, number>();
@@ -37,7 +36,12 @@ export class MessageService implements OnDestroy {
   private registerWebsocketsMessages(): void {
     this.messageSubscription = this.rxStompService.connected$.pipe(switchMap(() => {
       const tenantId = this.loginService.getTenantId();
-      return tenantId == null ? EMPTY : this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + tenantId + '/messages');
+      const roles = new Set<string>(this.loginService.getJwtRoles().map((role: string): string => role.toUpperCase()));
+      const readOnlySession = roles.has('GUEST') || roles.has('PARTICIPANT');
+      if (tenantId == null || readOnlySession) {
+        return EMPTY;
+      }
+      return this.rxStompService.watch(this.websocketsPrefix + '/tenant/' + tenantId + '/messages');
     })).subscribe((message: Message): void => {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
@@ -58,8 +62,10 @@ export class MessageService implements OnDestroy {
             this.infoMessage(res);
         }
 
-      } catch (e) {
-        console.error("Invalid message payload", message.body);
+      } catch (parseError: unknown) {
+        // The exception is ignored for the message flow: malformed payloads from stale WebSocket clients are expected,
+        // so we log it and keep the subscription alive instead of breaking all notifications.
+        console.error("Invalid message payload", message.body, parseError);
       }
     });
   }
@@ -107,7 +113,7 @@ export class MessageService implements OnDestroy {
 
   handleError<T>(operation = 'operation', result?: T) {
     return (error: unknown): Observable<T> => {
-      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
+      const errorMessage: string = this.formatError(error);
       //Log error
       const log: Log = new Log();
       log.message = `${operation} failed: ${errorMessage}`;
@@ -123,7 +129,7 @@ export class MessageService implements OnDestroy {
 
   logOnlyError<T>(operation: string = 'operation', result?: T) {
     return (error: unknown): Observable<T> => {
-      const errorMessage: string = error instanceof Error ? error.message : String(error ?? '');
+      const errorMessage: string = this.formatError(error);
       //Log error
       const log: Log = new Log();
       log.message = `${operation} failed: ${errorMessage}`;
@@ -132,6 +138,16 @@ export class MessageService implements OnDestroy {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+  private formatError(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === 'string') {
+      return error;
+    }
+    return '';
   }
 
 }

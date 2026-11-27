@@ -41,7 +41,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -66,7 +65,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 
 	private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
 	private static final String USER_PASSWORD = "password";
-	private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+	private static final String[] USER_ROLES = {"admin", "viewer"};
 
 	private static final String ONE_CLUBS_CSV_FILE_PATH = "csv/oneClub.csv";
 	private static final String CLUBS_CSV_FILE_PATH = "csv/clubs.csv";
@@ -89,7 +88,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 		return this.objectMapper.writeValueAsString(object);
 	}
 
-	private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+	private <T> T fromJson(String payload, Class<T> clazz) {
 		return this.objectMapper.readValue(payload, clazz);
 	}
 

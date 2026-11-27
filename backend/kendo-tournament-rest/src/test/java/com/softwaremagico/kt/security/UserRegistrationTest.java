@@ -42,7 +42,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -61,7 +60,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
     private static final String USER_FIRST_NAME = "Test";
     private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = {"admin", "viewer"};
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,7 +84,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         return objectMapper.writeValueAsString(object);
     }
 
-    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+    private <T> T fromJson(String payload, Class<T> clazz) {
         return objectMapper.readValue(payload, clazz);
     }
 

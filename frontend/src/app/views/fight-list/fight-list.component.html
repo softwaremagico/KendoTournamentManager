@@ -289,7 +289,7 @@
       no-header
       >
       <div class="vertical">
-        <span [innerHTML]="'deleteFightWarningDeleteFightWarning' | transloco: getDeleteTeamParams()"></span>
+        <span [innerHTML]="'deleteFightWarning' | transloco: getDeleteTeamParams()"></span>
         <div class="flex-grow horizontal buttons-row">
           <button id="confirm-delete-cancel-button" biit-button secondary
             (click)="confirmDeleteFights = false">{{ t('cancel') }}
@@ -316,7 +316,7 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (onClosed)="openNewFightPopup=false"></fight-creator>
+      (closed)="openNewFightPopup=false"></fight-creator>
     </biit-popup>
   }
 
@@ -333,7 +333,7 @@
         [swappedTeams]="this.swappedTeams"
         [horizontalTeams]="this.tournament.type === TournamentType.SENBATSU"
         [grid]="this.tournament.type !== TournamentType.SENBATSU"
-      (onClosed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
+      (closed)="openSenbatsuFightPopup=false"></senbatsu-fight-creator>
     </biit-popup>
   }
 

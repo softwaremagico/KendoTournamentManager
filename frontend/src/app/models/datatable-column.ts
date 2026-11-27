@@ -12,9 +12,8 @@ import {DatatableColumn as WizardryDatatableColumn} from "@biit-solutions/wizard
  */
 export class DatatableColumn extends WizardryDatatableColumn {
   constructor(name: string, prop: string | number, visible?: boolean, width?: number, sortable?: boolean,
-              pipe?: PipeTransform, cellTemplate?: TemplateRef<any>,
-              cellClass?: string | ((data: any) => string | any), comparator?: Function) {
-    super(name, prop, visible, width, sortable, pipe, cellTemplate, cellClass, comparator);
+              pipe?: PipeTransform, cellTemplate?: TemplateRef<any>) {
+    super(name, prop, visible, width, sortable, pipe, cellTemplate);
     this.width ??= 150;
     // The table forwards undefined through ngx-datatable's booleanAttribute
     // transform, which otherwise disables automatic resizing.

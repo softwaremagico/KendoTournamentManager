@@ -92,7 +92,7 @@ public class TableBackgroundEventTest {
         final Image image = Image.getInstance(getClass().getResourceAsStream("/kendo-tournament-manager-logo.png").readAllBytes());
         final TableBackgroundEvent event = new TableBackgroundEvent(image, document);
 
-        final PdfContentByte[] pcbs = new PdfContentByte[]{content, content, content, content};
+        final PdfContentByte[] pcbs = {content, content, content, content};
         event.tableLayout(new PdfPTable(1), WIDTHS, HEIGHTS, 0, 0, pcbs);
     }
 

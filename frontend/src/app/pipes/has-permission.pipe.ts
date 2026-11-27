@@ -7,7 +7,7 @@ import {ActivityService} from "../services/rbac/activity.service";
   standalone: true
 })
 export class HasPermissionPipe implements PipeTransform {
-  constructor(private activityService: ActivityService) {
+  constructor(private readonly activityService: ActivityService) {
   }
 
   transform(value: RbacActivity): boolean {

@@ -53,7 +53,7 @@ describe('RadarChartComponent', () => {
 
     expect(component.chartOptions).toBeTruthy();
     expect(component.chartOptions.chart.type).toBe('radar');
-    expect(component.chartOptions.series.length).toBe(2);
+    expect(component.chartOptions.series).toHaveSize(2);
     expect(component.chartOptions.xaxis?.categories).toEqual(component.data.getLabels());
     expect(component.chartOptions.theme?.mode).toBe('light');
   });

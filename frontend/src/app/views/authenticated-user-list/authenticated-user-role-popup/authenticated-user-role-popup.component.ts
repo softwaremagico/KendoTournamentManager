@@ -28,8 +28,8 @@ export class AuthenticatedUserRolePopupComponent extends RbacBasedComponent impl
   protected translatedRoles: { value: string, label: string, description: string }[] = [];
   selectedRole: string;
 
-  constructor(rbacService: RbacService, private transloco: TranslocoService, private userService: UserService,
-              private messageService: MessageService) {
+  constructor(rbacService: RbacService, private readonly transloco: TranslocoService, private readonly userService: UserService,
+              private readonly messageService: MessageService) {
     super(rbacService);
   }
 

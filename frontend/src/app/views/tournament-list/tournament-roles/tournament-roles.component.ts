@@ -28,22 +28,22 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
 
   @Input()
   tournament: Tournament;
-  @Output() onClosed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
+  @Output() closed: EventEmitter<Tournament> = new EventEmitter<Tournament>();
 
-  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected BiitProgressBarType = BiitProgressBarType;
 
   userListData: UserListData = new UserListData();
   roleTypes: RoleType[] = RoleType.toArray();
   participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
   loadingGlobal: boolean = false;
-  private pendingCompetitors: Set<Participant> = new Set<Participant>();
+  private readonly pendingCompetitors: Set<Participant> = new Set<Participant>();
 
-  constructor(public participantService: ParticipantService, public roleService: RoleService,
-              private messageService: MessageService,
-              rbacService: RbacService, private filterResetService: FilterResetService,
-               private statisticsChangedService: StatisticsChangedService,
-               private teamService: TeamService, private cdr: ChangeDetectorRef) {
+  constructor(public readonly participantService: ParticipantService, public readonly roleService: RoleService,
+              private readonly messageService: MessageService,
+              rbacService: RbacService, private readonly filterResetService: FilterResetService,
+               private readonly statisticsChangedService: StatisticsChangedService,
+               private readonly teamService: TeamService, private readonly cdr: ChangeDetectorRef) {
     super(rbacService);
   }
 
@@ -67,12 +67,12 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         }));
         //Update participant's club from roles. Needed if dropping back the card from role to user list.
         this.participants.get(roleType)!.forEach((participant: Participant) => {
-          participant.club = participants.filter(p => p.id === participant.id)[0]?.club;
+          participant.club = participants.find(p => p.id === participant.id)?.club;
         })
         //Get participants and subtract the ones already with roles.
-        const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
+        const participantsIds: Set<number | undefined> = new Set(this.participants.get(roleType)!.map(participant => participant.id));
         participants = participants.filter((participantWithoutRole: Participant) => !participantsIds
-          .includes(participantWithoutRole.id));
+          .has(participantWithoutRole.id));
       }
       participants.sort(function (a: Participant, b: Participant) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
@@ -166,16 +166,19 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       this.userListData.filteredParticipants = filteredParticipants;
       this.cdr.detectChanges();
     };
-    this.roleService.add(role).subscribe((_role: Role): void => {
-      if (!_role) {
-        rollback();
-        return;
-      }
-      this.messageService.infoMessage("infoRoleStored");
-      this.filterResetService.resetFilter.next(true);
-      this.statisticsChangedService.areStatisticsChanged.next(true);
-      this.cdr.detectChanges();
-    }, rollback);
+    this.roleService.add(role).subscribe({
+      next: (_role: Role): void => {
+        if (!_role) {
+          rollback();
+          return;
+        }
+        this.messageService.infoMessage("infoRoleStored");
+        this.filterResetService.resetFilter.next(true);
+        this.statisticsChangedService.areStatisticsChanged.next(true);
+        this.cdr.detectChanges();
+      },
+      error: rollback
+    });
   }
 
   addCompetitor(participant: Participant): void {
@@ -188,21 +191,24 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     role.participant = participant;
     role.roleType = RoleType.COMPETITOR;
     this.pendingCompetitors.add(participant);
-    this.roleService.add(role).pipe(finalize(() => this.pendingCompetitors.delete(participant))).subscribe((savedRole) => {
-      if (!savedRole) {
-        return;
+    this.roleService.add(role).pipe(finalize(() => this.pendingCompetitors.delete(participant))).subscribe({
+      next: savedRole => {
+        if (!savedRole) {
+          return;
+        }
+        this.getParticipantsContainer(RoleType.COMPETITOR).push(participant);
+        this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
+        this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
+        this.shortRoles();
+        this.messageService.infoMessage("infoRoleStored");
+        this.filterResetService.resetFilter.next(true);
+        this.statisticsChangedService.areStatisticsChanged.next(true);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // The HTTP error interceptor reports the failure; keep the participant available for retry.
+        this.cdr.detectChanges();
       }
-      this.getParticipantsContainer(RoleType.COMPETITOR).push(participant);
-      this.userListData.participants = this.userListData.participants.filter(user => user !== participant);
-      this.userListData.filteredParticipants = this.userListData.filteredParticipants.filter(user => user !== participant);
-      this.shortRoles();
-      this.messageService.infoMessage("infoRoleStored");
-      this.filterResetService.resetFilter.next(true);
-      this.statisticsChangedService.areStatisticsChanged.next(true);
-      this.cdr.detectChanges();
-    }, () => {
-      // The HTTP error interceptor reports the failure; keep the participant available for retry.
-      this.cdr.detectChanges();
     });
   }
 

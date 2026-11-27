@@ -47,6 +47,7 @@ RUN apk --no-cache add curl openssl supervisor unzip zip && \
     sed -i "s|jwt\.guest\.expiration.*|jwt.guest.expiration=${jwt_guest_expiration}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|jwt\.ip\.check.*|jwt.ip.check=${jwt_ip_check}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.platform.*|spring.kendo.datasource.platform=${database_type}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|spring\.kendo\.datasource\.driver-class-name.*|spring.kendo.datasource.driver-class-name=org.postgresql.Driver|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jpa\.hibernate\.ddl-auto.*|spring.kendo.datasource.jpa.hibernate.ddl-auto=update|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.sql\.init\.data-locations\.*|#spring.sql.init.data-locations|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.datasource\.data\.*||g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \

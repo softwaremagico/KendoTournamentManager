@@ -44,6 +44,7 @@ import org.springframework.data.annotation.Version;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Objects;
@@ -151,7 +152,7 @@ public abstract class Element implements Serializable {
     @PreUpdate
     protected void validateRelatedTenantsOnUpdate() {
         validateRelatedTenants();
-        updatedAt = truncate(LocalDateTime.now());
+        updatedAt = truncate(LocalDateTime.now(ZoneId.systemDefault()));
     }
 
     /**
@@ -162,7 +163,7 @@ public abstract class Element implements Serializable {
      * </p>
      */
     private void assignTimestamps() {
-        final LocalDateTime now = truncate(LocalDateTime.now());
+        final LocalDateTime now = truncate(LocalDateTime.now(ZoneId.systemDefault()));
         if (createdAt == null) {
             createdAt = now;
         }

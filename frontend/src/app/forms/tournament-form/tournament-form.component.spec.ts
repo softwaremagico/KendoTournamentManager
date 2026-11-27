@@ -67,7 +67,7 @@ describe('TournamentFormComponent', () => {
 
     expect((component as any).translatedTypes.length).toBeGreaterThan(0);
     expect((component as any).translatedScores.length).toBeGreaterThan(0);
-    expect((component as any).translatedDuration.length).toBe(13);
+    expect((component as any).translatedDuration).toHaveSize(13);
   });
 
   it('should check if tournament started on ngOnInit for existing tournament', () => {

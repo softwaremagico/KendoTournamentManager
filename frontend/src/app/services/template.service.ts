@@ -5,7 +5,7 @@ import {BehaviorSubject} from "rxjs";
   providedIn: 'root'
 })
 export class TemplateService {
-  private templateSource = new BehaviorSubject<TemplateRef<any> | null>(null);
+  private readonly templateSource = new BehaviorSubject<TemplateRef<any> | null>(null);
   currentTemplate = this.templateSource.asObservable();
 
   constructor() { }

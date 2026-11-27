@@ -105,15 +105,8 @@ public abstract class CrudProvider<E, K, R extends JpaRepository<E, K>> {
         repository.delete(entity);
     }
 
-    public void delete(Collection<E> entities) {
-        if (entities == null || entities.isEmpty()) {
-            return;
-        }
-        final List<E> validEntities = entities.stream().filter(Objects::nonNull).filter(this::belongsToCurrentTenant).toList();
-        if (validEntities.isEmpty()) {
-            return;
-        }
-        repository.deleteAll(validEntities);
+    public void delete(Collection<E> e) {
+        deleteAll(e);
     }
 
     public void deleteById(K id) {

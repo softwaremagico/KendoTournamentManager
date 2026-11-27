@@ -108,6 +108,7 @@ public class RankingServices {
 
     private final ZipController zipController;
 
+    @SuppressWarnings("java:S107") // NOSONAR - Spring constructor injects all ranking collaborators explicitly.
     public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
                            ParticipantController participantController, ClubController clubController,
                            HtmlController htmlController, GroupController groupController,

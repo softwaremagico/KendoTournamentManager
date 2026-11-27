@@ -21,13 +21,10 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-
 import org.openpdf.text.Document;
 import org.openpdf.text.Element;
-import org.openpdf.text.Font;
-import org.openpdf.text.PageSize;
-import org.openpdf.text.Paragraph;
-import org.openpdf.text.Rectangle;
+
+
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -189,38 +186,9 @@ public class FightsList extends ParentList {
     }
 
     @Override
-    public void setTableProperties(PdfPTable mainTable) {
-        mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
-        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(TOTAL_WIDTH);
+    protected String getHeaderTitle() {
+        return tournamentDto.getName();
     }
 
-    @Override
-    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournamentDto.getName(), new Font(font, fontSize)));
-        cell.setColspan(getTableWidths().length);
-        cell.setBorderWidth(HEADER_BORDER);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(MIN_HEADER_HIGH);
-        mainTable.addCell(cell);
-    }
 
-    @Override
-    public void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        mainTable.addCell(getEmptyRow());
-    }
-
-    @Override
-    protected Rectangle getPageSize() {
-        return PageSize.A4;
-    }
-
-    @Override
-    protected void addDocumentWriterEvents(PdfWriter writer) {
-        // No background.
-    }
 }

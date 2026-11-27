@@ -106,8 +106,8 @@ public class ParticipantImageProviderTest {
     @Test
     public void testAddMultipartFileStoresProcessedImageAndSetsAvatar() throws Exception {
         final Participant participant = participant("P1");
-        final byte[] uploaded = new byte[]{1, 2, 3};
-        final byte[] processed = new byte[]{9, 8, 7};
+        final byte[] uploaded = {1, 2, 3};
+        final byte[] processed = {9, 8, 7};
         final BufferedImage image = new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
 
         when(file.getBytes()).thenReturn(uploaded);
@@ -144,7 +144,7 @@ public class ParticipantImageProviderTest {
     public void testAddParticipantImageWithDataSetsAvatarTrue() throws Exception {
         final Participant participant = participant("P1");
         final ParticipantImage participantImage = participantImage(participant, new byte[]{3, 2, 1});
-        final byte[] processed = new byte[]{5, 5, 5};
+        final byte[] processed = {5, 5, 5};
         final BufferedImage image = new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
 
         when(participantImageRepository.save(any(ParticipantImage.class))).thenAnswer(invocation -> invocation.getArgument(0));

@@ -13,7 +13,7 @@ export class SuperAdminGuardService {
     if (this.userSessionService.getUser()?.roles?.includes(UserRoles.SUPER_ADMIN)) {
       return true;
     }
-    this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+    void this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
     return false;
   }
 }

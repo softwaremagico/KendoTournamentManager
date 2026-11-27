@@ -11,7 +11,7 @@ export class ImageService {
   @Input()
   participant: Participant;
 
-  constructor(private nameUtilsService: NameUtilsService) {
+  constructor(private readonly nameUtilsService: NameUtilsService) {
   }
 
   createBlobImageFileAndSave(base64ImageUrl: string, extension: string = 'jpeg'): void {
@@ -36,7 +36,7 @@ export class ImageService {
   }
 
   generateFileName(ext: string): string {
-    const date: number = new Date().valueOf();
+    const date: number = Date.now();
     return date + "." + this.nameUtilsService.getLastnameNameNoSpaces(this.participant) + "." + ext;
   }
 }

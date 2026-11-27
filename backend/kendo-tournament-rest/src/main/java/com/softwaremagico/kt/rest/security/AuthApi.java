@@ -137,6 +137,7 @@ public class AuthApi {
     /**
      * Kept for unit tests that do not require a tenant repository.
      */
+    @SuppressWarnings("java:S107") // NOSONAR - Test constructor keeps the Spring collaborators explicit.
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
                    AuthenticatedUserProvider authenticatedUserProvider,
@@ -162,9 +163,8 @@ public class AuthApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         // Tenancy disabled means every user belongs to the single Default tenant.
-        final Tenant tenant = !tenancyEnabled
-                ? tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null)
-                : resolveLastTenant(request.getUsername());
+        final Tenant tenant = tenancyEnabled ? resolveLastTenant(request.getUsername())
+                : tenantRepository.findById(TenantContext.LEGACY_TENANT_ID).orElse(null);
 
         // An unauthenticated caller must never be able to create the first
         // SUPER_ADMIN. Bootstrap the platform administrator only through the

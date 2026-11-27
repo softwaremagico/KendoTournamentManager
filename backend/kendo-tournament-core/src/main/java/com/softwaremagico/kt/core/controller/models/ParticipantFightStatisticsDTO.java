@@ -21,273 +21,29 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.core.statistics.AbstractFightStatistics;
+
 import java.io.Serial;
 import java.util.Objects;
 
-public class ParticipantFightStatisticsDTO extends ElementDTO {
+public class ParticipantFightStatisticsDTO extends AbstractFightStatistics {
 
     @Serial
     private static final long serialVersionUID = 7868206856267549959L;
 
-    private Long menNumber;
-
-    private Long koteNumber;
-
-    private Long doNumber;
-
-    private Long tsukiNumber;
-
-    private Long hansokuNumber;
-
-    private Long ipponNumber;
-
-    private Long fusenGachiNumber;
-
-    private Long receivedMenNumber;
-
-    private Long receivedKoteNumber;
-
-    private Long receivedDoNumber;
-
-    private Long receivedTsukiNumber;
-
-    private Long receivedHansokuNumber;
-
-    private Long receivedIpponNumber;
-    private Long receivedFusenGachiNumber;
-
-    private Long duelsNumber;
-    //In seconds.
-    private Long averageTime;
-    private Long averageWinTime;
-    private Long averageLostTime;
-
-    private Long totalDuelsTime;
-
-    private Long faults;
-
-    private Long receivedFaults;
-
-    private Long quickestHit;
-
-    private Long quickestReceivedHit;
-
-    private Long wonDuels;
-
-    private Long lostDuels;
-
-    private Long drawDuels;
-
-    public Long getDuelsNumber() {
-        return Objects.requireNonNullElse(duelsNumber, 0L);
-    }
-
-    public void setDuelsNumber(Long duelsNumber) {
-        if (duelsNumber != null && duelsNumber >= 0) {
-            this.duelsNumber = duelsNumber;
-        } else {
-            this.duelsNumber = null;
-        }
-    }
-
-    public Long getAverageTime() {
-        return averageTime;
-    }
-
-    public void setAverageTime(Long averageTime) {
-        this.averageTime = averageTime;
-    }
-
-    public Long getAverageWinTime() {
-        return averageWinTime;
-    }
-
-    public void setAverageWinTime(Long averageWinTime) {
-        this.averageWinTime = averageWinTime;
-    }
-
-    public Long getAverageLostTime() {
-        return averageLostTime;
-    }
-
-    public void setAverageLostTime(Long averageLostTime) {
-        this.averageLostTime = averageLostTime;
-    }
-
-    public Long getMenNumber() {
-        return Objects.requireNonNullElse(menNumber, 0L);
-    }
-
-    public void setMenNumber(Long menNumber) {
-        this.menNumber = menNumber;
-    }
-
-    public Long getKoteNumber() {
-        return Objects.requireNonNullElse(koteNumber, 0L);
-    }
-
-    public void setKoteNumber(Long koteNumber) {
-        this.koteNumber = koteNumber;
-    }
-
-    public Long getDoNumber() {
-        return Objects.requireNonNullElse(doNumber, 0L);
-    }
-
-    public void setDoNumber(Long doNumber) {
-        this.doNumber = doNumber;
-    }
-
-    public Long getTsukiNumber() {
-        return Objects.requireNonNullElse(tsukiNumber, 0L);
-    }
-
-    public void setTsukiNumber(Long tsukiNumber) {
-        this.tsukiNumber = tsukiNumber;
-    }
-
-    public Long getHansokuNumber() {
-        return Objects.requireNonNullElse(hansokuNumber, 0L);
-    }
-
-    public void setHansokuNumber(Long hansokuNumber) {
-        this.hansokuNumber = hansokuNumber;
-    }
-
-    public Long getIpponNumber() {
-        return Objects.requireNonNullElse(ipponNumber, 0L);
-    }
-
-    public void setIpponNumber(Long ipponNumber) {
-        this.ipponNumber = ipponNumber;
-    }
-
+    @Override
     public Long getFusenGachiNumber() {
-        return fusenGachiNumber;
+        return fusenGachiNumberValue();
     }
 
-    public void setFusenGachiNumber(Long fusenGachiNumber) {
-        this.fusenGachiNumber = fusenGachiNumber;
-    }
-
-    public Long getFaults() {
-        return Objects.requireNonNullElse(faults, 0L);
-    }
-
-    public void setFaults(Long faults) {
-        this.faults = faults;
-    }
-
-    public Long getReceivedMenNumber() {
-        return Objects.requireNonNullElse(receivedMenNumber, 0L);
-    }
-
-    public void setReceivedMenNumber(Long receivedMenNumber) {
-        this.receivedMenNumber = receivedMenNumber;
-    }
-
-    public Long getReceivedKoteNumber() {
-        return Objects.requireNonNullElse(receivedKoteNumber, 0L);
-    }
-
-    public void setReceivedKoteNumber(Long receivedKoteNumber) {
-        this.receivedKoteNumber = receivedKoteNumber;
-    }
-
-    public Long getReceivedDoNumber() {
-        return Objects.requireNonNullElse(receivedDoNumber, 0L);
-    }
-
-    public void setReceivedDoNumber(Long receivedDoNumber) {
-        this.receivedDoNumber = receivedDoNumber;
-    }
-
-    public Long getReceivedTsukiNumber() {
-        return Objects.requireNonNullElse(receivedTsukiNumber, 0L);
-    }
-
-    public void setReceivedTsukiNumber(Long receivedTsukiNumber) {
-        this.receivedTsukiNumber = receivedTsukiNumber;
-    }
-
-    public Long getReceivedHansokuNumber() {
-        return Objects.requireNonNullElse(receivedHansokuNumber, 0L);
-    }
-
-    public void setReceivedHansokuNumber(Long receivedHansokuNumber) {
-        this.receivedHansokuNumber = receivedHansokuNumber;
-    }
-
-    public Long getReceivedIpponNumber() {
-        return Objects.requireNonNullElse(receivedIpponNumber, 0L);
-    }
-
-    public void setReceivedIpponNumber(Long receivedIpponNumber) {
-        this.receivedIpponNumber = receivedIpponNumber;
-    }
-
+    @Override
     public Long getReceivedFusenGachiNumber() {
-        return receivedFusenGachiNumber;
+        return receivedFusenGachiNumberValue();
     }
 
-    public void setReceivedFusenGachiNumber(Long receivedFusenGachiNumber) {
-        this.receivedFusenGachiNumber = receivedFusenGachiNumber;
-    }
-
+    @Override
     public Long getReceivedFaults() {
-        return receivedFaults;
-    }
-
-    public void setReceivedFaults(Long receivedFaults) {
-        this.receivedFaults = receivedFaults;
-    }
-
-    public Long getTotalDuelsTime() {
-        return totalDuelsTime;
-    }
-
-    public void setTotalDuelsTime(Long totalDuelsTime) {
-        this.totalDuelsTime = totalDuelsTime;
-    }
-
-    public Long getQuickestHit() {
-        return quickestHit;
-    }
-
-    public void setQuickestHit(Long quickestHit) {
-        this.quickestHit = quickestHit;
-    }
-
-    public Long getQuickestReceivedHit() {
-        return quickestReceivedHit;
-    }
-
-    public void setQuickestReceivedHit(Long quickestReceivedHit) {
-        this.quickestReceivedHit = quickestReceivedHit;
-    }
-
-    public Long getWonDuels() {
-        return wonDuels;
-    }
-
-    public void setWonDuels(Long wonDuels) {
-        this.wonDuels = wonDuels;
-    }
-
-    public Long getLostDuels() {
-        return lostDuels;
-    }
-
-    public void setLostDuels(Long lostDuels) {
-        this.lostDuels = lostDuels;
-    }
-
-    public Long getDrawDuels() {
-        return drawDuels;
-    }
-
-    public void setDrawDuels(Long drawDuels) {
-        this.drawDuels = drawDuels;
+        return receivedFaultsValue();
     }
 
     @Override

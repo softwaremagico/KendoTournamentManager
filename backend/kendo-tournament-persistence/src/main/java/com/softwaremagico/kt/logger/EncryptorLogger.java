@@ -21,49 +21,39 @@ package com.softwaremagico.kt.logger;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Logger wrapper for encryption operations.
  */
+
 public final class EncryptorLogger extends AbstractLoggerWrapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EncryptorLogger.class);
-
-    private EncryptorLogger() {
-    }
+    private static final LoggerFacade ENCRYPTOR_DELEGATE = new LoggerFacade(EncryptorLogger.class);
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateInfo(LOGGER, clazz, messageTemplate, arguments);
+        ENCRYPTOR_DELEGATE.info(clazz, messageTemplate, arguments);
     }
-
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateWarning(LOGGER, clazz, messageTemplate, arguments);
+        ENCRYPTOR_DELEGATE.warning(clazz, messageTemplate, arguments);
     }
-
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateDebug(LOGGER, clazz, messageTemplate, arguments);
+        ENCRYPTOR_DELEGATE.debug(clazz, messageTemplate, arguments);
     }
-
-
     public static void severe(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateSevere(LOGGER, clazz.getName(), messageTemplate, arguments);
+        ENCRYPTOR_DELEGATE.severe(clazz, messageTemplate, arguments);
     }
-
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        delegateErrorMessage(LOGGER, clazz, throwable);
+        ENCRYPTOR_DELEGATE.error(clazz, throwable);
     }
-
     public static void errorMessage(Object object, Throwable throwable) {
-        AbstractLoggerWrapper.delegateErrorMessage(LOGGER, object, throwable);
+        ENCRYPTOR_DELEGATE.error(object, throwable);
     }
-
     public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
-        delegateErrorMessage(LOGGER, clazz.getName(), messageTemplate, arguments);
+        ENCRYPTOR_DELEGATE.error(clazz, messageTemplate, arguments);
+    }
+    public static boolean isDebugEnabled() {
+        return ENCRYPTOR_DELEGATE.isDebugEnabled();
     }
 
-    public static boolean isDebugEnabled() {
-        return isDebugEnabled(LOGGER);
+    private EncryptorLogger() {
     }
 }

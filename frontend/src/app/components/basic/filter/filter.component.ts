@@ -21,7 +21,7 @@ export class FilterComponent implements OnInit {
 
   @Input() resetValue: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private filterResetService: FilterResetService, private filterFocusService: FilterFocusService) {
+  constructor(private readonly filterResetService: FilterResetService, private readonly filterFocusService: FilterFocusService) {
   }
 
   ngOnInit(): void {

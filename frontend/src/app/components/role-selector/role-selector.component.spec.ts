@@ -44,16 +44,16 @@ describe('RoleSelectorComponent', () => {
 
   it('should select a role when checked is true', () => {
     const roleType = component.roleTypes[0];
-    component.select(true, roleType);
+    component.select(roleType);
     expect(component.roles).toContain(roleType);
   });
 
   it('should deselect a role when checked is false', () => {
     const roleType = component.roleTypes[0];
-    component.select(true, roleType);
+    component.select(roleType);
     expect(component.roles).toContain(roleType);
 
-    component.select(false, roleType);
+    component.deselect(roleType);
     expect(component.roles).not.toContain(roleType);
   });
 
@@ -61,10 +61,10 @@ describe('RoleSelectorComponent', () => {
     const role1 = component.roleTypes[0];
     const role2 = component.roleTypes[1];
 
-    component.select(true, role1);
-    component.select(true, role2);
+    component.select(role1);
+    component.select(role2);
 
-    expect(component.roles.length).toBe(2);
+    expect(component.roles).toHaveSize(2);
     expect(component.roles).toContain(role1);
     expect(component.roles).toContain(role2);
   });
@@ -73,7 +73,7 @@ describe('RoleSelectorComponent', () => {
     spyOn(component.closed, 'emit');
     component.tournament = tournament;
     const roleType = component.roleTypes[0];
-    component.select(true, roleType);
+    component.select(roleType);
 
     component.setRoles(true);
 

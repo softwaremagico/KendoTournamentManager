@@ -52,8 +52,8 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = {"tournamentExtraProperties"})
 public class TournamentImageProviderTest {
 
-    private static final byte[] MULTIPART_PAYLOAD = new byte[]{1, 2, 3, 4};
-    private static final byte[] DIRECT_IMAGE_PAYLOAD = new byte[]{9, 8, 7};
+    private static final byte[] MULTIPART_PAYLOAD = {1, 2, 3, 4};
+    private static final byte[] DIRECT_IMAGE_PAYLOAD = {9, 8, 7};
 
     @Mock
     private TournamentImageRepository repository;
@@ -89,10 +89,10 @@ public class TournamentImageProviderTest {
     @Test
     public void shouldReuseCachedDefaultImagesWhenAlreadyLoaded() {
         final Tournament tournament = tournament();
-        final byte[] accreditation = new byte[]{1};
-        final byte[] banner = new byte[]{2};
-        final byte[] diploma = new byte[]{3};
-        final byte[] photo = new byte[]{4};
+        final byte[] accreditation = {1};
+        final byte[] banner = {2};
+        final byte[] diploma = {3};
+        final byte[] photo = {4};
         setField(provider, "defaultAccreditation", accreditation);
         setField(provider, "defaultBanner", banner);
         setField(provider, "defaultDiploma", diploma);

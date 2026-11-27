@@ -126,11 +126,11 @@ describe('FightListComponent', () => {
       }
     } as any;
     tournamentServiceSpy = jasmine.createSpyObj('TournamentService', ['get', 'update']);
-    fightServiceSpy = jasmine.createSpyObj('FightService', ['create', 'update', 'delete', 'getFightSummaryPDf']);
+    fightServiceSpy = jasmine.createSpyObj('FightService', ['create', 'createNext', 'update', 'delete', 'getFightSummaryPDf']);
     environmentServiceSpy = jasmine.createSpyObj('EnvironmentService', ['getWebsocketPrefix']);
-    groupServiceSpy = jasmine.createSpyObj('GroupService', ['getFromTournament', 'setTeams']);
+    groupServiceSpy = jasmine.createSpyObj('GroupService', ['getFromTournament', 'setTeams', 'update']);
     duelServiceSpy = jasmine.createSpyObj('DuelService', ['update']);
-    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getSwappedColors', 'getSwappedTeams', 'setSwappedColors', 'setSwappedTeams']);
+    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getSwappedColors', 'getSwappedTeams', 'enableSwappedColors', 'disableSwappedColors', 'enableSwappedTeams', 'disableSwappedTeams']);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     fileServiceSpy = jasmine.createSpyObj('FileService', ['getTournamentPicture']);
@@ -399,13 +399,25 @@ describe('FightListComponent', () => {
   it('should toggle swapped colors and persist them', () => {
     component.swapColors();
     expect(component.swappedColors).toBeTrue();
-    expect(userSessionServiceSpy.setSwappedColors).toHaveBeenCalledWith(true);
+    expect(userSessionServiceSpy.enableSwappedColors).toHaveBeenCalled();
   });
 
   it('should toggle swapped teams and persist them', () => {
     component.swapTeams();
     expect(component.swappedTeams).toBeTrue();
-    expect(userSessionServiceSpy.setSwappedTeams).toHaveBeenCalledWith(true);
+    expect(userSessionServiceSpy.enableSwappedTeams).toHaveBeenCalled();
+  });
+
+  it('should persist disabled colors and teams when toggled back', () => {
+    component.swapColors();
+    component.swapColors();
+    expect(component.swappedColors).toBeFalse();
+    expect(userSessionServiceSpy.disableSwappedColors).toHaveBeenCalled();
+
+    component.swapTeams();
+    component.swapTeams();
+    expect(component.swappedTeams).toBeFalse();
+    expect(userSessionServiceSpy.disableSwappedTeams).toHaveBeenCalled();
   });
 
   it('should enable member order and notify service', () => {
@@ -434,11 +446,11 @@ describe('FightListComponent', () => {
 
     component.filter('angel');
 
-    expect(component.filteredFights.get(1)?.length).toBe(0);
-    expect(component.filteredUnties.get(1)?.length).toBe(1);
+    expect(component.filteredFights.get(1)).toHaveSize(0);
+    expect(component.filteredUnties.get(1)).toHaveSize(1);
 
     component.filter('aguila');
-    expect(component.filteredFights.get(1)?.length).toBe(1);
+    expect(component.filteredFights.get(1)).toHaveSize(1);
     expect(component.filteredLevels).toContain(2);
   });
 
@@ -454,8 +466,8 @@ describe('FightListComponent', () => {
 
     component.filter('equipo');
 
-    expect(component.filteredFights.get(1)?.length).toBe(0);
-    expect(component.filteredFights.get(2)?.length).toBe(1);
+    expect(component.filteredFights.get(1)).toHaveSize(0);
+    expect(component.filteredFights.get(2)).toHaveSize(1);
   });
 
   it('should reset filter and emit reset signal', () => {
@@ -632,6 +644,123 @@ describe('FightListComponent', () => {
     } as Message);
 
     expect(refreshSpy).not.toHaveBeenCalled();
+  });
+
+  it('replaces fights and groups received through websocket topics', () => {
+    const group = buildGroup(1, 0, [buildFight(1, [buildDuel(1)])]);
+    component.groups = [group];
+    component.filteredFights.set(1, [...group.fights]);
+    component.selectedFight = group.fights[0];
+    component.selectedDuel = group.fights[0].duels[0];
+    groupServiceSpy.getFromTournament.and.returnValue(of([buildGroup(1, 0, [buildFight(1, [buildDuel(1)])])]));
+
+    const replacement = buildFight(1, [buildDuel(1, true)]);
+    (component as any).replaceFight(replacement);
+    expect(component.selectedFight).toBe(replacement);
+    expect(component.filteredFights.get(1)![0]).toBe(replacement);
+
+    (component as any).replaceGroup(buildGroup(1, 0, [replacement]));
+    expect(component.selectedGroup!.fights[0]).toBe(replacement);
+    expect(component.selectedFight).toBe(replacement);
+  });
+
+  it('adds, deletes and navigates between fight elements', () => {
+    const duel = buildDuel(1);
+    const fight = buildFight(2, [duel]);
+    const untie = buildDuel(3, false, false);
+    untie.type = DuelType.UNDRAW;
+    const group = buildGroup(1, 0, [fight], [untie]);
+    component.groups = [group];
+    component.selectFight(fight);
+    groupServiceSpy.update.and.returnValue(of(group));
+    groupServiceSpy.getFromTournament.and.returnValue(of([group]));
+    tournamentServiceSpy.get.and.returnValue(of(component.tournament));
+
+    component.addElement();
+    expect((component as any).openNewFightPopup).toBeTrue();
+    expect((component as any).newFight.shiaijo).toBe(0);
+
+    expect(component.getDeleteTeamParams().team1).toBe(fight.team1.name);
+    component.swapTeams();
+    expect(component.getDeleteTeamParams().team1).toBe(fight.team2.name);
+
+    component.selectDuel(group.unties[0]);
+    component.deleteElement();
+    expect(group.unties).toHaveSize(0);
+    expect(groupServiceSpy.update).toHaveBeenCalled();
+  });
+
+  it('creates a group fight for league tournaments', () => {
+    Object.defineProperty(component, 'tournamentId', {value: 9, configurable: true});
+    groupServiceSpy.setTeams.and.returnValue(of(buildGroup(1, 0, [])));
+    fightServiceSpy.create.and.returnValue(of([buildFight(1, [])]));
+    groupServiceSpy.getFromTournament.and.returnValue(of([]));
+
+    component.createGroupFight([buildTeam(1, 'Team A', [])]);
+
+    expect(fightServiceSpy.create).toHaveBeenCalledWith(9, 0);
+    expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('infoFightCreated');
+  });
+
+  it('downloads the fight summary as a PDF', () => {
+    spyOn(window.URL, 'createObjectURL').and.returnValue('blob:http://localhost');
+
+    component.downloadPDF();
+
+    expect(fightServiceSpy.getFightSummaryPDf).toHaveBeenCalledWith(9);
+    expect(window.URL.createObjectURL).toHaveBeenCalled();
+  });
+
+  it('handles keyboard shortcuts for timer and project mode', () => {
+    const timerSpy = spyOn(component, 'showTimer');
+    const modeSpy = spyOn(component, 'changeProjectMode');
+    (component as any).filterInUse = false;
+
+    component.handleKeyboardEvent({key: 't'} as KeyboardEvent);
+    expect(timerSpy).toHaveBeenCalledWith(!component.timer);
+
+    component.handleKeyboardEvent({key: 'Escape'} as KeyboardEvent);
+    expect(modeSpy).toHaveBeenCalledWith(false);
+  });
+
+  it('finishes and reopens duels including defaults and classification paths', () => {
+    const duel = buildDuel(1);
+    component.groups = [buildGroup(1, 0, [buildFight(1, [duel])])];
+    component.selectDuel(duel);
+    duelServiceSpy.update.and.returnValue(of(duel));
+    spyOn<any>(component, 'generateNextFights');
+
+    component.finishDuel();
+    expect(duel.finished).toBeTrue();
+    expect(duel.finishedAt).toBeDefined();
+    expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('infoDuelFinished');
+
+    component.unfinishDuel();
+    expect(duel.finished).toBeFalse();
+    expect(duel.finishedAt).toBeUndefined();
+  });
+
+  it('generates next fights and finishes the tournament when none are created', () => {
+    Object.defineProperty(component, 'tournamentId', {value: 9, configurable: true});
+    spyOn(component, 'finishTournament');
+    fightServiceSpy.createNext.and.returnValue(of([]));
+
+    component.generateNextFights(true);
+
+    expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('fightsEnded');
+    expect(component.finishTournament).toHaveBeenCalled();
+  });
+
+  it('updates duel duration and elapsed time through the notification services', () => {
+    component.selectDuel(buildDuel(1));
+
+    component.updateDuelDuration(120);
+    component.updateDuelElapsedTime(30, true);
+
+    expect(component.selectedDuel!.totalDuration).toBe(120);
+    expect(component.selectedDuel!.duration).toBe(30);
+    expect(timeChangedServiceMock.isElapsedTimeChanged.value).toBe(0);
+    expect(duelServiceSpy.update).toHaveBeenCalled();
   });
 
   it('should keep group pending while an untie is unfinished and finish it once untie is solved', () => {

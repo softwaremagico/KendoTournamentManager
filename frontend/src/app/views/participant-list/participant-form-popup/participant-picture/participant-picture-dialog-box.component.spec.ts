@@ -56,11 +56,11 @@ describe('ParticipantPictureDialogBoxComponent', () => {
   });
 
   it('should emit onClosed when closeDialog is called', () => {
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
 
     component.closeDialog();
 
-    expect(component.onClosed.emit).toHaveBeenCalled();
+    expect(component.closed.emit).toHaveBeenCalled();
   });
 
   it('should update facing mode and video options when switchCamera is called', () => {
@@ -87,7 +87,7 @@ describe('ParticipantPictureDialogBoxComponent', () => {
       component.pictureHandler({ imageAsDataUrl: `img-${i}` } as WebcamImage);
     }
 
-    expect(component.pictures.length).toBe(5);
+    expect(component.pictures).toHaveSize(5);
     expect(component.pictures[0]).toBe('img-1');
     expect(component.pictures[4]).toBe('img-5');
     expect(component.imageClicked.emit).toHaveBeenCalledTimes(6);
@@ -111,7 +111,7 @@ describe('ParticipantPictureDialogBoxComponent', () => {
     component.selectedPicture = 0;
     const updated = { base64: 'data:image/png;base64,abc' } as ParticipantImage;
     fileServiceSpy.setBase64Picture.and.returnValue(of(updated));
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     const updateSpy = spyOn(pictureUpdatedServiceMock.isPictureUpdated, 'next');
 
     component.saveImage();
@@ -120,7 +120,7 @@ describe('ParticipantPictureDialogBoxComponent', () => {
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('infoPictureStored');
     expect(updateSpy).toHaveBeenCalledWith('data:image/png;base64,abc');
     expect(component.participant.hasAvatar).toBeTrue();
-    expect(component.onClosed.emit).toHaveBeenCalled();
+    expect(component.closed.emit).toHaveBeenCalled();
   });
 
   it('should toggle selected image when same image is clicked twice', () => {
@@ -165,7 +165,7 @@ describe('ParticipantPictureDialogBoxComponent', () => {
     });
 
     fileServiceSpy.setParticipantFilePicture.and.returnValue(of({ base64: 'img' } as ParticipantImage));
-    spyOn(component.onClosed, 'emit');
+    spyOn(component.closed, 'emit');
     const updateSpy = spyOn(pictureUpdatedServiceMock.isPictureUpdated, 'next');
 
     component.handleFileInput({ currentTarget: input } as unknown as Event);
@@ -173,7 +173,7 @@ describe('ParticipantPictureDialogBoxComponent', () => {
     expect(fileServiceSpy.setParticipantFilePicture).toHaveBeenCalledOnceWith(file, component.participant);
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('infoPictureStored');
     expect(updateSpy).toHaveBeenCalledWith('img');
-    expect(component.onClosed.emit).toHaveBeenCalled();
+    expect(component.closed.emit).toHaveBeenCalled();
   });
 
   it('should delete picture and show confirmation message', () => {

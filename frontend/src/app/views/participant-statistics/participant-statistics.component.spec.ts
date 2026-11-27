@@ -48,7 +48,11 @@ describe('ParticipantStatisticsComponent', () => {
   };
 
   beforeEach(() => {
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'getCurrentNavigation']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    // Router.currentNavigation() is a signal, so the spy provides the callable directly.
+    (routerSpy as any).currentNavigation = () => ({
+      extras: { state: { participantId: 42 } }
+    });
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       snapshot: {
         queryParamMap: {
@@ -77,10 +81,6 @@ describe('ParticipantStatisticsComponent', () => {
     environmentServiceSpy.isAchievementsEnabled.and.returnValue(false);
     loginServiceSpy.getJwtValue.and.returnValue('jwt-token');
 
-    routerSpy.getCurrentNavigation.and.returnValue({
-      extras: { state: { participantId: 42 } }
-    } as any);
-
     component = new ParticipantStatisticsComponent(
       routerSpy,
       activatedRouteSpy,
@@ -106,9 +106,9 @@ describe('ParticipantStatisticsComponent', () => {
   });
 
   it('should navigate back to participants when state has invalid participantId', () => {
-    routerSpy.getCurrentNavigation.and.returnValue({
+    (routerSpy as any).currentNavigation = () => ({
       extras: { state: { participantId: 'invalid_id' } }
-    } as any);
+    });
 
     component = new ParticipantStatisticsComponent(
       routerSpy,
@@ -180,7 +180,7 @@ describe('ParticipantStatisticsComponent', () => {
 
     const performance = (component as any).generatePerformanceStatistics(ps);
 
-    expect(performance.length).toBe(5);
+    expect(performance).toHaveSize(5);
     expect(performance[0][0]).toBe('attack');
     expect(performance[1][0]).toBe('defense');
     expect(performance[2][0]).toBe('willpower');
@@ -194,7 +194,7 @@ describe('ParticipantStatisticsComponent', () => {
 
     const points = (component as any).obtainPoints(ps);
 
-    expect(points.length).toBe(7);
+    expect(points).toHaveSize(7);
     expect(points[0][1]).toBe(5);
   });
 
@@ -205,8 +205,33 @@ describe('ParticipantStatisticsComponent', () => {
 
     const received = (component as any).obtainReceivedPoints(ps);
 
-    expect(received.length).toBe(7);
+    expect(received).toHaveSize(7);
     expect(received[0][1]).toBe(3);
+  });
+
+  it('should default missing point counters to zero', () => {
+    const ps = buildParticipantStatistics();
+    const statistics = ps.participantFightStatistics;
+    statistics.menNumber = undefined as any;
+    statistics.koteNumber = undefined as any;
+    statistics.doNumber = undefined as any;
+    statistics.tsukiNumber = undefined as any;
+    statistics.ipponNumber = undefined as any;
+    statistics.fusenGachiNumber = undefined as any;
+    statistics.hansokuNumber = undefined as any;
+    statistics.receivedMenNumber = undefined as any;
+    statistics.receivedKoteNumber = undefined as any;
+    statistics.receivedDoNumber = undefined as any;
+    statistics.receivedTsukiNumber = undefined as any;
+    statistics.receivedIpponNumber = undefined as any;
+    statistics.receivedFusenGachiNumber = undefined as any;
+    statistics.receivedHansokuNumber = undefined as any;
+
+    const points = (component as any).obtainPoints(ps) as [string, number][];
+    const received = (component as any).obtainReceivedPoints(ps) as [string, number][];
+
+    expect(points.every(([, value]) => value === 0)).toBeTrue();
+    expect(received.every(([, value]) => value === 0)).toBeTrue();
   });
 
   it('should return zero performance willpower when no tournaments', () => {
@@ -225,6 +250,15 @@ describe('ParticipantStatisticsComponent', () => {
     const performance = (component as any).generatePerformanceStatistics(ps);
 
     expect(performance[3][1]).toBe(0);
+  });
+
+  it('should navigate to the tournament fights on goBack when a backUrl is set', () => {
+    (component as any).backUrl = '/tournaments';
+    (component as any).srcTournamentId = 7;
+
+    component.goBack();
+
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/tournaments/fights'], {state: {tournamentId: 7}});
   });
 
   it('should navigate to registry/participants on goBack without backUrl', () => {

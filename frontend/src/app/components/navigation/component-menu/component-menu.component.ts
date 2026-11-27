@@ -11,7 +11,7 @@ import {TemplateService} from "../../../services/template.service";
 export class ComponentMenuComponent implements OnInit{
   template: TemplateRef<any> | null = null;
 
-  constructor(private templateService: TemplateService) { }
+  constructor(private readonly templateService: TemplateService) { }
 
   ngOnInit() {
     this.templateService.currentTemplate.subscribe(template => this.template = template);

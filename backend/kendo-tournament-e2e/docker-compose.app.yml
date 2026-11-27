@@ -45,6 +45,8 @@ services:
       - --bootstrap.super-admin.password=${APP_PASSWORD:-Admin-password-123}
       - --bootstrap.super-admin.roles=super_admin,admin,editor,viewer
       - --jwt.ip.check=false
+    environment:
+      SERVER_CORS_DOMAINS: ${APP_CORS_DOMAINS:-http://localhost:${APP_FRONTEND_PORT:-14200}}
     ports:
       - "${APP_BACKEND_PORT:-18080}:8080"
     healthcheck:

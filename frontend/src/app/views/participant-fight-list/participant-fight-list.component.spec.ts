@@ -51,7 +51,7 @@ describe('ParticipantFightListComponent', () => {
   } as Fight);
 
   beforeEach(() => {
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'getCurrentNavigation']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'currentNavigation']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     systemOverloadServiceSpy = jasmine.createSpyObj('SystemOverloadService', [], {
       isTransactionalBusy: {next: jasmine.createSpy('next')}
@@ -59,7 +59,7 @@ describe('ParticipantFightListComponent', () => {
     fightServiceSpy = jasmine.createSpyObj('FightService', ['getFromParticipant']);
     duelServiceSpy = jasmine.createSpyObj('DuelService', ['getUntiesFromParticipant']);
 
-    routerSpy.getCurrentNavigation.and.returnValue({
+    routerSpy.currentNavigation.and.returnValue({
       extras: {state: {participantId: 42}}
     } as any);
 
@@ -85,7 +85,7 @@ describe('ParticipantFightListComponent', () => {
   });
 
   it('should navigate back to statistics when participantId is not a number', () => {
-    routerSpy.getCurrentNavigation.and.returnValue({
+    routerSpy.currentNavigation.and.returnValue({
       extras: {state: {participantId: 'invalid'}}
     } as any);
 
@@ -112,7 +112,7 @@ describe('ParticipantFightListComponent', () => {
   });
 
   it('should go back to statistics when participantId is undefined in ngOnInit', () => {
-    routerSpy.getCurrentNavigation.and.returnValue(null);
+    routerSpy.currentNavigation.and.returnValue(null);
 
     component = new ParticipantFightListComponent(
       routerSpy,
@@ -141,7 +141,7 @@ describe('ParticipantFightListComponent', () => {
     component.initializeData();
 
     expect(component.competitorFights.size).toBe(2);
-    expect(component.tournaments.length).toBe(2);
+    expect(component.tournaments).toHaveSize(2);
   });
 
   it('should sort tournaments by createdAt descending', () => {
@@ -168,7 +168,7 @@ describe('ParticipantFightListComponent', () => {
     component.filter('kendo');
 
     const filtered = component.filteredFights.get(tournament1);
-    expect(filtered?.length).toBe(1);
+    expect(filtered).toHaveSize(1);
     expect(filtered?.[0].team1.name).toBe('Kendo Team Alpha');
   });
 
@@ -183,7 +183,7 @@ describe('ParticipantFightListComponent', () => {
     component.filter('');
 
     const filtered = component.filteredFights.get(tournament1);
-    expect(filtered?.length).toBe(2);
+    expect(filtered).toHaveSize(2);
   });
 
   it('should reset filter values and emit signal', () => {

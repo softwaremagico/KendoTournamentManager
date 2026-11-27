@@ -828,5 +828,20 @@
   "worstNightmareOf": "Vous êtes le pire cauchemar de",
   "yes": "Oui",
   "youCannotDeleteYourself": "Vous ne pouvez pas supprimer votre propre compte.",
-  "yourWorstNightmare": "Votre pire cauchemar"
+  "yourWorstNightmare": "Votre pire cauchemar",
+  "active": "Actif",
+  "administratorUsername": "Nom d'utilisateur de l'administrateur",
+  "createTenant": "Créer une organisation",
+  "fr": "Française",
+  "tenantAdministrationDenied": "Vous n'avez pas la permission d'administrer les organisations.",
+  "tenantName": "Organisation",
+  "languageKey": {
+    "en": "English",
+    "es": "Español",
+    "ca": "Català",
+    "it": "Italiano",
+    "nl": "Nederlandse",
+    "de": "Deutsche",
+    "fr": "Française"
+  }
 }

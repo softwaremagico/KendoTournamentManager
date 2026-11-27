@@ -21,13 +21,10 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-
 import org.openpdf.text.Document;
 import org.openpdf.text.Element;
-import org.openpdf.text.Font;
-import org.openpdf.text.PageSize;
+
 import org.openpdf.text.Paragraph;
-import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.BaseFont;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -35,33 +32,21 @@ import org.openpdf.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.pdf.BaseColor;
+
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
-import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
 
-public class TeamList extends ParentList {
+public class TeamList extends AbstractTournamentList {
 
-    private static final float[] TABLE_WIDTH = {0.46f, 0.08f, 0.46f};
     private static final int BORDER = 0;
-    private final TournamentDTO tournament;
-
     private final List<TeamDTO> teams;
 
     public TeamList(TournamentDTO tournament, List<TeamDTO> teams) {
-        this.tournament = tournament;
+        super(tournament);
         this.teams = teams;
-    }
-
-    @Override
-    public void setTableProperties(PdfPTable mainTable) {
-        mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
-        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     public PdfPTable teamTable(TeamDTO teamDTO) {
@@ -111,38 +96,5 @@ public class TeamList extends ParentList {
         mainTable.completeRow();
     }
 
-    @Override
-    public float[] getTableWidths() {
-        return TABLE_WIDTH;
-    }
 
-
-    @Override
-    public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        final PdfPCell cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, fontSize)));
-        cell.setColspan(getTableWidths().length);
-        cell.setBorderWidth(HEADER_BORDER);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(MIN_HEADER_HIGH);
-        mainTable.addCell(cell);
-    }
-
-    @Override
-    public void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
-                                BaseFont font, int fontSize) {
-        mainTable.addCell(getEmptyRow());
-    }
-
-    @Override
-    protected Rectangle getPageSize() {
-        return PageSize.A4;
-    }
-
-
-    @Override
-    protected void addDocumentWriterEvents(PdfWriter writer) {
-        // No background.
-    }
 }

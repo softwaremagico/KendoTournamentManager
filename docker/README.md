@@ -41,8 +41,12 @@ Three pre-built images are published on Docker Hub and updated with every releas
 | Frontend | `softwaremagico/kendo-tournament-manager-frontend` | [View →](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-frontend) |
 | Reverse proxy | `softwaremagico/kendo-tournament-manager-rproxy` | [View →](https://hub.docker.com/r/softwaremagico/kendo-tournament-manager-rproxy) |
 
-Use a specific version tag (e.g., `v3.6.0`) for production deployments instead of `latest` to ensure
+Use a specific version tag (e.g., `v3.7.0`) for production deployments instead of `latest` to ensure
 reproducibility.
+The `latest` tag refers to the last **published image**, not the current `main`
+branch. Changes to the repository or its Dockerfiles do not reach that image
+until it is rebuilt and published. Check the image version before relying on a
+recent fix.
 
 ---
 
@@ -61,24 +65,29 @@ self-contained example that pulls all three images from Docker Hub.
 5. Run:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 For full details, see the
 [wiki — Installing using Docker Hub images](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation-using-docker-hub).
 
-### Option B — Build from source
+### Option B — Build images from a published release
 
-Build the images locally from the source code in this repository:
+Build the images locally using the published release selected by `version` in
+`docker/.env`:
 
 ```bash
 # From the repository root
 cd docker
-docker-compose build && docker-compose up -d
+docker compose build && docker compose up -d
 ```
 
 This builds all three images using the Dockerfiles in `docker/backend/`, `docker/frontend/`, and `docker/traefik/`.
-Build arguments are automatically read from the `.env` file.
+The backend and frontend Dockerfiles download their application artifacts from
+the configured GitHub release; building these images does **not** compile the
+current checkout or include changes made after that release. Build arguments
+are automatically read from the `.env` file. To build the current checkout,
+use `docker-examples/local-build/localdockerbuild.sh` instead.
 
 ---
 
@@ -103,6 +112,10 @@ configurations:
 | `localhost-without-reverse-proxy/` | Runs frontend and backend directly on ports 4200/8080, no Traefik |
 | `local-build/` | Builds all images from source for local testing |
 
+Run `python3 backend/kendo-tournament-e2e/check-compose-security.py` from the
+repository root to validate Compose syntax and the security environment passed
+to each backend. This does not replace starting and testing the selected stack.
+
 ---
 
 ## Configuration reference
@@ -116,7 +129,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `machine_domain` | `localhost` | Domain name (or `localhost`) for the deployment |
 | `email` | `myemail@domain.com` | Email used for Let's Encrypt TLS certificate registration |
 | `timezone` | `Europe/Madrid` | Server timezone (used in logs and date handling) |
-| `version` | `v3.6.0` | Application version tag |
+| `version` | `v3.7.0` | Application version tag |
 | `release` | `${version}` | Release label (usually the same as `version`) |
 | `SERVER_CORS_DOMAINS` | `${protocol}://${machine_domain}` | Optional override. Exact browser origin(s) allowed by the backend CORS policy and by the WebSocket handshake. Comma-separated list supported. It is derived automatically in the bundled Traefik setups; override it when the frontend is opened from a different origin (for example `http://localhost:4200` in the no-reverse-proxy examples). Wildcards such as `*` are ignored. |
 
@@ -141,8 +154,13 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `enable_guest_user` | `false` | Allow unauthenticated read-only access via QR codes |
 | `enable_tenancy` | `true` | Enable multi-organization support. Set to `false` so the whole installation uses a single organization (the `Legacy organization`): the login selector disappears, the tenant administration menu is hidden and all tenant management API endpoints return `404`. |
 | `database_populate_default_data` | `always` | Controls SQL data initialization. The platform admin is created only from configured `bootstrap.super-admin.*` credentials, never by the first anonymous login |
+| `BOOTSTRAP_SUPER_ADMIN_USERNAME` / `BOOTSTRAP_SUPER_ADMIN_PASSWORD` | *(empty)* | Initial platform administrator credentials. Set both for the first startup, then remove them and recreate the backend container. |
 
 ### Backend — Database
+
+When upgrading an existing installation, preserve its existing database encryption
+key. Generating a new key does not re-encrypt existing records and may make
+them unreadable. Back up and verify the database before changing encryption settings.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -250,7 +268,7 @@ htpasswd -nB admin
 Use a high cost factor (`-C 12` or higher) and a unique password. To rotate the credential, update `.env` and restart:
 
 ```bash
-docker-compose up -d kendo-tournament-rproxy
+docker compose up -d kendo-tournament-rproxy
 ```
 
 ### Disabling the reverse proxy
@@ -294,7 +312,7 @@ Before going to production, verify the following:
 3. Rebuild and restart the stack:
 
 ```bash
-docker-compose build && docker-compose up -d
+docker compose build && docker compose up -d
 ```
 
 Hibernate's `ddl-auto=update` will automatically apply any required schema changes on startup.
@@ -349,7 +367,7 @@ This forces a new login and clears the stale token.
 Check the backend logs:
 
 ```bash
-docker-compose logs kendo-tournament-backend
+docker compose logs kendo-tournament-backend
 ```
 
 Common causes:
@@ -362,7 +380,7 @@ Common causes:
 
 - Ensure your domain's DNS A record points to the server's public IP.
 - Ensure ports 80 and 443 are open in the firewall.
-- Check Traefik logs: `docker-compose logs kendo-tournament-rproxy`.
+- Check Traefik logs: `docker compose logs kendo-tournament-rproxy`.
 - Let's Encrypt has rate limits; if you have hit them, wait before retrying.
 
 ### Frontend cannot connect to the backend (WebSocket errors)
@@ -449,7 +467,7 @@ email=myemail@domain.com
 Regenerate again the proxy if needed with the next command:
 
 ```
-docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy
+docker compose build --no-cache kendo-tournament-rproxy && docker compose up -d kendo-tournament-rproxy
 ```
 
 ## Traefik Dashboard
@@ -462,7 +480,7 @@ htpasswd -nB admin -C 12
 # TRAEFIK_BASIC_AUTH_USERS=admin:$2y$12$...
 ```
 
-Restart the proxy with `docker-compose up -d kendo-tournament-rproxy` after changing it.
+Restart the proxy with `docker compose up -d kendo-tournament-rproxy` after changing it.
 
 ## Disable the REVERSE PROXY
 

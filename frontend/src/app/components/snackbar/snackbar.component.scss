@@ -8,7 +8,7 @@
   padding: 1rem;
   box-sizing: border-box;
   pointer-events: none;
-  transition: .5s ease all;
+  transition: opacity .5s ease, transform .5s ease;
 
   &.top .snackbar-element + .snackbar-element {
     margin-top: 1rem;
@@ -44,5 +44,5 @@
 .snackbar-element {
   display: inline-flex;
   pointer-events: all;
-  transition: .5s ease all;
+  transition: opacity .5s ease, transform .5s ease;
 }

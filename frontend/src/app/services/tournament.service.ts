@@ -1,10 +1,10 @@
+import {ServiceRequestMonitor} from './service-request-monitor';
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {Tournament} from "../models/tournament";
-import {catchError, tap} from "rxjs/operators";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
@@ -25,79 +25,46 @@ import {RoleType} from "../models/role-type";
   providedIn: 'root'
 })
 export class TournamentService {
+  private readonly monitor = new ServiceRequestMonitor(this.loggerService, this.messageService, this.systemOverloadService);
 
-  private baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              public loginService: LoginService, private messageService: MessageService,
-              private systemOverloadService: SystemOverloadService,
-              private loggerService: LoggerService) {
+  private readonly baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments';
+
+  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService,
+              public readonly loginService: LoginService, private readonly messageService: MessageService,
+              private readonly systemOverloadService: SystemOverloadService,
+              private readonly loggerService: LoggerService) {
   }
 
   getAll(): Observable<Tournament[]> {
     const url: string = `${this.baseUrl}`;
 
     return this.http.get<Tournament[]>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched all Tournaments`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament[]>(`gets all`))
-      );
+      .pipe(this.monitor.track<Tournament[]>(`gets all`, () => `fetched all Tournaments`));
   }
 
   get(id: number): Observable<Tournament> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Tournament>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`fetched tournament id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`get id=${id}`))
-      );
+      .pipe(this.monitor.track<Tournament>(`get id=${id}`, () => `fetched tournament id=${id}`));
   }
 
   deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting tournament id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`delete id=${id}`))
-      );
+    this.http.delete<Tournament>(url)
+      .pipe(this.monitor.track<Tournament>(`delete id=${id}`, () => `deleting tournament id=${id}`));
   }
 
   delete(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Tournament>(url, tournament)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`deleting tournament ${tournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`delete ${tournament}`))
-      );
+      .pipe(this.monitor.track<Tournament>(`delete ${tournament.name}`, () => `deleting tournament ${tournament.name}`));
   }
 
   add(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Tournament>(url, tournament)
-      .pipe(
-        tap({
-          next: () => (newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`adding ${tournament}`))
-      );
+      .pipe(this.monitor.track<Tournament>(`adding ${tournament.name}`));
   }
 
 
@@ -105,41 +72,20 @@ export class TournamentService {
     const url: string = `${this.baseUrl}`;
     this.systemOverloadService.isBusy.next(true);
     return this.http.put<Tournament>(url, tournament)
-      .pipe(
-        tap({
-          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
-      );
+      .pipe(this.monitor.track<Tournament>(`updating ${tournament.name}`));
   }
 
   clone(id: number): Observable<Tournament> {
     const url: string = `${this.baseUrl}/${id}/clone`;
     return this.http.get<Tournament>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`cloned tournament id=${id}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`clone id=${id}`))
-      );
+      .pipe(this.monitor.track<Tournament>(`clone id=${id}`, () => `cloned tournament id=${id}`));
   }
 
   setNumberOfWinners(tournament: Tournament, numberOfWinners: number): Observable<Tournament> {
     const url: string = `${this.baseUrl}/${tournament.id}/winners/${numberOfWinners}`;
     this.systemOverloadService.isBusy.next(true);
     return this.http.put<Tournament>(url, null)
-      .pipe(
-        tap({
-          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
-      );
+      .pipe(this.monitor.track<Tournament>(`updating ${tournament.name}`));
   }
 
   getAccreditations(tournamentId: number, newOnes: boolean | undefined, roles: RoleType[]): Observable<Blob> {
@@ -155,34 +101,18 @@ export class TournamentService {
           'onlyNew': newOnes!
         }
       })
-    }).pipe(
-      tap({
-        next: () => this.loggerService.info(`getting tournament accreditations`),
-        error: () => this.systemOverloadService.isBusy.next(false),
-        complete: () => this.systemOverloadService.isBusy.next(false),
-      }),
-      catchError(this.messageService.handleError<Blob>(`getting tournament accreditations`))
-    );
+    }).pipe(this.monitor.track<Blob>(`getting tournament accreditations`, () => `getting tournament accreditations`));
   }
 
   getParticipantAccreditation(tournamentId: number, participant: Participant, roleType: RoleType | undefined): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
-    if (roleType === undefined) {
-      roleType = RoleType.getRandom();
-    }
+    roleType ??= RoleType.getRandom();
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations/' + roleType;
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
-    }).pipe(
-      tap({
-        next: () => this.loggerService.info(`getting participant accreditations`),
-        error: () => this.systemOverloadService.isBusy.next(false),
-        complete: () => this.systemOverloadService.isBusy.next(false),
-      }),
-      catchError(this.messageService.handleError<Blob>(`getting participant accreditations`))
-    );
+    }).pipe(this.monitor.track<Blob>(`getting participant accreditations`, () => `getting participant accreditations`));
   }
 
   getDiplomas(tournamentId: number, newOnes: boolean | undefined, roles: RoleType[]): Observable<Blob> {
@@ -198,14 +128,7 @@ export class TournamentService {
           'onlyNew': newOnes!
         }
       })
-    }).pipe(
-      tap({
-        next: () => this.loggerService.info(`getting tournament diplomas`),
-        error: () => this.systemOverloadService.isBusy.next(false),
-        complete: () => this.systemOverloadService.isBusy.next(false),
-      }),
-      catchError(this.messageService.handleError<Blob>(`getting tournament diplomas`))
-    );
+    }).pipe(this.monitor.track<Blob>(`getting tournament diplomas`, () => `getting tournament diplomas`));
   }
 
   getParticipantDiploma(tournamentId: number, participant: Participant): Observable<Blob> {
@@ -215,27 +138,13 @@ export class TournamentService {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
-    }).pipe(
-      tap({
-        next: () => this.loggerService.info(`getting participant diplomas`),
-        error: () => this.systemOverloadService.isBusy.next(false),
-        complete: () => this.systemOverloadService.isBusy.next(false),
-      }),
-      catchError(this.messageService.handleError<Blob>(`getting participant diplomas`))
-    );
+    }).pipe(this.monitor.track<Blob>(`getting participant diplomas`, () => `getting participant diplomas`));
   }
 
   getLastUnlockedTournament(): Observable<Tournament> {
     const url: string = `${this.baseUrl}/unlocked/lasts`;
     return this.http.get<Tournament>(url)
-      .pipe(
-        tap({
-          next: () => (newTournament: Tournament) => this.loggerService.info(`Last unlocked tournament is ${newTournament}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Tournament>(`Cannot retrieve last unlocked tournament`))
-      );
+      .pipe(this.monitor.track<Tournament>(`Cannot retrieve last unlocked tournament`));
   }
 
 }

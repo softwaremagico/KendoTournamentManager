@@ -86,7 +86,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1, p2], []);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, true);
+    const predicate = component.dropListEnterPredicateTeam1(fight);
 
     const dragItem = { data: p1 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
@@ -102,7 +102,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1], [p2]);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, true);
+    const predicate = component.dropListEnterPredicateTeam1(fight);
 
     const dragItem = { data: p2 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
@@ -118,7 +118,7 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1], [p2]);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, false);
+    const predicate = component.dropListEnterPredicateTeam2(fight);
 
     const dragItem = { data: p2 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
@@ -134,12 +134,24 @@ describe('DuelComponent', () => {
     const fight = createFight([duel1, duel2], [p1], [p2]);
 
     component.fight = fight;
-    const predicate = component.dropListEnterPredicate(fight, false);
+    const predicate = component.dropListEnterPredicateTeam2(fight);
 
     const dragItem = { data: p1 } as CdkDrag<Participant>;
     const dropList = {} as CdkDropList;
 
     expect(predicate(dragItem, dropList)).toBeFalse();
+  });
+
+  // Los desempates renderizan <duel> sin [fight]: el predicado debe ser seguro.
+  it('should create drop predicates for untie duels without a fight', () => {
+    const participant = createParticipant(1, 'A');
+    const dragItem = {data: participant} as CdkDrag<Participant>;
+    const dropList = {} as CdkDropList;
+
+    expect(() => component.dropListEnterPredicateTeam1(undefined)).not.toThrow();
+    expect(() => component.dropListEnterPredicateTeam2(undefined)).not.toThrow();
+    expect(component.dropListEnterPredicateTeam1(undefined)(dragItem, dropList)).toBeFalse();
+    expect(component.dropListEnterPredicateTeam2(undefined)(dragItem, dropList)).toBeFalse();
   });
 
   it('should swap left competitors using swapMembers', () => {

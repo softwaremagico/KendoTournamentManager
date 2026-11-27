@@ -36,7 +36,7 @@ export class PasswordsComponent extends RbacBasedComponent implements OnInit {
     repeatPassword: new UntypedFormControl('', Validators.required)
   }, {validators: confirmPasswordValidator, updateOn: 'change'});
 
-  constructor(private userService: UserService, private messageService: MessageService, rbacService: RbacService) {
+  constructor(private readonly userService: UserService, private readonly messageService: MessageService, rbacService: RbacService) {
     super(rbacService);
   }
 

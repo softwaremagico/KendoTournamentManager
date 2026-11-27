@@ -109,7 +109,7 @@ public class WebSecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         //Will use the bean KendoUserDetailsService.
         return authenticationConfiguration.getAuthenticationManager();
     }
@@ -117,7 +117,7 @@ public class WebSecurityConfig {
 
     @Bean
     @SuppressWarnings("java:S4502")
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         http
                 //Disable cors headers
                 .cors(cors -> cors.configurationSource(generateCorsConfigurationSource()))

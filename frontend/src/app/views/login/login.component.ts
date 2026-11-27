@@ -6,7 +6,6 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {AuthenticatedUser} from "../../models/authenticated-user";
-import { HttpHeaders } from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
 import {TranslocoService} from '@jsverse/transloco';
 import {EnvironmentService} from "../../environment.service";
@@ -34,13 +33,13 @@ export class LoginComponent implements OnInit {
   protected waiting: boolean = true;
   protected readonly BiitProgressBarType = BiitProgressBarType;
 
-  protected checkForNewVersion: boolean = this.environmentService.isCheckForNewVersion();
+  protected readonly checkForNewVersion: boolean = this.environmentService.isCheckForNewVersion();
 
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService,
-              private formBuilder: UntypedFormBuilder, private messageService: MessageService, private loggerService: LoggerService,
-              private infoService: InfoService, private translateService: TranslocoService, private environmentService: EnvironmentService,
-                private userSessionService: UserSessionService, private activityService: ActivityService, private translocoService: TranslocoService) {
+  constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute, private readonly loginService: LoginService,
+              private readonly formBuilder: UntypedFormBuilder, private readonly messageService: MessageService, private readonly loggerService: LoggerService,
+              private readonly infoService: InfoService, private readonly translateService: TranslocoService, private readonly environmentService: EnvironmentService,
+                private readonly userSessionService: UserSessionService, private readonly activityService: ActivityService, private readonly translocoService: TranslocoService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
@@ -53,7 +52,7 @@ export class LoginComponent implements OnInit {
     this.isLastVersion();
     this.managePathQueries();
     if (!this.userSessionService.isTokenExpired()) {
-      this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+      void this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
     } else {
       this.waiting = false;
       this.userSessionService.clearToken();
@@ -83,7 +82,7 @@ export class LoginComponent implements OnInit {
         });
         queryParams[Constants.PATHS.QUERY.LOGOUT] = null;
       }
-      this.router.navigate([], {queryParams: queryParams, queryParamsHandling: 'merge'});
+      void this.router.navigate([], {queryParams: queryParams, queryParamsHandling: 'merge'});
     });
   }
 
@@ -96,9 +95,9 @@ export class LoginComponent implements OnInit {
         this.activityService.setRoles(authenticatedUser.roles);
         const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         if (returnUrl) {
-          this.router.navigate([returnUrl]);
+          void this.router.navigate([returnUrl]);
         } else {
-          this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
+          void this.router.navigate([Constants.PATHS.TOURNAMENTS.ROOT]);
         }
         this.messageService.infoMessage("userLoggedInMessage");
         this.userSessionService.setUser(AuthenticatedUser.clone(authenticatedUser))
