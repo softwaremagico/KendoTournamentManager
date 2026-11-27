@@ -68,6 +68,7 @@
             <class name="com.softwaremagico.kt.rest.RestTreeChampionshipCriticalUntieTest"/>
             <class name="com.softwaremagico.kt.rest.UserRegisterTests"/>
             <class name="com.softwaremagico.kt.rest.ParticipantAccessTests"/>
+            <class name="com.softwaremagico.kt.rest.ParticipantReducedDtoSerializationTest"/>
             <class name="com.softwaremagico.kt.rest.DataValidationTest"/>
             <class name="com.softwaremagico.kt.rest.CsvServicesTest"/>
             <class name="com.softwaremagico.kt.rest.exceptions.ErrorResponseTest"/>

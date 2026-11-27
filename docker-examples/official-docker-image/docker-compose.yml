@@ -103,7 +103,7 @@ services:
       - DATABASE_USER=${database_user}
       - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
       - SPRING_KENDO_DATASOURCE_PASSWORD=${database_password:?Set database_password in .env}
-      - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
+      - DATABASE_ENCRYPTION_KEY=${database_encryption_key?Set database_encryption_key in .env (empty disables encryption)}
       - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
       # Same origin as the URLs in config.js (https, no port) and WebSocket origin.
       - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-https://${machine_domain}}

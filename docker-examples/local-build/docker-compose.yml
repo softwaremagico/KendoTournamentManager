@@ -98,7 +98,7 @@ services:
       - DATABASE_USER=${database_user}
       - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
       - SPRING_KENDO_DATASOURCE_PASSWORD=${database_password:?Set database_password in .env}
-      - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
+      - DATABASE_ENCRYPTION_KEY=${database_encryption_key?Set database_encryption_key in .env (empty disables encryption)}
       - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
       - SERVER_FORWARD_HEADERS_STRATEGY=${SERVER_FORWARD_HEADERS_STRATEGY:-none}
     depends_on:

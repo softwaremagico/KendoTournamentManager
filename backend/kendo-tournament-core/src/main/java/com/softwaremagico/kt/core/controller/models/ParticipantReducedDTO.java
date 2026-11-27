@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 
@@ -54,6 +55,7 @@ public class ParticipantReducedDTO extends ParticipantDTO implements IParticipan
     }
 
     @Override
+    @JsonIgnore
     public String getIdCard() {
         return null;
     }

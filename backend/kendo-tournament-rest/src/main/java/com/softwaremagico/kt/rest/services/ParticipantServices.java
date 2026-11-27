@@ -23,6 +23,7 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
@@ -90,7 +91,8 @@ public class ParticipantServices extends BasicServices<Participant, ParticipantD
     @GetMapping(value = "/jwt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantDTO getByUsername(Authentication authentication,
                                         HttpServletRequest request) {
-        return getController().getByUserName(authentication.getName());
+        // Available to GUEST/PARTICIPANT: expose only public participant data.
+        return new ParticipantReducedDTO(getController().getByUserName(authentication.getName()));
     }
 
 

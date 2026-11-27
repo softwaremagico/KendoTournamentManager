@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.controller.ParticipantStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantStatisticsDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
@@ -193,7 +194,9 @@ public class StatisticsServices {
                         + "' is trying to access to statistics from user '" + participantId + "'.");
             }
         }
-        return participantController.getYourWorstNightmare(participantController.get(participantId));
+        return participantController.getYourWorstNightmare(participantController.get(participantId)).stream()
+                .map(participant -> (ParticipantDTO) new ParticipantReducedDTO(participant))
+                .toList();
     }
 
 
@@ -213,6 +216,8 @@ public class StatisticsServices {
                         + "' is trying to access to statistics from user '" + participantId + "'.");
             }
         }
-        return participantController.getYouAreTheWorstNightmareOf(participantController.get(participantId));
+        return participantController.getYouAreTheWorstNightmareOf(participantController.get(participantId)).stream()
+                .map(participant -> (ParticipantDTO) new ParticipantReducedDTO(participant))
+                .toList();
     }
 }

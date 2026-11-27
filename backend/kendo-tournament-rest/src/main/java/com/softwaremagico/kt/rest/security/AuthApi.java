@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.core.controller.ParticipantController;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.controller.models.Token;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
@@ -308,7 +309,8 @@ public class AuthApi {
 
             return ResponseEntity.ok()
                 .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
-                .body(token.getParticipant());
+                // The exchange endpoint is public: never return the participant's idCard.
+                .body(new ParticipantReducedDTO(token.getParticipant()));
         } finally {
             TenantContext.clear();
         }
