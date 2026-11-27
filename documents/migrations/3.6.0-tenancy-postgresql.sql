@@ -228,3 +228,14 @@ ALTER TABLE tournament_extra_properties
         ));
 
 COMMIT;
+
+-- Non-unique indexes for the most frequent tenant-scoped queries.
+-- CONCURRENTLY needs autocommit, so these statements deliberately run after COMMIT.
+CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_duels_by_fight_duel ON duels_by_fight (duel_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_roles_tenant_tournament_type ON roles (tenant_id, tournament, role_type);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_tournament_groups_tenant_level_index
+    ON tournament_groups (tenant_id, tournament, group_level, group_index);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_fights_tenant_tournament_shiaijo ON fights (tenant_id, tournament, shiaijo);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_fights_tenant_tournament_level ON fights (tenant_id, tournament, fight_level);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_achievements_tenant_tournament_type_grade_created
+    ON achievements (tenant_id, tournament, achievement_type, achievement_grade, created_at);

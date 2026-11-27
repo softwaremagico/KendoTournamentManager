@@ -61,6 +61,8 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_groups", indexes = {
         @Index(name = "ind_tournament_groups_tournament", columnList = "tournament"),
+        @Index(name = "ind_tournament_groups_tenant_level_index",
+                columnList = "tenant_id, tournament, group_level, group_index")
 })
 @SuppressWarnings("java:S2160")
 public class Group extends Element {
