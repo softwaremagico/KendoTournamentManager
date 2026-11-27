@@ -194,7 +194,7 @@ The script builds the backend JAR and the frontend bundle, starts MySQL, the
 backend, and the frontend, waits for readiness, and prints the access URLs.
 By default the frontend is available at `http://localhost:14200` and the API at
 `http://localhost:18080/kendo-tournament-backend`, with bootstrap credentials
-`admin@test.local` / `Admin-password-123`.
+`admin@test.com` / `asd123`. These credentials are for local development only; existing databases retain their configured accounts.
 
 Before printing the URLs, the script seeds the database through the REST API
 using the existing test CSVs directly (they are not copied anywhere):
