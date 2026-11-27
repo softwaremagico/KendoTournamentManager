@@ -232,4 +232,70 @@ public class QrServiceUnitTests {
         assertSame(dto, qrCodeDTO);
         verify(qrController).generateGuestQrCodeForTournamentFights(11, null, false);
     }
+
+    @Test
+    public void shouldGenerateAndRenewRegistrationQrJson() {
+        final QrCodeDTO current = new QrCodeDTO();
+        current.setContent("registration-link");
+        final QrCodeDTO renewed = new QrCodeDTO();
+        renewed.setContent("renewed-link");
+        when(qrController.generateRegistrationQrCodeForTournament(12, null, false, false)).thenReturn(current);
+        when(qrController.generateRegistrationQrCodeForTournament(12, 4200, true, true)).thenReturn(renewed);
+
+        assertSame(qrService.generateRegistrationQrCodeForTournament(12, Optional.empty(), Optional.empty()), current);
+        assertSame(qrService.renewRegistrationQrCodeForTournament(12, Optional.of(4200), Optional.of(true)), renewed);
+        verify(qrController).generateRegistrationQrCodeForTournament(12, null, false, false);
+        verify(qrController).generateRegistrationQrCodeForTournament(12, 4200, true, true);
+    }
+
+    @Test
+    public void shouldDownloadRegistrationQrPngWithAttachmentHeader() {
+        final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+        qrCodeDTO.setData(new byte[]{11, 12});
+        when(qrController.generateRegistrationQrCodeForTournament(13, null, false, false)).thenReturn(qrCodeDTO);
+
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final byte[] image = qrService.generateRegistrationQrCodeForTournamentImage(13, Optional.empty(), Optional.empty(), response);
+
+        assertEquals(image, new byte[]{11, 12});
+        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+    }
+
+    @Test
+    public void shouldDownloadRegistrationQrPdfWithAttachmentHeader() throws Exception {
+        final TournamentDTO tournamentDTO = new TournamentDTO();
+        tournamentDTO.setId(14);
+        tournamentDTO.setName("Registration Tournament");
+        when(tournamentController.get(14)).thenReturn(tournamentDTO);
+
+        final TournamentQr tournamentQr = mock(TournamentQr.class);
+        when(pdfController.generateRegistrationTournamentQr(any(Locale.class), eq(tournamentDTO), eq(null), eq(false)))
+                .thenReturn(tournamentQr);
+        when(tournamentQr.generate()).thenReturn(new byte[]{13, 14, 15});
+
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final byte[] pdf = qrService.generateRegistrationQrCodeForTournamentPdf(14, Optional.empty(), Locale.ENGLISH, response);
+
+        assertEquals(pdf, new byte[]{13, 14, 15});
+        verify(response).setHeader(eq(HttpHeaders.CONTENT_DISPOSITION), any());
+    }
+
+    @Test(expectedExceptions = BadRequestException.class)
+    public void shouldWrapRegistrationPdfErrorsAsBadRequest() throws Exception {
+        final TournamentDTO tournamentDTO = new TournamentDTO();
+        tournamentDTO.setId(15);
+        when(tournamentController.get(15)).thenReturn(tournamentDTO);
+
+        final TournamentQr tournamentQr = mock(TournamentQr.class);
+        when(pdfController.generateRegistrationTournamentQr(any(Locale.class), eq(tournamentDTO), eq(null), eq(false)))
+                .thenReturn(tournamentQr);
+        when(tournamentQr.generate()).thenThrow(new EmptyPdfBodyException("empty"));
+
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
+        try {
+            qrService.generateRegistrationQrCodeForTournamentPdf(15, Optional.empty(), Locale.ENGLISH, mock(HttpServletResponse.class));
+        } finally {
+            System.out.println("------------------------- End Expected Logged Exception -------------------------");
+        }
+    }
 }
