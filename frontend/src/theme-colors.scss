@@ -87,13 +87,15 @@
   --team-ranking-semifinalist: #4d6d95;
   --team-ranking-semifinalist-draw: #ffd740;
   --ranking-normal: #000000;
+  --ranking-good: #012354;
+  --ranking-very-good: #011d4a;
   --ranking-bad: #ff4a4a;
   --ranking-very-bad: #ff2525;
   --text-highlighted: var(--main-color);
   --fight-over: var(--disabled-primary-color);
 
   .dark-mode {
-    --main-color: #001fff;
+    --main-color: #4762df;
     --logo-color: var(--body-background-color);
     --body-background-color: #4b5160;
     --popup-background-color: rgba(0, 0, 0, 0.60);
@@ -126,6 +128,7 @@
     --quaternary-button-hover-background: #14A44D;
     --quaternary-button-active-background: #14A44D;
     --text-hover-color: #B0BAC5;
+    --tab-inactive-color: #B0BAC5;
     --selected-color: #434b5c;
     --untie-selected-color: #245b4a;
     --chart-background: #1E222B;
@@ -136,12 +139,12 @@
     --table-background-color: #1E222B;
     --table-hover-background-color: var(--selected-color);
     --table-border-color: var(--table-header-color);
-    --table-selected-row-color: #a4a5ac;
+    --table-selected-row-color: var(--selected-color);
     --table-text-color: var(--main-font-color);
     --table-text-hover-color: var(--table-text-color);
     --table-text-hover-locked-color: #B0BAC5;
     --table-text-active-color: var(--table-text-color);
-    --table-active-row-backgorund-color: var(--secondary-color);
+    --table-active-row-backgorund-color: var(--selected-color);
     --scrollbar-color: var(--main-color);
     --fight-color: var(--popup-background);
     --duel-selected-color: var(--selected-color);
@@ -164,8 +167,8 @@
     --input-text-background: var(--main-background);
     --input-text-focus-background: var(--main-background);
     --input-text-hover-background: var(--main-background);
-    --popup-background: var(--body-background-color);
-    --popup-color: var(--table-background-color);
+    --popup-background: var(--floating-background);
+    --popup-color: var(--component-color);
     --popup-error-color: var(--error-color);
     --ngx-contextmenu-background-color: var(--nav-menu-background-color);
     --ngx-contextmenu-border: 1px solid var(--nav-menu-background-color);
@@ -187,9 +190,11 @@
     --team-ranking-semifinalist: #E4E7EC;
     --team-ranking-semifinalist-draw: #ffd740;
     --ranking-normal: var(--component-color);
+    --ranking-good: #a2b4ff;
+    --ranking-very-good: #c4cfff;
     --ranking-bad: #ff4a4a;
     --ranking-very-bad: #ff2525;
-    --text-highlighted: var(--main-color);
+    --text-highlighted: #a2b4ff;
     --fight-over: var(--disabled-primary-color);
   }
 }
