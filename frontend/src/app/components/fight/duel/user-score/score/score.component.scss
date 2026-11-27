@@ -113,9 +113,12 @@
   border: 3px solid var(--component-color);
   padding: 0 10px 0 10px;
 
-  .mat-mdc-menu-item:hover {
-    background: var(--hover-color);
-  }
+}
+
+.score-menu .mat-mdc-menu-item:not([disabled]):hover,
+.score-menu .mat-mdc-menu-item:not([disabled]):focus-visible,
+.score-menu .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
+  background-color: var(--main-background);
 }
 
 .dark-mode .score-menu .mat-mdc-menu-item:not([disabled]):hover,
