@@ -65,7 +65,11 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   }
 
   public errorHandler(error: WebcamInitError): void {
-    this.messageService.errorMessage(error.message);
+    if (error.mediaStreamError?.name === 'NotFoundError') {
+      this.messageService.warningMessage('cameraNotFound');
+    } else {
+      this.messageService.errorMessage(error.message);
+    }
   }
 
   public pictureHandler(webcamImage: WebcamImage): void {

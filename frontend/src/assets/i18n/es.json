@@ -629,6 +629,7 @@
   "performance": "Rendimiento",
   "phone": "Teléfono",
   "photo": "Foto",
+  "cameraNotFound": "No se ha encontrado ninguna cámara. Puedes subir una foto desde un archivo si tienes permiso.",
   "picture": "Foto",
   "pictureDeleted": "¡La imagen ha sido eliminada!",
   "playWhistle": "Reproducir el sonido de un silbato.",
