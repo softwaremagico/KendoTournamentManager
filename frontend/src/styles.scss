@@ -104,6 +104,21 @@ svg {
   color: var(--icon-color);
 }
 
+/* Preserve a visible keyboard focus indicator for themed text inputs. */
+.dark-mode biit-input-text .input-object:focus-visible {
+  outline: 2px solid var(--text-highlighted);
+  outline-offset: 2px;
+}
+
+.dark-mode biit-tab-group .tab-selector:not(.active):not(.error) {
+  color: var(--tab-inactive-color);
+}
+
+.dark-mode biit-tab-group .tab-selector:not(.active):not(.error):hover {
+  color: var(--tab-inactive-color);
+  border-bottom-color: var(--tab-inactive-color);
+}
+
 //Size of buttons in table
 button > .mat-icon {
   height: 16px !important;
@@ -126,6 +141,10 @@ button .warning {
 
 .logo {
   filter: brightness(0) saturate(100%) invert(12%) sepia(35%) saturate(3300%) hue-rotate(204deg) brightness(88%) contrast(113%);
+}
+
+.dark-mode .logo {
+  filter: brightness(0) invert(1);
 }
 
 //Custom table buttons has a right margin

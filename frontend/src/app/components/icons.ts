@@ -37,6 +37,7 @@ export class IconModule {
       .addSvgIcon("check", this.setPath(`${this.path}/check.svg`))
       .addSvgIcon("uncheck", this.setPath(`${this.path}/uncheck.svg`))
       .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`))
+      .addSvgIcon("tournament-images", this.setPath(`${this.path}/tournament-images.svg`))
       .addSvgIcon("one-winner", this.setPath(`${this.path}/one-winner.svg`))
       .addSvgIcon("two-winners", this.setPath(`${this.path}/two-winners.svg`))
       .addSvgIcon("zip-file", this.setPath(`${this.path}/zip-file.svg`))

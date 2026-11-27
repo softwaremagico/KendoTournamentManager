@@ -114,11 +114,11 @@
 }
 
 .ranking-very-good {
-  color: #011d4a;
+  color: var(--ranking-very-good);
 }
 
 .ranking-good {
-  color: #012354;
+  color: var(--ranking-good);
 }
 
 .ranking-normal {

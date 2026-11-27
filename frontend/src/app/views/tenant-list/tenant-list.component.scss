@@ -8,7 +8,7 @@
   margin: 2rem;
   padding: 2rem;
   overflow: hidden;
-  border: solid 0.2rem #262626;
+  border: solid 0.2rem var(--table-border-color);
   background: var(--table-background-color);
 }
 
@@ -63,7 +63,7 @@
 }
 
 .error {
-  color: #b00020;
+  color: var(--error-color);
   margin: 0 2rem;
 }
 
