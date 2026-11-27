@@ -118,6 +118,11 @@
   }
 }
 
+.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):hover,
+.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):focus-visible {
+  background-color: var(--selected-color);
+}
+
 .score-area.over {
   color: var(--fight-over);
 }

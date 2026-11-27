@@ -1,7 +1,7 @@
 @if (!locked &&
   (RbacActivity.EDIT_DUEL | hasPermission)) {
   <div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" [attr.data-saving]="saving" class="score-area" [class.over]="over && !locked">
-    <mat-menu #menu="matMenu">
+    <mat-menu #menu="matMenu" class="score-menu">
       @for (score of possibleScores(); track score) {
         <button [disabled]="duel.finished" (click)="updateScore(score)"
           mat-menu-item>{{ Score.toCamel(score) | transloco }}
