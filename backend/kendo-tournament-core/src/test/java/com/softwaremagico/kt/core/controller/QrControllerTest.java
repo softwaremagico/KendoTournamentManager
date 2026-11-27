@@ -58,6 +58,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 @Test(groups = {"qrTest"})
@@ -211,6 +212,18 @@ public class QrControllerTest {
         assertEquals(qrCodeDTO.getImageFormat(), ImageFormat.SVG);
         assertEquals(qrCodeDTO.getContent(), "https://host/path");
         assertTrue(new String(qrCodeDTO.getData(), StandardCharsets.UTF_8).contains("svg"));
+    }
+
+    @Test
+    public void shouldRejectInvitationWhenNoRegistrationTicketProviderIsAvailable() {
+        final RegistrationTicketProvider provider = new RegistrationTicketProvider() {
+            @Override
+            public String createRegistrationTicket(Integer tournamentId, Integer tenantId, int version) {
+                return "ticket";
+            }
+        };
+
+        assertNull(provider.validateRegistrationTicket("ticket"));
     }
 
     private void setField(Object target, String fieldName, String value) throws Exception {

@@ -89,6 +89,7 @@
                 <include name="scoreOfTeamConverter"/>
                 <include name="registrationControllerTests"/>
                 <include name="registrationTeamServiceTests"/>
+                <include name="roleControllerUnitTests"/>
             </run>
         </groups>
         <classes>
@@ -150,6 +151,7 @@
             <class name="com.softwaremagico.kt.core.controller.FightStatisticsControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.TeamControllerTest"/>
             <class name="com.softwaremagico.kt.core.controller.BasicInsertableControllerTest"/>
+            <class name="com.softwaremagico.kt.core.controller.RoleControllerUnitTest"/>
             <class name="com.softwaremagico.kt.core.controller.ParticipantControllerTest"/>
             <class name="com.softwaremagico.kt.core.converters.ScoreOfTeamConverterTest"/>
             <class name="com.softwaremagico.kt.core.controller.CacheControllerTest"/>

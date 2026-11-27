@@ -100,6 +100,25 @@ public class RegistrationPublicServiceTest {
     }
 
     @Test
+    public void registerRejectsInvalidInvitationWithoutTouchingRepositories() {
+        when(registrationTicketProvider.validateRegistrationTicket("bad")).thenReturn(null);
+
+        Assert.expectThrows(BadRequestException.class,
+                () -> service.register("bad", new RegistrationRequestDTO()));
+        verify(tournamentProvider, org.mockito.Mockito.never()).get(org.mockito.ArgumentMatchers.anyInt());
+    }
+
+    @Test
+    public void invitationForMissingTournamentIsRejected() {
+        when(registrationTicketProvider.validateRegistrationTicket("ticket"))
+                .thenReturn(new RegistrationInvitation(7, 3, 1));
+        when(tournamentProvider.get(7)).thenReturn(Optional.empty());
+
+        Assert.expectThrows(BadRequestException.class, () -> service.getConfiguration("ticket"));
+        Assert.assertNull(TenantContext.getTenantId());
+    }
+
+    @Test
     public void registerUsesTheTrustedTournamentFromTheInvitation() {
         final Tournament tournament = tournament(7, 1);
         final RegistrationRequestDTO request = new RegistrationRequestDTO();
