@@ -16,5 +16,8 @@ export class DatatableColumn extends WizardryDatatableColumn {
               cellClass?: string | ((data: any) => string | any), comparator?: Function) {
     super(name, prop, visible, width, sortable, pipe, cellTemplate, cellClass, comparator);
     this.width ??= 150;
+    // The table forwards undefined through ngx-datatable's booleanAttribute
+    // transform, which otherwise disables automatic resizing.
+    this.canAutoResize = true;
   }
 }
