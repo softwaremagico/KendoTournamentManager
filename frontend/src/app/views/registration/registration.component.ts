@@ -66,12 +66,14 @@ export class RegistrationComponent implements OnInit {
     return this.request.roles.includes(role);
   }
 
-  toggleRole(role: RoleType, checked: boolean): void {
-    if (checked && !this.request.roles.includes(role)) {
+  selectRole(role: RoleType): void {
+    if (!this.request.roles.includes(role)) {
       this.request.roles.push(role);
-    } else if (!checked) {
-      this.request.roles = this.request.roles.filter(selected => selected !== role);
     }
+  }
+
+  deselectRole(role: RoleType): void {
+    this.request.roles = this.request.roles.filter(selected => selected !== role);
   }
 
   isValid(): boolean {

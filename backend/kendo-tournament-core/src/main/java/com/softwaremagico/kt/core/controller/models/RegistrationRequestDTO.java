@@ -59,7 +59,7 @@ public class RegistrationRequestDTO implements Serializable {
     @NotEmpty
     private List<RoleType> roles = new ArrayList<>();
 
-    /** Optional team name; ignored when the tournament has teamSize <= 1. */
+    /** Optional team name; ignored when the tournament has {@code teamSize <= 1}. */
     private String teamPreference;
 
     public Integer getClubId() {

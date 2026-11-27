@@ -1,7 +1,7 @@
 <ng-container *transloco="let t">
   <div class="registration-page">
     @if (loading) {
-      <div class="registration-card" role="status">{{ t('progress') }}</div>
+      <output class="registration-card">{{ t('progress') }}</output>
     }
 
     @if (!loading && !registered && configuration) {
@@ -36,7 +36,7 @@
               <label class="registration-checkbox">
                 <input id="registration-role-{{role}}" type="checkbox"
                   [checked]="isRoleSelected(role)"
-                  (change)="toggleRole(role, $any($event.target).checked)"/>
+                  (change)="$any($event.target).checked ? selectRole(role) : deselectRole(role)"/>
                 {{ t(roleKey(role)) }}
               </label>
             }
@@ -50,6 +50,7 @@
               {{ t('registrationExistingClub') }}
             </label>
             @if (useExistingClub) {
+              <label for="registration-club">{{ t('registrationSelectClub') }}</label>
               <select id="registration-club" name="clubId" [(ngModel)]="selectedClubId" required>
                 <option [ngValue]="undefined">{{ t('registrationSelectClub') }}</option>
                 @for (club of configuration.clubs; track club.id) {
@@ -104,7 +105,7 @@
     }
 
     @if (registered) {
-      <div class="registration-card registration-success" role="status">
+      <output class="registration-card registration-success">
         <h1>{{ t('registrationSuccessTitle') }}</h1>
         @if (registered.teamName) {
           <p>{{ t('registrationSuccessWithTeam', {
@@ -118,7 +119,7 @@
         @if (registered.pendingReview) {
           <p>{{ t('registrationPendingReview') }}</p>
         }
-      </div>
+      </output>
     }
   </div>
 </ng-container>
