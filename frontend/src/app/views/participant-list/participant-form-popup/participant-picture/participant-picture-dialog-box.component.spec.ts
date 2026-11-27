@@ -28,7 +28,7 @@ describe('ParticipantPictureDialogBoxComponent', () => {
 
   beforeEach(() => {
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
-    messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'errorMessage']);
+    messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage', 'warningMessage', 'errorMessage']);
     fileServiceSpy = jasmine.createSpyObj('FileService', [
       'setBase64Picture',
       'setParticipantFilePicture',
@@ -78,6 +78,18 @@ describe('ParticipantPictureDialogBoxComponent', () => {
     component.errorHandler(error);
 
     expect(messageServiceSpy.errorMessage).toHaveBeenCalledOnceWith('camera error');
+  });
+
+  it('should show a translated warning when no camera is found', () => {
+    const error = {
+      message: 'The object can not be found here.',
+      mediaStreamError: new DOMException('The object can not be found here.', 'NotFoundError')
+    } as WebcamInitError;
+
+    component.errorHandler(error);
+
+    expect(messageServiceSpy.warningMessage).toHaveBeenCalledOnceWith('cameraNotFound');
+    expect(messageServiceSpy.errorMessage).not.toHaveBeenCalled();
   });
 
   it('should add picture, emit imageClicked and keep only last 5 pictures', () => {
@@ -185,4 +197,3 @@ describe('ParticipantPictureDialogBoxComponent', () => {
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('pictureDeleted');
   });
 });
-

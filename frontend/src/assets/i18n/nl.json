@@ -611,6 +611,7 @@
   "performance": "Prestatie",
   "phone": "Telefoonnummer",
   "photo": "Foto",
+  "cameraNotFound": "Er is geen camera gevonden. Als je toestemming hebt, kun je een foto uit een bestand uploaden.",
   "picture": "Foto",
   "pictureDeleted": "De foto is verwijderd!",
   "playWhistle": "Het geluid van een fluitje reproduceren.",

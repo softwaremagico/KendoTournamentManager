@@ -614,6 +614,7 @@
   "performance": "Prestazione",
   "phone": "Telefono",
   "photo": "Foto",
+  "cameraNotFound": "Nessuna fotocamera trovata. Se disponi dell'autorizzazione, puoi caricare una foto da un file.",
   "picture": "Foto",
   "pictureDeleted": "L'immagine è stata eliminata!",
   "playWhistle": "Riprodurre il suono di un fischio.",

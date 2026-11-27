@@ -611,6 +611,7 @@
   "performance": "Leistung",
   "phone": "Telefon",
   "photo": "Foto",
+  "cameraNotFound": "Es wurde keine Kamera gefunden. Wenn du die Berechtigung hast, kannst du ein Foto aus einer Datei hochladen.",
   "picture": "Foto",
   "pictureDeleted": "Das Bild wurde gelöscht!",
   "playWhistle": "Reproduzieren Sie den Klang einer Pfeife.",

@@ -624,6 +624,7 @@
   "performance": "Rendiment",
   "phone": "Telèfon",
   "photo": "Foto",
+  "cameraNotFound": "No s'ha trobat cap càmera. Pots pujar una foto des d'un fitxer si tens permís.",
   "picture": "Foto",
   "pictureDeleted": "La imatge ha estat esborrada!",
   "playWhistle": "Reprodueix el so d'un xiulet.",

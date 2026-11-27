@@ -637,6 +637,7 @@
   "performance": "Performance",
   "phone": "Phone",
   "photo": "Photo",
+  "cameraNotFound": "No camera was found. You can upload a photo from a file if you have permission.",
   "picture": "Picture",
   "pictureDeleted": "The picture has been deleted!",
   "playWhistle": "Reproduce the sound of a whistle",

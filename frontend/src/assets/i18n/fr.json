@@ -623,6 +623,7 @@
   "performance": "Performance",
   "phone": "Téléphone",
   "photo": "Photo",
+  "cameraNotFound": "Aucune caméra n'a été détectée. Vous pouvez importer une photo depuis un fichier si vous y êtes autorisé.",
   "picture": "Photo",
   "pictureDeleted": "L’image a été supprimée!",
   "playWhistle": "Jouer le son d’un sifflet.",
