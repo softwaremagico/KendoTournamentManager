@@ -116,16 +116,20 @@
 }
 
 .score-menu .mat-mdc-menu-item:not([disabled]):hover,
-.score-menu .mat-mdc-menu-item:not([disabled]):focus-visible,
-.score-menu .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
+.score-menu:not(:has(.mat-mdc-menu-item:hover)) .mat-mdc-menu-item:not([disabled]):focus-visible,
+.score-menu:not(:has(.mat-mdc-menu-item:hover)) .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
   background-color: var(--main-background);
 }
 
 .dark-mode .score-menu .mat-mdc-menu-item:not([disabled]):hover,
-.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]):focus-visible,
-.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
+.dark-mode .score-menu:not(:has(.mat-mdc-menu-item:hover)) .mat-mdc-menu-item:not([disabled]):focus-visible,
+.dark-mode .score-menu:not(:has(.mat-mdc-menu-item:hover)) .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
   background-color: #64738d;
   color: #fff;
+}
+
+.score-menu:has(.mat-mdc-menu-item:hover) .mat-mdc-menu-item:not(:hover):focus {
+  background-color: transparent;
 }
 
 .score-area.over {
