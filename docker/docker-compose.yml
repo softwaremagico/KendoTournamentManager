@@ -128,10 +128,6 @@ services:
       - containers
     ports:
       - "8080"
-    environment:
-      # Exact browser origin of the frontend. Derived from the same values used
-      # to build the frontend URLs, so it also works behind an HTTPS reverse proxy.
-      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-${protocol}://${machine_domain}}
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend
@@ -139,9 +135,11 @@ services:
     working_dir: /opt/kendo-tournament-backend/
     # Secrets are runtime environment variables, never build arguments or image layers.
     environment:
+      # Exact browser origin of the frontend.
+      - SERVER_CORS_DOMAINS=${SERVER_CORS_DOMAINS:-${protocol}://${machine_domain}}
       - DATABASE_USER=${database_user}
       - DATABASE_PASSWORD=${database_password:?Set database_password in .env}
-      - DATABASE_ENCRYPTION_KEY=${database_encryption_key:?Set database_encryption_key in .env}
+      - DATABASE_ENCRYPTION_KEY=${database_encryption_key?Set database_encryption_key in .env (empty disables encryption)}
       - JWT_SECRET=${jwt_secret:?Set jwt_secret in .env}
       - SERVER_FORWARD_HEADERS_STRATEGY=${SERVER_FORWARD_HEADERS_STRATEGY:-none}
     depends_on:
@@ -179,6 +177,10 @@ services:
     restart: always
     networks:
       - containers
+      - external
+    ports:
+      # Accessible locally (e.g. via an SSH tunnel), not directly from the network.
+      - "127.0.0.1:5432:5432"
     volumes:
       - kendo-tournament-database:/var/lib/postgresql
     container_name: kendo-tournament-database
@@ -188,7 +190,7 @@ services:
       - POSTGRES_USER=${database_user}
       - POSTGRES_DB=${database_name}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 30s
       timeout: 60s
       retries: 3

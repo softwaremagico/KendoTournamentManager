@@ -151,7 +151,7 @@ All runtime settings live in the `.env` file. The table below describes every va
 | `database_user` | `myuser` | Database username |
 | `database_password` | *(required)* | Database password. Generate with `openssl rand -hex 32`; startup fails if empty |
 | `database_port` | `5432` | Database port |
-| `database_encryption_key` | *(required)* | Master key for field-level encryption of PII at rest. Generate with `openssl rand -hex 32` and keep it stable across restarts |
+| `database_encryption_key` | *(must be set; may be empty)* | Master key for field-level encryption of PII at rest. Generate with `openssl rand -hex 32` and keep it stable across restarts. Empty disables field-level encryption |
 
 ---
 
