@@ -326,9 +326,12 @@ public class RankingController {
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRankingByClub(Integer clubId) {
         final Club club = clubProvider.get(clubId).orElseThrow(() ->
                 new ClubNotFoundException(this.getClass(), "No club found with id '" + clubId + "'"));
-        final List<Participant> participants = participantProvider.get(club);
+        final List<Participant> participants = new ArrayList<>(participantProvider.get(club));
         final List<Role> competitorRoles = roleProvider.get(participants, RoleType.COMPETITOR);
         participants.retainAll(competitorRoles.stream().map(Role::getParticipant).collect(Collectors.toSet()));
+        if (participants.isEmpty()) {
+            return List.of();
+        }
         return getCompetitorsGlobalScoreRanking(participantConverter.convertAll(participants.stream()
                 .map(participant -> new ParticipantConverterRequest(participant, clubConverter.convert(new ClubConverterRequest(club)))).toList()), null);
     }
