@@ -44,6 +44,8 @@ import java.util.Objects;
 @Table(name = "achievements", indexes = {
         @Index(name = "ind_participant", columnList = "participant"),
         @Index(name = "ind_achievements_tournament", columnList = "tournament"),
+        @Index(name = "ind_achievements_tenant_tournament_type_grade_created",
+                columnList = "tenant_id, tournament, achievement_type, achievement_grade, created_at")
 })
 public class Achievement extends Element {
 

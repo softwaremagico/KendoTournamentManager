@@ -258,3 +258,15 @@ ALTER TABLE tournament_extra_properties
     'SWISS_TIE_BREAK_RULE',
     'SWISS_AVOID_REPEATED_PAIRINGS'
   ));
+
+-- Non-unique indexes for the most frequent tenant-scoped queries.
+-- ALTER TABLE ... ADD INDEX accepts ALGORITHM/LOCK clauses in MySQL 8+; CREATE INDEX does not.
+-- INPLACE with LOCK=NONE keeps the tables writable while the indexes are built.
+ALTER TABLE duels_by_fight ADD INDEX ind_duels_by_fight_duel (duel_id), ALGORITHM=INPLACE, LOCK=NONE;
+ALTER TABLE roles ADD INDEX ind_roles_tenant_tournament_type (tenant_id, tournament, role_type), ALGORITHM=INPLACE, LOCK=NONE;
+ALTER TABLE tournament_groups ADD INDEX ind_tournament_groups_tenant_level_index
+    (tenant_id, tournament, group_level, group_index), ALGORITHM=INPLACE, LOCK=NONE;
+ALTER TABLE fights ADD INDEX ind_fights_tenant_tournament_shiaijo (tenant_id, tournament, shiaijo), ALGORITHM=INPLACE, LOCK=NONE;
+ALTER TABLE fights ADD INDEX ind_fights_tenant_tournament_level (tenant_id, tournament, fight_level), ALGORITHM=INPLACE, LOCK=NONE;
+ALTER TABLE achievements ADD INDEX ind_achievements_tenant_tournament_type_grade_created
+    (tenant_id, tournament, achievement_type, achievement_grade, created_at), ALGORITHM=INPLACE, LOCK=NONE;
