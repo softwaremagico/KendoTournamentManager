@@ -119,8 +119,10 @@
 }
 
 .dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):hover,
-.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):focus-visible {
-  background-color: var(--selected-color);
+.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):focus-visible,
+.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]).cdk-keyboard-focused {
+  background-color: #64738d;
+  color: #fff;
 }
 
 .score-area.over {
