@@ -14,8 +14,8 @@
 # Environment variables:
 #   APP_FRONTEND_PORT   host port for the UI (default 14200)
 #   APP_BACKEND_PORT    host port for the API (default 18080)
-#   APP_USERNAME        bootstrap administrator username (default admin@test.local)
-#   APP_PASSWORD        bootstrap administrator password (default Admin-password-123)
+#   APP_USERNAME        bootstrap administrator username (default admin@test.com)
+#   APP_PASSWORD        bootstrap administrator password (default asd123)
 #   APP_ENABLE_TENANCY  enable multi-organization support (default true)
 #   APP_PROJECT_NAME    Docker Compose project name (default kendo-tournament-app)
 #   APP_SEED_DATA       import demo CSVs: if-empty (default), always, never
@@ -31,8 +31,8 @@ compose_file="${module_directory}/docker-compose.app.yml"
 project_name="${APP_PROJECT_NAME:-kendo-tournament-app}"
 frontend_port="${APP_FRONTEND_PORT:-14200}"
 backend_port="${APP_BACKEND_PORT:-18080}"
-app_username="${APP_USERNAME:-admin@test.local}"
-app_password="${APP_PASSWORD:-Admin-password-123}"
+app_username="${APP_USERNAME:-admin@test.com}"
+app_password="${APP_PASSWORD:-asd123}"
 app_enable_tenancy="${APP_ENABLE_TENANCY:-true}"
 seed_mode="${APP_SEED_DATA:-if-empty}"
 seed_mode="${seed_mode,,}"

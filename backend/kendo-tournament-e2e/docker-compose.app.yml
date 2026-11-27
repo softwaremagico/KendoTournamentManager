@@ -41,8 +41,8 @@ services:
       - --spring.kendo.datasource.jpa.hibernate.ddl-auto=update
       - --spring.sql.init.mode=never
       - --enable.tenancy=${APP_ENABLE_TENANCY:-true}
-      - --bootstrap.super-admin.username=${APP_USERNAME:-admin@test.local}
-      - --bootstrap.super-admin.password=${APP_PASSWORD:-Admin-password-123}
+      - --bootstrap.super-admin.username=${APP_USERNAME:-admin@test.com}
+      - --bootstrap.super-admin.password=${APP_PASSWORD:-asd123}
       - --bootstrap.super-admin.roles=super_admin,admin,editor,viewer
       - --jwt.ip.check=false
     environment:
