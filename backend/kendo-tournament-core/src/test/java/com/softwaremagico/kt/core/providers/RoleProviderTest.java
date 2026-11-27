@@ -394,6 +394,16 @@ public class RoleProviderTest {
     }
 
     @Test
+    public void testCreateOrUpdateRolesWithNoRolesDoesNotTouchRepository() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Participant participant = participant("P1");
+
+        assertThat(provider.createOrUpdateRoles(tournament, participant, java.util.List.of(), null, false)).isEmpty();
+        verify(roleRepository, org.mockito.Mockito.never())
+                .findAllByTournamentAndParticipant(tournament, participant);
+    }
+
+    @Test
     public void testDeleteByTournamentDelegatesToRepository() {
         final Tournament tournament = tournament("Autumn Cup");
         when(roleRepository.deleteByTournament(tournament)).thenReturn(4L);

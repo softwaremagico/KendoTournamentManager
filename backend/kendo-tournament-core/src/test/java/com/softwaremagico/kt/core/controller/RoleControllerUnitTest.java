@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.RoleConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -37,6 +38,7 @@ import org.testng.annotations.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertThrows;
 
 @Test(groups = {"roleControllerUnitTests"})
 public class RoleControllerUnitTest {
@@ -67,5 +69,11 @@ public class RoleControllerUnitTest {
         roleController.delete(participantDTO, tournamentDTO, RoleType.REFEREE);
 
         verify(roleProvider).delete(participant, tournament, RoleType.REFEREE);
+    }
+
+    @Test
+    public void rejectsIncompleteRoleData() {
+        assertThrows(ValidateBadRequestException.class,
+                () -> roleController.validate((com.softwaremagico.kt.core.controller.models.RoleDTO) null));
     }
 }

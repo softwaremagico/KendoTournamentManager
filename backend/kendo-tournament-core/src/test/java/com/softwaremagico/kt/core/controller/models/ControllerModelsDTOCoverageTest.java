@@ -747,5 +747,8 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(configuration.isTeamSelectionEnabled()).isTrue();
         assertThat(configuration.getClubs()).containsExactly(club);
         assertThat(configuration.getAvailableRoles()).containsExactly(RoleType.COMPETITOR, RoleType.REFEREE);
+
+        final RegistrationResponseDTO response = new RegistrationResponseDTO();
+        assertThat(response.getRoles()).isNotEmpty();
     }
 }
