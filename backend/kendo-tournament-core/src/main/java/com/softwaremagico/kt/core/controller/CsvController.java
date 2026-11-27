@@ -210,14 +210,15 @@ public class CsvController {
         if (team.getTournament() == null) {
             return;
         }
-        // Define roles for team members.
+        // A participant can hold several roles (for example COMPETITOR and
+        // REFEREE), so only add the missing competitor role instead of reading
+        // or overwriting an arbitrary single role.
+        final List<Role> competitorRoles = this.roleProvider.getAll(team.getTournament(), RoleType.COMPETITOR);
         team.getMembers().forEach(member -> {
-            final Role role = this.roleProvider.get(team.getTournament(), member);
-            if (role == null) {
+            final boolean alreadyCompetitor = competitorRoles.stream()
+                    .anyMatch(role -> role.getParticipant() != null && role.getParticipant().equals(member));
+            if (!alreadyCompetitor) {
                 this.roleProvider.save(new Role(team.getTournament(), member, RoleType.COMPETITOR));
-            } else {
-                role.setRoleType(RoleType.COMPETITOR);
-                this.roleProvider.save(role);
             }
         });
     }

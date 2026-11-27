@@ -87,6 +87,8 @@
                 <include name="scoreOfCompetitorWinOverDrawsTests"/>
                 <include name="scoreOfTeam"/>
                 <include name="scoreOfTeamConverter"/>
+                <include name="registrationControllerTests"/>
+                <include name="registrationTeamServiceTests"/>
             </run>
         </groups>
         <classes>
@@ -212,6 +214,8 @@
             <class name="com.softwaremagico.kt.core.converters.TournamentImageConverterTest"/>
             <class name="com.softwaremagico.kt.core.converters.TournamentStatisticsConverterTest"/>
             <class name="com.softwaremagico.kt.core.csv.GroupLinkCsvTest"/>
+            <class name="com.softwaremagico.kt.core.controller.RegistrationControllerTest"/>
+            <class name="com.softwaremagico.kt.core.services.RegistrationTeamServiceTest"/>
         </classes>
     </test>
 </suite>

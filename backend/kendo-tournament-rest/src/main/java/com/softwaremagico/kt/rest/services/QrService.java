@@ -179,6 +179,69 @@ public class QrService {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Generates the self-registration link and QR code for a tournament.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/registration/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO generateRegistrationQrCodeForTournament(
+            @Parameter(description = "Id of an existing tournament", required = true)
+            @PathVariable("tournamentId") Integer tournamentId,
+            @RequestParam(name = "port", required = false) Optional<Integer> port,
+            @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode) {
+        return qrController.generateRegistrationQrCodeForTournament(tournamentId, port.orElse(null), nightMode.orElse(false), false);
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Revokes the previous registration link and generates a new one.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/registration/tournament/{tournamentId}/renew", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO renewRegistrationQrCodeForTournament(
+            @Parameter(description = "Id of an existing tournament", required = true)
+            @PathVariable("tournamentId") Integer tournamentId,
+            @RequestParam(name = "port", required = false) Optional<Integer> port,
+            @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode) {
+        return qrController.generateRegistrationQrCodeForTournament(tournamentId, port.orElse(null), nightMode.orElse(false), true);
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Downloads the self-registration QR code as a PNG image.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/registration/tournament/{tournamentId}/png", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] generateRegistrationQrCodeForTournamentImage(
+            @PathVariable("tournamentId") Integer tournamentId,
+            @RequestParam(name = "port", required = false) Optional<Integer> port,
+            @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
+            HttpServletResponse response) {
+        final byte[] bytes = qrController.generateRegistrationQrCodeForTournament(tournamentId, port.orElse(null),
+                nightMode.orElse(false), false).getData();
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
+                .filename("Tournament - Registration QR.png").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        return bytes;
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Downloads a poster with the self-registration QR code and link.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/registration/tournament/{tournamentId}/pdf",
+            produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public byte[] generateRegistrationQrCodeForTournamentPdf(
+            @PathVariable("tournamentId") Integer tournamentId,
+            @RequestParam(name = "port", required = false) Optional<Integer> port,
+            Locale locale, HttpServletResponse response) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        try {
+            final byte[] bytes = pdfController.generateRegistrationTournamentQr(locale, tournament, port.orElse(null), false).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
+                    .filename(tournament.getName() + " - registration qr.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
+    }
+
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))

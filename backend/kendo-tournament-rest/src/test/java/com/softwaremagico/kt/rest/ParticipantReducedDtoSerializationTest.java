@@ -24,8 +24,11 @@ package com.softwaremagico.kt.rest;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
+import com.softwaremagico.kt.core.controller.models.RegistrationResponseDTO;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -53,5 +56,25 @@ public class ParticipantReducedDtoSerializationTest {
                 "Reduced DTO must not expose idCard, even as a null property");
         Assert.assertTrue(reducedJson.contains("\"name\""),
                 "Reduced DTO must still expose public participant data");
+    }
+
+    @Test
+    public void registrationResponseDoesNotSerializeIdCardAndUsesPublicRoles() throws Exception {
+        final RegistrationResponseDTO response = new RegistrationResponseDTO();
+        response.setId(9);
+        response.setName("Ada");
+        response.setLastname("Yukimura");
+        response.setRoles(java.util.List.of(RoleType.COMPETITOR, RoleType.REFEREE));
+        response.setTeamName("Team A");
+        response.setPendingReview(true);
+
+        final JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(response));
+
+        Assert.assertFalse(json.has("idCard"), "Registration response must not expose idCard");
+        Assert.assertTrue(json.path("roles").isArray(), "Registration roles must be serialized as an array");
+        Assert.assertEquals(json.path("roles").get(0).asText(), "COMPETITOR");
+        Assert.assertEquals(json.path("roles").get(1).asText(), "REFEREE");
+        Assert.assertEquals(json.path("teamName").asText(), "Team A");
+        Assert.assertTrue(json.path("pendingReview").asBoolean());
     }
 }

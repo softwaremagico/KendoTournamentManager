@@ -22,8 +22,10 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import jakarta.persistence.Cacheable;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,6 +35,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -43,11 +46,12 @@ import org.hibernate.annotations.FetchMode;
 @org.hibernate.annotations.Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "roles", indexes = {
-        @Index(name = "ind_roles_tournament", columnList = "tournament"),
-        @Index(name = "ind_type", columnList = "role_type"),
-        @Index(name = "ind_roles_tenant_tournament_type", columnList = "tenant_id, tournament, role_type")
-})
+@Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = {"tenant_id", "tournament", "participant", "role_type"}),
+        indexes = {
+                @Index(name = "ind_roles_tournament", columnList = "tournament"),
+                @Index(name = "ind_type", columnList = "role_type"),
+                @Index(name = "ind_roles_tenant_tournament_type", columnList = "tenant_id, tournament, role_type")
+        })
 @SuppressWarnings("java:S2160")
 public class Role extends Element {
 
@@ -70,6 +74,20 @@ public class Role extends Element {
 
     @Column(name = "accreditation_printed", nullable = false)
     private boolean accreditationPrinted = false;
+
+    /**
+     * Team requested by the participant when registering through a public link.
+     * Only used for tournaments with {@code teamSize > 1}.
+     */
+    @Column(name = "team_preference")
+    @Convert(converter = StringCryptoConverter.class)
+    private String teamPreference;
+
+    /**
+     * Roles created from a public registration must be reviewed by an organizer.
+     */
+    @Column(name = "pending_review", nullable = false)
+    private boolean pendingReview = false;
 
     public Role() {
         super();
@@ -120,6 +138,22 @@ public class Role extends Element {
 
     public void setAccreditationPrinted(boolean accreditationPrinted) {
         this.accreditationPrinted = accreditationPrinted;
+    }
+
+    public String getTeamPreference() {
+        return teamPreference;
+    }
+
+    public void setTeamPreference(String teamPreference) {
+        this.teamPreference = teamPreference;
+    }
+
+    public boolean isPendingReview() {
+        return pendingReview;
+    }
+
+    public void setPendingReview(boolean pendingReview) {
+        this.pendingReview = pendingReview;
     }
 
     @Override

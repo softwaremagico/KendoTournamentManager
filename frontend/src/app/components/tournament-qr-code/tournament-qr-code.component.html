@@ -1,4 +1,7 @@
 <div class="content" *transloco="let t">
+  @if (mode === 'registration') {
+    <p class="registration-hint">{{ t('registrationQrHint') }}</p>
+  }
   @if (!qrCode) {
     <div class="qr-container">
       <spinner-overlay></spinner-overlay>
@@ -11,6 +14,14 @@
         <a class="link" target=”_blank”
         href="{{link}}">{{'orClickHere' | transloco}}</a>
       }
+      @if (mode === 'registration' && link && (RbacActivity.LINK_QR_CODE | hasPermission)) {
+        <div class="registration-link">
+          <span class="registration-link-title">{{ t('registrationLink') }}</span>
+          <a class="link" target="_blank" href="{{link}}">{{link}}</a>
+          <button biit-button id="tournament-qr-copy" secondary
+            (click)="copyLink()">{{ t(copied ? 'copied' : 'copy') }}</button>
+        </div>
+      }
     </div>
   }
 </div>
@@ -19,6 +30,18 @@
     <button biit-button id="tournament-qr-download" secondary
       (click)="downloadQrAsPdf()">
       {{ 'download' | transloco }}
+    </button>
+  }
+  @if (mode === 'registration' && (RbacActivity.DOWNLOAD_QR_CODE | hasPermission)) {
+    <button biit-button id="tournament-qr-download-png" secondary
+      (click)="downloadQrAsPng()">
+      {{ 'downloadPng' | transloco }}
+    </button>
+  }
+  @if (mode === 'registration' && (RbacActivity.EDIT_TOURNAMENT | hasPermission)) {
+    <button biit-button id="tournament-qr-renew" secondary
+      (click)="renewRegistrationQr()">
+      {{ 'renew' | transloco }}
     </button>
   }
   <button biit-button id="tournament-qr-close"

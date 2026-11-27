@@ -22,6 +22,8 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.core.security.GuestTicketProvider;
+import com.softwaremagico.kt.core.security.RegistrationInvitation;
+import com.softwaremagico.kt.core.security.RegistrationTicketProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
@@ -73,9 +75,14 @@ import java.util.UUID;
  * </p>
  */
 @Component
-public class JwtTokenUtil implements GuestTicketProvider {
+public class JwtTokenUtil implements GuestTicketProvider, RegistrationTicketProvider {
     private static final String JWT_ISSUER = "com.softwaremagico";
     private static final String GUEST_TICKET_PREFIX = "guest:";
+    private static final String REGISTRATION_TICKET_PREFIX = "registration:";
+    private static final int REGISTRATION_FIELDS = 3;
+    private static final int REGISTRATION_VERSION_INDEX = 2;
+    /** Registration links live long enough to be printed on a tournament poster. */
+    private static final long REGISTRATION_EXPIRATION = 30L * 24 * 60 * 60 * 1000;
     private static final String TENANT_ID_CLAIM = "tenantId";
     private static final String ROLES_CLAIM = "roles";
     /** Default token validity period in milliseconds (20 minutes). */
@@ -111,12 +118,19 @@ public class JwtTokenUtil implements GuestTicketProvider {
     private final long jwtExpiration;
     private final long jwtGuestExpiration;
     private final long jwtParticipantExpiration;
+    private final long jwtRegistrationExpiration;
+
+    public JwtTokenUtil(String jwtSecret, String jwtExpiration, String jwtGuestExpiration,
+            String jwtParticipantExpiration, NetworkController networkController) {
+        this(jwtSecret, jwtExpiration, jwtGuestExpiration, jwtParticipantExpiration, null, networkController);
+    }
 
     @Autowired
     public JwtTokenUtil(@Value("${jwt.secret:#{null}}") String jwtSecret,
             @Value("${jwt.expiration}") String jwtExpiration,
             @Value("${jwt.guest.expiration:null}") String jwtGuestExpiration,
             @Value("${jwt.participant.expiration:null}") String jwtParticipantExpiration,
+            @Value("${jwt.registration.expiration:null}") String jwtRegistrationExpiration,
             NetworkController networkController) {
         this.networkController = networkController;
 
@@ -170,6 +184,20 @@ public class JwtTokenUtil implements GuestTicketProvider {
             }
         }
         this.jwtParticipantExpiration = calculatedParticipantJwtExpiration;
+
+        // Registration invitations are valid for 30 days by default so a printed
+        // poster keeps working during the weeks before the tournament.
+        long calculatedRegistrationJwtExpiration = REGISTRATION_EXPIRATION;
+        if (jwtRegistrationExpiration != null && !jwtRegistrationExpiration.isBlank()) {
+            try {
+                calculatedRegistrationJwtExpiration = Long.parseLong(jwtRegistrationExpiration);
+            } catch (NumberFormatException _) {
+                RestServerLogger.warning(this.getClass(),
+                        "jwt.registration.expiration value '{}' is invalid. Setting default to '{}'.",
+                        jwtRegistrationExpiration, REGISTRATION_EXPIRATION);
+            }
+        }
+        this.jwtRegistrationExpiration = calculatedRegistrationJwtExpiration;
     }
 
     /**
@@ -225,6 +253,44 @@ public class JwtTokenUtil implements GuestTicketProvider {
                 return null;
             }
             return Integer.valueOf(fields[1]);
+        } catch (JwtException | IllegalArgumentException _) {
+            return null;
+        }
+    }
+
+    @Override
+    public String createRegistrationTicket(Integer tournamentId, Integer tenantId, int version) {
+        if (tournamentId == null || tenantId == null || version < 1) {
+            throw new IllegalArgumentException("A registration ticket requires a tournament, a tenant and a valid version.");
+        }
+        final Instant issuedAt = Instant.now();
+        return Jwts.builder()
+                .subject(REGISTRATION_TICKET_PREFIX + tournamentId + ":" + tenantId + ":" + version)
+                .issuer(JWT_ISSUER).issuedAt(toLegacyDate(issuedAt))
+                .expiration(toLegacyDate(issuedAt.plusMillis(this.jwtRegistrationExpiration)))
+                .signWith(this.signingKey, Jwts.SIG.HS512)
+                .compact();
+    }
+
+    @Override
+    public RegistrationInvitation validateRegistrationTicket(String ticket) {
+        if (ticket == null || ticket.isBlank()) {
+            return null;
+        }
+        try {
+            final String subject = this.getClaims(ticket).getSubject();
+            if (subject == null || !subject.startsWith(REGISTRATION_TICKET_PREFIX)) {
+                return null;
+            }
+            final String[] fields = subject.substring(REGISTRATION_TICKET_PREFIX.length()).split(":");
+            if (fields.length != REGISTRATION_FIELDS) {
+                return null;
+            }
+            final int version = Integer.parseInt(fields[REGISTRATION_VERSION_INDEX]);
+            if (version < 1) {
+                return null;
+            }
+            return new RegistrationInvitation(Integer.valueOf(fields[0]), Integer.valueOf(fields[1]), version);
         } catch (JwtException | IllegalArgumentException _) {
             return null;
         }

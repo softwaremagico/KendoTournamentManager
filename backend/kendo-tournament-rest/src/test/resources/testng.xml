@@ -26,6 +26,7 @@
                 <include name="restErrorResponse"/>
                 <include name="createUserRequest"/>
                 <include name="jwtTokenUtil"/>
+                <include name="registrationPublic"/>
                 <include name="exceptionAdvice"/>
                 <include name="websocketMessages"/>
                 <include name="restServicesUnit"/>
@@ -78,6 +79,7 @@
             <class name="com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequestTest"/>
             <class name="com.softwaremagico.kt.rest.security.dto.AuthRequestsCoverageTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenUtilTest"/>
+            <class name="com.softwaremagico.kt.rest.services.RegistrationPublicServiceTest"/>
             <class name="com.softwaremagico.kt.rest.security.JwtTokenFilterTest"/>
             <class name="com.softwaremagico.kt.rest.security.BruteForceServiceTests"/>
             <class name="com.softwaremagico.kt.logger.FrontendLoggerTest"/>

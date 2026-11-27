@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
 import com.softwaremagico.kt.core.security.GuestTicketProvider;
+import com.softwaremagico.kt.core.security.RegistrationTicketProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
@@ -35,6 +36,7 @@ import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -59,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 public class QrController {
 
     private static final String TOURNAMENT_FIGHTS_URL = "/#/tournaments/fights";
+    private static final String REGISTRATION_URL = "/#/register";
     private static final String PARTICIPANT_STATISTICS_URL = "/#/participants/statistics";
     private static final String LOGO_RESOURCE = "/kote.svg";
     private static final String QR_FORMAT = "png";
@@ -83,16 +86,26 @@ public class QrController {
 
     private final GuestTicketProvider guestTicketProvider;
 
+    private final RegistrationTicketProvider registrationTicketProvider;
+
     /**
-     * The provider is optional in the core-only test context, where no signing bean exists.
-     * ObjectProvider keeps this an explicit constructor dependency without requiring a bean.
+     * The providers are optional in the core-only test context, where no signing bean exists.
+     * ObjectProvider keeps them explicit constructor dependencies without requiring a bean.
      */
     public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
                         ObjectProvider<GuestTicketProvider> guestTicketProvider) {
+        this(qrProvider, tournamentProvider, participantProvider, guestTicketProvider, null);
+    }
+
+    @Autowired
+    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
+                        ObjectProvider<GuestTicketProvider> guestTicketProvider,
+                        ObjectProvider<RegistrationTicketProvider> registrationTicketProvider) {
         this.qrProvider = qrProvider;
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
         this.guestTicketProvider = guestTicketProvider.getIfAvailable();
+        this.registrationTicketProvider = registrationTicketProvider == null ? null : registrationTicketProvider.getIfAvailable();
     }
 
     @Cacheable(cacheNames = "qr-codes", key = "T(com.softwaremagico.kt.persistence.entities.TenantContext).getRequiredTenantId() "
@@ -118,6 +131,29 @@ public class QrController {
         } catch (IOException e) {
             throw new UnexpectedValueException(this.getClass(), e);
         }
+    }
+
+    /**
+     * Builds the public self-registration link for a tournament and its QR code.
+     * A renewed invitation increments the tournament version, invalidating links
+     * on posters that were printed before the renewal.
+     */
+    public QrCodeDTO generateRegistrationQrCodeForTournament(Integer tournamentId, Integer port, boolean nightMode,
+                                                             boolean renew) {
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+                new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
+        if (registrationTicketProvider == null) {
+            throw new UnexpectedValueException(this.getClass(), "Registration links are not available in this context.");
+        }
+        if (renew) {
+            tournament.renewRegistration();
+            tournamentProvider.save(tournament);
+        }
+        final String ticket = registrationTicketProvider.createRegistrationTicket(tournament.getId(),
+                TenantContext.getRequiredTenantId(), tournament.getRegistrationVersion());
+        final String link = frontendOrigin(port) + REGISTRATION_URL
+                + "?invitation=" + URLEncoder.encode(ticket, StandardCharsets.UTF_8);
+        return generateQrCode(link, nightMode);
     }
 
     public QrCodeDTO generateQrCode(String content, boolean nightMode) {

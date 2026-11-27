@@ -29,7 +29,9 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.security.GuestTicketProvider;
+import com.softwaremagico.kt.core.security.RegistrationTicketProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.TenantContext;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -75,7 +77,10 @@ public class QrControllerTest {
         MockitoAnnotations.openMocks(this);
         final ObjectProvider<GuestTicketProvider> ticketProvider = mock(ObjectProvider.class);
         when(ticketProvider.getIfAvailable()).thenReturn((tournamentId, tenantId) -> "signed-ticket");
-        controller = new QrController(qrProvider, tournamentProvider, participantProvider, ticketProvider);
+        final ObjectProvider<RegistrationTicketProvider> registrationProvider = mock(ObjectProvider.class);
+        when(registrationProvider.getIfAvailable())
+                .thenReturn((tournamentId, tenantId, version) -> "registration-ticket-" + version);
+        controller = new QrController(qrProvider, tournamentProvider, participantProvider, ticketProvider, registrationProvider);
         setField(controller, "schema", "https");
         setField(controller, "machineDomain", "kt.local");
     }
@@ -94,6 +99,46 @@ public class QrControllerTest {
                 "https://kt.local:8080/#/tournaments/fights?tournamentId=7&user=guest&ticket=signed-ticket");
         assertFalse(qrCodeDTO.getData().length == 0);
         verify(qrProvider).getQr(anyString(), anyInt(), any(Color.class), anyString(), any(Color.class));
+    }
+
+    @Test
+    public void shouldGenerateRegistrationQrLinkWithCurrentVersion() throws Exception {
+        setField(controller, "machineDomain", "localhost:8080");
+        final Tournament tournament = new Tournament("T", 1, 1, TournamentType.LEAGUE, "tester");
+        tournament.setId(7);
+        when(tournamentProvider.get(7)).thenReturn(Optional.of(tournament));
+        when(qrProvider.getQr(anyString(), anyInt(), any(), any(Color.class), any(Color.class), anyString()))
+                .thenReturn(new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB));
+        TenantContext.setTenantId(3);
+        try {
+            final QrCodeDTO qrCodeDTO = controller.generateRegistrationQrCodeForTournament(7, 4200, false, false);
+            assertEquals(qrCodeDTO.getContent(),
+                    "https://localhost:4200/#/register?invitation=registration-ticket-1");
+        } finally {
+            TenantContext.clear();
+        }
+    }
+
+    @Test
+    public void renewingRegistrationLinkInvalidatesPreviousVersion() throws Exception {
+        final Tournament tournament = new Tournament("T", 1, 1, TournamentType.LEAGUE, "tester");
+        tournament.setId(7);
+        // Legacy rows can still hold 0 in the column; renewal must not reuse version 1.
+        final Field versionField = Tournament.class.getDeclaredField("registrationVersion");
+        versionField.setAccessible(true);
+        versionField.setInt(tournament, 0);
+        when(tournamentProvider.get(7)).thenReturn(Optional.of(tournament));
+        when(qrProvider.getQr(anyString(), anyInt(), any(), any(Color.class), any(Color.class), anyString()))
+                .thenReturn(new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB));
+        TenantContext.setTenantId(3);
+        try {
+            final QrCodeDTO qrCodeDTO = controller.generateRegistrationQrCodeForTournament(7, null, false, true);
+            assertEquals(qrCodeDTO.getContent(),
+                    "https://kt.local/#/register?invitation=registration-ticket-2");
+            verify(tournamentProvider).save(tournament);
+        } finally {
+            TenantContext.clear();
+        }
     }
 
     @Test

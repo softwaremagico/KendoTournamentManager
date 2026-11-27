@@ -181,6 +181,23 @@ describe('HTTP service endpoints', () => {
     expect(http.get).toHaveBeenCalledWith('/backend/qr/participant/7/statistics/port/4200?nightMode=false');
   });
 
+  it('uses the registration QR endpoints with port and night mode query parameters', () => {
+    const service = new QrService(http, environment, messages, logger, login, busy);
+    const tournament = {id: 9, name: 'Cup'} as Tournament;
+
+    service.getRegistrationQr(tournament, true, 4200).subscribe();
+    service.getRegistrationQr(tournament, false).subscribe();
+    service.getRegistrationQrAsPng(tournament, true, 4200).subscribe();
+    service.getRegistrationQrAsPdf(tournament, 4200).subscribe();
+    service.renewRegistrationQr(tournament, true, 4200).subscribe();
+
+    expect(http.get).toHaveBeenCalledWith('/backend/qr/registration/tournament/9?port=4200&nightMode=true');
+    expect(http.get).toHaveBeenCalledWith('/backend/qr/registration/tournament/9?nightMode=false');
+    expect(http.get).toHaveBeenCalledWith('/backend/qr/registration/tournament/9/png?port=4200&nightMode=true', jasmine.any(Object));
+    expect(http.get).toHaveBeenCalledWith('/backend/qr/registration/tournament/9/pdf?port=4200', jasmine.any(Object));
+    expect(http.post).toHaveBeenCalledWith('/backend/qr/registration/tournament/9/renew?port=4200&nightMode=true', null);
+  });
+
   it('addresses groups within the requested tournament', () => {
     const service = new GroupService(http, environment, messages, logger, login, busy);
     const group = {id: 3} as Group;

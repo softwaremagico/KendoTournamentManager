@@ -1,0 +1,58 @@
+.registration-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.registration-card {
+  background: var(--component-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+  max-width: 34rem;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.registration-tournament {
+  font-weight: 600;
+}
+
+.registration-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+
+  input[type='text'],
+  select {
+    background: transparent;
+    border: 1px solid var(--main-color);
+    border-radius: 0.25rem;
+    color: inherit;
+    padding: 0.5rem;
+  }
+}
+
+fieldset.registration-field {
+  border: 1px solid var(--main-color);
+  border-radius: 0.25rem;
+}
+
+.registration-checkbox {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.registration-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.registration-error {
+  color: #c62828;
+}
+
+.registration-success {
+  text-align: center;
+}

@@ -1,0 +1,124 @@
+<ng-container *transloco="let t">
+  <div class="registration-page">
+    @if (loading) {
+      <div class="registration-card" role="status">{{ t('progress') }}</div>
+    }
+
+    @if (!loading && !registered && configuration) {
+      <div class="registration-card">
+        <h1>{{ t('registrationTitle') }}</h1>
+        <p class="registration-tournament">{{ t('registrationForTournament', {tournament: configuration.tournamentName}) }}</p>
+
+        @if (errorMessage) {
+          <p class="registration-error" role="alert">{{ t(errorMessage) }}</p>
+        }
+
+        <form (ngSubmit)="submit()">
+          <div class="registration-field">
+            <label for="registration-name">{{ t('name') }}</label>
+            <input id="registration-name" name="name" type="text" autocomplete="given-name"
+              [(ngModel)]="request.name" required/>
+          </div>
+          <div class="registration-field">
+            <label for="registration-lastname">{{ t('lastname') }}</label>
+            <input id="registration-lastname" name="lastname" type="text" autocomplete="family-name"
+              [(ngModel)]="request.lastname" required/>
+          </div>
+          <div class="registration-field">
+            <label for="registration-id-card">{{ t('idCard') }}</label>
+            <input id="registration-id-card" name="idCard" type="text"
+              [(ngModel)]="request.idCard" required/>
+          </div>
+
+          <fieldset class="registration-field">
+            <legend>{{ t('registrationRoles') }}</legend>
+            @for (role of configuration.availableRoles; track role) {
+              <label class="registration-checkbox">
+                <input id="registration-role-{{role}}" type="checkbox"
+                  [checked]="isRoleSelected(role)"
+                  (change)="toggleRole(role, $any($event.target).checked)"/>
+                {{ t(roleKey(role)) }}
+              </label>
+            }
+          </fieldset>
+
+          <fieldset class="registration-field">
+            <legend>{{ t('club') }}</legend>
+            <label class="registration-checkbox">
+              <input id="registration-existing-club" name="clubMode" type="radio"
+                [checked]="useExistingClub" (change)="useExistingClub = true"/>
+              {{ t('registrationExistingClub') }}
+            </label>
+            @if (useExistingClub) {
+              <select id="registration-club" name="clubId" [(ngModel)]="selectedClubId" required>
+                <option [ngValue]="undefined">{{ t('registrationSelectClub') }}</option>
+                @for (club of configuration.clubs; track club.id) {
+                  <option [ngValue]="club.id">{{ club.name }}</option>
+                }
+              </select>
+            } @else {
+              <div class="registration-field">
+                <label for="registration-new-club-name">{{ t('registrationNewClubName') }}</label>
+                <input id="registration-new-club-name" name="newClubName" type="text"
+                  [(ngModel)]="request.newClubName" required/>
+              </div>
+              <div class="registration-field">
+                <label for="registration-new-club-city">{{ t('city') }}</label>
+                <input id="registration-new-club-city" name="newClubCity" type="text"
+                  [(ngModel)]="request.newClubCity" required/>
+              </div>
+              <div class="registration-field">
+                <label for="registration-new-club-country">{{ t('country') }}</label>
+                <input id="registration-new-club-country" name="newClubCountry" type="text"
+                  [(ngModel)]="request.newClubCountry" required/>
+              </div>
+            }
+            <label class="registration-checkbox">
+              <input id="registration-new-club" name="clubMode" type="radio"
+                [checked]="!useExistingClub" (change)="useExistingClub = false"/>
+              {{ t('registrationNewClub') }}
+            </label>
+          </fieldset>
+
+          @if (configuration.teamSelectionEnabled) {
+            <div class="registration-field">
+              <label for="registration-team-preference">{{ t('registrationTeamPreference') }}</label>
+              <input id="registration-team-preference" name="teamPreference" type="text"
+                [(ngModel)]="request.teamPreference"/>
+              <small>{{ t('registrationTeamPreferenceHint', {teamSize: configuration.teamSize}) }}</small>
+            </div>
+          }
+
+          <div class="registration-actions">
+            <button biit-button id="registration-submit" type="submit" primary
+              [disabled]="submitting || !isValid()">{{ t('registrationSubmit') }}</button>
+          </div>
+        </form>
+      </div>
+    }
+
+    @if (!loading && (!configuration || errorMessage) && !registered) {
+      <div class="registration-card registration-error" role="alert">
+        {{ t(errorMessage ?? 'registrationError') }}
+      </div>
+    }
+
+    @if (registered) {
+      <div class="registration-card registration-success" role="status">
+        <h1>{{ t('registrationSuccessTitle') }}</h1>
+        @if (registered.teamName) {
+          <p>{{ t('registrationSuccessWithTeam', {
+            name: registered.name, tournament: configuration?.tournamentName ?? '', team: registered.teamName
+          }) }}</p>
+        } @else {
+          <p>{{ t('registrationSuccess', {
+            name: registered.name, tournament: configuration?.tournamentName ?? ''
+          }) }}</p>
+        }
+        @if (registered.pendingReview) {
+          <p>{{ t('registrationPendingReview') }}</p>
+        }
+      </div>
+    }
+  </div>
+</ng-container>

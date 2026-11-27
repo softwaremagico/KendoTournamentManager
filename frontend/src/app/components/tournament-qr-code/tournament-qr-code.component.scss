@@ -36,3 +36,24 @@
   margin-top: 30px;
 }
 
+.registration-hint {
+  text-align: center;
+}
+
+.registration-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.registration-link-title {
+  font-weight: 600;
+}
+
+.registration-link .link {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+

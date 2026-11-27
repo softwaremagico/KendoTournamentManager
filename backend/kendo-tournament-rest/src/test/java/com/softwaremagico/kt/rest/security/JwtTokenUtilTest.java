@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.core.security.RegistrationInvitation;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -357,6 +358,44 @@ public class JwtTokenUtilTest {
         assertNull(util.validateGuestTicket(tokenWithoutSubject, 7));
         assertNull(util.validateGuestTicket(ticketWithoutTenant, 7));
         assertNull(util.validateGuestTicket(ticketWithNonNumericTenant, 7));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldCreateAndValidateRegistrationTicket() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000",
+                "2592000000", this.networkController);
+
+        final String ticket = util.createRegistrationTicket(7, 3, 2);
+
+        final RegistrationInvitation invitation = util.validateRegistrationTicket(ticket);
+        assertNotNull(invitation);
+        assertEquals(invitation.tournamentId(), Integer.valueOf(7));
+        assertEquals(invitation.tenantId(), Integer.valueOf(3));
+        assertEquals(invitation.version(), 2);
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectRegistrationTicketWithWrongSignatureOrMalformedSubject() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000",
+                "2592000000", this.networkController);
+        final String forged = Jwts.builder().subject("registration:7:3:2")
+                .signWith(signingKey("different-secret"), Jwts.SIG.HS512).compact();
+        final String malformed = Jwts.builder().subject("registration:7:3")
+                .signWith(signingKey(SECRET), Jwts.SIG.HS512).compact();
+
+        assertNull(util.validateRegistrationTicket(null));
+        assertNull(util.validateRegistrationTicket("not-a-jwt"));
+        assertNull(util.validateRegistrationTicket(forged));
+        assertNull(util.validateRegistrationTicket(malformed));
+    }
+
+    @Test(groups = "jwtTokenUtil")
+    public void shouldRejectExpiredRegistrationTicket() {
+        final JwtTokenUtil util = new JwtTokenUtil(SECRET, "1200000", "1200000", "1200000",
+                "1", this.networkController);
+        final String ticket = util.createRegistrationTicket(7, 3, 2);
+
+        assertNull(util.validateRegistrationTicket(ticket));
     }
 }
 

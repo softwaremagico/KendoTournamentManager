@@ -77,6 +77,16 @@ export class RoleService {
       .pipe(this.monitor.track<Role>(`delete role for ${participant} on ${tournament.name}`, () => `deleting role for ${participant} on ${tournament.name}`));
   }
 
+  deleteByParticipantAndTournamentAndRole(participant: Participant, tournament: Tournament, roleType: RoleType): Observable<Role> {
+    const url: string = `${this.baseUrl}/delete/participants/role/${roleType}`;
+    return this.http.post<Role>(url, {
+      participant: participant,
+      tournament: tournament
+    })
+      .pipe(this.monitor.track<Role>(`delete ${roleType} for ${participant} on ${tournament.name}`,
+        () => `deleting ${roleType} for ${participant} on ${tournament.name}`));
+  }
+
   add(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Role>(url, role)

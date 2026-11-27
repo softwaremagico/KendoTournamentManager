@@ -111,6 +111,14 @@
               <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
             </button>
           }
+          @if ((RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())) {
+            <button mat-button class="menu-button" id="button-registration-qr"
+              [title]="t('registrationQrHint')"
+              (click)="showRegistrationQr=true"
+              [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || table.selectedRows[0]!.locked">
+              <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+            </button>
+          }
           @if ((RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())) {
             <button mat-button class="menu-button"
               [title]="t('accreditationsHint')"
@@ -205,6 +213,17 @@
         [tournament]="table.selectedRows[0]"
         [port]="port"
       (closed)="showQr=false"></tournament-qr-code>
+    </biit-popup>
+  }
+
+  @if (showRegistrationQr) {
+    <biit-popup id="registration-qr-code" no-header closable
+      (onClosed)="showRegistrationQr=false">
+      <tournament-qr-code
+        [tournament]="table.selectedRows[0]"
+        [port]="port"
+        mode="registration"
+        (closed)="showRegistrationQr=false"></tournament-qr-code>
     </biit-popup>
   }
 

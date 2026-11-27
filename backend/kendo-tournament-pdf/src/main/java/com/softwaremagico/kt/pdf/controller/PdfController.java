@@ -261,4 +261,10 @@ public class PdfController {
         final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId(), port, false);
         return new TournamentQr(messageSource, locale, tournament, qrCodeDTO.getData(), null);
     }
+
+    public TournamentQr generateRegistrationTournamentQr(Locale locale, TournamentDTO tournament, Integer port, boolean renew) {
+        final QrCodeDTO qrCodeDTO = qrController.generateRegistrationQrCodeForTournament(tournament.getId(), port, false, renew);
+        return new TournamentQr(messageSource, locale, tournament, qrCodeDTO.getData(), null,
+                qrCodeDTO.getContent(), "qr.body.registration");
+    }
 }

@@ -22,7 +22,9 @@ describe('TournamentQrCodeComponent', () => {
   } as unknown as Tournament);
 
   beforeEach(() => {
-    qrServiceSpy = jasmine.createSpyObj('QrService', ['getGuestsQr', 'getGuestsQrAsPdf']);
+    qrServiceSpy = jasmine.createSpyObj('QrService', [
+      'getGuestsQr', 'getGuestsQrAsPdf', 'getRegistrationQr', 'getRegistrationQrAsPng', 'getRegistrationQrAsPdf', 'renewRegistrationQr'
+    ]);
     userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getNightMode']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
 
@@ -112,6 +114,88 @@ describe('TournamentQrCodeComponent', () => {
     component.downloadQrAsPdf();
 
     expect(qrServiceSpy.getGuestsQrAsPdf).not.toHaveBeenCalled();
+  });
+
+  it('should load the registration qr code in registration mode', () => {
+    const tournament = createTournament(12, 'Registration Cup');
+    const response = {base64: 'data:image/png;base64,registration', content: 'https://example.org/#/register?invitation=jwt'} as QrCode;
+
+    component.tournament = tournament;
+    component.port = 9090;
+    component.mode = 'registration';
+    userSessionServiceSpy.getNightMode.and.returnValue(true);
+    qrServiceSpy.getRegistrationQr.and.returnValue(of(response));
+
+    component.ngOnInit();
+
+    expect(qrServiceSpy.getRegistrationQr).toHaveBeenCalledOnceWith(tournament, true, 9090);
+    expect(qrServiceSpy.getGuestsQr).not.toHaveBeenCalled();
+    expect(component.qrCode).toBe(response.base64);
+    expect(component.link).toBe(response.content);
+  });
+
+  it('should copy the registration link to the clipboard', () => {
+    const writeText = jasmine.createSpy('writeText').and.returnValue(Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText}});
+    component.link = 'https://example.org/#/register?invitation=jwt';
+
+    component.copyLink();
+
+    expect(writeText).toHaveBeenCalledOnceWith(component.link);
+  });
+
+  it('should renew the registration link and display the new qr code when confirmed', () => {
+    const tournament = createTournament(12, 'Registration Cup');
+    const response = {base64: 'data:image/png;base64,renewed', content: 'https://example.org/#/register?invitation=new'} as QrCode;
+
+    component.tournament = tournament;
+    component.port = 9090;
+    component.mode = 'registration';
+    component.qrCode = 'old';
+    userSessionServiceSpy.getNightMode.and.returnValue(false);
+    rbacServiceSpy.isAllowed.and.returnValue(true);
+    qrServiceSpy.renewRegistrationQr.and.returnValue(of(response));
+    spyOn(window, 'confirm').and.returnValue(true);
+
+    component.renewRegistrationQr();
+
+    expect(qrServiceSpy.renewRegistrationQr).toHaveBeenCalledOnceWith(tournament, false, 9090);
+    expect(component.qrCode).toBe(response.base64);
+    expect(component.link).toBe(response.content);
+  });
+
+  it('should not renew the registration link when the confirmation is cancelled', () => {
+    component.tournament = createTournament(12, 'Registration Cup');
+    component.mode = 'registration';
+    rbacServiceSpy.isAllowed.and.returnValue(true);
+    spyOn(window, 'confirm').and.returnValue(false);
+
+    component.renewRegistrationQr();
+
+    expect(qrServiceSpy.renewRegistrationQr).not.toHaveBeenCalled();
+  });
+
+  it('should download the registration qr code as png and pdf', () => {
+    const tournament = createTournament(12, 'Registration Cup');
+    const blob = new Blob(['image'], {type: 'image/png'});
+    const anchorMock = {download: '', href: '', click: jasmine.createSpy('click')} as unknown as HTMLAnchorElement;
+
+    component.tournament = tournament;
+    component.port = 9090;
+    component.mode = 'registration';
+    userSessionServiceSpy.getNightMode.and.returnValue(false);
+    qrServiceSpy.getRegistrationQrAsPng.and.returnValue(of(blob));
+    qrServiceSpy.getRegistrationQrAsPdf.and.returnValue(of(blob));
+    spyOn(globalThis.URL, 'createObjectURL').and.returnValue('blob:mock-url');
+    spyOn(document, 'createElement').and.returnValue(anchorMock as any);
+
+    component.downloadQrAsPng();
+    component.downloadQrAsPdf();
+
+    expect(qrServiceSpy.getRegistrationQrAsPng).toHaveBeenCalledOnceWith(tournament, false, 9090);
+    expect(qrServiceSpy.getRegistrationQrAsPdf).toHaveBeenCalledOnceWith(tournament, 9090);
+    expect(anchorMock.download).toContain('registration QR');
+    expect((anchorMock.click as jasmine.Spy)).toHaveBeenCalledTimes(2);
   });
 });
 

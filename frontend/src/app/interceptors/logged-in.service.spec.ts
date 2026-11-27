@@ -51,6 +51,20 @@ describe('LoggedInService', () => {
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 
+  it('allows the public registration page without a session and without role redirects', () => {
+    loginServiceSpy.getJwtValue.and.returnValue(null);
+
+    expect(service.canActivate({} as ActivatedRouteSnapshot,
+      {url: '/register?invitation=jwt'} as RouterStateSnapshot)).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+
+    loginServiceSpy.getJwtValue.and.returnValue('jwt');
+    localStorage.setItem('account', 'participant');
+    expect(service.userLoginPageDependingOnRoles('/register', '')).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+    localStorage.removeItem('account');
+  });
+
   it('redirects guest and participant sessions to their permitted pages', () => {
     loginServiceSpy.getJwtValue.and.returnValue('jwt');
 

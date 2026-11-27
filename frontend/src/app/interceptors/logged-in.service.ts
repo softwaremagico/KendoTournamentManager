@@ -10,7 +10,7 @@ import {TournamentService} from "../services/tournament.service";
 export class LoggedInService {
 
   //Pages that will not force a login to access.
-  whiteListedPages: string[] = ["/tournaments/fights", "/participants/statistics"];
+  whiteListedPages: string[] = ["/tournaments/fights", "/participants/statistics", "/register"];
 
   public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -35,6 +35,10 @@ export class LoggedInService {
   }
 
   userLoginPageDependingOnRoles(context: string, params: string): boolean {
+    if (context.startsWith('/register')) {
+      //A registration link is public and must not be redirected by role-based rules.
+      return true;
+    }
     if (this.loginService.getJwtValue()) {
       //Participant users must redirect to their statistics.
       if (localStorage.getItem('account') === 'participant'
