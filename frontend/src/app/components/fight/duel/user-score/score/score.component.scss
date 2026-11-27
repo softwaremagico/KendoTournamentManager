@@ -113,14 +113,14 @@
   border: 3px solid var(--component-color);
   padding: 0 10px 0 10px;
 
-  .mat-mdc-menu-item.mdc-list-item:hover {
+  .mat-mdc-menu-item:hover {
     background: var(--hover-color);
   }
 }
 
-.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):hover,
-.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]):focus-visible,
-.dark-mode .score-menu .mat-mdc-menu-item.mdc-list-item:not([disabled]).cdk-keyboard-focused {
+.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]):hover,
+.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]):focus-visible,
+.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
   background-color: #64738d;
   color: #fff;
 }
