@@ -16,6 +16,22 @@ body {
   background-color: $background;
 }
 
+/* Let each surface show through the scrollbar track in dark mode. */
+.dark-mode,
+.dark-mode * {
+  scrollbar-color: var(--component-color) transparent;
+}
+
+.dark-mode *:hover,
+.dark-mode *:active {
+  scrollbar-color: var(--scrollbar-color) transparent;
+}
+
+.dark-mode::-webkit-scrollbar-track,
+.dark-mode *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 app-root > router-outlet + * {
   display: block;
   width: 100%;

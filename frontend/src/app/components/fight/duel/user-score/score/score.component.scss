@@ -113,9 +113,21 @@
   border: 3px solid var(--component-color);
   padding: 0 10px 0 10px;
 
-  .mat-mdc-menu-item.mdc-list-item:hover {
-    background: var(--hover-color);
-  }
+}
+
+.score-menu .mat-mdc-menu-item:not([disabled]):hover,
+.score-menu .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
+  background-color: var(--main-background);
+}
+
+.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]):hover,
+.dark-mode .score-menu .mat-mdc-menu-item:not([disabled]).cdk-keyboard-focused {
+  background-color: #64738d;
+  color: #fff;
+}
+
+.score-menu .mat-mdc-menu-item:not([disabled]).cdk-program-focused:not(:hover) {
+  background-color: transparent;
 }
 
 .score-area.over {
