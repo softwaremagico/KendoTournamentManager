@@ -231,7 +231,7 @@ public class RankingProvider {
         //Show all competitors, or only the ones that have fights.
         final boolean showAll;
         if (competitors == null || competitors.isEmpty()) {
-            competitors = participantProvider.getAll();
+            competitors = new ArrayList<>(participantProvider.getAll());
             showAll = false;
         } else {
             //If received a list of competitors, we will show all.

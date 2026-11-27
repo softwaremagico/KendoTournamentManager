@@ -388,7 +388,7 @@ public class RankingControllerTest {
 		role.setParticipant(participant);
 
 		when(clubProvider.get(1)).thenReturn(Optional.of(club));
-		when(participantProvider.get(club)).thenReturn(new ArrayList<>(List.of(participant)));
+		when(participantProvider.get(club)).thenReturn(List.of(participant));
 		when(roleProvider.get(any(), eq(RoleType.COMPETITOR))).thenReturn(List.of(role));
 		when(clubConverter.convert(any())).thenReturn(clubDTO(1, "ClubA"));
 		when(participantConverter.convertAll(any())).thenReturn(List.of());
@@ -398,6 +398,17 @@ public class RankingControllerTest {
 		final List<ScoreOfCompetitorDTO> result = controller.getCompetitorsGlobalScoreRankingByClub(1);
 
 		assertNotNull(result);
+	}
+
+	@Test
+	public void shouldReturnEmptyRankingWhenClubHasNoCompetitors() {
+		final Club club = club(1, "ClubA");
+		final Participant participant = participant(2, club);
+		when(clubProvider.get(1)).thenReturn(Optional.of(club));
+		when(participantProvider.get(club)).thenReturn(List.of(participant));
+		when(roleProvider.get(any(), eq(RoleType.COMPETITOR))).thenReturn(List.of());
+
+		assertTrue(controller.getCompetitorsGlobalScoreRankingByClub(1).isEmpty());
 	}
 
 	@Test(expectedExceptions = ClubNotFoundException.class)

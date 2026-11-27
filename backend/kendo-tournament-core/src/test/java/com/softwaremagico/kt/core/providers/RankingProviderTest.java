@@ -124,7 +124,7 @@ public class RankingProviderTest {
 		final Fight recentFight = this.fight(List.of(p1), List.of(p2), LocalDateTime.now().minusDays(2));
 		final Fight oldFight = this.fight(List.of(p2), List.of(p3), LocalDateTime.now().minusDays(90));
 
-		when(this.participantProvider.getAll()).thenReturn(new ArrayList<>(List.of(p1, p2, p3)));
+		when(this.participantProvider.getAll()).thenReturn(List.of(p1, p2, p3));
 		when(this.fightProvider.getBy(any(Collection.class))).thenReturn(List.of(recentFight, oldFight));
 		when(this.duelProvider.getUnties(any(Collection.class))).thenReturn(List.of());
 
