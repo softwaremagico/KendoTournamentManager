@@ -67,6 +67,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     private static final String PARTICIPANT_NAME = "Participant Name";
     private static final String PARTICIPANT_LASTNAME = "Participant Last Name";
+    private static final String PARTICIPANT_ID_CARD = "SEC-IDCARD-951";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -146,6 +147,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
         participantDto.setClub(this.clubDTO);
         participantDto.setName(PARTICIPANT_NAME);
         participantDto.setLastname(PARTICIPANT_LASTNAME);
+        participantDto.setIdCard(PARTICIPANT_ID_CARD);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/participants")
@@ -159,6 +161,8 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
         this.participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
 
         Assert.assertEquals(this.participantDTO.getName(), PARTICIPANT_NAME);
+        // Authorized CRUD responses keep the identifier (normalized by Participant.setIdCard).
+        Assert.assertEquals(this.participantDTO.getIdCard(), PARTICIPANT_ID_CARD.replace("-", ""));
     }
 
     @Test(dependsOnMethods = "createParticipant")
@@ -188,11 +192,30 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        ParticipantDTO responseParticipantDto = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+        final String responseBody = createResult.getResponse().getContentAsString();
+        ParticipantDTO responseParticipantDto = fromJson(responseBody, ParticipantDTO.class);
 
         this.participantJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
 
         Assert.assertEquals(responseParticipantDto.getName(), PARTICIPANT_NAME);
+        // This endpoint is public: the idCard must not be serialized.
+        Assert.assertFalse(responseBody.contains("\"idCard\""),
+                "Public participant token exchange must not expose idCard");
+        Assert.assertNull(responseParticipantDto.getIdCard());
+    }
+
+    @Test(dependsOnMethods = "generateToken")
+    public void ownParticipantDataDoesNotExposeIdCard() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/participants/jwt")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + participantJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        Assert.assertFalse(result.getResponse().getContentAsString().contains("\"idCard\""),
+                "GET /participants/jwt is available to low-privilege roles and must not expose idCard");
     }
 
     @Test(dependsOnMethods = "generateToken")
