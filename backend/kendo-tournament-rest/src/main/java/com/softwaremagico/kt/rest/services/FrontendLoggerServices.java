@@ -24,16 +24,18 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.models.LogDTO;
 import com.softwaremagico.kt.logger.FrontendLogger;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Front-end logging endpoint. It is intentionally public because credential-free
+ * pages (public registration) report their errors through it.
+ */
 @RestController
 @RequestMapping("/logger")
 public class FrontendLoggerServices {
@@ -42,27 +44,21 @@ public class FrontendLoggerServices {
         return parameter.toString().replaceAll("[\n\r\t]", "_");
     }
 
-    @PreAuthorize("hasAnyAuthority(@securityService.guestPrivilege, @securityService.viewerPrivilege, @securityService.editorPrivilege, "
-            + "@securityService.adminPrivilege, @securityService.participantPrivilege)")
-    @Operation(summary = "Register an action that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Register an action that must be logged.")
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
     public void info(@RequestBody LogDTO log, HttpServletRequest request) {
         FrontendLogger.info(this.getClass(), sanitize(log.getMessage()));
     }
 
-    @PreAuthorize("hasAnyAuthority(@securityService.guestPrivilege, @securityService.viewerPrivilege, @securityService.editorPrivilege, "
-            + "@securityService.adminPrivilege, @securityService.participantPrivilege)")
-    @Operation(summary = "Register a warning that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Register a warning that must be logged.")
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
     public void warning(@RequestBody LogDTO log, HttpServletRequest request) {
         FrontendLogger.warning(this.getClass(), sanitize(log.getMessage()));
     }
 
-    @PreAuthorize("hasAnyAuthority(@securityService.guestPrivilege, @securityService.viewerPrivilege, @securityService.editorPrivilege, "
-            + "@securityService.adminPrivilege, @securityService.participantPrivilege)")
-    @Operation(summary = "Register an error that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Register an error that must be logged.")
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)
     public void error(@RequestBody LogDTO log, HttpServletRequest request) {

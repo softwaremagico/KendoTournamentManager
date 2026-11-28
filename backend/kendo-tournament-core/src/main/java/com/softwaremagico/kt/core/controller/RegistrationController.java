@@ -25,6 +25,7 @@ import com.softwaremagico.kt.core.controller.models.RegistrationClubDTO;
 import com.softwaremagico.kt.core.controller.models.RegistrationConfigurationDTO;
 import com.softwaremagico.kt.core.controller.models.RegistrationRequestDTO;
 import com.softwaremagico.kt.core.controller.models.RegistrationResponseDTO;
+import com.softwaremagico.kt.core.controller.models.RegistrationTeamDTO;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.ClubProvider;
@@ -35,6 +36,7 @@ import com.softwaremagico.kt.core.services.RegistrationTeamService;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -78,6 +81,7 @@ public class RegistrationController {
         this.registrationTeamService = registrationTeamService;
     }
 
+    @Transactional(readOnly = true)
     public RegistrationConfigurationDTO getConfiguration(Integer tournamentId) {
         final Tournament tournament = getOpenTournament(tournamentId);
         final RegistrationConfigurationDTO configuration = new RegistrationConfigurationDTO();
@@ -85,7 +89,8 @@ public class RegistrationController {
         configuration.setTeamSize(tournament.getTeamSize());
         configuration.setTeamSelectionEnabled(isTeamSelectionEnabled(tournament));
         configuration.setAvailableRoles(PUBLIC_ROLES);
-        configuration.setClubs(clubProvider.getAll().stream().map(this::toPublicClub).toList());
+        configuration.setClubs(clubProvider.getAll().stream()
+                .map(club -> toPublicClub(club, tournament)).toList());
         return configuration;
     }
 
@@ -173,12 +178,23 @@ public class RegistrationController {
         return value == null || value.isBlank();
     }
 
-    private RegistrationClubDTO toPublicClub(Club club) {
+    private RegistrationClubDTO toPublicClub(Club club, Tournament tournament) {
         final RegistrationClubDTO dto = new RegistrationClubDTO();
         dto.setId(club.getId());
         dto.setName(club.getName());
         dto.setCity(club.getCity());
         dto.setCountry(club.getCountry());
+        dto.setTeams(registrationTeamService.getAvailableTeams(tournament, club.getId()).stream()
+                .map(team -> toPublicTeam(team, tournament.getTeamSize()))
+                .toList());
+        return dto;
+    }
+
+    private RegistrationTeamDTO toPublicTeam(Team team, Integer teamSize) {
+        final RegistrationTeamDTO dto = new RegistrationTeamDTO();
+        dto.setName(team.getName());
+        final int members = team.getMembers() == null ? 0 : (int) team.getMembers().stream().filter(Objects::nonNull).count();
+        dto.setFreeSlots(Math.max(0, (teamSize == null ? 0 : teamSize) - members));
         return dto;
     }
 

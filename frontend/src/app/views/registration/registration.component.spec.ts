@@ -1,4 +1,5 @@
 import {ActivatedRoute} from '@angular/router';
+import {TranslocoService} from '@jsverse/transloco';
 import {of, Subject} from 'rxjs';
 import {RoleType} from '../../models/role-type';
 import {RegistrationService} from '../../services/registration.service';
@@ -9,6 +10,7 @@ describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
   let route: jasmine.SpyObj<ActivatedRoute>;
   let registrationService: jasmine.SpyObj<RegistrationService>;
+  let translocoService: jasmine.SpyObj<TranslocoService>;
 
   const configuration: RegistrationConfiguration = {
     tournamentName: 'Open Cup',
@@ -21,7 +23,9 @@ describe('RegistrationComponent', () => {
   function createComponent(invitation: string | undefined): void {
     route = jasmine.createSpyObj('ActivatedRoute', [], {queryParams: of({invitation})});
     registrationService = jasmine.createSpyObj('RegistrationService', ['configuration', 'register']);
-    component = new RegistrationComponent(route, registrationService);
+    translocoService = jasmine.createSpyObj('TranslocoService', ['translate']);
+    translocoService.translate.and.callFake((key: string) => key as any);
+    component = new RegistrationComponent(route, registrationService, translocoService);
   }
 
   function fillRequiredFields(): void {
@@ -40,6 +44,28 @@ describe('RegistrationComponent', () => {
     expect(registrationService.configuration).toHaveBeenCalledOnceWith('jwt.invitation');
     expect(component.configuration).toBe(configuration);
     expect(component.loading).toBeFalse();
+  });
+
+  it('offers the existing teams of the selected club only', () => {
+    const withTeams: RegistrationConfiguration = {
+      ...configuration,
+      clubs: [
+        {id: 7, name: 'Kendo Club', teams: [{name: 'Club Team', freeSlots: 2}, {name: 'Full Team', freeSlots: 0}]},
+        {id: 8, name: 'Other Club', teams: [{name: 'Other Team', freeSlots: 1}]}
+      ]
+    };
+    createComponent('jwt.invitation');
+    registrationService.configuration.and.returnValue(of(withTeams));
+    component.ngOnInit();
+
+    component.onClubChange('7');
+    expect(component.teamOptions.map(option => option.value)).toEqual(['', 'Club Team', 'Full Team']);
+    expect(component.request.teamPreference).toBeUndefined();
+
+    component.request.teamPreference = 'Club Team';
+    component.onClubChange('8');
+    expect(component.teamOptions.map(option => option.value)).toEqual(['', 'Other Team']);
+    expect(component.request.teamPreference).toBeUndefined();
   });
 
   it('shows an error when the invitation cannot be resolved', () => {
@@ -110,7 +136,7 @@ describe('RegistrationComponent', () => {
     component.ngOnInit();
 
     fillRequiredFields();
-    component.useExistingClub = false;
+    component.clubMode = 'new';
     component.request.newClubName = '  New Club  ';
     component.request.newClubCity = '  Madrid  ';
     component.request.newClubCountry = '  Spain  ';
@@ -189,7 +215,7 @@ describe('RegistrationComponent', () => {
     component.request.lastname = 'Takeshi';
     component.request.idCard = '12345678Z';
     component.selectRole(RoleType.COMPETITOR);
-    component.useExistingClub = false;
+    component.clubMode = 'new';
 
     expect(component.isValid()).toBeFalse();
     component.request.newClubName = 'New Club';

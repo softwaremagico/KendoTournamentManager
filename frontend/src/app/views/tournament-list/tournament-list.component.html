@@ -116,7 +116,7 @@
               [title]="t('registrationQrHint')"
               (click)="showRegistrationQr=true"
               [disabled]="!table.selectedRows ||  table.selectedRows.length !== 1 || table.selectedRows[0]!.locked">
-              <mat-icon class="kendo-icon" svgIcon="qr_code"></mat-icon>
+              <mat-icon class="kendo-icon" svgIcon="user_add"></mat-icon>
             </button>
           }
           @if ((RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.getActivities())) {

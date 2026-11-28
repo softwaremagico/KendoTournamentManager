@@ -14,80 +14,75 @@
         }
 
         <form (ngSubmit)="submit()">
-          <div class="registration-field">
-            <label for="registration-name">{{ t('name') }}</label>
-            <input id="registration-name" name="name" type="text" autocomplete="given-name"
-              [(ngModel)]="request.name" required/>
-          </div>
-          <div class="registration-field">
-            <label for="registration-lastname">{{ t('lastname') }}</label>
-            <input id="registration-lastname" name="lastname" type="text" autocomplete="family-name"
-              [(ngModel)]="request.lastname" required/>
-          </div>
-          <div class="registration-field">
-            <label for="registration-id-card">{{ t('idCard') }}</label>
-            <input id="registration-id-card" name="idCard" type="text"
-              [(ngModel)]="request.idCard" required/>
-          </div>
+          <biit-input-text id="registration-name" [(ngModel)]="request.name"
+            [ngModelOptions]="{standalone: true}"
+            [placeholder]="t('name')" [required]="true"></biit-input-text>
+          <biit-input-text id="registration-lastname" [(ngModel)]="request.lastname"
+            [ngModelOptions]="{standalone: true}"
+            [placeholder]="t('lastname')" [required]="true"></biit-input-text>
+          <biit-input-text id="registration-id-card" [(ngModel)]="request.idCard"
+            [ngModelOptions]="{standalone: true}"
+            [placeholder]="t('idCard')" [required]="true"></biit-input-text>
 
-          <fieldset class="registration-field">
+          <fieldset class="registration-fieldset">
             <legend>{{ t('registrationRoles') }}</legend>
-            @for (role of configuration.availableRoles; track role) {
-              <label class="registration-checkbox">
-                <input id="registration-role-{{role}}" type="checkbox"
-                  [checked]="isRoleSelected(role)"
-                  (change)="$any($event.target).checked ? selectRole(role) : deselectRole(role)"/>
-                {{ t(roleKey(role)) }}
-              </label>
-            }
+            <div class="registration-checkbox-list">
+              @for (role of configuration.availableRoles; track role) {
+                <biit-checkbox id="registration-role-{{role}}" (onValueChange)="$event ? selectRole(role) : deselectRole(role)">
+                  {{ t(roleKey(role)) }}
+                </biit-checkbox>
+              }
+            </div>
           </fieldset>
 
-          <fieldset class="registration-field">
+          <fieldset class="registration-fieldset">
             <legend>{{ t('club') }}</legend>
-            <label class="registration-checkbox">
-              <input id="registration-existing-club" name="clubMode" type="radio"
-                [checked]="useExistingClub" (change)="useExistingClub = true"/>
-              {{ t('registrationExistingClub') }}
-            </label>
-            @if (useExistingClub) {
-              <label for="registration-club">{{ t('registrationSelectClub') }}</label>
-              <select id="registration-club" name="clubId" [(ngModel)]="selectedClubId" required>
-                <option [ngValue]="undefined">{{ t('registrationSelectClub') }}</option>
-                @for (club of configuration.clubs; track club.id) {
-                  <option [ngValue]="club.id">{{ club.name }}</option>
-                }
-              </select>
+            <div class="registration-radio-list">
+              <biit-radio-button id="registration-existing-club" name="clubMode"
+                [(ngModel)]="clubMode" [ngModelOptions]="{standalone: true}" value="existing">
+                {{ t('registrationExistingClub') }}
+              </biit-radio-button>
+              <biit-radio-button id="registration-new-club" name="clubMode"
+                [(ngModel)]="clubMode" [ngModelOptions]="{standalone: true}" value="new">
+                {{ t('registrationNewClub') }}
+              </biit-radio-button>
+            </div>
+            @if (clubMode === 'existing') {
+              <biit-dropdown id="registration-club"
+                [ngModel]="(selectedClubId?.toString() ?? '') | dropdownInterface: clubOptions"
+                (ngModelChange)="onClubChange($event.value)"
+                [ngModelOptions]="{standalone: true}"
+                [data]="clubOptions" [label]="'label'" [value]="'value'"
+                [title]="t('registrationSelectClub')"></biit-dropdown>
             } @else {
-              <div class="registration-field">
-                <label for="registration-new-club-name">{{ t('registrationNewClubName') }}</label>
-                <input id="registration-new-club-name" name="newClubName" type="text"
-                  [(ngModel)]="request.newClubName" required/>
-              </div>
-              <div class="registration-field">
-                <label for="registration-new-club-city">{{ t('city') }}</label>
-                <input id="registration-new-club-city" name="newClubCity" type="text"
-                  [(ngModel)]="request.newClubCity" required/>
-              </div>
-              <div class="registration-field">
-                <label for="registration-new-club-country">{{ t('country') }}</label>
-                <input id="registration-new-club-country" name="newClubCountry" type="text"
-                  [(ngModel)]="request.newClubCountry" required/>
-              </div>
+              <biit-input-text id="registration-new-club-name" [(ngModel)]="request.newClubName"
+                [ngModelOptions]="{standalone: true}"
+                [placeholder]="t('registrationNewClubName')" [required]="true"></biit-input-text>
+              <biit-input-text id="registration-new-club-city" [(ngModel)]="request.newClubCity"
+                [ngModelOptions]="{standalone: true}"
+                [placeholder]="t('city')" [required]="true"></biit-input-text>
+              <biit-input-text id="registration-new-club-country" [(ngModel)]="request.newClubCountry"
+                [ngModelOptions]="{standalone: true}"
+                [placeholder]="t('country')" [required]="true"></biit-input-text>
             }
-            <label class="registration-checkbox">
-              <input id="registration-new-club" name="clubMode" type="radio"
-                [checked]="!useExistingClub" (change)="useExistingClub = false"/>
-              {{ t('registrationNewClub') }}
-            </label>
           </fieldset>
 
           @if (configuration.teamSelectionEnabled) {
-            <div class="registration-field">
-              <label for="registration-team-preference">{{ t('registrationTeamPreference') }}</label>
-              <input id="registration-team-preference" name="teamPreference" type="text"
-                [(ngModel)]="request.teamPreference"/>
-              <small>{{ t('registrationTeamPreferenceHint', {teamSize: configuration.teamSize}) }}</small>
-            </div>
+            <fieldset class="registration-fieldset">
+              <legend>{{ t('registrationTeamPreference') }}</legend>
+              @if (clubMode === 'existing') {
+                <biit-dropdown id="registration-team"
+                  [ngModel]="(request.teamPreference ?? '') | dropdownInterface: teamOptions"
+                  (ngModelChange)="request.teamPreference = $event.value || undefined"
+                  [ngModelOptions]="{standalone: true}"
+                  [data]="teamOptions" [label]="'label'" [value]="'value'"
+                  [title]="t('registrationSelectTeam')"></biit-dropdown>
+              }
+              <biit-input-text id="registration-team-preference" [(ngModel)]="request.teamPreference"
+                [ngModelOptions]="{standalone: true}"
+                [placeholder]="t('registrationNewTeam')"
+                [description]="t('registrationTeamPreferenceHint', {teamSize: configuration.teamSize})"></biit-input-text>
+            </fieldset>
           }
 
           <div class="registration-actions">

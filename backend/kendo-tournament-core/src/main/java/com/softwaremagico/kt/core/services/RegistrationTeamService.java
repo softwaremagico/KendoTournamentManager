@@ -112,6 +112,32 @@ public class RegistrationTeamService {
         return teamProvider.get(tournament, participant).map(Team::getName).orElse(null);
     }
 
+    /**
+     * Returns the teams a participant of {@code clubId} can join. Empty teams
+     * are available to everyone; otherwise a team is offered when it already
+     * has a member from the same club. Team names are public, member data is not.
+     */
+    @Transactional(readOnly = true)
+    public List<Team> getAvailableTeams(Tournament tournament, Integer clubId) {
+        final Integer teamSize = tournament == null ? null : tournament.getTeamSize();
+        if (teamSize == null || teamSize <= 1) {
+            return List.of();
+        }
+        return teamProvider.getAll(tournament).stream()
+                .filter(team -> clubId == null || hasNoMembers(team) || belongsToClub(team, clubId))
+                .sorted(Comparator.comparing(Team::getName, String.CASE_INSENSITIVE_ORDER))
+                .toList();
+    }
+
+    private boolean hasNoMembers(Team team) {
+        return team.getMembers() == null || team.getMembers().isEmpty();
+    }
+
+    private boolean belongsToClub(Team team, Integer clubId) {
+        return team.getMembers() != null && team.getMembers().stream()
+                .anyMatch(member -> member != null && clubId.equals(clubId(member)));
+    }
+
     private Team findTeamForPreference(List<Team> teams, String preference, int teamSize) {
         return teams.stream()
                 .filter(team -> isPreferredTeam(team, preference))

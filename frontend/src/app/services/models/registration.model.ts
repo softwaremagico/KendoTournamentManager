@@ -1,11 +1,17 @@
 import {RoleType} from '../../models/role-type';
 
 /** Public information needed to render the credential-free registration form. */
+export interface RegistrationTeam {
+  name: string;
+  freeSlots: number;
+}
+
 export interface RegistrationClub {
   id: number;
   name: string;
   city?: string;
   country?: string;
+  teams?: RegistrationTeam[];
 }
 
 export interface RegistrationConfiguration {

@@ -31,12 +31,22 @@ export class AppComponent extends RbacBasedComponent {
                protected sessionService: UserSessionService, private readonly activityService: ActivityService) {
     super(rbacService);
     this.setLanguage();
+    this.applyStoredTheme();
     biitIconService.registerIcons(completeIconSet);
     this.loggedInService.isUserLoggedIn.pipe(takeUntil(this.destroySubject)).subscribe((value: boolean) => this.loggedIn = value);
     this.setPermissions();
     projectModeChangedService.isProjectMode.pipe(takeUntil(this.destroySubject)).subscribe((_mode: boolean): void => {
       this.hideMenu = _mode;
     });
+  }
+
+  private applyStoredTheme(): void {
+    //The navbar is hidden on public pages, so apply the stored theme globally.
+    if (this.userSessionService.getNightMode()) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }
 
   private setLanguage(): void {

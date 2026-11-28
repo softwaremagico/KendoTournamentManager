@@ -20,13 +20,20 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: unknown) => {
         const httpError: { error?: unknown; ok: boolean; status?: number; url?: string } = error as { error?: unknown; ok: boolean; status?: number; url?: string };
-        // Request-specific handlers render backend errors with context. Showing the
-        // same error here caused duplicate snackbars for a single failed request.
-        if (typeof httpError.status === 'number' && isAuthSessionErrorStatus(httpError.status)) {
+        const url: string = httpError.url ?? '';
+        // Requests that work without credentials (public registration, logging,
+        // authentication) must show their own error instead of jumping to login.
+        const isPublicRequest: boolean = url.includes('/registration/public/')
+          || url.includes('/logger/')
+          || url.includes('/auth/public/');
+        // Only a session that actually exists can become invalid. Anonymous
+        // failures are handled by the component that made the request.
+        const hasSession: boolean = !!this.loginService.getJwtValue();
+        if (typeof httpError.status === 'number' && isAuthSessionErrorStatus(httpError.status)
+          && !isPublicRequest && hasSession
           //Ensure errors only from Kendo Tournament (for future external calls).
-          if (httpError.url?.startsWith(this.environmentService.getBackendUrl())) {
-            logoutAndRedirectToLogin(this.router, this.loginService, this.messageService);
-          }
+          && url.startsWith(this.environmentService.getBackendUrl())) {
+          logoutAndRedirectToLogin(this.router, this.loginService, this.messageService);
         }
         return throwError(() => error);
       })

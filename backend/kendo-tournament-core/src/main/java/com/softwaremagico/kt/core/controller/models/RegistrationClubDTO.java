@@ -23,6 +23,8 @@ package com.softwaremagico.kt.core.controller.models;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Public projection of a club: no contact details are shared. */
 @SuppressWarnings("java:S2160")
@@ -38,6 +40,8 @@ public class RegistrationClubDTO implements Serializable {
     private String city;
 
     private String country;
+
+    private List<RegistrationTeamDTO> teams = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -69,5 +73,13 @@ public class RegistrationClubDTO implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public List<RegistrationTeamDTO> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<RegistrationTeamDTO> teams) {
+        this.teams = teams;
     }
 }

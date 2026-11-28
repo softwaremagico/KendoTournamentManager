@@ -33,7 +33,7 @@ describe('AppComponent', () => {
       'setActiveLang'
     ]);
     loginServiceSpy = jasmine.createSpyObj('LoginService', ['getJwtValue']);
-    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getLanguage', 'getUser']);
+    userSessionServiceSpy = jasmine.createSpyObj('UserSessionService', ['getLanguage', 'getUser', 'getNightMode']);
     rbacServiceSpy = jasmine.createSpyObj('RbacService', ['isAllowed']);
     biitIconServiceSpy = jasmine.createSpyObj('BiitIconService', ['registerIcons']);
     activityServiceSpy = jasmine.createSpyObj('ActivityService', ['setRoles']);
@@ -49,6 +49,7 @@ describe('AppComponent', () => {
     translocoServiceSpy.getAvailableLangs.and.returnValue(['en', 'es'] as any);
     userSessionServiceSpy.getLanguage.and.returnValue('es');
     userSessionServiceSpy.getUser.and.returnValue(loggedUser);
+    userSessionServiceSpy.getNightMode.and.returnValue(false);
     rbacServiceSpy.isAllowed.and.returnValue(true);
 
     component = new AppComponent(
@@ -71,6 +72,25 @@ describe('AppComponent', () => {
   it('should set language from session if available', () => {
     expect(translocoServiceSpy.setActiveLang).toHaveBeenCalledWith('es');
     expect(component.selectedLanguage).toBe('es');
+  });
+
+  it('should apply the stored night mode to the document body', () => {
+    userSessionServiceSpy.getNightMode.and.returnValue(true);
+
+    component = new AppComponent(
+      translocoServiceSpy,
+      loginServiceSpy,
+      loggedInServiceMock,
+      userSessionServiceSpy,
+      rbacServiceSpy,
+      biitIconServiceSpy,
+      projectModeChangedServiceMock,
+      userSessionServiceSpy,
+      activityServiceSpy
+    );
+
+    expect(document.body.classList.contains('dark-mode')).toBeTrue();
+    document.body.classList.remove('dark-mode');
   });
 
   it('should register icon set on constructor', () => {

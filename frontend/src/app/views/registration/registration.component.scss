@@ -1,57 +1,62 @@
 .registration-page {
+  background: var(--body-background);
+  color: var(--component-color);
   display: flex;
   justify-content: center;
+  min-height: 100%;
+  overflow-y: auto;
   padding: 2rem 1rem;
 }
 
 .registration-card {
-  background: var(--component-color);
-  display: block;
+  background: var(--floating-background);
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+  color: var(--component-color);
+  display: block;
   max-width: 34rem;
   padding: 1.5rem;
   width: 100%;
+
+  biit-input-text,
+  biit-dropdown,
+  biit-checkbox,
+  biit-radio-button {
+    display: block;
+    width: 100%;
+  }
 }
 
 .registration-tournament {
   font-weight: 600;
 }
 
-.registration-field {
+.registration-fieldset {
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
-
-  input[type='text'],
-  select {
-    background: transparent;
-    border: 1px solid var(--main-color);
-    border-radius: 0.25rem;
-    color: inherit;
-    padding: 0.5rem;
-  }
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 1rem 0.75rem;
 }
 
-fieldset.registration-field {
-  border: 1px solid var(--main-color);
-  border-radius: 0.25rem;
-}
-
-.registration-checkbox {
-  align-items: center;
+.registration-checkbox-list,
+.registration-radio-list {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
 }
 
 .registration-actions {
   display: flex;
   justify-content: flex-end;
+  margin-top: 1rem;
 }
 
 .registration-error {
-  color: #c62828;
+  color: var(--error-color);
 }
 
 .registration-success {

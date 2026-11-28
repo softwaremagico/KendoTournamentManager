@@ -32,6 +32,7 @@ import com.softwaremagico.kt.core.services.RegistrationTeamService;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -74,6 +75,25 @@ public class RegistrationControllerTest {
         MockitoAnnotations.openMocks(this);
         controller = new RegistrationController(tournamentProvider, clubProvider, participantProvider,
                 roleProvider, registrationTeamService);
+    }
+
+    @Test
+    public void shouldExposeTeamsAvailableForEachClubInConfiguration() {
+        final Tournament tournament = tournament(3);
+        final Club club = club(4, "Existing club");
+        final Team team = new Team("Club Team", tournament);
+        team.addMember(participant(11, "999"));
+        when(tournamentProvider.get(1)).thenReturn(Optional.of(tournament));
+        when(clubProvider.getAll()).thenReturn(List.of(club));
+        when(registrationTeamService.getAvailableTeams(tournament, 4)).thenReturn(List.of(team));
+
+        final var configuration = controller.getConfiguration(1);
+
+        assertThat(configuration.isTeamSelectionEnabled()).isTrue();
+        assertThat(configuration.getClubs()).hasSize(1);
+        assertThat(configuration.getClubs().get(0).getTeams()).hasSize(1);
+        assertThat(configuration.getClubs().get(0).getTeams().get(0).getName()).isEqualTo("Club Team");
+        assertThat(configuration.getClubs().get(0).getTeams().get(0).getFreeSlots()).isEqualTo(2);
     }
 
     @Test

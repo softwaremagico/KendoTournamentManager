@@ -87,6 +87,7 @@ public class WebSecurityConfig {
             // Own
             "/",
             "/info/**",
+            "/logger/**",
             "/*/public/**",
             //Websockets uses custom security.
             WebSocketConfiguration.SOCKETS_STOMP_URL + "/**"

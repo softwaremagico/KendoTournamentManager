@@ -729,11 +729,18 @@ public class ControllerModelsDTOCoverageTest {
         club.setName("Kendo Club");
         club.setCity("Barcelona");
         club.setCountry("Spain");
+        final RegistrationTeamDTO team = new RegistrationTeamDTO();
+        team.setName("Team A");
+        team.setFreeSlots(2);
+        club.setTeams(java.util.List.of(team));
 
         assertThat(club.getId()).isEqualTo(41);
         assertThat(club.getName()).isEqualTo("Kendo Club");
         assertThat(club.getCity()).isEqualTo("Barcelona");
         assertThat(club.getCountry()).isEqualTo("Spain");
+        assertThat(club.getTeams()).containsExactly(team);
+        assertThat(team.getName()).isEqualTo("Team A");
+        assertThat(team.getFreeSlots()).isEqualTo(2);
 
         final RegistrationConfigurationDTO configuration = new RegistrationConfigurationDTO();
         configuration.setTournamentName("Open Cup");
