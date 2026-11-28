@@ -119,4 +119,13 @@ public class RoleServices extends BasicServices<Role, RoleDTO, RoleRepository,
     public void delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
         getController().delete(participantInTournament.getParticipant(), participantInTournament.getTournament());
     }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Deletes one role of a participant.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete/participants/role/{roleType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@Parameter(description = "Role to remove") @PathVariable("roleType") RoleType roleType,
+                       @RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
+        getController().delete(participantInTournament.getParticipant(), participantInTournament.getTournament(), roleType);
+    }
 }

@@ -78,6 +78,15 @@ public class TournamentQrTest {
     }
 
     @Test
+    public void constructor_withRegistrationLink_expectLinkInGeneratedDocument() throws Exception {
+        final TournamentDTO tournament = new TournamentDTO("T", 1, 3, com.softwaremagico.kt.persistence.values.TournamentType.LEAGUE);
+        final TournamentQr tournamentQr = new TournamentQr(messageSource(), Locale.getDefault(), tournament, validImage(), null,
+                "https://frontend/#/register?invitation=ticket", "qr.body.registration");
+
+        assertNotNull(tournamentQr.generate());
+    }
+
+    @Test
     public void addDocumentWriterEvents_expectNoException() throws Exception {
         final TournamentDTO tournament = new TournamentDTO("T", 1, 3, com.softwaremagico.kt.persistence.values.TournamentType.LEAGUE);
         final TournamentQr tournamentQr = new TournamentQr(messageSource(), Locale.getDefault(), tournament, validImage(), null);

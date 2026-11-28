@@ -16,6 +16,10 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./views/login/login.module').then(m => m.LoginModule),
   },
+  {
+    path: 'register',
+    loadChildren: () => import('./views/registration/registration.module').then(m => m.RegistrationModule),
+  },
   {path: 'registry/clubs', component: ClubListComponent, canActivate: [LoggedInService]},
   {
     path: 'registry/participants',

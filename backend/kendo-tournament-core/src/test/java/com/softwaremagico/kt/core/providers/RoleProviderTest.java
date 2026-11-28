@@ -27,6 +27,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.RoleRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
@@ -37,7 +38,9 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -332,7 +335,7 @@ public class RoleProviderTest {
         final Participant participant = participant("P1");
         final Role role = role(tournament, RoleType.COMPETITOR);
 
-        when(roleRepository.findByTournamentAndParticipant(tournament, participant)).thenReturn(role);
+        when(roleRepository.findFirstByTournamentAndParticipant(tournament, participant)).thenReturn(role);
 
         final Role result = provider.get(tournament, participant);
 
@@ -380,6 +383,27 @@ public class RoleProviderTest {
     }
 
     @Test
+    public void testDeleteByParticipantTournamentAndRoleTypeDelegatesToRepository() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Participant participant = participant("P1");
+
+        provider.delete(participant, tournament, RoleType.REFEREE);
+
+        verify(roleRepository).deleteByParticipantAndTournamentAndRoleType(participant, tournament, RoleType.REFEREE);
+        verify(roleRepository, org.mockito.Mockito.never()).deleteByParticipantAndTournament(participant, tournament);
+    }
+
+    @Test
+    public void testCreateOrUpdateRolesWithNoRolesDoesNotTouchRepository() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Participant participant = participant("P1");
+
+        assertThat(provider.createOrUpdateRoles(tournament, participant, java.util.List.of(), null, false)).isEmpty();
+        verify(roleRepository, org.mockito.Mockito.never())
+                .findAllByTournamentAndParticipant(tournament, participant);
+    }
+
+    @Test
     public void testDeleteByTournamentDelegatesToRepository() {
         final Tournament tournament = tournament("Autumn Cup");
         when(roleRepository.deleteByTournament(tournament)).thenReturn(4L);
@@ -387,6 +411,34 @@ public class RoleProviderTest {
         final long result = provider.delete(tournament);
 
         assertThat(result).isEqualTo(4L);
+    }
+
+    @Test
+    public void createOrUpdateRolesAddsRolesWithoutRemovingOrganizerRole() {
+        final Tournament tournament = tournament("Autumn Cup");
+        final Participant participant = participant("P1");
+        final Role organizerRole = role(tournament, RoleType.ORGANIZER);
+        final Role competitorRole = role(tournament, RoleType.COMPETITOR);
+        final Role refereeRole = new Role(tournament, participant, RoleType.REFEREE);
+        when(roleRepository.findAllByTournamentAndParticipant(tournament, participant))
+                .thenReturn(new ArrayList<>(List.of(organizerRole, competitorRole)))
+                .thenReturn(new ArrayList<>(List.of(organizerRole, competitorRole, refereeRole)));
+        when(roleRepository.save(any(Role.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final List<Role> result = provider.createOrUpdateRoles(tournament, participant,
+                List.of(RoleType.COMPETITOR, RoleType.REFEREE), "Team A", true);
+
+        assertThat(result).extracting(Role::getRoleType)
+                .containsExactlyInAnyOrder(RoleType.ORGANIZER, RoleType.COMPETITOR, RoleType.REFEREE);
+        verify(roleRepository, never()).delete(any(Role.class));
+        final ArgumentCaptor<Role> captor = ArgumentCaptor.forClass(Role.class);
+        verify(roleRepository, times(2)).save(captor.capture());
+        assertThat(captor.getAllValues()).extracting(Role::getRoleType)
+                .containsExactlyInAnyOrder(RoleType.COMPETITOR, RoleType.REFEREE);
+        assertThat(captor.getAllValues()).allSatisfy(role -> {
+            assertThat(role.isPendingReview()).isTrue();
+            assertThat(role.getTeamPreference()).isEqualTo("Team A");
+        });
     }
 
     private Tournament tournament(String name) {

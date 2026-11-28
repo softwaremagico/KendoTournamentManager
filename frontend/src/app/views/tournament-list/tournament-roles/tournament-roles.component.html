@@ -22,6 +22,7 @@
               </div>
               <div (cdkDropListDropped)="dropParticipant($event, roleType)"
                 [cdkDropListData]="getParticipantsContainer(roleType)"
+                [id]="roleType"
                 cdkDropList
                 class="role">
                 @for (user of participants.get(roleType); track user) {

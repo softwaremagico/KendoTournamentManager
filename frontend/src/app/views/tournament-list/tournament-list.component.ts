@@ -67,6 +67,7 @@ export class TournamentListComponent extends RbacBasedComponent implements After
   protected loading: boolean = false;
   protected loadingGlobal: boolean = false;
   protected showQr: boolean = false;
+  protected showRegistrationQr: boolean = false;
   protected readonly port: number = +window.location.port;
 
   @ViewChildren('booleanCell') booleanCellTemplates: QueryList<TemplateRef<unknown>>;

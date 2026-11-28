@@ -121,6 +121,13 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   removeRole(event: CdkDragDrop<Participant[], any>): void {
+    // The source drop list is identified by its role type. Removing one role must
+    // not delete the other roles of a multi-role participant.
+    const roleType: RoleType | undefined = this.roleTypes.find(type => type === event.previousContainer.id)
+      ?? [...this.participants.entries()].find(([, members]) => members === event.previousContainer.data)?.[0];
+    if (roleType === undefined) {
+      return;
+    }
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
@@ -128,7 +135,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex]
-    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe((): void => {
+    this.roleService.deleteByParticipantAndTournamentAndRole(participant, this.tournament, roleType).subscribe((): void => {
       this.messageService.infoMessage("infoRoleDeleted");
       this.statisticsChangedService.areStatisticsChanged.next(true);
     });

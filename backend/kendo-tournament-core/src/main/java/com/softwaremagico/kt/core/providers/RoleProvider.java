@@ -28,9 +28,13 @@ import com.softwaremagico.kt.persistence.repositories.RoleRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
@@ -113,7 +117,7 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
     }
 
     public Role get(Tournament tournament, Participant participant) {
-        return getRepository().findByTournamentAndParticipant(tournament, participant);
+        return getRepository().findFirstByTournamentAndParticipant(tournament, participant);
     }
 
     public long count(Tournament tournament) {
@@ -132,7 +136,38 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         getRepository().deleteByParticipantAndTournament(participant, tournament);
     }
 
+    /** Deletes only the requested role, preserving any other role of the participant. */
+    public void delete(Participant participant, Tournament tournament, RoleType roleType) {
+        getRepository().deleteByParticipantAndTournamentAndRoleType(participant, tournament, roleType);
+    }
+
     public long delete(Tournament tournament) {
         return getRepository().deleteByTournament(tournament);
+    }
+
+    /**
+     * Adds the requested roles, keeping every role already assigned to the
+     * participant. Unlike {@code RoleController.create}, this allows a
+     * competitor to also be registered as a referee (and preserves roles
+     * assigned by an organizer, such as ORGANIZER or VOLUNTEER).
+     */
+    @Transactional
+    public List<Role> createOrUpdateRoles(Tournament tournament, Participant participant, Collection<RoleType> roleTypes,
+                                          String teamPreference, boolean pendingReview) {
+        if (roleTypes == null || roleTypes.isEmpty()) {
+            return List.of();
+        }
+        final Set<RoleType> requested = roleTypes.stream().filter(Objects::nonNull).collect(Collectors.toSet());
+        final List<Role> currentRoles = getRepository().findAllByTournamentAndParticipant(tournament, participant);
+        for (final RoleType roleType : requested) {
+            final Role role = currentRoles.stream()
+                    .filter(current -> current.getRoleType() == roleType)
+                    .findFirst()
+                    .orElseGet(() -> new Role(tournament, participant, roleType));
+            role.setTeamPreference(teamPreference);
+            role.setPendingReview(pendingReview);
+            save(role);
+        }
+        return getRepository().findAllByTournamentAndParticipant(tournament, participant);
     }
 }

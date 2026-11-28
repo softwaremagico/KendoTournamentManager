@@ -59,7 +59,10 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     List<Role> findByParticipantIn(Collection<Participant> participants);
 
-    Role findByTournamentAndParticipant(Tournament tournament, Participant participant);
+    /** Returns one role only; use {@link #findAllByTournamentAndParticipant} for multi-role participants. */
+    Role findFirstByTournamentAndParticipant(Tournament tournament, Participant participant);
+
+    List<Role> findAllByTournamentAndParticipant(Tournament tournament, Participant participant);
 
     List<Role> findByParticipantInAndRoleType(Collection<Participant> participant, RoleType roleType);
 
@@ -70,6 +73,9 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     long countByParticipantAndRoleType(Participant participant, RoleType roleType);
 
     void deleteByParticipantAndTournament(Participant participant, Tournament tournament);
+
+    /** Deletes a single role so participants can keep their other roles. */
+    void deleteByParticipantAndTournamentAndRoleType(Participant participant, Tournament tournament, RoleType roleType);
 
     long deleteByTournament(Tournament tournament);
 

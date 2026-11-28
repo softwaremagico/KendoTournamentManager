@@ -116,6 +116,19 @@ public class RoleServicesTest {
     }
 
     @Test
+    public void deleteOneRole_expectControllerDeleteWithRoleType() {
+        final ParticipantInTournamentDTO participantInTournament = new ParticipantInTournamentDTO();
+        final ParticipantDTO participant = new ParticipantDTO();
+        final TournamentDTO tournament = new TournamentDTO();
+        participantInTournament.setParticipant(participant);
+        participantInTournament.setTournament(tournament);
+
+        services.delete(RoleType.REFEREE, participantInTournament, mockRequest);
+
+        verify(mockRoleController).delete(participant, tournament, RoleType.REFEREE);
+    }
+
+    @Test
     public void getAllFromTournamentAsPdf_expectPdfBytesAndContentDisposition() throws Exception {
         final TournamentDTO tournament = new TournamentDTO();
         tournament.setName("My Tournament");

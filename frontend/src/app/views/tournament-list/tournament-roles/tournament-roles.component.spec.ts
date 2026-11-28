@@ -50,6 +50,7 @@ describe('TournamentRolesComponent', () => {
       'getFromTournamentAndTypes',
       'add',
       'deleteByParticipantAndTournament',
+      'deleteByParticipantAndTournamentAndRole',
       'getRolesByTournament'
     ]);
     messageServiceSpy = jasmine.createSpyObj('MessageService', ['infoMessage']);
@@ -160,14 +161,14 @@ describe('TournamentRolesComponent', () => {
     expect(component.userListData.filteredParticipants).toEqual([]);
   });
 
-  it('should remove role and move participant back to user lists', () => {
+  it('should remove only the dragged role and move participant back to user lists', () => {
     const participant = createParticipant(1, 'John', 'Doe');
     component.userListData.participants = [];
     component.userListData.filteredParticipants = [];
-    roleServiceSpy.deleteByParticipantAndTournament.and.returnValue(of({} as Role));
+    roleServiceSpy.deleteByParticipantAndTournamentAndRole.and.returnValue(of({} as Role));
 
     const event = {
-      previousContainer: { data: [participant] },
+      previousContainer: { data: [participant], id: RoleType.REFEREE },
       container: { data: [] },
       previousIndex: 0,
       currentIndex: 0
@@ -175,7 +176,9 @@ describe('TournamentRolesComponent', () => {
 
     component.removeRole(event);
 
-    expect(roleServiceSpy.deleteByParticipantAndTournament).toHaveBeenCalledWith(participant, component.tournament);
+    expect(roleServiceSpy.deleteByParticipantAndTournamentAndRole)
+      .toHaveBeenCalledWith(participant, component.tournament, RoleType.REFEREE);
+    expect(roleServiceSpy.deleteByParticipantAndTournament).not.toHaveBeenCalled();
     expect(messageServiceSpy.infoMessage).toHaveBeenCalledWith('infoRoleDeleted');
     expect((statisticsChangedServiceMock.areStatisticsChanged.next as jasmine.Spy)).toHaveBeenCalledWith(true);
     expect(component.userListData.participants).toContain(participant);

@@ -133,6 +133,13 @@ public class Tournament extends Element implements IName {
     private LocalDateTime lockedAt;
 
     /**
+     * Version of the public registration invitation. Incrementing it revokes all
+     * previously printed links/QR codes for this tournament.
+     */
+    @Column(name = "registration_version", nullable = false)
+    private int registrationVersion = 1;
+
+    /**
      * Timestamp at which the first fight was started, or {@code null} if not yet
      * begun.
      */
@@ -233,6 +240,25 @@ public class Tournament extends Element implements IName {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public int getRegistrationVersion() {
+        // Existing rows created before this column was added may hold 0.
+        return Math.max(1, this.registrationVersion);
+    }
+
+    public void setRegistrationVersion(int registrationVersion) {
+        this.registrationVersion = Math.max(1, registrationVersion);
+    }
+
+    /**
+     * Invalidates every registration link issued before this call.
+     */
+    public int renewRegistration() {
+        // Legacy rows may still hold 0. Go through the setter so a renewal always
+        // produces a version that no previously issued invitation can match.
+        setRegistrationVersion(getRegistrationVersion() + 1);
+        return getRegistrationVersion();
     }
 
     public LocalDateTime getLockedAt() {

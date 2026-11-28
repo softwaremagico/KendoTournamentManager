@@ -721,4 +721,41 @@ public class ControllerModelsDTOCoverageTest {
         assertThat(token.getExpiration()).isEqualTo(expiration.plusDays(1));
         assertThat(token.getParticipant()).isEqualTo(participant);
     }
+
+    @Test
+    public void testRegistrationConfigurationAndClubDtos() {
+        final RegistrationClubDTO club = new RegistrationClubDTO();
+        club.setId(41);
+        club.setName("Kendo Club");
+        club.setCity("Barcelona");
+        club.setCountry("Spain");
+        final RegistrationTeamDTO team = new RegistrationTeamDTO();
+        team.setName("Team A");
+        team.setFreeSlots(2);
+        club.setTeams(java.util.List.of(team));
+
+        assertThat(club.getId()).isEqualTo(41);
+        assertThat(club.getName()).isEqualTo("Kendo Club");
+        assertThat(club.getCity()).isEqualTo("Barcelona");
+        assertThat(club.getCountry()).isEqualTo("Spain");
+        assertThat(club.getTeams()).containsExactly(team);
+        assertThat(team.getName()).isEqualTo("Team A");
+        assertThat(team.getFreeSlots()).isEqualTo(2);
+
+        final RegistrationConfigurationDTO configuration = new RegistrationConfigurationDTO();
+        configuration.setTournamentName("Open Cup");
+        configuration.setTeamSize(3);
+        configuration.setTeamSelectionEnabled(true);
+        configuration.setClubs(java.util.List.of(club));
+        configuration.setAvailableRoles(java.util.List.of(RoleType.COMPETITOR, RoleType.REFEREE));
+
+        assertThat(configuration.getTournamentName()).isEqualTo("Open Cup");
+        assertThat(configuration.getTeamSize()).isEqualTo(3);
+        assertThat(configuration.isTeamSelectionEnabled()).isTrue();
+        assertThat(configuration.getClubs()).containsExactly(club);
+        assertThat(configuration.getAvailableRoles()).containsExactly(RoleType.COMPETITOR, RoleType.REFEREE);
+
+        final RegistrationResponseDTO response = new RegistrationResponseDTO();
+        assertThat(response.getRoles()).isNotEmpty();
+    }
 }

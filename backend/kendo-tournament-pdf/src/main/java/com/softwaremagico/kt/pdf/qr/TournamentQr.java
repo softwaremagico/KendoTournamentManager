@@ -57,10 +57,21 @@ public class TournamentQr extends PdfDocument {
 
     private final TournamentDTO tournamentDTO;
 
+    private final String registrationLink;
+
+    private final String bodyMessageKey;
+
     public TournamentQr(MessageSource messageSource, Locale locale, TournamentDTO tournamentDTO, byte[] qrCode, byte[] backgroundImage) {
+        this(messageSource, locale, tournamentDTO, qrCode, backgroundImage, null, "qr.body.content");
+    }
+
+    public TournamentQr(MessageSource messageSource, Locale locale, TournamentDTO tournamentDTO, byte[] qrCode,
+                        byte[] backgroundImage, String registrationLink, String bodyMessageKey) {
         this.tournamentDTO = tournamentDTO;
         this.messageSource = messageSource;
         this.locale = locale;
+        this.registrationLink = registrationLink;
+        this.bodyMessageKey = bodyMessageKey;
         try {
             this.qrCode = Image.getInstance(qrCode);
         } catch (IOException e) {
@@ -117,7 +128,7 @@ public class TournamentQr extends PdfDocument {
         mainTable.addCell(titleCell);
 
 
-        final Paragraph content = new Paragraph(messageSource.getMessage("qr.body.content", null, locale),
+        final Paragraph content = new Paragraph(messageSource.getMessage(bodyMessageKey, null, locale),
                 new Font(PdfTheme.getLineFont(), PdfTheme.FONT_SIZE));
         final PdfPCell contentCell = new PdfPCell(content);
         contentCell.setBorderWidth(BORDER);
@@ -129,6 +140,13 @@ public class TournamentQr extends PdfDocument {
 
         mainTable.setWidthPercentage(TOTAL_WIDTH);
         document.add(mainTable);
+
+        if (registrationLink != null) {
+            final Paragraph link = new Paragraph(registrationLink,
+                    new Font(PdfTheme.getLineFont(), PdfTheme.FOOTER_FONT_SIZE));
+            link.setAlignment(Element.ALIGN_CENTER);
+            document.add(link);
+        }
 
         if (qrCode != null) {
             qrCode.scaleToFit(QR_CELL_SIZE, QR_CELL_SIZE);

@@ -277,4 +277,18 @@ public class PdfControllerTest {
 
         assertNotNull(this.pdfController.generateTournamentQr(Locale.getDefault(), tournament, null));
     }
+
+    @Test
+    public void generateRegistrationTournamentQr_expectDelegationToQrController() {
+        this.setUp();
+        final TournamentDTO tournament = new TournamentDTO("T", 1, 3, TournamentType.LEAGUE);
+        tournament.setId(4);
+        final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+        qrCodeDTO.setData(new byte[]{2});
+        qrCodeDTO.setContent("https://frontend/#/register?invitation=ticket");
+        when(this.qrController.generateRegistrationQrCodeForTournament(4, null, false, false)).thenReturn(qrCodeDTO);
+
+        assertNotNull(this.pdfController.generateRegistrationTournamentQr(Locale.getDefault(), tournament, null, false));
+        verify(this.qrController).generateRegistrationQrCodeForTournament(4, null, false, false);
+    }
 }

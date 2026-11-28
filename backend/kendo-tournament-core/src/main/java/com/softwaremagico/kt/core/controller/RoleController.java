@@ -110,6 +110,11 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
         getProvider().delete(participantConverter.reverse(participantDTO), tournamentConverter.reverse(tournamentDTO));
     }
 
+    /** Removes a single role so a participant can also keep other roles. */
+    public void delete(ParticipantDTO participantDTO, TournamentDTO tournamentDTO, RoleType roleType) {
+        getProvider().delete(participantConverter.reverse(participantDTO), tournamentConverter.reverse(tournamentDTO), roleType);
+    }
+
     @Override
     public RoleDTO create(RoleDTO roleDTO, String username, String session) {
         //Delete any previous role.
